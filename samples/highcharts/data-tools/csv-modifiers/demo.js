@@ -11,9 +11,9 @@ const chainModifier = {
     }, {
         type: 'Range',
         ranges: [{
-            column: 'x',
-            minValue: 1961,
-            maxValue: 2021
+            column: 'columnNames',
+            minValue: 1974,
+            maxValue: 1978
         }]
     }]
 };
@@ -72,9 +72,24 @@ const asiaChart = {
     renderTo: 'asia-chart',
     connector: {
         id: 'population-growth',
-        columnAssignment: getColumnAssignment(
-            ['China', 'Japan', 'India', 'Indonesia']
-        )
+        columnAssignment: [
+            {
+                seriesId: '0',
+                data: ['y', 'China']
+            },
+            {
+                seriesId: '1',
+                data: ['y', 'Japan']
+            },
+            {
+                seriesId: '2',
+                data: ['y', 'India']
+            },
+            {
+                seriesId: '3',
+                data: ['y', 'Indonesia']
+            }
+        ]
     },
     type: 'Highcharts',
     chartOptions: {
@@ -177,68 +192,100 @@ const legendChart = {
     }
 };
 
-Dashboards.board('container', {
-    dataPool: {
-        connectors: [{
-            id: 'population-growth',
-            type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true,
-                beforeParse: function (csv) {
-                    if (useInvertMod) {
-                        // Flip table using InvertModifier
-                        return csv.replace(/Country Name/g, 'x');
-                    }
 
-                    // Convert rows to columns and throw away empty rows
-                    const rows = csv.split('\n');
-                    const columns = [];
-
-                    rows.forEach((row, i) => {
-                        if (!row) {
-                            return;
-                        }
-                        console.log('row', i);
-                        const values = row.split(',');
-                        // Replace name of first column: "Country Name" -> x
-                        if (i === 0) {
-                            values[0] = 'x';
-                        }
-                        values.forEach((value, j) => {
-                            if (!columns[j]) {
-                                columns[j] = [];
-                            }
-                            columns[j][i] = value;
-                        });
-                    });
-                    return columns.map(column => column.join(',')).join('\n');
-                },
-                dataModifier: dataModifier
-            }
-        }]
+// For debugging purposes
+// eslint-disable-next-line no-unused-vars
+const dataGrid =
+{
+    renderTo: 'data-grid',
+    connector: {
+        id: 'population-growth'
     },
-    gui: {
-        layouts: [{
-            rows: [{
-                cells: [{
-                    id: 'south-america-chart'
+    type: 'DataGrid',
+    sync: {
+        visibility: true
+    }
+};
+
+async function setupBoard() {
+    const board = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                id: 'population-growth',
+                type: 'CSV',
+                options: {
+                    csv: csvData,
+                    firstRowAsNames: true,
+                    dataModifier: dataModifier,
+                    beforeParse: function (csv) {
+                        // console.log(csv);
+                        if (useInvertMod) {
+                            // Flip table using InvertModifier
+                            return csv; // .replace(/Country Name/g, 'x');
+                        }
+
+                        // Convert rows to columns and throw away empty rows
+                        const rows = csv.split('\n');
+                        const columns = [];
+
+                        rows.forEach((row, i) => {
+                            if (!row) {
+                                return;
+                            }
+                            const values = row.split(',');
+                            // Replace name of first column: "Country Name" -> x
+                            if (i === 0) {
+                                values[0] = 'x';
+                            }
+                            values.forEach((value, j) => {
+                                if (!columns[j]) {
+                                    columns[j] = [];
+                                }
+                                columns[j][i] = value;
+                            });
+                        });
+                        return columns.map(column =>
+                            column.join(',')
+                        ).join('\n');
+                    }
+                }
+            }]
+        },
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'south-america-chart'
+                    }, {
+                        id: 'north-america-chart'
+                    }, {
+                        id: 'asia-chart'
+                    }]
                 }, {
-                    id: 'north-america-chart'
+                    cells: [{
+                        id: 'legend'
+                    }]
                 }, {
-                    id: 'asia-chart'
-                }]
-            }, {
-                cells: [{
-                    id: 'legend'
+                    cells: [{
+                        id: 'data-grid'
+                    }]
                 }]
             }]
-        }]
-    },
-    components: [
-        asiaChart,
-        northAmericaChart,
-        southAmericaChart,
-        legendChart
-    ]
-}, true);
+        },
+        components: [
+            asiaChart,
+            //northAmericaChart,
+            //southAmericaChart,
+            // legendChart,
+            dataGrid
+        ]
+    }, true);
+
+    const dataPool = board.dataPool;
+    const conn = await dataPool.getConnector('population-growth');
+    console.log(conn.table.modified.columns);
+
+    return board;
+}
+
+setupBoard();
