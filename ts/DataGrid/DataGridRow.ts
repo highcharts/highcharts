@@ -147,6 +147,9 @@ class DataGridRow {
 
     /**
      * Registers a cell in the row.
+     *
+     * @param cell
+     * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
         this.cells.push(cell);

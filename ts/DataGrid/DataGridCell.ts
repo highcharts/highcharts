@@ -235,11 +235,13 @@ class DataGridCell {
     /**
      * Handle the formatting content of the cell.
      *
-     * @internal
-     *
      * @param value
      * The value of cell
      *
+     * @param ctx
+     * The context of the cell
+     *
+     * @internal
      */
     public formatCell(
         value: string | number | boolean,

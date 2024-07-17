@@ -114,10 +114,19 @@ class CellEditing {
         delete this.editedCell;
     }
 
+    /**
+     * Handles the blur event on the input field.
+     */
     private onInputBlur = (): void => {
         this.stopEditing();
     };
 
+    /**
+     * Handles the keydown event on the input field.
+     *
+     * @param e
+     * The keyboard event.
+     */
     private onInputKeyDown = (e: KeyboardEvent): void => {
         const { keyCode } = e;
 
@@ -128,6 +137,10 @@ class CellEditing {
         }
     };
 
+    /**
+     * Renders the input field for the cell, focuses it and sets up event
+     * listeners.
+     */
     private renderInput(): void {
         const cell = this.editedCell;
         if (!cell) {
@@ -144,6 +157,9 @@ class CellEditing {
         input.addEventListener('keydown', this.onInputKeyDown);
     }
 
+    /**
+     * Removes event listeners and the input element.
+     */
     private destroyInput(): void {
         const input = this.inputElement;
         if (!input) {
