@@ -237,8 +237,7 @@
 }
 
 td.highcharts-datagrid-focused-cell {
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0 0 1px;
 }
 
 .highcharts-datagrid-focused-cell input,
@@ -247,5 +246,6 @@ td.highcharts-datagrid-focused-cell {
     border-radius: 0;
     background-color: #b7d4ff;
     width: 100%;
+    height: 100%;
     outline: none;
 }
