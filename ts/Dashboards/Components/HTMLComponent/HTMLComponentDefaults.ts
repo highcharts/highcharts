@@ -24,6 +24,8 @@
 import type Globals from '../../Globals';
 import type Options from './HTMLComponentOptions';
 
+import Component from '../Component.js';
+
 /* *
  *
  *  Constants
@@ -32,7 +34,15 @@ import type Options from './HTMLComponentOptions';
 
 const HTMLComponentDefaults: Globals.DeepPartial<Options> = {
     type: 'HTML',
-    elements: []
+    elements: [],
+    editableOptions: [
+        ...Component.defaultOptions.editableOptions || [],
+        {
+            name: 'htmlInput',
+            propertyPath: ['html'],
+            type: 'textarea'
+        }
+    ]
 };
 
 /* *
