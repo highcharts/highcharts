@@ -282,6 +282,102 @@ function addInfoMeta(
 
 
 /**
+ * Adds the scope path to code informations.
+ *
+ * @param {CodeInfo|SourceInfo} parentInfo
+ * Code information with scope path to add.
+ *
+ * @param {Array<CodeInfo|ValueInfo>} targetInfos
+ * Code information to add to add to.
+ */
+function addInfoScopes(
+    parentInfo,
+    targetInfos
+) {
+    const _scopePath = extractInfoScopePath(parentInfo);
+
+    for (const _info of targetInfos) {
+
+        if (
+            !_info ||
+            typeof _info !== 'object' ||
+            _info.kind === 'Doclet' ||
+            _info.kind === 'Export' ||
+            _info.kind === 'Import'
+        ) {
+            continue;
+        }
+
+        if (_scopePath) {
+            _info.meta.scope = _scopePath;
+        }
+
+        switch (_info.kind) {
+
+            case 'Array':
+                if (_info.values) {
+                    addInfoScopes(_info, _info.values);
+                }
+                break;
+
+            case 'Class':
+            case 'Interface':
+                if (_info.generics) {
+                    addInfoScopes(_info, _info.generics);
+                }
+                addInfoScopes(_info, _info.members);
+                break;
+
+
+            case 'Function':
+                if (_info.generics) {
+                    addInfoScopes(_info, _info.generics);
+                }
+                if (_info.parameters) {
+                    addInfoScopes(_info, _info.parameters);
+                }
+                break;
+
+            case 'FunctionCall':
+                if (_info.arguments) {
+                    addInfoScopes(_info, _info.arguments);
+                }
+                if (_info.genericArguments) {
+                    addInfoScopes(_info, _info.genericArguments);
+                }
+                break;
+
+            case 'Module':
+            case 'Namespace':
+            case 'Object':
+                addInfoScopes(_info, _info.members);
+                break;
+
+            case 'Property':
+            case 'Reference':
+            case 'Variable':
+                if (typeof _info.value === 'object') {
+                    addInfoScopes(_info, [_info.value]);
+                }
+                break;
+
+            case 'TypeAlias':
+                if (_info.generics) {
+                    addInfoScopes(_info, _info.generics);
+                }
+                break;
+
+            default:
+                break;
+
+        }
+
+    }
+
+}
+
+
+/**
  * Adds a tag to a DocletInfo object.
  *
  * @param {DocletInfo} doclet
@@ -683,6 +779,49 @@ function extractInfos(
 
 
 /**
+ * Extracts scope path for the given code information.
+ *
+ * @param {CodeInfo|SourceInfo} info
+ * Information to extract from.
+ *
+ * @return {string|undefined}
+ * Scope path or `undefined`.
+ */
+function extractInfoScopePath(
+    info
+) {
+
+    switch (info.kind) {
+
+        case 'Array':
+        case 'Deconstruct':
+        case 'Object':
+            return info.meta.scope;
+
+        case 'Class':
+        case 'Function':
+        case 'FunctionCall':
+        case 'Interface':
+        case 'Namespace':
+        case 'Property':
+        case 'Reference':
+        case 'TypeAlias':
+        case 'Variable':
+            return (
+                info.meta.scope ?
+                    `${info.meta.scope}.${info.name}` :
+                    info.name
+            );
+
+        default:
+            return void 0;
+
+    }
+
+}
+
+
+/**
  * Retrieves the leading curly bracket inset from the given tag text.
  *
  * @param {string} text
@@ -1062,7 +1201,17 @@ function getDeconstructInfos(
     };
 
     if (node.initializer) {
-        _info.from = getInfoValue(node.initializer);
+        const _from = getInfoValue(node.initializer);
+
+        if (
+            typeof _from === 'object' &&
+            (
+                _from.kind === 'FunctionCall' ||
+                _from.kind === 'Reference'
+            )
+        ) {
+            _info.from = _from;
+        }
     }
 
     for (const element of node.name.elements) {
@@ -1256,17 +1405,9 @@ function getExportInfo(
 
     /** @type {ExportInfo} */
     const _info = {
-        kind: 'Export'
+        kind: 'Export',
+        value: getInfoValue(node.expression, includeNodes)
     };
-
-    const _value = getInfoValue(node.expression, includeNodes);
-
-    if (_value) {
-        if (_value.name) {
-            _info.name = _value.name;
-        }
-        _info.value = _value;
-    }
 
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
@@ -1318,7 +1459,7 @@ function getFunctionCallInfo(
             _arguments.push(getInfoValue(_child));
         }
 
-        if (!_info.arguments.length) {
+        if (!_arguments.length) {
             delete _info.arguments;
         }
     }
@@ -1329,6 +1470,10 @@ function getFunctionCallInfo(
 
         for (const _child of node.typeArguments) {
             _genericArguments.push(getInfoType(_child));
+        }
+
+        if (!_genericArguments.length) {
+            delete _info.genericArguments;
         }
     }
 
@@ -1381,8 +1526,19 @@ function getFunctionInfo(
         /** @type {Array<VariableInfo>} */
         const _generics = _info.generics = [];
 
+        /** @type {TypeAliasInfo} */
+        let _typeAlias;
+
         for (const _typeParameter of node.typeParameters) {
-            _generics.push(getTypeAliasInfo(_typeParameter, includeNodes));
+            _typeAlias = getTypeAliasInfo(_typeParameter, includeNodes);
+
+            if (_typeAlias) {
+                _generics.push(_typeAlias);
+            }
+        }
+
+        if (!_generics.length) {
+            delete _info.generics;
         }
     }
 
@@ -1390,8 +1546,19 @@ function getFunctionInfo(
         /** @type {Array<VariableInfo>} */
         const _parameters = _info.parameters = [];
 
+        /** @type {PropertyInfo|} */
+        let _typeAlias;
+
         for (const parameter of node.parameters) {
-            _parameters.push(getPropertyInfo(parameter));
+            _typeAlias = getTypeAliasInfo(parameter, includeNodes);
+
+            if (_typeAlias) {
+                _parameters.push(_typeAlias);
+            }
+        }
+
+        if (!_parameters.length) {
+            delete _info.parameters;
         }
     }
 
@@ -1639,59 +1806,6 @@ function getInterfaceInfo(
 
 
 /**
- * Retrieves the name of the given code information.
- *
- * @param {CodeInfo} info
- * Code information to get name for.
- *
- * @return {string|undefined}
- * Name or `undefined`.
- */
-function getName(
-    info
-) {
-    /** @type {DocletInfo|undefined} */
-    const _doclet = (info.kind === 'Doclet' ? info : info.doclet);
-
-    /** @type {string|undefined} */
-    let _name;
-
-    if (_doclet) {
-        _name = extractTagText(_doclet, 'optionparent', true);
-
-        if (typeof _name !== 'string') {
-            _name = extractTagText(_doclet, 'apioption', true);
-        }
-
-        if (typeof _name === 'string') {
-            return _name;
-        }
-
-    }
-
-    switch (info.kind) {
-
-        default:
-            return void 0;
-
-        case 'Class':
-        case 'Function':
-        case 'FunctionCall':
-        case 'Interface':
-        case 'Namespace':
-        case 'Property':
-        case 'TypeAlias':
-        case 'Variable':
-            _name = info.name;
-            break;
-
-    }
-
-    return _name;
-}
-
-
-/**
  * Retrieves namespace and module information from the given node.
  *
  * @param {TS.Node} node
@@ -1724,13 +1838,11 @@ function getNamespaceInfo(
         name: node.name.text
     };
 
-    if (
-        node.body &&
-        node.body.statements
-    ) {
-        addChildInfos(_info.members = [], node.body.statements, includeNodes);
-    }
-
+    addChildInfos(
+        _info.members = [],
+        ((node.body && node.body.statements) || []),
+        includeNodes
+    );
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -1830,31 +1942,13 @@ function getObjectInfo(
         kind: 'Object'
     };
 
-    _type = (
-        _type ||
-        getInfoType(TS.getJSDocType(node))
-    );
+    _type = (_type || getInfoType(TS.getJSDocType(node)));
 
     if (typeof _type !== 'object') {
         _info.type = _type;
     }
 
-    if (node.properties) {
-        /** @type {Array<MemberInfo>} */
-        const _members = _info.members = [];
-
-        for (const _childInfo of getChildInfos(node.properties, includeNodes)) {
-            if (
-                _childInfo.kind === 'Doclet' ||
-                _childInfo.kind === 'Function' ||
-                _childInfo.kind === 'Property'
-            ) {
-                _members.push(_childInfo);
-            }
-        }
-
-    }
-
+    addChildInfos(_info.members = [], node.properties, includeNodes);
     addInfoFlags(_info, node);
     addInfoMeta(_info, node);
 
@@ -2023,6 +2117,7 @@ function getSourceInfo(
     };
 
     addChildInfos(_info.code, getNodesChildren(_sourceFile), includeNodes);
+    addInfoScopes(_info, _info.code);
 
     SOURCE_CACHE[_cacheKey] = _info;
 
@@ -2329,6 +2424,7 @@ function mergeCodeInfos(
                         _mergedMember = newCodeInfo(_sourceMember);
                         _mergedMember.meta.merged = true;
                         _targetMembers.push(_mergedMember);
+                        addInfoScopes(_targetMember, [_mergedMember]);
                         break;
                     case 'Property':
                         if (_sourceMember.doclet) {
@@ -2343,6 +2439,13 @@ function mergeCodeInfos(
                                 _mergedMember.meta.merged = true;
                                 _targetMember.doclet = _mergedMember;
                             }
+                        }
+                        if (
+                            _targetMember.type ||
+                            _sourceMember.type
+                        ) {
+                            _targetMember.type = (_targetMember.type || []);
+                            _targetMember.type.push(_sourceMember.type || []);
                         }
                         if (
                             _targetMember.value &&
@@ -2365,6 +2468,7 @@ function mergeCodeInfos(
             _mergedMember = newCodeInfo(_sourceMember);
             _mergedMember.meta.merged = true;
             _targetMembers.push(_mergedMember);
+            addInfoScopes(_targetMember, [_mergedMember]);
         }
 
     }
@@ -3193,7 +3297,6 @@ module.exports = {
     extractTypes,
     getChildInfos,
     getDocletInfosBetween,
-    getName,
     getNodesChildren,
     getNodesFirstChild,
     getNodesLastChild,
@@ -3262,7 +3365,7 @@ module.exports = {
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {string|FunctionCallInfo|ReferenceInfo} [from]
+ * @property {FunctionCallInfo|ReferenceInfo} [from]
  * @property {'Deconstruct'} kind
  * @property {Meta} meta
  * @property {TS.ParameterDeclaration|TS.VariableDeclaration} [node]
@@ -3356,8 +3459,8 @@ module.exports = {
  * @property {'Interface'} kind
  * @property {Array<MemberInfo>} members
  * @property {Meta} meta
- * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
+ * @property {TS.InterfaceDeclaration} [node]
  */
 
 
@@ -3373,6 +3476,7 @@ module.exports = {
  * @property {string} file
  * @property {boolean} [merged]
  * @property {number} overhead
+ * @property {string} [scope]
  * @property {number} syntax
  */
 
