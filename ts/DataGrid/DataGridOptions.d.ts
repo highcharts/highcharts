@@ -201,8 +201,8 @@ export interface IndividualColumnOptions extends ColumnOptions {
     editable?: boolean;
 
     /**
-     * Allows user to sorting values in column
-     * (ascending, descending or default).
+     * Allows users to sort values in column
+     * (ascending, descending, or default).
      *
      * @default true
      */
