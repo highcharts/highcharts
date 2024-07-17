@@ -168,41 +168,6 @@ class ColumnSorting {
                 });
             }
         }
-
-        // if (state === 'none') {
-        //     this.sortingState =
-        //         dataGrid.columnSortingState[this.column.id] = 'asc';
-
-        //     modifier = new DataModifier.types.Sort({
-        //         direction: 'asc',
-        //         orderByColumn: this.column.id
-        //     });
-
-        //     dataGrid.update({
-        //         table: modifier.modifyTable(
-        //             (dataGrid.dataTable as DataTable).clone()
-        //         )
-        //     });
-        // } else if (state === 'asc') {
-        //     modifier = new DataModifier.types.Sort({
-        //         direction: 'desc',
-        //         orderByColumn: this.column.id
-        //     });
-
-        //     this.sortingState =
-        //         dataGrid.columnSortingState[this.column.id] = 'desc';
-        //     dataGrid.update({
-        //         table: modifier.modifyTable(
-        //             (dataGrid.dataTable as DataTable).clone()
-        //         )
-        //     });
-        // } else if (state === 'desc') {
-        //     this.sortingState =
-        //         dataGrid.columnSortingState[this.column.id] = 'none';
-        //     dataGrid.update({
-        //         table: dataGrid.originDataTable
-        //     });
-        // }
     }
 
     /**
