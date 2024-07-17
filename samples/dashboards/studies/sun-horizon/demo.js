@@ -988,9 +988,8 @@ const createBoard = async () => {
             },
             type: 'DataGrid',
             dataGridOptions: {
-                editable: false,
                 columns: [{
-                    headerFormat: 'Celestial event',
+                    headFormat: 'Celestial event',
                     cellFormatter: function () {
                         const str = this.value
                             .replace(/([A-Z])/g, ' $1')
@@ -999,7 +998,7 @@ const createBoard = async () => {
                     }
                 },
                 {
-                    headerFormat: 'Time',
+                    headFormat: 'Time',
                     // @todo Fix after #20444
                     // cellFormat: '{value:%H:%M}'
                     cellFormatter: function () {
