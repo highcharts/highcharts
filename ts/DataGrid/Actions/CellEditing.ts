@@ -110,7 +110,7 @@ class CellEditing {
             newValue = +newValue;
         }
 
-        cell.setContent(submit ? newValue : cell.value);
+        cell.setValue(submit ? newValue : cell.value, submit);
         delete this.editedCell;
     }
 

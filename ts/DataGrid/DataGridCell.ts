@@ -121,17 +121,20 @@ class DataGridCell {
             return;
         }
 
-        this.setContent(this.column.data[this.row.index]);
+        this.setValue(this.column.data[this.row.index], false);
         this.row.htmlElement.appendChild(this.htmlElement);
     }
 
     /**
-     * Sets the content of the cell.
+     * Sets the value & updating content of the cell.
      *
      * @param value
      * The raw value to set.
+     *
+     * @param updateTable
+     * Whether to update the table after setting the content.
      */
-    public setContent(value: DataTable.CellType): void {
+    public setValue(value: DataTable.CellType, updateTable: boolean): void {
         const element = this.htmlElement;
 
         this.value = value;
@@ -146,6 +149,15 @@ class DataGridCell {
             this.renderHTMLCellContent(cellContent, element);
         } else {
             element.innerText = cellContent;
+        }
+
+        if (updateTable) {
+            const vp = this.row.viewport;
+            vp.dataTable.setCell(
+                this.column.id,
+                this.row.index,
+                this.value
+            );
         }
     }
 

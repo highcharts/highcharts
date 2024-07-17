@@ -9,40 +9,20 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    defaults: {
-        columns: {
-            editable: true,
-            useHTML: true
-        }
+    caption: {
+        text: 'Open the console to see the events being logged.'
     },
-    columns: {
-        date: {
-            headFormat: 'Date of purchase',
-            cellFormatter: function () {
-                return new Date(this.value)
-                    .toISOString()
-                    .substring(0, 10);
+    events: {
+        cell: {
+            click: function () {
+                console.log('Cell click event', this);
+            },
+            mouseOver: function () {
+                console.log('Cell mouse over event', this);
+            },
+            mouseOut: function () {
+                console.log('Cell mouse out event', this);
             }
-        },
-        product: {
-            headFormat: '{id} name'
-        },
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormatter: function () {
-                return `${this.value} kg`;
-            }
-        },
-        price: {
-            cellFormat: '$ {value:.2f}'
-        },
-        icon: {
-            cellFormatter: function () {
-                return `<a href="#">${this.value}</a>`;
-            }
-        },
-        metaData: {
-            enabled: false
         }
     }
 });
