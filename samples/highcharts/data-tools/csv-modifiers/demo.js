@@ -11,9 +11,9 @@ const chainModifier = {
     }, {
         type: 'Range',
         ranges: [{
-            column: 'columnNames',
-            minValue: 1974,
-            maxValue: 1978
+            column: '0',
+            minValue: '1961',
+            maxValue: '2022'
         }]
     }]
 };
@@ -21,10 +21,11 @@ const chainModifier = {
 
 const rangeModifier = {
     type: 'Range',
+    stict: true,
     ranges: [{
         column: 'x',
-        minValue: 1961,
-        maxValue: 2021
+        minValue: '1974',
+        maxValue: '1978'
     }]
 };
 
@@ -32,12 +33,16 @@ const dataModifier = useInvertMod ? chainModifier : rangeModifier;
 
 
 function getColumnAssignment(columnNames) {
+    return null;
+    /* // TBD
     return columnNames.map(function (column) {
+        // TBD
         return {
             seriesId: column,
             data: ['x', column]
         };
     });
+    */
 }
 
 Highcharts.setOptions({
@@ -69,29 +74,14 @@ Highcharts.setOptions({
 });
 
 const asiaChart = {
+    type: 'Highcharts',
     renderTo: 'asia-chart',
     connector: {
         id: 'population-growth',
-        columnAssignment: [
-            {
-                seriesId: '0',
-                data: ['y', 'China']
-            },
-            {
-                seriesId: '1',
-                data: ['y', 'Japan']
-            },
-            {
-                seriesId: '2',
-                data: ['y', 'India']
-            },
-            {
-                seriesId: '3',
-                data: ['y', 'Indonesia']
-            }
-        ]
+        columnAssignment: getColumnAssignment(
+            ['China', 'Japan', 'India', 'Indonesia']
+        )
     },
-    type: 'Highcharts',
     chartOptions: {
         title: {
             text: 'Asia'
@@ -132,11 +122,12 @@ const southAmericaChart = {
 };
 
 const legendChart = {
+    type: 'Highcharts',
     renderTo: 'legend',
     connector: {
         id: 'population-growth'
     },
-    type: 'Highcharts',
+    /*
     columnAssignment: {
         Brazil: 'y',
         Argentina: 'y',
@@ -151,6 +142,7 @@ const legendChart = {
         India: 'y',
         Indonesia: 'y'
     },
+    */
     chartOptions: {
         chart: {
             height: 200
@@ -202,10 +194,53 @@ const dataGrid =
         id: 'population-growth'
     },
     type: 'DataGrid',
-    sync: {
-        visibility: true
+    columnAssignment: {
+        'Country Name': 'x',
+        Brazil: 'y',
+        Argentina: 'y',
+        Uruguay: 'y',
+        Paraguay: 'y',
+        'United States': 'y',
+        Canada: 'y',
+        Mexico: 'y',
+        Guatemala: 'y',
+        China: 'y',
+        Japan: 'y',
+        India: 'y',
+        Indonesia: 'y'
+    },
+    chartOptions: {
+        title: {
+            text: 'Countries population growth by year'
+        }
     }
 };
+
+function beforeParse(csv) {
+    // Convert rows to columns and throw away empty rows
+    const rows = csv.split('\n');
+    const columns = [];
+
+    rows.forEach((row, i) => {
+        if (!row) {
+            return;
+        }
+        const values = row.split(',');
+        // Replace name of first column: "Country Name" -> x
+        if (i === 0) {
+            values[0] = 'x';
+        }
+        values.forEach((value, j) => {
+            if (!columns[j]) {
+                columns[j] = [];
+            }
+            columns[j][i] = value;
+        });
+    });
+    return columns.map(column =>
+        column.join(',')
+    ).join('\n');
+}
 
 async function setupBoard() {
     const board = await Dashboards.board('container', {
@@ -215,39 +250,15 @@ async function setupBoard() {
                 type: 'CSV',
                 options: {
                     csv: csvData,
-                    firstRowAsNames: true,
-                    dataModifier: dataModifier,
-                    beforeParse: function (csv) {
-                        // console.log(csv);
-                        if (useInvertMod) {
-                            // Flip table using InvertModifier
-                            return csv; // .replace(/Country Name/g, 'x');
-                        }
-
-                        // Convert rows to columns and throw away empty rows
-                        const rows = csv.split('\n');
-                        const columns = [];
-
-                        rows.forEach((row, i) => {
-                            if (!row) {
-                                return;
-                            }
-                            const values = row.split(',');
-                            // Replace name of first column: "Country Name" -> x
-                            if (i === 0) {
-                                values[0] = 'x';
-                            }
-                            values.forEach((value, j) => {
-                                if (!columns[j]) {
-                                    columns[j] = [];
-                                }
-                                columns[j][i] = value;
-                            });
-                        });
-                        return columns.map(column =>
-                            column.join(',')
-                        ).join('\n');
-                    }
+                    firstRowAsNames: false,
+                    orientation: 'columns',
+                    columnNames: [
+                        'Country Name',
+                        'Brazil', 'Argentina', 'Uruguay', 'Paraguay',
+                        'United States', 'Canada', 'Mexico', 'Guatemala',
+                        'China', 'Japan', 'India', 'Indonesia', 'columnNames'
+                    ],
+                    dataModifier: dataModifier
                 }
             }]
         },
@@ -274,16 +285,21 @@ async function setupBoard() {
         },
         components: [
             asiaChart,
-            //northAmericaChart,
-            //southAmericaChart,
-            // legendChart,
-            dataGrid
+            northAmericaChart,
+            southAmericaChart,
+            legendChart
+            // dataGrid
         ]
     }, true);
 
     const dataPool = board.dataPool;
     const conn = await dataPool.getConnector('population-growth');
-    console.log(conn.table.modified.columns);
+
+    // For debugging purposes
+    // const hc = board.getComponentByCellId('asia-chart').seriesFromConnector;
+    // console.log(conn.table); // .columns);
+
+    // console.log(hc);
 
     return board;
 }
