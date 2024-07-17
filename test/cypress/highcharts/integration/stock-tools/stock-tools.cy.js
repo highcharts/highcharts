@@ -241,7 +241,7 @@ describe('Annotations popup text field', () => {
     });
 });
 
-describe('A11Y - aria-labels', () => {
+describe('A11Y - aria-attributes', () => {
     before(() => {
         cy.viewport(1000, 1000);
         cy.visit('/highcharts/cypress/stock-tools-gui/');
@@ -254,6 +254,26 @@ describe('A11Y - aria-labels', () => {
 
     it('All top level buttons should have aria-labels on first render', () => {
         cy.get('.highcharts-stocktools-toolbar > li > button').should('have.attr', 'aria-label');
+    });
+
+    it('Has correct aria-expanded attributes', () => {
+        cy.get('.highcharts-stocktools-toolbar > li > button.highcharts-submenu-item-arrow')
+            .as('submenu-arrows')
+            .should('have.attr', 'aria-expanded', 'false')
+            .should('have.attr', 'aria-haspopup', 'true')
+            .should('have.attr', 'aria-controls');
+
+        cy.get('@submenu-arrows').first()
+            .click()
+            .should('have.attr', 'aria-expanded', 'true', 'aria-expanded should be true when expanded')
+            .siblings('ul[role=menu]')
+            .should('be.visible');
+
+        cy.get('@submenu-arrows').first()
+            .click()
+            .should('have.attr', 'aria-expanded', 'false', 'aria-expanded should be returned to false when toggled again')
+            .siblings('ul[role=menu]')
+            .should('not.be.visible');
     });
 
     it('Should update aria-label of main button when selecting submenu item', () => {
