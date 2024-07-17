@@ -36,7 +36,8 @@ function getProducts(logPaths) {
             'Dashboards',
             'Gantt',
             'Maps',
-            'Stock'
+            'Stock',
+            'Accessibility'
         ],
         affectedProducts = [];
 
@@ -237,6 +238,7 @@ function getProductTests() {
         } else {
             nonProducts.push(product);
         }
+
     }
 
     if (nonProducts.length) {
