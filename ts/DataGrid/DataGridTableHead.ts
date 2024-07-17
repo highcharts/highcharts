@@ -121,7 +121,7 @@ class DataGridTableHead {
 
             column.setHeadElement(element);
 
-            // resizing
+            // Resizing
             if (vp.columnsResizer && (
                 vp.columnDistribution !== 'full' ||
                 i < vp.dataGrid.enabledColumns.length - 1
