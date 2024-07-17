@@ -290,3 +290,32 @@ QUnit.test('Plotbands in stock', assert => {
         'The plotBand on navigator should be positioned on corresponding yAxis'
     );
 });
+
+QUnit.test('PlotBand on main axis when navigator yAxis has id', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            plotBands: [{
+                from: 5,
+                to: 10,
+                color: 'yellow'
+            }]
+        },
+        navigator: {
+            yAxis: {
+                id: 'nav-ABC'
+            }
+        },
+
+        series: [{
+            data: Array.from({ length: 15 }, () => 1)
+        }]
+    });
+    const xAxis = chart.xAxis[0];
+
+    assert.strictEqual(
+        xAxis.plotLinesAndBands[0].svgElem.pathArray.length,
+        5,
+        'The plotband should only have 1 box'
+    );
+});
