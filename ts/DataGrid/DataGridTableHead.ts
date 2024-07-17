@@ -133,7 +133,7 @@ class DataGridTableHead {
                 );
             }
 
-            // sorting buttons
+            // Sorting buttons
             if (column.userOptions.sorting) {
                 column.columnSorting = new ColumnSorting(column, element);
             }
