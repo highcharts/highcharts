@@ -459,7 +459,6 @@ class StockToolsComponent extends AccessibilityComponent {
                     component.announceTool(button);
 
                     component.closeSubmenu(submenu);
-                    component.focusedButtonIndex--; // Target main button
                     component.focusButton();
 
                     return component.keyboardNavigationHandler.response.success;
