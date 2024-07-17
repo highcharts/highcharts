@@ -91,11 +91,10 @@ class ColumnSorting {
      * Adds CSS classes and click event to the header of column.
      */
     private addSortingEvents(): void {
-        const vp = this.column.viewport;
-        const columnSortingState = vp.dataGrid.columnSortingState &&
-            vp.dataGrid.columnSortingState[this.column.id];
+        const dataGrid = this.column.viewport.dataGrid;
+        const columnSortingState = dataGrid.columnSortingState?.[this.column.id];
 
-        if (!vp.dataGrid.dataTable) {
+        if (!dataGrid.dataTable) {
             return;
         }
 
