@@ -110,7 +110,7 @@ class DataGridTableHead {
             ) : column.id;
 
             const element = makeHTMLElement('th', {}, this.container);
-            column.headerWrapper = makeHTMLElement('div', {
+            column.headerContent = makeHTMLElement('div', {
                 innerText,
                 className: Globals.classNames.headCellContent
             }, element);

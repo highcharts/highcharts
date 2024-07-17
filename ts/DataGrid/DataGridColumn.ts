@@ -125,10 +125,10 @@ class DataGridColumn {
     /**
      * The wrapper for content of head.
      */
-    public headerWrapper?: HTMLElement;
+    public headerContent?: HTMLElement;
 
     /**
-     * Sorting option.
+     * Sorting column module.
      */
     public columnSorting?: ColumnSorting;
 

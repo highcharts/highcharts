@@ -123,7 +123,7 @@ class DataGrid {
      * The origin data source of the data grid.
      * It allows to recover datagrid to origin state after updates.
      */
-    public initDataTable?: DataTable;
+    public originDataTable?: DataTable;
 
     /**
      * The HTML element of the table.
@@ -381,7 +381,7 @@ class DataGrid {
             return;
         }
 
-        this.dataTable = this.initDataTable =
+        this.dataTable = this.originDataTable =
             new DataTable(tableOptions as DataTableOptions);
     }
 

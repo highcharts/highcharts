@@ -99,7 +99,7 @@ class ColumnSorting {
             return;
         }
 
-        this.column.headerWrapper?.addEventListener(
+        this.column.headerContent?.addEventListener(
             'click',
             this.setSortingState
         );
@@ -123,51 +123,86 @@ class ColumnSorting {
      * (ascending, descending or default).
      */
     private setSortingState = (): void => {
-        const vp = this.column.viewport;
-        let state = this.sortingState;
+        const dataGrid = this.column.viewport.dataGrid;
+        let state = this.sortingState,
+            modifier: DataModifier;
 
         if (
-            vp.dataGrid.columnSortingState &&
-            vp.dataGrid.columnSortingState[this.column.id]
+            dataGrid.columnSortingState &&
+            dataGrid.columnSortingState[this.column.id]
         ) {
-            state = vp.dataGrid.columnSortingState[this.column.id];
+            state = dataGrid.columnSortingState[this.column.id];
         } else {
-            vp.dataGrid.columnSortingState = {};
+            dataGrid.columnSortingState = {};
         }
 
-        const sortAsc = new DataModifier.types.Sort({
-            direction: 'asc',
-            orderByColumn: this.column.id
-        });
+        if (state === 'desc') {
+            this.sortingState =
+                dataGrid.columnSortingState[this.column.id] = 'none';
+            dataGrid.update({
+                table: dataGrid.originDataTable
+            });
+        } else {
+            if (state === 'none') {
+                modifier = new DataModifier.types.Sort({
+                    direction: 'asc',
+                    orderByColumn: this.column.id
+                });
+                this.sortingState =
+                    dataGrid.columnSortingState[this.column.id] = 'asc';
+            } else {
+                modifier = new DataModifier.types.Sort({
+                    direction: 'desc',
+                    orderByColumn: this.column.id
+                });
+    
+                this.sortingState =
+                    dataGrid.columnSortingState[this.column.id] = 'desc';
+            }
 
-        const sortDesc = new DataModifier.types.Sort({
-            direction: 'desc',
-            orderByColumn: this.column.id
-        });
-
-        if (state === 'none') {
-            this.sortingState =
-                vp.dataGrid.columnSortingState[this.column.id] = 'asc';
-            vp.dataGrid.update({
-                table: sortAsc.modifyTable(
-                    (vp.dataGrid.dataTable as DataTable).clone()
-                )
-            });
-        } else if (state === 'asc') {
-            this.sortingState =
-                vp.dataGrid.columnSortingState[this.column.id] = 'desc';
-            vp.dataGrid.update({
-                table: sortDesc.modifyTable(
-                    (vp.dataGrid.dataTable as DataTable).clone()
-                )
-            });
-        } else if (state === 'desc') {
-            this.sortingState =
-                vp.dataGrid.columnSortingState[this.column.id] = 'none';
-            vp.dataGrid.update({
-                table: vp.dataGrid.initDataTable
-            });
+            if (modifier) {
+                dataGrid.update({
+                    table: modifier.modifyTable(
+                        (dataGrid.dataTable as DataTable).clone()
+                    )
+                });
+            }
         }
+
+        // if (state === 'none') {
+        //     this.sortingState =
+        //         dataGrid.columnSortingState[this.column.id] = 'asc';
+
+        //     modifier = new DataModifier.types.Sort({
+        //         direction: 'asc',
+        //         orderByColumn: this.column.id
+        //     });
+
+        //     dataGrid.update({
+        //         table: modifier.modifyTable(
+        //             (dataGrid.dataTable as DataTable).clone()
+        //         )
+        //     });
+        // } else if (state === 'asc') {
+        //     modifier = new DataModifier.types.Sort({
+        //         direction: 'desc',
+        //         orderByColumn: this.column.id
+        //     });
+
+        //     this.sortingState =
+        //         dataGrid.columnSortingState[this.column.id] = 'desc';
+        //     dataGrid.update({
+        //         table: modifier.modifyTable(
+        //             (dataGrid.dataTable as DataTable).clone()
+        //         )
+        //     });
+        // } else if (state === 'desc') {
+        //     this.sortingState =
+        //         dataGrid.columnSortingState[this.column.id] = 'none';
+        //     dataGrid.update({
+        //         table: dataGrid.originDataTable
+        //     });
+        // }
     }
 
     /**
