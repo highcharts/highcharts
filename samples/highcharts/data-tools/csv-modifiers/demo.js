@@ -25,7 +25,7 @@ function createColumnAssignment(columnNames) {
 
 Highcharts.setOptions({
     chart: {
-        type: 'line'
+        zoomType: 'x'
     },
     yAxis: {
         max: 5,
