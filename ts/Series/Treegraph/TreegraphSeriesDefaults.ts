@@ -188,6 +188,7 @@ const TreegraphSeriesDefaults = {
     fillSpace: false,
     /**
      * @extends plotOptions.series.tooltip
+     * @excluding groupedNodesFormat
      */
     tooltip: {
         /**

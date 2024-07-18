@@ -106,6 +106,56 @@ export interface TreemapSeriesLevelColorVariationOptions {
     to?: number;
 }
 
+export interface TreemapSeriesGroupAreaThresholdOptions {
+
+    /**
+     * TO DO
+     *
+     * @type {boolean}
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    enabled: boolean;
+
+    /**
+     * The pixel threshold width of area, which is used as a minimal square
+     * area of point.
+     *
+     * @type {number}
+     *
+     * @since next
+     *
+     * @product highcharts
+     *
+     */
+    width?: number;
+
+    /**
+     * The pixel threshold height of area, which is used as a minual square
+     * area of point.
+     *
+     * @type {number}
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    height?: number;
+
+    /**
+     * TO DO
+     *
+     * @type {string}
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    name: string;
+}
+
 
 /**
  * Set options on specific levels. Takes precedence over series options,
@@ -449,7 +499,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @product highcharts
      */
-    groupAreaThreshold?: number;
+    groupAreaThreshold?: TreemapSeriesGroupAreaThresholdOptions;
 
     /**
      * Whether to ignore hidden points when the layout algorithm runs.
@@ -600,7 +650,13 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @apioption series.treemap.states.hover
      */
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TreemapSeriesTooltipOptions;
+
+    /**
+     * TO DO
+     *
+     * @apioption plotOptions.treemap.tooltip.groupedNodesFormat
+     */
 
     /**
      * Options for the button appearing when traversing down in a treemap.
@@ -635,6 +691,10 @@ export interface TreemapSeriesUpButtonPositionOptions {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
+}
+
+export interface TreemapSeriesTooltipOptions extends Partial<TooltipOptions> {
+    groupedNodesFormat?: string;
 }
 
 /* *

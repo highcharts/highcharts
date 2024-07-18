@@ -200,12 +200,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             const point: TreemapPoint = this && this.point ?
                     this.point :
                     ({} as any),
-                { isGroup } = point.node,
                 name = isString(point.name) ? point.name : '';
-
-            if (isGroup && point.node.groupChildren?.length) {
-                return `+${point.node.groupChildren?.length} more`;
-            }
 
             return name;
         },
@@ -215,21 +210,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
 
     tooltip: {
         headerFormat: '',
-        pointFormatter: function (): string {
-            const point = this as TreemapPoint,
-                { value } = point,
-                { isGroup } = point.node;
-
-            if (isGroup && point.node.groupChildren?.length) {
-                return `+${point.node.groupChildren?.length} more`;
-            }
-
-            if (value) {
-                return `<b>${point.name}</b>: ${value}<br/>`;
-            }
-
-            return `<b>${point.name}</b>`;
-        }
+        pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
+        groupedNodesFormat: '<span>+ X more</span><br/>'
     },
 
     /**
@@ -561,7 +543,12 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @product highcharts
      */
-    traverseToLeaf: false
+    traverseToLeaf: false,
+
+    groupAreaThreshold: {
+        enabled: false,
+        name: 'Grouped nodes'
+    }
 
 };
 

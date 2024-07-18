@@ -31,6 +31,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
+    TreemapSeriesGroupAreaThresholdOptions,
     TreemapSeriesLayoutAlgorithmValue,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
@@ -427,6 +428,137 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    public getGroup(
+        series: TreemapSeries,
+        level: TreemapSeriesLevelOptions,
+        area: TreemapSeries.AreaObject,
+        children: TreemapNode[],
+        groupAreaThreshold: TreemapSeriesGroupAreaThresholdOptions | undefined,
+        parent: TreemapNode
+    ):
+        {
+            children: TreemapNode[],
+            childrenValues: TreemapNode.NodeValuesObject[]
+        } {
+        const groupChildren: TreemapNode[] = [],
+            algorithm = pick<
+            TreemapSeriesLayoutAlgorithmValue|undefined,
+            TreemapSeriesLayoutAlgorithmValue
+            >(
+                (
+                    (series as any)[
+                        (level && level.layoutAlgorithm) as any
+                    ] &&
+                    level.layoutAlgorithm
+                ),
+                series.options.layoutAlgorithm as any
+            );
+
+        let childrenValues: Array<TreemapNode.NodeValuesObject> =
+            series[algorithm](area as any, children) as any;
+
+        if (
+            groupAreaThreshold &&
+            groupAreaThreshold.enabled &&
+            groupAreaThreshold.width
+        ) {
+            childrenValues.forEach((child, i): void => {
+                if (!children[i].isGroup) {
+                    const x = series.xAxis.toPixels(child.x / series.axisRatio),
+                        y = series.yAxis.toPixels(
+                            axisMax - child.y - child.height
+                        ),
+                        x2 = series.xAxis.toPixels(
+                            (child.x + child.width) / series.axisRatio
+                        ),
+                        y2 = series.yAxis.toPixels(axisMax - child.y),
+                        a = x2 - x,
+                        b = y - y2,
+                        area = a * b;
+
+                    if (
+                        (
+                            !groupAreaThreshold.height &&
+                            groupAreaThreshold.width &&
+                            (
+                                a < groupAreaThreshold.width ||
+                                b < groupAreaThreshold.width ||
+                                area < groupAreaThreshold.width *
+                                    groupAreaThreshold.width
+                            )
+                        ) ||
+                        (
+                            groupAreaThreshold.height &&
+                            groupAreaThreshold.width &&
+                            (
+                                a < groupAreaThreshold.width ||
+                                b < groupAreaThreshold.height ||
+                                area < groupAreaThreshold.width *
+                                    groupAreaThreshold.height
+                            )
+                        )
+                    ) {
+                        groupChildren.push(children[i]);
+                        children[i].visible = false;
+                    }
+                }
+            });
+
+            if (groupChildren.length) {
+                const node = new series.NodeClass().init(
+                        `highcharts-grouped-treemap-points-${parent.id || 'root'}`,
+                        series.nodeList.length,
+                        [],
+                        0,
+                        parent.level + 1,
+                        series,
+                        parent.id
+                    ),
+                    val = groupChildren.reduce(
+                        (acc, child): number => acc + child.val,
+                        0
+                    ),
+                    PointClass = series.pointClass;
+
+                node.val = val;
+                node.visible = true;
+
+                const groupPoint = new PointClass(series, {
+                    name: groupAreaThreshold.name,
+                    value: val,
+                    color: parent.point?.color
+                } as any);
+                series.points.push(groupPoint);
+
+                groupPoint.node = node;
+                groupPoint.formatPrefix = 'groupedNodesFormat';
+
+                series.nodeMap[node.id] = node;
+                series.nodeList.push(node);
+
+                node.point = groupPoint;
+                node.isLeaf = true;
+                node.isGroup = true;
+
+                node.parentNode = parent;
+
+                children = children.filter(
+                    (x): boolean => !groupChildren?.includes(x)
+                );
+
+                children.push(node);
+
+                childrenValues =
+                    series[algorithm](area as any, children) as any;
+            }
+        }
+
+        return {
+            children,
+            childrenValues
+        };
+    }
+
     /**
      * Recursive function which calculates the area for all children of a
      * node.
@@ -449,18 +581,6 @@ class TreemapSeries extends ScatterSeries {
             { groupAreaThreshold } = options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<
-            TreemapSeriesLayoutAlgorithmValue|undefined,
-            TreemapSeriesLayoutAlgorithmValue
-            >(
-                (
-                    (series as any)[
-                        (level && level.layoutAlgorithm) as any
-                    ] &&
-                    level.layoutAlgorithm
-                ),
-                options.layoutAlgorithm as any
-            ),
             alternate = options.alternateStartingDirection;
         // Collect all children which should be included
         let children = parent.children.filter((n): boolean => !n.ignore);
@@ -476,51 +596,15 @@ class TreemapSeries extends ScatterSeries {
                 0 :
                 1;
         }
-        childrenValues = series[algorithm](area as any, children) as any;
 
-        if (groupAreaThreshold) {
-            const groupChildren: TreemapNode[] = [];
-            childrenValues.forEach((child, i): void => {
-                const x = series.xAxis.toPixels(child.x / series.axisRatio),
-                    y = series.yAxis.toPixels(axisMax - child.y - child.height),
-                    x2 = series.xAxis.toPixels(
-                        (child.x + child.width) / series.axisRatio
-                    ),
-                    y2 = series.yAxis.toPixels(axisMax - child.y),
-                    a = x2 - x,
-                    b = y - y2,
-                    area = a * b;
-
-                if (area < groupAreaThreshold) {
-                    groupChildren.push(children[i]);
-                }
-            });
-
-            if (
-                groupChildren.length > 1 &&
-                series.rootNode !== groupChildren[0].id
-            ) {
-                const groupNode = groupChildren[0],
-                    val = groupChildren.reduce(
-                        (acc, child): number => acc + child.val,
-                        0
-                    );
-                groupNode.val = val;
-                groupNode.isGroup = true;
-                groupNode.name = 'Grouped nodes';
-                groupNode.groupChildren = groupChildren;
-
-                groupChildren.forEach((child): void => {
-                    child.parentNode = groupNode;
-                });
-                children = children.filter(
-                    (x): boolean => !groupChildren.includes(x)
-                );
-                children.push(groupNode);
-                childrenValues =
-                    series[algorithm](area as any, children) as any;
-            }
-        }
+        ({ children, childrenValues } = this.getGroup(
+            series,
+            level,
+            area,
+            children,
+            groupAreaThreshold,
+            parent
+        ));
 
         let i = -1;
         for (const child of children) {
@@ -895,6 +979,13 @@ class TreemapSeries extends ScatterSeries {
                 return d.id;
             }),
             parentList = series.getListOfParents(this.data, allIds);
+
+        // Remove old group points for small nodes
+        Object.keys(parentList).forEach((parentKey): void => {
+            if (series.nodeMap?.[`highcharts-grouped-treemap-points-${parentKey || 'root'}`]) {
+                series.nodeMap[`highcharts-grouped-treemap-points-${parentKey || 'root'}`].point.destroy();
+            }
+        });
 
         series.nodeMap = {};
         series.nodeList = [];
