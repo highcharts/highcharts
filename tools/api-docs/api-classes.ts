@@ -34,9 +34,6 @@ const md = markdownit();
 // - Check doclets that are matching the name with classes and interfaces.
 // - Links in docs like "{@link Highcharts#chart}".
 // - Smart link to other docs for types.
-// - Style, for readablity, tabels with funciton parameters.
-// - api.js doesn't open the tree when full name has a dot.
-// - Check if all statick files are really needed (copied in buildStructure).
 // - Include kind=Doclet with matching tags.
 
 /**
@@ -174,6 +171,7 @@ async function main() {
         },
         urlRoot = 'https://api.highcharts.com/',
         defaultHbsConfig = {
+            isClassReference: true,
             date: new Date(),
             includeClassReference: true,
             platforms: {
@@ -289,8 +287,9 @@ async function main() {
                 }) || void 0,
                 samples: getSamples(info.doclet.tags.sample),
                 children: info.members.map((member: any|TSLib.PropertyInfo) => {
-                    const description: string[] =
-                        descriptionFromTags(member.doclet.tags);
+                    const params: Array<string> = [],
+                        description: Array<string> =
+                            descriptionFromTags(member.doclet.tags, params);
 
                     // Use parameters for description instead
                     /*
@@ -312,18 +311,10 @@ async function main() {
 
                     if (member.return) {
                         description.push(
-                            '**Return type:** ' + sanitize(member.return.join('|'))
+                            '**Return type:** ' +
+                            sanitize(member.return.join(' | '))
                         );
                     }
-
-                    // TODO: Replace with proper body handling
-                    /*if (member.body) {
-                        description.push(
-                            '**Body:** ' + sanitize(
-                                JSON.stringify(member.body)
-                            )
-                        );
-                    }*/
 
                     // Nested from value
                     if (member.value && typeof member.value === 'string') {
@@ -351,7 +342,7 @@ async function main() {
                     }
 
                     return {
-                        ignoreDefault: member.kind === 'Function',
+                        ignoreDefault: true,
                         description: getHTMLDescription(description),
                         filename: member.meta?.file ||
                             member.doclet?.meta?.file ||
@@ -369,8 +360,13 @@ async function main() {
                         typeList: {
                             names: [typeListNames]
                         },
+                        default: typeListNames,
                         type: member.kind === 'Function' ?
                             'method' : 'member',
+                        functionTypes: member.kind === 'Function' ? {
+                            params,
+                            return: member.return
+                        } : void 0,
                         version: versionProps.version
                     };
                 // Sort by name a-z
@@ -479,7 +475,7 @@ async function main() {
 
 // Sanitize HTML
 function sanitize(text: string): string {
-    if(typeof text.replace !== 'function') {
+    if (typeof text.replace !== 'function') {
         text = JSON.stringify(text);
     }
     return text
@@ -532,17 +528,48 @@ function getSamples(
 // Filter members by doclet
 function filterMembers(code: TSLib.ClassInfo): void {
     const filteredMembers: Array<TSLib.MemberInfo> = [];
-    for(const member of code.members) {
+    for (const member of code.members) {
         if (
-            // Allow only if has doclet
+            // Allow if has doclet
             (member as any).doclet &&
             // Ignore private
             (member as any).doclet.tags?.private === void 0
         ) {
             filteredMembers.push(member);
         }
+
+        // Create additional members from body
+        if (
+            (member as any).body
+        ) {
+            filteredMembers.push.apply(
+                filteredMembers,
+                getMembersFromBody((member as any).body)
+            );
+        }
     }
     code.members = filteredMembers;
+}
+
+// Get members from body
+function getMembersFromBody(
+    body: Array<TSLib.DocletInfo>
+): Array<TSLib.FunctionInfo|TSLib.PropertyInfo> {
+    const members: Array<TSLib.FunctionInfo|TSLib.PropertyInfo> = [];
+    for (const doclet of body) {
+        // Skip private
+        if (doclet.tags.private) {
+            continue;
+        }
+
+        members.push({
+            doclet,
+            kind: doclet.tags.function ? 'Function' : 'Property',
+            name: doclet.tags.name?.[0].split('#')[1] || 'unknown',
+            meta: doclet.meta
+        });
+    }
+    return members;
 }
 
 /**
@@ -559,8 +586,11 @@ async function buildStructure() {
  *
  * @param tags Doclet tags
  */
-function descriptionFromTags(tags: Record<string,Array<string>>): string[] {
-    const description: string[] = [];
+function descriptionFromTags(
+    tags: Record<string,Array<string>>,
+    paramsNames: Array<string> = []
+): Array<string> {
+    const description: Array<string> = [];
 
     if (tags.description) {
         description.push(...tags.description);
@@ -581,7 +611,7 @@ function descriptionFromTags(tags: Record<string,Array<string>>): string[] {
             if (!paramInfo) {
                 console.warn('Regex failed for param: ', param);
             }
-
+            paramsNames.push(parts[2]);
             params.push(paramInfo || sanitize(param));
         });
         description.push(
@@ -594,7 +624,7 @@ function descriptionFromTags(tags: Record<string,Array<string>>): string[] {
     if (tags.example) {
         tags.example.forEach((example: string) => {
             description.push(
-                '**Example:** \n\n```\n' + sanitize(example) +
+                '**Example:** \n\n```\n ' + sanitize(example) +
                 '\n```'
             );
         });

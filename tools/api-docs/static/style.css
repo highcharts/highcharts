@@ -572,6 +572,7 @@ a:hover {
     color: #39a832;
 }
 
+.options-tree .default.type-function-argument,
 .options-tree .default.type-number {
     color: #297ea8;
 }

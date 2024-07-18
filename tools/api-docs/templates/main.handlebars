@@ -266,7 +266,11 @@
             {{#unless node.meta.hasChildren}}
             hasChildren = false;
             {{/unless}}
+            {{#if isClassReference}}
+            hapi.classReference.createNavigation('#options', state, product);
+            {{else}}
             hapi.createNavigation('#options', '#global-options', state, product);
+            {{/if}}
             hapi.createBody('#body', state, hasChildren);
             hapi.initializeDropdowns('.menu', '.dropdown-link', '.body');
             hapi.initializeSidebar('.sidebar', '.sidebar-link', '.body');

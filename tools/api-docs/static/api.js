@@ -1,5 +1,6 @@
 var hapi = {
-  versionLocation: '/versions.json'
+  versionLocation: '/versions.json',
+  classReference: {} // Namespace for class reference specific functions
 };
 
 var htmlExtension = '';
@@ -193,8 +194,8 @@ hapi.ajax = function(p) {
       );
   }
 
-  function getDefault(def) {
-    if (def.ignoreDefault) {
+  function getDefault(def, forTree) {
+    if (!forTree && def.ignoreDefault) {
       return void 0;
     } else if (
       typeof def.default === 'boolean' ||
@@ -296,10 +297,14 @@ hapi.ajax = function(p) {
 
   function createNode(parent, def, state, origState, product) {
     var isCurrent = def.fullname === origState,
+      asFunction = location.pathname.indexOf('class-reference') !== -1 &&
+        def.type === 'method',
       optionClass = toClassName(def.fullname),
       node = cr('div', 'node collapsed ' + optionClass),
       arrow,
-      title = cr('a', 'title', def.name + ':'),
+      title = cr('a', 'title', def.name +
+        (asFunction ? '' : ':')
+      ),
       postfix,
       startBracket,
       dots,
@@ -307,7 +312,13 @@ hapi.ajax = function(p) {
       endBracket1,
       endBracket2,
       expanded = false,
-      hasNext = false;
+      hasNext = false,
+
+      // Function specific
+      functionBracketOpen,
+      functionParams,
+      funcitonBracketClose,
+      functionReturn;
 
     title.href = def.fullname + htmlExtension
 
@@ -334,6 +345,29 @@ hapi.ajax = function(p) {
         endBracket1.innerHTML = ' }';
       }
 
+    } else if(asFunction) {
+      // Open parameters
+      functionBracketOpen = cr('span', 'bracket', '(');
+      // Parameters
+      if (def.functionTypes.params) {
+        functionParams = cr(
+          'span',
+          'default type-function-argument',
+          def.functionTypes.params.join(', '),
+          true
+        );
+      }
+      // Close parameters
+      funcitonBracketClose = cr('span', 'bracket', ')');
+      // Return type
+      if (def.functionTypes.return) {
+        funcitonBracketClose.innerText += ': ';
+        functionReturn = cr(
+          'span',
+          'default type-function-argument',
+          def.functionTypes.return.join(' | ')
+        );
+      }
     } else {
 
       postfix = cr(
@@ -346,7 +380,7 @@ hapi.ajax = function(p) {
             def.typeList.names[0].toLowerCase().replace(/[\.\<\>]+/g, '-') :
             'undefined'
         ),
-        getDefault(def),
+        getDefault(def, true),
         true
       );
     }
@@ -358,10 +392,10 @@ hapi.ajax = function(p) {
           arrow
         ),
         postfix,
-        startBracket,
-        dots,
-        endBracket1,
-        children,
+        startBracket || functionBracketOpen,
+        dots || functionParams,
+        endBracket1 || funcitonBracketClose,
+        children || functionReturn,
         endBracket2
       )
     );
@@ -733,15 +767,7 @@ hapi.ajax = function(p) {
     options = document.querySelector(options);
 
     function explodeState(state) {
-      const states = state.replace(/</g, '.').replace(/>\./g, '.').split('.');
-
-      // Namespace Highcharts
-      if (states[0] === 'Highcharts') {
-        states.shift();
-        states[0] = 'Highcharts.' + states[0];
-      }
-
-      return states;
+      return state.replace(/</g, '.').replace(/>\./g, '.').split('.');
     }
 
     function build(data) {
@@ -782,6 +808,36 @@ hapi.ajax = function(p) {
       }
     });
      */
+  };
+
+  // Naviagtion builder for class reference
+  hapi.classReference.createNavigation = function(options, state, product) {
+    options = document.querySelector(options);
+
+    function explodeState(state) {
+      const states = state.replace(/</g, '.').replace(/>\./g, '.').split('.');
+
+      // Namespace Highcharts
+      if (states[0] === 'Highcharts') {
+        states.shift();
+        states[0] = 'Highcharts.' + states[0];
+      }
+      return states;
+    }
+
+    function build(data) {
+      options.innerHTML = '';
+      data.children.forEach(function(def) {
+        createNode(options, def, explodeState(state), state, product);
+      });
+    }
+
+    hapi.ajax({
+      url: 'nav/index.json',
+      success: function(data) {
+        build(data);
+      }
+    });
   };
 
   hapi.createBody = function(target, state, hasChildren, callback) {
