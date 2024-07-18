@@ -169,12 +169,19 @@ async function addOption(
 
         case 'Property':
         case 'Variable':
+            if (
+                codeInfo.kind === 'Variable' &&
+                codeInfo.name !== 'defaultOptions'
+            ) {
+                return;
+            }
             value = codeInfo.value;
             switch (typeof value) {
 
                 case 'boolean':
                 case 'number':
                 case 'string':
+                    node.doclet.default = (node.doclet.default || []);
                     node.doclet.default.push(value);
                     break;
 
@@ -196,6 +203,9 @@ async function addOption(
                         }
                     }
                 }
+            }
+            if (codeInfo.kind === 'Variable') {
+                node = void 0;
             }
             break;
 
@@ -275,23 +285,13 @@ async function main() {
     TSLib.autoCompleteInfos();
 
     // Load root options
-
-    const defaultSource =
-        TSLib.getSourceInfo(FSLib.path('ts/Dashboards/Board.ts'));
-
-
-    const defaultOptions =
-        TSLib.resolveReference(defaultSource, 'Board.defaultOptions');
-
-    const defaultNode = await addOption(void 0, defaultOptions);
-
-    // Ooops
-
-    if (!defaultNode) {
-        throw new Error('Source lacks default export: ' + defaultSource.path);
-    }
-
-    // Done
+    await addOption(
+        void 0,
+        TSLib.resolveReference(
+            TSLib.getSourceInfo(FSLib.path('ts/Dashboards/Board.ts')),
+            'Board.defaultOptions'
+        )
+    );
 
 }
 
