@@ -42,7 +42,7 @@ There are several types of the DataConnectors, depending on the data source.
 Each of those types has its own, specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)
 has two data input options. Directly as a string - `options.csv`, or as a URL from which the CSV file is fetched - `options.csvURL`.
 
-### Example
+### Examples
 ```js
 dataPool: {
     connectors: [{
@@ -50,6 +50,43 @@ dataPool: {
         type: 'CSV',
         options: {
             csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
+        }
+    }]
+}
+```
+
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-json-connector',
+        type: 'JSON',
+        options: {
+            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
+        }
+    }]
+}
+```
+
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-google-sheets-connector',
+            type: 'GoogleSheets',
+            options: {
+                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+                googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
+            }
+    }]
+}
+```
+
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-html-table-connector',
+        type: 'HTMLTable',
+        options: {
+            table: 'table-element-id',
         }
     }]
 }
@@ -71,7 +108,6 @@ can be directly done on the table or with DataModifiers.
 When a `DataModifier` is applied to a `DataTable`, it's like assigning a specific team of workers to handle modifications for that batch of products.
 They can make changes to the products as needed, and the modified versions are stored separately.
 
-
 DataTables can provide automatic modification of data during their lifetime with
 the help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers. If a DataModifier changes the DataTable,
@@ -87,3 +123,37 @@ supports multiple tables and statuses simultaneously. Each Board has a DataCurso
 that is accessible via the `Board.dataCursor` property.
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/datacursor-sync" allow="fullscreen"></iframe>
+
+
+## GoogleSheetsConnector Tutorial
+
+Google Sheets is a spreadsheet application included as part of the free, web-based Google Docs Editors suite offered by Google.
+
+With Highchart Dashboards' `GoogleSheetsConnector` is it possible to load data from a Google spreadsheet and insert it into the connector's data table,
+allowing the data to rendered in any Dashboards component, be it in a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing. Alternatively, the data may be filtered or modfied before being parsed, in the `beforeParse` callback.
+
+The connector requires two API keys; one for the Google account and one for the document itself. In additition, the owner of the Google account must grant read access to the document.
+
+### Google API key
+
+> Prerequisite
+>
+>The owner of the document must own a [Google Cloud Project](https://developers.google.com/workspace/guides/get-started) where API/Services with [Google Sheets API](https://developers.google.com/sheets/api/guides/concepts) must be enabled and an API key must exist.
+
+Providing the Google Sheet API exists, the `API key` can be extraced from the [Credentials Panel](https://console.cloud.google.com/apis/credentials).
+
+### Spreadsheet Key
+The `spreadsheet key` can be extracted directly from the URL of the document as illustrated below:
+
+https://docs.google.com/spreadsheets/d/`1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw`/edit?usp=sharing
+
+Sheet key: `1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw`
+
+### Basic example
+
+The example uses [this Google Sheet](https://docs.google.com/spreadsheets/d/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/edit?usp=sharing).
+
+
+
+
+
