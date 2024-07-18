@@ -24,6 +24,7 @@
 
 import type DataGridOptions from './DataGridOptions';
 import type DataTableOptions from '../Data/DataTableOptions';
+import type ColumnSorting from './Actions/ColumnSorting';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn.js';
@@ -119,6 +120,12 @@ class DataGrid {
     public dataTable?: DataTable;
 
     /**
+     * The original data source of the data grid.
+     * It allows to recover datagrid to original state after updates.
+     */
+    public originalDataTable?: DataTable;
+
+    /**
      * The HTML element of the table.
      */
     public tableElement?: HTMLTableElement;
@@ -153,6 +160,10 @@ class DataGrid {
      */
     public hoveredColumnId?: string;
 
+    /**
+     * Keeps status of sorted column, when updating datagrid.
+     */
+    public columnSortingState?: Record<string, ColumnSorting.SortingState>;
 
     /* *
     *
@@ -370,7 +381,8 @@ class DataGrid {
             return;
         }
 
-        this.dataTable = new DataTable(tableOptions as DataTableOptions);
+        this.dataTable = this.originalDataTable =
+            new DataTable(tableOptions as DataTableOptions);
     }
 
     /**

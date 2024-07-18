@@ -79,7 +79,10 @@ namespace Globals {
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         headCellContent: classNamePrefix + 'head-cell-content',
         headCellResized: classNamePrefix + 'head-cell-resized',
-        noData: classNamePrefix + 'no-data'
+        noData: classNamePrefix + 'no-data',
+        columnSorting: classNamePrefix + 'col-sorting',
+        columnSortingAsc: classNamePrefix + 'col-sorting-asc',
+        columnSortingDesc: classNamePrefix + 'col-sorting-desc',
     };
 
     export const win = window;

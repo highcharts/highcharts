@@ -209,6 +209,14 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     editable?: boolean;
+
+    /**
+     * Allows users to sort values in column
+     * (ascending, descending, or default).
+     *
+     * @default true
+     */
+    sorting?: boolean;
 }
 
 export interface CaptionOptions {
