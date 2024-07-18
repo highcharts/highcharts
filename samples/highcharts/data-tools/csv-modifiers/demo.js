@@ -1,49 +1,27 @@
 const csvData = document.getElementById('csv').innerHTML;
 
-// Set to true to use the Invert modifier,
-// otherwise flip table using beforeParse
-const useInvertMod = true;
+const firstYear = 2002;
+const lastYear = 2022;
 
-const chainModifier = {
-    type: 'Chain',
-    chain: [{
-        type: 'Invert'
-    }, {
-        type: 'Range',
-        ranges: [{
-            column: '0',
-            minValue: '1961',
-            maxValue: '2022'
-        }]
-    }]
-};
-
-
-const rangeModifier = {
+const dataModifier = {
     type: 'Range',
-    stict: true,
     ranges: [{
-        column: 'x',
-        minValue: '1974',
-        maxValue: '1978'
+        column: 'Year',
+        minValue: firstYear,
+        maxValue: lastYear
     }]
 };
 
-const dataModifier = useInvertMod ? chainModifier : rangeModifier;
 
-
-function getColumnAssignment(columnNames) {
-    return null;
-    /* // TBD
+function createColumnAssignment(columnNames) {
     return columnNames.map(function (column) {
-        // TBD
         return {
             seriesId: column,
-            data: ['x', column]
+            data: ['Year', column]
         };
     });
-    */
 }
+
 
 Highcharts.setOptions({
     chart: {
@@ -54,8 +32,8 @@ Highcharts.setOptions({
         min: -1
     },
     xAxis: {
-        min: 1960,
-        max: 2022
+        min: firstYear,
+        max: lastYear
     },
     tooltip: {
         pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
@@ -78,7 +56,7 @@ const asiaChart = {
     renderTo: 'asia-chart',
     connector: {
         id: 'population-growth',
-        columnAssignment: getColumnAssignment(
+        columnAssignment: createColumnAssignment(
             ['China', 'Japan', 'India', 'Indonesia']
         )
     },
@@ -93,7 +71,7 @@ const northAmericaChart = {
     renderTo: 'north-america-chart',
     connector: {
         id: 'population-growth',
-        columnAssignment: getColumnAssignment(
+        columnAssignment: createColumnAssignment(
             ['Mexico', 'Guatemala', 'Canada', 'United States']
         )
     },
@@ -109,7 +87,7 @@ const southAmericaChart = {
     renderTo: 'south-america-chart',
     connector: {
         id: 'population-growth',
-        columnAssignment: getColumnAssignment(
+        columnAssignment: createColumnAssignment(
             ['Brazil', 'Argentina', 'Uruguay', 'Paraguay']
         )
     },
@@ -127,7 +105,6 @@ const legendChart = {
     connector: {
         id: 'population-growth'
     },
-    /*
     columnAssignment: {
         Brazil: 'y',
         Argentina: 'y',
@@ -142,7 +119,6 @@ const legendChart = {
         India: 'y',
         Indonesia: 'y'
     },
-    */
     chartOptions: {
         chart: {
             height: 200
@@ -194,21 +170,6 @@ const dataGrid =
         id: 'population-growth'
     },
     type: 'DataGrid',
-    columnAssignment: {
-        'Country Name': 'x',
-        Brazil: 'y',
-        Argentina: 'y',
-        Uruguay: 'y',
-        Paraguay: 'y',
-        'United States': 'y',
-        Canada: 'y',
-        Mexico: 'y',
-        Guatemala: 'y',
-        China: 'y',
-        Japan: 'y',
-        India: 'y',
-        Indonesia: 'y'
-    },
     chartOptions: {
         title: {
             text: 'Countries population growth by year'
@@ -226,9 +187,9 @@ function beforeParse(csv) {
             return;
         }
         const values = row.split(',');
-        // Replace name of first column: "Country Name" -> x
+        // Replace name of first column: 'Country Name' -> 'Year'
         if (i === 0) {
-            values[0] = 'x';
+            values[0] = 'Year';
         }
         values.forEach((value, j) => {
             if (!columns[j]) {
@@ -242,6 +203,7 @@ function beforeParse(csv) {
     ).join('\n');
 }
 
+
 async function setupBoard() {
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -250,15 +212,9 @@ async function setupBoard() {
                 type: 'CSV',
                 options: {
                     csv: csvData,
-                    firstRowAsNames: false,
-                    orientation: 'columns',
-                    columnNames: [
-                        'Country Name',
-                        'Brazil', 'Argentina', 'Uruguay', 'Paraguay',
-                        'United States', 'Canada', 'Mexico', 'Guatemala',
-                        'China', 'Japan', 'India', 'Indonesia', 'columnNames'
-                    ],
-                    dataModifier: dataModifier
+                    firstRowAsNames: true,
+                    dataModifier: dataModifier,
+                    beforeParse: beforeParse
                 }
             }]
         },
@@ -288,18 +244,8 @@ async function setupBoard() {
             northAmericaChart,
             southAmericaChart,
             legendChart
-            // dataGrid
         ]
     }, true);
-
-    const dataPool = board.dataPool;
-    const conn = await dataPool.getConnector('population-growth');
-
-    // For debugging purposes
-    // const hc = board.getComponentByCellId('asia-chart').seriesFromConnector;
-    // console.log(conn.table); // .columns);
-
-    // console.log(hc);
 
     return board;
 }
