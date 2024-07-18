@@ -155,7 +155,7 @@ function addTreeNode(
             _parentNode.meta.fullname
     ); */
 
-    let _fullname: (string|undefined) = TSLib.getName(info);
+    let _fullname: (string|undefined) = TSLib.extractInfoName(info);
 
     if (typeof _fullname === 'undefined') {
         return;
