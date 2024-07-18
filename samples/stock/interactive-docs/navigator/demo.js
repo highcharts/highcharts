@@ -18,7 +18,8 @@
     });
 
     // Toggle navigator
-    const toggleNavigator = document.getElementById('toggle-navigator');
+    const toggleNavigator = document.getElementById('toggle-navigator'),
+        sliderBox = document.getElementById('slider-box');
     toggleNavigator.addEventListener('click', () => {
         const navigatorEnabled = chart.navigator.navigatorEnabled;
 
@@ -29,10 +30,11 @@
         });
 
         toggleNavigator.innerText =
-        `${navigatorEnabled ? 'Enable' : 'Disable'} navigator`;
+            `${navigatorEnabled ? 'Enable' : 'Disable'} navigator`;
+        sliderBox.style.visibility = navigatorEnabled ? 'hidden' : 'visible';
     });
 
-    // Toggle navigator
+    // Toggle scrollbar
     const toggleScrollbar = document.getElementById('toggle-scrollbar');
     toggleScrollbar.addEventListener('click', () => {
         const scrollbarEnabled = !!chart.scrollbar.scrollbar;
@@ -50,12 +52,12 @@
     // Change navigator height
     document
         .getElementById('navigator-slider')
-        .addEventListener('change', e => {
+        .addEventListener('input', e => {
             chart.update({
                 navigator: {
                     height: +e.target.value
                 }
-            });
+            }, true, false, false);
         });
 
 

@@ -33,38 +33,75 @@
     });
 
     // Update range selector buttons
+    let isDefaultButtons = true;
     const updateButton =
         document.getElementById('update-range-selector-buttons');
 
+    const newOptions = {
+        buttons: [{
+            type: 'month',
+            count: 1,
+            text: 'Month',
+            title: 'View 1 months'
+        }, {
+            type: 'month',
+            count: 6,
+            text: '6 months',
+            title: 'View 1 months'
+        }, {
+            type: 'week',
+            count: 1,
+            text: 'Week',
+            title: 'View 1 week'
+        }, {
+            type: 'year',
+            text: 'Year',
+            title: 'View 1 year'
+        }],
+        buttonTheme: {
+            width: 60
+        }
+    };
+    const originalOptions = {
+        buttons: [{
+            type: 'month',
+            count: 1,
+            text: '1m',
+            title: 'View 1 month'
+        }, {
+            type: 'month',
+            count: 3,
+            text: '3m',
+            title: 'View 3 months'
+        }, {
+            type: 'month',
+            count: 6,
+            text: '6m',
+            title: 'View 6 months'
+        }, {
+            type: 'ytd',
+            text: 'YTD',
+            title: 'View year to date'
+        }, {
+            type: 'year',
+            count: 1,
+            text: '1y',
+            title: 'View 1 year'
+        }, {
+            type: 'all',
+            text: 'All',
+            title: 'View all'
+        }],
+        buttonTheme: {
+            width: 28
+        }
+    };
+
     updateButton.addEventListener('click', () => {
         chart.update({
-            rangeSelector: {
-                buttons: [{
-                    type: 'month',
-                    count: 1,
-                    text: 'Month',
-                    title: 'View 1 months'
-                }, {
-                    type: 'month',
-                    count: 6,
-                    text: '6 months',
-                    title: 'View 1 months'
-                }, {
-                    type: 'week',
-                    count: 1,
-                    text: 'Week',
-                    title: 'View 1 week'
-                }, {
-                    type: 'year',
-                    text: 'Year',
-                    title: 'View 1 year'
-                }],
-                buttonTheme: {
-                    width: 60
-                }
-            }
+            rangeSelector: isDefaultButtons ? newOptions : originalOptions
         });
+
+        isDefaultButtons = !isDefaultButtons;
     });
-
-
 })();
