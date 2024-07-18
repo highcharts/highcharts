@@ -254,14 +254,14 @@ td.highcharts-datagrid-focused-cell {
 }
 
 /* Sorting */
-.highcharts-dg-col-sorting {
+.highcharts-datagrid-col-sorting {
     cursor: pointer;
 }
 
-.highcharts-dg-col-sorting-asc {
+.highcharts-datagrid-col-sorting-asc {
     background: url("data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idy02IGgtNiB0ZXh0LWdyYXktODAwIGRhcms6dGV4dC13aGl0ZSIgYXJpYS1oaWRkZW49InRydWUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTEyIDE5VjVtMCAxNC00LTRtNCA0IDQtNCIvPgo8L3N2Zz4K") no-repeat 100% 50%;
 }
 
-.highcharts-dg-col-sorting-desc {
+.highcharts-datagrid-col-sorting-desc {
     background: url("data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idy02IGgtNiB0ZXh0LWdyYXktODAwIGRhcms6dGV4dC13aGl0ZSIgYXJpYS1oaWRkZW49InRydWUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTEyIDZ2MTNtMC0xMyA0IDRtLTQtNC00IDQiLz4KPC9zdmc+Cg==") no-repeat 100% 50%;
 }

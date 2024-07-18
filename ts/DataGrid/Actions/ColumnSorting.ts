@@ -59,6 +59,7 @@ class ColumnSorting {
      */
     public sortingState: ColumnSorting.SortingState = 'none';
 
+
     /* *
     *
     *  Constructor
@@ -70,7 +71,7 @@ class ColumnSorting {
      *
      * @param column
      * The column that be sorted.
-     * 
+     *
      * @param headElement
      * The head element of the column.
      */
@@ -92,7 +93,8 @@ class ColumnSorting {
      */
     private addSortingEvents(): void {
         const dataGrid = this.column.viewport.dataGrid;
-        const columnSortingState = dataGrid.columnSortingState?.[this.column.id];
+        const columnSortingState =
+            dataGrid.columnSortingState?.[this.column.id];
 
         if (!dataGrid.dataTable) {
             return;
@@ -117,14 +119,15 @@ class ColumnSorting {
             );
         }
     }
+
     /**
      * Apply the dedicated sorting for a column
      * (ascending, descending or default).
      */
     private setSortingState = (): void => {
         const dataGrid = this.column.viewport.dataGrid;
-        let state = this.sortingState,
-            modifier: DataModifier;
+        let state = this.sortingState;
+        let modifier: DataModifier | undefined;
 
         if (
             dataGrid.columnSortingState &&
@@ -136,38 +139,31 @@ class ColumnSorting {
         }
 
         if (state === 'desc') {
-            this.sortingState =
-                dataGrid.columnSortingState[this.column.id] = 'none';
-            dataGrid.update({
-                table: dataGrid.originDataTable
+            this.sortingState = 'none';
+        } else if (state === 'none') {
+            modifier = new DataModifier.types.Sort({
+                direction: 'asc',
+                orderByColumn: this.column.id
             });
+            this.sortingState = 'asc';
         } else {
-            if (state === 'none') {
-                modifier = new DataModifier.types.Sort({
-                    direction: 'asc',
-                    orderByColumn: this.column.id
-                });
-                this.sortingState =
-                    dataGrid.columnSortingState[this.column.id] = 'asc';
-            } else {
-                modifier = new DataModifier.types.Sort({
-                    direction: 'desc',
-                    orderByColumn: this.column.id
-                });
-    
-                this.sortingState =
-                    dataGrid.columnSortingState[this.column.id] = 'desc';
-            }
+            modifier = new DataModifier.types.Sort({
+                direction: 'desc',
+                orderByColumn: this.column.id
+            });
 
-            if (modifier) {
-                dataGrid.update({
-                    table: modifier.modifyTable(
-                        (dataGrid.dataTable as DataTable).clone()
-                    )
-                });
-            }
+            this.sortingState = 'desc';
         }
-    }
+
+        dataGrid.columnSortingState[this.column.id] = this.sortingState;
+        dataGrid.update({
+            table: modifier ? (
+                modifier.modifyTable(
+                    (dataGrid.dataTable as DataTable).clone()
+                )
+            ) : dataGrid.originalDataTable
+        });
+    };
 
     /**
      * Unbind click event
@@ -176,6 +172,8 @@ class ColumnSorting {
         this.headElement.removeEventListener('click', this.setSortingState);
     }
 }
+
+
 /* *
  *
  *  Class Namespace
@@ -185,6 +183,7 @@ class ColumnSorting {
 namespace ColumnSorting {
     export type SortingState = 'asc' | 'desc' | 'none';
 }
+
 
 /* *
  *

@@ -107,6 +107,7 @@ module.exports = {
         ],
         'DataGrid': [
             'datagrid/general',
+            'datagrid/understanding-datagrid'
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
