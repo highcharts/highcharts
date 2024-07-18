@@ -2468,7 +2468,7 @@ function mergeCodeInfos(
             _mergedMember = newCodeInfo(_sourceMember);
             _mergedMember.meta.merged = true;
             _targetMembers.push(_mergedMember);
-            addInfoScopes(_targetMember, [_mergedMember]);
+            addInfoScopes(targetInfo, [_mergedMember]);
         }
 
     }
@@ -2650,10 +2650,10 @@ function removeTag(
 
 
 /**
- * Resolves a reference relative to the given source information.
+ * Resolves a reference relative to the given information.
  *
- * @param {SourceInfo} sourceInfo
- * Source information to use.
+ * @param {CodeInfo|SourceInfo} scopeInfo
+ * Scope information to use.
  *
  * @param {string|ReferenceInfo} reference
  * Reference name or information to resolve.
@@ -2662,15 +2662,46 @@ function removeTag(
  * Resolved information or `undefined`.
  */
 function resolveReference(
-    sourceInfo,
+    scopeInfo,
     reference
 ) {
-    return resolveReferenceInChildInfos(
-        sourceInfo,
-        sourceInfo.code,
+    const _referenceName = (
         typeof reference === 'string' ?
             reference :
             reference.name
+    );
+    const _sourceInfo = (
+        scopeInfo.kind === 'Source' ?
+            scopeInfo :
+            getSourceInfo(scopeInfo.meta.file)
+    );
+
+    /** @type {CodeInfo|undefined} */
+    let _resolvedInfo;
+    let _scopePath = extractInfoScopePath(scopeInfo);
+
+    // First search in inner scopes
+    while (_scopePath) {
+
+        _resolvedInfo = resolveReferenceInChildInfos(
+            _sourceInfo,
+            _sourceInfo.code,
+            `${_scopePath}.${_referenceName}`
+        );
+
+        if (_resolvedInfo) {
+            return _resolvedInfo;
+        }
+
+        _scopePath = _scopePath.substring(0, _scopePath.lastIndexOf('.'));
+
+    }
+
+    // Search in source scope
+    return resolveReferenceInChildInfos(
+        _sourceInfo,
+        _sourceInfo.code,
+        _referenceName
     );
 }
 
