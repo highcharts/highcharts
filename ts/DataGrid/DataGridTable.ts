@@ -332,7 +332,7 @@ class DataGridTable {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
-        this.columns.forEach(column => {
+        this.columns.forEach((column): void => {
             column.columnSorting?.removeEventListeners();
         });
 

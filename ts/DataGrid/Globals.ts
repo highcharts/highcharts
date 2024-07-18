@@ -82,7 +82,7 @@ namespace Globals {
         noData: classNamePrefix + 'no-data',
         columnSorting: classNamePrefix + 'col-sorting',
         columnSortingAsc: classNamePrefix + 'col-sorting-asc',
-        columnSortingDesc: classNamePrefix + 'col-sorting-desc',
+        columnSortingDesc: classNamePrefix + 'col-sorting-desc'
     };
 
     export const win = window;
