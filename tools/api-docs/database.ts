@@ -239,7 +239,7 @@ export class Database {
 
         await FS.writeFile(
             this.getFilePath(name),
-            JSON.stringify(data),
+            JSON.stringify(data, void 0, '\t'),
             'utf8'
         );
 
@@ -262,7 +262,7 @@ export class Database {
         data.doclet[index] = JSON.stringify(node.doclet);
         data.description[index] = node.description;
         data.meta[index] = JSON.stringify(node.meta);
-        data.name[index] = node.name;
+        data.name[index] = nodePath;
 
         await this.saveTreeData(data);
 
