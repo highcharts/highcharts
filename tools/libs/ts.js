@@ -2407,6 +2407,8 @@ function mergeCodeInfos(
     let _merged;
     /** @type {CodeInfo} */
     let _mergedMember;
+    /** @type {Set} */
+    let _mergedTypes;
     /** @type {string} */
     let _name;
 
@@ -2459,8 +2461,10 @@ function mergeCodeInfos(
                             _targetMember.type ||
                             _sourceMember.type
                         ) {
-                            _targetMember.type = (_targetMember.type || []);
-                            _targetMember.type.push(_sourceMember.type || []);
+                            _targetMember.type = Array.from(new Set([
+                                ...(_targetMember.type || []),
+                                ...(_sourceMember.type || [])
+                            ]));
                         }
                         if (
                             _targetMember.value &&
