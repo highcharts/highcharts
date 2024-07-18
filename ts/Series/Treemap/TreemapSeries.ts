@@ -531,7 +531,7 @@ class TreemapSeries extends ScatterSeries {
                 series.points.push(groupPoint);
 
                 groupPoint.node = node;
-                groupPoint.formatPrefix = 'groupedNodesFormat';
+                groupPoint.formatPrefix = 'groupedNodes';
 
                 series.nodeMap[node.id] = node;
                 series.nodeList.push(node);
@@ -1605,7 +1605,6 @@ class TreemapSeries extends ScatterSeries {
             ),
             val: tree.val
         });
-        series.calculateChildrenAreas(tree, seriesArea);
 
         // Logic for point colors
         if (
@@ -1614,6 +1613,8 @@ class TreemapSeries extends ScatterSeries {
         ) {
             series.setColorRecursive(series.tree);
         }
+
+        series.calculateChildrenAreas(tree, seriesArea);
 
         // Update axis extremes according to the root node.
         if (options.allowTraversingTree) {
