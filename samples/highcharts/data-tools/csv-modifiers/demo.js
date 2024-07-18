@@ -1,6 +1,6 @@
 const csvData = document.getElementById('csv').innerHTML;
 
-const firstYear = 2002;
+const firstYear = 1961;
 const lastYear = 2022;
 
 const dataModifier = {
@@ -68,6 +68,7 @@ const asiaChart = {
 };
 
 const northAmericaChart = {
+    type: 'Highcharts',
     renderTo: 'north-america-chart',
     connector: {
         id: 'population-growth',
@@ -75,7 +76,6 @@ const northAmericaChart = {
             ['Mexico', 'Guatemala', 'Canada', 'United States']
         )
     },
-    type: 'Highcharts',
     chartOptions: {
         title: {
             text: 'North America'
@@ -84,6 +84,7 @@ const northAmericaChart = {
 };
 
 const southAmericaChart = {
+    type: 'Highcharts',
     renderTo: 'south-america-chart',
     connector: {
         id: 'population-growth',
@@ -91,7 +92,6 @@ const southAmericaChart = {
             ['Brazil', 'Argentina', 'Uruguay', 'Paraguay']
         )
     },
-    type: 'Highcharts',
     chartOptions: {
         title: {
             text: 'South America'
@@ -161,22 +161,6 @@ const legendChart = {
 };
 
 
-// For debugging purposes
-// eslint-disable-next-line no-unused-vars
-const dataGrid =
-{
-    renderTo: 'data-grid',
-    connector: {
-        id: 'population-growth'
-    },
-    type: 'DataGrid',
-    chartOptions: {
-        title: {
-            text: 'Countries population growth by year'
-        }
-    }
-};
-
 function beforeParse(csv) {
     // Convert rows to columns and throw away empty rows
     const rows = csv.split('\n');
@@ -187,7 +171,7 @@ function beforeParse(csv) {
             return;
         }
         const values = row.split(',');
-        // Replace name of first column: 'Country Name' -> 'Year'
+        // Replace name row name 'Country Name' with column name 'Year'
         if (i === 0) {
             values[0] = 'Year';
         }
@@ -198,56 +182,47 @@ function beforeParse(csv) {
             columns[j][i] = value;
         });
     });
+    // Convert back to CSV
     return columns.map(column =>
         column.join(',')
     ).join('\n');
 }
 
 
-async function setupBoard() {
-    const board = await Dashboards.board('container', {
-        dataPool: {
-            connectors: [{
-                id: 'population-growth',
-                type: 'CSV',
-                options: {
-                    csv: csvData,
-                    firstRowAsNames: true,
-                    dataModifier: dataModifier,
-                    beforeParse: beforeParse
-                }
-            }]
-        },
-        gui: {
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'south-america-chart'
-                    }, {
-                        id: 'north-america-chart'
-                    }, {
-                        id: 'asia-chart'
-                    }]
+Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'population-growth',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true,
+                dataModifier: dataModifier,
+                beforeParse: beforeParse
+            }
+        }]
+    },
+    gui: {
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'south-america-chart'
                 }, {
-                    cells: [{
-                        id: 'legend'
-                    }]
+                    id: 'north-america-chart'
                 }, {
-                    cells: [{
-                        id: 'data-grid'
-                    }]
+                    id: 'asia-chart'
+                }]
+            }, {
+                cells: [{
+                    id: 'legend'
                 }]
             }]
-        },
-        components: [
-            asiaChart,
-            northAmericaChart,
-            southAmericaChart,
-            legendChart
-        ]
-    }, true);
-
-    return board;
-}
-
-setupBoard();
+        }]
+    },
+    components: [
+        asiaChart,
+        northAmericaChart,
+        southAmericaChart,
+        legendChart
+    ]
+}, true);
