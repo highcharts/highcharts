@@ -992,8 +992,8 @@ function extractTagText(
  * Extracts all types of a type statement, including conditionals, generics,
  * intersects and unions.
  *
- * @param {string} typeString
- * Type statement as string to extract from.
+ * @param {string|Array<string>} typeStrings
+ * Type statements as strings to extract from.
  *
  * @param {boolean} [includeNativeTypes]
  * Set `true` to include TypeScript's native types.
@@ -1002,41 +1002,56 @@ function extractTagText(
  * Array of extracted types.
  */
 function extractTypes(
-    typeString,
+    typeStrings,
     includeNativeTypes
 ) {
     /** @type {Array<string>} */
-    const types = [];
+    const _types = [];
 
-    let sublevel = 0;
+    let _sublevel = 0;
 
-    for (let part of typeString.split('|')) {
+    typeStrings = (
+        typeof typeStrings === 'string' ?
+            [typeStrings] :
+            typeStrings
+    );
 
-        if (
-            !includeNativeTypes &&
-            isNativeType(part)
-        ) {
-            continue;
+    for (const _typeString of typeStrings) {
+        for (let _part of _typeString.split('|')) {
+
+            if (
+                !includeNativeTypes &&
+                isNativeType(_part)
+            ) {
+                if (_part.includes('<')) {
+                    _types.push(
+                        _part
+                            .replace(NATIVE_HELPER, '')
+                            .replace('>', '')
+                    );
+                }
+                continue;
+            }
+
+            _part = _part.trim();
+
+            if (_sublevel) {
+                _types.push(`${_types.pop()}|${_part}`);
+            } else {
+                _types.push(_part);
+            }
+
+            if (_part.includes('<')) {
+                ++_sublevel;
+            }
+            if (_part.includes('>')) {
+                --_sublevel;
+            }
+
         }
-
-        part = part.trim();
-
-        if (sublevel) {
-            types.push(`${types.pop()}|${part}`);
-        } else {
-            types.push(part);
-        }
-
-        if (part.includes('<')) {
-            ++sublevel;
-        }
-        if (part.includes('>')) {
-            --sublevel;
-        }
-
     }
 
-    return types;
+    return _types;
 }
 
 
