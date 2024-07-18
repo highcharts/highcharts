@@ -216,10 +216,6 @@ Dashboards.board('container', {
             id: 'transactions'
         },
         title: 'Transactions',
-        type: 'DataGrid',
-        dataGridOptions: {
-            cellHeight: 37,
-            editable: false
-        }
+        type: 'DataGrid'
     }]
 }, true);

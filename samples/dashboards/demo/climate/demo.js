@@ -464,8 +464,6 @@ async function setupBoard() {
                 highlight: true
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
                 columns: {
                     time: {
                         enabled: false

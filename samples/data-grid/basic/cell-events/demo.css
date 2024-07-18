@@ -4,12 +4,3 @@
     height: 250px;
     margin: 8px;
 }
-
-.highcharts-dg-column {
-    width: 15%;
-}
-
-.custom-column-class-name {
-    color: #f00;
-    width: 40%;
-}

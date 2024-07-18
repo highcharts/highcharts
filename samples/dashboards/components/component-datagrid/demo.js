@@ -32,18 +32,16 @@ Dashboards.board('container', {
     components: [{
         type: 'HTML',
         renderTo: 'cell-id',
-        elements: [
-            {
-                tagName: 'h1',
-                textContent: 'Sales in the last 7 days'
-            }
-        ]
+        elements: [{
+            tagName: 'h1',
+            textContent: 'Sales in the last 7 days'
+        }]
     }, {
+        type: 'DataGrid',
+        renderTo: 'cell-id-2',
         connector: {
             id: 'data'
         },
-        type: 'DataGrid',
-        renderTo: 'cell-id-2',
         dataGridOptions: {
             columns: {
                 Revenue: {

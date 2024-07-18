@@ -105,21 +105,6 @@ export interface Options extends Component.Options {
      * Sync options for the component.
      */
     syncHandlers?: Sync.OptionsRecord;
-
-    /**
-     * If the `visibleColumns` option is not provided, the data grid will
-     * calculate and include each column from the data connector.
-     * When declared, the data grid will only include the columns that are
-     * listed.
-     *
-     * Alternatively, the column visibility can be controlled by the
-     * `dataGridOptions.columns` option.
-     * ```
-     * Example
-     * visibleColumns: ['Food', 'Vitamin A']
-     * ```
-     */
-    visibleColumns?: Array<string>;
 }
 
 /**

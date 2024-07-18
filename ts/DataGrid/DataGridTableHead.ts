@@ -167,13 +167,19 @@ class DataGridTableHead {
 
     /**
      * Render the drag handle for resizing columns.
+     *
+     * @param column
+     * The column to render the drag handle for.
+     *
+     * @param headElement
+     * The head element to append the drag handle to.
      */
     private renderColumnDragHandles(
         column: DataGridColumn,
         headElement: HTMLElement
     ): HTMLElement {
         const handle = makeHTMLElement('div', {
-            className: 'highcharts-dg-col-resizer'
+            className: 'highcharts-datagrid-col-resizer'
         }, headElement);
 
         this.viewport.columnsResizer?.addHandleListeners(handle, column);

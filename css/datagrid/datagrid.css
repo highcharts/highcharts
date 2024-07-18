@@ -81,11 +81,11 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
-.highcharts-dg-container * {
+.highcharts-datagrid-container * {
     box-sizing: border-box;
 }
 
-.highcharts-dg-container {
+.highcharts-datagrid-container {
     display: block;
     min-height: 200px;
     overflow: hidden;
@@ -93,7 +93,7 @@
     color: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-dg-table {
+.highcharts-datagrid-table {
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
@@ -104,26 +104,26 @@
     border: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-dg-caption {
+.highcharts-datagrid-caption {
     padding: 5px;
 }
 
-.highcharts-dg-table thead {
+.highcharts-datagrid-table thead {
     background-color: var(--highcharts-neutral-color-5);
     display: block;
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-dg-table thead tr {
+.highcharts-datagrid-table thead tr {
     height: 32px;
 }
 
-.highcharts-dg-table thead th {
+.highcharts-datagrid-table thead th {
     position: relative;
     border-left: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-dg-head-cell-content {
+.highcharts-datagrid-head-cell-content {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -135,7 +135,7 @@
     user-select: none; /* Standard syntax */
 }
 
-.highcharts-dg-table tbody {
+.highcharts-datagrid-table tbody {
     overflow: auto;
     height: 100%;
     min-height: 100%;
@@ -143,7 +143,7 @@
     position: relative;
 }
 
-.highcharts-dg-row {
+.highcharts-datagrid-row {
     background: var(--highcharts-background-color);
     position: absolute;
     height: 36px;
@@ -152,40 +152,40 @@
     width: 100%;
 }
 
-.highcharts-dg-row.highcharts-dg-odd {
+.highcharts-datagrid-row.highcharts-datagrid-odd {
     background-color: var(--highcharts-neutral-color-3);
 }
 
-.highcharts-dg-table td {
+.highcharts-datagrid-table td {
     height: inherit;
     border-left: 1px solid var(--highcharts-neutral-color-20);
     padding: 0 4px;
     overflow: hidden;
 }
 
-.highcharts-dg-table td:first-child,
-.highcharts-dg-table thead th:first-child {
+.highcharts-datagrid-table td:first-child,
+.highcharts-datagrid-table thead th:first-child {
     border-left: none;
 }
 
-.highcharts-dg-hovered-column {
+.highcharts-datagrid-hovered-column {
     background-color: #0000ff07;
 }
 
-.highcharts-dg-hovered-row,
-.highcharts-dg-row.highcharts-dg-odd.highcharts-dg-hovered-row {
+.highcharts-datagrid-hovered-row,
+.highcharts-datagrid-row.highcharts-datagrid-odd.highcharts-datagrid-hovered-row {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-dg-hovered-row td.highcharts-dg-hovered-column {
+.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-dg-table thead th.highcharts-dg-hovered-column {
+.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-dg-col-resizer {
+.highcharts-datagrid-col-resizer {
     position: absolute;
     top: 0;
     width: 16px;
@@ -196,7 +196,7 @@
     z-index: 10;
 }
 
-.highcharts-dg-col-resizer::after {
+.highcharts-datagrid-col-resizer::after {
     content: "";
     position: absolute;
     display: block;
@@ -207,49 +207,49 @@
     left: 2px;
 }
 
-.highcharts-dg-col-resizer:hover::after {
+.highcharts-datagrid-col-resizer:hover::after {
     border-left: 2px solid var(--highcharts-neutral-color-20);
     border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-dg-head-cell-resized .highcharts-dg-col-resizer::after {
+.highcharts-datagrid-head-cell-resized .highcharts-datagrid-col-resizer::after {
     border-left: 2px solid var(--highcharts-highlight-color-60);
     border-right: 2px solid var(--highcharts-highlight-color-60);
 }
 
-.highcharts-dg-column {
+.highcharts-datagrid-column {
     width: 0;
 }
 
-.highcharts-dg-no-result-column { /* --------- */
+.highcharts-datagrid-no-result-column { /* --------- */
     text-align: center;
     padding: 10px;
     width: 100%;
     display: inline-block;
 }
 
-.highcharts-dg-rows-content-nowrap td {
+.highcharts-datagrid-rows-content-nowrap td {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.highcharts-dg-container:has(.highcharts-dg-no-data) {
+.highcharts-datagrid-container:has(.highcharts-datagrid-no-data) {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-td.highcharts-dg-focused-cell {
-    padding-left: 0;
-    padding-right: 0;
+td.highcharts-datagrid-focused-cell {
+    padding: 0 0 1px;
 }
 
-.highcharts-dg-focused-cell input,
-.highcharts-dg-focused-cell input:focus {
+.highcharts-datagrid-focused-cell input,
+.highcharts-datagrid-focused-cell input:focus {
     border: 1px solid #0000ed;
     border-radius: 0;
     background-color: #b7d4ff;
     width: 100%;
+    height: 100%;
     outline: none;
 }
 

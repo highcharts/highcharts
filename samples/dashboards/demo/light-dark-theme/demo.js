@@ -104,7 +104,7 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: {
                 'Vitamin A': {
-                    headerFormat: '{text} μg'
+                    headFormat: '{text} μg'
                 }
             }
         }
