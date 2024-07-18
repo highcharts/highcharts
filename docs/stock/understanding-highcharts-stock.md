@@ -37,7 +37,7 @@ chart.update({
     }
 });
 ```
-Navigator and scrollbar does not have its own update method, use [Chart update](https://api.highcharts.com/class-reference/Highcharts.Chart#update) instead. See [navigator API options](https://api.highcharts.com/highstock/navigator).
+To update navigator and scrollbar use [Chart update](https://api.highcharts.com/class-reference/Highcharts.Chart#update). See [navigator API options](https://api.highcharts.com/highstock/navigator).
 
 
 Range selector
@@ -57,12 +57,12 @@ chart.update({
 });
 ```
 
-Range selector does not have its own update method, use [Chart update](https://api.highcharts.com/class-reference/Highcharts.Chart#update) instead. See [range selector API options](https://api.highcharts.com/highstock/rangeSelector).
+To update range selector use [Chart update](https://api.highcharts.com/class-reference/Highcharts.Chart#update). See [range selector API options](https://api.highcharts.com/highstock/rangeSelector).
 
 Crosshair
 ---------
 
-Shows a line following the tooltip of a chart to better read results of the axes. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts, but are not enabled by default.
+Shows a line perpendicular to the corresponding axis which is following the mouse position or nearest point, depending on the `crosshair.snap` property. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts, but are not enabled by default.
 
 <iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/352ea24215ec4f79bb50ead0152430087bc3551e/sample/stock/interactive-docs/crosshair allow="fullscreen"></iframe>
 
@@ -79,7 +79,7 @@ Crosshair is an axis property, therefore update it via [Axis update](https://api
 Data grouping
 ---------
 
-Changes granularity of the data depending on the zoom level, data density and user options.
+Automatically groups multiple points into a single point to improve readability. The displayed value for a grouped point depends on the approximation function which is set by default depending on the series type, but can be manually overwritten. The amount of points in a single group is selected based on the zoom level, data density and user options.
 
 <iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/352ea24215ec4f79bb50ead0152430087bc3551e/sample/stock/interactive-docs/range-selector allow="fullscreen"></iframe>
 
