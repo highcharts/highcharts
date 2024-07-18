@@ -24,16 +24,26 @@
 
 import type * as D from '@highcharts/dashboards/datagrid';
 
-export type DataGrid = D.DataGrid;
-
-export type DataGridNamespace = typeof D;
-
 
 /* *
  *
  *  Declarations
  *
  * */
+
+export type DataGrid = D.DataGrid;
+
+export type DataGridNamespace = typeof D;
+
+export type DataGridColumn = D.DataGridColumn;
+
+export type DataGridRow = D.DataGridRow;
+
+export namespace DataGridCell {
+    export type CellEvent = D.DataGridCell.CellEvent;
+}
+
+export type DataGridCell = D.DataGridCell;
 
 
 /* *

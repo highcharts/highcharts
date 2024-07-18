@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('data-grid/v2/cell-formatting');
+        cy.visit('data-grid/basic/cell-formatting');
     });
 
     it('Head should be formatted.', () => {

@@ -24,11 +24,11 @@ import type Sync from '../../Sync/Sync';
 import type DataCursor from '../../../../Data/DataCursor';
 import type DataGridComponent from '../DataGridComponent.js';
 import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
+import type { DataGridCell } from '../../../Plugins/DataGridTypes';
 
 import Component from '../../Component';
 import U from '../../../../Core/Utilities.js';
 const { addEvent, removeEvent } = U;
-
 
 /* *
  *
@@ -58,15 +58,15 @@ const syncPair: Sync.SyncPair = {
 
         const { dataCursor: cursor } = board;
 
-        const onCellHover = (e: any): void => {
+        const onCellHover = (e: DataGridCell.CellEvent): void => {
             const table = this.getFirstConnector()?.table;
             if (table) {
                 const cell = e.target;
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: parseInt(cell?.row?.index, 10),
-                    column: cell?.column?.id,
+                    row: cell.row.index,
+                    column: cell.column.id,
                     state: 'dataGrid.hoverRow' + groupKey
                 });
             }

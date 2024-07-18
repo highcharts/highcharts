@@ -36,61 +36,59 @@ Dashboards.board('container', {
             }]
         }]
     },
-    components: [
-        {
-            renderTo: 'dashboard-col-0',
-            connector: {
-                id: 'connector-1',
-                columnAssignment: [{
-                    seriesId: 'Vitamin A',
-                    data: ['Food', 'Vitamin A']
-                }]
+    components: [{
+        renderTo: 'dashboard-col-0',
+        connector: {
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: 'Vitamin A',
+                data: ['Food', 'Vitamin A']
+            }]
+        },
+        type: 'Highcharts',
+        sync: {
+            highlight: true,
+            visibility: true,
+            extremes: true
+        },
+        chartOptions: {
+            xAxis: {
+                type: 'category'
             },
-            type: 'Highcharts',
-            sync: {
-                highlight: true,
-                visibility: true,
-                extremes: true
+            chart: {
+                animation: false,
+                type: 'column',
+                zoomType: 'x'
             },
-            chartOptions: {
-                xAxis: {
-                    type: 'category'
-                },
-                chart: {
+            plotOptions: {
+                series: {
                     animation: false,
-                    type: 'column',
-                    zoomType: 'x'
-                },
-                plotOptions: {
-                    series: {
-                        animation: false,
-                        dragDrop: {
-                            draggableY: true,
-                            dragPrecisionY: 1
-                        }
-                    }
-                }
-            }
-        }, {
-            renderTo: 'dashboard-col-1',
-            type: 'DataGrid',
-            connector: {
-                id: 'connector-1'
-            },
-            editable: true,
-            sync: {
-                highlight: true,
-                visibility: true,
-                extremes: true
-            },
-            dataGridOptions: {
-                columnsIncluded: ['Food', 'Vitamin A'],
-                columns: {
-                    'Vitamin A': {
-                        headerFormat: '{text} (IU)'
+                    dragDrop: {
+                        draggableY: true,
+                        dragPrecisionY: 1
                     }
                 }
             }
         }
-    ]
+    }, {
+        renderTo: 'dashboard-col-1',
+        type: 'DataGrid',
+        connector: {
+            id: 'connector-1'
+        },
+        editable: true,
+        sync: {
+            highlight: true,
+            visibility: true,
+            extremes: true
+        },
+        dataGridOptions: {
+            columnsIncluded: ['Food', 'Vitamin A'],
+            columns: {
+                'Vitamin A': {
+                    headerFormat: '{text} (IU)'
+                }
+            }
+        }
+    }]
 }, true);

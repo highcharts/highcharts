@@ -195,8 +195,7 @@ class DataGridColumn {
      * The column options to update.
      */
     public update(options: IndividualColumnOptions): void {
-        const dg = this.viewport.dataGrid;
-        dg.update({
+        this.viewport.dataGrid.update({
             columns: {
                 [this.id]: options
             }
@@ -210,13 +209,11 @@ class DataGridColumn {
      * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
-        const dg = this.viewport.dataGrid;
-
         cell.htmlElement.setAttribute('data-column-id', this.id);
         if (this.options.className) {
             cell.htmlElement.classList.add(this.options.className);
         }
-        if (dg.hoveredColumnId === this.id) {
+        if (this.viewport.dataGrid.hoveredColumnId === this.id) {
             cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
         }
         this.cells.push(cell);
