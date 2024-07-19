@@ -1,5 +1,5 @@
 const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
-const googleSpreadsheetKey = '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw';
+const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 
 Dashboards.board('container', {
     dataPool: {
@@ -42,7 +42,7 @@ Dashboards.board('container', {
             id: 'conn-raw'
         },
         type: 'DataGrid',
-        title: 'Google Sheet Raw',
+        title: 'Original sheet',
         dataGridOptions: {
             editable: false
         }
@@ -52,7 +52,7 @@ Dashboards.board('container', {
             id: 'conn-mod'
         },
         type: 'DataGrid',
-        title: 'Google Sheet Modified',
+        title: 'Modified sheet',
         dataGridOptions: {
             editable: false
         }
