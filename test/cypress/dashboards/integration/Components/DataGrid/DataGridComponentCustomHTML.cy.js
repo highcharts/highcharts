@@ -3,7 +3,7 @@ describe('layout resize on window changes', () => {
         cy.visit('/dashboards/cypress/component-datagrid-custom-html');
     });
 
-    it('The columnAssignment and visibleColumns should be respected', () =>{
+    it('The columnAssignment should be respected', () =>{
         cy.get('.highcharts-datagrid-column-header').should('have.length', 2);
         cy.chart().then(chart =>{
             assert.strictEqual(

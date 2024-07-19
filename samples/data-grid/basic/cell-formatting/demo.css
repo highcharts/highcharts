@@ -1,11 +1,11 @@
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 #container {
     height: 250px;
     margin: 8px;
 }
 
-.highcharts-dg-column {
+.highcharts-datagrid-column {
     width: 15%;
 }
 

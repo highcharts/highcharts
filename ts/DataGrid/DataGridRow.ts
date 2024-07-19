@@ -147,6 +147,9 @@ class DataGridRow {
 
     /**
      * Registers a cell in the row.
+     *
+     * @param cell
+     * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
         this.cells.push(cell);
@@ -180,19 +183,19 @@ class DataGridRow {
      */
     private setRowAttributes(): void {
         const idx = this.index;
-        const dg = this.viewport.dataGrid;
+        const el = this.htmlElement;
 
-        this.htmlElement.setAttribute('data-row-index', idx);
+        el.setAttribute('data-row-index', idx);
 
         // 1 - index of the head, 1 to avoid indexing from 0
-        this.htmlElement.setAttribute('aria-rowindex', idx + 2);
+        el.setAttribute('aria-rowindex', idx + 2);
 
         if (idx % 2 === 1) {
-            this.htmlElement.classList.add(Globals.classNames.odd);
+            el.classList.add(Globals.classNames.odd);
         }
 
-        if (dg.hoveredRowIndex === idx) {
-            this.htmlElement.classList.add(Globals.classNames.hoveredRow);
+        if (this.viewport.dataGrid.hoveredRowIndex === idx) {
+            el.classList.add(Globals.classNames.hoveredRow);
         }
     }
 }

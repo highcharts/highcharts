@@ -1,13 +1,10 @@
-const { DataTable } = Dashboards;
-
-const columns = {
-    date: [Date.UTC(2022, 0, 1)],
-    product: ['Apples']
-};
-
-// eslint-disable-next-line
-const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataTable({ columns }),
+DataGrid.dataGrid('container', {
+    table: {
+        columns: {
+            date: [Date.UTC(2022, 0, 1)],
+            product: ['Apples']
+        }
+    },
     columns: {
         date: {
             cellFormatter: function () {

@@ -22,6 +22,7 @@
  * */
 
 import type { ColumnDistribution } from './DataGridOptions';
+import type DataGridCell from './DataGridCell';
 
 import DGUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
@@ -33,7 +34,7 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
 import Utils from '../Core/Utilities.js';
-import DataGridCell from './DataGridCell';
+import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -128,6 +129,12 @@ class DataGridTable {
      */
     public editedCell?: DataGridCell;
 
+    /**
+     * The cell editing instance that handles the manual editing of cells in
+     * the data grid.
+     */
+    public cellEditing: CellEditing;
+
 
     /* *
     *
@@ -166,16 +173,14 @@ class DataGridTable {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
+        this.cellEditing = new CellEditing();
+
         this.init();
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
         this.tbodyElement.addEventListener('scroll', this.onScroll);
-
-        document.addEventListener('click', (e): void => {
-            this.onDocumentClick(e);
-        });
     }
 
     /* *
@@ -327,30 +332,12 @@ class DataGridTable {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
+        this.columns.forEach((column): void => {
+            column.columnSorting?.removeEventListeners();
+        });
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
-        }
-    }
-
-    /**
-     * Handle the user clicking somewhere outside the grid.
-     *
-     * @internal
-     *
-     * @param e
-     * Related mouse event.
-     */
-    private onDocumentClick(e: MouseEvent): void {
-        const editedCell = this.editedCell;
-        const cellInputEl = editedCell?.cellInputEl;
-
-        if (editedCell && cellInputEl && e.target) {
-            const cellEl = cellInputEl.parentNode;
-            const isClickInInput = cellEl && cellEl.contains(e.target as Node);
-            if (!isClickInInput) {
-                editedCell.removeCellInputElement();
-            }
         }
     }
 

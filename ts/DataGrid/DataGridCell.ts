@@ -27,13 +27,10 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../Core/Templating.js';
-import Globals from './Globals.js';
-import DataGridUtils from './Utils.js';
 import Utils from '../Core/Utilities.js';
 
-const { makeHTMLElement } = DataGridUtils;
 const { format } = F;
-const { fireEvent } = Utils;
+const { defined, fireEvent } = Utils;
 
 
 /* *
@@ -106,6 +103,7 @@ class DataGridCell {
 
         this.htmlElement.addEventListener('mouseover', this.onMouseOver);
         this.htmlElement.addEventListener('mouseout', this.onMouseOut);
+        this.htmlElement.addEventListener('click', this.onClick);
     }
 
 
@@ -119,40 +117,48 @@ class DataGridCell {
      * Renders the cell.
      */
     public render(): void {
-
         if (!this.column.data) {
             return;
         }
 
-        const {
-            useHTML,
-            editable
-        } = this.column.userOptions;
-        const cell = this;
-        const element = cell.htmlElement;
+        this.setValue(this.column.data[this.row.index], false);
+        this.row.htmlElement.appendChild(this.htmlElement);
+    }
 
-        let cellContent = '';
+    /**
+     * Sets the value & updating content of the cell.
+     *
+     * @param value
+     * The raw value to set.
+     *
+     * @param updateTable
+     * Whether to update the table after setting the content.
+     */
+    public setValue(value: DataTable.CellType, updateTable: boolean): void {
+        const element = this.htmlElement;
 
-        this.value = this.column.data[this.row.index];
+        this.value = value;
 
-        if (this.value) {
-            cellContent = this.formatCell(this.value, this);
+        if (!defined(value)) {
+            value = '';
         }
 
-        if (editable) {
-            element.addEventListener('click', (): void => {
-                const element = this.htmlElement;
-                this.onCellClick(element, this.value + '');
-            });
-        }
+        const cellContent = this.formatCell(value, this);
 
-        if (useHTML) {
+        if (this.column.userOptions.useHTML) {
             this.renderHTMLCellContent(cellContent, element);
         } else {
             element.innerText = cellContent;
         }
 
-        this.row.htmlElement.appendChild(element);
+        if (updateTable) {
+            const vp = this.row.viewport;
+            vp.dataTable.setCell(
+                this.column.id,
+                this.row.index,
+                this.value
+            );
+        }
     }
 
     /**
@@ -187,10 +193,11 @@ class DataGridCell {
      * Sets the hover state of the cell and its row and column.
      */
     private readonly onMouseOver = (): void => {
-        const dg = this.row.viewport.dataGrid;
-        dg.hoverRow(this.row.index);
-        dg.hoverColumn(this.column.id);
-        fireEvent(this.row.viewport.dataGrid, 'cellMouseOver', {
+        const { dataGrid } = this.row.viewport;
+        dataGrid.hoverRow(this.row.index);
+        dataGrid.hoverColumn(this.column.id);
+        dataGrid.options?.events?.cell.mouseOver?.call(this);
+        fireEvent(dataGrid, 'cellMouseOver', {
             target: this
         });
     };
@@ -199,107 +206,42 @@ class DataGridCell {
      * Unsets the hover state of the cell and its row and column.
      */
     private readonly onMouseOut = (): void => {
-        const dg = this.row.viewport.dataGrid;
-        dg.hoverRow();
-        dg.hoverColumn();
-        fireEvent(this.row.viewport.dataGrid, 'cellMouseOut', {
+        const { dataGrid } = this.row.viewport;
+        dataGrid.hoverRow();
+        dataGrid.hoverColumn();
+        dataGrid.options?.events?.cell.mouseOut?.call(this);
+        fireEvent(dataGrid, 'cellMouseOut', {
             target: this
         });
     };
 
     /**
-     * Handle the user starting interaction with a cell.
-     *
-     * @internal
-     *
-     * @param cellElement
-     * The clicked cell's HTML element.
-     *
-     * @param value
-     * The value of cell
-     *
+     * Handles the user clicking on a cell.
      */
-    private onCellClick(cellElement: HTMLElement, value: string): void {
-        const cell = this;
+    private readonly onClick = (): void => {
+        const vp = this.row.viewport;
+        const { dataGrid } = vp;
 
-        // Check input to avoid creating,
-        // when setting the coursor.
-        if (cell.cellInputEl) {
-            return;
+        if (this.column.options.editable) {
+            vp.cellEditing.startEditing(this);
         }
 
-        this.removeCellInputElement();
-
-        // Replace cell contents with an input element
-        cellElement.innerHTML = '';
-        cellElement.classList.add(Globals.classNames.focusedCell);
-
-        this.column.viewport.editedCell = cell;
-        const input = this.cellInputEl =
-            makeHTMLElement('input', {}, cellElement);
-        input.style.height = (cellElement.clientHeight - 1) + 'px';
-        input.value = value || '';
-        input.focus();
-        input.addEventListener('keydown', (e: any): void => {
-            // Enter / Escape
-            if (e.keyCode === 13 || e.keyCode === 27) {
-                cell.removeCellInputElement();
-            }
+        dataGrid.options?.events?.cell.click?.call(this);
+        fireEvent(dataGrid, 'cellClick', {
+            target: this
         });
-
-        // Emit for use in extensions
-        fireEvent(input, 'cellClick');
-    }
-
-    /**
-     * Remove the <input> overlay and update the cell value
-     * @internal
-     */
-    public removeCellInputElement(): void {
-        const editedCell = this.column.viewport.editedCell;
-        const parentNode = editedCell?.cellInputEl?.parentNode;
-        if (!editedCell || !parentNode) {
-            return;
-        }
-
-        let cellValue = editedCell.value || '';
-
-        if (editedCell.cellInputEl) {
-            if (typeof editedCell.value === 'number') {
-                cellValue = parseFloat(editedCell.cellInputEl.value);
-            } else {
-                cellValue = editedCell.cellInputEl.value;
-            }
-        }
-
-        if (editedCell.column.id && editedCell.row.index > -1 && editedCell) {
-            editedCell.column.viewport.dataTable.setCell(
-                editedCell.column.id,
-                editedCell.row.index,
-                cellValue
-            );
-
-            editedCell.value = cellValue;
-        }
-
-        editedCell.cellInputEl?.remove();
-        parentNode.classList.remove(Globals.classNames.focusedCell);
-        parentNode.innerHTML = this.formatCell(cellValue, editedCell);
-
-        delete editedCell.cellInputEl;
-        delete this.column.viewport.editedCell;
-
-        fireEvent(parentNode, 'cellUpdated');
-    }
+    };
 
     /**
      * Handle the formatting content of the cell.
      *
-     * @internal
-     *
      * @param value
      * The value of cell
      *
+     * @param ctx
+     * The context of the cell
+     *
+     * @internal
      */
     public formatCell(
         value: string | number | boolean,
@@ -329,6 +271,7 @@ class DataGridCell {
     public destroy(): void {
         this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
         this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
+        this.htmlElement.removeEventListener('click', this.onClick);
         this.htmlElement.remove();
     }
 }
@@ -341,7 +284,12 @@ class DataGridCell {
  * */
 
 namespace DataGridCell {
-
+    /**
+     * Event interface for cell events.
+     */
+    export interface CellEvent {
+        target: DataGridCell;
+    }
 }
 
 

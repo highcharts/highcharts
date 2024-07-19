@@ -27,8 +27,10 @@ import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
+import ColumnSorting from './Actions/ColumnSorting.js';
 
 const { makeHTMLElement } = DGUtils;
+
 const { format } = Templating;
 
 
@@ -63,7 +65,6 @@ class DataGridTableHead {
      * The viewport (table) the table head belongs to.
      */
     public viewport: DataGridTable;
-
 
     /* *
     *
@@ -108,7 +109,7 @@ class DataGridTableHead {
             ) : column.id;
 
             const element = makeHTMLElement('th', {}, this.container);
-            makeHTMLElement('span', {
+            column.headerContent = makeHTMLElement('div', {
                 innerText,
                 className: Globals.classNames.headCellContent
             }, element);
@@ -119,6 +120,7 @@ class DataGridTableHead {
 
             column.setHeadElement(element);
 
+            // Resizing
             if (vp.columnsResizer && (
                 vp.columnDistribution !== 'full' ||
                 i < vp.dataGrid.enabledColumns.length - 1
@@ -128,6 +130,11 @@ class DataGridTableHead {
                     column,
                     element
                 );
+            }
+
+            // Sorting buttons
+            if (column.userOptions.sorting) {
+                column.columnSorting = new ColumnSorting(column, element);
             }
         }
     }
@@ -159,12 +166,19 @@ class DataGridTableHead {
 
     /**
      * Render the drag handle for resizing columns.
+     *
+     * @param column
+     * The column to render the drag handle for.
+     *
+     * @param headElement
+     * The head element to append the drag handle to.
      */
     private renderColumnDragHandles(
-        column: DataGridColumn, headElement: HTMLElement
+        column: DataGridColumn,
+        headElement: HTMLElement
     ): HTMLElement {
         const handle = makeHTMLElement('div', {
-            className: 'highcharts-dg-col-resizer'
+            className: 'highcharts-datagrid-col-resizer'
         }, headElement);
 
         this.viewport.columnsResizer?.addHandleListeners(handle, column);

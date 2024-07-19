@@ -35,6 +35,11 @@ import type DataGridCell from './DataGridCell';
  */
 export type ColumnDistribution = 'full' | 'fixed';
 
+/**
+ * Callback function to be called when a cell event is triggered.
+ */
+export type DataGridCellEventCallback = (this: DataGridCell) => void;
+
 
 /**
  * Options to control the content and the user experience of a grid structure.
@@ -70,6 +75,11 @@ export interface DataGridOptions {
      * Contains options for caption.
      */
     caption?: CaptionOptions;
+
+    /**
+     * Contains events options.
+     */
+    events?: DataGridEvents;
 }
 
 /**
@@ -199,6 +209,14 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     editable?: boolean;
+
+    /**
+     * Allows users to sort values in column
+     * (ascending, descending, or default).
+     *
+     * @default true
+     */
+    sorting?: boolean;
 }
 
 export interface CaptionOptions {
@@ -213,6 +231,36 @@ export interface CaptionOptions {
  */
 export interface CellFormatterCallback {
     (this: DataGridCell): string;
+}
+
+/**
+ * Events options.
+ */
+export interface DataGridEvents {
+    /**
+     * Events related to the cells.
+     */
+    cell: DataGridCellEvents;
+}
+
+/**
+ * Events related to the cells.
+ */
+export interface DataGridCellEvents {
+    /**
+     * Callback function to be called when the cell is clicked.
+     */
+    click?: DataGridCellEventCallback;
+
+    /**
+     * Callback function to be called when the cell is hovered.
+     */
+    mouseOver?: DataGridCellEventCallback;
+
+    /**
+     * Callback function to be called when the cell is no longer hovered.
+     */
+    mouseOut?: DataGridCellEventCallback;
 }
 
 /* *
