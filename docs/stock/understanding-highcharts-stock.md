@@ -62,7 +62,7 @@ To update range selector use [Chart update](https://api.highcharts.com/class-ref
 Crosshair
 ---------
 
-Shows a line perpendicular to the corresponding axis which is following the mouse position or nearest point, depending on the `crosshair.snap` property. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts, but are not enabled by default.
+Shows a line perpendicular to the corresponding axis which is following the mouse position or nearest point, depending on the `crosshair.snap` property. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts Core (without Stock module), but are not enabled by default.
 
 <iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/352ea24215ec4f79bb50ead0152430087bc3551e/sample/stock/interactive-docs/crosshair allow="fullscreen"></iframe>
 
