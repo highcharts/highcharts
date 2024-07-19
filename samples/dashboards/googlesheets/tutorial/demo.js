@@ -4,7 +4,7 @@ const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            id: 'conn-raw',
+            id: 'conn-orig',
             type: 'GoogleSheets',
             options: {
                 googleAPIKey: googleApiKey,
@@ -37,9 +37,9 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        renderTo: 'dashboard-col-0',
+        renderTo: 'orig-sheet-cell',
         connector: {
-            id: 'conn-raw'
+            id: 'conn-orig'
         },
         type: 'DataGrid',
         title: 'Original sheet',
@@ -47,7 +47,7 @@ Dashboards.board('container', {
             editable: false
         }
     }, {
-        renderTo: 'dashboard-col-1',
+        renderTo: 'mod-sheet-cell',
         connector: {
             id: 'conn-mod'
         },
