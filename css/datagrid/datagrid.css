@@ -270,9 +270,9 @@ td.highcharts-datagrid-focused-cell {
 }
 
 .highcharts-datagrid-col-sorting-asc::after {
-    content: '▲';
+    content: "▲";
 }
 
 .highcharts-datagrid-col-sorting-desc::after {
-    content: '▼';
+    content: "▼";
 }

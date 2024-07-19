@@ -23,7 +23,6 @@
  * */
 
 import DGUtils from './Utils.js';
-import Utilities from '../Core/Utilities.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import Templating from '../Core/Templating.js';

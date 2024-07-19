@@ -1,4 +1,4 @@
-describe('Remove the dashboard.', () => {
+describe('Formatting cells.', () => {
     before(() => {
         cy.visit('data-grid/basic/cell-formatting');
     });
