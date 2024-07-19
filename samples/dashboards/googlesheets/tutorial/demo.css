@@ -10,21 +10,20 @@ body {
     padding: 10px;
 }
 
+#orig-sheet-cell .highcharts-dashboards-component-title {
+    background-color: #363;
+}
+
 #mod-sheet-cell .highcharts-dashboards-component-title {
     background-color: #336;
 }
 
-#config-cell {
+.config-cell {
     border: 1px solid #ccc;
     margin: 20px;
-    background-color: var(--highcharts-neutral-color-5);
-}
-
-#config-cell h2 {
-    margin: 10px;
     padding: 10px;
-    font-size: 16px;
-    color: #336;
+    background-color: var(--highcharts-neutral-color-5);
+    text-align: center;
 }
 
 div#description {
@@ -54,9 +53,8 @@ div#description {
 .highcharts-dashboards-component-title {
     padding: 10px;
     margin: 0;
-    background-color: #363;
     text-align: center;
-    color: #fff;
+    color: var(--highcharts-neutral-color-5);
 }
 
 .highcharts-dashboards-component {
