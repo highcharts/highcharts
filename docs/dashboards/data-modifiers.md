@@ -99,5 +99,5 @@ You can check the modifiers in action with the following demos:
 #### DataGrid with MathModifier
 <iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/datagrid-mathmodifier" allow="fullscreen"></iframe>
 
-#### Using CSV data and RangeModifier
-<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/data-tools/csv-modifiers" allow="fullscreen"></iframe>
+#### CSV data with RangeModifier
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers" allow="fullscreen"></iframe>
