@@ -54,6 +54,10 @@ Highcharts.setOptions({
 const asiaChart = {
     type: 'Highcharts',
     renderTo: 'asia-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
     connector: {
         id: 'population-growth',
         columnAssignment: createColumnAssignment(
@@ -70,6 +74,10 @@ const asiaChart = {
 const northAmericaChart = {
     type: 'Highcharts',
     renderTo: 'north-america-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
     connector: {
         id: 'population-growth',
         columnAssignment: createColumnAssignment(
@@ -86,6 +94,10 @@ const northAmericaChart = {
 const southAmericaChart = {
     type: 'Highcharts',
     renderTo: 'south-america-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
     connector: {
         id: 'population-growth',
         columnAssignment: createColumnAssignment(
@@ -102,6 +114,9 @@ const southAmericaChart = {
 const legendChart = {
     type: 'Highcharts',
     renderTo: 'legend',
+    sync: {
+        visibility: true
+    },
     connector: {
         id: 'population-growth'
     },
@@ -145,7 +160,6 @@ const legendChart = {
         legend: {
             enabled: true,
             verticalAlign: 'middle',
-            width: 1000,
             align: 'center',
             visible: false
         },
