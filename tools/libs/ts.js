@@ -1284,13 +1284,13 @@ function getDocletInfosBetween(
                     addTag(
                         _doclet,
                         'description',
-                        node.comment instanceof Array ?
-                            node.comment
-                                .map(c => c.text)
-                                .join('\n')
-                                .trim() :
-                            node.comment
-                                .trim()
+                        (
+                            node.comment instanceof Array ?
+                                node.comment
+                                    .map(c => c.text)
+                                    .join('\n') :
+                                node.comment
+                        ).trim()
                     );
                 }
 
@@ -2407,8 +2407,6 @@ function mergeCodeInfos(
     let _merged;
     /** @type {CodeInfo} */
     let _mergedMember;
-    /** @type {Set} */
-    let _mergedTypes;
     /** @type {string} */
     let _name;
 
@@ -2684,28 +2682,39 @@ function resolveReference(
     scopeInfo,
     reference
 ) {
-    const _referenceName = (
-        typeof reference === 'string' ?
-            reference :
-            reference.name
-    );
     const _sourceInfo = (
         scopeInfo.kind === 'Source' ?
             scopeInfo :
             getSourceInfo(scopeInfo.meta.file)
     );
 
+    let _hasThis = false;
+    let _referenceName = (
+        typeof reference === 'string' ?
+            reference :
+            reference.name
+    );
+
+    if (_referenceName.split('.').indexOf('this') === 0) {
+        _hasThis = true;
+        _referenceName = _referenceName.split('.').slice(1).join('.');
+    }
+
     /** @type {CodeInfo|undefined} */
     let _resolvedInfo;
     let _scopePath = extractInfoScopePath(scopeInfo);
 
-    // First search in inner scopes
+    // First search in inner scopes.
     while (_scopePath) {
 
         _resolvedInfo = resolveReferenceInChildInfos(
             _sourceInfo,
             _sourceInfo.code,
-            `${_scopePath}.${_referenceName}`
+            (
+                _referenceName ?
+                    `${_scopePath}.${_referenceName}` :
+                    _scopePath
+            )
         );
 
         if (_resolvedInfo) {
@@ -2716,7 +2725,12 @@ function resolveReference(
 
     }
 
-    // Search in source scope
+    // Did not found this in inner scopes.
+    if (_hasThis) {
+        return void 0;
+    }
+
+    // Search in source scope.
     return resolveReferenceInChildInfos(
         _sourceInfo,
         _sourceInfo.code,
@@ -2763,9 +2777,11 @@ function resolveReferenceInChildInfos(
                 if (extractInfoName(_childInfo) === _referenceCurrent) {
                     if (_referenceNext) {
                         _resolvedInfo = resolveReferenceInChildInfos(
-                            _childInfo.kind === 'Namespace' ?
-                                _childInfo :
-                                scopeInfo,
+                            (
+                                _childInfo.kind === 'Namespace' ?
+                                    _childInfo :
+                                    scopeInfo
+                            ),
                             _childInfo.members,
                             _referenceNext
                         );
@@ -2964,9 +2980,11 @@ function resolveReferenceInDeconstructInfo(
                         scopeInfo.code :
                         scopeInfo.members
                 ),
-                deconstructInfo.from ?
-                    `${_found}.${_referenceNext}` :
-                    _found
+                (
+                    deconstructInfo.from ?
+                        `${_found}.${_referenceNext}` :
+                        _found
+                )
             );
         }
 
@@ -3232,7 +3250,7 @@ function trimBetween(
     text,
     keepSeparate
 ) {
-    return text.replace(/\s+/gsu, keepSeparate ? ' ' : '');
+    return text.replace(/\s+/gsu, (keepSeparate ? ' ' : ''));
 }
 
 
