@@ -110,4 +110,4 @@ DataGrid.dataGrid('container', {
 
 A complete list of the API options can be found [here](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridOptions-1.html).
 
-Go [here](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about the DataGrid structure.
+[Go to the next article](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about the DataGrid structure.
