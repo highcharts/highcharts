@@ -10,6 +10,7 @@ export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
 export { default as DataGridColumn } from './es-modules/DataGrid/DataGridColumn';
 export { default as DataGridRow } from './es-modules/DataGrid/DataGridRow';
 export { default as DataGridCell } from './es-modules/DataGrid/DataGridCell';
+export { default as DataGridOptions } from './es-modules/DataGrid/DataGridOptions';
 
 export const win: typeof Globals.win;
 

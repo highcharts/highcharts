@@ -58,7 +58,7 @@
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTableOptions.ts",
         "../../../ts/DataGrid/DataGrid.ts",
-        "../../../ts/DataGrid/DataGridOptions.d.ts",
+        "../../../ts/DataGrid/DataGridOptions.ts",
         "../../../ts/DataGrid/DataGridCell.ts",
         "../../../ts/DataGrid/DataGridColumn.ts",
         "../../../ts/DataGrid/DataGridRow.ts",
