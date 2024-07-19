@@ -318,35 +318,22 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
+                columnsIncluded: [
+                    'state', 'demColVotes', 'repColVotes', 'demVoteSummary',
+                    'repVoteSummary', 'totalVotes'
+                ],
                 columns: {
                     state: {
-                        headerFormat: 'State'
-                    },
-                    'postal-code': {
-                        show: false
-                    },
-                    demPercent: {
-                        show: false
-                    },
-                    repPercent: {
-                        show: false
-                    },
-                    demVotes: {
-                        show: false
-                    },
-                    repVotes: {
-                        show: false
+                        headFormat: 'State'
                     },
                     demVoteSummary: {
-                        headerFormat: 'Dem. votes'
+                        headFormat: 'Dem. votes'
                     },
                     repVoteSummary: {
-                        headerFormat: 'Rep. votes'
+                        headFormat: 'Rep. votes'
                     },
                     totalVotes: {
-                        headerFormat: 'Total votes',
+                        headFormat: 'Total votes',
                         cellFormatter: function () {
                             return Number(this.value).toLocaleString('en-US');
                         }
@@ -791,10 +778,10 @@ async function updateGridComponent(component, year) {
         dataGridOptions: {
             columns: {
                 repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
+                    headFormat: candRep + ' (Republican)'
                 },
                 demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
+                    headFormat: candDem + ' (Democrat)'
                 }
             }
         }

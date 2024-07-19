@@ -114,13 +114,12 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
             columns: {
                 Revenue: {
-                    headerFormat: '{text} (€)'
+                    headFormat: '{id} (€)'
                 },
                 Category: {
-                    show: false
+                    enabled: false
                 }
             }
         }

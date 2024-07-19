@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Øystein Moseng
+ *  - Dawid Dragula
  *
  * */
 
@@ -20,6 +20,9 @@
  * */
 
 import type DataTable from '../Data/DataTable';
+import type DataTableOptions from '../Data/DataTableOptions';
+import type DataGridCell from './DataGridCell';
+
 
 /* *
  *
@@ -28,121 +31,177 @@ import type DataTable from '../Data/DataTable';
  * */
 
 /**
+ * The distribution of the columns in the grid structure.
+ */
+export type ColumnDistribution = 'full' | 'fixed';
+
+/**
+ * Callback function to be called when a cell event is triggered.
+ */
+export type DataGridCellEventCallback = (this: DataGridCell) => void;
+
+
+/**
  * Options to control the content and the user experience of a grid structure.
  */
 export interface DataGridOptions {
 
     /**
-     * Height of each grid cell in pixels. This is used to calculate the amount
-     * of visible cells in a container and the size of the scrollbar.
+     * Data table to display in the grid structure.
+     */
+    table?: DataTable | DataTableOptions;
+
+    /**
+     * Options to control the way DataGrid is rendered.
+     */
+    settings?: DataGridSettings;
+
+    /**
+     * Default options for the rows and columns.
+     */
+    defaults?: DataGridDefaults;
+
+    /**
+     * Columns included in the grid structure.
+     */
+    columnsIncluded?: Array<string>;
+
+    /**
+     * Options for individual columns.
+     */
+    columns?: Record<string, IndividualColumnOptions>;
+
+    /**
+     * Contains options for caption.
+     */
+    caption?: CaptionOptions;
+
+    /**
+     * Contains events options.
+     */
+    events?: DataGridEvents;
+}
+
+/**
+ * Options to control the way DataGrid is rendered.
+ */
+export interface DataGridSettings {
+    /**
+    * Options to control the columns behavior and rendering.
+    */
+    columns?: ColumnsSettings;
+
+    /**
+    * Options to control the rows behavior and rendering.
+    */
+    rows?: RowsSettings;
+}
+
+export interface ColumnsSettings {
+    /**
+     * The distribution of the columns. If `full`, the columns will be
+     * distributed so that the first and the last column are at the edges of
+     * the grid. If `fixed`, the columns will have a fixed width in pixels.
      *
-     * It also specifies the minimum height of the header row and its double
-     * determines the maximum possible height of the header row.
-     *
-     * @default 49
+     * @default 'full'
      */
-    cellHeight?: number;
+    distribution?: ColumnDistribution;
 
     /**
-     * Contains options for column headers.
-     */
-    columnHeaders?: ColumnHeaderOptions;
-
-    /**
-     * Contains column-specific options. The key is the column name and the
-     * value is the object with the column-specific options.
-     */
-    columns?: Record<string, ColumnOptions>;
-
-    /**
-     * Table data to display in the grid structure.
-     */
-    dataTable?: DataTable;
-
-    /**
-     * An explicit height for the table. If given, the height of the table will
-     * be fixed regardless of how many rows are visible. The scrollbar will
-     * disappear if the actual height of the rows is less than the set height.
-     * @internal
-     * @default 400
-     */
-    defaultHeight?: number;
-
-    /**
-     * Switch to make the whole grid structure with all cells editable ('true')
-     * or read-only ('false').
+     * Whether the columns should be resizable.
      *
      * @default true
      */
-    editable?: boolean;
+    resizing?: boolean;
+}
 
+export interface RowsSettings {
     /**
-     * Events attached to the row : `click`.
-     */
-    events?: DataGridEvents
-
-    /**
-     * Switch to make the column sizes editable ('true') or fixed ('false').
+     * Buffer of rows to render outside the visible area from the top and from
+     * the bottom while scrolling. The bigger the buffer, the less flicker will
+     * be seen while scrolling, but the more rows will have to be rendered.
      *
-     * @default true
+     * Cannot be lower than 0.
+     *
+     * @default 10
      */
-    resizableColumns?: boolean;
+    bufferSize?: number;
 
     /**
-     * Weather to use HTML to render the cell content. When enabled, other
-     * elements than text can be added to the cell ie. images.
+     * Whether the height of the rows should be calculated automatically based
+     * on the content of the cells. If `true`, the ellipsis will be used to
+     * indicate that the content is too long to fit in the cell.
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cells-formatting | Cell with an URL to click}
+     * When there is no need to have different row heights, it is recommended
+     * to set this option to `true` for the performance reasons, to avoid the
+     * unnecessary calculations.
      *
      * @default false
      */
-    useHTML?: boolean;
+    strictHeights?: boolean;
 }
 
 /**
- * Contains options for column headers.
+ * Default options for the rows and columns.
  */
-export interface ColumnHeaderOptions {
+export interface DataGridDefaults {
 
     /**
-     * Switch to turn the column header on (`true`) or off (`false`).
-     *
-     * Try it:
-     *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/options/disable-column-headers/ | Column headers disabled}
-     *
-     * @default true
+     * Default options for the columns.
      */
-    enabled?: boolean;
+    columns?: ColumnOptions;
 }
 
 /**
- * Contains options for column cells.
+ * Column options that can be shared between columns but can be set for each
+ * column individually.
  */
 export interface ColumnOptions {
+
     /**
-     * A string used to format each cell's content. The context is the cell's
-     * value and can be accessed only by using `{value}` and `{text}`.
-     * First one is used for formatting numbers, second one for
-     * formatting strings.
-     *
-     * @example
-     * ```js
-     * cellFormat: '{value:.2f} kg'
-     * ```
-     * ```js
-     * cellFormat: '{text} (custom format)'
-     * ```
+     * The format of the cell content within the given column of
+     * DataGrid.
      */
     cellFormat?: string;
 
     /**
-     * Extendable method for formatting each cell's in DataGrid.
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    headFormat?: string;
+}
+
+/**
+ * Column options that can be set for each column individually.
+ */
+export interface IndividualColumnOptions extends ColumnOptions {
+    /**
+     * The custom CSS class name for the column.
+     */
+    className?: string;
+
+    /**
+     * Whether the column is enabled and should be displayed.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * Callback function for formatting cells within the given column of the
+     * DataGrid.
      *
      * @return {string}
      * A string to be concatenated in to the common cell's text.
      */
     cellFormatter?: CellFormatterCallback;
+
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     *
+     * @default false
+     */
+    useHTML?: boolean;
 
     /**
      * Switch to make the column cells editable ('true') or read-only ('false').
@@ -152,62 +211,56 @@ export interface ColumnOptions {
     editable?: boolean;
 
     /**
-     * A string used to format the header row's cells. The context is the
-     * column's name and can be accessed only by using `{text}`.
-     *
-     * Try it:
-     *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options/ | Add a header format}
-     *
-     * @example
-     * ```js
-     * headerFormat: '{text} (custom format)'
-     * ```
-     *
-     */
-    headerFormat?: string;
-
-    /**
-     * Wether to show the column in the grid structure.
+     * Allows users to sort values in column
+     * (ascending, descending, or default).
      *
      * @default true
      */
-    show?: boolean;
+    sorting?: boolean;
+}
+
+export interface CaptionOptions {
+    /**
+     * The caption of the datagrid grid.
+     */
+    text?: string;
 }
 
 /**
  * Returns a formatted call's string.
  */
 export interface CellFormatterCallback {
-    (this: CellValue): string;
+    (this: DataGridCell): string;
 }
 
 /**
- * Value to convert
- */
-export interface CellValue {
-    value: DataTable.CellType
-}
-
-/**
- * Contains events for row
+ * Events options.
  */
 export interface DataGridEvents {
-    row?: DataGridRowEvents
+    /**
+     * Events related to the cells.
+     */
+    cell: DataGridCellEvents;
 }
 
 /**
- * Declare events for row
+ * Events related to the cells.
  */
-export interface DataGridRowEvents {
-    click?: DataGridClickCallbackFunction
-}
+export interface DataGridCellEvents {
+    /**
+     * Callback function to be called when the cell is clicked.
+     */
+    click?: DataGridCellEventCallback;
 
-/**
- * Click callback function
- */
-export interface DataGridClickCallbackFunction {
-    (this: HTMLElement, event: MouseEvent): void;
+    /**
+     * Callback function to be called when the cell is hovered.
+     */
+    mouseOver?: DataGridCellEventCallback;
+
+    /**
+     * Callback function to be called when the cell is no longer hovered.
+     */
+    mouseOut?: DataGridCellEventCallback;
 }
 
 /* *

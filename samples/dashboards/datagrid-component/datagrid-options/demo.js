@@ -30,7 +30,7 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: {
                 'Vitamin A': {
-                    headerFormat: '{text} mg'
+                    headFormat: '{id} [mg]'
                 }
             }
         }

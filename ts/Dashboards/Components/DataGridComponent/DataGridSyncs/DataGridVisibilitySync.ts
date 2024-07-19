@@ -55,11 +55,11 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            const columnName = cursor.column;
+            const columnId = cursor.column;
             dataGrid.update({
                 columns: {
-                    [columnName]: {
-                        show: cursor.state !== 'series.hide' + groupKey
+                    [columnId]: {
+                        enabled: cursor.state !== 'series.hide' + groupKey
                     }
                 }
             });

@@ -389,8 +389,7 @@ abstract class Component {
      * */
 
     /**
-     * Function fired when component's `tableChanged` event is fired.
-     * @internal
+     * Function fired when component's data source's data is changed.
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
 
@@ -535,16 +534,23 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
+        const { element } = this;
         if (height) {
-            // Get offset for border, padding
-            const pad =
-                getPaddings(this.element).y + getMargins(this.element).y;
-            this.element.style.height = 'calc(100% - ' + pad + 'px)';
-            this.contentElement.style.height =
-                'calc(100% - ' + this.getContentHeight() + 'px)';
+            const margins = getMargins(element).y;
+            const paddings = getPaddings(element).y;
+
+            if (typeof height === 'string') {
+                height = parseFloat(height);
+            }
+            height = Math.round(height);
+
+            element.style.height = `${height - margins - paddings}px`;
+            this.contentElement.style.height = `${
+                element.clientHeight - this.getContentHeight() - paddings
+            }px`;
         } else if (height === null) {
             this.dimensions.height = null;
-            this.element.style.removeProperty('height');
+            element.style.removeProperty('height');
         }
 
         fireEvent(this, 'resize', {
