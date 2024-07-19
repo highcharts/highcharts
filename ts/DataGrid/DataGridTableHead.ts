@@ -41,7 +41,8 @@ const { format } = Templating;
  * */
 
 /**
- * Represents a table header row containing the column names.
+ * Represents a table header row containing the cells (headers) with
+ * column names.
  */
 class DataGridTableHead {
 
@@ -104,8 +105,8 @@ class DataGridTableHead {
         let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
-            const innerText = column.userOptions.headFormat ? (
-                format(column.userOptions.headFormat, column)
+            const innerText = column.userOptions.headerFormat ? (
+                format(column.userOptions.headerFormat, column)
             ) : column.id;
 
             const element = makeHTMLElement('th', {}, this.container);
@@ -118,7 +119,7 @@ class DataGridTableHead {
             element.setAttribute('scope', 'col');
             element.setAttribute('data-column-id', this.columns[i].id);
 
-            column.setHeadElement(element);
+            column.setHeaderElement(element);
 
             // Resizing
             if (vp.columnsResizer && (
@@ -148,7 +149,7 @@ class DataGridTableHead {
 
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const column = this.columns[i];
-            const td = column.headElement;
+            const td = column.headerElement;
             if (!td) {
                 continue;
             }

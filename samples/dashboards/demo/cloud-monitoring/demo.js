@@ -648,16 +648,16 @@ const setupDashboard = instanceId => {
                 },
                 columns: {
                     InstanceId: {
-                        headFormat: 'ID'
+                        headerFormat: 'ID'
                     },
                     InstanceType: {
-                        headFormat: 'Type'
+                        headerFormat: 'Type'
                     },
                     PublicIpAddress: {
-                        headFormat: 'Public IP'
+                        headerFormat: 'Public IP'
                     },
                     HealthIndicator: {
-                        headFormat: 'Health',
+                        headerFormat: 'Health',
                         useHTML: true,
                         cellFormatter: function () {
                             const val = this.value;

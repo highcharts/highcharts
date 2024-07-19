@@ -190,7 +190,7 @@ class ColumnsResizer {
      * Handles the mouse up event on the document.
      */
     private onDocumentMouseUp = (): void => {
-        this.draggedColumn?.headElement?.classList.remove(
+        this.draggedColumn?.headerElement?.classList.remove(
             'highcharts-datagrid-head-cell-resized'
         );
 
@@ -222,7 +222,7 @@ class ColumnsResizer {
             this.nextColumnStartWidth =
                 this.viewport.columns[column.index + 1]?.getWidth();
 
-            column.headElement?.classList.add(
+            column.headerElement?.classList.add(
                 'highcharts-datagrid-head-cell-resized'
             );
         };
