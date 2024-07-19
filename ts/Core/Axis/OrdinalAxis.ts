@@ -604,6 +604,7 @@ namespace OrdinalAxis {
         }
     ): void {
         const chart = this,
+            // TODO: take xAxis from event not chart
             xAxis = chart.xAxis[0] as OrdinalAxis.Composition,
             overscroll = xAxis.ordinal.convertOverscroll(
                 xAxis.options.overscroll
