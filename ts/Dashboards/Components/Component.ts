@@ -389,8 +389,7 @@ abstract class Component {
      * */
 
     /**
-     * Function fired when component's `tableChanged` event is fired.
-     * @internal
+     * Function fired when component's data source's data is changed.
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
 

@@ -206,7 +206,7 @@ class DataGridComponent extends Component {
         this.dataGrid?.viewport?.reflow();
     }
 
-    public onTableChanged(): void {
+    public override onTableChanged(): void {
         this.dataGrid?.update({
             table: this.getFirstConnector()?.table?.modified
         });

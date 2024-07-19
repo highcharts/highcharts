@@ -1,6 +1,6 @@
 describe('Formatting cells.', () => {
     before(() => {
-        cy.visit('data-grid/cell-formatting');
+        cy.visit('data-grid/basic/cell-formatting');
     });
 
     it('Head should be formatted.', () => {

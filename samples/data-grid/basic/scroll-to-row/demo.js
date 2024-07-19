@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid('container', {
+const dataGrid = new DataGrid.DataGrid('container', {
     table: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),
@@ -37,8 +37,8 @@ document.getElementById('scroll').addEventListener('submit', e => {
     e.preventDefault();
     const value = +e.target.elements['row-to-scroll'].value;
     if (!isNaN(value)) {
-        dg.viewport.scrollToRow(value);
+        dataGrid.viewport.scrollToRow(value);
     }
 });
 
-console.log(dg);
+console.log(dataGrid);

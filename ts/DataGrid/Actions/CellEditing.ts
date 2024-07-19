@@ -122,7 +122,8 @@ class CellEditing {
     };
 
     /**
-     * Handles the keydown event on the input field.
+     * Handles the keydown event on the input field. Cancels editing on escape
+     * and saves the value on enter.
      *
      * @param e
      * The keyboard event.

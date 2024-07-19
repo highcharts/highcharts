@@ -30,7 +30,7 @@ import F from '../Core/Templating.js';
 import Utils from '../Core/Utilities.js';
 
 const { format } = F;
-const { fireEvent } = Utils;
+const { defined, fireEvent } = Utils;
 
 
 /* *
@@ -139,7 +139,7 @@ class DataGridCell {
 
         this.value = value;
 
-        if (value === null || value === void 0) {
+        if (!defined(value)) {
             value = '';
         }
 
@@ -193,11 +193,11 @@ class DataGridCell {
      * Sets the hover state of the cell and its row and column.
      */
     private readonly onMouseOver = (): void => {
-        const dg = this.row.viewport.dataGrid;
-        dg.hoverRow(this.row.index);
-        dg.hoverColumn(this.column.id);
-        dg.options?.events?.cell.mouseOver?.call(this);
-        fireEvent(dg, 'cellMouseOver', {
+        const { dataGrid } = this.row.viewport;
+        dataGrid.hoverRow(this.row.index);
+        dataGrid.hoverColumn(this.column.id);
+        dataGrid.options?.events?.cell.mouseOver?.call(this);
+        fireEvent(dataGrid, 'cellMouseOver', {
             target: this
         });
     };
@@ -206,11 +206,11 @@ class DataGridCell {
      * Unsets the hover state of the cell and its row and column.
      */
     private readonly onMouseOut = (): void => {
-        const dg = this.row.viewport.dataGrid;
-        dg.hoverRow();
-        dg.hoverColumn();
-        dg.options?.events?.cell.mouseOut?.call(this);
-        fireEvent(dg, 'cellMouseOut', {
+        const { dataGrid } = this.row.viewport;
+        dataGrid.hoverRow();
+        dataGrid.hoverColumn();
+        dataGrid.options?.events?.cell.mouseOut?.call(this);
+        fireEvent(dataGrid, 'cellMouseOut', {
             target: this
         });
     };
@@ -220,14 +220,14 @@ class DataGridCell {
      */
     private readonly onClick = (): void => {
         const vp = this.row.viewport;
-        const dg = vp.dataGrid;
+        const { dataGrid } = vp;
 
         if (this.column.options.editable) {
             vp.cellEditing.startEditing(this);
         }
 
-        dg.options?.events?.cell.click?.call(this);
-        fireEvent(dg, 'cellClick', {
+        dataGrid.options?.events?.cell.click?.call(this);
+        fireEvent(dataGrid, 'cellClick', {
             target: this
         });
     };
@@ -284,7 +284,12 @@ class DataGridCell {
  * */
 
 namespace DataGridCell {
-
+    /**
+     * Event interface for cell events.
+     */
+    export interface CellEvent {
+        target: DataGridCell;
+    }
 }
 
 
