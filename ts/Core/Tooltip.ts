@@ -557,12 +557,12 @@ class Tooltip {
     public getPlayingField(): SizeObject {
         const { body, documentElement } = doc,
             { chart, distance, outside } = this;
-
         return {
             width: outside ?
                 // Subtract distance to prevent scrollbars
                 Math.max(
                     body.scrollWidth,
+                    documentElement.scrollWidth,
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
