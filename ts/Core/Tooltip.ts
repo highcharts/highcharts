@@ -939,17 +939,17 @@ class Tooltip {
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
         const tooltip = this,
-            chartWidth = this.chart.chartWidth,
-            label = this.label,
-            sum = label && (label.x || 0) + (label.width || 0) || 0,
+            chartWidth = tooltip.chart.chartWidth,
+            label = tooltip.label,
+            sum = label && x + (label.width || 0) || 0,
             animation = animObject(
                 !tooltip.isHidden && tooltip.options.animation
             ),
             skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
             attr: SVGAttributes = { x, y };
 
-        if (sum > chartWidth && label && label.x) {
-            label.x = label.x - ((sum - chartWidth) * 2);
+        if (sum > chartWidth) {
+            x = x - (sum - chartWidth);
         }
 
         if (!skipAnchor) {
