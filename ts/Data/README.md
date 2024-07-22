@@ -43,23 +43,6 @@ table.id === 'gremlins_movies';
 table.autoId === false;
 ```
 
-
-
-### Column Aliases
-
-Tables provide an alias system that allows access to columns under multiple
-names. That way also row objects can have different key-value pairs, but
-identical data.
-
-```TypeScript
-table.aliases['movie_title'] = 'title';
-table.getColumn('movie_title')[0] === table.getColumn('title')[0];
-delete table.aliases['movie_title'];
-table.getColumn('movie_title') === undefined;
-```
-
-
-
 ### Column References
 
 For maximum performance you can retrieve columns from the table as a reference.
@@ -142,21 +125,6 @@ const chart = new Highcharts.chart('container', {
 });
 ```
 
-In case of a series that only accepts data points as objects, you might need to
-set up column aliases to retrieve the expected structure.
-
-```TypeScript
-table.aliases.name = 'year';
-table.aliases.label = 'title';
-const chart = new Highcharts.chart('container', {
-    series: [{
-        type: 'timeline',
-        data: table.getRowObjects(0, void 0, ['name', 'label']);
-    }]
-});
-```
-
-
 
 ### DataTable in DataGrid
 
@@ -167,7 +135,7 @@ to retrieve the original order.
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
-    dataTable: new DataTable({
+    table: new DataTable({
         columns: {
             Value: [ 12.34, 45.67, 78.90 ],
             Currency: [ 'EUR', 'DKK', 'NOK' ]
@@ -180,7 +148,7 @@ If a row reference is needed, an index column has to be part of the table:
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
-    dataTable: new DataTable({
+    table: new DataTable({
         columns: {
             '': [1, 2, 3],
             Value: [ 12.34, 45.67, 78.90 ],
@@ -188,7 +156,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
+dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
 ```
 
 

@@ -670,13 +670,13 @@ async function setupBoard() {
                         enabled: false
                     },
                     FD: {
-                        headFormat: 'Days with Frost'
+                        headerFormat: 'Days with Frost'
                     },
                     ID: {
-                        headFormat: 'Days with Ice'
+                        headerFormat: 'Days with Ice'
                     },
                     RR1: {
-                        headFormat: 'Days with Rain'
+                        headerFormat: 'Days with Rain'
                     },
                     TN: {
                         enabled: false
@@ -685,20 +685,20 @@ async function setupBoard() {
                         enabled: false
                     },
                     TNC: {
-                        headFormat: 'Average Temperature °C',
+                        headerFormat: 'Average Temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TNF: {
-                        headFormat: 'Average Temperature °F',
+                        headerFormat: 'Average Temperature °F',
                         cellFormat: '{value:.1f}',
                         enabled: false
                     },
                     TXC: {
-                        headFormat: 'Maximal Temperature °C',
+                        headerFormat: 'Maximal Temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TXF: {
-                        headFormat: 'Maximal Temperature °F',
+                        headerFormat: 'Maximal Temperature °F',
                         cellFormat: '{value:.1f}',
                         enabled: false
                     }

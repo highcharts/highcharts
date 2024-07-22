@@ -17,7 +17,7 @@ DataGrid.dataGrid('container', {
     },
     columns: {
         date: {
-            headFormat: 'Date of purchase',
+            headerFormat: 'Date of purchase',
             cellFormatter: function () {
                 return new Date(this.value)
                     .toISOString()
@@ -25,7 +25,7 @@ DataGrid.dataGrid('container', {
             }
         },
         product: {
-            headFormat: '{id} name'
+            headerFormat: '{id} name'
         },
         weight: {
             className: 'custom-column-class-name',

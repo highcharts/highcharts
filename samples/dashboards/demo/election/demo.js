@@ -324,16 +324,16 @@ async function setupDashboard() {
                 ],
                 columns: {
                     state: {
-                        headFormat: 'State'
+                        headerFormat: 'State'
                     },
                     demVoteSummary: {
-                        headFormat: 'Dem. votes'
+                        headerFormat: 'Dem. votes'
                     },
                     repVoteSummary: {
-                        headFormat: 'Rep. votes'
+                        headerFormat: 'Rep. votes'
                     },
                     totalVotes: {
-                        headFormat: 'Total votes',
+                        headerFormat: 'Total votes',
                         cellFormatter: function () {
                             return Number(this.value).toLocaleString('en-US');
                         }
@@ -778,10 +778,10 @@ async function updateGridComponent(component, year) {
         dataGridOptions: {
             columns: {
                 repColVotes: {
-                    headFormat: candRep + ' (Republican)'
+                    headerFormat: candRep + ' (Republican)'
                 },
                 demColVotes: {
-                    headFormat: candDem + ' (Democrat)'
+                    headerFormat: candDem + ' (Democrat)'
                 }
             }
         }
