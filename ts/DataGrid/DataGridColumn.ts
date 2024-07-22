@@ -103,9 +103,9 @@ class DataGridColumn {
     public type?: DataGridColumn.Type;
 
     /**
-     * The head element of the column.
+     * The header element of the column (the proper cell in the table head).
      */
-    public headElement?: HTMLElement;
+    public headerElement?: HTMLElement;
 
     /**
      * The user options of the column.
@@ -176,15 +176,15 @@ class DataGridColumn {
     * */
 
     /**
-     * Sets the head element of the column.
+     * Sets the header element of the column.
      *
-     * @param headElement
+     * @param headerElement
      * The head element of the column.
      */
-    public setHeadElement(headElement: HTMLElement): void {
-        this.headElement = headElement;
+    public setHeaderElement(headerElement: HTMLElement): void {
+        this.headerElement = headerElement;
         if (this.options.className) {
-            headElement.classList.add(this.options.className);
+            headerElement.classList.add(this.options.className);
         }
     }
 
@@ -239,7 +239,7 @@ class DataGridColumn {
      * Whether the column should be hovered.
      */
     public setHoveredState(hovered: boolean): void {
-        this.headElement?.classList[hovered ? 'add' : 'remove'](
+        this.headerElement?.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredColumn
         );
 

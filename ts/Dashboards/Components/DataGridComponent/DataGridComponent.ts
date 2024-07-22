@@ -220,9 +220,20 @@ class DataGridComponent extends Component {
      *
      * @internal
      */
-    public getOptions(): Partial<Options> {
+    public override getOptions(): Partial<Options> {
+
+        // Remove the table from the options copy if the connector is set.
+        const optionsCopy = merge(this.options);
+        if (optionsCopy.connector?.id) {
+            delete optionsCopy.dataGridOptions?.table;
+        } else if (optionsCopy.dataGridOptions?.table?.id) {
+            optionsCopy.dataGridOptions.table = {
+                columns: optionsCopy.dataGridOptions.table.columns
+            };
+        }
+
         return {
-            ...diffObjects(this.options, DataGridComponent.defaultOptions),
+            ...diffObjects(optionsCopy, DataGridComponent.defaultOptions),
             type: 'DataGrid'
         };
     }
@@ -231,6 +242,7 @@ class DataGridComponent extends Component {
      * Destroys the data grid component.
      */
     public override destroy(): void {
+        this.sync.stop();
         this.dataGrid?.destroy();
         super.destroy();
     }

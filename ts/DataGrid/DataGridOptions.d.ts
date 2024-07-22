@@ -40,6 +40,11 @@ export type ColumnDistribution = 'full' | 'fixed';
  */
 export type DataGridCellEventCallback = (this: DataGridCell) => void;
 
+/**
+ * Returns a formatted call's string.
+ */
+export type CellFormatterCallback = (this: DataGridCell) => string;
+
 
 /**
  * Options to control the content and the user experience of a grid structure.
@@ -165,35 +170,18 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
-     * The format of the column header. Use `{id}` to display the column id.
-     */
-    headFormat?: string;
-}
-
-/**
- * Column options that can be set for each column individually.
- */
-export interface IndividualColumnOptions extends ColumnOptions {
-    /**
-     * The custom CSS class name for the column.
-     */
-    className?: string;
-
-    /**
-     * Whether the column is enabled and should be displayed.
-     *
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
      * Callback function for formatting cells within the given column of the
      * DataGrid.
      *
-     * @return {string}
+     * @return
      * A string to be concatenated in to the common cell's text.
      */
     cellFormatter?: CellFormatterCallback;
+
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    headerFormat?: string;
 
     /**
      * Weather to use HTML to render the cell content. When enabled, other
@@ -219,18 +207,28 @@ export interface IndividualColumnOptions extends ColumnOptions {
     sorting?: boolean;
 }
 
+/**
+ * Column options that can be set for each column individually.
+ */
+export interface IndividualColumnOptions extends ColumnOptions {
+    /**
+     * The custom CSS class name for the column.
+     */
+    className?: string;
+
+    /**
+     * Whether the column is enabled and should be displayed.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
 export interface CaptionOptions {
     /**
      * The caption of the datagrid grid.
      */
     text?: string;
-}
-
-/**
- * Returns a formatted call's string.
- */
-export interface CellFormatterCallback {
-    (this: DataGridCell): string;
 }
 
 /**
