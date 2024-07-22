@@ -117,7 +117,7 @@ class CellEditing {
 
         cell.setValue(submit ? newValue : cell.value, submit);
 
-        dataGrid.options?.events?.cell.afterEdit?.call(cell);
+        dataGrid.options?.events?.cell?.afterEdit?.call(cell);
 
         delete this.editedCell;
     }
