@@ -45,7 +45,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *               alternateStartingDirection, borderRadius, breadcrumbs,
  *               interactByLeaf, layoutStartingDirection, levelIsConstant,
  *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
- *               zones
+ *               zones, groupAreaThreshold
  *
  * @product      highcharts
  * @since 10.3.0
