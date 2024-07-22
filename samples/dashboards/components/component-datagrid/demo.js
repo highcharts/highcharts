@@ -45,7 +45,7 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: {
                 Revenue: {
-                    headFormat: '{id} (€)'
+                    headerFormat: '{id} (€)'
                 },
                 Category: {
                     enabled: false

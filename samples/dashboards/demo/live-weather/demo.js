@@ -536,7 +536,7 @@ async function setupDashboard() {
                 dataGridOptions: {
                     columns: {
                         time: {
-                            headFormat: 'Time UTC',
+                            headerFormat: 'Time UTC',
                             cellFormatter: function () {
                                 return Highcharts.dateFormat(
                                     '%H:%M', this.value
@@ -544,23 +544,23 @@ async function setupDashboard() {
                             }
                         },
                         temperature: {
-                            headFormat: paramConfig.getColumnHeader(
+                            headerFormat: paramConfig.getColumnHeader(
                                 'temperature'
                             ),
                             cellFormat: '{value:.1f}'
                         },
                         wind: {
-                            headFormat: paramConfig.getColumnHeader('wind'),
+                            headerFormat: paramConfig.getColumnHeader('wind'),
                             cellFormat: '{value:.1f}'
                         },
                         windDir: {
-                            headFormat: paramConfig.getColumnHeader(
+                            headerFormat: paramConfig.getColumnHeader(
                                 'windDir'
                             ),
                             cellFormat: '{value:.0f}'
                         },
                         precipitation: {
-                            headFormat: paramConfig.getColumnHeader(
+                            headerFormat: paramConfig.getColumnHeader(
                                 'precipitation'
                             ),
                             cellFormat: '{value:.1f}'

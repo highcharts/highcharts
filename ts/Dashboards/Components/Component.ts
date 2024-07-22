@@ -808,7 +808,9 @@ abstract class Component {
          * TODO: Should perhaps set an `isActive` flag to false.
          */
 
-        this.sync.stop();
+        if (this.sync.isSyncing) {
+            this.sync.stop();
+        }
 
         while (this.element.firstChild) {
             this.element.firstChild.remove();

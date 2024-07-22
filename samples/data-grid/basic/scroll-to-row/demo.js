@@ -21,13 +21,13 @@ const dataGrid = new DataGrid.DataGrid('container', {
     },
     defaults: {
         columns: {
-            headFormat: 'Col-{id}',
+            headerFormat: 'Col-{id}',
             cellFormat: 'V: {value}'
         }
     },
     columns: {
         d: {
-            headFormat: 'Col D',
+            headerFormat: 'Col D',
             cellFormat: '{row.index}%'
         }
     }
