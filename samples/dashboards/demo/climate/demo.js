@@ -630,14 +630,7 @@ async function setupBoard() {
             id: cityRows[i].city,
             type: 'CSV',
             options: {
-                csvURL: cityRows[i].csv,
-                dataTable: {
-                    aliases: {
-                        'Days with rain': 'RR1',
-                        'Average temperature': 'TNC',
-                        'Maximum temperature': 'TXC'
-                    }
-                }
+                csvURL: cityRows[i].csv
             }
         });
     }

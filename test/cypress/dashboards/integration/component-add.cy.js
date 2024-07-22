@@ -37,7 +37,7 @@ describe('Add components through UI', () => {
     });
 
     it('should be able to add a layout', function() {
-        grabComponent('layout');
+        grabComponent('Row');
         dropComponent('#dashboard-col-0');
         cy.board().then((board) => {
             assert.equal(
