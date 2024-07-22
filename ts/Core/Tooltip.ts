@@ -941,15 +941,15 @@ class Tooltip {
         const tooltip = this,
             chartWidth = tooltip.chart.chartWidth,
             label = tooltip.label,
-            sum = label && x + (label.width || 0) || 0,
+            endPos = label && (label.x || 0) + (label.width || 0) || 0,
             animation = animObject(
                 !tooltip.isHidden && tooltip.options.animation
             ),
             skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
             attr: SVGAttributes = { x, y };
 
-        if (sum > chartWidth) {
-            x = x - (sum - chartWidth);
+        if (label && label.x && endPos > chartWidth) {
+            label.x = label.x - (endPos - chartWidth);
         }
 
         if (!skipAnchor) {
