@@ -84,7 +84,7 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 Example:
 ```js
 DataGrid.dataGrid('container', {
-    dataTable: { columns },
+    table: { columns },
     caption: {
         text: 'Fruit market'
     },
