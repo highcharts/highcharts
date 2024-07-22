@@ -22,6 +22,7 @@
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type DataGridCell from './DataGridCell';
+import DataGridColumn from './DataGridColumn';
 
 
 /* *
@@ -39,6 +40,11 @@ export type ColumnDistribution = 'full' | 'fixed';
  * Callback function to be called when a cell event is triggered.
  */
 export type DataGridCellEventCallback = (this: DataGridCell) => void;
+
+/**
+ * Callback function to be called when a column event is triggered.
+ */
+export type DataGridColumnEventCallback = (this: DataGridColumn) => void;
 
 
 /**
@@ -217,6 +223,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     sorting?: boolean;
+
+    /**
+     * Events related to column. 
+     */
+    events?: DataGridColumnEvents
 }
 
 export interface CaptionOptions {
@@ -261,6 +272,20 @@ export interface DataGridCellEvents {
      * Callback function to be called when the cell is no longer hovered.
      */
     mouseOut?: DataGridCellEventCallback;
+
+    /**
+     * Callback function to be called after editing of cell value.
+     */
+    afterEdit?: DataGridCellEventCallback;
+}
+
+
+export interface DataGridColumnEvents {
+    /**
+     * Callback function to be called when the column is sorted
+     * (for instance, after clicking on header).
+     */
+    afterSorting?: DataGridColumnEventCallback;
 }
 
 /* *

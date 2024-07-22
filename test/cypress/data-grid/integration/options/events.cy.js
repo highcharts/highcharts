@@ -1,9 +1,9 @@
-describe('Exporting to JSON.', () => {
+describe('DataGrid events.', () => {
     before(() => {
         cy.visit('data-grid/cypress/column-cell-events');
     });
 
-    it.skip('Cell mouseOver / mouseOut event.', () => {
+    it('Cell mouseOver / mouseOut event.', () => {
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')
             .trigger('mouseover');
         cy.get('#cellMouseOver').should('have.value', 'cellMouseOver');
@@ -14,7 +14,7 @@ describe('Exporting to JSON.', () => {
         cy.get('#cellMouseOut').should('have.value', 'cellMouseOut');
     });
 
-    it.skip('Cell click event', () => {
+    it('Cell click event', () => {
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]').click({force: true});
         cy.get('#cellClick').should('have.value', 'cellClick');
     });

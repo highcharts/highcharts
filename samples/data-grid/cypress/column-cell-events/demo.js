@@ -17,9 +17,7 @@ DataGrid.dataGrid('container', {
     },
     columns: {
         product: {
-            editable: true
-        },
-        weight: {
+            editable: true,
             events: {
                 afterSorting: function () {
                     doc.getElementById('columnSorting').value = 'afterSorting';

@@ -163,6 +163,8 @@ class ColumnSorting {
                 )
             ) : dataGrid.originalDataTable
         });
+
+        this.column.options.events?.afterSorting?.call(this.column);
     };
 
     /**
