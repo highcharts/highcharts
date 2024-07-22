@@ -27,7 +27,7 @@ describe('DataGrid events.', () => {
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
 
-    it('After sorting event.', () => {
+    it('AfterSorting column event.', () => {
         cy.get('th[data-column-id="product"]').click();
         cy.get('#columnSorting').should('have.value', 'afterSorting');
     });
