@@ -1,5 +1,8 @@
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/sort-modifier.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/range-modifier.js"></script>
 
 <div id="container">
     <div class="row">
@@ -8,22 +11,28 @@
     </div>
     <div class="row">
         <div class="cell config-cell">
-            <label for="sheet">Sheet selection:</label>
-            <select name="sheet" id="sheet" class="form-select">
+            <label>Worksheet</label>
+            <select id="worksheet-select" class="form-select">
                 <option value="0">Sheet 1</option>
                 <option value="1">Sheet 2</option>
                 <option value="2">Sheet 3</option>
             </select>
         </div>
         <div class="cell config-cell">
-            <label for="modification">Modification:</label>
-            <select name="modification" id="modification" class="form-select">
+            <label>Before parse</label>
+            <select id="before-parse-select" class="form-select">
                 <option value="0">None</option>
                 <option value="1">Before parse, header</option>
-                <option value="2">Before parse, row 2</option>
-                <option value="3">Math Modifier, col. 3</option>
-                <option value="4">Sort Modifier, col. 4</option>
-                <option value="5">Range Modifier, col. 1</option>
+                <option value="2">Before parse, remove oranges</option>
+            </select>
+        </div>
+        <div class="cell config-cell">
+            <label>Data modifier</label>
+            <select id="datamodifier-select" class="form-select">
+                <option value="0">None</option>
+                <option value="1">Math Modifier, sum</option>
+                <option value="2">Sort Modifier, Jane</option>
+                <option value="3">Range Modifier, John</option>
             </select>
         </div>
     </div>
@@ -31,7 +40,7 @@
     <div class="row">
         <div class="cell" id='description'>
             <p>This <strong>Google Sheets</strong> demo is based on a simple <em>Google Sheets</em> document that
-                contains data on fruit consumption amongst a small group of people. The demo showcases how to connect to
+                contains data on fruit consumption by person. The demo showcases how to connect to
                 <em>Google Sheets</em>, how to process the data using diffent approaches (<em>beforeParse</em>
                 and <em>DataModifiers</em>), and finally, how to visualize the downloaded data in a <em>Highcharts DataGrid</em>.
             </p>
