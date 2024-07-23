@@ -53,7 +53,7 @@ Highcharts.Point.prototype.highlight = function (event) {
 };
 
 /**
- * Synchronize zooming through the setExtremes event handler.
+ * Synchronize extremes (zooming) through the setExtremes event handler.
  */
 function syncExtremes(e) {
     const thisChart = this.chart;
@@ -75,6 +75,23 @@ function syncExtremes(e) {
     }
 }
 
+/**
+ * Resets chart zoom on selection event.
+ */
+function resetZoom(e) {
+    // Prevent feedback loop
+    if (e.resetSelection) {
+        return;
+    }
+
+    // Zoom out all other charts on selection
+    Highcharts.each(Highcharts.charts, chart => {
+        if (chart !== e.target) {
+            chart.zoomOut();
+        }
+    });
+}
+
 // Get the data. The contents of the data file can be viewed at
 Highcharts.ajax({
     url: 'https://www.highcharts.com/samples/data/activity.json',
@@ -83,7 +100,6 @@ Highcharts.ajax({
 
         activity = JSON.parse(activity);
         activity.datasets.forEach(function (dataset, i) {
-
             // Add X values
             dataset.data = Highcharts.map(dataset.data, function (val, j) {
                 return [activity.xData[j], val];
@@ -97,7 +113,13 @@ Highcharts.ajax({
                 chart: {
                     marginLeft: 40, // Keep all charts left aligned
                     spacingTop: 20,
-                    spacingBottom: 20
+                    spacingBottom: 20,
+                    zooming: {
+                        type: 'x'
+                    },
+                    events: {
+                        selection: resetZoom
+                    }
                 },
                 title: {
                     text: dataset.name,
