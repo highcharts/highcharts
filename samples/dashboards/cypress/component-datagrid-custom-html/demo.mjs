@@ -81,7 +81,7 @@ Dashboards.board('container', {
                 },
                 columns: {
                     'Vitamin A': {
-                        headFormat: '{id} (IU)'
+                        headerFormat: '{id} (IU)'
                     }
                 }
             }
