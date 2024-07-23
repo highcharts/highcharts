@@ -41,7 +41,7 @@ export type ColumnDistribution = 'full' | 'fixed';
 export type DataGridCellEventCallback = (this: DataGridCell) => void;
 
 /**
- * Returns a formatted call's string.
+ * Returns a formatted cell's string.
  */
 export type CellFormatterCallback = (this: DataGridCell) => string;
 
