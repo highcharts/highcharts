@@ -30,5 +30,14 @@ describe('DataGrid events.', () => {
     it('AfterSorting column event.', () => {
         cy.get('th[data-column-id="product"]').click();
         cy.get('#columnSorting').should('have.value', 'afterSorting');
+        cy.get('#headerClick').should('have.value', 'headerClick');
+    });
+
+    it('Resize column event.', () => {
+        cy.get('th[data-column-id="product"] > .highcharts-datagrid-col-resizer')
+            .trigger('mousedown')
+            .trigger('mousemove', { clientX: 300, clientY: 300 })
+            .trigger('mouseup');
+        cy.get('#columnResizing').should('have.value', 'columnResizing');
     });
 });
