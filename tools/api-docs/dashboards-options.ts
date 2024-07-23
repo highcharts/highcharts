@@ -29,10 +29,10 @@ import TSLib from '../libs/ts';
  * */
 
 
-const DATABASE = new Database('Highcharts Dashboards');
-
-
 const PRODUCT = 'dashboards';
+
+
+const DATABASE = new Database(PRODUCT);
 
 
 const REFERENCES: Record<string, true> = {};
@@ -49,8 +49,12 @@ async function addOption(
     parentNode: (Database.Node|undefined),
     codeInfo: TSLib.CodeInfo
 ): Promise<(Database.Node|undefined)> {
-
     const doclet = codeInfo.kind === 'Doclet' ? codeInfo : codeInfo.doclet;
+
+    if (doclet?.tags.internal) {
+        return void 0;
+    }
+
     const moreInfos: Array<TSLib.CodeInfo> = [];
 
     let name = (
@@ -70,12 +74,21 @@ async function addOption(
 
     REFERENCES[reference] = true;
 
-    if (
-        typeof name === 'string' &&
-        !name.includes('.') &&
-        parentNode
+    if (parentNode) {
+        if (
+            parentNode.name &&
+            typeof name === 'string' &&
+            !name.includes('.')
+        ) {
+            name = `${parentNode.name}.${name}`
+        }
+    } else if (
+        codeInfo.kind === 'Interface' &&
+        codeInfo.name.endsWith('Options')
     ) {
-        name = `${parentNode.name}.${name}`
+        // Create root interface name
+        name = name.substring(0, name.length - 7);
+        name = name ? name[0].toLowerCase() + name.substring(1) : name;
     }
 
     let node: (Database.Node|undefined) = (
@@ -87,7 +100,8 @@ async function addOption(
         meta: {
             file: codeInfo.meta.file
         },
-        name
+        name,
+        since: parentNode?.since
     };
     let resolved: TSLib.CodeInfo;
     let value: TSLib.Value;
@@ -136,21 +150,28 @@ async function addOption(
             break;
 
         case 'Interface':
-            node = void 0;
             if (codeInfo.name.endsWith('Options')) {
                 TSLib.autoExtendInfo(codeInfo);
-                if (doclet && parentNode) {
-                    value = TSLib.extractTagText(doclet, 'description', true);
-                    if (typeof value === 'string') {
-                        parentNode.description = (
-                            parentNode.description ?
-                                `${parentNode.description}\n\n${value}` :
-                                value
-                        );
-                        DATABASE.setNode(parentNode);
+                if (doclet) {
+                    if (parentNode) {
+                        node = void 0;
+                        value =
+                            TSLib.extractTagText(doclet, 'description', true);
+                        if (typeof value === 'string') {
+                            parentNode.description = (
+                                parentNode.description ?
+                                    `${parentNode.description}\n\n${value}` :
+                                    value
+                            );
+                            DATABASE.setNode(parentNode);
+                        }
                     }
+                } else {
+                    node = void 0;
                 }
                 moreInfos.push(...codeInfo.members);
+            } else {
+                node = void 0;
             }
             break;
 
@@ -223,6 +244,7 @@ async function addOption(
     }
 
     if (node) {
+
         if (doclet) {
             for (const tag of Object.keys(doclet.tags)) {
                 switch (tag) {
@@ -238,6 +260,12 @@ async function addOption(
                         break;
 
                     default:
+                        if (tag === 'deprecated' || tag === 'since') {
+                            node[tag] = parseFloat(
+                                TSLib.extractTagText(doclet, tag, PRODUCT) ||
+                                '1.0.0'
+                            );
+                        }
                         node.doclet[tag] = doclet.tags[tag].slice();
                         break;
 
@@ -245,12 +273,12 @@ async function addOption(
             }
         }
 
-        if (node.name) {
-            console.log(node.name);
+        if (typeof node.name === 'string') {
             node = await DATABASE.setNode(node);
         } else {
             node = void 0;
         }
+
     }
 
     if (moreInfos.length) {

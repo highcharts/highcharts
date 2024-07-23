@@ -29,10 +29,12 @@ import FSLib from '../libs/fs';
 
 
 interface Data {
+    deprecated: Array<(null|number)>;
     description: Array<string>;
     doclet: Array<string>;
     meta: Array<string>;
     name: Array<string>;
+    since: Array<number>;
 }
 
 
@@ -60,6 +62,40 @@ const VALUE_ANTI_PATTERN = /[^\w\-\n\r\\\/\[\] .:,;?!=+*(){}<>'"`^#$%&@]+/gsu;
  *  Functions
  *
  * */
+
+
+function getNodeAt(
+    data: Data,
+    index: number,
+    alternativeName?: string
+): Database.Node {
+    return {
+        name: (alternativeName || data.name[index]),
+        description: data.description[index],
+        since: data.since[index],
+        deprecated: data.deprecated[index],
+        doclet: JSON.parse(data.doclet[index]),
+        meta: JSON.parse(data.meta[index])
+    };
+}
+
+
+function partOfVersion(
+    node: Database.Node,
+    version: number
+): boolean {
+    const majorVersion = Math.floor(version);
+
+    return (
+        // Skip newer options.
+        node.since <= version &&
+        // Include only deprecations from last major version:
+        (
+            !node.deprecated ||
+            node.deprecated >= majorVersion - 1
+        )
+    );
+}
 
 
 function sanitizeKey(
@@ -108,7 +144,7 @@ export class Database {
         storageFolder: string = process.cwd()
     ) {
         this.cache = {};
-        this.namePrefix = `${product}.`;
+        this.namePrefix = `${product}/`;
         this.product = product;
         this.storageFolder = storageFolder;
     }
@@ -148,7 +184,8 @@ export class Database {
 
 
     public async getNode(
-        nodeName: string
+        nodeName: string,
+        version?: number
     ): Promise<(Database.Node|undefined)> {
         const data = await this.getTreeData();
         const nodePath = this.namePrefix + nodeName;
@@ -159,25 +196,29 @@ export class Database {
             return void 0;
         }
 
-        return {
-            name: nodeName,
-            description: data.description[index],
-            doclet: JSON.parse(data.doclet[index]),
-            meta: JSON.parse(data.meta[index])
-        };
+        const node = getNodeAt(data, index, nodeName);
+
+        if (version && !partOfVersion(node, version)) {
+            return void 0;
+        }
+
+        return node;
     }
 
 
     public async getNodeChildren(
-        nodeName: string
+        nodeName: string,
+        version?: number
     ): Promise<Array<Database.Node>> {
         const children: Array<Database.Node> = [];
         const data = await this.getTreeData();
         const nodePath = this.namePrefix + nodeName;
-
-        let indexOffset = nodePath.length;
+        const majorVersion = Math.floor(version);
+        const prefixLength = this.namePrefix.length;
 
         let index = -1;
+        let indexOffset = nodePath.length;
+        let node: Database.Node;
 
         for (const name of data.name) {
 
@@ -191,12 +232,13 @@ export class Database {
                 continue;
             }
 
-            children.push({
-                name: nodeName,
-                description: data.description[index],
-                doclet: JSON.parse(data.doclet[index]),
-                meta: JSON.parse(data.meta[index])
-            });
+            node = getNodeAt(data, index, name.substring(prefixLength));
+
+            if (version && !partOfVersion(node, version)) {
+                continue;
+            }
+
+            children.push(node);
 
         }
 
@@ -217,10 +259,12 @@ export class Database {
 
         if (!FSLib.isFile(filePath)) {
             await this.saveTreeData({
+                deprecated: [],
                 description: [],
                 doclet: [],
                 meta: [],
-                name: []
+                name: [],
+                since: []
             });
         }
 
@@ -260,9 +304,11 @@ export class Database {
         }
 
         data.doclet[index] = JSON.stringify(node.doclet);
+        data.deprecated[index] = node.deprecated;
         data.description[index] = node.description;
         data.meta[index] = JSON.stringify(node.meta);
         data.name[index] = nodePath;
+        data.since[index] = node.since;
 
         await this.saveTreeData(data);
 
@@ -310,6 +356,8 @@ export namespace Database {
     export interface Node {
         name: string;
         description: string;
+        since: number;
+        deprecated?: number;
         doclet: Doclet;
         meta: Meta;
     }
