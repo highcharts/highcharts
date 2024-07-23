@@ -30,7 +30,6 @@ import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
-import ComponentType from '../ComponentType';
 const {
     merge,
     diffObjects
