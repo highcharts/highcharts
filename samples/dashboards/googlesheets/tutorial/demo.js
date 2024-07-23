@@ -1,7 +1,6 @@
 const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
 const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 
-const board = setupBoard();
 
 /* Helper functions */
 function sheetTitle(n = 1) {
@@ -13,7 +12,6 @@ function sheetTitle(n = 1) {
 
 /* Modification implementations */
 function bfpModifyHeader(data) {
-    console.log('bfpModifyHeader', data);
     data.forEach(row => {
         row[0] += '*';
     });
@@ -24,67 +22,75 @@ function bfpModifyHeader(data) {
 }
 
 function bfpModifyData(data) {
-    console.log('bfpModifyData', data);
-
-    // Supply Jane with additional pears
-    data[2][3] += 5;
-
-    // Deprive Joe of his pears
-    data[2][4] = 0;
+    // Derive everyone of their oranges
+    data[1][2] = 0;
+    data[2][2] = 0;
+    data[3][2] = 0;
 
     return data;
 }
 
+let modSelection = 0;
+
+
 /* Create the Dashboard */
-async function setupBoard() {
-    const board = await Dashboards.board('container', {
-        dataPool: {
-            connectors: [{
-                id: 'conn-orig',
-                type: 'GoogleSheets',
-                options: {
-                    googleAPIKey: googleApiKey,
-                    googleSpreadsheetKey: googleSpreadsheetKey
-                }
-            }, {
-                id: 'conn-mod',
-                type: 'GoogleSheets',
-                options: {
-                    googleAPIKey: googleApiKey,
-                    googleSpreadsheetKey: googleSpreadsheetKey,
-                    beforeParse: null
-                }
-            }]
-        },
-        components: [{
-            renderTo: 'orig-sheet-cell',
-            connector: {
-                id: 'conn-orig'
-            },
-            type: 'DataGrid',
-            title: sheetTitle().original,
-            dataGridOptions: {
-                editable: false
+const board = Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'conn-orig',
+            type: 'GoogleSheets',
+            options: {
+                googleAPIKey: googleApiKey,
+                googleSpreadsheetKey: googleSpreadsheetKey
             }
         }, {
-            renderTo: 'mod-sheet-cell',
-            connector: {
-                id: 'conn-mod'
-            },
-            type: 'DataGrid',
-            title: sheetTitle().modified,
-            dataGridOptions: {
-                editable: false
+            id: 'conn-mod',
+            type: 'GoogleSheets',
+            options: {
+                googleAPIKey: googleApiKey,
+                googleSpreadsheetKey: googleSpreadsheetKey,
+                beforeParse: data => {
+                    switch (modSelection) {
+                    case 1:
+                        return bfpModifyHeader(data);
+                    case 2:
+                        return bfpModifyData(data);
+                    default:
+                        return data;
+                    }
+                }
             }
         }]
-    });
-    return board;
-}
+    },
+    components: [{
+        type: 'DataGrid',
+        renderTo: 'orig-sheet-cell',
+        connector: {
+            id: 'conn-orig'
+        },
+        title: sheetTitle().original,
+        dataGridOptions: {
+            editable: false
+        }
+    }, {
+        type: 'DataGrid',
+        renderTo: 'mod-sheet-cell',
+        connector: {
+            id: 'conn-mod'
+        },
+        title: sheetTitle().modified,
+        dataGridOptions: {
+            editable: false
+        }
+    }]
+});
 
 const modification = document.getElementById('modification');
 const sheet = document.getElementById('sheet');
 
 sheet.addEventListener('input', async event => {
+    console.log('Sheet event:', event);
+
     // The sheet selection has changed
     const worksheet = Number(event.target.value) + 1;
 
@@ -117,23 +123,14 @@ sheet.addEventListener('input', async event => {
 const bfpExecuter = [null, bfpModifyHeader, bfpModifyData];
 
 modification.addEventListener('input', async event => {
+    console.log('Mod event:', event);
+
     const i = Number(event.target.value);
     const conn = board.dataPool.connectors['conn-mod'];
 
     if (i < bfpExecuter.length) {
-        const modMethod = bfpExecuter[i];
-
+        modSelection = i;
         // Update the modified sheet component
-        if (modMethod) {
-            // Update the original sheet component
-            conn.options.beforeParse = modMethod;
-            await conn.load();
-        }
-        const comp = board.getComponentByCellId('mod-sheet-cell');
-        await comp.update({
-            title: {
-                text: 'title.modified'
-            }
-        });
+        await conn.load();
     }
 });
