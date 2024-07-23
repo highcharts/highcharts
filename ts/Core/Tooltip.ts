@@ -1128,16 +1128,6 @@ class Tooltip {
                         ttBelow: point.ttBelow,
                         h: anchor[2] || 0
                     } as any);
-
-                    if (this.outside && label.x && label.width) {
-                        const { x, width } = label,
-                            pixelsOutOfBounds = (
-                                (x + width) - doc.documentElement.clientWidth
-                            );
-                        if (pixelsOutOfBounds > 0) {
-                            label.x -= pixelsOutOfBounds;
-                        }
-                    }
                 } else {
                     tooltip.hide();
                     return;
