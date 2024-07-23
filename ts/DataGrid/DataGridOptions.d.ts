@@ -211,11 +211,6 @@ export interface ColumnOptions {
      * @default true
      */
     sorting?: boolean;
-
-    /**
-     * Events related to column. 
-     */
-    events?: DataGridCellEvents
 }
 
 /**
