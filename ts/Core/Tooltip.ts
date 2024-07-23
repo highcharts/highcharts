@@ -519,20 +519,54 @@ class Tooltip {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside) {
-                const label = this.label;
+                const label = this.label,
+                    setContainerProp = (
+                        styleProp: any,
+                        value: number
+                    ): void => {
+                        if (container) {
+                            container.style[styleProp] = `${value}px`;
+                        }
+                    };
                 [label.xSetter, label.ySetter].forEach((
                     setter: (value: number) => void,
                     i: number
                 ): void => {
-                    label[i ? 'ySetter' : 'xSetter'] = (
-                        value: number
-                    ): void => {
-                        setter.call(label, tooltip.distance);
-                        label[i ? 'y' : 'x'] = value;
-                        if (container) {
-                            container.style[i ? 'top' : 'left'] = `${value}px`;
-                        }
-                    };
+                    if (i) {
+                        label.ySetter = (
+                            value: number
+                        ): void => {
+                            setter.call(label, tooltip.distance);
+
+                            label.y = value;
+
+                            setContainerProp('top', value);
+                        };
+                    } else {
+                        label.xSetter = (
+                            value: number
+                        ): void => {
+                            setter.call(label, tooltip.distance);
+
+                            const { translateX = 0, width = 0 } = label,
+                                pixelsTooMuch = (
+                                    (
+                                        translateX +
+                                        width +
+                                        value
+                                    ) -
+                                    doc.documentElement.clientWidth
+                                );
+
+                            if (pixelsTooMuch > 0) {
+                                value -= pixelsTooMuch;
+                            }
+
+                            label.x = value;
+
+                            setContainerProp('left', value);
+                        };
+                    }
                 });
             }
 
@@ -939,18 +973,11 @@ class Tooltip {
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
         const tooltip = this,
-            chartWidth = tooltip.chart.chartWidth,
-            label = tooltip.label,
-            endPos = label && (label.x || 0) + (label.width || 0) || 0,
             animation = animObject(
                 !tooltip.isHidden && tooltip.options.animation
             ),
             skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
             attr: SVGAttributes = { x, y };
-
-        if (label && label.x && endPos > chartWidth) {
-            label.x = label.x - (endPos - chartWidth);
-        }
 
         if (!skipAnchor) {
             attr.anchorX = anchorX;
@@ -1101,6 +1128,16 @@ class Tooltip {
                         ttBelow: point.ttBelow,
                         h: anchor[2] || 0
                     } as any);
+
+                    if (this.outside && label.x && label.width) {
+                        const { x, width } = label,
+                            pixelsOutOfBounds = (
+                                (x + width) - doc.documentElement.clientWidth
+                            );
+                        if (pixelsOutOfBounds > 0) {
+                            label.x -= pixelsOutOfBounds;
+                        }
+                    }
                 } else {
                     tooltip.hide();
                     return;
