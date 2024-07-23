@@ -1,3 +1,4 @@
+// Credentials
 const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
 const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 
@@ -9,7 +10,7 @@ function sheetTitle(n = 1) {
     };
 }
 
-/* Modification implementations */
+/* Various 'beforeParse' functions */
 function bfpVoid(data) {
     return data;
 }
@@ -83,13 +84,14 @@ const board = Dashboards.board('container', {
 });
 
 
-//
-// Worksheet selection processing
-//
+// Event handlers for configuration choices (dropdowns)
 const worksheetSelect = document.getElementById('worksheet-select');
 const beforeParseSelect = document.getElementById('before-parse-select');
 const datamodifierSelect = document.getElementById('datamodifier-select');
 
+//
+// Worksheet selection processing
+//
 worksheetSelect.addEventListener('input', async e => {
     // The sheet selection has changed
     const worksheet = Number(e.target.value) + 1;
@@ -125,13 +127,13 @@ worksheetSelect.addEventListener('input', async e => {
 // 'beforeParse' processing
 //
 beforeParseSelect.addEventListener('input', async e => {
-    const value = e.target.value;
-    if (value >= beforeParseFunction.length) {
+    const idx = e.target.value;
+    if (idx >= beforeParseFunction.length) {
         return;
     }
 
     // Used in the 'beforeParse' callback of the modified sheet connector
-    beforeParseSelector = value;
+    beforeParseSelector = idx;
 
     // Update the modified sheet component
     await board.dataPool.connectors['conn-mod'].load();
@@ -174,15 +176,15 @@ const rangeModifier = new RangeModifier({
 const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
 
 datamodifierSelect.addEventListener('input', async e => {
-    const value = e.target.value;
-    if (value >= dataModifiers.length) {
+    const idx = e.target.value;
+    if (idx >= dataModifiers.length) {
         return;
     }
-    await applyDataModifier(value);
+    await applyDataModifier(idx);
 });
 
 
-async function applyDataModifier(value) {
+async function applyDataModifier(idx) {
     const connector = board.dataPool.connectors['conn-mod'];
-    await connector.table.setModifier(dataModifiers[value]);
+    await connector.table.setModifier(dataModifiers[idx]);
 }
