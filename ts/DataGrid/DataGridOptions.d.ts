@@ -244,7 +244,17 @@ export interface DataGridEvents {
     /**
      * Events related to the cells.
      */
-    cell: DataGridCellEvents;
+    cell?: DataGridCellEvents;
+
+    /**
+     * Events related to column. 
+     */
+    column?: DataGridColumnEvents
+
+    /**
+     * Events related to column. 
+     */
+    header?: DataGridHeaderEvents
 }
 
 /**
@@ -270,12 +280,27 @@ export interface DataGridCellEvents {
      * Callback function to be called after editing of cell value.
      */
     afterEdit?: DataGridCellEventCallback;
+}
 
+
+export interface DataGridColumnEvents {
     /**
      * Callback function to be called when the column is sorted
      * (for instance, after clicking on header).
      */
     afterSorting?: DataGridColumnEventCallback;
+
+    /**
+     * Callback function to be called when the column is resized.
+     */
+    resize?: DataGridColumnEventCallback;
+}
+
+export interface DataGridHeaderEvents {
+    /**
+     * Callback function to be called when the header is clicked.
+     */
+    click?: DataGridColumnEventCallback;
 }
 
 /* *

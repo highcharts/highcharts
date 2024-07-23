@@ -196,7 +196,7 @@ class DataGridCell {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow(this.row.index);
         dataGrid.hoverColumn(this.column.id);
-        dataGrid.options?.events?.cell.mouseOver?.call(this);
+        dataGrid.options?.events?.cell?.mouseOver?.call(this);
         fireEvent(dataGrid, 'cellMouseOver', {
             target: this
         });
@@ -209,7 +209,7 @@ class DataGridCell {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow();
         dataGrid.hoverColumn();
-        dataGrid.options?.events?.cell.mouseOut?.call(this);
+        dataGrid.options?.events?.cell?.mouseOut?.call(this);
         fireEvent(dataGrid, 'cellMouseOut', {
             target: this
         });
@@ -226,7 +226,7 @@ class DataGridCell {
             vp.cellEditing.startEditing(this);
         }
 
-        dataGrid.options?.events?.cell.click?.call(this);
+        dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {
             target: this
         });

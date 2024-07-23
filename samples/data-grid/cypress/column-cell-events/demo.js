@@ -33,9 +33,19 @@ DataGrid.dataGrid('container', {
             },
             afterEdit: function () {
                 doc.getElementById('cellAfterEdit').value = 'cellAfterEdit';
-            },
+            }
+        },
+        column: {
             afterSorting: function () {
                 doc.getElementById('columnSorting').value = 'afterSorting';
+            },
+            resize: function () {
+                doc.getElementById('columnResizing').value = 'columnResizing';
+            }
+        },
+        header: {
+            click: function () {
+                doc.getElementById('headerClick').value = 'headerClick';
             }
         }
     }
