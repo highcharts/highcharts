@@ -90,6 +90,11 @@ Dashboards.board('container', {
                     columns: {
                         editable: true
                     }
+                },
+                columns: {
+                    USD: {
+                        editable: false
+                    }
                 }
             },
             sync: {
