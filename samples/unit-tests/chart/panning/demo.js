@@ -417,6 +417,29 @@ QUnit.test(
             chart.xAxis[0].min,
             'Chart should pan horizontally.'
         );
+
+        chart.update({
+            xAxis: [{
+                overscroll: 864000000
+            }]
+        });
+
+        const min = chart.xAxis[0].min,
+            max = chart.xAxis[0].max;
+
+        controller.pan([100, 100], [100, 200]);
+        assert.equal(
+            min,
+            chart.xAxis[0].min,
+            'xAxis extremes should not change with vertical panning'
+        );
+
+        assert.equal(
+            max,
+            chart.xAxis[0].max,
+            'xAxis extremes should not change with vertical panning'
+        );
+
     }
 );
 

@@ -3607,18 +3607,22 @@ class Chart {
             chartOptions.panning = panningOptions;
         }
 
-        fireEvent(this, 'pan', { originalEvent: event }, (): void => {
-            chart.transform({
-                axes,
-                event,
-                to: {
-                    x: event.chartX - (chart.mouseDownX || 0),
-                    y: event.chartY - (chart.mouseDownY || 0)
-                },
-                trigger: 'pan'
+        fireEvent(
+            this,
+            'pan',
+            { originalEvent: { ...event, axes } },
+            (): void => {
+                chart.transform({
+                    axes,
+                    event,
+                    to: {
+                        x: event.chartX - (chart.mouseDownX || 0),
+                        y: event.chartY - (chart.mouseDownY || 0)
+                    },
+                    trigger: 'pan'
+                });
+                css(chart.container, { cursor: 'move' });
             });
-            css(chart.container, { cursor: 'move' });
-        });
     }
 
     /**
