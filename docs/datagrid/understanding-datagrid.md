@@ -35,7 +35,7 @@ For more information on `caption` options see the [API reference]().
 Head
 ---------
 
-The [table head](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHead.DataGridTableHead-1) is a special, always top row, containing the column IDs.
+The [table head](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHead.DataGridTableHead-1) is a special row, always on the top, containing the column IDs.
 Cells in the `head` are called `headers`. Their content can be edited using the
 [`headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 

@@ -46,8 +46,9 @@ export type DataGridCellEventCallback = (this: DataGridCell) => void;
  */
 export type DataGridColumnEventCallback = (this: DataGridColumn) => void;
 
+
 /**
- * Returns a formatted call's string.
+ * Returns a formatted cell's string.
  */
 export type CellFormatterCallback = (this: DataGridCell) => string;
 
