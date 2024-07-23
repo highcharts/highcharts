@@ -17,12 +17,7 @@ DataGrid.dataGrid('container', {
     },
     columns: {
         product: {
-            editable: true,
-            events: {
-                afterSorting: function () {
-                    doc.getElementById('columnSorting').value = 'afterSorting';
-                }
-            }
+            editable: true
         }
     },
     events: {
@@ -38,6 +33,9 @@ DataGrid.dataGrid('container', {
             },
             afterEdit: function () {
                 doc.getElementById('cellAfterEdit').value = 'cellAfterEdit';
+            },
+            afterSorting: function () {
+                doc.getElementById('columnSorting').value = 'afterSorting';
             }
         }
     }

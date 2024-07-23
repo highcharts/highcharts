@@ -215,7 +215,7 @@ export interface ColumnOptions {
     /**
      * Events related to column. 
      */
-    events?: DataGridColumnEvents
+    events?: DataGridCellEvents
 }
 
 /**
@@ -275,10 +275,7 @@ export interface DataGridCellEvents {
      * Callback function to be called after editing of cell value.
      */
     afterEdit?: DataGridCellEventCallback;
-}
 
-
-export interface DataGridColumnEvents {
     /**
      * Callback function to be called when the column is sorted
      * (for instance, after clicking on header).
