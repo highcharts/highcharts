@@ -209,6 +209,55 @@ function cloneTreeNode(sourceOption, fullname) {
 
 
 /**
+ * Creates or retrieves an option with the given name.
+ *
+ * @param {Options} tree
+ * Tree root to walk on.
+ *
+ * @param {string} nodePath
+ * Node path to retrieve.
+ *
+ * @return {Option}
+ * Created or retrieved option.
+ */
+function createTreeNode(
+    tree,
+    nodePath
+) {
+    /** @type {Option} */
+    let node = {
+        doclet: {},
+        meta: {},
+        children: tree
+    };
+
+    let currentName = '';
+
+    for (const name of nodePath.split('.')) {
+
+        currentName = (currentName ? `${currentName}.${name}` : name);
+        node = (
+            node.children[name] ||
+            {
+                doclet: {},
+                meta: {
+                    fullname: currentName,
+                    name
+                }
+            }
+        );
+
+        if (!node.children) {
+            node.children = [];
+        }
+
+    }
+
+    return node;
+}
+
+
+/**
  * Extend target option with information from source option.
  *
  * @param {Option} sourceOption
@@ -366,9 +415,9 @@ function getTreeNode(
         nodePath = 'plotOptions.series';
     }
 
-    /** @type {TreeNodeDoclet} */
+    /** @type {OptionDoclet} */
     let doclet;
-    /** @type {TreeNode} */
+    /** @type {Option} */
     let node = {
         doclet: {},
         meta: {},
@@ -517,6 +566,7 @@ function toJSONString(
 
 
 module.exports = {
+    createTreeNode,
     extendTreeNode,
     getTreeNode,
     loadOptionsTree,
