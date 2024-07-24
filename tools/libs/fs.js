@@ -426,6 +426,7 @@ function isFile(
  * Last path item.
  */
 function lastPath(
+    path
 ) {
     return (
         Path.sep !== Path.posix.sep &&
