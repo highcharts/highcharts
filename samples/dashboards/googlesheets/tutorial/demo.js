@@ -19,8 +19,8 @@ function bfpModifyHeader(data) {
     data.forEach(col => {
         col[0] = col[0].toUpperCase();
     });
-    // Special header for the first column
-    data[0][0] = '*';
+    // Header for the first column
+    data[0][0] = 'modified';
 
     return data;
 }
@@ -38,8 +38,7 @@ function bfpModifyData(data) {
 // The function is selected by the user in the dropdown in demo.html
 let beforeParseSelector = 0;
 
-// 'beforeParse' lookup. The order must be the same as in the
-// dropdown in demo.html.
+// 'beforeParse' lookup. The order must reflect the dropdown in demo.html.
 const beforeParseFunction = [bfpNone, bfpModifyHeader, bfpModifyData];
 
 
@@ -84,7 +83,12 @@ const board = Dashboards.board('container', {
         },
         title: sheetTitle().modified,
         dataGridOptions: {
-            editable: false
+            editable: false,
+            columns: {
+                modified: {
+                    headerFormat: ''
+                }
+            }
         }
     }]
 });
@@ -179,7 +183,7 @@ const rangeModifier = new RangeModifier({
     }]
 });
 
-// Modifier lookup, the order must be the same as in the dropdown in demo.html
+// Modifier lookup, the order must reflect the dropdown in demo.html
 const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
 
 async function applyDataModifier(idx) {
