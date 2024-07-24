@@ -248,12 +248,12 @@ export interface DataGridEvents {
     cell?: DataGridCellEvents;
 
     /**
-     * Events related to column. 
+     * Events related to column.
      */
     column?: DataGridColumnEvents
 
     /**
-     * Events related to column. 
+     * Events related to column.
      */
     header?: DataGridHeaderEvents
 }

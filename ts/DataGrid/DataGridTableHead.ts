@@ -133,9 +133,9 @@ class DataGridTableHead {
                 column.headerElement &&
                 dataGrid.options?.events?.header?.click
             ) {
-                const onHeaderClick = (e: MouseEvent): void => {
+                const onHeaderClick = (): void => {
                     dataGrid.options?.events?.header?.click?.call(
-                        this.columns[i] // shorter then clousure
+                        this.columns[i] // Shorter then closure
                     );
                 };
 

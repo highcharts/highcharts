@@ -26,8 +26,6 @@
 import DataGridCell from '../DataGridCell.js';
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
-import Utils from '../../Core/Utilities.js';;
-const { fireEvent } = Utils;
 
 const { makeHTMLElement } = DGUtils;
 
