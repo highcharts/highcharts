@@ -234,23 +234,18 @@ function createTreeNode(
     let currentName = '';
 
     for (const name of nodePath.split('.')) {
-
         currentName = (currentName ? `${currentName}.${name}` : name);
-        node = (
+        node = node.children[name] = (
             node.children[name] ||
             {
                 doclet: {},
                 meta: {
                     fullname: currentName,
                     name
-                }
+                },
+                children: {}
             }
         );
-
-        if (!node.children) {
-            node.children = [];
-        }
-
     }
 
     return node;
@@ -596,6 +591,7 @@ module.exports = {
  * @typedef OptionDoclet
  * @property {string} [declare]
  * @property {boolean|null|number|string} [defaultvalue]
+ * @property {string} [deprecated]
  * @property {string} [description]
  * @property {Array<string>} [exclude]
  * @property {string} [extends]
