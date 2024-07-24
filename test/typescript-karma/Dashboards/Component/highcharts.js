@@ -9,7 +9,7 @@ Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 const registeredEvents = [];
 const eventTypes = [
@@ -761,7 +761,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
 });
 
 // DataGrid1 Tests to update
-skip('Crossfilter with string values', async function (assert) {
+test('Crossfilter with string values', async function (assert) {
     assert.timeout(1000);
 
     const parentElement = document.getElementById('container');

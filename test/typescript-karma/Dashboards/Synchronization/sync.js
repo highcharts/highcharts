@@ -10,11 +10,11 @@ Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 
 // DataGrid1 Tests to update
-skip('Sync events leak in updated components', async function (assert) {
+test('Sync events leak in updated components', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;

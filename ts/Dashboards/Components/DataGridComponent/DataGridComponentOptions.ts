@@ -20,7 +20,7 @@
  *
  * */
 
-import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
+import type { DataGridOptions } from '../../Plugins/DataGridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -67,7 +67,7 @@ export interface Options extends Component.Options {
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: BaseDataGridOptions;
+    dataGridOptions?: DataGridOptions;
 
     /**
      * The set of options like `dataGridClassName` and `dataGridID`.

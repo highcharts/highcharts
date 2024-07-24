@@ -29,6 +29,7 @@ import Component from '../Component.js';
 import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
+import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
     diffObjects
@@ -212,6 +213,25 @@ class DataGridComponent extends Component {
         });
     }
 
+    public override getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
+        const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
+        let options: Partial<Options> = {
+            cell: '',
+            type: 'DataGrid'
+        };
+
+        if (connectorsIds.length) {
+            options = {
+                ...options,
+                connector: {
+                    id: connectorsIds[0]
+                }
+            };
+        }
+
+        return options;
+    }
+
     /**
      * Get the DataGrid component's options.
      *
@@ -237,6 +257,7 @@ class DataGridComponent extends Component {
             type: 'DataGrid'
         };
     }
+
 
     /**
      * Destroys the data grid component.
