@@ -70,7 +70,7 @@ function getNodeAt(
     alternativeName?: string
 ): Database.Node {
     return {
-        name: (alternativeName || data.name[index]),
+        name: (alternativeName ?? data.name[index]),
         description: data.description[index],
         since: data.since[index],
         deprecated: data.deprecated[index],
@@ -176,6 +176,36 @@ export class Database {
      * */
 
 
+    private async getData(): Promise<Data> {
+        const name = DATABASE_NAME;
+
+        let data = this.cache[name];
+
+        if (data) {
+            return data;
+        }
+
+        const filePath = this.getFilePath(name);
+
+        if (!FSLib.isFile(filePath)) {
+            await this.saveData({
+                deprecated: [],
+                description: [],
+                doclet: [],
+                meta: [],
+                name: [],
+                since: []
+            });
+        }
+
+        data = JSON.parse(await FS.readFile(filePath, 'utf8'));
+
+        this.cache[name] = data;
+
+        return data;
+    }
+
+
     private getFilePath(
         name: string
     ) {
@@ -187,7 +217,7 @@ export class Database {
         nodeName: string,
         version?: number
     ): Promise<(Database.Node|undefined)> {
-        const data = await this.getTreeData();
+        const data = await this.getData();
         const nodePath = this.namePrefix + nodeName;
 
         let index = data.name.indexOf(nodePath);
@@ -211,13 +241,12 @@ export class Database {
         version?: number
     ): Promise<Array<Database.Node>> {
         const children: Array<Database.Node> = [];
-        const data = await this.getTreeData();
+        const data = await this.getData();
         const nodePath = this.namePrefix + nodeName;
-        const majorVersion = Math.floor(version);
+        const indexOffset = nodePath.length;
         const prefixLength = this.namePrefix.length;
 
         let index = -1;
-        let indexOffset = nodePath.length;
         let node: Database.Node;
 
         for (const name of data.name) {
@@ -242,41 +271,19 @@ export class Database {
 
         }
 
+        children.sort((a, b) => (
+            a.name === b.name ?
+                0 :
+                a.name < b.name ?
+                    -1 :
+                    1
+        ));
+
         return children;
     }
 
 
-    private async getTreeData(): Promise<Data> {
-        const name = DATABASE_NAME;
-
-        let data = this.cache[name];
-
-        if (data) {
-            return data;
-        }
-
-        const filePath = this.getFilePath(name);
-
-        if (!FSLib.isFile(filePath)) {
-            await this.saveTreeData({
-                deprecated: [],
-                description: [],
-                doclet: [],
-                meta: [],
-                name: [],
-                since: []
-            });
-        }
-
-        data = JSON.parse(await FS.readFile(filePath, 'utf8'));
-
-        this.cache[name] = data;
-
-        return data;
-    }
-
-
-    private async saveTreeData(
+    private async saveData(
         data: Data
     ): Promise<Data> {
         const name = DATABASE_NAME;
@@ -294,7 +301,7 @@ export class Database {
     public async setNode(
         node: Database.Node
     ): Promise<Database.Node> {
-        const data = await this.getTreeData();
+        const data = await this.getData();
         const nodePath = this.namePrefix + node.name;
 
         let index = data.name.indexOf(nodePath);
@@ -310,7 +317,7 @@ export class Database {
         data.name[index] = nodePath;
         data.since[index] = node.since;
 
-        await this.saveTreeData(data);
+        await this.saveData(data);
 
         return node;
     }
