@@ -68,7 +68,7 @@ function getNodeAt(
     data: Data,
     index: number,
     alternativeName?: string
-): Database.Node {
+): Database.Item {
     return {
         name: (alternativeName ?? data.name[index]),
         description: data.description[index],
@@ -81,7 +81,7 @@ function getNodeAt(
 
 
 function partOfVersion(
-    node: Database.Node,
+    node: Database.Item,
     version: number
 ): boolean {
     const majorVersion = Math.floor(version);
@@ -176,9 +176,9 @@ export class Database {
      * */
 
 
-    private async getData(): Promise<Data> {
-        const name = DATABASE_NAME;
-
+    private async getData(
+        name: string = DATABASE_NAME
+    ): Promise<Data> {
         let data = this.cache[name];
 
         if (data) {
@@ -213,12 +213,12 @@ export class Database {
     }
 
 
-    public async getNode(
-        nodeName: string,
+    public async getItem(
+        itemName: string,
         version?: number
-    ): Promise<(Database.Node|undefined)> {
+    ): Promise<(Database.Item|undefined)> {
         const data = await this.getData();
-        const nodePath = this.namePrefix + nodeName;
+        const nodePath = this.namePrefix + itemName;
 
         let index = data.name.indexOf(nodePath);
 
@@ -226,7 +226,7 @@ export class Database {
             return void 0;
         }
 
-        const node = getNodeAt(data, index, nodeName);
+        const node = getNodeAt(data, index, itemName);
 
         if (version && !partOfVersion(node, version)) {
             return void 0;
@@ -236,18 +236,19 @@ export class Database {
     }
 
 
-    public async getNodeChildren(
-        nodeName: string,
-        version?: number
-    ): Promise<Array<Database.Node>> {
-        const children: Array<Database.Node> = [];
+    public async getItemChildren(
+        itemName: string,
+        version?: number,
+        all?: boolean
+    ): Promise<Array<Database.Item>> {
+        const children: Array<Database.Item> = [];
         const data = await this.getData();
-        const nodePath = this.namePrefix + nodeName;
+        const nodePath = this.namePrefix + itemName;
         const indexOffset = nodePath.length;
         const prefixLength = this.namePrefix.length;
 
         let index = -1;
-        let node: Database.Node;
+        let node: Database.Item;
 
         for (const name of data.name) {
 
@@ -255,8 +256,9 @@ export class Database {
 
             if (
                 !name.startsWith(nodePath) ||
+                name === nodePath ||
                 // Skip children's children
-                name.indexOf('.', indexOffset) !== -1
+                (!all && name.indexOf('.', indexOffset) !== -1)
             ) {
                 continue;
             }
@@ -298,11 +300,11 @@ export class Database {
     }
 
 
-    public async setNode(
-        node: Database.Node
-    ): Promise<Database.Node> {
+    public async setItem(
+        item: Database.Item
+    ): Promise<Database.Item> {
         const data = await this.getData();
-        const nodePath = this.namePrefix + node.name;
+        const nodePath = this.namePrefix + item.name;
 
         let index = data.name.indexOf(nodePath);
 
@@ -310,16 +312,16 @@ export class Database {
             index = data.name.length;
         }
 
-        data.doclet[index] = JSON.stringify(node.doclet);
-        data.deprecated[index] = node.deprecated;
-        data.description[index] = node.description;
-        data.meta[index] = JSON.stringify(node.meta);
+        data.doclet[index] = JSON.stringify(item.doclet);
+        data.deprecated[index] = item.deprecated;
+        data.description[index] = item.description;
+        data.meta[index] = JSON.stringify(item.meta);
         data.name[index] = nodePath;
-        data.since[index] = node.since;
+        data.since[index] = item.since;
 
         await this.saveData(data);
 
-        return node;
+        return item;
     }
 
 
@@ -360,7 +362,7 @@ export namespace Database {
     }
 
 
-    export interface Node {
+    export interface Item {
         name: string;
         description: string;
         since: number;
