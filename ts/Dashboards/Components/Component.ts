@@ -534,6 +534,37 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
+        if (height) {
+            // Get offset for border, padding
+            const pad =
+                getPaddings(this.element).y + getMargins(this.element).y;
+            this.element.style.height = 'calc(100% - ' + pad + 'px)';
+            this.contentElement.style.height =
+                'calc(100% - ' + this.getContentHeight() + 'px)';
+        } else if (height === null) {
+            this.dimensions.height = null;
+            this.element.style.removeProperty('height');
+        }
+
+        fireEvent(this, 'resize', {
+            width,
+            height
+        });
+    }
+
+    /**
+     * It's a temporary alternative for the `resize` method. It set the strict
+     * pixel height for the component so that the content can be distributed in
+     * the right way, without looping the resizers in the content and container.
+     * @param width
+     * The width to set the component to.
+     * @param height
+     * The height to set the component to.
+     */
+    protected resizeDynamicContent(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
         const { element } = this;
         if (height) {
             const margins = getMargins(element).y;
