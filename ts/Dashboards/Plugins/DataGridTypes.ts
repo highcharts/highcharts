@@ -45,6 +45,8 @@ export namespace DataGridCell {
 
 export type DataGridCell = D.DataGridCell;
 
+export type DataGridOptions = D.DataGridOptions;
+
 
 /* *
  *

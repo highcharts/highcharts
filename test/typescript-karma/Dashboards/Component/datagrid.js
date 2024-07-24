@@ -6,10 +6,10 @@ import EditMode from '../../../../code/dashboards/es-modules/masters/modules/lay
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { skip } = QUnit;
+const { test } = QUnit;
 
 // DataGrid1 Tests to update
-skip('DataGrid component with dataTable', async function (assert) {
+test('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
@@ -44,7 +44,7 @@ skip('DataGrid component with dataTable', async function (assert) {
                 renderTo: 'dashboard-col-1',
                 type: 'DataGrid',
                 dataGridOptions: {
-                    dataTable: new DataTable({
+                    table: new DataTable({
                         columns
                     })
                 }

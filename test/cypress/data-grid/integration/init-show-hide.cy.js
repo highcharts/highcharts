@@ -8,6 +8,6 @@ describe('Remove the dashboard.', () => {
         cy.get('#show').trigger('click');
 
         // Assert
-        cy.get('td').should('have.length', 4);
+        cy.get('tr').should('have.length', 5);
     });
 });
