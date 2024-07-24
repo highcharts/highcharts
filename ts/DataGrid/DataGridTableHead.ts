@@ -67,6 +67,11 @@ class DataGridTableHead {
      */
     public viewport: DataGridTable;
 
+    /**
+     * The headers and their mouse click event listeners.
+     */
+    private headersEvents: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
+
     /* *
     *
     *  Constructor
@@ -98,7 +103,9 @@ class DataGridTableHead {
      */
     public render(): void {
         const vp = this.viewport;
-        if (!vp.dataGrid.enabledColumns) {
+        const dataGrid = vp.dataGrid;
+
+        if (!dataGrid.enabledColumns) {
             return;
         }
 
@@ -121,10 +128,29 @@ class DataGridTableHead {
 
             column.setHeaderElement(element);
 
+            // Header click event
+            if (
+                column.headerElement &&
+                dataGrid.options?.events?.header?.click
+            ) {
+                const onHeaderClick = (e: MouseEvent): void => {
+                    dataGrid.options?.events?.header?.click?.call(
+                        this.columns[i] // shorter then clousure
+                    );
+                };
+
+                this.headersEvents.push([
+                    column.headerElement,
+                    onHeaderClick
+                ]);
+
+                column.headerContent.addEventListener('click', onHeaderClick);
+            }
+
             // Resizing
             if (vp.columnsResizer && (
                 vp.columnDistribution !== 'full' ||
-                i < vp.dataGrid.enabledColumns.length - 1
+                i < dataGrid.enabledColumns.length - 1
             )) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(
@@ -133,7 +159,7 @@ class DataGridTableHead {
                 );
             }
 
-            // Sorting buttons
+            // Add column sorting
             if (column.userOptions.sorting) {
                 column.columnSorting = new ColumnSorting(column, element);
             }
@@ -196,6 +222,16 @@ class DataGridTableHead {
     public scrollHorizontally(scrollLeft: number): void {
         this.viewport.theadElement.style.transform =
             `translateX(${-scrollLeft}px)`;
+    }
+
+    /**
+     * Unbind click event
+     */
+    public removeHeaderEventListeners(): void {
+        for (let i = 0, iEnd = this.headersEvents.length; i < iEnd; i++) {
+            const [handle, listener] = this.headersEvents[i];
+            handle.removeEventListener('click', listener);
+        }
     }
 }
 

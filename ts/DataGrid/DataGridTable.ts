@@ -335,6 +335,7 @@ class DataGridTable {
         this.columns.forEach((column): void => {
             column.columnSorting?.removeEventListeners();
         });
+        this.head?.removeHeaderEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();

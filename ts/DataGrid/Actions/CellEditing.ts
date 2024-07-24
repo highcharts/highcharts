@@ -26,6 +26,8 @@
 import DataGridCell from '../DataGridCell.js';
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
+import Utils from '../../Core/Utilities.js';;
+const { fireEvent } = Utils;
 
 const { makeHTMLElement } = DGUtils;
 
@@ -97,11 +99,14 @@ class CellEditing {
     public stopEditing(submit = true): void {
         const cell = this.editedCell;
         const input = this.inputElement;
+
         if (!cell || !input) {
             return;
         }
 
+        const dataGrid = cell.column.viewport.dataGrid;
         let newValue: string | number = input.value;
+
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.focusedCell);
 
@@ -111,6 +116,9 @@ class CellEditing {
         }
 
         cell.setValue(submit ? newValue : cell.value, submit);
+
+        dataGrid.options?.events?.cell?.afterEdit?.call(cell);
+
         delete this.editedCell;
     }
 

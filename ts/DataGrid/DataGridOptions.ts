@@ -22,6 +22,7 @@
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type DataGridCell from './DataGridCell';
+import DataGridColumn from './DataGridColumn';
 
 
 /* *
@@ -39,6 +40,12 @@ export type ColumnDistribution = 'full' | 'fixed';
  * Callback function to be called when a cell event is triggered.
  */
 export type DataGridCellEventCallback = (this: DataGridCell) => void;
+
+/**
+ * Callback function to be called when a column event is triggered.
+ */
+export type DataGridColumnEventCallback = (this: DataGridColumn) => void;
+
 
 /**
  * Returns a formatted cell's string.
@@ -238,7 +245,17 @@ export interface DataGridEvents {
     /**
      * Events related to the cells.
      */
-    cell: DataGridCellEvents;
+    cell?: DataGridCellEvents;
+
+    /**
+     * Events related to column. 
+     */
+    column?: DataGridColumnEvents
+
+    /**
+     * Events related to column. 
+     */
+    header?: DataGridHeaderEvents
 }
 
 /**
@@ -259,6 +276,32 @@ export interface DataGridCellEvents {
      * Callback function to be called when the cell is no longer hovered.
      */
     mouseOut?: DataGridCellEventCallback;
+
+    /**
+     * Callback function to be called after editing of cell value.
+     */
+    afterEdit?: DataGridCellEventCallback;
+}
+
+
+export interface DataGridColumnEvents {
+    /**
+     * Callback function to be called when the column is sorted
+     * (for instance, after clicking on header).
+     */
+    afterSorting?: DataGridColumnEventCallback;
+
+    /**
+     * Callback function to be called when the column is resized.
+     */
+    resize?: DataGridColumnEventCallback;
+}
+
+export interface DataGridHeaderEvents {
+    /**
+     * Callback function to be called when the header is clicked.
+     */
+    click?: DataGridColumnEventCallback;
 }
 
 /* *
