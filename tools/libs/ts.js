@@ -74,13 +74,27 @@ const NATIVE_TYPES = [
 ];
 
 
+/**
+ * Array of product IDs to extract. If empty, everything is included.
+ *
+ * @type {Array<string>}
+ */
+const PRODUCTS = [];
+
+
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
 
 
 const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
 
 
-/** @type {Record<string,SourceInfo>} */
+/**
+ * Dictionary of cached source information. The key starts with the path.
+ * Separated with a colon character (`:`) follows a boolean value indicating the
+ * inclusion of native TypeScript nodes.
+ *
+ * @type {Record<string,SourceInfo>}
+ */
 const SOURCE_CACHE = {};
 
 
@@ -173,7 +187,11 @@ function addChildInfos(
         // Deal with floating doclets before leading child doclet
 
         if (_doclets.length) {
+
             _doclet = _doclets[_doclets.length - 1];
+
+            // Add trailing doclet to child information
+
             if (
                 _child &&
                 _child.kind !== 'Export' &&
@@ -182,13 +200,23 @@ function addChildInfos(
             ) {
                 _child.doclet = _doclets.pop();
             }
-            infos.push(..._doclets);
+
+            // Add floating doclets
+
+            for (_doclet of _doclets) {
+                if (isProductRelated(_doclet)) {
+                    infos.push(_doclet);
+                }
+            }
+
         }
 
         // Finally add child(ren)
 
         if (_child) {
-            infos.push(_child);
+            if (isProductRelated(_child.doclet)) {
+                infos.push(_child);
+            }
             _child = void 0;
         }
 
@@ -1338,8 +1366,6 @@ function getDocletInfosBetween(
  *
  * @return {Array<ReturnType<TS.getJSDocCommentsAndTags>>}
  * Array of doclet nodes.
- *
- * @todo add function for simple array<doclet<tags>>
  */
 function getDocletsBetween(
     startNode,
@@ -2342,6 +2368,86 @@ function isNativeType(
 
 
 /**
+ * Tests whether a doclet tag is related to one or more products. The test will
+ * also succeed, if no product information was provided or could be found.
+ *
+ * @param {string|DocletInfo|undefined} docletOrTagLine
+ * Doclet information or tag line to test.
+ *
+ * @param {Array<string>} [products]
+ * Products to test against.
+ *
+ * @return {boolean}
+ * `true` if related to one or more products, otherwise `false`.
+ */
+function isProductRelated(
+    docletOrTagLine,
+    products = PRODUCTS
+) {
+    /** @type {Array<string>} */
+    const productsToTest = [];
+
+    if (
+        !docletOrTagLine ||
+        !products.length
+    ) {
+        return true;
+    }
+
+    /**
+     * Adds any discovered product to the `productsToTest` array.
+     *
+     * @param {string} tagLine
+     * Line to extract product from.
+     */
+    function addProductsToTest(tagLine) {
+        const inset = extractTagInset(tagLine);
+
+        if (inset) {
+            productsToTest.push(...inset.split(/[^\w\-]+/gu));
+        }
+
+    }
+
+    if (typeof docletOrTagLine === 'string') {
+
+        addProductsToTest(docletOrTagLine);
+
+    } else {
+        const tags = docletOrTagLine.tags;
+
+        for (const tag of Object.keys(tags)) {
+
+            if (
+                tag === 'param' ||
+                tag === 'type'
+            ) {
+                continue;
+            }
+
+            for (const tagLine of tags[tag]) {
+                addProductsToTest(tagLine);
+            }
+
+        }
+
+    }
+
+    if (!productsToTest.length) {
+        return true;
+    }
+
+    for (const product of productsToTest) {
+        if (products.includes(product)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/**
  * Merge code information.
  *
  * @template {CodeInfo|SourceInfo} T
@@ -2524,7 +2630,10 @@ function mergeDocletInfos(
         for (const tag of Object.keys(sourceTags)) {
             targetTag = targetTags[tag] = targetTags[tag] || [];
             for (const value of sourceTags[tag]) {
-                if (!targetTag.includes(value)) {
+                if (
+                    !targetTag.includes(value) &&
+                    isProductRelated(value)
+                ) {
                     targetTag.push(value);
                 }
             }
@@ -2663,6 +2772,20 @@ function removeTag(
     }
 
     return [];
+}
+
+
+/**
+ * Resets the products array and source cache for a new session.
+ */
+function reset() {
+
+    PRODUCTS.length = 0;
+
+    for (const key of Object.keys(SOURCE_CACHE)) {
+        delete SOURCE_CACHE[key];
+    }
+
 }
 
 
@@ -3347,6 +3470,7 @@ function toDocletString(
 
 
 module.exports = {
+    PRODUCTS,
     SOURCE_CACHE,
     SOURCE_EXTENSION,
     sourceRoot,
@@ -3378,6 +3502,7 @@ module.exports = {
     newDocletInfo,
     removeAllDoclets,
     removeTag,
+    reset,
     resolveReference,
     sanitizeSourcePath,
     sanitizeText,

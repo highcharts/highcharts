@@ -44,6 +44,7 @@ import Yargs from 'yargs';
 interface Args {
     debug?: boolean;
     root?: string;
+    products?: string;
     source?: string;
 }
 
@@ -507,7 +508,12 @@ function getTreeNode(
 async function main() {
     const args = Yargs.parseSync(process.argv) as Args;
     const debug = !!args.debug;
+    const products = args.products;
     const source = args.source as (string|undefined) || DEFAULT_SOURCE;
+
+    if (products) {
+        TSLib.PRODUCTS.push(...products.split(','));
+    }
 
     TSLib.sourceRoot = source;
 
