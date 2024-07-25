@@ -20,7 +20,7 @@ function bfpModifyHeader(data) {
         col[0] = col[0].toUpperCase();
     });
     // Header for the first column
-    data[0][0] = 'modified';
+    data[0][0] = '-';
 
     return data;
 }
@@ -83,12 +83,7 @@ const board = Dashboards.board('container', {
         },
         title: sheetTitle().modified,
         dataGridOptions: {
-            editable: false,
-            columns: {
-                modified: {
-                    headerFormat: ''
-                }
-            }
+            editable: false
         }
     }]
 });
