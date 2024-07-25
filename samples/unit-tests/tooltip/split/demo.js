@@ -610,3 +610,43 @@ QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
         endTest();
     }, 1000);
 });
+
+QUnit.test('Split tooltip, hovering between series', assert => {
+    const chart = Highcharts.chart('container', {
+            tooltip: {
+                split: true,
+                animation: {
+                    // We need some time to catch the tooltip
+                    duration: 2000
+                }
+            },
+            series: [{
+                data: [0, 1, 3]
+            }, {
+                data: [[1, 2]],
+                type: 'scatter'
+            }]
+        }),
+        { plotLeft, plotTop, series } = chart,
+        startPoint = series[0].points[2],
+        endPoint =  series[1].points[0],
+        controller = new TestController(chart),
+        controlPos = endPoint.plotX + plotLeft;
+
+    controller.moveTo(
+        startPoint.plotX + plotLeft,
+        startPoint.plotY + plotTop
+    );
+    controller.moveTo(
+        controlPos,
+        endPoint.plotY + plotTop
+    );
+
+    setTimeout(function () {
+        assert.strictEqual(
+            true,
+            chart.tooltip.label.x > controlPos,
+            'Tooltip should travel from the right side.'
+        );
+    }, 500);
+});
