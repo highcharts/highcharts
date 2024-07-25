@@ -294,7 +294,6 @@ class ProxyProvider {
             if (group.groupElement !== group.proxyContainerElement) {
                 this.domElementProvider.removeElement(group.proxyContainerElement);
             }
-
             delete this.groups[groupKey];
         }
     }
