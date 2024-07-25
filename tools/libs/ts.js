@@ -2836,9 +2836,12 @@ function resolveReference(
             reference.name
     );
 
-    if (_referenceName.split('.').indexOf('this') === 0) {
+    const _referenceSplit = _referenceName.split(/\W+/gsu);
+
+    if (_referenceSplit.indexOf('this') === 0) {
         _hasThis = true;
-        _referenceName = _referenceName.split('.').slice(1).join('.');
+        _referenceName = _referenceName.substring(5);
+        _referenceSplit.shift();
     }
 
     /** @type {CodeInfo|undefined} */
@@ -2900,7 +2903,7 @@ function resolveReferenceInChildInfos(
     childInfos,
     referenceName
 ) {
-    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceSplit = referenceName.split(/\W+/gsu);
     const _referenceCurrent = _referenceSplit.shift();
     const _referenceNext = _referenceSplit.join('.');
 
@@ -3063,6 +3066,21 @@ function resolveReferenceInChildInfos(
                 }
                 continue;
 
+            case 'TypeAlias':
+                if (extractInfoName(_childInfo) === _referenceCurrent) {
+                    const _typeAlias = extractTypes(_childInfo.value)[0];
+                    if (_typeAlias) {
+                        return resolveReference(
+                            scopeInfo,
+                            _referenceNext ?
+                                `${_typeAlias}.${_referenceNext}` :
+                                _typeAlias
+                        );
+                    }
+                    return _childInfo;
+                }
+                continue;
+
             default:
                 if (extractInfoName(_childInfo) === referenceName) {
                     return _childInfo;
@@ -3097,7 +3115,7 @@ function resolveReferenceInDeconstructInfo(
     referenceName
 ) {
     const _deconstructs = deconstructInfo.deconstructs;
-    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceSplit = referenceName.split(/\W+/gsu);
     const _referenceCurrent = _referenceSplit.shift();
     const _referenceNext = _referenceSplit.join('.');
 
@@ -3156,7 +3174,7 @@ function resolveReferenceInExportInfo(
     exportInfo,
     referenceName
 ) {
-    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceSplit = referenceName.split(/\W+/gsu);
     const _referenceCurrent = _referenceSplit.shift();
     const _referenceNext = _referenceSplit.join('.');
 
@@ -3221,7 +3239,7 @@ function resolveReferenceInImportInfo(
     importInfo,
     referenceName
 ) {
-    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceSplit = referenceName.split(/\W+/gsu);
     const _referenceCurrent = _referenceSplit.shift();
     const _referenceNext = _referenceSplit.join('.');
 
@@ -3298,7 +3316,7 @@ function resolveReferenceInObjectInfo(
     objectInfo,
     referenceName
 ) {
-    const _referenceSplit = referenceName.split('.');
+    const _referenceSplit = referenceName.split(/\W+/gsu);
     const _nextReferenceName = _referenceSplit.shift();
     const _restReferenceName = _referenceSplit.join('.');
 
