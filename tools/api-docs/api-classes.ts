@@ -35,6 +35,7 @@ const md = markdownit();
 // - Links in docs like "{@link Highcharts#chart}".
 // - Smart link to other docs for types.
 // - Include kind=Doclet with matching tags.
+// - URL redirects for old ...Highcharts.AST#.something to without #
 
 /**
  * Main function
@@ -323,15 +324,19 @@ async function main() {
                         );
                     }
 
-                    let typeListNames = member.doclet.tags.type?.join(', ') ||
-                        (typeof member.value === 'object' ?
-                        '*' :
-                        typeof member.value === 'string' ?
-                            member.value : member.kind);
+                    let typeListNames = member.type?.join(' | ') ||
+                        member.doclet.tags.type?.join(' | ')
+                        .replace(/[{}]/g, '') || (
+                            typeof member.value === 'object' ?
+                                '*' :
+                                typeof member.value === 'string' ?
+                                    member.value :
+                                    member.kind
+                        );
 
                     if (typeListNames === '*') {
                         // Nested type shows as collapsible. Add children.
-                        // TODO: Doesn't happen for classes - not fully tested.
+                        console.warn('Check: ', info.name + '.' + member.name);
                         processParent({
                             name: info.name + '.' + member.name,
                             doclet: member.doclet,
