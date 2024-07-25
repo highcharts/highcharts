@@ -27,12 +27,12 @@ Constructor
 Run the `stockChart` constructor for initializing a Stock chart visualization. The constructor takes two required parameters (container ID and a config object) and a third optional parameter, which is the callback function run after the chart has loaded.
 
 ```js
-Highcharts.stockChart('containerID', {
+Highcharts.stockChart(containerID, {
     // configuration options object
 }, callback);
 ```
 
-1.  `containerID:` The `id` of the HTML element used for rendering the chart.
+1.  `containerID:` The HTML element used for rendering the chart.
 2.  `config`: An object with configuration options for defining the Stock chart.
 3.  `callback`: (Optional) A callback for getting a handle on the chart once it's loaded.
 
