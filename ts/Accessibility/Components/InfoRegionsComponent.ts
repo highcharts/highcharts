@@ -487,8 +487,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
         // Sections are wrapped to be positioned relatively to chart in case
         // elements inside are tabbed to.
         sectionDiv.style.position = 'relative';
-        sectionDiv.style.height = '0px';
-        sectionDiv.style.padding = '0px';
 
         if (labelText) {
             sectionDiv.setAttribute(

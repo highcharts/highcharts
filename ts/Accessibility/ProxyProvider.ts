@@ -294,7 +294,7 @@ class ProxyProvider {
             if (group.groupElement !== group.proxyContainerElement) {
                 this.domElementProvider.removeElement(group.proxyContainerElement);
             }
-            
+
             delete this.groups[groupKey];
         }
     }
@@ -358,8 +358,6 @@ class ProxyProvider {
             el.style.whiteSpace = 'nowrap';
             el.style.position = 'absolute';
         }
-        el.style.height = '0px';
-        el.style.padding = '0px';
 
         return el;
     }

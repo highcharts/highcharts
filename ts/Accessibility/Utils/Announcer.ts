@@ -136,8 +136,6 @@ class Announcer {
             'class': 'highcharts-announcer-container'
         });
         container.style.position = 'relative';
-        container.style.height = '0px';
-        container.style.padding = '0px';
 
         chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
         chart.announcerContainer = container;

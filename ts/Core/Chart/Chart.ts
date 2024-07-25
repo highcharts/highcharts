@@ -1351,9 +1351,21 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
+        // Hidden divs offsets should be subtracted, #21888
+        let verticalOffsets = 0;
+        [].forEach.call(
+            this.renderTo.children,
+            (child: HTMLDOMElement): void => {
+                if (child !== this.container) {
+                    verticalOffsets += child.offsetHeight;
+                }
+            }
+        );
+
         return {
             width: getStyle(this.renderTo, 'width', true) || 0,
-            height: getStyle(this.renderTo, 'height', true) || 0
+            height: (getStyle(this.renderTo, 'height', true) || 0) -
+                verticalOffsets
         };
     }
 
@@ -1370,7 +1382,12 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            containerBox = chart.getContainerBox();
+            containerBox = chart.getContainerBox(),
+            enableDefaultHeight = containerBox.height > 1 &&
+                !( // #21510, prevent infinite reflow
+                    !chart.renderTo.parentElement?.style.height &&
+                        chart.renderTo.style.height === '100%'
+                );
 
         /**
          * The current pixel width of the chart.
@@ -1394,7 +1411,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (containerBox.height > 1 ? containerBox.height : 400)
+            (enableDefaultHeight ? containerBox.height : 400)
         );
 
         chart.containerBox = containerBox;
@@ -1785,7 +1802,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout as any);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
