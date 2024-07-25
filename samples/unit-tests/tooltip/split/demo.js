@@ -631,7 +631,8 @@ QUnit.test('Split tooltip, hovering between series', assert => {
         startPoint = series[0].points[2],
         endPoint =  series[1].points[0],
         controller = new TestController(chart),
-        controlPos = endPoint.plotX + plotLeft;
+        controlPos = endPoint.plotX + plotLeft,
+        endTest = assert.async();
 
     controller.moveTo(
         startPoint.plotX + plotLeft,
@@ -648,5 +649,6 @@ QUnit.test('Split tooltip, hovering between series', assert => {
             chart.tooltip.label.x > controlPos,
             'Tooltip should travel from the right side.'
         );
-    }, 500);
+        endTest();
+    }, 1000);
 });
