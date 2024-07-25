@@ -203,7 +203,7 @@ class DataGridComponent extends Component {
             this.contentElement.style.removeProperty('min-height');
         }
 
-        super.resize(width, height);
+        this.resizeDynamicContent(width, height);
         this.dataGrid?.viewport?.reflow();
     }
 
