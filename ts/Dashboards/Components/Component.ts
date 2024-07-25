@@ -553,7 +553,7 @@ abstract class Component {
     }
 
     /**
-     * It's a temporary alternative for the `resize` method. It set the strict
+     * It's a temporary alternative for the `resize` method. It sets the strict
      * pixel height for the component so that the content can be distributed in
      * the right way, without looping the resizers in the content and container.
      * @param width
