@@ -2414,6 +2414,12 @@ function isProductRelated(
         addProductsToTest(docletOrTagLine);
 
     } else {
+        const productTagLine = extractTagText(docletOrTagLine, 'product', true);
+
+        if (productTagLine) {
+            return isProductRelated(`{${productTagLine}}`, products);
+        }
+
         const tags = docletOrTagLine.tags;
 
         for (const tag of Object.keys(tags)) {
@@ -2620,13 +2626,25 @@ function mergeDocletInfos(
 
     const targetTags = targetDoclet.tags;
 
+    /** @type {string} */
+    let productTagLine;
     /** @type {Record<string,Array<string>>} */
     let sourceTags;
     /** @type {Array<string>} */
     let targetTag;
 
     for (const sourceDoclet of sourceDoclets) {
+        productTagLine = extractTagText(sourceDoclet, 'product', true);
+
+        if (
+            productTagLine &&
+            !isProductRelated(`{${productTagLine}}`)
+        ) {
+            continue;
+        }
+
         sourceTags = sourceDoclet.tags;
+
         for (const tag of Object.keys(sourceTags)) {
             targetTag = targetTags[tag] = targetTags[tag] || [];
             for (const value of sourceTags[tag]) {
