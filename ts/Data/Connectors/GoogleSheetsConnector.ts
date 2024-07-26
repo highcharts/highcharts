@@ -336,7 +336,6 @@ namespace GoogleSheetsConnector {
             )
         );
     }
-
 }
 
 /* *
