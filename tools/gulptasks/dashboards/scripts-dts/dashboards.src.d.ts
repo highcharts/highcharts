@@ -6,6 +6,7 @@
 
 import Board from "./es-modules/Dashboards/Board";
 import Globals from "./es-modules/Dashboards/Globals";
+import Utilities from "./es-modules/Dashboards/Utilities";
 
 import "./es-modules/Dashboards/Components/HTMLComponent/HTMLComponent";
 import "./es-modules/Data/Connectors/CSVConnector";
@@ -32,8 +33,13 @@ export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
 
-export const board: typeof Board.board;
-export const boards: typeof Globals.boards;
-export const win: typeof Globals.win;
+declare module Dashboards {
+    export const board: typeof Board.board;
+    export const boards: typeof Globals.boards;
+    export const win: typeof Globals.win;
+    export const error: typeof Utilities.error;
+    export const merge: typeof Utilities.merge;
+    export const uniqueKey: typeof Utilities.uniqueKey;
+}
 
-export as namespace Dashboards;
+export default Dashboards;
