@@ -104,4 +104,21 @@
 
         isDefaultButtons = !isDefaultButtons;
     });
+
+    // Toggle range selector position
+    const togglePosition =
+        document.getElementById('toggle-range-selector-position');
+    togglePosition.addEventListener('click', () => {
+        const verticalAlign = chart.rangeSelector.options.verticalAlign;
+
+        chart.update({
+            rangeSelector: {
+                verticalAlign: verticalAlign === 'top' ? 'bottom' : 'top'
+            }
+        });
+
+        togglePosition.innerText =
+        `Move range selector to ${verticalAlign === 'top' ? 'top' : 'bottom'}`;
+    });
+
 })();
