@@ -650,7 +650,7 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         const extremes = testedAxis.getExtremes();
 
         controller.slide(
-            [x + 200, y],
+            [x + 220, y],
             [x - 100, y]
         );
 
