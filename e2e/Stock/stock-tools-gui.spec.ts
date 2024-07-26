@@ -106,7 +106,7 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         // await page.locator('.highcharts-annotation-shapes').last().click();
         await page.getByText('Edit').click();
         await page.locator('input[name="highcharts-annotation-0"]').fill('1');
-        await page.getByText('save').click();
+        await page.getByRole('button', { name: 'Save' }).click();
 
         const chart = await page.evaluate(() => {
             return Highcharts.charts[0];
@@ -123,7 +123,7 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         await page.locator('.highcharts-container').click({ position: { x: 360, y: 100 } });
         await page.getByText('Edit').click();
         await page.locator('input[name="highcharts-annotation-0"]').fill('(X)');
-        await page.getByText('save').click();
+        await page.getByRole('button', { name: 'Save' }).click();
         await page.locator('.highcharts-annotation-shapes').last().click();
         await page.locator('.highcharts-annotation-edit-button').click();
         await expect(page.locator('input[name="highcharts-annotation-0"]')).toHaveValue('(X)');
