@@ -42,12 +42,12 @@
             type: 'month',
             count: 1,
             text: 'Month',
-            title: 'View 1 months'
+            title: 'View 1 month'
         }, {
             type: 'month',
             count: 6,
             text: '6 months',
-            title: 'View 1 months'
+            title: 'View 6 months'
         }, {
             type: 'week',
             count: 1,
