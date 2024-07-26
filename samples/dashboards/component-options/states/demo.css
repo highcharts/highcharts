@@ -1,0 +1,11 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+.highcharts-dashboards-cell-state-active {
+    background-color: red;
+}
