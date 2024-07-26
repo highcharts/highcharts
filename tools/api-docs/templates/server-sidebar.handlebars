@@ -1,0 +1,12 @@
+{{#if node.children}}
+<ul>
+    {{#each node.children}}
+    <li>
+        <a href="/{{../product.id}}/{{this.meta.fullname}}">{{this.meta.name}}</a>
+        {{#if this.children}}
+            {{>server-sidebar node=. this=..}}
+        {{/if}}
+    </li>
+    {{/each}}
+</ul>
+{{/if}}

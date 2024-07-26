@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>{{#if option.name}}{{option.name}} | {{/if}}{{product.name}} API Reference</title>
+
+        <link rel="stylesheet" href="/static/style.css" type="text/css" />
+
+        <script src="/static/script.js"></script>
+        <script type="text/javascript" src="/static/websearch/highsoft-websearch.js"></script>
+
+    </head>
+    <body class="{{product.className}}">
+
+        <header>
+            <label for="menu-mobile"></label>
+            <input type="checkbox" id="menu-mobile" />
+            <nav class="Menu">
+                <ul>
+                    <li>
+                        <label for="menu-product">{{product.name}}</label>
+                        <input type="checkbox" id="menu-product" />
+                        <ul>
+                            <li><a href="/highcharts/">Highcharts Core</a></li>
+                            <li><a href="/highstock/">Highcharts Stock</a></li>
+                            <li><a href="/highmaps/">Highcharts Maps</a></li>
+                            <li><a href="/gantt/">Highcharts Gantt</a></li>
+                            <li><a href="/dashboards/">Highcharts Dashboards</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <section id="side">
+            <nav>
+                {{>server-sidebar node=side}}
+            </nav>
+        </section>
+
+        <section id="main">
+
+        </section>
+
+        <footer>
+
+        </footer>
+
+    </body>
+</html>
