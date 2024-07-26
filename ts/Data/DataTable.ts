@@ -177,7 +177,6 @@ class DataTable implements DataEvent.Emitter {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
-        this.rowKeysId = options.rowKeysId;
 
         const columns = options.columns || {},
             columnNames = Object.keys(columns),
@@ -204,7 +203,6 @@ class DataTable implements DataEvent.Emitter {
         }
 
         this.rowCount = rowCount;
-        this.setRowKeysColumn(rowCount);
     }
 
     /* *
@@ -227,7 +225,17 @@ class DataTable implements DataEvent.Emitter {
 
     private versionTag: string;
 
-    private rowKeysId: string | undefined;
+    /**
+     * Array of the parent table's row indexes corresponding to the rows in this
+     * table.
+     */
+    public parentRowIndexes?: number[];
+
+    /**
+     * Array of the modified table's row indexes corresponding to the rows in
+     * this table.
+     */
+    public modifiedRowIndexes?: number[];
 
     /* *
      *
@@ -269,10 +277,6 @@ class DataTable implements DataEvent.Emitter {
 
         if (!table.autoId) {
             tableOptions.id = table.id;
-        }
-
-        if (table.rowKeysId) {
-            tableOptions.rowKeysId = table.rowKeysId;
         }
 
         const tableClone: DataTable = new DataTable(tableOptions);
@@ -346,14 +350,7 @@ class DataTable implements DataEvent.Emitter {
                 delete columns[columnName];
             }
 
-            let nColumns = Object.keys(columns).length;
-            if (table.rowKeysId && nColumns === 1) {
-                // All columns deleted, remove row keys column
-                delete columns[table.rowKeysId];
-                nColumns = 0;
-            }
-
-            if (!nColumns) {
+            if (!Object.keys(columns).length) {
                 table.rowCount = 0;
             }
 
@@ -732,8 +729,6 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             columnNames = Object.keys(table.columns);
 
-        this.removeRowKeysColumn(columnNames);
-
         return columnNames;
     }
 
@@ -771,7 +766,6 @@ class DataTable implements DataEvent.Emitter {
         columnNames = (
             columnNames || Object.keys(tableColumns)
         );
-        this.removeRowKeysColumn(columnNames);
 
         for (
             let i = 0,
@@ -921,7 +915,6 @@ class DataTable implements DataEvent.Emitter {
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
         columnNames = (columnNames || Object.keys(columns));
-        this.removeRowKeysColumn(columnNames);
 
         for (
             let i = rowIndex,
@@ -1117,10 +1110,6 @@ class DataTable implements DataEvent.Emitter {
             if (columnName !== newColumnName) {
                 columns[newColumnName] = columns[columnName];
                 delete columns[columnName];
-                if (table.rowKeysId) {
-                    // Ensure that row keys column is last
-                    this.moveRowKeysColumnToLast(columns, table.rowKeysId);
-                }
             }
 
             return true;
@@ -1307,11 +1296,6 @@ class DataTable implements DataEvent.Emitter {
             tableModifier.modifyColumns(table, columns, (rowIndex || 0));
         }
 
-        if (table.rowKeysId) {
-            // Ensure that the row keys column is always last
-            this.moveRowKeysColumnToLast(tableColumns, table.rowKeysId);
-        }
-
         table.emit({
             type: 'afterSetColumns',
             columns,
@@ -1319,68 +1303,6 @@ class DataTable implements DataEvent.Emitter {
             detail: eventDetail,
             rowIndex
         });
-    }
-
-    /**
-     * Sets the row key column. This column is invisible and the cells
-     * serve as identifiers to the rows they are contained in. Accessing
-     * rows by keys instead of indexes is necessary in cases where rows
-     * are rearranged by a DataModifier (e.g. SortModifier or RangeModifier).
-     *
-     * @function Highcharts.DataTable#setRowKeysColumn
-     *
-     * @param {number} nRows
-     * Number of rows to add to the column.
-     *
-     */
-    public setRowKeysColumn(nRows: number): void {
-        const id = this.rowKeysId;
-        if (!id) {
-            return;
-        }
-        this.columns[id] = [];
-        const keysArray = this.columns[id];
-
-        for (let i = 0; i < nRows; i++) {
-            keysArray.push(id + '_' + i);
-        }
-    }
-
-    /**
-     * Get the row key column.
-     *
-     * @function Highcharts.DataTable#getRowKeysColumn
-     *     *
-     * @return {DataTable.Column|undefined}
-     * Returns row keys if rowKeysId is defined, else undefined.
-     */
-    public getRowKeysColumn(): DataTable.Column | undefined {
-        const id = this.rowKeysId;
-        if (id) {
-            return this.columns[id];
-        }
-    }
-
-    /**
-     * Get the row index in the original (unmodified) data table.
-     *
-     * @function Highcharts.DataTable#getRowIndexOriginal
-     *
-     * @param {number} idx
-     * Row index in the modified data table.
-     *
-     * @return {string}
-     * Row index in the original data table.
-     */
-    public getRowIndexOriginal(idx: number): string {
-        const id = this.rowKeysId;
-        if (id) {
-            const rowKeyCol = this.columns[id];
-            const idxOrig = '' + rowKeyCol[idx];
-
-            return idxOrig.split('_')[1];
-        }
-        return String(idx);
     }
 
     /**
@@ -1551,10 +1473,6 @@ class DataTable implements DataEvent.Emitter {
             }
         }
 
-        if (this.rowKeysId && !columnNames.includes(this.rowKeysId)) {
-            this.setRowKeysColumn(rowCount);
-        }
-
         if (modifier) {
             modifier.modifyRows(table, rows, rowIndex);
         }
@@ -1566,25 +1484,6 @@ class DataTable implements DataEvent.Emitter {
             rowIndex,
             rows
         });
-    }
-
-    // The row keys column must always be the last column
-    private moveRowKeysColumnToLast(columns: Record<string, DataTable.Column>, id: string): void {
-        const rowKeyColumn = columns[id];
-        delete columns[id];
-        columns[id] = rowKeyColumn;
-    }
-
-    // The row keys column must be removed in some methods
-    // (API backwards compatibility)
-    private removeRowKeysColumn(columnNames: Array<string>): void {
-        if (this.rowKeysId) {
-            const pos = columnNames.indexOf(this.rowKeysId);
-            if (pos !== -1) {
-                // Always the last column
-                columnNames.pop();
-            }
-        }
     }
 }
 

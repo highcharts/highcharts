@@ -144,7 +144,6 @@ class JSONConnector extends DataConnector {
                     converter.parse({ data });
 
                     table.setColumns(converter.getTable().getColumns());
-                    table.setRowKeysColumn(data.length);
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })
