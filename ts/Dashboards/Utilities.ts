@@ -24,7 +24,9 @@
 
 import U from '../Core/Utilities.js';
 const {
+    addEvent,
     error: coreError,
+    fireEvent,
     isClass,
     isDOMElement,
     isObject,
@@ -190,7 +192,9 @@ function error(code: number|string, stop?: boolean): void {
  * */
 
 const Utilities = {
+    addEvent,
     error,
+    fireEvent,
     merge,
     uniqueKey
 };

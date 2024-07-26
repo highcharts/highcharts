@@ -33,13 +33,13 @@ export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
 
-declare module Dashboards {
-    export const board: typeof Board.board;
-    export const boards: typeof Globals.boards;
-    export const win: typeof Globals.win;
-    export const error: typeof Utilities.error;
-    export const merge: typeof Utilities.merge;
-    export const uniqueKey: typeof Utilities.uniqueKey;
-}
+export const addEvent: typeof Utilities.addEvent;
+export const board: typeof Board.board;
+export const boards: typeof Globals.boards;
+export const error: typeof Utilities.error;
+export const fireEvent: typeof Utilities.fireEvent;
+export const merge: typeof Utilities.merge;
+export const uniqueKey: typeof Utilities.uniqueKey;
+export const win: typeof Globals.win;
 
-export default Dashboards;
+export as namespace Dashboards;
