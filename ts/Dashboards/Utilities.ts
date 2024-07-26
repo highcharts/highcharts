@@ -24,9 +24,7 @@
 
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     error: coreError,
-    fireEvent,
     isClass,
     isDOMElement,
     isObject,
@@ -80,12 +78,12 @@ const {
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T>(): T {
-    /* eslint-enable valid-jsdoc */
-    let i,
-        args = arguments,
-        copyDepth = 0,
-        ret = {} as T;
+function merge<T extends Object>(
+    a: (true|T|undefined),
+    ...n: Array<unknown>
+) : T {
+    let copyDepth = 0,
+        obj = {} as T;
 
     // Descriptive error stack:
     const copyDepthError = new Error('Recursive copy depth > 100'),
@@ -127,18 +125,18 @@ function merge<T>(): T {
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.
-    if (args[0] === true) {
-        ret = args[1];
-        args = Array.prototype.slice.call(args, 2) as any;
+    if (a === true) {
+        obj = n.shift() as T;
+    } else {
+        n.unshift(a);
     }
 
     // For each argument, extend the return
-    const len = args.length;
-    for (i = 0; i < len; i++) {
-        ret = doCopy(ret, args[i]);
+    for (let i = 0, iEnd = n.length; i < iEnd; ++i) {
+        obj = doCopy(obj, n[i]);
     }
 
-    return ret;
+    return obj;
 }
 
 /**
@@ -192,9 +190,7 @@ function error(code: number|string, stop?: boolean): void {
  * */
 
 const Utilities = {
-    addEvent,
     error,
-    fireEvent,
     merge,
     uniqueKey
 };
