@@ -131,7 +131,7 @@ function getOptionName(
         camelCaseName.endsWith('IndicatorOptions') ||
         camelCaseName.endsWith('SeriesOptions')
     ) {
-        if (CamelSeriesPattern.test(camelCaseName)) {
+        if (camelCaseName.match(CamelSeriesPattern)) {
             return 'plotOptions.' + camelCaseName
                 .replace(CamelSeriesPattern, '$1')
                 .toLowerCase();
@@ -147,7 +147,7 @@ function getOptionName(
     }
 
     if (camelCaseName.endsWith('PointOptions')) {
-        if (CamelSeriesPattern.test(camelCaseName)) {
+        if (camelCaseName.match(CamelSeriesPattern)) {
             return 'series.' + camelCaseName
                 .replace(CamelPointPattern, '$1')
                 .toLowerCase() +

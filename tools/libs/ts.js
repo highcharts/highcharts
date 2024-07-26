@@ -681,7 +681,7 @@ function extractGenericArguments(
     nameOrTypeString
 ) {
 
-    if (!GENERIC.test(nameOrTypeString)) {
+    if (!nameOrTypeString.match(GENERIC)) {
         return void 0;
     }
 
@@ -2125,7 +2125,7 @@ function getReferenceInfo(
  * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {SourceInfo|undefined}
+ * @return {SourceInfo}
  * Source information.
  */
 function getSourceInfo(
@@ -2361,7 +2361,7 @@ function isNativeType(
         typeString.length < 2 ||
         !isCapitalCase(typeString) ||
         NATIVE_TYPES.includes(typeString) ||
-        NATIVE_HELPER.test(typeString) ||
+        typeString.match(NATIVE_HELPER) ||
         TS.SyntaxKind[typeString] > 0
     );
 }
@@ -3077,7 +3077,9 @@ function resolveReferenceInChildInfos(
                                 _typeAlias
                         );
                     }
-                    return _childInfo;
+                    if (!_referenceNext) {
+                        return _childInfo;
+                    }
                 }
                 continue;
 
@@ -3263,7 +3265,7 @@ function resolveReferenceInImportInfo(
         let _sourceInfo;
 
         if (
-            SOURCE_EXTENSION.test(_from) &&
+            _from.match(SOURCE_EXTENSION) &&
             FSLib.isFile(FSLib.path(_from.replace(JSX, '\.t$1')))
         ) {
             _sourceInfo = getSourceInfo(
@@ -3281,15 +3283,11 @@ function resolveReferenceInImportInfo(
             return importInfo;
         }
 
-        if (_sourceInfo) {
-            return resolveReferenceInChildInfos(
-                _sourceInfo,
-                _sourceInfo.code,
-                (_referenceNext ? `${_found}.${_referenceNext}` : _found)
-            );
-        }
-
-        return importInfo;
+        return resolveReferenceInChildInfos(
+            _sourceInfo,
+            _sourceInfo.code,
+            (_referenceNext ? `${_found}.${_referenceNext}` : _found)
+        );
     }
 
     return void 0;

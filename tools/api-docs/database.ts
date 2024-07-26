@@ -102,7 +102,7 @@ function sanitizeKey(
     key: string
 ): string {
 
-    while (KEY_ANTI_PATTERN.test(key)) {
+    while (key.match(KEY_ANTI_PATTERN)) {
         key = key.replace(KEY_ANTI_PATTERN, ' ');
     }
 
@@ -114,7 +114,7 @@ function sanitizeValue(
     value: string
 ): string {
 
-    while (VALUE_ANTI_PATTERN.test(value)) {
+    while (value.match(VALUE_ANTI_PATTERN)) {
         value = value.replace(VALUE_ANTI_PATTERN, '');
     }
 
@@ -174,6 +174,11 @@ export class Database {
      *  Functions
      *
      * */
+
+
+    public async getCount(): Promise<number> {
+        return (await this.getData()).name.length;
+    }
 
 
     private async getData(
