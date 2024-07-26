@@ -71,32 +71,30 @@ test.describe('Stock Tools annotation popup, #15725', () => {
             return Highcharts.charts[0];
         });
 
-        chart.annotations[0].points.forEach(point => {
+        chart.annotations[0].points.forEach((point) => {
             expect(point.y).toBeGreaterThan(-50);
             expect(point.y).toBeLessThan(75);
         });
     });
-    // test('#16158: Should use correct default series in popup', async ({ page }) => {
-    //     await page.locator('.highcharts-indicators').click();
-    //     await page.locator('.highcharts-indicator-list').getByText('Accumulation').click();
-    //     await expect(page.locator('.highcharts-tab-item-show #highcharts-select-series')).toHaveValue('aapl-ohlc');
-    //     await expect(page.locator('.highcharts-tab-item-show #highcharts-select-volume')).toHaveValue('aapl-volume');
-    //     await page.getByRole('button', { name: 'Add' }).nth(1).click();
-    //     await page.locator('.highcharts-indicators').click();
-    //     await page.getByText('Edit').click();
+    test('#16158: Should use correct default series in popup', async ({ page }) => {
+        await page.locator('.highcharts-indicators').click();
+        await page.locator('.highcharts-indicator-list').getByText('Accumulation').click();
+        await expect(page.locator('.highcharts-tab-item-show #highcharts-select-series')).toHaveValue('aapl-ohlc');
+        await expect(page.locator('.highcharts-tab-item-show #highcharts-select-volume')).toHaveValue('aapl-volume');
+        await page.getByRole('button', { name: 'Add' }).nth(1).click();
+        await page.locator('.highcharts-indicators').click();
+        await page.getByText('Edit').click();
+
+        expect(await page.locator('#highcharts-select-series').first().evaluate((el: HTMLSelectElement) => el.value)).toBe('aapl-ohlc');
+        expect(await page.locator('#highcharts-select-series').nth(1).evaluate((el: HTMLSelectElement) => el.value)).toBe('aapl-ohlc');
+    });
     //
-    //     const selectedElement = page.locator('#highcharts-select-series').first().evaluate((el: HTMLSelectElement) => el.value);
-    //     expect(selectedElement).toBe('aapl-ohlc');
-    //     // const selectedElement2 = page.locator('#highcharts-select-series').nth(1).evaluate((el: HTMLSelectElement) => el.value);
-    //     // expect(selectedElement2).toBe('aapl-volume');
-    // });
-    //
-    // test('#16159: For some indicators params, there should be a dropdown with options in popup.', async ({ page }) => {
-    //     await page.locator('.highcharts-indicators').click();
-    //     await page.locator('.highcharts-indicator-list').contains('Disparity Index').click();
-    //     await page.locator('#highcharts-select-params\\.average').selectOption('ema');
-    //     await page.locator('.highcharts-popup-rhs-col button').contains('Add').click();
-    // });
+    test('#16159: For some indicators params, there should be a dropdown with options in popup.', async ({ page }) => {
+        await page.locator('.highcharts-indicators').click();
+        await page.getByText('Disparity Index').click();
+        const selectLabel  = page.locator('[id="highcharts-select-params\\.average"]');
+        await selectLabel.selectOption('ema');
+    });
     //
     // test('#17425: Editing labels of Elliott3 line should not hide the line.', async ({ page }) => {
     //     await page.locator('.highcharts-elliott3').first().click();
