@@ -22,7 +22,12 @@
             crosshair: true
         },
         yAxis: {
-            crosshair: true
+            crosshair: {
+                label: {
+                    enabled: true,
+                    format: '{value:.2f}'
+                }
+            }
         }
     });
 
@@ -80,5 +85,23 @@
         isCrosshairSnapping = !isCrosshairSnapping;
     });
 
+    // Toggle yAxis label
+    const toggleYAxisCrosshairLabel =
+        document.getElementById('toggle-yaxis-label');
+
+    toggleYAxisCrosshairLabel.addEventListener('click', () => {
+        const labelEnabled = !!chart.yAxis[0].crossLabel;
+
+        chart.yAxis[0].update({
+            crosshair: {
+                label: {
+                    enabled: !labelEnabled
+                }
+            }
+        });
+
+        toggleYAxisCrosshairLabel.innerText =
+        `${labelEnabled ? 'Enable' : 'Disable'} yAxis crosshair label`;
+    });
 
 })();
