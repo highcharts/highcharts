@@ -553,6 +553,9 @@ namespace Row {
          * A unique id for the row.
          **/
         id?: string;
+        editMode?: {
+            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+        }
         /**
          * The id of the container element.
          **/

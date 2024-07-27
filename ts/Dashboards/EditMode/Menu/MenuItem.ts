@@ -35,7 +35,6 @@ class MenuItem {
     * */
 
     public static defaultOptions: Partial<MenuItem.Options> = {
-        id: '',
         type: 'text'
     };
 
@@ -182,7 +181,7 @@ class MenuItem {
 
 namespace MenuItem {
     export interface ItemOptions {
-        id: string;
+        id: 'destroy'|'settings'|'drag'|'viewFullscreen';
         name?: string;
         type: 'icon'|'toggle'|'text'|'button';
         className?: string;

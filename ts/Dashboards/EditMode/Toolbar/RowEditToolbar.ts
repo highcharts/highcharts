@@ -178,10 +178,15 @@ class RowEditToolbar extends EditToolbar {
                 toolbar.editMode.board.container
             );
             const rowWidth = rowOffsets.right - rowOffsets.left;
+            const hiddenItems = row.options.editMode?.hiddenToolbarItems || [];
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
-                item.activate();
+                if (hiddenItems.includes(item.options.id as any)) {
+                    item.deactivate();
+                } else {
+                    item.activate();
+                }
             });
 
             offsetX = rowWidth / 2 - toolbar.container.clientWidth / 2;

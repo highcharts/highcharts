@@ -198,10 +198,15 @@ class CellEditToolbar extends EditToolbar {
             );
             const x = cellOffsets.right - toolbarWidth - toolbarMargin;
             const y = cellOffsets.top + toolbarMargin;
+            const hiddenItems = cell.options.editMode?.hiddenToolbarItems || [];
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
-                item.activate();
+                if (hiddenItems.includes(item.options.id as any)) {
+                    item.deactivate();
+                } else {
+                    item.activate();
+                }
             });
 
             toolbar.setPosition(x, y);

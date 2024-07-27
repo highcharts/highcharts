@@ -599,6 +599,10 @@ namespace Cell {
          * Unique cell id.
          **/
         id: string;
+
+        editMode?: {
+            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+        }
         /**
          * Width of the cell. Can be a percentage value, pixels or a fraction.
          *

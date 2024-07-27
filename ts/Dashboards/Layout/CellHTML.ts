@@ -148,6 +148,10 @@ namespace CellHTML {
          **/
         id: string;
 
+        editMode?: {
+            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+        }
+
         /**
          * HTML container of a GUIElement.
          **/

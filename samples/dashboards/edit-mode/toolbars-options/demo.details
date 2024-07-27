@@ -1,0 +1,6 @@
+---
+ name: Options for the toolbars
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...
