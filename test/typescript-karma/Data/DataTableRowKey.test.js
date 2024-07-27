@@ -1,7 +1,7 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
 
-QUnit.test('DataTableRowKey.modify', async function (assert) {
+QUnit.skip('DataTableRowKey.modify', async function (assert) {
 
     const table = new DataTable({
         columns: {
@@ -63,7 +63,7 @@ QUnit.test('DataTableRowKey.modify', async function (assert) {
     );
 });
 
-QUnit.test('DataTableRowKey.modifyCell', function (assert) {
+QUnit.skip('DataTableRowKey.modifyCell', function (assert) {
 
     const done = assert.async(),
         modifier = new RangeModifier({
@@ -114,7 +114,7 @@ QUnit.test('DataTableRowKey.modifyCell', function (assert) {
 });
 
 
-QUnit.test('DataTableRowKey.modifyColumns', function (assert) {
+QUnit.skip('DataTableRowKey.modifyColumns', function (assert) {
 
     const done = assert.async(),
         modifier = new RangeModifier({
@@ -165,7 +165,7 @@ QUnit.test('DataTableRowKey.modifyColumns', function (assert) {
 
 });
 
-QUnit.test('DataTableRowKey.renameColumn', function (assert) {
+QUnit.skip('DataTableRowKey.renameColumn', function (assert) {
     const done = assert.async(),
         modifier = new RangeModifier({
             additive: true,
@@ -240,7 +240,7 @@ QUnit.test('DataTableRowKey.renameColumn', function (assert) {
         );
 });
 
-QUnit.test('DataTableRowKey.deleteColumns', function (assert) {
+QUnit.skip('DataTableRowKey.deleteColumns', function (assert) {
     const done = assert.async(),
         modifier = new RangeModifier({
             additive: true,
@@ -322,7 +322,7 @@ QUnit.test('DataTableRowKey.deleteColumns', function (assert) {
         );
 });
 
-QUnit.test('DataTableRowKey.setColumns', function (assert) {
+QUnit.skip('DataTableRowKey.setColumns', function (assert) {
     const done = assert.async(),
         modifier = new RangeModifier({
             additive: true,

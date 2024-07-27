@@ -598,8 +598,7 @@ class DataGrid {
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
-            rowElement.dataset.rowIndex =
-                this.dataTable.getRowIndexOriginal(i);
+            rowElement.dataset.rowIndex = String(i);
 
             const cellElements = rowElement.childNodes;
 
