@@ -45,7 +45,7 @@ const DOCLET = /\/\*\*.*?\*\//gsu;
 const DOCLET_TAG_INSET = /^\s*\{([^}]+)\}/su;
 
 
-const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
+const DOCLET_TAG_NAME = /^(?:\[([a-z][\w\.='"]+)\]|([a-z][\w\.='"]*))/su;
 
 
 const JSX = /\.j(sx?)$/su;
@@ -59,7 +59,7 @@ const NATIVE_HELPER = new RegExp(
         'Array', 'Extract', 'Omit', 'Partial', 'Promise', 'Readonly',
         'ReadonlyArray', 'Record', 'Require'
     ].join('|') + ')(?:<|$)',
-    'su'
+    'gsu'
 );
 
 
@@ -1315,10 +1315,15 @@ function getDocletInfosBetween(
                         (
                             node.comment instanceof Array ?
                                 node.comment
-                                    .map(c => c.text)
-                                    .join('\n') :
+                                    .map(c => c.getText())
+                                    .join(' ') :
                                 node.comment
-                        ).trim()
+                        )
+                            .trim()
+                            .substring(3)
+                            .split(/\n *(?:\* )?/gu)
+                            .join('\n')
+                            .trim()
                     );
                 }
 
@@ -1331,7 +1336,7 @@ function getDocletInfosBetween(
                             tag.getText()
                                 .trim()
                                 .substring(_tagName.length + 1)
-                                .split(/\n *\*?/gu)
+                                .split(/\n *(?:\* )?/gu)
                                 .join('\n')
                                 .trim()
                         );
@@ -3068,13 +3073,13 @@ function resolveReferenceInChildInfos(
 
             case 'TypeAlias':
                 if (extractInfoName(_childInfo) === _referenceCurrent) {
-                    const _typeAlias = extractTypes(_childInfo.value)[0];
-                    if (_typeAlias) {
+                    const _original = extractTypes(_childInfo.value)[0];
+                    if (_original) {
                         return resolveReference(
                             scopeInfo,
                             _referenceNext ?
-                                `${_typeAlias}.${_referenceNext}` :
-                                _typeAlias
+                                `${_original}.${_referenceNext}` :
+                                _original
                         );
                     }
                     if (!_referenceNext) {
