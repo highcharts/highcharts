@@ -2745,6 +2745,46 @@ QUnit.test('#14428: Update point.drilldown', assert => {
     );
 });
 
+QUnit.test('#21534: mouseEvent breaks point.drilldown', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'pie',
+                data: [1, 2, 3]
+            }
+        ],
+        drilldown: {
+            series: [
+                {
+                    id: 'drill',
+                    data: [3, 2, 1]
+                }
+            ]
+        },
+        plotSeries: {
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function () {}
+                    }
+                }
+            }
+        }
+    });
+
+    const point = chart.series[0].points[0];
+    point.update({
+        drilldown: 'drill'
+    });
+    Highcharts.fireEvent(point, 'click');
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        'The chart should be drilled down'
+    );
+});
+
 QUnit.test(
     '#14458: Drilling down 3d chart points with the same name threw',
     assert => {
