@@ -162,6 +162,7 @@ test('GoogleDataConnector, worksheet 1', async (assert) => {
     const connector = new GoogleSheetsConnector({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA',
+        googleSpreadsheetRange: 'Sheet1',
         firstRowAsNames: true
     });
 
@@ -253,4 +254,3 @@ test('GoogleDataConnector, worksheet 2', async (assert) => {
         ))
         .then(() => done())
 });
-

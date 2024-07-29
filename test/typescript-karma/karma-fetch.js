@@ -10,7 +10,7 @@
 window.JSONSources = {
     ...window.JSONSources,
     '/data/sine-data.csv': function () {
-        const csv = [['X', 'sin(n)', 'sin(-n)']];
+        const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
 
         for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
             x = 3184606 + Math.random();
@@ -38,7 +38,7 @@ window.JSONSources = {
         }
     },
     'https://sheets.googleapis.com/v4/spreadsheets/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/values/A1:ZZ?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk': {
-        "range": "Sheet1!A1:Z999",
+        "range": "'Fruit consumption'!A1:T1468",
         "majorDimension": "COLUMNS",
         "values": [
             [
@@ -71,42 +71,73 @@ window.JSONSources = {
             ]
         ]
     },
-    'https://sheets.googleapis.com/v4/spreadsheets/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/values/Sheet2!A1:ZZ?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk': {
-        "range": "Sheet2!A1:Z1000",
-        "majorDimension": "ROWS",
+    'https://sheets.googleapis.com/v4/spreadsheets/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/values/Sheet1?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk': {
+        "range": "Sheet1",
+        "majorDimension": "COLUMNS",
         "values": [
             [
                 "",
+                "Apples",
+                "Oranges",
+                "Pears",
+                "Bananas"
+            ],
+            [
                 "John",
+                10,
+                12,
+                1,
+                2
+            ],
+            [
                 "Jane",
-                "Joe"
+                3,
+                4,
+                5,
+                7
             ],
             [
+                "Joe",
+                8,
+                5,
+                2,
+                12
+            ]
+        ]
+    },
+    'https://sheets.googleapis.com/v4/spreadsheets/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/values/Sheet2?alt=json&dateTimeRenderOption=FORMATTED_STRING&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&prettyPrint=false&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk': {
+        "range": "Sheet2",
+        "majorDimension": "COLUMNS",
+        "values": [
+            [
+                "",
                 "Apricots",
-                "1",
-                "3",
-                "2"
-            ],
-            [
                 "Melons",
-                "5",
-                "4",
-                "2"
-            ],
-            [
                 "Papayas",
-                "1",
-                "5",
-                "2"
+                "Kiwis"
             ],
             [
-                "Kiwis",
-                "2",
-                "5",
-                "4"
+                "John",
+                10,
+                12,
+                1,
+                2
+            ],
+            [
+                "Jane",
+                3,
+                4,
+                5,
+                7
+            ],
+            [
+                "Joe",
+                8,
+                5,
+                2,
+                12
             ]
         ]
     }
-
     // add more fetch results with `[key]: result`
 };

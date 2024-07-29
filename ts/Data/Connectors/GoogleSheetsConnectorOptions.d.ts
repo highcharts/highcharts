@@ -80,10 +80,6 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * The number of the first row to load.
      */
     startRow?: number;
-    /**
-     * The number of the worksheet to load.
-     */
-    worksheet?: number;
 }
 
 /**
