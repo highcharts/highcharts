@@ -128,6 +128,20 @@ class MenuComponent extends AccessibilityComponent {
             component.onMenuHidden();
         });
 
+        this.addEvent(chart, 'afterPrint', function (): void {
+            const renderToChildren = chart.renderTo.children;
+            if (
+                chart.accessibility?.keyboardNavigation.exitAnchor &&
+                renderToChildren[renderToChildren.length - 1] !==
+                chart.accessibility?.keyboardNavigation.exitAnchor
+            ) {
+                chart.renderTo.insertBefore(
+                    chart.accessibility?.keyboardNavigation.exitAnchor,
+                    renderToChildren[renderToChildren.length - 1]
+                );
+            }
+        });
+
         this.createProxyGroup();
     }
 
