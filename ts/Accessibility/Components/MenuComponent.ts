@@ -128,19 +128,6 @@ class MenuComponent extends AccessibilityComponent {
             component.onMenuHidden();
         });
 
-        // Needed when print logic in exporting does not trigger an update
-        // (#21554)
-        this.addEvent(chart, 'afterPrint', function (): void {
-            const infoRegionsComponent = chart
-                .accessibility
-                ?.components
-                .infoRegions;
-
-            if (infoRegionsComponent) {
-                infoRegionsComponent.updateScreenReaderSection('after');
-            }
-        });
-
         this.createProxyGroup();
     }
 
