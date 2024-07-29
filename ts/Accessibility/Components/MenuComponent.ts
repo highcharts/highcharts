@@ -128,17 +128,16 @@ class MenuComponent extends AccessibilityComponent {
             component.onMenuHidden();
         });
 
+        // Needed when print logic in exporting does not trigger an update
+        // (#21554)
         this.addEvent(chart, 'afterPrint', function (): void {
-            const renderToChildren = chart.renderTo.children;
-            if (
-                chart.accessibility?.keyboardNavigation.exitAnchor &&
-                renderToChildren[renderToChildren.length - 1] !==
-                chart.accessibility?.keyboardNavigation.exitAnchor
-            ) {
-                chart.renderTo.insertBefore(
-                    chart.accessibility?.keyboardNavigation.exitAnchor,
-                    renderToChildren[renderToChildren.length - 1]
-                );
+            const infoRegionsComponent = chart
+                .accessibility
+                ?.components
+                .infoRegions;
+
+            if (infoRegionsComponent) {
+                infoRegionsComponent.updateScreenReaderSection('after');
             }
         });
 
