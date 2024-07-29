@@ -1,8 +1,8 @@
-// Credentials
+// Google Sheets Credentials
 const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
 const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 
-/* Helper functions */
+// Calculate sheet title based on the sheet number
 function sheetTitle(n = 1) {
     return {
         original: 'Original sheet #' + n,
@@ -10,7 +10,7 @@ function sheetTitle(n = 1) {
     };
 }
 
-/* Various 'beforeParse' functions */
+// Various 'beforeParse' functions
 function bfpNone(data) {
     return data;
 }
@@ -99,12 +99,11 @@ const dataModifierSelect = document.getElementById('data-modifier-select');
 //
 worksheetSelect.addEventListener('input', async e => {
     // The worksheet selection has changed
-    const worksheet = Number(e.target.value) + 1;
+    const worksheet = e.target.value;
 
     // Update the original sheet component
     let connector = board.dataPool.connectors['conn-orig'];
-    connector.options.worksheet = worksheet;
-    await connector.load();
+    connector.options.googleSpreadsheetRange = worksheet;
 
     let comp = board.getComponentByCellId('orig-sheet-cell');
     const title = sheetTitle(worksheet);
@@ -113,11 +112,11 @@ worksheetSelect.addEventListener('input', async e => {
             text: title.original
         }
     });
+    await connector.load();
 
     // Update the modified sheet component
     connector = board.dataPool.connectors['conn-mod'];
-    connector.options.worksheet = worksheet;
-    await connector.load();
+    connector.options.googleSpreadsheetRange = worksheet;
 
     comp = board.getComponentByCellId('mod-sheet-cell');
     await comp.update({
@@ -125,8 +124,8 @@ worksheetSelect.addEventListener('input', async e => {
             text: title.modified
         }
     });
+    await connector.load();
 });
-
 
 //
 // 'beforeParse' processing
@@ -178,7 +177,7 @@ const rangeModifier = new RangeModifier({
     }]
 });
 
-// Modifier lookup, the order must reflect the dropdown in demo.html
+// DataModifier lookup, the order must reflect the dropdown in demo.html
 const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
 
 async function applyDataModifier(idx) {
