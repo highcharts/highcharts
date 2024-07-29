@@ -5,17 +5,17 @@ Annotations GUI
 The API of the annotations module allows you to build a custom user interface for adding annotations to your charts. Automatic binding and built-in actions for your custom HTML elements come out of the box and require minimal programming.
 
 ### Binding an event to a HTML element
-HTML elements are bound to annotations events through reverse lookup of HTML elements with a classname in the form of: `highcharts-BINDINGNAME`. For example a HTML button with `highcharts-circle-annotation` will bind the [`navigation.bindings.circleAnnotation`](https://api.highcharts.com/highcharts/navigation.bindings.circleAnnotation) events. Class name can be changed by setting `navigation.bindings.circleAnnotation.className`. The actual binding takes place on chart initialization, but only for HTML elements that are wrapped within another HTML element with the classname correlating the chart configuration for [`navigation.bindingsClassName`](https://api.highcharts.com/highcharts/navigation.bindingsClassName). The wrapping classname defaults to `highcharts-bindings-wrapper`. Wrapping the GUI elements is made required for specifying which GUI elements need to be bound and events are delegated to the correct chart.
+HTML elements are bound to annotations events through reverse lookup of HTML elements with a classname in the form of: `highcharts-BINDINGNAME`. For example a HTML button with `highcharts-circle-annotation` will bind the [`navigation.bindings.circleAnnotation`](https://api.highcharts.com/highcharts/navigation.bindings.circleAnnotation) events. Classname can be changed by setting `navigation.bindings.circleAnnotation.className`. The actual binding takes place on chart initialization, but only for HTML elements that are wrapped within another HTML element with the classname correlating the chart configuration for [`navigation.bindingsClassName`](https://api.highcharts.com/highcharts/navigation.bindingsClassName). The wrapping classname defaults to `highcharts-bindings-wrapper`. Wrapping the GUI elements is made required for specifying which GUI elements need to be bound and events are delegated to the correct chart.
 
 _The code snippet below demonstrates how trigger lookup of a custom GUI with the `navigation.bindingsClassName`._
 
 ```js
 Highcharts.chart('container', {
     navigation: {
-        bindingsClassName: 'custom-gui-container' // informs Annotations module where to look for HTML elements for adding annotations etc.
+        bindingsClassName: 'custom-gui-container' // Informs Annotations module where to look for HTML elements for adding annotations etc.
     },
     series: [{
-        ....
+        ...
     }]
 });
 ```
@@ -61,7 +61,7 @@ How to implement a custom dialog window, is best explained with an example where
       events: {
           // On selecting the annotation the showPopup event is fired
           showPopup: function(event) {
-              var chart = this.chart;
+              const chart = this.chart;
 
               if (!chart.annotationsPopupContainer) {
                   // Get and store the popup annotations container
@@ -108,12 +108,12 @@ How to implement a custom dialog window, is best explained with an example where
           events: {
               load: function() {
                   // Function which saves the new background color.
-                  var chart = this;
+                  const chart = this;
                   // Select the save button of the popup and assign a click event
                   document.querySelectorAll('.highcharts-popup-annotations button')[0].addEventListener(
                       'click',
                       function() {
-                          var color = document.querySelectorAll(
+                          const color = document.querySelectorAll(
                               '.highcharts-popup-annotations input[name="stroke"]'
                           )[0].value;
 
