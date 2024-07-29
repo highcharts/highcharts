@@ -288,12 +288,14 @@ class InfoRegionsComponent extends AccessibilityComponent {
             }
         });
 
-        // Needed when print logic in exporting does not trigger
-        // rerendering thus repositioning of screen reader DOM elements
-        // (#21554)
-        this.addEvent(chart, 'afterPrint', function (): void {
-            component.updateAllScreenReaderSections();
-        });
+        if (chart.exporting) {
+            // Needed when print logic in exporting does not trigger
+            // rerendering thus repositioning of screen reader DOM elements
+            // (#21554)
+            this.addEvent(chart, 'afterPrint', function (): void {
+                component.updateAllScreenReaderSections();
+            });
+        }
 
         this.announcer = new Announcer(chart, 'assertive');
     }
