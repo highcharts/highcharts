@@ -38,7 +38,7 @@ import type DataModifierOptions from './DataModifierOptions';
 export interface MathModifierColumnFormulaOptions {
 
     /**
-     * Column name or alias in the DataTable to replace with values of the
+     * Column name in the DataTable to replace with values of the
      * formula.
      */
     column: string;
@@ -87,7 +87,7 @@ export interface MathModifierOptions extends DataModifierOptions {
     columnFormulas?: Array<MathModifierColumnFormulaOptions>;
 
     /**
-     * Array of column names or aliases to replace formula strings to
+     * Array of column names to replace formula strings to
      * replace with calculated values. By default all columns in a table
      * will be processed.
      */

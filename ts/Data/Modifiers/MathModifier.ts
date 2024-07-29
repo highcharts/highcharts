@@ -177,8 +177,8 @@ class MathModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to extract column from and use as reference.
      *
-     * @param {string} columnNameOrAlias
-     * Name or alias of column to process.
+     * @param {string} columnName
+     * Name of column to process.
      *
      * @param {number} rowIndex
      * Row index to start the replacing process from.
@@ -188,11 +188,11 @@ class MathModifier extends DataModifier {
      */
     protected processColumn(
         table: DataTable,
-        columnNameOrAlias: string,
+        columnName: string,
         rowIndex: number = 0
     ): DataTable.Column {
         const alternativeSeparators = this.options.alternativeSeparators,
-            column = (table.getColumn(columnNameOrAlias, true) || [])
+            column = (table.getColumn(columnName, true) || [])
                 .slice(rowIndex > 0 ? rowIndex : 0);
 
         for (
