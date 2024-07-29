@@ -105,6 +105,7 @@ namespace OrdinalAxis {
         forceOrdinal?: boolean;
         isInternal?: boolean;
         ordinal: Additions;
+        oldMax?: number;
         getTimeTicks(
             normalizedInterval: Time.TimeNormalizedObject,
             min: number,
@@ -169,6 +170,7 @@ namespace OrdinalAxis {
             );
 
             addEvent(ChartClass, 'pan', onChartPan);
+            addEvent(ChartClass, 'beforeRedraw', restoreOldMax);
             addEvent(ChartClass, 'touchpan', onChartPan);
 
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
@@ -592,6 +594,14 @@ namespace OrdinalAxis {
         }
     }
 
+    function restoreOldMax(this: Chart): void {
+        for (const axis of this.xAxis) {
+            if ((axis as Composition).oldMax) {
+                axis.max = (axis as Composition).oldMax;
+                (axis as Composition).oldMax = void 0;
+            }
+        }
+    }
     /**
      * Extending the Chart.pan method for ordinal axes
      * @private
@@ -747,6 +757,7 @@ namespace OrdinalAxis {
                 );
 
                 if (overscroll) {
+                    axis.oldMax = axis.max;
                     axis.max = (axis.dataMax as any) + overscroll;
                 }
             }
