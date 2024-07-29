@@ -12,6 +12,8 @@
 
 
 /* eslint-disable
+   func-style,
+   jsdoc/require-param-description, jsdoc/require-description,
    no-console, no-undef, no-underscore-dangle, no-unused-expressions,
    no-use-before-define */
 
@@ -1293,6 +1295,22 @@ function getDocletInfosBetween(
     endNode,
     includeNodes
 ) {
+    /** @param {TS.JSDocComment} [comment] */
+    const _toString = comment => {
+        switch (comment.kind) {
+            case TS.SyntaxKind.JSDocLink:
+            case TS.SyntaxKind.JSDocLinkCode:
+            case TS.SyntaxKind.JSDocLinkPlain:
+                return (
+                    '{@link ' +
+                    (comment.name ? comment.name.getText() : '') +
+                    comment.text +
+                    '}'
+                );
+            default:
+                return comment.text || '';
+        }
+    };
     /** @type {Array<DocletInfo>} */
     const _doclets = [];
 
@@ -1314,32 +1332,16 @@ function getDocletInfosBetween(
                         'description',
                         (
                             node.comment instanceof Array ?
+                                node.comment.map(_toString).join('') :
                                 node.comment
-                                    .map(c => c.getText())
-                                    .join(' ') :
-                                node.comment
-                        )
-                            .trim()
-                            .substring(3)
-                            .split(/\n *(?:\* )?/gu)
-                            .join('\n')
-                            .trim()
+                        ).trim()
                     );
                 }
 
                 if (node.tags) {
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.text;
-                        addTag(
-                            _doclet,
-                            _tagName,
-                            tag.getText()
-                                .trim()
-                                .substring(_tagName.length + 1)
-                                .split(/\n *(?:\* )?/gu)
-                                .join('\n')
-                                .trim()
-                        );
+                        addTag(_doclet, _tagName, _toString(tag).trim());
                     }
                 }
 
