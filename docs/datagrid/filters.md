@@ -3,9 +3,9 @@ Column filters in the Datagrid
 The DataGrid allows you to set the filtering option per column. The basic one is sorting.
 
 You have three states of sorting:
-1 - default
-2 - descending
-3 - ascending
+ * 1 - default
+ * 2 - descending
+ * 3 - ascending
 
 When you click on the header, it triggers the next state in order to the current one.
 

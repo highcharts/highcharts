@@ -5,14 +5,14 @@ The core of DataGrid has been changed in the version 2.0. We increased the pefor
 ### Data source
 In the newest DataGrid, the data source definition has been redesigned. It is a critical upgrade, so please double-check if everything is configured properly.
 
-v1
+DataGrid v1
 ```js
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataGrid.DataTable({ columns })
 });
 ```
 
-v2
+DataGrid v2
 ```js
 const grid = DataGrid.dataGrid('container', {
     table: new DataTable({
