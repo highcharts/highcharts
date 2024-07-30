@@ -70,19 +70,19 @@ namespace Globals {
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
+        rowOdd: classNamePrefix + 'row-odd',
+        hoveredRow: classNamePrefix + 'hovered-row',
         columnElement: classNamePrefix + 'column',
         hoveredCell: classNamePrefix + 'hovered-cell',
         hoveredColumn: classNamePrefix + 'hovered-column',
-        hoveredRow: classNamePrefix + 'hovered-row',
         focusedCell: classNamePrefix + 'focused-cell',
-        odd: classNamePrefix + 'odd',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         headCellContent: classNamePrefix + 'head-cell-content',
         headCellResized: classNamePrefix + 'head-cell-resized',
         noData: classNamePrefix + 'no-data',
-        columnSorting: classNamePrefix + 'col-sorting',
-        columnSortingAsc: classNamePrefix + 'col-sorting-asc',
-        columnSortingDesc: classNamePrefix + 'col-sorting-desc'
+        columnSorting: classNamePrefix + 'column-sorting',
+        columnSortingAsc: classNamePrefix + 'column-sorting-asc',
+        columnSortingDesc: classNamePrefix + 'column-sorting-desc'
     };
 
     export const win = window;

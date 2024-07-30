@@ -152,7 +152,7 @@
     width: 100%;
 }
 
-.highcharts-datagrid-row.highcharts-datagrid-odd {
+.highcharts-datagrid-row.highcharts-datagrid-column-odd {
     background-color: var(--highcharts-neutral-color-3);
 }
 
@@ -173,7 +173,7 @@
 }
 
 .highcharts-datagrid-hovered-row,
-.highcharts-datagrid-row.highcharts-datagrid-odd.highcharts-datagrid-hovered-row {
+.highcharts-datagrid-row.highcharts-datagrid-column-odd.highcharts-datagrid-hovered-row {
     background-color: var(--highcharts-highlight-color-10);
 }
 
@@ -185,7 +185,7 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-datagrid-col-resizer {
+.highcharts-datagrid-column-resizer {
     position: absolute;
     top: 0;
     width: 16px;
@@ -196,7 +196,7 @@
     z-index: 10;
 }
 
-.highcharts-datagrid-col-resizer::after {
+.highcharts-datagrid-column-resizer::after {
     content: "";
     position: absolute;
     display: block;
@@ -207,12 +207,12 @@
     left: 2px;
 }
 
-.highcharts-datagrid-col-resizer:hover::after {
+.highcharts-datagrid-column-resizer:hover::after {
     border-left: 2px solid var(--highcharts-neutral-color-20);
     border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-head-cell-resized .highcharts-datagrid-col-resizer::after {
+.highcharts-datagrid-head-cell-resized .highcharts-datagrid-column-resizer::after {
     border-left: 2px solid var(--highcharts-highlight-color-60);
     border-right: 2px solid var(--highcharts-highlight-color-60);
 }
