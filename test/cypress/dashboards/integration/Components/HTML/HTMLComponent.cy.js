@@ -1,5 +1,5 @@
 describe('Updating HTML component.', () => {
-    before(()=>{
+    beforeEach(() => {
         cy.visit('dashboards/cypress/component-html');
     });
 
@@ -56,5 +56,21 @@ describe('Updating HTML component.', () => {
             .closest('.highcharts-dashboards-edit-collapsable-content-header')
             .click();
         cy.get('textarea').should('have.value', '<h1>New title</h1>');
+    });
+
+    it('Sidebar should be populated when adding a component.', () => {
+        // Act
+        cy.toggleEditMode();
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-2');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(2).as('HTML');
+        cy.get('@HTML').click();
+
+        // Assert
+        cy.get('@HTML')
+            .parent()
+            .parent()
+            .find('.highcharts-dashboards-edit-accordion-content textarea')
+            .should('have.value', '<img src="https://www.highcharts.com/samples/graphics/stock-dark.svg"></img>');
     });
 });
