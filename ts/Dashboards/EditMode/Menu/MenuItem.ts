@@ -180,8 +180,11 @@ class MenuItem {
 }
 
 namespace MenuItem {
+    export type ToolbarItemId =
+        'destroy' | 'settings' | 'drag' | 'viewFullscreen';
+
     export interface ItemOptions {
-        id: 'destroy'|'settings'|'drag'|'viewFullscreen';
+        id: ToolbarItemId;
         name?: string;
         type: 'icon'|'toggle'|'text'|'button';
         className?: string;

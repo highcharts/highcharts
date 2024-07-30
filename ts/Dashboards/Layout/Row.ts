@@ -19,8 +19,10 @@
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
-import type Layout from './Layout.js';
+import type Layout from './Layout';
+import type MenuItem from '../EditMode/Menu/MenuItem';
 import type Serializable from '../Serializable';
+
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -554,7 +556,7 @@ namespace Row {
          **/
         id?: string;
         editMode?: {
-            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+            hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
         }
         /**
          * The id of the container element.

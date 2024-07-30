@@ -22,7 +22,8 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
+import type MenuItem from '../EditMode/Menu/MenuItem';
 
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
@@ -149,7 +150,7 @@ namespace CellHTML {
         id: string;
 
         editMode?: {
-            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+            hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
         }
 
         /**

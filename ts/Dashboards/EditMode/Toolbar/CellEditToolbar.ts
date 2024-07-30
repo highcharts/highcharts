@@ -202,7 +202,7 @@ class CellEditToolbar extends EditToolbar {
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
-                if (hiddenItems.includes(item.options.id as any)) {
+                if (hiddenItems.includes(item.options.id)) {
                     item.deactivate();
                 } else {
                     item.activate();
