@@ -1295,20 +1295,32 @@ function getDocletInfosBetween(
     endNode,
     includeNodes
 ) {
-    /** @param {TS.JSDocComment} [comment] */
-    const _toString = comment => {
-        switch (comment.kind) {
+    /** @param {TS.JSDoc|TS.JSDocTag} tag */
+    const _toString = tag => {
+        switch (tag.kind) {
+            case TS.SyntaxKind.JSDoc:
+                return (
+                    tag.comment instanceof Array ?
+                        tag.comment.map(_toString).join('') :
+                        tag.comment
+                );
             case TS.SyntaxKind.JSDocLink:
             case TS.SyntaxKind.JSDocLinkCode:
             case TS.SyntaxKind.JSDocLinkPlain:
                 return (
                     '{@link ' +
-                    (comment.name ? comment.name.getText() : '') +
-                    comment.text +
+                    (tag.name ? tag.name.getText() : '') +
+                    tag.text +
                     '}'
                 );
+            case TS.SyntaxKind.JSDocText:
+                return tag.text;
             default:
-                return comment.text || '';
+                return tag
+                    .getText()
+                    .substring(tag.tagName.text.length + 1)
+                    .replace(/\n +\* ?/gsu, '\n')
+                    .trim();
         }
     };
     /** @type {Array<DocletInfo>} */
@@ -1327,21 +1339,13 @@ function getDocletInfosBetween(
             if (TS.isJSDoc(node)) {
 
                 if (node.comment) {
-                    addTag(
-                        _doclet,
-                        'description',
-                        (
-                            node.comment instanceof Array ?
-                                node.comment.map(_toString).join('') :
-                                node.comment
-                        ).trim()
-                    );
+                    addTag(_doclet, 'description', _toString(node));
                 }
 
                 if (node.tags) {
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.text;
-                        addTag(_doclet, _tagName, _toString(tag).trim());
+                        addTag(_doclet, _tagName, _toString(tag));
                     }
                 }
 
