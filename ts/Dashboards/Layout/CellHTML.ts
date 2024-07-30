@@ -149,7 +149,14 @@ namespace CellHTML {
          **/
         id: string;
 
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
         editMode?: {
+            /**
+             * Array of toolbar items to hide in the edit mode.
+             * Available items are `destroy`, `settings` and `drag`.
+             **/
             hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
         }
 

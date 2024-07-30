@@ -22,11 +22,12 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type LayoutType from './Layout';
+import type MenuItem from '../EditMode/Menu/MenuItem';
 import type Row from './Row';
 import type Serializable from '../Serializable';
 
@@ -600,8 +601,15 @@ namespace Cell {
          **/
         id: string;
 
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
         editMode?: {
-            hiddenToolbarItems?: Array<'destroy'|'settings'|'drag'>;
+            /**
+             * Array of toolbar items to hide in the edit mode.
+             * Available items are `destroy`, `settings` and `drag`.
+             **/
+            hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
         }
         /**
          * Width of the cell. Can be a percentage value, pixels or a fraction.
