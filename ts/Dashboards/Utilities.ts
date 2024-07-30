@@ -23,6 +23,10 @@
  * */
 
 import D from './Globals.js';
+const {
+    doc,
+    supportsPassiveEvents
+} = D;
 import U from '../Core/Utilities.js';
 const {
     error: coreError,
@@ -87,7 +91,7 @@ function addEvent<T>(
             el,
             type,
             fn,
-            D.supportsPassiveEvents ? {
+            supportsPassiveEvents ? {
                 passive: options.passive === void 0 ?
                     type.indexOf('touch') !== -1 : options.passive,
                 capture: false
@@ -262,6 +266,154 @@ function error(code: number|string, stop?: boolean): void {
 }
 
 /**
+ * Utility function to extend an object with the members of another.
+ *
+ * @function Dashboards.extend<T>
+ *
+ * @param {T|undefined} a
+ *        The object to be extended.
+ *
+ * @param {Partial<T>} b
+ *        The object to add to the first one.
+ *
+ * @return {T}
+ *         Object a, the original object.
+ */
+function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
+    /* eslint-enable valid-jsdoc */
+    let n;
+
+    if (!a) {
+        a = {} as T;
+    }
+    for (n in b) { // eslint-disable-line guard-for-in
+        (a as any)[n] = (b as any)[n];
+    }
+    return a;
+}
+
+/**
+ * Fire an event that was registered with addEvent.
+ *
+ * @function Highcharts.fireEvent<T>
+ *
+ * @param {T} el
+ *        The object to fire the event on. It can be a {@link HTMLDOMElement},
+ *        an {@link SVGElement} or any other object.
+ *
+ * @param {string} type
+ *        The type of event.
+ *
+ * @param {Dashboards.Dictionary<*>|Event} [eventArguments]
+ *        Custom event arguments that are passed on as an argument to the event
+ *        handler.
+ *
+ * @param {Dashboards.EventCallbackFunction<T>|Function} [defaultFunction]
+ *        The default function to execute if the other listeners haven't
+ *        returned false.
+ *
+ * @return {void}
+ */
+function fireEvent<T>(
+    el: T,
+    type: string,
+    eventArguments?: (D.AnyRecord|Event),
+    defaultFunction?: (Utilities.EventCallback<T>|Function)
+): void {
+    /* eslint-enable valid-jsdoc */
+    eventArguments = eventArguments || {};
+
+    if (
+        doc.createEvent &&
+        (
+            (el as any).dispatchEvent ||
+            (
+                (el as any).fireEvent &&
+                // Enable firing events on Highcharts instance.
+                (el as any) !== D
+            )
+        )
+    ) {
+        const e = doc.createEvent('Events');
+        e.initEvent(type, true, true);
+
+        eventArguments = extend(e, eventArguments);
+
+        if ((el as any).dispatchEvent) {
+            (el as any).dispatchEvent(eventArguments);
+        } else {
+            (el as any).fireEvent(type, eventArguments);
+        }
+
+    } else if ((el as any).hcEvents) {
+
+        if (!(eventArguments as any).target) {
+            // We're running a custom event
+
+            extend(eventArguments as any, {
+                // Attach a simple preventDefault function to skip
+                // default handler if called. The built-in
+                // defaultPrevented property is not overwritable (#5112)
+                preventDefault: function (): void {
+                    (eventArguments as any).defaultPrevented = true;
+                },
+                // Setting target to native events fails with clicking
+                // the zoom-out button in Chrome.
+                target: el,
+                // If the type is not set, we're running a custom event
+                // (#2297). If it is set, we're running a browser event.
+                type: type
+            });
+        }
+
+        const events: Array<Utilities.EventWrapperObject<any>> = [];
+        let object: any = el;
+        let multilevel = false;
+
+        // Recurse up the inheritance chain and collect hcEvents set as own
+        // objects on the prototypes.
+        while (object.hcEvents) {
+            if (
+                Object.hasOwnProperty.call(object, 'hcEvents') &&
+                object.hcEvents[type]
+            ) {
+                if (events.length) {
+                    multilevel = true;
+                }
+                events.unshift.apply(events, object.hcEvents[type]);
+            }
+            object = Object.getPrototypeOf(object);
+        }
+
+        // For performance reasons, only sort the event handlers in case we are
+        // dealing with multiple levels in the prototype chain. Otherwise, the
+        // events are already sorted in the addEvent function.
+        if (multilevel) {
+            // Order the calls
+            events.sort((
+                a: Utilities.EventWrapperObject<T>,
+                b: Utilities.EventWrapperObject<T>
+            ): number => a.order - b.order);
+        }
+
+        // Call the collected event handlers
+        events.forEach((obj): void => {
+            // If the event handler returns false, prevent the default handler
+            // from executing
+            if (obj.fn.call(el, eventArguments as any) === false) {
+                (eventArguments as any).preventDefault();
+            }
+        });
+
+    }
+
+    // Run the default if not prevented
+    if (defaultFunction && !eventArguments.defaultPrevented) {
+        (defaultFunction as Function).call(el, eventArguments);
+    }
+}
+
+/**
  * Remove an event that was added with {@link Highcharts#addEvent}.
  *
  * @function Dashboards.removeEvent<T>
@@ -378,6 +530,7 @@ namespace Utilities {
 const Utilities = {
     addEvent,
     error,
+    fireEvent,
     merge,
     removeEvent,
     uniqueKey

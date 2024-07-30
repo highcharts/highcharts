@@ -119,6 +119,8 @@ namespace Globals {
      */
     export const win = window;
 
+    export const doc = document;
+
     export const noop = function (): void {};
 
     export const isMS = /(edge|msie|trident)/i

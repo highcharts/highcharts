@@ -37,6 +37,7 @@ export const addEvent: typeof Utilities.addEvent;
 export const board: typeof Board.board;
 export const boards: typeof Globals.boards;
 export const error: typeof Utilities.error;
+export const fireEvent: typeof Utilities.fireEvent;
 export const merge: typeof Utilities.merge;
 export const removeEvent: typeof Utilities.removeEvent;
 export const uniqueKey: typeof Utilities.uniqueKey;
