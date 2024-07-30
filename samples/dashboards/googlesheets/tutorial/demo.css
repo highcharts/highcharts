@@ -26,6 +26,11 @@ body {
     text-align: center;
 }
 
+.config-cell label {
+    display: block;
+    margin: 10px 0;
+}
+
 div#description {
     margin: 10px 30px;
     font-size: 1.2em;

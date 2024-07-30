@@ -150,7 +150,7 @@ The `spreadsheet key` can be extracted directly from the URL of the document as 
 https://docs.google.com/spreadsheets/d/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/edit
 ```
 
-Sheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
+Spreadsheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
 
 ### Basic demo
 

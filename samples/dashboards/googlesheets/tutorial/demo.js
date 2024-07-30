@@ -3,10 +3,10 @@ const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
 const googleSpreadsheetKey = '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA';
 
 // Calculate sheet title based on the sheet number
-function sheetTitle(n = 1) {
+function sheetTitle(name = 'Sheet 1') {
     return {
-        original: 'Original sheet #' + n,
-        modified: 'Modified sheet #' + n
+        original: 'Original - ' + name,
+        modified: 'Modified - ' + name
     };
 }
 
@@ -26,7 +26,7 @@ function bfpModifyHeader(data) {
 }
 
 function bfpModifyData(data) {
-    // Deprive everyone of their oranges
+    // Deprive everyone of the fruit in row 2
     for (let i = 1; i < data.length; i++) {
         data[i][2] = 0;
     }
