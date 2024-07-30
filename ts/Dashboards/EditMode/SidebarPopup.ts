@@ -335,6 +335,7 @@ class SidebarPopup extends BaseForm {
 
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
+                e.preventDefault();
                 if (sidebar.editMode.dragDrop) {
 
                     // Workaround for Firefox, where mouseleave is not triggered
