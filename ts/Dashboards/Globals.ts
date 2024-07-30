@@ -119,6 +119,34 @@ namespace Globals {
      */
     export const win = window;
 
+    export const noop = function (): void {};
+
+    export const isMS = /(edge|msie|trident)/i
+        .test((win.navigator && win.navigator.userAgent) || '') && !win.opera;
+
+    export const supportsPassiveEvents = (function (): boolean {
+        // Checks whether the browser supports passive events, (#11353).
+        let supportsPassive = false;
+
+        // Object.defineProperty doesn't work on IE as well as passive
+        // events - instead of using polyfill, we can exclude IE totally.
+        if (!isMS) {
+            const opts = Object.defineProperty({}, 'passive', {
+                get: function (): void {
+                    supportsPassive = true;
+                }
+            });
+
+            if (win.addEventListener && win.removeEventListener) {
+                win.addEventListener('testPassive', noop, opts);
+                win.removeEventListener('testPassive', noop, opts);
+            }
+        }
+
+        return supportsPassive;
+    }());
+
+
 }
 
 /* *

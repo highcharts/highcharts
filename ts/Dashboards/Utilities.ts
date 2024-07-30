@@ -22,6 +22,7 @@
  *
  * */
 
+import D from './Globals.js';
 import U from '../Core/Utilities.js';
 const {
     error: coreError,
@@ -38,6 +39,83 @@ const {
  *
  * */
 
+/**
+ * Add an event listener.
+ *
+ * @function Highcharts.addEvent<T>
+ *
+ * @param  {D.Class<T>|T} el
+ *         The element or object to add a listener to. It can be a
+ *         {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
+ *
+ * @param  {string} type
+ *         The event type.
+ *
+ * @param  {Dashboards.EventCallbackFunction<T>|Function} fn
+ *         The function callback to execute when the event is fired.
+ *
+ * @param  {Dashboards.EventOptionsObject} [options]
+ *         Options for adding the event.
+ *
+ * @return {Function}
+ *         A callback function to remove the added event.
+ */
+function addEvent<T>(
+    el: (D.Class<T>|T),
+    type: string,
+    fn: (Utilities.EventCallback<T>|Function),
+    options: Utilities.EventOptions = {}
+): Function {
+    /* eslint-enable valid-jsdoc */
+
+    // Add hcEvents to either the prototype (in case we're running addEvent on a
+    // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
+    // inherited down the prototype chain, in which case we need to set the
+    // property on this instance (which may itself be a prototype).
+    const owner = typeof el === 'function' && el.prototype || el;
+    if (!Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        owner.hcEvents = {};
+    }
+    const events: Record<string, Array<any>> = owner.hcEvents;
+
+    // Handle DOM events
+    // If the browser supports passive events, add it to improve performance
+    // on touch events (#11353).
+    const addEventListener = (el as any).addEventListener;
+    if (addEventListener) {
+        addEventListener.call(
+            el,
+            type,
+            fn,
+            D.supportsPassiveEvents ? {
+                passive: options.passive === void 0 ?
+                    type.indexOf('touch') !== -1 : options.passive,
+                capture: false
+            } : false
+        );
+    }
+
+    if (!events[type]) {
+        events[type] = [];
+    }
+
+    const eventObject = {
+        fn,
+        order: typeof options.order === 'number' ? options.order : Infinity
+    };
+    events[type].push(eventObject);
+
+    // Order the calls
+    events[type].sort((
+        a: Utilities.EventWrapperObject<T>,
+        b: Utilities.EventWrapperObject<T>
+    ): number => a.order - b.order);
+
+    // Return a function that can be called to remove this event.
+    return function (): void {
+        removeEvent(el, type, fn);
+    };
+}
 /**
  * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
@@ -183,6 +261,114 @@ function error(code: number|string, stop?: boolean): void {
     coreError(code, stop);
 }
 
+/**
+ * Remove an event that was added with {@link Highcharts#addEvent}.
+ *
+ * @function Dashboards.removeEvent<T>
+ *
+ * @param {Dashboards.Class<T>|T} el
+ *        The element to remove events on.
+ *
+ * @param {string} [type]
+ *        The type of events to remove. If undefined, all events are removed
+ *        from the element.
+ *
+ * @param {Dashboards.EventCallbackFunction<T>} [fn]
+ *        The specific callback to remove. If undefined, all events that match
+ *        the element and optionally the type are removed.
+ *
+ * @return {void}
+ */
+function removeEvent<T>(
+    el: (D.Class<T>|T),
+    type?: string,
+    fn?: (Utilities.EventCallback<T>|Function)
+): void {
+    /* eslint-enable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    function removeOneEvent(
+        type: string,
+        fn: (Utilities.EventCallback<T>|Function)
+    ): void {
+        const removeEventListener = (el as any).removeEventListener;
+
+        if (removeEventListener) {
+            removeEventListener.call(el, type, fn, false);
+        }
+    }
+
+    /**
+     * @private
+     */
+    function removeAllEvents(eventCollection: any): void {
+        let types: Record<string, boolean>,
+            len;
+
+        if (!(el as any).nodeName) {
+            return; // Break on non-DOM events
+        }
+
+        if (type) {
+            types = {};
+            types[type] = true;
+        } else {
+            types = eventCollection;
+        }
+
+        objectEach(types, function (_val, n): void {
+            if (eventCollection[n]) {
+                len = eventCollection[n].length;
+                while (len--) {
+                    removeOneEvent(n as any, eventCollection[n][len].fn);
+                }
+            }
+        });
+    }
+
+    const owner = typeof el === 'function' && el.prototype || el;
+    if (Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        const events = owner.hcEvents;
+        if (type) {
+            const typeEvents = (
+                events[type] || []
+            ) as Utilities.EventWrapperObject<T>[];
+
+            if (fn) {
+                events[type] = typeEvents.filter(
+                    function (obj): boolean {
+                        return fn !== obj.fn;
+                    }
+                );
+                removeOneEvent(type, fn);
+
+            } else {
+                removeAllEvents(events);
+                events[type] = [];
+            }
+        } else {
+            removeAllEvents(events);
+            delete owner.hcEvents;
+        }
+    }
+}
+
+namespace Utilities {
+    export interface EventCallback<T> {
+        (this: T, eventArguments: (D.AnyRecord|Event)): (boolean|void);
+    }
+    export interface EventWrapperObject<T> {
+        fn: EventCallback<T>;
+        order: number;
+    }
+    export interface EventOptions {
+        order?: number;
+        passive?: boolean;
+    }
+}
+
 /* *
  *
  *  Default Export
@@ -190,8 +376,10 @@ function error(code: number|string, stop?: boolean): void {
  * */
 
 const Utilities = {
+    addEvent,
     error,
     merge,
+    removeEvent,
     uniqueKey
 };
 
