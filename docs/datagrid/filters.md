@@ -11,7 +11,7 @@ When you click on the header, it triggers the next state in order to the current
 
 
 ### Filters
-The [sorting]() option is available in the `columns`.
+The [sorting](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
 
 ```js
 defaults: {
@@ -32,7 +32,7 @@ columns: {
 ```
 
 ### Events
-The DataGrid supports event listeners that can be added to the column [events]() object, which will call callback functions when filtering the cell or column.
+The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object, which will call callback functions when filtering the cell or column.
 
 Example:
 ```js
