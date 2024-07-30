@@ -9,12 +9,12 @@ The [cellFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Data
 
 ```js
 columns: {
-  yourColumnName: {
+  column1: {
       cellFormatter: function () {
           return 'V: ' + this.value;
       }
   },
-  yourColumnName2: {
+  column2: {
     cellFormat: '<h3>{value}</h3>'
   }
 ```
