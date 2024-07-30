@@ -8,7 +8,7 @@ You can get all DataGrid functionality through Dashboard's packages, which can b
 npm install @highcharts/dashboards
 ```
 Then import the package in your project:
-``` JS
+```js
 import * as Dashboards from '@highcharts/dashboards';
 ```
 
