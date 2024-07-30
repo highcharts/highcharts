@@ -130,7 +130,7 @@ that is accessible via the `Board.dataCursor` property.
 Google Sheets is a spreadsheet application included as part of the free, web-based Google Docs Editors suite offered by Google.
 
 With Highcharts Dashboards' `GoogleSheetsConnector` is it possible to load data from a Google spreadsheet and insert it into the connector's data table,
-allowing the data to rendered in any Dashboards component, be it in a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
+allowing the data to be rendered in any dashboard component, whether in a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
 Alternatively, the data may be filtered or modified before being parsed, in the `beforeParse` callback.
 
 The connector requires two API keys; one for the Google account and one for the document itself. In addition, the owner of the Google account must grant read access to the document.
