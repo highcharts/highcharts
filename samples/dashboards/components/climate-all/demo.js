@@ -435,7 +435,7 @@ async function setupBoard() {
             states: {
                 active: {
                     enabled: true,
-                    isActive: true
+                    activateComponent: true
                 },
                 hover: {
                     enabled: true

@@ -39,7 +39,7 @@ Dashboards.board('container', {
         states: {
             active: {
                 enabled: true,
-                isActive: true
+                activateComponent: true
             }
         }
     }, {

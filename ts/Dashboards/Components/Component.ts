@@ -1103,18 +1103,10 @@ namespace Component {
      */
     export interface StatesOptions {
         active?: {
-
-            /**
-             * Whether to enable the active state.
-             *
-             * @default false
-             */
-            enabled?: boolean;
-
             /**
              * Whether the component is active. Only used when `enabled` is
              * `true`.
-             * If `true`, the `highcharts-dashboards-cell-state-active`class
+             * If `true`, the `highcharts-dashboards-cell-state-active` class
              * will be added to the component's container.
              *
              * Only one component can be active at a time.
@@ -1124,7 +1116,14 @@ namespace Component {
              *
              * @default false
              */
-            isActive?: boolean;
+            activateComponent?: boolean;
+
+            /**
+             * Whether to enable the active state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
         };
         hover?: {
             /**
