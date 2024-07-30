@@ -3,6 +3,8 @@ Upgrade DataGrid to v2
 The core of DataGrid has been changed in the version 2.0. We increased the peformance, flexibility and added accessibility supoort. It means that API options have been changed and definition of styles or data source are different. We described all changes below. 
 
 ### Data source
+In the newest DataGrid, the data source definition has been redesigned. It is a critical upgrade, so please double-check if everything is configured properly.
+
 v1
 ```js
 const grid = new DataGrid.DataGrid('container', {
