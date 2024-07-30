@@ -1,0 +1,32 @@
+DataGrid installation
+===
+
+### Install via NPM
+One of the ways of adding the DataGrid to your web page is via npm script.
+You can get all DataGrid functionality through Dashboard's packages, which can be installed using the following script:
+```bash
+npm install @highcharts/dashboards
+```
+Then import the package in your project:
+``` JS
+import * as Dashboards from '@highcharts/dashboards';
+```
+
+### Include DataGrid by script tag
+Include the JavaScript files in the `<head>` section of your web page as shown below.
+
+```html
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+ ```
+
+
+### Load files from your domain
+In the example above the Javascript files are loaded from [code.highcharts.com](https://code.highcharts.com) but you can download the files from [highcharts.com](https://www.highcharts.com/download/) and include them on your web page. Here is an example with DataGrid served from your own server:
+
+```html
+<script src="../code/dashboards/datagrid.js"></script>
+```
+
+### Get started
+
+Now you are ready to use DataGrid. Check out [Your first DataGrid](https://highcharts.com/docs/dashboards/your-first-datagrid) to get started.
