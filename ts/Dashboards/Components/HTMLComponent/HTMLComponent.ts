@@ -364,12 +364,18 @@ class HTMLComponent extends Component {
      */
     public getEditableOptions(): Options {
         const component = this;
-        return merge(
-            component.options,
-            {
-                elements: this.elements
-            }
-        );
+
+        // When adding a new component, the elements are not yet set.
+        if (this.elements.length) {
+            return merge(
+                component.options,
+                {
+                    elements: this.elements
+                }
+            );
+        }
+
+        return component.options;
     }
 
     /**
