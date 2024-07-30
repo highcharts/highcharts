@@ -73,4 +73,4 @@ DataGrid.dataGrid('container', {
 
 6. With that config, your DataGrid should look like the example below:
 
-<iframe src="https://www.highcharts.com/samples/embed/data-grid/basic/your-first-datagrid" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/data-grid/demo/your-first-datagrid" allow="fullscreen"></iframe>
