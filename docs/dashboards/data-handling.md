@@ -154,11 +154,4 @@ Spreadsheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
 
 ### Basic demo
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/googlesheets/tutorial" allow="fullscreen"></iframe>
-
-
-
-
-
-
-
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial" allow="fullscreen"></iframe>
