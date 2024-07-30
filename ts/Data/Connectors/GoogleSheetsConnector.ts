@@ -11,6 +11,7 @@
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sophie Bremer
+ *  - Jomar Hønsi
  *
  * */
 
@@ -168,6 +169,8 @@ class GoogleSheetsConnector extends DataConnector {
                 connector.options
             );
 
+        const urlObj = new URL(url);
+
         connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,
@@ -176,7 +179,7 @@ class GoogleSheetsConnector extends DataConnector {
         });
 
 
-        return fetch(url)
+        return fetch(urlObj.href)
             .then((
                 response
             ): Promise<GoogleSheetsConverter.GoogleSpreadsheetJSON> => (
@@ -228,7 +231,6 @@ class GoogleSheetsConnector extends DataConnector {
                 throw error;
             });
     }
-
 }
 
 /* *
@@ -336,7 +338,6 @@ namespace GoogleSheetsConnector {
             )
         );
     }
-
 }
 
 /* *
