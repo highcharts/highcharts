@@ -67,3 +67,33 @@ events: {
   }
 }
 ```
+
+### Sorting
+The DataGrid allows you to set the filtering option per column. The basic one is sorting.
+
+You have three states of sorting:
+ * 1 - default
+ * 2 - descending
+ * 3 - ascending
+
+When you click on the header, it triggers the next state in order to the current one.
+
+The [sorting](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
+
+```js
+defaults: {
+    columns: {
+        sorting: true
+    }
+},
+```
+
+Applies sorting to all columns. However, you can define the option only for a particular column.
+
+```js
+columns: {
+  yourColumnName: {
+    sorting: true
+  }
+}
+```
