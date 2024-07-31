@@ -20,3 +20,8 @@ select {
     border: 1px solid rgba(227, 227, 232, 1);
     border-radius: 4px;
 }
+
+select:hover {
+    cursor: pointer;
+    border-color: #000;
+}

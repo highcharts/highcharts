@@ -39,6 +39,11 @@
 
     const newOptions = {
         buttons: [{
+            type: 'week',
+            count: 1,
+            text: 'Week',
+            title: 'View 1 week'
+        }, {
             type: 'month',
             count: 1,
             text: 'Month',
@@ -48,11 +53,6 @@
             count: 6,
             text: '6 months',
             title: 'View 6 months'
-        }, {
-            type: 'week',
-            count: 1,
-            text: 'Week',
-            title: 'View 1 week'
         }, {
             type: 'year',
             text: 'Year',
