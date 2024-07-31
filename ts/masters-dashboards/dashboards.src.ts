@@ -57,10 +57,12 @@ import Utilities from '../Dashboards/Utilities.js';
 
 declare global {
     interface Dashboards {
+        addEvent: typeof Utilities.addEvent;
         board: typeof Board.board;
         boards: typeof Globals.boards;
         error: typeof Utilities.error;
         merge: typeof Utilities.merge;
+        removeEvent: typeof Utilities.removeEvent;
         uniqueKey: typeof Utilities.uniqueKey;
         win: typeof Globals.win;
         AST: typeof AST;
@@ -96,8 +98,10 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
+G.addEvent = Utilities.addEvent;
 G.error = Utilities.error;
 G.merge = Utilities.merge;
+G.removeEvent = Utilities.removeEvent;
 G.uniqueKey = Utilities.uniqueKey;
 G.AST = AST;
 G.Board = Board;
