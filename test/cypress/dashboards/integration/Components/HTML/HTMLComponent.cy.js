@@ -67,7 +67,7 @@ describe('Updating HTML component.', () => {
             .parent()
             .parent()
             .find('.highcharts-dashboards-edit-accordion-content textarea')
-            .should('have.value', '<img src="https://www.highcharts.com/samples/graphics/stock-dark.svg"></img>');
+            .should('have.value', '<p>[Your custom HTML here- edit the component]</p>');
     });
 
     it('Properties should be reflected in the sidebar.', () => {

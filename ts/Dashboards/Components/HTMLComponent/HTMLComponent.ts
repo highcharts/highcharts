@@ -286,10 +286,8 @@ class HTMLComponent extends Component {
             cell: '',
             type: 'HTML',
             elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                }
+                tagName: 'p',
+                textContent: '[Your custom HTML here- edit the component]'
             }]
         };
     }
