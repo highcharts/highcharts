@@ -136,6 +136,10 @@ class RangeModifier extends DataModifier {
 
         if (ranges.length) {
             const modified = table.modified;
+            const modifiedIndexes = table.modifiedRowIndexes =
+                new Array<number>(table.getRowCount());
+            const parentIndexes: number[] =
+                table.modified.parentRowIndexes = [];
 
             let columns = table.getColumns(),
                 rows: Array<DataTable.Row> = [];
@@ -204,6 +208,8 @@ class RangeModifier extends DataModifier {
 
                         if (row) {
                             rows.push(row);
+                            modifiedIndexes[j] = rows.length - 1;
+                            parentIndexes.push(j);
                         }
                     }
                 }
