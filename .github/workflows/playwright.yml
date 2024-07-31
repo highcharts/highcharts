@@ -63,7 +63,6 @@ jobs:
         BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
       run: |
         export DISPLAY=:99
-        §
         npx browserstack-node-sdk playwright test
     - uses: actions/upload-artifact@v4
       if: always()
