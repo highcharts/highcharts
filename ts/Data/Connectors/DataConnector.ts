@@ -25,8 +25,8 @@ import type { DataConnectorTypes } from './DataConnectorType';
 import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
 import type DataEvent from '../DataEvent';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
-import type DataConverterNamespace from '../Converters/DataConverter';
 
+import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -79,7 +79,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The DataConverter responsible for handling conversion of provided data to
      * a DataConnector.
      */
-    public abstract readonly converter: DataConverterNamespace;
+    public abstract readonly converter: DataConverter;
 
     /**
      * Metadata to describe the connector and the content of columns.
@@ -371,11 +371,6 @@ namespace DataConnector {
      * Option of the DataConnector.
      */
     export type UserOptions = Partial<DataConnectorOptions>;
-
-    /**
-     * The DataConverter responsible for handling conversion.
-     */
-    export type DataConverter = DataConverterNamespace;
 
     /* *
      *
