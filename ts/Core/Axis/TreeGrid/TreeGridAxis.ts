@@ -522,12 +522,13 @@ function onBeforeRender(
                                 series.options.keys.length
                             )
                         ) {
+                            const toArray = splat(d);
+
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
                             data.forEach(function (
                                 point: GanttPointOptions
                             ): void {
-                                const toArray = splat(d);
 
                                 if (
                                     toArray.indexOf(point.x) >= 0 &&
