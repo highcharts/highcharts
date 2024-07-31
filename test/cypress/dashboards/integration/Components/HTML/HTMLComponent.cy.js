@@ -3,6 +3,10 @@ describe('Updating HTML component.', () => {
         cy.visit('dashboards/cypress/component-html');
     });
 
+    it('Should have the correct class name.', () => {
+        cy.get('#dashboard-2').children().eq(0).should('have.class', 'highcharts-dashboards-component-html');
+    });
+
     it('Should update the HTML component title and caption.', () => {
         cy.get('.highcharts-dashboards-component-title').should('have.text', 'Title (original)');
         cy.get('.highcharts-dashboards-component-caption').should('have.text', 'Caption (original)');
