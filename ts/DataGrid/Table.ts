@@ -28,7 +28,7 @@ import DGUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import Row from './Row.js';
 import Column from './Column.js';
-import TableHead from './TableHead.js';
+import TableHeader from './TableHeader.js';
 import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
@@ -79,7 +79,7 @@ class Table {
     /**
      * The head of the table.
      */
-    public head?: TableHead;
+    public header?: TableHeader;
 
     /**
      * The visible columns of the table.
@@ -197,8 +197,8 @@ class Table {
         this.loadColumns();
 
         // Load & render head
-        this.head = new TableHead(this);
-        this.head.render();
+        this.header = new TableHeader(this);
+        this.header.render();
 
         this.rowsVirtualizer.initialRender();
 
@@ -251,8 +251,8 @@ class Table {
         }
 
         // Reflow the head
-        if (this.head) {
-            this.head.reflow();
+        if (this.header) {
+            this.header.reflow();
         }
 
         // Reflow rows content dimensions
@@ -271,7 +271,7 @@ class Table {
      */
     private onScroll = (): void => {
         this.rowsVirtualizer.scroll();
-        this.head?.scrollHorizontally(this.tbodyElement.scrollLeft);
+        this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
     };
 
     /**
@@ -335,7 +335,7 @@ class Table {
         this.columns.forEach((column): void => {
             column.columnSorting?.removeEventListeners();
         });
-        this.head?.removeHeaderEventListeners();
+        this.header?.removeHeaderEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();

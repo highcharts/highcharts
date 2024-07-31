@@ -44,7 +44,7 @@ const { format } = Templating;
  * Represents a table header row containing the cells (headers) with
  * column names.
  */
-class TableHead {
+class TableHeader {
 
     /* *
     *
@@ -242,7 +242,7 @@ class TableHead {
  *
  * */
 
-namespace TableHead {
+namespace TableHeader {
 
 }
 
@@ -253,4 +253,4 @@ namespace TableHead {
  *
  * */
 
-export default TableHead;
+export default TableHeader;
