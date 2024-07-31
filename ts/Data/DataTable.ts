@@ -219,7 +219,22 @@ class DataTable implements DataEvent.Emitter {
 
     public modified: DataTable;
 
+    /**
+     * Array of the modified table's row indexes corresponding to the rows in
+     * this table. If not defined, the table does not have a modified table or
+     * the row order in the modified table is identical to the row order in this
+     * table.
+     */
+    public modifiedRowIndexes?: Array<number>;
+
     private modifier?: DataModifier;
+
+    /**
+     * Array of the parent table's row indexes corresponding to the rows in this
+     * table. If not defined, the table is a root table or parent table row
+     * order is in the parent table is identical to the row order in this table.
+     */
+    public parentRowIndexes?: Array<number>;
 
     private rowCount: number;
 
@@ -340,6 +355,8 @@ class DataTable implements DataEvent.Emitter {
 
             if (!Object.keys(columns).length) {
                 table.rowCount = 0;
+                delete table.parentRowIndexes;
+                delete table.modifiedRowIndexes;
             }
 
             if (modifier) {
