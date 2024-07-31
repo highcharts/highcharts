@@ -57,7 +57,7 @@ function arc(
             // proximity is too small, the arc disappears. If it is too great, a
             // gap appears. This can be seen in the animation of the official
             // bubble demo (#20586).
-            proximity = 0.0002 / Math.max(rx, 1),
+            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
             fullCircle = (
                 Math.abs((options.end || 0) - start - 2 * Math.PI) <
                 proximity
