@@ -402,7 +402,7 @@ class HTMLComponent extends Component {
             return result[propertyPath[0]];
         }
 
-        super.getEditableOptionValue(propertyPath);
+        return super.getEditableOptionValue(propertyPath);
     }
 
     /**
