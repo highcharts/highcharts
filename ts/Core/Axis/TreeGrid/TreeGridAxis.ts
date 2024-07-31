@@ -424,15 +424,37 @@ function onBeforeRender(
                 treeGrid: TreeGridObject;
 
             if (isDirty) {
+
+                const seriesHasPrimitivePoints: boolean[] = [];
+
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
+                    const seriesData = (s.options.data || []),
+                        firstPoint = seriesData[0],
+                        // Check if the first point is a simple array of values.
+                        // If so we assume that this is the case for all points.
+                        foundPrimitivePoint = (
+                            Array.isArray(firstPoint) &&
+                            !(firstPoint as any).find(
+                                (value: any): boolean => (
+                                    typeof value === 'object'
+                                )
+                            )
+                        );
+
+                    seriesHasPrimitivePoints.push(foundPrimitivePoint);
+
                     if (s.visible) {
                         // Push all data to array
-                        (s.options.data || []).forEach(function (
+                        seriesData.forEach(function (
                             data
                         ): void {
+
                             // For using keys - rebuild the data structure
-                            if (s.options.keys && s.options.keys.length) {
+                            if (
+                                foundPrimitivePoint ||
+                                (s.options.keys && s.options.keys.length)
+                            ) {
                                 data = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, data);
@@ -485,7 +507,7 @@ function onBeforeRender(
                 axis.treeGrid.tree = treeGrid.tree;
 
                 // Update yData now that we have calculated the y values
-                axis.series.forEach(function (series): void {
+                axis.series.forEach(function (series, index): void {
                     const axisData = (
                         series.options.data || []
                     ).map(function (
@@ -493,9 +515,12 @@ function onBeforeRender(
                     ): (PointOptions|PointShortOptions) {
 
                         if (
-                            isArray(d) &&
-                            series.options.keys &&
-                            series.options.keys.length
+                            seriesHasPrimitivePoints[index] ||
+                            (
+                                isArray(d) &&
+                                series.options.keys &&
+                                series.options.keys.length
+                            )
                         ) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
