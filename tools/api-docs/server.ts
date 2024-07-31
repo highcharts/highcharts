@@ -10,12 +10,12 @@
  * */
 
 
-import Database from './database';
-import FS from 'node:fs/promises';
-import FSLib from '../libs/fs';
 import Handlebars from 'handlebars';
+import FS from 'node:fs/promises';
 import HTTP from 'node:http';
+import FSLib from '../libs/fs';
 import TreeLib from '../libs/tree';
+import Database from './database';
 
 
 /* *
@@ -152,9 +152,45 @@ async function getNav(
     itemName: string = '',
     version?: number
 ): Promise<Record<string, unknown>> {
-    const option = getOption(database, itemName, version);
+    const item = await database.getItem(itemName, version);
+    const nav = TreeLib.createTreeNode({}, itemName);
 
-    return {};
+    if (item && item.name) {
+        nav.doclet.description = item.description;
+        nav.meta.fullname = item.name;
+        nav.meta.name = item.name.split('.').pop();
+    }
+
+    let navChild: TreeLib.Option;
+    let navChildren: TreeLib.Options = {};
+
+    for (const childItem of await database.getItemChildren(itemName, version)) {
+        if (childItem && childItem.name) {
+            navChild = {
+                doclet: {},
+                meta: {
+                    name: childItem.name.split('.').pop(),
+                    fullname: childItem.name
+                }
+            }
+            if (childItem.description) {
+                navChild.doclet.description = childItem.description;
+            }
+            if (childItem.deprecated) {
+                navChild.doclet.deprecated = `${childItem.deprecated}.0`;
+            }
+            if (childItem.since) {
+                navChild.doclet.since = `${childItem.since}.0`;
+            }
+            navChildren[navChild.meta.name] = navChild;
+        }
+    }
+
+    if (Object.keys(navChildren).length) {
+        nav.children = navChildren;
+    }
+
+    return nav;
 }
 
 
@@ -318,28 +354,50 @@ async function main() {
                         ext
                     );
 
-                } else {
-                    const product = path.split('/')[1];
-                    const option = path.split('/')[2];
-                    const database = new Database(product);
-                    const side =
-                        await getOption(database, option, void 0, true);
+                    return;
+                }
 
-                    console.log(side);
+                const product = path.split('/')[1];
+                const option = path.split('/')[2];
+                const database = new Database(`${product}_options`);
+
+                if (option === 'nav') {
+                    let navOption = path.split('/')[3];
+
+                    console.log(database.product, navOption);
+
+                    if (navOption.endsWith('.json')) {
+                        navOption = navOption
+                            .substring(0, navOption.length - 5);
+                    }
 
                     response200(
                         response,
-                        template({
-                            option: {
-                                name: option
-                            },
-                            product: PRODUCT_META[product],
-                            side
-                        }),
-                        'html'
+                        JSON.stringify(getNav(database, navOption)),
+                        'json'
                     );
 
+                    return;
                 }
+
+                console.log(database.product, option);
+
+                response200(
+                    response,
+                    template({
+                        option: {
+                            name: option
+                        },
+                        product: PRODUCT_META[product],
+                        side: await getOption(
+                            database,
+                            option,
+                            void 0,
+                            true
+                        )
+                    }),
+                    'html'
+                );
             } catch (error) {
                 console.error(`${error}`);
                 response404(response, path);
@@ -348,7 +406,8 @@ async function main() {
         .listen(PORT);
 
     log.warn(
-        'API documentation server running on http://localhost:' + PORT
+        'API documentation server running on ',
+        `http://localhost:${PORT}/dashboards/`
     );
 }
 

@@ -32,7 +32,7 @@ import TSLib from '../libs/ts';
 const PRODUCT = 'dashboards';
 
 
-const DATABASE = new Database(PRODUCT);
+const DATABASE = new Database(`${PRODUCT}_options`);
 
 
 const REFERENCES: Record<string, true> = {};
@@ -46,21 +46,21 @@ const REFERENCES: Record<string, true> = {};
 
 
 async function addOption(
-    parentNode: (Database.Node|undefined),
+    parentItem: (Database.Item|undefined),
     codeInfo: TSLib.CodeInfo
-): Promise<(Database.Node|undefined)> {
+): Promise<(Database.Item|undefined)> {
     const doclet = codeInfo.kind === 'Doclet' ? codeInfo : codeInfo.doclet;
 
     if (doclet?.tags.internal) {
         return void 0;
     }
 
-    const moreInfos: Array<TSLib.CodeInfo> = [];
-
     let name = (
         (doclet && TSLib.extractInfoName(doclet)) ??
         TSLib.extractInfoName(codeInfo)
     );
+
+    // Skip recursive traps
 
     const reference = (
         codeInfo.meta.scope ?
@@ -74,26 +74,33 @@ async function addOption(
 
     REFERENCES[reference] = true;
 
-    if (parentNode) {
-        if (
-            parentNode.name &&
-            typeof name === 'string' &&
-            !name.includes('.')
-        ) {
-            name = `${parentNode.name}.${name}`
-        }
-    } else if (
-        codeInfo.kind === 'Interface' &&
-        codeInfo.name.endsWith('Options')
+    // Decorate option name
+
+    if (
+        typeof name === 'string' &&
+        !name.includes('.')
     ) {
-        // Create root interface name
-        name = name.substring(0, name.length - 7);
-        name = name ? name[0].toLowerCase() + name.substring(1) : name;
+        if (parentItem?.name) {
+            name = `${parentItem.name}.${name}`
+        } else if (
+            codeInfo.kind === 'Interface' &&
+            name.endsWith('Options')
+        ) {
+            // Create root interface name
+            name = name.substring(0, name.length - 7);
+            if (name) {
+                name = name[0].toLowerCase() + name.substring(1);
+            }
+        }
     }
 
-    let node: (Database.Node|undefined) = (
+    // Walk over code information
+
+    const moreInfos: Array<TSLib.CodeInfo> = [];
+
+    let item: (Database.Item|undefined) = (
         name &&
-        await DATABASE.getNode(name)
+        await DATABASE.getItem(name)
     ) || {
         description: '',
         doclet: {},
@@ -101,15 +108,17 @@ async function addOption(
             file: codeInfo.meta.file
         },
         name,
-        since: parentNode?.since
+        since: parentItem?.since
     };
     let resolved: TSLib.CodeInfo;
     let value: TSLib.Value;
 
+    const debug = item.name === 'components';
+
     switch (codeInfo.kind) {
 
         case 'Class':
-            node = void 0;
+            item = void 0;
             TSLib.autoExtendInfo(codeInfo);
             for (const member of codeInfo.members) {
                 if (
@@ -131,12 +140,12 @@ async function addOption(
             value = codeInfo.value;
             return (
                 typeof value === 'object' ?
-                    addOption(parentNode, value) :
+                    addOption(parentItem, value) :
                     void 0
             );
 
         case 'FunctionCall':
-            node = void 0;
+            item = void 0;
             if (
                 codeInfo.name === 'merge' &&
                 codeInfo.arguments
@@ -150,34 +159,31 @@ async function addOption(
             break;
 
         case 'Interface':
+            item = void 0;
             if (codeInfo.name.endsWith('Options')) {
                 TSLib.autoExtendInfo(codeInfo);
                 if (doclet) {
-                    if (parentNode) {
-                        node = void 0;
+                    if (parentItem) {
+                        item = void 0;
                         value =
                             TSLib.extractTagText(doclet, 'description', true);
                         if (typeof value === 'string') {
-                            parentNode.description = (
-                                parentNode.description ?
-                                    `${parentNode.description}\n\n${value}` :
+                            parentItem.description = (
+                                parentItem.description ?
+                                    `${parentItem.description}\n\n${value}` :
                                     value
                             );
-                            DATABASE.setNode(parentNode);
+                            DATABASE.setItem(parentItem);
                         }
                     }
-                } else {
-                    node = void 0;
                 }
                 moreInfos.push(...codeInfo.members);
-            } else {
-                node = void 0;
             }
             break;
 
         case 'Namespace':
         case 'Object':
-            node = void 0;
+            item = void 0;
             for (const member of codeInfo.members) {
                 if (
                     member.kind === 'Class' ||
@@ -194,6 +200,7 @@ async function addOption(
                 codeInfo.kind === 'Variable' &&
                 codeInfo.name !== 'defaultOptions'
             ) {
+                debug && console.log('EXIT');
                 return;
             }
             value = codeInfo.value;
@@ -202,8 +209,8 @@ async function addOption(
                 case 'boolean':
                 case 'number':
                 case 'string':
-                    node.doclet.default = (node.doclet.default || []);
-                    node.doclet.default.push(value);
+                    item.doclet.default = (item.doclet.default || []);
+                    item.doclet.default.push(value);
                     break;
 
                 case 'object':
@@ -212,8 +219,9 @@ async function addOption(
 
             }
             if (codeInfo.type) {
-                node.doclet.type = TSLib.extractTypes(codeInfo.type);
-                for (const type of node.doclet.type) {
+                item.doclet.type = TSLib.extractTypes(codeInfo.type);
+                // debug && console.log(codeInfo.type, item.doclet.type);
+                for (const type of item.doclet.type) {
                     if (type.endsWith('Options')) {
                         resolved = TSLib.resolveReference(
                             codeInfo,
@@ -226,7 +234,7 @@ async function addOption(
                 }
             }
             if (codeInfo.kind === 'Variable') {
-                node = void 0;
+                item = void 0;
             }
             break;
 
@@ -237,13 +245,15 @@ async function addOption(
             );
             return (
                 resolved ?
-                    addOption(parentNode, resolved) :
+                    addOption(parentItem, resolved) :
                     void 0
             );
 
     }
 
-    if (node) {
+    // Update item with doclet information
+
+    if (item) {
 
         if (doclet) {
             for (const tag of Object.keys(doclet.tags)) {
@@ -251,43 +261,51 @@ async function addOption(
 
                     case 'apioption':
                     case 'optionparent':
-                        node.name = TSLib.extractTagText(doclet, tag, PRODUCT);
+                        item.name = TSLib.extractTagText(doclet, tag, PRODUCT);
                         break;
 
                     case 'description':
-                        node.description =
+                        item.description =
                             TSLib.extractTagText(doclet, tag, PRODUCT);
                         break;
 
                     default:
                         if (tag === 'deprecated' || tag === 'since') {
-                            node[tag] = parseFloat(
+                            item[tag] = parseFloat(
                                 TSLib.extractTagText(doclet, tag, PRODUCT) ||
                                 '1.0.0'
                             );
                         }
-                        node.doclet[tag] = doclet.tags[tag].slice();
+                        item.doclet[tag] = doclet.tags[tag].slice();
                         break;
 
                 }
             }
         }
 
-        if (typeof node.name === 'string') {
-            node = await DATABASE.setNode(node);
+        if (typeof item.name === 'string') {
+            item = await DATABASE.setItem(item);
         } else {
-            node = void 0;
+            item = void 0;
         }
 
     }
+
+    // Continue with potential sub-items
 
     if (moreInfos.length) {
         for (const moreInfo of moreInfos) {
-            await addOption(node || parentNode, moreInfo);
+            await addOption(item || parentItem, moreInfo);
         }
     }
 
-    return node;
+    // Done
+
+    if (item) {
+        console.log(item.name);
+    }
+
+    return item;
 }
 
 
@@ -298,21 +316,30 @@ async function main() {
     FSLib.deleteFile('tree-database.json');
 
     // Auto complete foreign declarations
+
     const sourcePaths = FSLib.getFilePaths(FSLib.path('ts/'), true);
 
     for (const sourcePath of sourcePaths) {
         if (
-            sourcePath.endsWith('.d.ts') ||
-            sourcePath.startsWith(FSLib.path('ts/Dash')) ||
-            sourcePath.startsWith(FSLib.path('ts/Data'))
+            sourcePath.endsWith('.ts') &&
+            (
+                sourcePath.startsWith(FSLib.path('ts/Dash')) ||
+                sourcePath.startsWith(FSLib.path('ts/Data'))
+            )
         ) {
+            console.log('Loading', sourcePath, '...');
             TSLib.getSourceInfo(sourcePath);
         }
     }
 
     TSLib.autoCompleteInfos();
 
+    // Save statistic
+
+    let count = await DATABASE.getCount();
+
     // Load root options
+
     await addOption(
         void 0,
         TSLib.resolveReference(
@@ -320,6 +347,12 @@ async function main() {
             'Board.defaultOptions'
         )
     );
+
+    // Done
+
+    count = await DATABASE.getCount() - count;
+
+    console.info('Found', count, 'options.');
 
 }
 
