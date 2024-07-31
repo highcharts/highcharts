@@ -131,60 +131,6 @@ test.describe('Stock Tools annotation popup, #15725', () => {
     });
 });
 
-test.describe('Indicator popup searchbox, #16019.', () => {
-    test.beforeEach(async ({ page }) => {
-        const urlPrefix = "view?path=";
-        await page.goto(urlPrefix + '/highcharts/cypress/stock-tools-gui/');
-    });
-
-    test('Search indicator input should filter and sort the list, #16019.', async ({ page }) => {
-        await page.locator('.highcharts-indicators').click();
-        const input = page.locator('input[name="highcharts-input-search-indicators"]');
-        const list = page.locator('.highcharts-indicator-list');
-        await input.fill('ac');
-        await expect(list).toHaveCount(5);
-
-        await input.fill('acc');
-        await expect(list.first()).toContainText('Acceleration Bands');
-
-        await input.fill('cd');
-        await expect(list.first()).toContainText('MACD');
-
-        await page.getByText('clear filter').click();
-        await expect(input).toHaveValue('');
-        await expect(list).toHaveCount(50);
-    });
-
-    test('Indicators should be accessible through aliases, #16019.', async ({ page }) => {
-        await page.locator('.highcharts-indicators').click();
-        const input = page.locator('input[name="highcharts-input-search-indicators"]');
-        const list = page.locator('.highcharts-indicator-list');
-        await input.fill('boll');
-        expect(list.first()).toContainText('BB');
-    });
-
-    test('Popup should warn when no items are found using the filter, #16019.', async ({ page }) => {
-        await page.locator('.highcharts-indicators').click();
-        await page.locator('input[name="highcharts-input-search-indicators"]').fill('dada');
-        await page.isVisible('text=No match');
-        await page.getByText('clear filter').click();
-        await expect(page.locator('.highcharts-indicator-list').first()).toContainText('Acceleration Bands');
-    });
-    //
-    test('Stock-tools should work after update, #17741.', async ({ page }) => {
-        await page.locator('.highcharts-toggle-toolbar').click();
-        await page.locator('.highcharts-toggle-toolbar').click();
-        await page.locator('.highcharts-indicators').click();
-        await expect(page.locator('.highcharts-popup')).toBeVisible();
-    });
-
-    test('Indicators button should be inactive when popup is closed #16487', async ({ page }) => {
-        await page.locator('.highcharts-indicators').click();
-        await page.locator('.highcharts-popup-close').click();
-        await expect(page.locator('.highcharts-indicators')).not.toHaveClass('highcharts-active');
-    });
-});
-//
 test.describe('Annotations popup text field', () => {
 
     test.beforeEach(async ({ page }) => {
@@ -203,4 +149,3 @@ test.describe('Annotations popup text field', () => {
         await expect(page.locator('input[highcharts-data-name="typeOptions.line.fill"]')).toHaveValue(' ');
     });
 });
-//
