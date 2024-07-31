@@ -3079,17 +3079,13 @@ function resolveReferenceInChildInfos(
 
             case 'TypeAlias':
                 if (extractInfoName(_childInfo) === _referenceCurrent) {
-                    const _original = extractTypes(_childInfo.value)[0];
-                    if (_original) {
-                        return resolveReference(
-                            scopeInfo,
-                            _referenceNext ?
-                                `${_original}.${_referenceNext}` :
-                                _original
-                        );
-                    }
-                    if (!_referenceNext) {
-                        return _childInfo;
+                    _resolvedInfo = resolveReferenceInType(
+                        scopeInfo,
+                        _childInfo.value,
+                        _referenceNext
+                    );
+                    if (_resolvedInfo) {
+                        return _resolvedInfo;
                     }
                 }
                 continue;
@@ -3345,6 +3341,57 @@ function resolveReferenceInObjectInfo(
     }
 
     return void 0;
+}
+
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {NamespaceInfo|SourceInfo} scopeInfo
+ * Scope information to use.
+ *
+ * @param {Array<string>} types
+ * Type information to resolve.
+ *
+ * @param {string} [referenceName]
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInType(
+    scopeInfo,
+    types,
+    referenceName
+) {
+    /** @type {Array<CodeInfo>} */
+    const _resolvedInfos = [];
+
+    /** @type {CodeInfo} */
+    let _resolvedInfo;
+
+    for (const _type of extractTypes(types)) {
+
+        _resolvedInfo = resolveReference(
+            scopeInfo,
+            (referenceName ? `${_type}.${referenceName}` : _type)
+        );
+
+        if (_resolvedInfo) {
+            _resolvedInfos.push(_resolvedInfo);
+        }
+
+    }
+
+    if (_resolvedInfos.length > 1) {
+        return {
+            kind: 'ArrayInfo',
+            meta: newMeta(scopeInfo.meta),
+            values: _resolvedInfos.slice()
+        };
+    }
+
+    return _resolvedInfos[0];
 }
 
 
