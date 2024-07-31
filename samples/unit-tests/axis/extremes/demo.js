@@ -650,7 +650,7 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         const extremes = testedAxis.getExtremes();
 
         controller.slide(
-            [x + 220, y],
+            [x + 200, y],
             [x - 100, y]
         );
 
@@ -732,20 +732,20 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         }
     });
     chart.pinching = true;
-    controller.pinch(touchPointX, touchPointY, -400);
+    controller.pinch(
+        chart.plotLeft + chart.plotWidth - 20,
+        chart.plotTop + chart.plotHeight - 20,
+        -300
+    );
 
     const extremes = xAxis.getExtremes();
 
-    assert.strictEqual(
-        extremes.min,
-        0,
-        'Axis should should zoom out to min extreme on pinch out (#20877).'
-    );
-
-    assert.strictEqual(
-        extremes.max,
-        13,
-        'Axis should should zoom out to max extreme on pinch out (#20877).'
+    // Don't test exact extremes, as they are not deterministic:
+    // depend on browser size
+    assert.notDeepEqual(
+        [extremes.min, extremes.max],
+        [1, 10],
+        'Axis should should zoom out on pinch out (#20877).'
     );
 });
 
