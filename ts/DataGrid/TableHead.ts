@@ -23,8 +23,8 @@
  * */
 
 import DGUtils from './Utils.js';
-import DataGridColumn from './DataGridColumn.js';
-import DataGridTable from './DataGridTable.js';
+import Column from './Column.js';
+import Table from './Table.js';
 import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
 import ColumnSorting from './Actions/ColumnSorting.js';
@@ -44,7 +44,7 @@ const { format } = Templating;
  * Represents a table header row containing the cells (headers) with
  * column names.
  */
-class DataGridTableHead {
+class TableHead {
 
     /* *
     *
@@ -55,7 +55,7 @@ class DataGridTableHead {
     /**
      * The visible columns of the table.
      */
-    public columns: DataGridColumn[] = [];
+    public columns: Column[] = [];
 
     /**
      * The container of the table head.
@@ -65,7 +65,7 @@ class DataGridTableHead {
     /**
      * The viewport (table) the table head belongs to.
      */
-    public viewport: DataGridTable;
+    public viewport: Table;
 
     /**
      * The headers and their mouse click event listeners.
@@ -84,7 +84,7 @@ class DataGridTableHead {
      * @param viewport
      * The viewport (table) the table head belongs to.
      */
-    constructor(viewport: DataGridTable) {
+    constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
         this.container = makeHTMLElement('tr', {}, viewport.theadElement);
@@ -109,7 +109,7 @@ class DataGridTableHead {
             return;
         }
 
-        let column: DataGridColumn;
+        let column: Column;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
             const innerText = column.userOptions.headerFormat ? (
@@ -201,7 +201,7 @@ class DataGridTableHead {
      * The head element to append the drag handle to.
      */
     private renderColumnDragHandles(
-        column: DataGridColumn,
+        column: Column,
         headElement: HTMLElement
     ): HTMLElement {
         const handle = makeHTMLElement('div', {
@@ -242,7 +242,7 @@ class DataGridTableHead {
  *
  * */
 
-namespace DataGridTableHead {
+namespace TableHead {
 
 }
 
@@ -253,4 +253,4 @@ namespace DataGridTableHead {
  *
  * */
 
-export default DataGridTableHead;
+export default TableHead;

@@ -24,8 +24,8 @@
 import type DataTable from '../Data/DataTable';
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import DataGridColumn from './DataGridColumn';
-import DataGridRow from './DataGridRow';
+import Column from './Column';
+import Row from './Row';
 import F from '../Core/Templating.js';
 import Utils from '../Core/Utilities.js';
 
@@ -42,7 +42,7 @@ const { defined, fireEvent } = Utils;
 /**
  * Represents a cell in the data grid.
  */
-class DataGridCell {
+class Cell {
 
     /* *
     *
@@ -58,12 +58,12 @@ class DataGridCell {
     /**
      * The column of the cell.
      */
-    public column: DataGridColumn;
+    public column: Column;
 
     /**
      * The row of the cell.
      */
-    public row: DataGridRow;
+    public row: Row;
 
     /**
      * The raw value of the cell.
@@ -92,7 +92,7 @@ class DataGridCell {
      * @param row
      * The row of the cell.
      */
-    constructor(column: DataGridColumn, row: DataGridRow) {
+    constructor(column: Column, row: Row) {
         this.htmlElement = document.createElement('td');
 
         this.column = column;
@@ -245,7 +245,7 @@ class DataGridCell {
      */
     public formatCell(
         value: string | number | boolean,
-        ctx: DataGridCell
+        ctx: Cell
     ): string {
         const {
             cellFormat,
@@ -283,12 +283,12 @@ class DataGridCell {
  *
  * */
 
-namespace DataGridCell {
+namespace Cell {
     /**
      * Event interface for cell events.
      */
     export interface CellEvent {
-        target: DataGridCell;
+        target: Cell;
     }
 }
 
@@ -299,4 +299,4 @@ namespace DataGridCell {
  *
  * */
 
-export default DataGridCell;
+export default Cell;

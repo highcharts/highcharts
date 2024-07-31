@@ -21,8 +21,8 @@
  *
  * */
 
-import DataGridCell from './DataGridCell.js';
-import DataGridTable from './DataGridTable.js';
+import Cell from './Cell.js';
+import Table from './Table.js';
 import Globals from './Globals.js';
 import DGUtils from './Utils.js';
 
@@ -37,7 +37,7 @@ const { makeHTMLElement } = DGUtils;
 /**
  * Represents a row in the data grid.
  */
-class DataGridRow {
+class Row {
 
     /* *
     *
@@ -48,7 +48,7 @@ class DataGridRow {
     /**
      * The cells of the row.
      */
-    public cells: DataGridCell[] = [];
+    public cells: Cell[] = [];
 
     /**
      * The HTML element of the row.
@@ -63,7 +63,7 @@ class DataGridRow {
     /**
      * The viewport the row belongs to.
      */
-    public viewport: DataGridTable;
+    public viewport: Table;
 
 
     /* *
@@ -81,7 +81,7 @@ class DataGridRow {
      * @param index
      * The index of the row in the data table.
      */
-    constructor(viewport: DataGridTable, index: number) {
+    constructor(viewport: Table, index: number) {
         this.viewport = viewport;
         this.index = index;
 
@@ -109,7 +109,7 @@ class DataGridRow {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new DataGridCell(columns[i], this);
+            const cell = new Cell(columns[i], this);
             cell.render();
         }
 
@@ -151,7 +151,7 @@ class DataGridRow {
      * @param cell
      * The cell to register.
      */
-    public registerCell(cell: DataGridCell): void {
+    public registerCell(cell: Cell): void {
         this.cells.push(cell);
     }
 
@@ -207,7 +207,7 @@ class DataGridRow {
  *
  * */
 
-namespace DataGridRow {
+namespace Row {
 
 }
 
@@ -218,4 +218,4 @@ namespace DataGridRow {
  *
  * */
 
-export default DataGridRow;
+export default Row;

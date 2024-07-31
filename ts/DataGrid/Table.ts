@@ -21,14 +21,14 @@
  *
  * */
 
-import type { ColumnDistribution } from './DataGridOptions';
-import type DataGridCell from './DataGridCell';
+import type { ColumnDistribution } from './Options';
+import type DataGridCell from './Cell';
 
 import DGUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
-import DataGridRow from './DataGridRow.js';
-import DataGridColumn from './DataGridColumn.js';
-import DataGridTableHead from './DataGridTableHead.js';
+import Row from './Row.js';
+import Column from './Column.js';
+import TableHead from './TableHead.js';
 import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
@@ -48,7 +48,7 @@ const { getStyle } = Utils;
 /**
  * Represents a table viewport for the data grid.
  */
-class DataGridTable {
+class Table {
 
     /* *
     *
@@ -79,17 +79,17 @@ class DataGridTable {
     /**
      * The head of the table.
      */
-    public head?: DataGridTableHead;
+    public head?: TableHead;
 
     /**
      * The visible columns of the table.
      */
-    public columns: DataGridColumn[] = [];
+    public columns: Column[] = [];
 
     /**
      * The visible rows of the table.
      */
-    public rows: DataGridRow[] = [];
+    public rows: Row[] = [];
 
     /**
      * The resize observer for the table container.
@@ -197,7 +197,7 @@ class DataGridTable {
         this.loadColumns();
 
         // Load & render head
-        this.head = new DataGridTableHead(this);
+        this.head = new TableHead(this);
         this.head.render();
 
         this.rowsVirtualizer.initialRender();
@@ -219,7 +219,7 @@ class DataGridTable {
         for (let i = 0, iEnd = enabledColumns.length; i < iEnd; ++i) {
             columnId = enabledColumns[i];
             this.columns.push(
-                new DataGridColumn(this, columnId, i)
+                new Column(this, columnId, i)
             );
         }
     }
@@ -349,7 +349,7 @@ class DataGridTable {
      * @returns
      * The viewport state metadata.
      */
-    public getStateMeta(): DataGridTable.ViewportStateMetadata {
+    public getStateMeta(): Table.ViewportStateMetadata {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
@@ -366,7 +366,7 @@ class DataGridTable {
      * The viewport state metadata.
      */
     public applyStateMeta(
-        meta: DataGridTable.ViewportStateMetadata
+        meta: Table.ViewportStateMetadata
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
@@ -384,7 +384,7 @@ class DataGridTable {
     }
 }
 
-namespace DataGridTable {
+namespace Table {
 
     /**
      * Represents the metadata of the viewport state. It is used to save the
@@ -405,4 +405,4 @@ namespace DataGridTable {
  *
  * */
 
-export default DataGridTable;
+export default Table;

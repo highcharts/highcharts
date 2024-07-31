@@ -23,7 +23,7 @@
  *
  * */
 
-import DataGridCell from '../DataGridCell.js';
+import DataGridCell from '../Cell.js';
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
 

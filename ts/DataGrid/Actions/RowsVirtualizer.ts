@@ -22,10 +22,10 @@
  *
  * */
 
-import DataGridTable from '../DataGridTable.js';
+import Table from '../Table.js';
 import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
-import DataGridRow from '../DataGridRow.js';
+import Row from '../Row.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;
 
@@ -60,7 +60,7 @@ class RowsVirtualizer {
     /**
      * The viewport (table) of the data grid.
      */
-    public viewport: DataGridTable;
+    public viewport: Table;
 
     /**
      * Size of the row buffer - how many rows should be rendered outside of the
@@ -93,7 +93,7 @@ class RowsVirtualizer {
      * @param viewport
      * The viewport of the data grid to render rows in.
      */
-    constructor(viewport: DataGridTable) {
+    constructor(viewport: Table) {
         const rowSettings = viewport.dataGrid.options?.settings?.rows;
 
         this.viewport = viewport;
@@ -211,7 +211,7 @@ class RowsVirtualizer {
         const rows = vp.rows;
 
         if (!rows.length) {
-            const last = new DataGridRow(vp, vp.dataTable.getRowCount() - 1);
+            const last = new Row(vp, vp.dataTable.getRowCount() - 1);
             last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
@@ -234,7 +234,7 @@ class RowsVirtualizer {
         rows.length = 0;
 
         for (let i = from; i <= to; ++i) {
-            const newRow = new DataGridRow(vp, i);
+            const newRow = new Row(vp, i);
             newRow.render();
             vp.tbodyElement.insertBefore(
                 newRow.htmlElement,
