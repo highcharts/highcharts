@@ -22,7 +22,7 @@
  * */
 
 import type { ColumnDistribution } from './Options';
-import type DataGridCell from './Cell';
+import type TableCell from './TableCell';
 
 import DGUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
@@ -127,7 +127,7 @@ class Table {
      * The input element of a cell after mouse focus.
      * @internal
      */
-    public editedCell?: DataGridCell;
+    public editedCell?: TableCell;
 
     /**
      * The cell editing instance that handles the manual editing of cells in

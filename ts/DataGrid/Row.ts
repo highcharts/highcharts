@@ -21,7 +21,8 @@
  *
  * */
 
-import Cell from './Cell.js';
+import type Cell from './Cell';
+import TableCell from './TableCell.js';
 import Table from './Table.js';
 import Globals from './Globals.js';
 import DGUtils from './Utils.js';
@@ -109,7 +110,7 @@ class Row {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new Cell(columns[i], this);
+            const cell = new TableCell(columns[i], this);
             cell.render();
         }
 

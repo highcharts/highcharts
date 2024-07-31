@@ -22,8 +22,8 @@
  * */
 
 import type { IndividualColumnOptions } from './Options';
+import type Cell from './Cell';
 
-import Cell from './Cell.js';
 import Table from './Table.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';

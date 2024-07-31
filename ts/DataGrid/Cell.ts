@@ -35,14 +35,10 @@ const { defined, fireEvent } = Utils;
 
 /* *
  *
- *  Class
+ *  Abstract Class of Cell
  *
  * */
-
-/**
- * Represents a cell in the data grid.
- */
-class Cell {
+abstract class Cell {
 
     /* *
     *
@@ -70,12 +66,6 @@ class Cell {
      */
     public value: DataTable.CellType;
 
-    /**
-     * The input element of a cell after mouse focus.
-     * @internal
-     */
-    public cellInputEl?: HTMLInputElement;
-
 
     /* *
     *
@@ -101,9 +91,9 @@ class Cell {
         this.row = row;
         this.row.registerCell(this);
 
-        this.htmlElement.addEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.addEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.addEventListener('click', this.onClick);
+        // this.htmlElement.addEventListener('mouseover', this.onMouseOver);
+        // this.htmlElement.addEventListener('mouseout', this.onMouseOut);
+        // this.htmlElement.addEventListener('click', this.onClick);
     }
 
 
@@ -142,14 +132,11 @@ class Cell {
         if (!defined(value)) {
             value = '';
         }
-
-        const cellContent = this.formatCell(value, this);
-
-        if (this.column.userOptions.useHTML) {
-            this.renderHTMLCellContent(cellContent, element);
-        } else {
-            element.innerText = cellContent;
-        }
+        
+        this.renderHTMLCellContent(
+            this.formatCell(value, this),
+            element
+        );
 
         if (updateTable) {
             const vp = this.row.viewport;
@@ -170,67 +157,6 @@ class Cell {
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
     }
-
-    /**
-     * When useHTML enabled, parse the syntax and render HTML.
-     *
-     * @param cellContent
-     * Content to render.
-     *
-     * @param parentElement
-     * Parent element where the content should be.
-     *
-     */
-    private renderHTMLCellContent(
-        cellContent: string,
-        parentElement: HTMLElement
-    ): void {
-        const formattedNodes = new AST(cellContent);
-        formattedNodes.addToDOM(parentElement);
-    }
-
-    /**
-     * Sets the hover state of the cell and its row and column.
-     */
-    private readonly onMouseOver = (): void => {
-        const { dataGrid } = this.row.viewport;
-        dataGrid.hoverRow(this.row.index);
-        dataGrid.hoverColumn(this.column.id);
-        dataGrid.options?.events?.cell?.mouseOver?.call(this);
-        fireEvent(dataGrid, 'cellMouseOver', {
-            target: this
-        });
-    };
-
-    /**
-     * Unsets the hover state of the cell and its row and column.
-     */
-    private readonly onMouseOut = (): void => {
-        const { dataGrid } = this.row.viewport;
-        dataGrid.hoverRow();
-        dataGrid.hoverColumn();
-        dataGrid.options?.events?.cell?.mouseOut?.call(this);
-        fireEvent(dataGrid, 'cellMouseOut', {
-            target: this
-        });
-    };
-
-    /**
-     * Handles the user clicking on a cell.
-     */
-    private readonly onClick = (): void => {
-        const vp = this.row.viewport;
-        const { dataGrid } = vp;
-
-        if (this.column.options.editable) {
-            vp.cellEditing.startEditing(this);
-        }
-
-        dataGrid.options?.events?.cell?.click?.call(this);
-        fireEvent(dataGrid, 'cellClick', {
-            target: this
-        });
-    };
 
     /**
      * Handle the formatting content of the cell.
@@ -266,12 +192,27 @@ class Cell {
     }
 
     /**
+     * Renders content of cell.
+     *
+     * @param cellContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     *
+     */
+    private renderHTMLCellContent(
+        cellContent: string,
+        parentElement: HTMLElement
+    ): void {
+        const formattedNodes = new AST(cellContent);
+        formattedNodes.addToDOM(parentElement);
+    }
+
+    /**
      * Destroys the cell.
      */
     public destroy(): void {
-        this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.removeEventListener('click', this.onClick);
         this.htmlElement.remove();
     }
 }
