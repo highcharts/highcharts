@@ -29,4 +29,6 @@ button {
 
 button:hover {
     opacity: 0.8;
+    cursor: pointer;
+    border-color: #000;
 }
