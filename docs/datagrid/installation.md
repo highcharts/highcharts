@@ -27,6 +27,12 @@ In the example above the Javascript files are loaded from [code.highcharts.com](
 <script src="../code/dashboards/datagrid.js"></script>
 ```
 
+## Importing the CSS
+The CSS is not included in the library by default, but you can import it like below:
+```css
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+```
+
 ### Get started
 
 Now you are ready to use DataGrid. Check out [Your first DataGrid](https://highcharts.com/docs/dashboards/your-first-datagrid) to get started.

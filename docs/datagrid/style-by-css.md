@@ -37,7 +37,7 @@ We can distinguish a few main elements and their classes:
 
 The rest of the classes are specific for each element.
 
-To style the DataGrid's row:
+To style the DataGrid's rows:
 ```css
 .highcharts-dashboards-row {
     padding: 10px;
@@ -52,8 +52,19 @@ To style the DataGrid's row:
 }
 ```
 
+To style the DataGrid's particular row:
+```css
+.highcharts-datagrid-row[data-row-index="1"] {
+    background-color: red;
+}
+```
+
 To style the DataGrid's cell:
 ```css
+.highcharts-datagrid-row[data-row-index="1"] td {
+    height: 150px;
+}
+
 .highcharts-dashboards-hovered-cell {
     border: 1px solid red;
 }
@@ -63,7 +74,7 @@ To style the DataGrid's cell:
 }
 ```
 
-To style the DataGrid's column:
+To style the DataGrid's columns:
 ```css
 .highcharts-dashboards-column {
     padding: 10px;
@@ -71,6 +82,13 @@ To style the DataGrid's column:
 
 .highcharts-dashboards-hovered-column {
     background-color: blue;
+}
+```
+
+To style the DataGrid's particular column:
+```css
+.highcharts-datagrid-column[data-column-id="b"] {
+    width: 30%;
 }
 ```
 

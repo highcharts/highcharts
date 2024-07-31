@@ -32,7 +32,7 @@ defaults: {
 ```
 
 ### Events
-The DataGrid supports event listeners that can be added to the column [events]() object, which will call callback functions when editing the cell or column.
+The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object, which will call callback functions when editing the cell or column.
 
 The available events are:
 
