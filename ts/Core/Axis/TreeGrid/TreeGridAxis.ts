@@ -57,7 +57,8 @@ const {
     merge,
     pick,
     removeEvent,
-    wrap
+    wrap,
+    splat
 } = U;
 
 /* *
@@ -501,9 +502,11 @@ function onBeforeRender(
                             data.forEach(function (
                                 point: GanttPointOptions
                             ): void {
+                                const toArray = splat(d);
+
                                 if (
-                                    (d as any).indexOf(point.x) >= 0 &&
-                                    (d as any).indexOf(point.x2) >= 0
+                                    toArray.indexOf(point.x) >= 0 &&
+                                    toArray.indexOf(point.x2) >= 0
                                 ) {
                                     d = point;
                                 }
