@@ -180,29 +180,6 @@ afterRender(e) {
 }
 ```
 
-If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
-
-```js
-dataPool: {
-    connectors: [{
-      id: 'Vitamin',
-      type: 'CSV',
-      options: {
-        csv: csvData,
-        firstRowAsNames: true,
-        dataTable: {
-          aliases: {
-            // Workaround for renamed series:
-            // set an alias that matches the series name
-            'customName': 'water',
-            'otherCustomName': 'air'
-          }
-        }
-      }
-    }]
-}
-```
-See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
 How to style the Dashboard?
 -----------------------------------------------------------------------

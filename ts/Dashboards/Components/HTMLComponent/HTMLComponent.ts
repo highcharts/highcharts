@@ -180,6 +180,10 @@ class HTMLComponent extends Component {
      * The options for the component.
      */
     constructor(cell: Cell, options: Partial<Options>) {
+        if (options.className) {
+            options.className = `${HTMLComponent.defaultOptions.className} ${options.className}`;
+        }
+
         options = merge(
             HTMLComponent.defaultOptions,
             options
