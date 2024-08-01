@@ -87,6 +87,10 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
                 return 'V: ' + this.value;
             }
         },
+        price: {
+            headerFormat: '{id} (total)',
+            cellFormat: '$ {value}'
+        },
         metaData: {
             enabled: false
         }
