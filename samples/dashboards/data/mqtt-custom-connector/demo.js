@@ -4,6 +4,16 @@
  *
  * */
 
+// Set up Highcharts common options
+Highcharts.setOptions({
+    chart: {
+        type: 'spline',
+        animation: true
+    },
+    title: {
+        text: 'Production'
+    }
+});
 
 // MQTT connection configuration
 const mqttConfig = {
@@ -22,20 +32,17 @@ const mqttConfig = {
 // Connector configuration
 const connConfig = {
     firstRowAsNames: false,
+    overwrite: false,
     columnNames: [
-        'Generator',
-        'Generated power',
-        'Maximum power'
+        'Time',
+        'Power'
     ],
     beforeParse: data => {
         // Application specific data parsing, extracts power production data
         const modifiedData = [];
         if (data.aggs) {
-            const plantName = data.name;
-            data.aggs.forEach(agg => {
-                const name = `${plantName} - ${agg.name}`;
-                modifiedData.push([name, agg.P_gen, agg.P_max]);
-            });
+            const ts = data.tst_iso.valueOf();
+            modifiedData.push([ts, data.aggs[0].P_gen]);
         }
         return modifiedData;
     }
@@ -44,7 +51,6 @@ const connConfig = {
 
 // Create the dashboard
 function createDashboard() {
-
     return Dashboards.board('container', {
         dataPool: {
             connectors: [{
@@ -70,15 +76,6 @@ function createDashboard() {
             type: 'Highcharts',
             connector: {
                 id: 'mqtt-data-1'
-            },
-            chartOptions: {
-                chart: {
-                    type: 'column',
-                    animation: true
-                },
-                title: {
-                    text: 'Production'
-                }
             }
         }, {
             renderTo: 'data-grid-1',
@@ -91,15 +88,6 @@ function createDashboard() {
             type: 'Highcharts',
             connector: {
                 id: 'mqtt-data-2'
-            },
-            chartOptions: {
-                chart: {
-                    type: 'column',
-                    animation: true
-                },
-                title: {
-                    text: 'Production'
-                }
             }
         }, {
             renderTo: 'data-grid-2',
@@ -315,7 +303,9 @@ class MQTTConnector extends DataConnector {
         converter.parse({ data });
 
         // Update the data table
-        table.deleteColumns();
+        if (connector.options.overwrite) {
+            table.deleteColumns();
+        }
         table.setColumns(converter.getTable().getColumns());
         table.setRowKeysColumn(data.length);
     }
@@ -368,6 +358,7 @@ MQTTConnector.defaultOptions = {
     timeout: 10,
     qOs: 0,  // Quality of Service
     topic: 'mqtt',
+    overwrite: true,
     firstRowAsNames: true
 };
 
