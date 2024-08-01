@@ -1,20 +1,116 @@
+/* *
+ *
+ *  Start of sample application
+ *
+ * */
+
+
+// MQTT configuration
+const mqttConfig = {
+    host: 'mqtt.sognekraft.no',
+    port: 8083,
+    user: 'highsoft',
+    password: 'Qs0URPjxnWlcuYBmFWNK',
+    topic: 'prod/+/+/overview',
+    connectionHandler: function (isConnected) {
+        console.log('MQTT broker connection:', isConnected);
+    },
+    errorHandler: function (error) {
+        console.error('Error:', error);
+    }
+};
+
+
+// Create the dashboard
+function setupDashboard() {
+    return Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                type: 'MQTT',
+                id: 'mqtt-data',
+                options: {
+                    ...mqttConfig,
+                    firstRowAsNames: false,
+                    columnNames: [
+                        'Generator',
+                        'Generated power',
+                        'Maximum power'
+                    ],
+                    beforeParse: function (data) {
+                        // Application specific data parsing
+                        const modifiedData = [];
+                        if (data.aggs) {
+                            data.aggs.forEach(agg => {
+                                modifiedData.push({
+                                    Generator: data.name + ' ' + agg.name,
+                                    'Generated power': agg.P_gen,
+                                    'Maximum power': agg.P_max
+                                });
+                            });
+                        }
+
+                        return modifiedData;
+                    }
+                }
+            }]
+        },
+        components: [{
+            renderTo: 'column-chart',
+            type: 'Highcharts',
+            connector: {
+                id: 'mqtt-data'
+            },
+            chartOptions: {
+                chart: {
+                    type: 'column',
+                    animation: true
+                },
+                title: {
+                    text: 'Production'
+                }
+            }
+        }, {
+            renderTo: 'data-grid',
+            type: 'DataGrid',
+            connector: {
+                id: 'mqtt-data'
+            }
+        }],
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'column-chart'
+                    }, {
+                        id: 'data-grid'
+                    }]
+                }]
+            }]
+        }
+    }, true);
+}
+
+
+/* *
+ *
+ *  MQTT connector class - custom connector
+ *
+ * */
+
 /* eslint-disable no-underscore-dangle */
 const modules = Dashboards._modules;
 
 const DataConnector = modules['Data/Connectors/DataConnector.js'];
 const JSONConverter = modules['Data/Converters/JSONConverter.js'];
 const U = modules['Core/Utilities.js'];
-
-/* *
- *
- *  Custom Connector for MQTT.
- *
- *  Author(s):
- *  - Jomar Hønsi
- *
- * */
-
 const { merge } = U;
+
+// Connector instances, indexed by clientID
+const instanceTable = {};
+
+// eslint-disable-next-line no-undef
+const MQTTClient = Paho.MQTT.Client;
+
 
 /* *
  *
@@ -23,11 +119,6 @@ const { merge } = U;
  * */
 
 class MQTTConnector extends DataConnector {
-    /* *
-     *
-     *  Constructor
-     *
-     * */
     /**
      * Constructs an instance of MQTTConnector
      *
@@ -42,6 +133,18 @@ class MQTTConnector extends DataConnector {
         super(mergedOptions);
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
+
+        // Set up event handlers
+        this.connectionHandler = options.connectionHandler;
+
+        // Connection status
+        this.connected = false;
+        this.nMqttPackets = 0;
+
+        // Store connector instance
+        const clientID = 'clientID-' + Math.floor(Math.random() * 10000);
+        this.clientID = clientID;
+        instanceTable[clientID] = this;
     }
 
     /* *
@@ -61,11 +164,9 @@ class MQTTConnector extends DataConnector {
      */
     async load(eventDetail) {
         const connector = this,
-            converter = connector.converter,
             table = connector.table,
             {
-                data, dataUrl, dataModifier,
-                host, port, topic
+                data, host, port, topic
             } = connector.options;
 
         connector.emit({
@@ -75,45 +176,20 @@ class MQTTConnector extends DataConnector {
             table
         });
 
-        console.log('Loading data from MQTT broker:', host, port, topic);
+        console.log(
+            'Connection to the MQTT broker:', host, port, topic,
+            this.clientID
+        );
 
-        return Promise
-            .resolve(
-                dataUrl ?
-                    fetch(dataUrl).then(json => json.json()) :
-                    data || []
-            )
-            .then(data => {
-                if (data) {
-                    // If already loaded, clear the current rows
-                    table.deleteColumns();
-                    converter.parse({ data });
-                    table.setColumns(converter.getTable().getColumns());
-                    table.setRowKeysColumn(data.length);
-                }
-                return connector.setModifierOptions(
-                    dataModifier
-                ).then(() => data);
-            })
-            .then(data => {
-                connector.emit({
-                    type: 'afterLoad',
-                    data,
-                    detail: eventDetail,
-                    table
-                });
-                return connector;
-            }).catch(error => {
-                connector.emit({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table
-                });
-                throw error;
-            });
+        // Start MQTT client
+        this.mqtt = new MQTTClient(host, port, this.clientID);
+        this.mqtt.onConnectionLost = this.onConnectionLost;
+        this.mqtt.onMessageArrived = this.onMessageArrived;
+
+        await this.connect();
+
+        return connector;
     }
-
 
     /**
      * Connects to an MQTT broker.
@@ -124,18 +200,22 @@ class MQTTConnector extends DataConnector {
      * @return {Promise<this>}
      * Return same instance of MqttConnector.
      */
-    async connect(host, port, user, password, eventDetail) {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            { dataModifier, firstRowAsNames } = connector.options;
+    async connect() {
+        if (this.connected) {
+            console.log('Already connected');
+            return;
+        }
+        const { user, password, timeout } = this.options;
 
-        const url = `ws://${host}:${port}`;
-        connector.emit({
-            type: 'connect',
-            detail: eventDetail,
-            table,
-            url
+        // Connect to broker
+        this.mqtt.connect({
+            useSSL: true,
+            timeout: timeout,
+            cleanSession: true,
+            onSuccess: () => this.onConnect(),
+            onFailure: resp => this.onFailure(resp),
+            userName: user,
+            password: password
         });
     }
 
@@ -143,56 +223,91 @@ class MQTTConnector extends DataConnector {
      * Disconnects from an MQTT broker.
      *
      */
-    disconnect(eventDetail) {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            { host, port } = connector.options;
-
-        const url = `ws://${host}:${port}`;
-
-        connector.emit({
-            type: 'disconnect',
-            detail: eventDetail,
-            table,
-            url
-        });
+    async disconnect() {
+        this.mqtt.disconnect();
     }
 
     /**
      * Subscribe to an MQTT topic.
      *
      */
-    subscribe(topic, eventDetail) {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            { dataModifier, firstRowAsNames, url } = connector.options;
-
-        connector.emit({
-            type: 'subscribe',
-            detail: eventDetail,
-            table,
-            url
-        });
+    async subscribe() {
+        const { topic, qOs } = this.options;
+        this.mqtt.subscribe(topic, { qos: qOs });
     }
 
     /**
      * Unsubscribe from an MQTT topic.
      *
      */
-    unsubscribe(topic, eventDetail) {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            { dataModifier, firstRowAsNames, url } = connector.options;
+    unsubscribe() {
+        this.mqtt.unsubscribe(this.options.topic);
+    }
 
-        connector.emit({
-            type: 'subscribe',
-            detail: eventDetail,
-            table,
-            url
-        });
+    /**
+     * Handle established connection
+     *
+     */
+    onConnect() {
+        this.connected = true;
+        this.connectionHandler(true);
+
+        // Subscribe to the topic
+        this.subscribe();
+    }
+
+    /**
+     * Handle incoming messages
+     *
+     */
+    onMessageArrived(mqttPacket) {
+        // Executes in Paho.MQTT.Client context
+        const connector = instanceTable[this.clientId],
+            converter = connector.converter,
+            table = connector.table;
+
+        connector.nMqttPackets++;
+
+        // Parse the message
+        const data = JSON.parse(mqttPacket.payloadString);
+        converter.parse({ data });
+
+        // Update the data table
+        table.deleteColumns();
+        table.setColumns(converter.getTable().getColumns());
+        table.setRowKeysColumn(data.length);
+    }
+
+    /**
+     * Handle lost connection
+     *
+     */
+    onConnectionLost(responseObject) {
+        // Executes in Paho.MQTT.Client context
+        if (responseObject.errorCode !== 0) {
+            console.log('onConnectionLost:', responseObject.errorMessage);
+        }
+        const connector = instanceTable[this.clientId];
+        connector.connected = false;
+
+        // Execute custom connection handler
+        if (connector.options.connectionHandler) {
+            connector.options.connectionHandler(false);
+        }
+    }
+
+    /**
+     * Handle failure
+     *
+     */
+    onFailure(response) {
+        console.error('Failed to connect:', response);
+        this.connected = false;
+
+        // Execute custom error handler
+        if (this.options.errorHandler) {
+            this.options.errorHandler(response);
+        }
     }
 }
 
@@ -202,79 +317,22 @@ class MQTTConnector extends DataConnector {
  *
  */
 MQTTConnector.defaultOptions = {
-    host: 'mqtt.sognekraft.no',
+    host: '',
     port: 8083,
-    user: 'highsoft',
-    password: 'Qs0URPjxnWlcuYBmFWNK',
+    user: '',
+    password: '',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: 'prod/+/+/overview',
+    topic: '',
     firstRowAsNames: true
 };
 
+// Register the connector
 MQTTConnector.registerType('MQTT', MQTTConnector);
 
-
-/* *
+/**
  *
- *  Start of demo section
+ *  Launch the application
  *
- * */
-
-// MQTT configuration
-const mqttConfig = {
-    host: 'mqtt.sognekraft.no',
-    port: 8083,
-    user: 'highsoft',
-    password: 'Qs0URPjxnWlcuYBmFWNK',
-    timeout: 10,
-    qOs: 0,  // Quality of Service
-    topic: 'prod/+/+/overview'
-};
-
-// Instantiate the connector
-Dashboards.board('container', {
-    dataPool: {
-        connectors: [{
-            type: 'MQTT',
-            id: 'fetched-data',
-            options: {
-                ...mqttConfig,
-                firstRowAsNames: false,
-                dataRefreshRate: 5,
-                enablePolling: true,
-                columnNames: ['time', 'value', 'rounded'],
-                dataUrl: 'https://demo-live-data.highcharts.com/time-rows.json',
-                beforeParse: function (data) {
-                    data.map(el => el.push(Math.round(el[1])));
-
-                    return data;
-                }
-            }
-        }]
-    },
-    components: [{
-        renderTo: 'chart',
-        type: 'Highcharts',
-        connector: {
-            id: 'fetched-data'
-        }
-    }, {
-        renderTo: 'fetched-columns',
-        type: 'DataGrid',
-        connector: {
-            id: 'fetched-data'
-        }
-    }],
-    gui: {
-        layouts: [{
-            rows: [{
-                cells: [{
-                    id: 'chart'
-                }, {
-                    id: 'fetched-columns'
-                }]
-            }]
-        }]
-    }
-}, true);
+ */
+setupDashboard();
