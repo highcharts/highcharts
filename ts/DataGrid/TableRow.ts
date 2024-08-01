@@ -23,6 +23,7 @@
 
 import type Cell from './Cell';
 import TableCell from './TableCell.js';
+import Row from './Row.js';
 import Table from './Table.js';
 import Globals from './Globals.js';
 import DGUtils from './Utils.js';
@@ -31,14 +32,14 @@ const { makeHTMLElement } = DGUtils;
 
 /* *
  *
- *  Abstract Class of Row
+ *  Class
  *
  * */
 
 /**
  * Represents a row in the data grid.
  */
-abstract class Row {
+class TableRow extends Row {
 
     /* *
     *
@@ -50,22 +51,6 @@ abstract class Row {
      * The cells of the row.
      */
     public cells: Cell[] = [];
-
-    /**
-     * The HTML element of the row.
-     */
-    public htmlElement: HTMLTableRowElement;
-
-    /**
-     * The index of the row in the data table.
-     */
-    public index: number;
-
-    /**
-     * The viewport the row belongs to.
-     */
-    public viewport: Table;
-
 
     /* *
     *
@@ -83,10 +68,11 @@ abstract class Row {
      * The index of the row in the data table.
      */
     constructor(viewport: Table, index: number) {
-        this.viewport = viewport;
-        this.index = index;
+        super(viewport, index);
+        this.htmlElement.style.transform = 
+            `translateY(${this.getDefaultTopOffset()}px)`;
 
-        this.htmlElement = makeHTMLElement('tr', {});
+        this.setRowAttributes();
     }
 
 
@@ -102,6 +88,7 @@ abstract class Row {
      */
     public render(): void {
         const columns = this.viewport.columns;
+        this.htmlElement.classList.add(Globals.classNames.rowElement);
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             new TableCell(columns[i], this);
@@ -148,6 +135,50 @@ abstract class Row {
     public registerCell(cell: Cell): void {
         this.cells.push(cell);
     }
+
+    /**
+     * Adds or removes the hovered CSS class to the row element.
+     *
+     * @param hovered
+     * Whether the row should be hovered.
+     */
+    public setHoveredState(hovered: boolean): void {
+        this.htmlElement.classList[hovered ? 'add' : 'remove'](
+            Globals.classNames.hoveredRow
+        );
+
+        if (hovered) {
+            this.viewport.dataGrid.hoveredRowIndex = this.index;
+        }
+    }
+
+    /**
+     * Sets the row HTML element attributes and additional classes.
+     */
+    private setRowAttributes(): void {
+        const idx = this.index;
+        const el = this.htmlElement;
+
+        el.setAttribute('data-row-index', idx);
+
+        // 1 - index of the head, 1 to avoid indexing from 0
+        el.setAttribute('aria-rowindex', idx + 2);
+
+        if (idx % 2 === 1) {
+            el.classList.add(Globals.classNames.odd);
+        }
+
+        if (this.viewport.dataGrid.hoveredRowIndex === idx) {
+            el.classList.add(Globals.classNames.hoveredRow);
+        }
+    }
+
+    /**
+     * Returns the default top offset of the row (before adjusting row heights).
+     */
+    public getDefaultTopOffset(): number {
+        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
+    }
 }
 
 
@@ -157,7 +188,7 @@ abstract class Row {
  *
  * */
 
-namespace Row {
+namespace TableRow {
 
 }
 
@@ -168,4 +199,4 @@ namespace Row {
  *
  * */
 
-export default Row;
+export default TableRow;

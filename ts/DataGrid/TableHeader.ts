@@ -28,6 +28,8 @@ import Table from './Table.js';
 import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
 import ColumnSorting from './Actions/ColumnSorting.js';
+import HeaderCell from './HeaderCell.js';
+import HeaderRow from './HeaderRow.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -60,7 +62,7 @@ class TableHeader {
     /**
      * The container of the table head.
      */
-    public container: HTMLElement;
+    public rows: HeaderRow[] = [];
 
     /**
      * The viewport (table) the table head belongs to.
@@ -87,8 +89,7 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-        this.container = makeHTMLElement('tr', {}, viewport.theadElement);
-        this.container.setAttribute('aria-rowindex', 1);
+        this.rows[0] = new HeaderRow(viewport, -1);
     }
 
 
@@ -97,7 +98,6 @@ class TableHeader {
     *  Methods
     *
     * */
-
     /**
      * Renders the table head content.
      */
@@ -108,62 +108,68 @@ class TableHeader {
         if (!dataGrid.enabledColumns) {
             return;
         }
+        // TODO: render column grouping headers
 
-        let column: Column;
-        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-            column = this.columns[i];
-            const innerText = column.userOptions.headerFormat ? (
-                format(column.userOptions.headerFormat, column)
-            ) : column.id;
+        // render basic column headers
+        this.rows[0].renderColumnsHeaders();
 
-            const element = makeHTMLElement('th', {}, this.container);
-            column.headerContent = makeHTMLElement('div', {
-                innerText,
-                className: Globals.classNames.headCellContent
-            }, element);
+                                // let column: Column;
+                                // for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+                                //     column = this.columns[i];
+                                // const innerText = column.userOptions.headerFormat ? (
+                                //     format(column.userOptions.headerFormat, column)
+                                // ) : column.id;
 
-            // Set the accessibility attributes.
-            element.setAttribute('scope', 'col');
-            element.setAttribute('data-column-id', this.columns[i].id);
+                                // const element = makeHTMLElement('th', {}, this.container);
+                                // column.headerContent = makeHTMLElement('div', {
+                                //     innerText,
+                                //     className: Globals.classNames.headCellContent
+                                // }, element);
 
-            column.setHeaderElement(element);
+                                // column.header = new HeaderCell(column, this.container);
 
-            // Header click event
-            if (
-                column.headerElement &&
-                dataGrid.options?.events?.header?.click
-            ) {
-                const onHeaderClick = (): void => {
-                    dataGrid.options?.events?.header?.click?.call(
-                        this.columns[i] // Shorter then closure
-                    );
-                };
+                                // // Set the accessibility attributes.
+                                // element.setAttribute('scope', 'col');
+                                // element.setAttribute('data-column-id', this.columns[i].id);
 
-                this.headersEvents.push([
-                    column.headerElement,
-                    onHeaderClick
-                ]);
+            // column.setHeaderElement(element);
 
-                column.headerContent.addEventListener('click', onHeaderClick);
-            }
+            // // Header click event
+            // if (
+            //     column.headerElement &&
+            //     dataGrid.options?.events?.header?.click
+            // ) {
+            //     const onHeaderClick = (): void => {
+            //         dataGrid.options?.events?.header?.click?.call(
+            //             this.columns[i] // Shorter then closure
+            //         );
+            //     };
 
-            // Resizing
-            if (vp.columnsResizer && (
-                vp.columnDistribution !== 'full' ||
-                i < dataGrid.enabledColumns.length - 1
-            )) {
-                // Render the drag handle for resizing columns.
-                this.renderColumnDragHandles(
-                    column,
-                    element
-                );
-            }
+            //     this.headersEvents.push([
+            //         column.headerElement,
+            //         onHeaderClick
+            //     ]);
 
-            // Add column sorting
-            if (column.userOptions.sorting) {
-                column.columnSorting = new ColumnSorting(column, element);
-            }
-        }
+            //     column.headerContent.addEventListener('click', onHeaderClick);
+            // }
+
+            // // Resizing
+            // if (vp.columnsResizer && (
+            //     vp.columnDistribution !== 'full' ||
+            //     i < dataGrid.enabledColumns.length - 1
+            // )) {
+            //     // Render the drag handle for resizing columns.
+            //     this.renderColumnDragHandles(
+            //         column,
+            //         element
+            //     );
+            // }
+
+            // // Add column sorting
+            // if (column.userOptions.sorting) {
+            //     column.columnSorting = new ColumnSorting(column, element);
+            // }
+        // }
     }
 
     /**
@@ -173,17 +179,17 @@ class TableHeader {
         const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
         const vp = this.viewport;
 
-        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-            const column = this.columns[i];
-            const td = column.headerElement;
-            if (!td) {
-                continue;
-            }
+        // for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+        //     const column = this.columns[i];
+        //     const td = column.header;
+        //     if (!td) {
+        //         continue;
+        //     }
 
-            // Set the width of the column. Max width is needed for the
-            // overflow: hidden to work.
-            td.style.width = td.style.maxWidth = column.getWidth() + 'px';
-        }
+        //     // Set the width of the column. Max width is needed for the
+        //     // overflow: hidden to work.
+        //     td.style.width = td.style.maxWidth = column.getWidth() + 'px';
+        // }
 
         if (vp.rowsWidth) {
             vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
@@ -200,18 +206,18 @@ class TableHeader {
      * @param headElement
      * The head element to append the drag handle to.
      */
-    private renderColumnDragHandles(
-        column: Column,
-        headElement: HTMLElement
-    ): HTMLElement {
-        const handle = makeHTMLElement('div', {
-            className: 'highcharts-datagrid-col-resizer'
-        }, headElement);
+    // private renderColumnDragHandles(
+    //     column: Column,
+    //     headElement: HTMLElement
+    // ): HTMLElement {
+    //     const handle = makeHTMLElement('div', {
+    //         className: 'highcharts-datagrid-col-resizer'
+    //     }, headElement);
 
-        this.viewport.columnsResizer?.addHandleListeners(handle, column);
+    //     this.viewport.columnsResizer?.addHandleListeners(handle, column);
 
-        return handle;
-    }
+    //     return handle;
+    // }
 
     /**
      * Scrolls the table head horizontally.

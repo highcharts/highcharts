@@ -35,6 +35,7 @@ import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
 import Utils from '../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
+import TableRow from './TableRow';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -89,7 +90,7 @@ class Table {
     /**
      * The visible rows of the table.
      */
-    public rows: Row[] = [];
+    public rows: TableRow[] = [];
 
     /**
      * The resize observer for the table container.

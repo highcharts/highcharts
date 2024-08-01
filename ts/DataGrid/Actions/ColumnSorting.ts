@@ -92,32 +92,32 @@ class ColumnSorting {
      * Adds CSS classes and click event to the header of column.
      */
     private addSortingEvents(): void {
-        const dataGrid = this.column.viewport.dataGrid;
-        const columnSortingState =
-            dataGrid.columnSortingState?.[this.column.id];
+        // const dataGrid = this.column.viewport.dataGrid;
+        // const columnSortingState =
+        //     dataGrid.columnSortingState?.[this.column.id];
 
-        if (!dataGrid.dataTable) {
-            return;
-        }
+        // if (!dataGrid.dataTable) {
+        //     return;
+        // }
 
-        this.column.headerContent?.addEventListener(
-            'click',
-            this.setSortingState
-        );
+        // this.column.headerContent?.addEventListener(
+        //     'click',
+        //     this.setSortingState
+        // );
 
-        this.headElement.classList.add(Globals.classNames.columnSorting);
+        // this.headElement.classList.add(Globals.classNames.columnSorting);
 
-        if (columnSortingState === 'asc') {
-            this.headElement.classList.add(
-                Globals.classNames.columnSortingAsc
-            );
-        }
+        // if (columnSortingState === 'asc') {
+        //     this.headElement.classList.add(
+        //         Globals.classNames.columnSortingAsc
+        //     );
+        // }
 
-        if (columnSortingState === 'desc') {
-            this.headElement.classList.add(
-                Globals.classNames.columnSortingDesc
-            );
-        }
+        // if (columnSortingState === 'desc') {
+        //     this.headElement.classList.add(
+        //         Globals.classNames.columnSortingDesc
+        //     );
+        // }
     }
 
     /**

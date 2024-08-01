@@ -79,6 +79,7 @@ namespace Globals {
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         headCellContent: classNamePrefix + 'head-cell-content',
         headCellResized: classNamePrefix + 'head-cell-resized',
+        headerRow: classNamePrefix + 'head-row-content',
         noData: classNamePrefix + 'no-data',
         columnSorting: classNamePrefix + 'col-sorting',
         columnSortingAsc: classNamePrefix + 'col-sorting-asc',

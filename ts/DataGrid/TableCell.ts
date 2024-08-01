@@ -21,17 +21,12 @@
  *
  * */
 
-import type DataTable from '../Data/DataTable';
-
 import Cell from './Cell.js';
-import AST from '../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
-import F from '../Core/Templating.js';
 import Utils from '../Core/Utilities.js';
 
-const { format } = F;
-const { defined, fireEvent } = Utils;
+const { fireEvent } = Utils;
 
 
 /* *
@@ -130,39 +125,6 @@ class TableCell extends Cell {
             target: this
         });
     };
-
-    /**
-     * Handle the formatting content of the cell.
-     *
-     * @param value
-     * The value of cell
-     *
-     * @param ctx
-     * The context of the cell
-     *
-     * @internal
-     */
-    public formatCell(
-        value: string | number | boolean,
-        ctx: Cell
-    ): string {
-        const {
-            cellFormat,
-            cellFormatter
-        } = ctx.column.userOptions;
-
-        let cellContent = '';
-
-        if (cellFormatter) {
-            cellContent = cellFormatter.call(this);
-        } else {
-            cellContent = (
-                cellFormat ? format(cellFormat, ctx) : value + ''
-            );
-        }
-
-        return cellContent;
-    }
 
     /**
      * Destroys the cell.

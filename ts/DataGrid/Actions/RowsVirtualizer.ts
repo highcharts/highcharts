@@ -25,7 +25,7 @@
 import Table from '../Table.js';
 import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
-import Row from '../Row.js';
+import TableRow from '../TableRow.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;
 
@@ -211,7 +211,7 @@ class RowsVirtualizer {
         const rows = vp.rows;
 
         if (!rows.length) {
-            const last = new Row(vp, vp.dataTable.getRowCount() - 1);
+            const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
             last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
@@ -234,7 +234,7 @@ class RowsVirtualizer {
         rows.length = 0;
 
         for (let i = from; i <= to; ++i) {
-            const newRow = new Row(vp, i);
+            const newRow = new TableRow(vp, i);
             newRow.render();
             vp.tbodyElement.insertBefore(
                 newRow.htmlElement,

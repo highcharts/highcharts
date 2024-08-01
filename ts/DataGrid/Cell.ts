@@ -28,9 +28,11 @@ import Column from './Column';
 import Row from './Row';
 import F from '../Core/Templating.js';
 import Utils from '../Core/Utilities.js';
+import DGUtils from './Utils.js';
 
 const { format } = F;
-const { defined, fireEvent } = Utils;
+const { defined } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -83,17 +85,15 @@ abstract class Cell {
      * The row of the cell.
      */
     constructor(column: Column, row: Row) {
-        this.htmlElement = document.createElement('td');
 
         this.column = column;
-        this.column.registerCell(this);
-
         this.row = row;
+
+        this.htmlElement = this.render();
+        this.column.registerCell(this);
         this.row.registerCell(this);
 
-        // this.htmlElement.addEventListener('mouseover', this.onMouseOver);
-        // this.htmlElement.addEventListener('mouseout', this.onMouseOut);
-        // this.htmlElement.addEventListener('click', this.onClick);
+        this.setValue(this.column.data?.[this.row.index], false);
     }
 
 
@@ -106,13 +106,8 @@ abstract class Cell {
     /**
      * Renders the cell.
      */
-    public render(): void {
-        if (!this.column.data) {
-            return;
-        }
-
-        this.setValue(this.column.data[this.row.index], false);
-        this.row.htmlElement.appendChild(this.htmlElement);
+    public render(): HTMLTableCellElement {
+        return makeHTMLElement('td', {}, this.row.htmlElement);
     }
 
     /**
