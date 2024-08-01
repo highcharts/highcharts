@@ -11,6 +11,7 @@ export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
 export { default as DataConnector } from "./es-modules/Data/Connectors/DataConnector";
 export { default as DataConverter } from "./es-modules/Data/Converters/DataConverter";
 export { default as DataCursor } from "./es-modules/Data/DataCursor";
+export { default as DataEvents } from "./es-modules/Data/DataEvents";
 export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifier";
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
