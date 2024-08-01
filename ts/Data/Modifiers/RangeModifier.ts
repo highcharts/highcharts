@@ -128,6 +128,9 @@ class RangeModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
+        let indexesBuffer: number[] | undefined;
+        let indexes: number[] = [];
+
         const {
             additive,
             ranges,
@@ -136,10 +139,6 @@ class RangeModifier extends DataModifier {
 
         if (ranges.length) {
             const modified = table.modified;
-            const modifiedIndexes = table.modifiedRowIndexes =
-                new Array<number>(table.getRowCount());
-            const parentIndexes: number[] =
-                table.modified.parentRowIndexes = [];
 
             let columns = table.getColumns(),
                 rows: Array<DataTable.Row> = [];
@@ -166,6 +165,8 @@ class RangeModifier extends DataModifier {
                     modified.setRows(rows);
                     columns = modified.getColumns();
                     rows = [];
+                    indexesBuffer = indexes;
+                    indexes = [];
                 }
 
                 rangeColumn = (columns[range.column] || []);
@@ -208,11 +209,23 @@ class RangeModifier extends DataModifier {
 
                         if (row) {
                             rows.push(row);
-                            modifiedIndexes[j] = rows.length - 1;
-                            parentIndexes.push(j);
+
+                            if (indexesBuffer) {
+                                indexes.push(indexesBuffer[j]);
+                            } else {
+                                indexes.push(j);
+                            }
                         }
                     }
                 }
+            }
+
+            modified.parentRowIndexes = indexes;
+            const modifiedRowIndexes: number[] =
+                table.modifiedRowIndexes = new Array(table.getRowCount());
+
+            for (let i = 0, iEnd = indexes.length; i < iEnd; ++i) {
+                modifiedRowIndexes[indexes[i]] = i;
             }
 
             modified.deleteRows();
