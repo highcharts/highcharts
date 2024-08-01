@@ -46,8 +46,8 @@ import U from '../Core/Utilities.js';
  * create a custom accessibility component for a chart.
  *
  * Components should take care to destroy added elements and unregister event
- * handlers on destroy. This is handled automatically if using this.addEvent and
- * this.createElement.
+ * handlers on destroy. This is handled automatically if using `this.addEvent`
+ * and `this.createElement`.
  *
  * @sample highcharts/accessibility/custom-component
  *         Custom accessibility component

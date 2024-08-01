@@ -35,7 +35,6 @@ const md = markdownit();
 // - Links in docs like "{@link Highcharts#chart}".
 // - Smart link to other docs for types.
 // - Include kind=Doclet with matching tags.
-// - URL redirects for old ...Highcharts.AST#.something to without #
 
 /**
  * Main function
@@ -90,7 +89,10 @@ async function main() {
 
                         // Doclet's name tag is more important than code's name
                         if (code.doclet?.tags?.name) {
-                            code.name = code.doclet.tags.name[0]
+                            if (!code.doclet.tags.name[0]) {
+                                console.error('Empty tags name: ', code.name);
+                            }
+                            code.name = (code.doclet.tags.name[0] || '')
                                 .replace(/Highcharts./g, '');
                         }
                         allClassNames.push(code.name);
@@ -121,7 +123,7 @@ async function main() {
         }
     }
 
-    //console.log('Old interfaces: 109; classes: 29. Total: 138');
+    // Old interfaces: 109; classes: 29. Total: 138.
     // Found +1 (missing PlotLineOrBand that should be added), so all good.
     console.log('classes found: ', filteredClassCodeInfo.length);
 
@@ -155,20 +157,20 @@ async function main() {
     // Some constants for the template
     const exec = require('child_process').execSync,
         hcRoot = process.cwd(),
-        packageJson = require('../../package.json'),
+        packageJson = require(hcRoot + '/package.json'),
         product = 'highcharts',
         productName = 'Highcharts',
         version = packageJson.version,
         versionProps = {
             commit: exec(
                 'git rev-parse --short HEAD',
-                {cwd: process.cwd()}
+                {cwd: hcRoot}
             ).toString().trim(),
             branch: exec(
                 'git rev-parse --abbrev-ref HEAD',
-                {cwd: process.cwd()}
+                {cwd: hcRoot}
             ).toString().trim(),
-            version: require(hcRoot  + '/package.json').version
+            version
         },
         urlRoot = 'https://api.highcharts.com/',
         defaultHbsConfig = {
@@ -289,29 +291,13 @@ async function main() {
                 samples: getSamples(info.doclet.tags.sample),
                 children: info.members.map((member: any|TSLib.PropertyInfo) => {
                     const params: Array<string> = [],
-                        description: Array<string> =
-                            descriptionFromTags(member.doclet.tags, params);
-
-                    // Use parameters for description instead
-                    /*
-                    if (member.parameters) {
-                        member.parameters.forEach((param: any) => {
-                            if (param.name !== 'this') {
-                                description.push(
-                                    '**Param:** ' + sanitize(
-                                        param.name + ': ' + param.type.join('|')
-                                    )
-                                );
-                            } else {
-                                member.doclet.tags.description.push(
-                                    '**Ctx:** ' + sanitize(param.type.join('|'))
-                                );
-                            }
-                        });
-                    }*/
+                        memberDescription: Array<string> = descriptionFromTags(
+                            member.doclet.tags,
+                            params
+                        );
 
                     if (member.return) {
-                        description.push(
+                        memberDescription.push(
                             '**Return type:** ' +
                             sanitize(member.return.join(' | '))
                         );
@@ -319,23 +305,36 @@ async function main() {
 
                     // Nested from value
                     if (member.value && typeof member.value === 'string') {
-                        description.push(
+                        memberDescription.push(
                             '**Value:** ' + sanitize(member.value)
                         );
                     }
 
+                    // Primarily use type
                     let typeListNames = member.type?.join(' | ') ||
                         member.doclet.tags.type?.join(' | ')
-                        .replace(/[{}]/g, '') || (
-                            typeof member.value === 'object' ?
+                            .replace(/[{}]/g, '');
+
+                    // Fallback for functions
+                    if (!typeListNames) {
+                        if(member.doclet.tags.function) {
+                            typeListNames = member.doclet.tags.function
+                                .join(' | ');
+                            member.kind = 'Function';
+                            member.doclet.tags.type = ['Function'];
+                        } else {
+                            // Fallback for value only
+                            typeListNames = typeof member.value === 'object' ?
                                 '*' :
                                 typeof member.value === 'string' ?
                                     member.value :
-                                    member.kind
-                        );
+                                    member.kind;
+                        }
+                    }
 
                     if (typeListNames === '*') {
                         // Nested type shows as collapsible. Add children.
+                        // TODO: remove the warn when you are sure it's working
                         console.warn('Check: ', info.name + '.' + member.name);
                         processParent({
                             name: info.name + '.' + member.name,
@@ -346,14 +345,17 @@ async function main() {
                         } as unknown as TSLib.ClassInfo);
                     }
 
+                    // TODO: Remove the legacy syntax and this can be removed.
+                    typeListNames = typeListNames.replace('#', '.');
+
                     return {
                         ignoreDefault: true,
-                        description: getHTMLDescription(description),
+                        description: getHTMLDescription(memberDescription),
                         filename: member.meta?.file ||
                             member.doclet?.meta?.file ||
                             info.meta?.file ||
                             info.doclet?.meta?.file,
-                        fullname: fullName + '.' + member.name,
+                        fullname: fullName + '.' + member.name.split('\r\n')[0],
 
                         isLeaf: !!member.doclet.tags.type ||
                             typeof member.value !== 'object',
@@ -490,7 +492,18 @@ function sanitize(text: string): string {
 
 // Convert description to HTML
 function parseLine(line: string): string {
-    return md.render(line);
+    return md.render(
+        line.replace(
+            /{@link ([^|}]+)(?:\|([^}]+))?}/gm,
+            (_, link, name) => {
+                // Remove # from the legacy syntax
+                // TODO: clean up the source files
+                link = link.replace('#', '.');
+                // TODO: Some links miss Highcharts. prefix
+                return `[${name || link}](${link})`;
+            }
+        )
+    );
 }
 function getHTMLDescription(description: string[]) {
     let html: string = '';
@@ -609,7 +622,7 @@ function descriptionFromTags(
                 paramInfo = parts.length < 2 ? void 0 :
                     [
                         '| `' + parts[2] + '`', // Name
-                        parts[1], // Type
+                        linkAndFormat(parts[1]), // Type
                         parts[3] // Description
                     ].join(' | ') + ' |';
 
@@ -629,13 +642,28 @@ function descriptionFromTags(
     if (tags.example) {
         tags.example.forEach((example: string) => {
             description.push(
-                '**Example:** \n\n```\n ' + sanitize(example) +
+                '**Example:** \n\n```\n' + sanitize(example) +
                 '\n```'
             );
         });
     }
 
     return description;
+}
+
+// Create internal markdown links and adjust formatting for markdown table.
+function linkAndFormat(text: string): string {
+    return text.replace(
+        /Highcharts\.[A-Z][a-zA-Z0-9]+/g,
+        (match: string) => {
+            // Use # for internal links resolved in hapi (api.js).
+            return `[${match}](#${match})`;
+        }
+    ).replace(
+        /\|/g,
+        // Adding spaces around pipes for better readability.
+        ' &#124; '
+    );
 }
 
 /* *
