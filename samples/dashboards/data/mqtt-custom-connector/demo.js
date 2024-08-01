@@ -1,17 +1,16 @@
 /* *
  *
- *  Start of sample application
+ *  Sample application using a custom MQTT connector
  *
  * */
 
 
-// MQTT configuration
+// MQTT connection configuration
 const mqttConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
     password: 'Qs0URPjxnWlcuYBmFWNK',
-    topic: 'prod/+/+/overview',
     connectionHandler: function (isConnected) {
         console.log('MQTT broker connection:', isConnected);
     },
@@ -20,45 +19,57 @@ const mqttConfig = {
     }
 };
 
+// Connector configuration
+const connConfig = {
+    firstRowAsNames: false,
+    columnNames: [
+        'Generator',
+        'Generated power',
+        'Maximum power'
+    ],
+    beforeParse: data => {
+        // Application specific data parsing, extracts power production data
+        const modifiedData = [];
+        if (data.aggs) {
+            const plantName = data.name;
+            data.aggs.forEach(agg => {
+                const name = `${plantName} - ${agg.name}`;
+                modifiedData.push([name, agg.P_gen, agg.P_max]);
+            });
+        }
+        return modifiedData;
+    }
+};
+
 
 // Create the dashboard
-function setupDashboard() {
+function createDashboard() {
+
     return Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 type: 'MQTT',
-                id: 'mqtt-data',
+                id: 'mqtt-data-1',
                 options: {
                     ...mqttConfig,
-                    firstRowAsNames: false,
-                    columnNames: [
-                        'Generator',
-                        'Generated power',
-                        'Maximum power'
-                    ],
-                    beforeParse: function (data) {
-                        // Application specific data parsing
-                        const modifiedData = [];
-                        if (data.aggs) {
-                            data.aggs.forEach(agg => {
-                                modifiedData.push({
-                                    Generator: data.name + ' ' + agg.name,
-                                    'Generated power': agg.P_gen,
-                                    'Maximum power': agg.P_max
-                                });
-                            });
-                        }
-
-                        return modifiedData;
-                    }
+                    topic: 'prod/DEMO_Highsoft/kraftverk_1/overview',
+                    ...connConfig
+                }
+            }, {
+                type: 'MQTT',
+                id: 'mqtt-data-2',
+                options: {
+                    ...mqttConfig,
+                    topic: 'prod/DEMO_Highsoft/kraftverk_2/overview',
+                    ...connConfig
                 }
             }]
         },
         components: [{
-            renderTo: 'column-chart',
+            renderTo: 'column-chart-1',
             type: 'Highcharts',
             connector: {
-                id: 'mqtt-data'
+                id: 'mqtt-data-1'
             },
             chartOptions: {
                 chart: {
@@ -70,19 +81,46 @@ function setupDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid',
+            renderTo: 'data-grid-1',
             type: 'DataGrid',
             connector: {
-                id: 'mqtt-data'
+                id: 'mqtt-data-1'
+            }
+        }, {
+            renderTo: 'column-chart-2',
+            type: 'Highcharts',
+            connector: {
+                id: 'mqtt-data-2'
+            },
+            chartOptions: {
+                chart: {
+                    type: 'column',
+                    animation: true
+                },
+                title: {
+                    text: 'Production'
+                }
+            }
+        }, {
+            renderTo: 'data-grid-2',
+            type: 'DataGrid',
+            connector: {
+                id: 'mqtt-data-2'
             }
         }],
         gui: {
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'column-chart'
+                        id: 'column-chart-1'
                     }, {
-                        id: 'data-grid'
+                        id: 'data-grid-1'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'column-chart-2'
+                    }, {
+                        id: 'data-grid-2'
                     }]
                 }]
             }]
@@ -139,11 +177,13 @@ class MQTTConnector extends DataConnector {
 
         // Connection status
         this.connected = false;
-        this.nMqttPackets = 0;
+        this.packetCount = 0;
 
-        // Store connector instance
+        // Generate a unique client ID
         const clientID = 'clientID-' + Math.floor(Math.random() * 10000);
         this.clientID = clientID;
+
+        // Store connector instance (for use in callbacks from MQTT client)
         instanceTable[clientID] = this;
     }
 
@@ -166,7 +206,7 @@ class MQTTConnector extends DataConnector {
         const connector = this,
             table = connector.table,
             {
-                data, host, port, topic
+                data, host, port
             } = connector.options;
 
         connector.emit({
@@ -175,11 +215,6 @@ class MQTTConnector extends DataConnector {
             detail: eventDetail,
             table
         });
-
-        console.log(
-            'Connection to the MQTT broker:', host, port, topic,
-            this.clientID
-        );
 
         // Start MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientID);
@@ -202,8 +237,7 @@ class MQTTConnector extends DataConnector {
      */
     async connect() {
         if (this.connected) {
-            console.log('Already connected');
-            return;
+            throw Error('Already connected');
         }
         const { user, password, timeout } = this.options;
 
@@ -224,7 +258,9 @@ class MQTTConnector extends DataConnector {
      *
      */
     async disconnect() {
-        this.mqtt.disconnect();
+        if (this.connected) {
+            this.mqtt.disconnect();
+        }
     }
 
     /**
@@ -232,8 +268,12 @@ class MQTTConnector extends DataConnector {
      *
      */
     async subscribe() {
-        const { topic, qOs } = this.options;
-        this.mqtt.subscribe(topic, { qos: qOs });
+        if (this.connected) {
+            const { topic, qOs } = this.options;
+            this.mqtt.subscribe(topic, { qos: qOs });
+            return;
+        }
+        throw Error('Not connected: subscription not possible');
     }
 
     /**
@@ -241,7 +281,9 @@ class MQTTConnector extends DataConnector {
      *
      */
     unsubscribe() {
-        this.mqtt.unsubscribe(this.options.topic);
+        if (this.connected) {
+            this.mqtt.unsubscribe(this.options.topic);
+        }
     }
 
     /**
@@ -266,7 +308,7 @@ class MQTTConnector extends DataConnector {
             converter = connector.converter,
             table = connector.table;
 
-        connector.nMqttPackets++;
+        connector.packetCount++;
 
         // Parse the message
         const data = JSON.parse(mqttPacket.payloadString);
@@ -289,6 +331,7 @@ class MQTTConnector extends DataConnector {
         }
         const connector = instanceTable[this.clientId];
         connector.connected = false;
+        connector.packetCount = 0;
 
         // Execute custom connection handler
         if (connector.options.connectionHandler) {
@@ -303,6 +346,7 @@ class MQTTConnector extends DataConnector {
     onFailure(response) {
         console.error('Failed to connect:', response);
         this.connected = false;
+        this.packetCount = 0;
 
         // Execute custom error handler
         if (this.options.errorHandler) {
@@ -317,13 +361,13 @@ class MQTTConnector extends DataConnector {
  *
  */
 MQTTConnector.defaultOptions = {
-    host: '',
-    port: 8083,
+    host: 'test.mosquitto.org',
+    port: 1883,
     user: '',
     password: '',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: '',
+    topic: 'mqtt',
     firstRowAsNames: true
 };
 
@@ -335,4 +379,4 @@ MQTTConnector.registerType('MQTT', MQTTConnector);
  *  Launch the application
  *
  */
-setupDashboard();
+createDashboard();
