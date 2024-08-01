@@ -93,31 +93,17 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
     },
     events: {
         cell: {
-            click: function () {
-                // Callback action
-            },
-            mouseOver: function () {
-                // Callback action
-            },
-            mouseOut: function () {
-                // Callback action
-            },
-            afterEdit: function () {
-                // Callback action
-            }
+            click: function () { ... },
+            mouseOver: function () { ... },
+            mouseOut: function () { ... },
+            afterEdit: function () { ... }
         },
         column: {
-            afterSorting: function () {
-                // Callback action
-            },
-            resize: function () {
-                // Callback action
-            }
+            afterSorting: function () { ... },
+            resize: function () { ... }
         },
         header: {
-            click: function () {
-                // Callback action
-            }
+            click: function () { ... }
         }
     }
 ```
