@@ -450,7 +450,8 @@ function onBeforeRender(
                             data
                         ): void {
 
-                            // For using keys - rebuild the data structure
+                            // For using keys, or when using primitive points,
+                            // rebuild the data structure
                             if (
                                 foundPrimitivePoint ||
                                 (s.options.keys && s.options.keys.length)
