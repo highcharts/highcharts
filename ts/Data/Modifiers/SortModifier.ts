@@ -379,22 +379,20 @@ class SortModifier extends DataModifier {
             }
             modified.setColumns({ [orderInColumn]: column });
         } else {
-            const modifiedIndexes =
-                table.modifiedRowIndexes = new Array<number>(rowCount);
-            const parentIndexes: number[] =
-                table.modified.parentRowIndexes = [];
+            const originalIndexes: Array<number|undefined> = [];
             const rows: Array<DataTable.Row> = [];
 
             let rowReference: SortRowReference;
             for (let i = 0; i < rowCount; ++i) {
                 rowReference = rowReferences[i];
 
-                modifiedIndexes[rowReference.index] = i;
-                parentIndexes.push(rowReference.index);
-
+                originalIndexes.push(
+                    modified.getOriginalRowIndex(rowReference.index)
+                );
                 rows.push(rowReference.row);
             }
             modified.setRows(rows, 0);
+            modified.setOriginalRowIndexes(originalIndexes);
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });

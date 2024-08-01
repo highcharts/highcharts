@@ -30,6 +30,7 @@ import type DataTableOptions from './DataTableOptions';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     fireEvent,
     uniqueKey
 } = U;
@@ -217,24 +218,13 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly id: string;
 
-    public modified: DataTable;
+    private localRowIndexes?: Array<number>;
 
-    /**
-     * Array of the modified table's row indexes corresponding to the rows in
-     * this table. If not defined, the table does not have a modified table or
-     * the row order in the modified table is identical to the row order in this
-     * table.
-     */
-    public modifiedRowIndexes?: Array<number>;
+    public modified: DataTable;
 
     private modifier?: DataModifier;
 
-    /**
-     * Array of the parent table's row indexes corresponding to the rows in this
-     * table. If not defined, the table is a root table or parent table row
-     * order is in the parent table is identical to the row order in this table.
-     */
-    public parentRowIndexes?: Array<number>;
+    private originalRowIndexes?: Array<number|undefined>;
 
     private rowCount: number;
 
@@ -286,6 +276,8 @@ class DataTable implements DataEvent.Emitter {
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
+            tableClone.originalRowIndexes = table.originalRowIndexes;
+            tableClone.localRowIndexes = table.localRowIndexes;
         }
 
         table.emit({
@@ -355,8 +347,7 @@ class DataTable implements DataEvent.Emitter {
 
             if (!Object.keys(columns).length) {
                 table.rowCount = 0;
-                delete table.parentRowIndexes;
-                delete table.modifiedRowIndexes;
+                delete table.originalRowIndexes;
             }
 
             if (modifier) {
@@ -792,6 +783,27 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
+     * Retrieves the local row index that corresponds to the original row index.
+     *
+     * @param {number} originalRowIndex
+     * Original row index to get the local row index for.
+     *
+     * @return {number|undefined}
+     * Returns the local row index or `undefined` if not found.
+     */
+    public getLocalRowIndex(
+        originalRowIndex: number
+    ): (number | undefined) {
+        const { localRowIndexes } = this;
+
+        if (localRowIndexes) {
+            return localRowIndexes[originalRowIndex];
+        }
+
+        return originalRowIndex;
+    }
+
+    /**
      * Retrieves the modifier for the table.
      * @private
      *
@@ -800,6 +812,18 @@ class DataTable implements DataEvent.Emitter {
      */
     public getModifier(): (DataModifier | undefined) {
         return this.modifier;
+    }
+
+    public getOriginalRowIndex(
+        rowIndex: number
+    ): (number | undefined) {
+        const { originalRowIndexes } = this;
+
+        if (originalRowIndexes) {
+            return originalRowIndexes[rowIndex];
+        }
+
+        return rowIndex;
     }
 
     /**
@@ -1367,6 +1391,40 @@ class DataTable implements DataEvent.Emitter {
                 });
                 throw error;
             });
+    }
+
+    /**
+     * Sets the original row indexes for the table. It is used to keep the
+     * reference to the original rows when modifying the table.
+     *
+     * @param {Array<number|undefined>} originalRowIndexes
+     * Original row indexes array.
+     *
+     * @param {boolean} omitLocalRowIndexes
+     * Whether to omit the local row indexes calculation. Defaults to `false`.
+     */
+    public setOriginalRowIndexes(
+        originalRowIndexes: Array<number|undefined>,
+        omitLocalRowIndexes: boolean = false
+    ): void {
+        this.originalRowIndexes = originalRowIndexes;
+        if (omitLocalRowIndexes) {
+            return;
+        }
+
+        const modifiedIndexes: number[] = this.localRowIndexes = [];
+        for (
+            let i = 0,
+                iEnd = originalRowIndexes.length,
+                originalIndex: number | undefined;
+            i < iEnd;
+            ++i
+        ) {
+            originalIndex = originalRowIndexes[i];
+            if (defined(originalIndex)) {
+                modifiedIndexes[originalIndex] = i;
+            }
+        }
     }
 
     /**

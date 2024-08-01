@@ -127,9 +127,7 @@ class RangeModifier extends DataModifier {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
-
-        let indexesBuffer: number[] | undefined;
-        let indexes: number[] = [];
+        let indexes: Array<number|undefined> = [];
 
         const {
             additive,
@@ -163,9 +161,9 @@ class RangeModifier extends DataModifier {
                 if (i > 0 && !additive) {
                     modified.deleteRows();
                     modified.setRows(rows);
+                    modified.setOriginalRowIndexes(indexes, true);
                     columns = modified.getColumns();
                     rows = [];
-                    indexesBuffer = indexes;
                     indexes = [];
                 }
 
@@ -175,7 +173,8 @@ class RangeModifier extends DataModifier {
                     let j = 0,
                         jEnd = rangeColumn.length,
                         cell: DataTable.CellType,
-                        row: (DataTable.Row|undefined);
+                        row: DataTable.Row | undefined,
+                        originalRowIndex: number | undefined;
                     j < jEnd;
                     ++j
                 ) {
@@ -201,35 +200,25 @@ class RangeModifier extends DataModifier {
                         cell >= range.minValue &&
                         cell <= range.maxValue
                     ) {
-                        row = (
-                            additive ?
-                                table.getRow(j) :
-                                modified.getRow(j)
-                        );
+                        if (additive) {
+                            row = table.getRow(j);
+                            originalRowIndex = table.getOriginalRowIndex(j);
+                        } else {
+                            row = modified.getRow(j);
+                            originalRowIndex = modified.getOriginalRowIndex(j);
+                        }
 
                         if (row) {
                             rows.push(row);
-
-                            if (indexesBuffer) {
-                                indexes.push(indexesBuffer[j]);
-                            } else {
-                                indexes.push(j);
-                            }
+                            indexes.push(originalRowIndex);
                         }
                     }
                 }
             }
 
-            modified.parentRowIndexes = indexes;
-            const modifiedRowIndexes: number[] =
-                table.modifiedRowIndexes = new Array(table.getRowCount());
-
-            for (let i = 0, iEnd = indexes.length; i < iEnd; ++i) {
-                modifiedRowIndexes[indexes[i]] = i;
-            }
-
             modified.deleteRows();
             modified.setRows(rows);
+            modified.setOriginalRowIndexes(indexes);
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });
