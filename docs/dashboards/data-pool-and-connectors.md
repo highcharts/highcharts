@@ -109,8 +109,8 @@ possibilities of limiting access.
 ``` JavaScript
 async function run() {
     const connector = new DataConnector.types.GoogleSheets({
-        googleAPIKey: 'AIzaSyDaGmWKa4JsXZ-HjGw7ISLn_3namBGewQe',
-        googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
+        googleAPIKey: 'Aa...zz',
+        googleSpreadsheetKey: 'Bb...wW'
     });
     await connector.load();
 }
@@ -121,9 +121,9 @@ run();
 
 Google Sheets is a spreadsheet application included as part of the free, web-based Google Docs Editors suite offered by Google.
 
-With Highcharts Dashboards' `GoogleSheetsConnector` is it possible to load data from a Google spreadsheet and insert it into the connector's data table, allowing the data to be rendered in any dashboard component, whether in a DataGrid, KPI, or chart. Like with other connectors,
-DataModifiers may be applied during parsing. Alternatively, the data may be filtered or modified before being parsed,
-in the `beforeParse` callback.
+With the `GoogleSheetsConnector` in Highcharts Dashboards you can load tables from a Google spreadsheet right into one your dashboard 
+components, whether it is a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
+Alternatively, the data may be filtered or modified before being parsed, in the `beforeParse` callback.
 
 The connector requires two API keys; one for the Google Spreadsheets API and one for the document itself. In addition, the owner of the Google account must grant read access to the document. See the [GoogleSheetsConnector API](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) for further details.
 
