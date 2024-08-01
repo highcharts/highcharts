@@ -20,6 +20,27 @@ import Database from './database';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+
+interface Nav {
+    children?: Array<Nav>;
+    deprecated?: string;
+    description?: string;
+    filename?: string;
+    fullname?: string;
+    isLeaf?: boolean;
+    name?: string;
+    since?: string;
+    typeList?: { names: Array<string> };
+    version?: string;
+}
+
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -151,43 +172,41 @@ async function getNav(
     database: Database,
     itemName: string = '',
     version?: number
-): Promise<Record<string, unknown>> {
+): Promise<Nav> {
     const item = await database.getItem(itemName, version);
-    const nav = TreeLib.createTreeNode({}, itemName);
+    const nav: Nav = (item ? toNav(item) : {});
 
-    if (item && item.name) {
-        nav.doclet.description = item.description;
-        nav.meta.fullname = item.name;
-        nav.meta.name = item.name.split('.').pop();
-    }
-
-    let navChild: TreeLib.Option;
-    let navChildren: TreeLib.Options = {};
+    let navChildren: Array<Nav> = [];
 
     for (const childItem of await database.getItemChildren(itemName, version)) {
         if (childItem && childItem.name) {
-            navChild = {
-                doclet: {},
-                meta: {
-                    name: childItem.name.split('.').pop(),
-                    fullname: childItem.name
-                }
-            }
-            if (childItem.description) {
-                navChild.doclet.description = childItem.description;
-            }
-            if (childItem.deprecated) {
-                navChild.doclet.deprecated = `${childItem.deprecated}.0`;
-            }
-            if (childItem.since) {
-                navChild.doclet.since = `${childItem.since}.0`;
-            }
-            navChildren[navChild.meta.name] = navChild;
+            navChildren.push(toNav(childItem));
         }
     }
 
-    if (Object.keys(navChildren).length) {
+    if (navChildren.length) {
         nav.children = navChildren;
+    }
+
+    return nav;
+}
+
+
+function toNav(item: Database.Item): Nav {
+    const nav: Nav = {};
+
+    if (item.description) {
+        nav.description = item.description;
+    }
+    if (item.meta.file) {
+        nav.filename = item.meta.file;
+    }
+    nav.fullname = item.name;
+    nav.name = item.name.split('.').pop();
+    if (item.doclet.type) {
+        nav.isLeaf = item.doclet.type
+            .every(type => type[0] === type[0].toLowerCase());
+        nav.typeList = { names: item.doclet.type };
     }
 
     return nav;
@@ -266,7 +285,6 @@ function response302(response, p) {
  * @return {void}
  */
 function response404(response, p) {
-
     const log = require('../libs/log');
 
     log.failure('404', p);
@@ -285,6 +303,7 @@ function response404(response, p) {
  * Sanitized path.
  */
 function sanitizePath(path: string): string {
+
     path = (new URL(path, 'http://localhost')).pathname;
 
     while (PATH_ESCAPE.test(path)) {
@@ -359,21 +378,23 @@ async function main() {
 
                 const product = path.split('/')[1];
                 const option = path.split('/')[2];
-                const database = new Database(`${product}_options`);
+                const database = new Database(product);
 
                 if (option === 'nav') {
                     let navOption = path.split('/')[3];
 
-                    console.log(database.product, navOption);
-
                     if (navOption.endsWith('.json')) {
-                        navOption = navOption
-                            .substring(0, navOption.length - 5);
+                        navOption =
+                            navOption.substring(0, navOption.length - 5);
                     }
 
                     response200(
                         response,
-                        JSON.stringify(getNav(database, navOption)),
+                        JSON.stringify(
+                            await getNav(database, navOption),
+                            void 0,
+                            '\t'
+                        ),
                         'json'
                     );
 

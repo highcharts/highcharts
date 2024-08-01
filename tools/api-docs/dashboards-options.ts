@@ -32,7 +32,7 @@ import TSLib from '../libs/ts';
 const PRODUCT = 'dashboards';
 
 
-const DATABASE = new Database(`${PRODUCT}_options`);
+const DATABASE = new Database(PRODUCT);
 
 
 const REFERENCES: Record<string, true> = {};

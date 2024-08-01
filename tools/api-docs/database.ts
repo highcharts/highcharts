@@ -249,7 +249,7 @@ export class Database {
         const children: Array<Database.Item> = [];
         const data = await this.getData();
         const nodePath = this.namePrefix + itemName;
-        const indexOffset = nodePath.length;
+        const indexOffset = nodePath.length + 1;
         const prefixLength = this.namePrefix.length;
 
         let index = -1;
@@ -356,6 +356,7 @@ export namespace Database {
         exclude?: Array<string>;
         extends?: Array<string>;
         product?: Array<string>;
+        requires?: Array<string>;
         sample?: Array<string>;
         see?: Array<string>;
         type?: Array<string>;
