@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const modules = Dashboards._modules;
 
-const JSONConnector = modules['Data/Connectors/JSONConnector.js'];
+const DataConnector = modules['Data/Connectors/DataConnector.js'];
 const JSONConverter = modules['Data/Converters/JSONConverter.js'];
 const U = modules['Core/Utilities.js'];
 
@@ -22,7 +22,7 @@ const { merge } = U;
  *
  * */
 
-class MQTTConnector extends JSONConnector {
+class MQTTConnector extends DataConnector {
     /* *
      *
      *  Constructor
@@ -51,6 +51,71 @@ class MQTTConnector extends JSONConnector {
      * */
 
     /**
+     * Sets up the MQTT connection and subscribes to the topic.
+     *
+     * @param {DataEvent.Detail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Promise<this>}
+     * Same connector instance with modified table.
+     */
+    async load(eventDetail) {
+        const connector = this,
+            converter = connector.converter,
+            table = connector.table,
+            {
+                data, dataUrl, dataModifier,
+                host, port, topic
+            } = connector.options;
+
+        connector.emit({
+            type: 'load',
+            data,
+            detail: eventDetail,
+            table
+        });
+
+        console.log('Loading data from MQTT broker:', host, port, topic);
+
+        return Promise
+            .resolve(
+                dataUrl ?
+                    fetch(dataUrl).then(json => json.json()) :
+                    data || []
+            )
+            .then(data => {
+                if (data) {
+                    // If already loaded, clear the current rows
+                    table.deleteColumns();
+                    converter.parse({ data });
+                    table.setColumns(converter.getTable().getColumns());
+                    table.setRowKeysColumn(data.length);
+                }
+                return connector.setModifierOptions(
+                    dataModifier
+                ).then(() => data);
+            })
+            .then(data => {
+                connector.emit({
+                    type: 'afterLoad',
+                    data,
+                    detail: eventDetail,
+                    table
+                });
+                return connector;
+            }).catch(error => {
+                connector.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table
+                });
+                throw error;
+            });
+    }
+
+
+    /**
      * Connects to an MQTT broker.
      *
      * @param {url} [string]
@@ -59,12 +124,13 @@ class MQTTConnector extends JSONConnector {
      * @return {Promise<this>}
      * Return same instance of MqttConnector.
      */
-    connect(url, user, password, eventDetail) {
+    async connect(host, port, user, password, eventDetail) {
         const connector = this,
             converter = connector.converter,
             table = connector.table,
             { dataModifier, firstRowAsNames } = connector.options;
 
+        const url = `ws://${host}:${port}`;
         connector.emit({
             type: 'connect',
             detail: eventDetail,
@@ -81,7 +147,9 @@ class MQTTConnector extends JSONConnector {
         const connector = this,
             converter = connector.converter,
             table = connector.table,
-            { dataModifier, firstRowAsNames, url } = connector.options;
+            { host, port } = connector.options;
+
+        const url = `ws://${host}:${port}`;
 
         connector.emit({
             type: 'disconnect',
@@ -168,10 +236,10 @@ const mqttConfig = {
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            // ...mqttConfig,
             type: 'MQTT',
             id: 'fetched-data',
             options: {
+                ...mqttConfig,
                 firstRowAsNames: false,
                 dataRefreshRate: 5,
                 enablePolling: true,
