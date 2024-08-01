@@ -1116,7 +1116,7 @@ namespace Component {
              *
              * @default false
              */
-            activateComponent?: boolean;
+            activated?: boolean;
 
             /**
              * Whether to enable the active state.

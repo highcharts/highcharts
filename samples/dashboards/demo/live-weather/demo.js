@@ -418,7 +418,7 @@ async function setupDashboard() {
                 states: {
                     active: {
                         enabled: true,
-                        activateComponent: true
+                        activated: true
                     },
                     hover: {
                         enabled: true

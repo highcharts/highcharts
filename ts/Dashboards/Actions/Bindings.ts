@@ -211,7 +211,7 @@ namespace Bindings {
         if (
             cell &&
             optionsStates?.active?.enabled &&
-            optionsStates?.active?.activateComponent
+            optionsStates?.active?.activated
         ) {
             cell.setActiveState();
             component.isActive = true;
