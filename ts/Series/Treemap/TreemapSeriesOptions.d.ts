@@ -109,7 +109,7 @@ export interface TreemapSeriesLevelColorVariationOptions {
 export interface TreemapSeriesGroupAreaThresholdOptions {
 
     /**
-     * TO DO
+     * Enable or disable Treemap grouping.
      *
      * @type {boolean}
      *
@@ -120,8 +120,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
     enabled: boolean;
 
     /**
-     * The pixel threshold width of area, which is used as a minimal square
-     * area of point.
+     * The pixel threshold width of area, which is used in Treemap grouping.
      *
      * @type {number}
      *
@@ -130,11 +129,10 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * @product highcharts
      *
      */
-    width?: number;
+    pixelWidth?: number;
 
     /**
-     * The pixel threshold height of area, which is used as a minual square
-     * area of point.
+     * The pixel threshold height of area, which is used in Treemap grouping.
      *
      * @type {number}
      *
@@ -142,10 +140,11 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      *
      * @product highcharts
      */
-    height?: number;
+    pixelHeight?: number;
 
     /**
-     * TO DO
+     * The name of the point of grouped nodes shown in the tooltip, dataLabels,
+     * etc.
      *
      * @type {string}
      *
@@ -493,7 +492,18 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     drillUpButton?: TreemapSeriesUpButtonOptions;
 
     /**
-     * TO DO
+     * An option to optimize treemap series rendering by grouping smaller leaf
+     * nodes below a certain square area threshold in pixels. If the square area
+     * of a point becomes smaller than the specified threshold, determined by
+     * the `pixelWidth` and/or `pixelHeight` options, then this point is moved
+     * into group point per series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-simple
+     *         Simple demo of Treemap grouping
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-multiple-parents
+     *         Treemap grouping with multiple parents
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
+     *         Advanced demo of Treemap grouping
      *
      * @since next
      *
@@ -653,9 +663,16 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     tooltip?: TreemapSeriesTooltipOptions;
 
     /**
-     * TO DO
+     * The HTML of the grouped nodes point's in the tooltip. Works only for
+     * Treemap series grouping and analogously to
+     * [pointFormat](#tooltip.pointFormat).
      *
-     * @apioption plotOptions.treemap.tooltip.groupedNodesFormat
+     * The grouped nodes point tooltip can be also formatted using
+     * `tooltip.formatter` callback function and `point.isGroupNode` flag.
+     *
+     * @type      {string}
+     * @default   + {point.groupedPointsAmount} more...
+     * @apioption tooltip.groupedNodesFormat
      */
 
     /**

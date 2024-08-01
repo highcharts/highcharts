@@ -462,7 +462,7 @@ class TreemapSeries extends ScatterSeries {
             parent.visible &&
             groupAreaThreshold &&
             groupAreaThreshold.enabled &&
-            groupAreaThreshold.width
+            groupAreaThreshold.pixelWidth
         ) {
             childrenValues.forEach((child, i): void => {
                 const x = series.xAxis.toPixels(child.x / series.axisRatio),
@@ -479,23 +479,23 @@ class TreemapSeries extends ScatterSeries {
 
                 if (
                     (
-                        !groupAreaThreshold.height &&
-                        groupAreaThreshold.width &&
+                        !groupAreaThreshold.pixelHeight &&
+                        groupAreaThreshold.pixelWidth &&
                         (
-                            a < groupAreaThreshold.width ||
-                            b < groupAreaThreshold.width ||
-                            area < groupAreaThreshold.width *
-                                groupAreaThreshold.width
+                            a < groupAreaThreshold.pixelWidth ||
+                            b < groupAreaThreshold.pixelWidth ||
+                            area < groupAreaThreshold.pixelWidth *
+                                groupAreaThreshold.pixelWidth
                         )
                     ) ||
                     (
-                        groupAreaThreshold.height &&
-                        groupAreaThreshold.width &&
+                        groupAreaThreshold.pixelHeight &&
+                        groupAreaThreshold.pixelWidth &&
                         (
-                            a < groupAreaThreshold.width ||
-                            b < groupAreaThreshold.height ||
-                            area < groupAreaThreshold.width *
-                                groupAreaThreshold.height
+                            a < groupAreaThreshold.pixelWidth ||
+                            b < groupAreaThreshold.pixelHeight ||
+                            area < groupAreaThreshold.pixelWidth *
+                                groupAreaThreshold.pixelHeight
                         )
                     )
                 ) {
