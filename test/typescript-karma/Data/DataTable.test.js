@@ -518,7 +518,7 @@ QUnit.test('DataTable.setColumns', function (assert) {
     );
 });
 
-QUnit.test('DataTable.setModifier with orderInColumn', function (assert) {
+QUnit.test('DataTable.setModifier', function (assert) {
     const done = assert.async(),
         modifier = new SortModifier({
             direction: 'asc',
