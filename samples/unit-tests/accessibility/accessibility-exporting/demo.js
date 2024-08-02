@@ -1,5 +1,3 @@
-const { container } = require('webpack');
-
 QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
