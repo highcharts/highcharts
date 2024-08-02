@@ -31,8 +31,6 @@ const mqttConfig = {
 
 // Connector configuration
 const connConfig = {
-    firstRowAsNames: false,
-    overwrite: false,
     columnNames: [
         'Time',
         'Power'
@@ -302,12 +300,17 @@ class MQTTConnector extends DataConnector {
         const data = JSON.parse(mqttPacket.payloadString);
         converter.parse({ data });
 
-        // Update the data table
-        if (connector.options.overwrite) {
-            table.deleteColumns();
+        // Append the incoming data to the current table
+        const rowCount = table.getRowCount();
+        const convTable = converter.getTable();
+
+        if (rowCount === 0) {
+            // First message, set columns for data storage
+            table.setColumns(convTable.getColumns());
+        } else {
+            // Append row
+            table.setRows(convTable.getRows());
         }
-        table.setColumns(converter.getTable().getColumns());
-        table.setRowKeysColumn(data.length);
     }
 
     /**
@@ -358,8 +361,7 @@ MQTTConnector.defaultOptions = {
     timeout: 10,
     qOs: 0,  // Quality of Service
     topic: 'mqtt',
-    overwrite: true,
-    firstRowAsNames: true
+    firstRowAsNames: false
 };
 
 // Register the connector
