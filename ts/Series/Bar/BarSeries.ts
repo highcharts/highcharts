@@ -54,7 +54,7 @@ class BarSeries extends ColumnSeries {
      * A bar series is a special type of column series where the columns are
      * horizontal.
      *
-     * @sample highcharts/demo/bar-basic/
+     * @sample highcharts/demo/bar-chart/
      *         Bar chart
      *
      * @extends      plotOptions.column

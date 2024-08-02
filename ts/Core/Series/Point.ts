@@ -71,7 +71,7 @@ declare module './PointLike' {
     interface PointLike {
         className?: string;
         events?: PointEventsOptions;
-        hasImportedEvents?: boolean;
+        importedUserEvent?: Function;
         selected?: boolean;
         selectedStaging?: boolean;
         state?: string;
@@ -1315,10 +1315,13 @@ class Point {
                     .indexOf(userEvent) === -1
             )
         ) {
-            addEvent(point, eventType, userEvent);
-            point.hasImportedEvents = true;
+            // While updating the existing callback event the old one should be
+            // removed
+            point.importedUserEvent?.();
+
+            point.importedUserEvent = addEvent(point, eventType, userEvent);
         } else if (
-            point.hasImportedEvents &&
+            point.importedUserEvent &&
             !userEvent &&
             point.hcEvents?.[eventType]
         ) {
@@ -1326,7 +1329,7 @@ class Point {
             delete point.hcEvents[eventType];
 
             if (!Object.keys(point.hcEvents)) {
-                point.hasImportedEvents = false;
+                delete point.importedUserEvent;
             }
         }
     }

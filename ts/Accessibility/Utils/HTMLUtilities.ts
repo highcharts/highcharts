@@ -281,7 +281,7 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
         return 'h' + newLevel;
     };
 
-    const isHeading = (tagName: string): boolean => /H[1-6]/.test(tagName);
+    const isHeading = (tagName: string): boolean => /^H[1-6]$/i.test(tagName);
 
     const getPreviousSiblingsHeading = (el: HTMLDOMElement): string => {
         let sibling: ChildNode|null = el;

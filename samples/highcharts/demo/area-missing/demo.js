@@ -29,7 +29,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            pointStart: 2014
+            pointStart: 2016
         },
         area: {
             fillOpacity: 0.5
@@ -40,9 +40,9 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Arvid',
-        data: [10, 9, 11, 11, 8, 13, 12, 14]
+        data: [11, 11, 8, 13, 12, 14, 4, 12]
     }, {
         name: 'Yasin',
-        data: [13, 9, 10, 10, 8, null, 8, 6]
+        data: [10, 10, 8, null, 8, 6, 4, 8]
     }]
 });

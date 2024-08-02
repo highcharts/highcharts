@@ -18,8 +18,7 @@ Dashboards.board('container', {
             enabled: false
         },
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
@@ -66,6 +65,10 @@ Dashboards.board('container', {
                         }]
                     }]
                 }]
+            }, {
+                name: 'connectorName',
+                propertyPath: ['connector', 'id'],
+                type: 'select'
             }],
             chartOptions: {
                 plotOptions: {
