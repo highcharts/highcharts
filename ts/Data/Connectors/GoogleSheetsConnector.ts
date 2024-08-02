@@ -11,6 +11,7 @@
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sophie Bremer
+ *  - Jomar Hønsi
  *
  * */
 
@@ -175,6 +176,9 @@ class GoogleSheetsConnector extends DataConnector {
             url
         });
 
+        if (!URL.canParse(url)) {
+            throw new Error('Invalid URL: ' + url);
+        }
 
         return fetch(url)
             .then((
@@ -228,7 +232,6 @@ class GoogleSheetsConnector extends DataConnector {
                 throw error;
             });
     }
-
 }
 
 /* *
@@ -245,7 +248,7 @@ namespace GoogleSheetsConnector {
      *
      * */
 
-    export type Event = (ErrorEvent|LoadEvent);
+    export type Event = (ErrorEvent | LoadEvent);
 
     export type ErrorEvent = DataConnector.ErrorEvent;
 
@@ -262,7 +265,7 @@ namespace GoogleSheetsConnector {
      * GoogleSheetsConnector.
      */
     export type UserOptions = (
-        Types.DeepPartial<GoogleSheetsConnectorOptions>&
+        Types.DeepPartial<GoogleSheetsConnectorOptions> &
         GoogleSheetsConverter.UserOptions
     );
 
@@ -287,26 +290,26 @@ namespace GoogleSheetsConnector {
     export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
-        options: Partial<(FetchURLOptions&GoogleSheetsConnectorOptions)> = {}
+        options: Partial<(FetchURLOptions & GoogleSheetsConnectorOptions)> = {}
     ): string {
-        return (
-            `https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/` +
-            (
-                options.onlyColumnNames ?
-                    'A1:Z1' :
-                    buildQueryRange(options)
-            ) +
-            '?alt=json' +
-            (
-                options.onlyColumnNames ?
-                    '' :
-                    '&dateTimeRenderOption=FORMATTED_STRING' +
-                    '&majorDimension=COLUMNS' +
-                    '&valueRenderOption=UNFORMATTED_VALUE'
-            ) +
-            '&prettyPrint=false' +
-            `&key=${apiKey}`
-        );
+        const url = new URL(`https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/`);
+
+        const range = options.onlyColumnNames ?
+            'A1:Z1' : buildQueryRange(options);
+        url.pathname += range;
+
+        const searchParams = url.searchParams;
+        searchParams.set('alt', 'json');
+
+        if (!options.onlyColumnNames) {
+            searchParams.set('dateTimeRenderOption', 'FORMATTED_STRING');
+            searchParams.set('majorDimension', 'COLUMNS');
+            searchParams.set('valueRenderOption', 'UNFORMATTED_VALUE');
+        }
+        searchParams.set('prettyPrint', 'false');
+        searchParams.set('key', apiKey);
+
+        return url.href;
     }
 
     /**
@@ -336,7 +339,6 @@ namespace GoogleSheetsConnector {
             )
         );
     }
-
 }
 
 /* *
