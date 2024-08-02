@@ -38,22 +38,6 @@ Highcharts.chart('container-area', {
         landmarkVerbosity: 'one'
     },
 
-    plotOptions: {
-        area: {
-            fillColor: {
-                pattern: {
-                    path: {
-                        d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-                        strokeWidth: 3
-                    },
-                    width: 10,
-                    height: 10,
-                    opacity: 0.4
-                }
-            }
-        }
-    },
-
     legend: {
         enabled: false
     },
@@ -63,7 +47,14 @@ Highcharts.chart('container-area', {
         color: '#88e',
         fillColor: {
             pattern: {
-                color: '#11d'
+                color: '#11d',
+                path: {
+                    d: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 11 9 L 9 11',
+                    strokeWidth: 3
+                },
+                width: 10,
+                height: 10,
+                opacity: 0.4
             }
         }
     }, {
@@ -74,7 +65,14 @@ Highcharts.chart('container-area', {
         color: '#e88',
         fillColor: {
             pattern: {
-                color: '#d11'
+                color: '#d11',
+                path: {
+                    d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+                    strokeWidth: 3
+                },
+                width: 10,
+                height: 10,
+                opacity: 0.4
             }
         }
     }]

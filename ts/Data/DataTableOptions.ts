@@ -28,12 +28,6 @@ export interface DataTableOptions {
 
 
     /**
-     * Initial map of column aliases to original column names.
-     */
-    aliases?: Record<string, string>;
-
-
-    /**
      * Initial columns with their values.
      */
     columns?: Record<string, Array<DataTableValue>>;
@@ -45,6 +39,10 @@ export interface DataTableOptions {
     id?: string;
 
 
+    /**
+     * Name of the (invisible) column that contains all row keys.
+     */
+    rowKeysId?: string;
 }
 
 

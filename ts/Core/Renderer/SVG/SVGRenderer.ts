@@ -583,7 +583,7 @@ class SVGRenderer implements SVGRendererLike {
                     .map((key: string): string =>
                         `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
@@ -599,22 +599,38 @@ class SVGRenderer implements SVGRendererLike {
                     id,
                     filterUnits: options.filterUnits
                 },
-                children: [{
-                    tagName: 'feDropShadow',
-                    attributes: {
-                        dx: options.offsetX,
-                        dy: options.offsetY,
-                        'flood-color': options.color,
-                        // Tuned and modified to keep a preserve compatibility
-                        // with the old settings
-                        'flood-opacity': Math.min(options.opacity * 5, 1),
-                        stdDeviation: options.width / 2
-                    }
-                }]
+                children: this.getShadowFilterContent(options)
             });
         }
 
         return id;
+    }
+
+    /**
+     * Get shadow filter content.
+     * NOTE! Overridden in es5 module for IE11 compatibility.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#getShadowFilterContent
+     *
+     * @param {ShadowOptionsObject} options
+     * The shadow options.
+     * @return {Array<AST.Node>}
+     * The shadow filter content.
+     */
+    private getShadowFilterContent(options: ShadowOptionsObject): AST.Node[] {
+        return [{
+            tagName: 'feDropShadow',
+            attributes: {
+                dx: options.offsetX,
+                dy: options.offsetY,
+                'flood-color': options.color,
+                // Tuned and modified to keep a preserve compatibility
+                // with the old settings
+                'flood-opacity': Math.min(options.opacity * 5, 1),
+                stdDeviation: options.width / 2
+            }
+        }];
     }
 
     /**
