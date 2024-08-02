@@ -1,19 +1,40 @@
 /* *
  *
- *  Sample application using a custom MQTT connector
+ *  Sample application using a MQTT connector (custom connector)
  *
  * */
 
-// Set up Highcharts common options
+// Highcharts common options
 Highcharts.setOptions({
     chart: {
         type: 'spline',
         animation: true
     },
-    title: {
-        text: 'Production'
+    xAxis: {
+        type: 'datetime',
+        labels: {
+            format: '{value:%H:%M}'
+        }
     }
 });
+
+const dataGridOptions = {
+    cellHeight: 38,
+    editable: false,
+    columns: {
+        Time: {
+            headerFormat: 'Time (UTC)',
+            cellFormatter: function () {
+                const date = new Date(this.value);
+                // HH:MM:SS
+                return date.toISOString().slice(11, 19);
+            }
+        },
+        Power: {
+            headerFormat: 'Power (MW)'
+        }
+    }
+};
 
 // MQTT connection configuration
 const mqttConfig = {
@@ -39,7 +60,8 @@ const connConfig = {
         // Application specific data parsing, extracts power production data
         const modifiedData = [];
         if (data.aggs) {
-            const ts = data.tst_iso.valueOf();
+            // const ts = new Date(data.tst_iso).getTime();
+            const ts = data.tst_iso;
             modifiedData.push([ts, data.aggs[0].P_gen]);
         }
         return modifiedData;
@@ -74,25 +96,40 @@ function createDashboard() {
             type: 'Highcharts',
             connector: {
                 id: 'mqtt-data-1'
+            },
+            sync: {
+                highlight: true
             }
         }, {
             renderTo: 'data-grid-1',
             type: 'DataGrid',
             connector: {
                 id: 'mqtt-data-1'
-            }
+            },
+            sync: {
+                highlight: true
+            },
+            dataGridOptions: dataGridOptions
         }, {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
             connector: {
                 id: 'mqtt-data-2'
+            },
+            sync: {
+                highlight: true
             }
+
         }, {
             renderTo: 'data-grid-2',
             type: 'DataGrid',
             connector: {
                 id: 'mqtt-data-2'
-            }
+            },
+            sync: {
+                highlight: true
+            },
+            dataGridOptions: dataGridOptions
         }],
         gui: {
             layouts: [{
@@ -121,6 +158,14 @@ function createDashboard() {
  *
  * */
 
+let MQTTClient;
+try {
+    // eslint-disable-next-line no-undef
+    MQTTClient = Paho.MQTT.Client;
+} catch (e) {
+    console.error('Paho MQTT library not found:', e);
+}
+
 /* eslint-disable no-underscore-dangle */
 const modules = Dashboards._modules;
 
@@ -131,9 +176,6 @@ const { merge } = U;
 
 // Connector instances, indexed by clientID
 const instanceTable = {};
-
-// eslint-disable-next-line no-undef
-const MQTTClient = Paho.MQTT.Client;
 
 
 /* *
@@ -155,6 +197,8 @@ class MQTTConnector extends DataConnector {
             options
         );
         super(mergedOptions);
+        mergedOptions.firstRowAsNames = false;
+
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
 
@@ -195,12 +239,14 @@ class MQTTConnector extends DataConnector {
                 data, host, port
             } = connector.options;
 
+        /*
         connector.emit({
             type: 'load',
             data,
             detail: eventDetail,
             table
         });
+        */
 
         // Start MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientID);
@@ -215,23 +261,18 @@ class MQTTConnector extends DataConnector {
     /**
      * Connects to an MQTT broker.
      *
-     * @param {url} [string]
-     * URL of the MQTT broker, e.g. 'wss://mqtt.eclipse.org:443/mqtt'.
-     *
-     * @return {Promise<this>}
-     * Return same instance of MqttConnector.
      */
     async connect() {
         if (this.connected) {
             throw Error('Already connected');
         }
-        const { user, password, timeout } = this.options;
+        const { user, password, timeout, useSSL, cleanSession } = this.options;
 
         // Connect to broker
         this.mqtt.connect({
-            useSSL: true,
+            useSSL: useSSL,
             timeout: timeout,
-            cleanSession: true,
+            cleanSession: cleanSession,
             onSuccess: () => this.onConnect(),
             onFailure: resp => this.onFailure(resp),
             userName: user,
@@ -361,7 +402,8 @@ MQTTConnector.defaultOptions = {
     timeout: 10,
     qOs: 0,  // Quality of Service
     topic: 'mqtt',
-    firstRowAsNames: false
+    useSSL: true,
+    cleanSession: true
 };
 
 // Register the connector
