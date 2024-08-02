@@ -369,7 +369,8 @@ class DataTable implements DataEvent.Emitter {
     /**
      * Deletes the row index references. This is useful when the original table
      * is deleted, and the references are no longer needed. This table is
-     * then considered an original table.
+     * then considered an original table or a table that has the same row's
+     * order as the original table.
      */
     public deleteRowIndexReferences(): void {
         delete this.originalRowIndexes;
