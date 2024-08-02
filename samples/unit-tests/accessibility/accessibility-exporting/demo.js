@@ -94,7 +94,7 @@ QUnit.test(
                     ]
                 }]
             }),
-            containerChildren = chart.renderTo.children;
+            renderToChildren = chart.renderTo.children;
 
         // These two functions move "highcharts-container" when
         // user selects printing
@@ -109,7 +109,7 @@ QUnit.test(
             ],
             [
                 2,
-                'highcharts-container',
+                chart.container.id,
                 '"highcharts-container" should be between screen-reader divs'
             ],
             [
@@ -119,7 +119,7 @@ QUnit.test(
             ]
         ]) {
             assert.strictEqual(
-                containerChildren[elementIndex].id,
+                renderToChildren[elementIndex].id,
                 candidateId,
                 testMessage
             );
