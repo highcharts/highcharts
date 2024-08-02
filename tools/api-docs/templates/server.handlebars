@@ -9,13 +9,13 @@
 
         <link rel="stylesheet" href="/static/style.css" type="text/css" />
 
-        <script src="/static/script.js"></script>
-        <script type="text/javascript" src="/static/websearch/highsoft-websearch.js"></script>
+        <script type="text/javascript" src="/static/api.js"></script>
+        <script type="text/javascript" src="/static/highsoft-websearch.js"></script>
 
     </head>
     <body class="{{product.className}}">
 
-        <header>
+        <header class="header">
             <label for="menu-mobile"></label>
             <input type="checkbox" id="menu-mobile" />
             <nav class="Menu">
@@ -35,19 +35,65 @@
             </nav>
         </header>
 
-        <section id="side">
-            <nav>
-                {{>server-sidebar node=side}}
-            </nav>
-        </section>
+        <main class="wrapper">
 
-        <section id="main">
+            <div id="sidebar" class="navigation sidebar" expanded="false">
+                <div id="search" class="search-wrapper">
+                    <input type="text" autocapitalize="off" autocomplete="off" autocorrect="off" class="search" dir="auto" placeholder="Search - return for full results" />
+                    <button title="Full results"><i class="fa fa-search"></i></button>
+                    <ul class="results" style="display: none;"></ul>
+                </div>
+                <nav id="option-trees-wrapper">
+                    <div id="global-options" style="display:none;"></div>
+                    <div class="options-tree">
+                        {{>server-sidebar node=side}}
+                    </div>
+                </nav>
+            </div>
 
-        </section>
+            <div id="body">
 
-        <footer>
+            </div>
 
+        </main>
+
+        <footer class="footer">
+            <p>Copyright &copy; {{year}}, Highsoft AS. All rights reserved.</p>
+            <div id="footer-social" class="footer-social">
+                <a href="https://www.facebook.com/Highcharts" title="Facebook" class="social-icon"><i class="fa fa-facebook"></i></a>
+                <a href="https://twitter.com/Highcharts" title="Twitter" class="social-icon"><i class="fa fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/company/highsoft-solutions-as" title="LinkedIn" class="social-icon"><i class="fa fa-linkedin"></i></a>
+                <a href="https://github.com/highcharts/highcharts" title="Github" class="social-icon"><i class="fa fa-github"></i></a>
+            </div>
+            <p>
+                {{productName}} v{{version}} -
+                Generated from branch <a href="https://github.com/highcharts/highcharts/tree/{{versionProps.branch}}">{{versionProps.branch}}</a> (commit <a href="https://github.com/highcharts/highcharts/commit/{{versionProps.commit}}">{{versionProps.commit}}</a>), on {{date}}
+            </p>
         </footer>
+
+        <script>
+            var state = '{{{name}}}',
+                hasChildren = true,
+                product = '{{{productModule}}}';
+
+            {{#unless node.meta.hasChildren}}
+            hasChildren = false;
+            {{/unless}}
+            {{#if isClassReference}}
+            hapi.classReference.createNavigation('#options', state, product);
+            {{else}}
+            hapi.createNavigation('#options', '#global-options', state, product);
+            {{/if}}
+            hapi.createBody('#body', state, hasChildren);
+            hapi.initializeDropdowns('.menu', '.dropdown-link', '.body');
+            hapi.initializeSidebar('.sidebar', '.sidebar-link', '.body');
+            hapi.initializeSearchBar('.search', '#search button', '.results', '#search-text-results', 'search.json', 2, 20);
+            //hapi.simulateHistory();
+
+            // Populate version
+            // hapi.populateVersions();
+
+        </script>
 
     </body>
 </html>

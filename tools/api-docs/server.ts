@@ -25,6 +25,14 @@ import Database from './database';
  * */
 
 
+interface Context {
+    node: TreeLib.Option;
+    platform: string;
+    productModule: string;
+    productName: string;
+}
+
+
 interface Nav {
     children?: Array<Nav>;
     deprecated?: string;
@@ -107,6 +115,20 @@ const STATIC_PATH = FSLib.path([__dirname, 'static']);
  * */
 
 
+async function getContext(
+    database: Database,
+    itemName: string = '',
+    version?: number
+): Promise<Context> {
+    return {
+        node: await getOption(database, itemName, version, true),
+        platform: 'JS',
+        productModule: database.product,
+        productName: PRODUCT_META[database.product].name
+    };
+}
+
+
 async function getOption(
     database: Database,
     itemName: string = '',
@@ -173,7 +195,10 @@ async function getNav(
     itemName: string = '',
     version?: number
 ): Promise<Nav> {
-    const item = await database.getItem(itemName, version);
+    const item = await database.getItem(
+        (itemName === 'index' ? '' : itemName),
+        version
+    );
     const nav: Nav = (item ? toNav(item) : {});
 
     let navChildren: Array<Nav> = [];
@@ -214,12 +239,28 @@ function toNav(item: Database.Item): Nav {
 
 
 /**
- * Loads handlebar template and pending partials.
+ * Loads old handlebar template.
  *
  * @return
  * Promise of the template delegate to call with a context object.
  */
-async function loadTemplate(): Promise<Handlebars.TemplateDelegate> {
+async function loadMainTemplate(): Promise<Handlebars.TemplateDelegate> {
+    return Handlebars.compile(
+        await FS.readFile(
+            FSLib.path([__dirname, 'templates/main.handlebars']),
+            'utf8'
+        )
+    );
+}
+
+
+/**
+ * Loads new handlebar template and pending partials.
+ *
+ * @return
+ * Promise of the template delegate to call with a context object.
+ */
+async function loadServerTemplate(): Promise<Handlebars.TemplateDelegate> {
 
     Handlebars.registerPartial(
         'server-sidebar', 
@@ -328,7 +369,7 @@ function sanitizePath(path: string): string {
 async function main() {
 
     const log = require('../libs/log');
-    const template = await loadTemplate();
+    const template = await loadServerTemplate();
 
     HTTP
         .createServer(async (request, response) => {
@@ -339,11 +380,9 @@ async function main() {
                 return;
             }
 
-            for (const productID of Object.keys(PRODUCT_META)) {
-                if (path === `/${productID}`) {
-                    response302(response, `/${productID}/`);
-                    return;
-                }
+            if (PRODUCT_META[path.substring(1)]) {
+                response302(response, `${path}/`);
+                return;
             }
 
             if (request.method !== 'GET') {
@@ -352,73 +391,55 @@ async function main() {
             }
 
             try {
-                if (path.startsWith('/static')) {
-                    let file = (
-                        path.endsWith('/') ?
-                            'index.html' :
-                            FSLib.lastPath(path)
-                    );
-                    let ext = file.split('.').pop();
+                const pathItems = path.substring(1).split('/');
 
-                    if (!MIMES[ext]) {
-                        ext = 'html';
-                        file += '.html';
-                    }
+                let product =  pathItems[0];
+                let option = (
+                    pathItems.length > 2 ?
+                        pathItems.slice(1).join('/') :
+                        pathItems[1]
+                );
 
-                    // console.log(sourcePath + path + file);
-
-                    response200(
-                        response,
-                        await FS.readFile(`${STATIC_PATH}/${file}`, 'utf8'),
-                        ext
-                    );
-
-                    return;
-                }
-
-                const product = path.split('/')[1];
-                const option = path.split('/')[2];
                 const database = new Database(product);
 
-                if (option === 'nav') {
-                    let navOption = path.split('/')[3];
+                let file = FSLib.lastPath(option);
+                let ext = file.split('.').pop();
 
-                    if (navOption.endsWith('.json')) {
-                        navOption =
-                            navOption.substring(0, navOption.length - 5);
-                    }
+                console.log(product, option, file, ext);
 
-                    response200(
-                        response,
-                        JSON.stringify(
-                            await getNav(database, navOption),
-                            void 0,
-                            '\t'
-                        ),
-                        'json'
-                    );
-
-                    return;
+                switch (ext) {
+                    case '':
+                    case 'html':
+                        console.log(database.product, option);
+                        response200(
+                            response,
+                            template(getContext(database, option)),
+                            'html'
+                        );
+                        return;
+                    case 'json':
+                        if (option.startsWith('nav/')) {
+                            file = file.substring(0, file.length - 5);
+                            response200(
+                                response,
+                                JSON.stringify(
+                                    await getNav(database, file),
+                                    void 0,
+                                    '\t'
+                                ),
+                                'json'
+                            );
+                            return;
+                        }
+                    default:
+                        response200(
+                            response,
+                            await FS.readFile(`${STATIC_PATH}/${file}`, 'utf8'),
+                            ext
+                        );
+                        return;
                 }
 
-                console.log(database.product, option);
-
-                response200(
-                    response,
-                    template({
-                        option: {
-                            name: option
-                        },
-                        product: PRODUCT_META[product],
-                        side: await getOption(
-                            database,
-                            option,
-                            void 0,
-                            true
-                        )
-                    }),
-                    'html'
-                );
             } catch (error) {
                 console.error(`${error}`);
                 response404(response, path);
