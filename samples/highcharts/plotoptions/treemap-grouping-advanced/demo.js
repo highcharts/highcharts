@@ -66,7 +66,7 @@
                     prefix += parentInfo + ' <b>' + point.name + ':</b>';
                 }
 
-                return `${prefix} ${value}`;
+                return `${prefix} ${value}%`;
 
             },
             positioner: function () {

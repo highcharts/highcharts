@@ -539,6 +539,7 @@ class TreemapSeries extends ScatterSeries {
 
                 groupPoint.node = node;
                 groupPoint.formatPrefix = 'groupedNodes';
+                groupPoint.groupedPointsAmount = groupChildren.length;
 
                 series.nodeMap[node.id] = node;
                 series.nodeList.push(node);
@@ -590,13 +591,8 @@ class TreemapSeries extends ScatterSeries {
             level = mapOptionsToLevel[parent.level + 1],
             alternate = options.alternateStartingDirection;
         // Collect all children which should be included
-        let children = parent.children.filter((n): boolean => !n.ignore);
-
-        if (!children.length && parent.groupChildren) {
-            children = parent.groupChildren.filter((n): boolean => !n.ignore);
-        }
-
-        let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
+        let children = parent.children.filter((n): boolean => !n.ignore),
+            childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
         if (level && level.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
