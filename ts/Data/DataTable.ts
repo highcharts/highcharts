@@ -10,6 +10,7 @@
  *  - Sophie Bremer
  *  - Gøran Slettemark
  *  - Jomar Hønsi
+ *  - Dawid Dragula
  *
  * */
 
@@ -347,7 +348,7 @@ class DataTable implements DataEvent.Emitter {
 
             if (!Object.keys(columns).length) {
                 table.rowCount = 0;
-                delete table.originalRowIndexes;
+                this.deleteRowIndexReferences();
             }
 
             if (modifier) {
@@ -363,6 +364,19 @@ class DataTable implements DataEvent.Emitter {
 
             return deletedColumns;
         }
+    }
+
+    /**
+     * Deletes the row index references. This is useful when the original table
+     * is deleted, and the references are no longer needed. This table is
+     * then considered an original table.
+     */
+    public deleteRowIndexReferences(): void {
+        delete this.originalRowIndexes;
+        delete this.localRowIndexes;
+
+        // Here, in case of future need, can be implemented updating of the
+        // modified tables' row indexes references.
     }
 
     /**
