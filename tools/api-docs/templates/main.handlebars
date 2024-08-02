@@ -4,6 +4,15 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{{#if node.meta.fullname}}{{node.meta.fullname}} | {{/if}}{{productName}} {{platform}} API Reference</title>
+        {{#if isClassReference}}
+        <script>
+            // Check if the URL contains a hash - legacy class reference URLs
+            if (window.location.href.includes('#')) {
+                // Redirect to the new URL without the hash
+                window.location.href = window.location.href.replace(/#\.?/, '.');
+            }
+        </script>
+        {{/if}}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
         <link rel="stylesheet" href="style.css" type="text/css" />
 
