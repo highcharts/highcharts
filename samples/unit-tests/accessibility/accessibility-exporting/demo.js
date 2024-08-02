@@ -84,7 +84,7 @@ QUnit.test(
     });
 
 QUnit.test(
-    'Entering print menu should not disrupt position of screen reader divs',
+    'Printing should preserve position of screen-reader divs (#21554)',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 chart: {
@@ -96,19 +96,35 @@ QUnit.test(
                     ]
                 }]
             }),
-            containerChildren = chart.container.children,
-            controller = new TestController();
+            containerChildren = chart.renderTo.children;
 
-        assert.strictEqual(
-            containerChildren[1].classList[0],
-            'highcharts-root',
-            'Root SVG should be the second child of container'
-        );
-        assert.strictEqual(
-            containerChildren[2].classList[0],
-            'highcharts-a11y-proxy-container-after',
-            '"proxy-container-after should "'
-        );
+        // These two functions move "highcharts-container" when
+        // user selects printing
+        chart.beforePrint();
+        chart.afterPrint();
+
+        for (const [elementIndex, candidateId, testMessage]  of [
+            [
+                0,
+                'highcharts-screen-reader-region-before-0',
+                '"screen-reader-before" should be before "highcharts-container"'
+            ],
+            [
+                2,
+                'highcharts-container',
+                '"highcharts-container" should be between screen-reader divs'
+            ],
+            [
+                3,
+                'highcharts-screen-reader-region-after-0',
+                '"screen-reader-after" should be below "highcharts-container"'
+            ]
+        ]) {
+            assert.strictEqual(
+                containerChildren[elementIndex].id,
+                candidateId,
+                testMessage
+            );
+        }
     }
-
 );
