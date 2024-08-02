@@ -23,7 +23,7 @@
  *
  * */
 
-import TableCell from '../TableCell.js';
+import TableCell from '../Content/TableCell.js';
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
 

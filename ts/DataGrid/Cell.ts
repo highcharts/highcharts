@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -28,11 +29,9 @@ import Column from './Column';
 import Row from './Row';
 import F from '../Core/Templating.js';
 import Utils from '../Core/Utilities.js';
-import DGUtils from './Utils.js';
 
 const { format } = F;
 const { defined } = Utils;
-const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -89,11 +88,9 @@ abstract class Cell {
         this.column = column;
         this.row = row;
 
-        this.htmlElement = this.render();
+        this.htmlElement = this.init();
         this.column.registerCell(this);
         this.row.registerCell(this);
-
-        this.setValue(this.column.data?.[this.row.index], false);
     }
 
 
@@ -104,10 +101,17 @@ abstract class Cell {
     * */
 
     /**
+     * Init element
+     */
+    public init(): HTMLTableCellElement {
+        return document.createElement('td', {});
+    }
+    /**
      * Renders the cell.
      */
-    public render(): HTMLTableCellElement {
-        return makeHTMLElement('td', {}, this.row.htmlElement);
+    public render(): void {
+        this.row.htmlElement.appendChild(this.htmlElement);
+        this.setValue(this.column.data?.[this.row.index], false);
     }
 
     /**
@@ -127,7 +131,7 @@ abstract class Cell {
         if (!defined(value)) {
             value = '';
         }
-        
+
         this.renderHTMLCellContent(
             this.formatCell(value, this),
             element

@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,10 +22,10 @@
  *
  * */
 
-import Cell from './Cell.js';
-import Column from './Column';
-import Row from './Row';
-import Utils from '../Core/Utilities.js';
+import Cell from '../Cell.js';
+import Column from '../Column';
+import Row from '../Row';
+import Utils from '../../Core/Utilities.js';
 
 const { fireEvent } = Utils;
 

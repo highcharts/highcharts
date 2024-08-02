@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,14 +22,11 @@
  *
  * */
 
-import type Cell from './Cell';
+import type Cell from '../Cell';
 import TableCell from './TableCell.js';
-import Row from './Row.js';
-import Table from './Table.js';
-import Globals from './Globals.js';
-import DGUtils from './Utils.js';
-
-const { makeHTMLElement } = DGUtils;
+import Row from '../Row.js';
+import Table from '../Table.js';
+import Globals from '../Globals.js';
 
 /* *
  *
@@ -69,7 +67,7 @@ class TableRow extends Row {
      */
     constructor(viewport: Table, index: number) {
         super(viewport, index);
-        this.htmlElement.style.transform = 
+        this.htmlElement.style.transform =
             `translateY(${this.getDefaultTopOffset()}px)`;
 
         this.setRowAttributes();
@@ -91,7 +89,8 @@ class TableRow extends Row {
         this.htmlElement.classList.add(Globals.classNames.rowElement);
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            new TableCell(columns[i], this);
+            const cell = new TableCell(columns[i], this);
+            cell.render();
         }
 
         this.reflow();

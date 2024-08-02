@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -22,9 +23,8 @@
  * */
 
 import type Cell from './Cell';
-import TableCell from './TableCell.js';
+import TableCell from './Content/TableCell.js';
 import Table from './Table.js';
-import Globals from './Globals.js';
 import DGUtils from './Utils.js';
 
 const { makeHTMLElement } = DGUtils;
@@ -104,7 +104,8 @@ abstract class Row {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            new TableCell(columns[i], this);
+            const cell = new TableCell(columns[i], this);
+            cell.render();
         }
 
         this.reflow();

@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,15 +22,10 @@
  *
  * */
 
-import type Cell from './Cell';
-import TableCell from './TableCell.js';
-import Row from './Row.js';
-import Table from './Table.js';
-import Globals from './Globals.js';
-import DGUtils from './Utils.js';
+import Row from '../Row.js';
+import Table from '../Table.js';
+import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
-
-const { makeHTMLElement } = DGUtils;
 
 /* *
  *
@@ -86,7 +82,7 @@ class HeaderRow extends Row {
     public renderColumnsHeaders(): void {
         const columns = this.viewport.columns;
         const cells = this.cells;
-        // render element
+        // Render element
         this.viewport.theadElement.appendChild(
             this.htmlElement
         );
@@ -97,6 +93,7 @@ class HeaderRow extends Row {
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const last = new HeaderCell(columns[i], this);
+            last.render();
             cells.push(last);
         }
 

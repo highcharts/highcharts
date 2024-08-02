@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -22,20 +23,19 @@
  * */
 
 import type { ColumnDistribution } from './Options';
-import type TableCell from './TableCell';
+import type TableCell from './Content/TableCell';
 
 import DGUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
-import Row from './Row.js';
 import Column from './Column.js';
-import TableHeader from './TableHeader.js';
+import TableHeader from './Header/TableHeader.js';
 import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
 import Utils from '../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
-import TableRow from './TableRow';
+import TableRow from './Content/TableRow';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -200,6 +200,10 @@ class Table {
         // Load & render head
         this.header = new TableHeader(this);
         this.header.render();
+
+        // TODO: Load & render footer
+        // this.footer = new TableFooter(this);
+        // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
 

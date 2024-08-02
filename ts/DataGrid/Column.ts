@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -23,7 +24,7 @@
 
 import type { IndividualColumnOptions } from './Options';
 import type Cell from './Cell';
-import type HeaderCell from './HeaderCell';
+import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
 import DataTable from '../Data/DataTable.js';
@@ -103,11 +104,6 @@ class Column {
      */
     public type?: Column.Type;
 
-    // /**
-    //  * The header element of the column (the proper cell in the table head).
-    //  */
-    // public headerElement?: HTMLElement;
-
     /**
      * The user options of the column.
      */
@@ -177,19 +173,6 @@ class Column {
     * */
 
     /**
-     * Sets the header element of the column.
-     *
-     * @param headerElement
-     * The head element of the column.
-     */
-    // public setHeaderElement(headerElement: HTMLElement): void {
-    //     this.headerElement = headerElement;
-    //     if (this.options.className) {
-    //         headerElement.classList.add(this.options.className);
-    //     }
-    // }
-
-    /**
      * Updates the column with new options.
      *
      * @param options
@@ -240,9 +223,9 @@ class Column {
      * Whether the column should be hovered.
      */
     public setHoveredState(hovered: boolean): void {
-        // this.headerElement?.classList[hovered ? 'add' : 'remove'](
-        //     Globals.classNames.hoveredColumn
-        // );
+        this.header?.htmlElement?.classList[hovered ? 'add' : 'remove'](
+            Globals.classNames.hoveredColumn
+        );
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[hovered ? 'add' : 'remove'](
