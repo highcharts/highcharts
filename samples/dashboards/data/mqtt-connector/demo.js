@@ -10,10 +10,28 @@ Highcharts.setOptions({
         type: 'spline',
         animation: true
     },
+    legend: {
+        enabled: false
+    },
+    title: {
+        text: 'Generated Power'
+    },
     xAxis: {
         type: 'datetime',
         labels: {
             format: '{value:%H:%M}'
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Power (MW)'
+        }
+    },
+    tooltip: {
+        useHTML: true,
+        formatter: function () {
+            const date = Highcharts.dateFormat('%A, %b %e, %H:%M', this.x);
+            return `<b>${date} (UTC)</b><hr>Generated power: ${this.y} MW<br/>`;
         }
     }
 });
@@ -22,15 +40,14 @@ const dataGridOptions = {
     cellHeight: 38,
     editable: false,
     columns: {
-        Time: {
+        time: {
             headerFormat: 'Time (UTC)',
             cellFormatter: function () {
                 const date = new Date(this.value);
-                // HH:MM:SS
-                return date.toISOString().slice(11, 19);
+                return Highcharts.dateFormat('%H:%M', date);
             }
         },
-        Power: {
+        power: {
             headerFormat: 'Power (MW)'
         }
     }
@@ -53,15 +70,14 @@ const mqttConfig = {
 // Connector configuration
 const connConfig = {
     columnNames: [
-        'Time',
-        'Power'
+        'time',
+        'power'
     ],
     beforeParse: data => {
         // Application specific data parsing, extracts power production data
         const modifiedData = [];
         if (data.aggs) {
-            // const ts = new Date(data.tst_iso).getTime();
-            const ts = data.tst_iso;
+            const ts = new Date(data.tst_iso).valueOf();
             modifiedData.push([ts, data.aggs[0].P_gen]);
         }
         return modifiedData;
@@ -95,7 +111,11 @@ function createDashboard() {
             renderTo: 'column-chart-1',
             type: 'Highcharts',
             connector: {
-                id: 'mqtt-data-1'
+                id: 'mqtt-data-1',
+                columnAssignment: [{
+                    seriesId: 'power',
+                    data: ['time', 'power']
+                }]
             },
             sync: {
                 highlight: true
@@ -114,7 +134,11 @@ function createDashboard() {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
             connector: {
-                id: 'mqtt-data-2'
+                id: 'mqtt-data-2',
+                columnAssignment: [{
+                    seriesId: 'power',
+                    data: ['time', 'power']
+                }]
             },
             sync: {
                 highlight: true
@@ -188,7 +212,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Constructs an instance of MQTTConnector
      *
-     * @param {MQTTConnector.UserOptions} [options]
+     * @param options
      * Options for the connector and converter.
      */
     constructor(options) {
@@ -226,27 +250,12 @@ class MQTTConnector extends DataConnector {
     /**
      * Sets up the MQTT connection and subscribes to the topic.
      *
-     * @param {DataEvent.Detail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Promise<this>}
-     * Same connector instance with modified table.
      */
-    async load(eventDetail) {
+    async load() {
         const connector = this,
-            table = connector.table,
             {
-                data, host, port
+                host, port
             } = connector.options;
-
-        /*
-        connector.emit({
-            type: 'load',
-            data,
-            detail: eventDetail,
-            table
-        });
-        */
 
         // Start MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientID);
@@ -333,25 +342,25 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.MQTT.Client context
         const connector = instanceTable[this.clientId],
             converter = connector.converter,
-            table = connector.table;
+            connTable = connector.table;
 
         connector.packetCount++;
 
         // Parse the message
         const data = JSON.parse(mqttPacket.payloadString);
         converter.parse({ data });
-
-        // Append the incoming data to the current table
-        const rowCount = table.getRowCount();
         const convTable = converter.getTable();
 
-        if (rowCount === 0) {
-            // First message, set columns for data storage
-            table.setColumns(convTable.getColumns());
+        // Append the incoming data to the current table
+        if (connTable.getRowCount() === 0) {
+            // First message, initialize columns for data storage
+            connTable.setColumns(convTable.getColumns());
         } else {
-            // Append row
-            table.setRows(convTable.getRows());
+            // Subsequent message, append row
+            connTable.setRows(convTable.getRows());
         }
+
+        // TBD: Invoke data modifier (if any)
     }
 
     /**
@@ -361,7 +370,7 @@ class MQTTConnector extends DataConnector {
     onConnectionLost(responseObject) {
         // Executes in Paho.MQTT.Client context
         if (responseObject.errorCode !== 0) {
-            console.log('onConnectionLost:', responseObject.errorMessage);
+            console.error('onConnectionLost:', responseObject.errorMessage);
         }
         const connector = instanceTable[this.clientId];
         connector.connected = false;
