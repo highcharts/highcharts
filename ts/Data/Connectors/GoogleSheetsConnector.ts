@@ -93,7 +93,6 @@ class GoogleSheetsConnector extends DataConnector {
     protected static readonly defaultOptions: GoogleSheetsConnectorOptions = {
         googleAPIKey: '',
         googleSpreadsheetKey: '',
-        worksheet: 1,
         enablePolling: false,
         dataRefreshRate: 2,
         firstRowAsNames: true
