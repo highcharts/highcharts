@@ -2,17 +2,15 @@ Highcharts.chart('container', {
     series: [{
         name: 'Regions',
         type: 'treemap',
-        // layoutAlgorithm: 'squarified',
-        // groupAreaThreshold: 1000,
         groupAreaThreshold: {
             enabled: true,
-            width: 60,
-            height: 25
+            pixelWidth: 60,
+            pixelHeight: 25
         },
         data: [{
             name: 'Parent 1',
             id: 'par1',
-            color: 'red'
+            color: Highcharts.getOptions().colors[0]
         }, {
             value: 600,
             name: 'A',
@@ -48,7 +46,7 @@ Highcharts.chart('container', {
         }, {
             name: 'Parent 2',
             id: 'par2',
-            color: 'green'
+            color: Highcharts.getOptions().colors[1]
         }, {
             value: 600,
             name: 'A2',

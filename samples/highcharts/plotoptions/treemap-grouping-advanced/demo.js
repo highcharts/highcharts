@@ -4,55 +4,115 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8a1f8f0eb4/samples/data/africa-export-2021.json'
     ).then(response => response.json());
 
+    const lightenDarkenColor = (col, amt) =>
+        '#' + (+('0x' + col) + amt * 0x010101).toString(16).padStart(6, 0);
+
+    // Calculate different color if there is not enough colors in array
+    if (Highcharts.getOptions().colors.length < 11) {
+        const { colors } = Highcharts.getOptions();
+        let j = 0,
+            k = 0;
+        for (let i = colors.length; i < 12; i++) {
+            if (j === 0) {
+                k++;
+            }
+            Highcharts.defaultOptions.colors.push(
+                lightenDarkenColor(
+                    colors[j % colors.length].slice(1, 7),
+                    -20 * k
+                )
+            );
+            j++;
+        }
+    }
 
     Highcharts.chart('container', {
-        colorAxis: {
-            minColor: Highcharts.getOptions().colors[6],
-            maxColor: Highcharts.getOptions().colors[3]
+        chart: {
+            spacingBottom: 50
         },
-        series: [
-            {
-                name: 'Export',
-                type: 'treemap',
-                layoutAlgorithm: 'squarified',
-                allowDrillToNode: true,
-                dataLabels: {
-                    enabled: false,
-                    crop: true
-                },
-                groupAreaThreshold: {
-                    enabled: true,
-                    width: 20,
-                    height: 20
-                },
-                colorKey: 'value',
-                borderColor: 'black',
-                levels: [
-                    {
-                        level: 1,
-                        dataLabels: {
-                            format: '{point.name} {point.value:.0f}%',
-                            style: {
-                                textOutline: false,
-                                fontSize: 18
-                            },
-                            zIndex: 9
-                        }
-                    },
-                    {
-                        level: 2,
-                        borderWidth: 1
-                    },
-                    {
-                        level: 1,
-                        levelIsConstant: false,
-                        dataLabels: {
-                            enabled: true
-                        }
+
+        title: {
+            text: 'Exports of goods from Africa in 2021',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'Source: ' +
+                '<a href="https://www.harvard.edu/" target="_blank">' +
+                'Harvard.edu</a>',
+            align: 'left'
+        },
+
+        tooltip: {
+            borderWidth: 0,
+            borderRadius: 15,
+            backgroundColor: '#474554',
+            style: {
+                color: '#fff'
+            },
+            shape: 'rect',
+            formatter: function () {
+                const point = this.point,
+                    node = point.node,
+                    value = point.value.toFixed(2);
+                let prefix = `<span style='color: ${point.color}'>●</span> `;
+
+                if (node.children.length > 0) {
+                    prefix += '<b>All ' + this.point.node.name + ':</b>';
+                } else {
+                    let parentInfo = '';
+                    if (point.parent !== undefined || point.node.isGroup) {
+                        parentInfo = point.node.parentNode.name + ' > ';
                     }
-                ],
-                data: dataJson
+                    prefix += parentInfo + ' <b>' + point.name + ':</b>';
+                }
+
+                return `${prefix} ${value}`;
+
+            },
+            positioner: function () {
+                return {
+                    x: this.chart.plotLeft + (this.chart.plotWidth / 2) -
+                        (this.label.bBox.width / 2),
+                    y: this.chart.plotTop + this.chart.plotHeight + 5
+                };
             }
-        ]
+        },
+
+        series: [{
+            name: 'Export',
+            type: 'treemap',
+            layoutAlgorithm: 'squarified',
+            allowTraversingTree: true,
+            borderRadius: 6,
+            borderColor: '#fff',
+            colorKey: 'value',
+            dataLabels: {
+                enabled: true,
+                useHTML: true,
+                style: {
+                    textOutline: false,
+                    fontWeight: 400,
+                    color: '#fff',
+                    fontSize: '0.8em'
+                }
+            },
+            groupAreaThreshold: {
+                enabled: true,
+                pixelWidth: 15,
+                pixelHeight: 30
+            },
+            levels: [{
+                level: 1,
+                borderWidth: 4,
+                dataLabels: {
+                    enabled: false
+                },
+                colorByPoint: true
+            }, {
+                level: 2,
+                borderWidth: 1
+            }],
+            data: dataJson
+        }]
     });
 })();

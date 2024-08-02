@@ -5,8 +5,8 @@ Highcharts.chart('container', {
         layoutAlgorithm: 'squarified',
         groupAreaThreshold: {
             enabled: true,
-            width: 30,
-            height: 30
+            pixelWidth: 30,
+            pixelHeight: 30
         },
         data: [{
             value: 600,

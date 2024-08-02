@@ -473,8 +473,10 @@ class TreemapSeries extends ScatterSeries {
                         (child.x + child.width) / series.axisRatio
                     ),
                     y2 = series.yAxis.toPixels(axisMax - child.y),
-                    a = x2 - x,
-                    b = y - y2,
+                    a = series.xAxis.reversed ? x - x2 : x2 - x,
+                    b = series.chart.inverted || series.yAxis.reversed ?
+                        y2 - y :
+                        y - y2,
                     area = a * b;
 
                 if (
