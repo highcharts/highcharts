@@ -1,3 +1,5 @@
+const { container } = require('webpack');
+
 QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
@@ -80,3 +82,33 @@ QUnit.test(
             'Title should replace `<` to `&lt;` for exporting, (#17753, #19002)'
         );
     });
+
+QUnit.test(
+    'Entering print menu should not disrupt position of screen reader divs',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    width: 300
+                },
+                series: [{
+                    data: [
+                        1
+                    ]
+                }]
+            }),
+            containerChildren = chart.container.children,
+            controller = new TestController();
+
+        assert.strictEqual(
+            containerChildren[1].classList[0],
+            'highcharts-root',
+            'Root SVG should be the second child of container'
+        );
+        assert.strictEqual(
+            containerChildren[2].classList[0],
+            'highcharts-a11y-proxy-container-after',
+            '"proxy-container-after should "'
+        );
+    }
+
+);
