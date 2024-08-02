@@ -93,6 +93,13 @@ dataModifier: {
 ```
 [API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_SortModifierOptions.SortModifierOptions-1.html)
 
+### Original and Modified Table relations
+
+Each modified table contains two methods that allow you to manage the relationships between the rows of the original and modified tables:
+- [`getLocalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getLocalRowIndex) - Takes the original row index as an argument and returns the local row index in the modified table for which this function is called.
+- [`getOriginalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getOriginalRowIndex) - Takes the local row index (in the modified table for which it is called) as an argument and returns the index of the corresponding row in the original table.
+
+
 ### Example demos
 You can check the modifiers in action with the following demos:
 

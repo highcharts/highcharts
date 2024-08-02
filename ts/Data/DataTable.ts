@@ -798,7 +798,8 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the local row index that corresponds to the original row index.
+     * Takes the local row index and returns the index of the corresponding row
+     * in the original table.
      *
      * @param {number} originalRowIndex
      * Original row index to get the local row index for.
@@ -829,6 +830,16 @@ class DataTable implements DataEvent.Emitter {
         return this.modifier;
     }
 
+    /**
+     * Takes the original row index and returns the local row index in the
+     * modified table for which this function is called.
+     *
+     * @param {number} rowIndex
+     * Local row index to get the original row index for.
+     *
+     * @return {number|undefined}
+     * Returns the original row index or `undefined` if not found.
+     */
     public getOriginalRowIndex(
         rowIndex: number
     ): (number | undefined) {
