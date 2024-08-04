@@ -36,7 +36,6 @@ import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -4163,7 +4162,7 @@ class Axis {
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions: PlotLineOptions;
+            crossOptions: Axis.PlotLinePathOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -4450,7 +4449,11 @@ namespace Axis {
         lineWidth?: number;
         old?: boolean;
         /** @internal */
+        chartX?: number;
+        chartY?: number;
+        isCrosshair?: boolean;
         path?: SVGPath;
+        point?: Point;
         reverse?: boolean;
         translatedValue?: number;
         value?: number;
