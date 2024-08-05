@@ -79,11 +79,6 @@ export interface Options {
     columns?: Record<string, IndividualColumnOptions>;
 
     /**
-     * Contains options for caption.
-     */
-    caption?: CaptionOptions;
-
-    /**
      * Contains events options.
      */
     events?: DataGridEvents;
@@ -93,6 +88,11 @@ export interface Options {
  * Options to control the way DataGrid is rendered.
  */
 export interface DataGridSettings {
+    /**
+     * Contains options for caption.
+     */
+    caption?: CaptionOptions;
+
     /**
     * Options to control the columns behavior and rendering.
     */
@@ -232,6 +232,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
 }
 
 export interface CaptionOptions {
+    /**
+     * The custom CSS class name for the caption.
+     */
+    className?: string;
+
     /**
      * The caption of the datagrid grid.
      */

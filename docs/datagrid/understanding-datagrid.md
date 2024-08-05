@@ -25,8 +25,10 @@ Caption
 The caption of the datagrid grid.
 
 ```js
-caption: {
-    text: 'Your title of datagrid'
+settings: {
+    caption: {
+        text: 'Your title of datagrid'
+    }
 }
 ```
 
