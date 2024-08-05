@@ -7,12 +7,6 @@ Highcharts.chart('container', {
         text: 'Mobile vendor market share, June 2024',
         align: 'left'
     },
-    xAxis: {
-        categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-            'Oct', 'Nov', 'Dec'
-        ]
-    },
     series: [{
         type: 'pie',
         allowPointSelect: true,
