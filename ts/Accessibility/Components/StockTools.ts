@@ -464,16 +464,6 @@ class StockToolsComponent extends AccessibilityComponent {
                     return component.keyboardNavigationHandler.response.success;
                 }
 
-                if (component.chart.navigationBindings) {
-                    fireEvent(
-                        component.chart.navigationBindings,
-                        'selectButton',
-                        {
-                            button: button.parentElement
-                        }
-                    );
-                }
-
                 return component.keyboardNavigationHandler.response.noHandler;
             }
         }
@@ -557,7 +547,6 @@ class StockToolsComponent extends AccessibilityComponent {
                                         button,
                                         didCloseSubmenus
                                     );
-
                                 }
                             }
                         )
