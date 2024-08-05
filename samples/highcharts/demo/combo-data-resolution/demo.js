@@ -52,7 +52,7 @@ Highcharts.chart('container', {
         },
         name: 'Temperature change',
         title: {
-            text: 'Temperature changes from 1880 to 2021'
+            text: 'Annual mean of temperature change from 1880 to 2021'
         }
     },
     xAxis: {
