@@ -80,3 +80,49 @@ QUnit.test(
             'Title should replace `<` to `&lt;` for exporting, (#17753, #19002)'
         );
     });
+
+QUnit.test(
+    'Printing should preserve position of screen-reader divs (#21554)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    width: 300
+                },
+                series: [{
+                    data: [
+                        1
+                    ]
+                }]
+            }),
+            renderToChildren = chart.renderTo.children;
+
+        // These two functions move "highcharts-container" when
+        // user selects printing
+        chart.beforePrint();
+        chart.afterPrint();
+
+        for (const [elementIndex, candidateId, testMessage]  of [
+            [
+                0,
+                'highcharts-screen-reader-region-before-0',
+                '"screen-reader-before" should be before "highcharts-container"'
+            ],
+            [
+                2,
+                chart.container.id,
+                '"highcharts-container" should be between screen-reader divs'
+            ],
+            [
+                3,
+                'highcharts-screen-reader-region-after-0',
+                '"screen-reader-after" should be below "highcharts-container"'
+            ]
+        ]) {
+            assert.strictEqual(
+                renderToChildren[elementIndex].id,
+                candidateId,
+                testMessage
+            );
+        }
+    }
+);

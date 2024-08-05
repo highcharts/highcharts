@@ -169,6 +169,7 @@ namespace OrdinalAxis {
             );
 
             addEvent(ChartClass, 'pan', onChartPan);
+            addEvent(ChartClass, 'touchpan', onChartPan);
 
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
@@ -595,7 +596,13 @@ namespace OrdinalAxis {
      * Extending the Chart.pan method for ordinal axes
      * @private
      */
-    function onChartPan(this: Chart, e: Event): void {
+    function onChartPan(
+        this: Chart,
+        e: Event & {
+            originalEvent: PointerEvent,
+            touches: Touch[] | undefined
+        }
+    ): void {
         const chart = this,
             xAxis = chart.xAxis[0] as OrdinalAxis.Composition,
             overscroll = xAxis.ordinal.convertOverscroll(
@@ -609,7 +616,9 @@ namespace OrdinalAxis {
             panning &&
             panning.type !== 'y' &&
             xAxis.options.ordinal &&
-            xAxis.series.length
+            xAxis.series.length &&
+            // On touch devices, let default function handle the pinching
+            (!e.touches || e.touches.length <= 1)
         ) {
 
             const mouseDownX = chart.mouseDownX,

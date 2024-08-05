@@ -40,7 +40,7 @@ import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
  * @product      highcharts
  * @excluding    boostThreshold, connectNulls, dragDrop, stacking,
  *               pointInterval, pointIntervalUnit
- * @requires     modules/bellcurve
+ * @requires     modules/histogram-bellcurve
  * @optionparent plotOptions.bellcurve
  */
 const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
@@ -105,7 +105,7 @@ const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
  * @since     6.0.0
  * @product   highcharts
  * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
- * @requires  modules/bellcurve
+ * @requires  modules/histogram-bellcurve
  * @apioption series.bellcurve
  */
 

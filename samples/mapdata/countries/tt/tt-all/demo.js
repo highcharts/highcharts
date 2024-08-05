@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tt/tt-all.topo.json">Trinidad and Tobago</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tt/tt-all.topo.json">Trinidad and Tobago</a>'
         },
 
         mapNavigation: {

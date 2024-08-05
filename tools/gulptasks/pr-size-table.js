@@ -5,7 +5,7 @@ const gulp = require('gulp');
 const { sync: gzipSize } = require('gzip-size');
 const scriptsCompile = require('./scripts-compile');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
-const log = require('./lib/log');
+const log = require('../libs/log');
 
 /* *
  *

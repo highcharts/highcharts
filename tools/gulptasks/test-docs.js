@@ -11,8 +11,9 @@ const gulp = require('gulp');
  */
 async function checkDocsConsistency() {
     const FS = require('fs');
+    const FSLib = require('../libs/fs');
     const glob = require('glob');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');
@@ -23,8 +24,10 @@ async function checkDocsConsistency() {
         );
     }
     tsFiles.forEach(file => {
+        file = FSLib.path(file, true);
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
+            requiresPattern = /@requires[ ]*([a-z0-9\-\/\.:]+)/gu,
             samplePattern = /@sample[ ]*(\{(highcharts|highstock|highmaps|gantt)\})? ([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             error404s = [];
 
@@ -35,6 +38,34 @@ async function checkDocsConsistency() {
                 FS.statSync(`samples/${sample}/demo.js`);
             } catch (error) {
                 error404s.push({ file, sample });
+            }
+        }
+
+        while ((match = requiresPattern.exec(md))) {
+            let requires = match[1]
+                .replace(/^(stock|maps|gantt)\//u, '');
+
+            // The @require tags in the master files are relative to the npm
+            // package root (#21470)
+            if (
+                file.startsWith('ts/masters/') &&
+                requires !== 'highcharts'
+            ) {
+                if (requires.startsWith('highcharts/')) {
+                    requires = requires.replace('highcharts/', '');
+                } else {
+                    error404s.push({ file, requires });
+                }
+            }
+
+            try {
+                FS.statSync(`ts/masters/${requires}.src.ts`);
+            } catch (e1) {
+                try {
+                    FS.statSync(`ts/masters-dashboards/${requires}.src.ts`);
+                } catch (e2) {
+                    error404s.push({ file, requires });
+                }
             }
         }
 

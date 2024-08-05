@@ -43,6 +43,7 @@ const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
+    crisp,
     extend,
     merge,
     pick,
@@ -55,7 +56,9 @@ import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
-
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 /* *
  *
  *  Declatarions
@@ -132,6 +135,30 @@ class TreegraphSeries extends TreemapSeries {
     public init(): void {
         super.init.apply(this, arguments);
         this.layoutAlgorythm = new TreegraphLayout();
+
+        // Register the link data labels in the label collector for overlap
+        // detection.
+        const series = this,
+            collectors = this.chart.labelCollectors,
+            collectorFunc = function (): Array<SVGElement> {
+                const linkLabels = [];
+
+                // Check links for overlap
+                if (!splat(series.options.dataLabels)[0].allowOverlap) {
+
+                    for (const link of series.links) {
+                        if (link.dataLabel) {
+                            linkLabels.push(link.dataLabel);
+                        }
+                    }
+                }
+                return linkLabels;
+            };
+
+        // Only add the collector function if it is not present
+        if (!collectors.some((f): boolean => f.name === 'collectorFunc')) {
+            collectors.push(collectorFunc);
+        }
     }
 
     /**
@@ -368,8 +395,7 @@ class TreegraphSeries extends TreemapSeries {
     public translateLink(link: TreegraphLink): void {
         const fromNode = link.fromNode,
             toNode = link.toNode,
-            linkWidth = pick(this.options.link?.lineWidth, 0),
-            crisp = (Math.round(linkWidth) % 2) / 2,
+            linkWidth = this.options.link?.lineWidth || 0,
             factor = pick(this.options.link?.curveFactor, 0.5),
             type = pick(
                 link.options.link?.type,
@@ -382,19 +408,23 @@ class TreegraphSeries extends TreemapSeries {
             const fromNodeWidth = (fromNode.shapeArgs.width || 0),
                 inverted = this.chart.inverted,
 
-                y1 = Math.floor(
+                y1 = crisp(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2
-                ) + crisp,
+                        (fromNode.shapeArgs.height || 0) / 2,
+                    linkWidth
+                ),
 
-                y2 = Math.floor(
+                y2 = crisp(
                     (toNode.shapeArgs.y || 0) +
-                    (toNode.shapeArgs.height || 0) / 2
-                ) + crisp;
+                        (toNode.shapeArgs.height || 0) / 2,
+                    linkWidth
+                );
 
-            let x1 = Math.floor((fromNode.shapeArgs.x || 0) + fromNodeWidth) +
-                crisp,
-                x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp;
+            let x1 = crisp(
+                    (fromNode.shapeArgs.x || 0) + fromNodeWidth,
+                    linkWidth
+                ),
+                x2 = crisp(toNode.shapeArgs.x || 0, linkWidth);
 
             if (inverted) {
                 x1 -= fromNodeWidth;
@@ -405,7 +435,7 @@ class TreegraphSeries extends TreemapSeries {
             const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
                 width = (fullWidth / diff) - fromNodeWidth,
                 offset = width * factor * (inverted ? -1 : 1);
-            const xMiddle = Math.floor((x2 + x1) / 2) + crisp;
+            const xMiddle = crisp((x2 + x1) / 2, linkWidth);
             link.plotX = xMiddle;
             link.plotY = y2;
 
@@ -755,8 +785,8 @@ export default TreegraphSeries;
  * relativeXValue, softThreshold, stack, stacking, step,
  * traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
- * @requires  modules/treemap.js
- * @requires  modules/treegraph.js
+ * @requires  modules/treemap
+ * @requires  modules/treegraph
  * @apioption series.treegraph
  */
 

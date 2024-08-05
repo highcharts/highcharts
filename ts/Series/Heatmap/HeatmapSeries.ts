@@ -309,7 +309,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.xData; // != 0
     }
 
     /**
@@ -484,6 +484,12 @@ class HeatmapSeries extends ScatterSeries {
             symbol = marker && marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
+
+        if (!series.processedXData) {
+            const { xData, yData } = series.getProcessedData();
+            series.processedXData = xData;
+            series.processedYData = yData;
+        }
 
         series.generatePoints();
         for (const point of series.points) {

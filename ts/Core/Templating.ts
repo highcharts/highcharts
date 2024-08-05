@@ -166,14 +166,14 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= #\(\)]+)\}/g,
+    const regex = /\{([\w\:\.\,;\-\/<>%@"'’= #\(\)]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= ]+)\)/g,
+        subRegex = /\(([\w\:\.\,;\-\/<>%@"'= ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
-        decRegex = /\.([0-9])/,
+        decRegex = /\.(\d)/,
         lang = defaultOptions.lang,
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
@@ -458,6 +458,8 @@ function numberFormat(
     if (decimals) {
         // Get the decimal component
         ret += decimalPoint + roundedNumber.slice(-decimals);
+    } else if (+ret === 0) { // Remove signed minus #20564
+        ret = '0';
     }
 
     if (exponent[1] && +ret !== 0) {

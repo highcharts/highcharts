@@ -26,6 +26,7 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from '../Components/ComponentType';
+import type Board from '../Board';
 import type GUIElement from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
@@ -33,13 +34,12 @@ import type Row from '../Layout/Row';
 import type Component from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
+import CellHTML from '../Layout/CellHTML.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
-import Board from '../Board';
 const {
     addEvent,
-    fireEvent,
-    error
+    fireEvent
 } = U;
 
 /* *
@@ -57,7 +57,7 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell|Cell.DOMCell;
+        cell: Cell|CellHTML;
         component: ComponentType;
         options: Partial<Component.Options>;
     }
@@ -71,26 +71,24 @@ namespace Bindings {
     function getGUIElement(
         idOrElement: string,
         parentElement?: HTMLElement
-    ): (GUIElement|undefined) {
-        let container;
+    ): Cell|Row|Layout|undefined {
         let guiElement;
 
-        if (typeof idOrElement === 'string') {
-            if (document.querySelectorAll('#' + idOrElement).length > 1) {
-                error(
-                    'Multiple cells have identical ID ' +
-                    '("' + idOrElement + '"), potentially leading to ' +
-                    'unexpected behaviour. Ensure that each cell has a ' +
-                    'unique ID on the page.'
-                );
-            }
-
-            container = parentElement ?
-                parentElement.querySelector('#' + idOrElement) :
-                document.getElementById(idOrElement);
-        } else {
-            container = idOrElement;
+        if (
+            typeof idOrElement === 'string' &&
+            document.querySelectorAll('#' + idOrElement).length > 1
+        ) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+                'font-weight: bold',
+                ''
+            );
         }
+
+        const container = parentElement ?
+            parentElement.querySelector('#' + idOrElement) :
+            document.getElementById(idOrElement);
 
         if (container !== null) {
             fireEvent(container, 'bindedGUIElement', {}, function (
@@ -113,8 +111,11 @@ namespace Bindings {
         const renderTo = options.renderTo || options.cell;
 
         if (!renderTo) {
-            error(
-                'The `renderTo` option is required to render the component.'
+            // eslint-disable-next-line no-console
+            console.error(
+                'The%c renderTo%c option is required to render the component.',
+                'font-weight: bold',
+                ''
             );
             return;
         }
@@ -125,10 +126,11 @@ namespace Bindings {
                     (el.options.renderTo || el.options.cell) === renderTo)
             ).length > 0
         ) {
-            error(
-                'The component is misconfigured and is unable to initialize ' +
-                'it. A different component has already been declared in the`' +
-                renderTo + '` cell.'
+            // eslint-disable-next-line no-console
+            console.error(
+                `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
+                'font-weight: bold',
+                ''
             );
             return;
         }
@@ -139,9 +141,11 @@ namespace Bindings {
             cell?.container || document.querySelector('#' + renderTo);
 
         if (!componentContainer || !options.type) {
-            error(
-                'The component is misconfigured and is unable to find the' +
-                'HTML cell element ${renderTo} to render the content.'
+            // eslint-disable-next-line no-console
+            console.error(
+                `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
+                'font-weight: bold',
+                ''
             );
             return;
         }
@@ -150,8 +154,11 @@ namespace Bindings {
             ComponentRegistry.types[options.type] as Class<ComponentType>;
 
         if (!ComponentClass) {
-            error(
-                `The component's type ${options.type} does not exist.`
+            // eslint-disable-next-line no-console
+            console.error(
+                `The component's type %c${options.type}%c does not exist.`,
+                'font-weight: bold',
+                ''
             );
 
             if (cell) {
@@ -194,11 +201,11 @@ namespace Bindings {
         board.mountedComponents.push({
             options: options,
             component: component,
-            cell: cell || {
+            cell: cell || new CellHTML({
                 id: renderTo,
                 container: componentContainer as HTMLElement,
                 mountedComponent: component
-            }
+            })
         });
 
         fireEvent(component, 'mount');

@@ -109,7 +109,7 @@ async function deleteS3Object(
     session
 ) {
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         path = Path.join(
             'tmp',
@@ -264,7 +264,7 @@ async function putS3Object(
     session = defaultSession
 ) {
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);
 
@@ -365,9 +365,9 @@ async function synchronizeDirectory(
     session = defaultSession,
     filterCallback = void 0
 ) {
-    const fsLib = require('./fs');
+    const fsLib = require('../../libs/fs');
     const glob = require('glob');
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     log.warn(`Start synchronization of "${sourcePath}"...`);
 
@@ -500,9 +500,9 @@ async function uploadDirectory(
     session = defaultSession,
     filterCallback = void 0
 ) {
-    const fsLib = require('./fs');
+    const fsLib = require('../../libs/fs');
     const glob = require('glob');
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     log.warn(`Start upload of "${sourcePath}"...`);
 
@@ -565,7 +565,7 @@ async function uploadFile(
     filterCallback = void 0,
     s3Params = {}
 ) {
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     let fileContent = FS.readFileSync(sourcePath);
 
@@ -574,7 +574,7 @@ async function uploadFile(
     }
 
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
 
@@ -659,8 +659,12 @@ function getVersionPaths(version) {
  * Promise to keep
  */
 async function uploadFiles(params) {
-    const log = require('./log');
-    const { files, name, bucket, s3Params } = params;
+    const log = require('../../libs/log');
+    const { files, name, bucket, s3Params, region } = params;
+
+    const stagingBuckets = [
+        'staging-code.highcharts.com'
+    ];
 
     params = Object.assign(
         {
@@ -672,7 +676,9 @@ async function uploadFiles(params) {
             callback: (from, to) => {
                 log.message(`Uploaded ${from} --> ${to}`);
             },
-            region: 'eu-west-1'
+            region: region || stagingBuckets.includes(bucket) ?
+                'eu-central-1' :
+                'eu-west-1'
         },
         params
     );

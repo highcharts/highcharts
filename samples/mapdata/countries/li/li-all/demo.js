@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/li/li-all.topo.json">Liechtenstein</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/li/li-all.topo.json">Liechtenstein</a>'
         },
 
         mapNavigation: {

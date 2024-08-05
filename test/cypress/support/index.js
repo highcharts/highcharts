@@ -68,6 +68,17 @@ Cypress.Commands.add('hideSidebar', () =>
     cy.get('.highcharts-dashboards-edit-popup-close:visible').click()
 );
 
+Cypress.Commands.add('openCellEditSidebar', (cellId) => {
+    cy.get(cellId).click();
+    cy.get('.highcharts-dashboards-edit-menu-item > div')
+        .each(($el) => {
+            const backgroundImage = $el.css('background-image');
+            if (backgroundImage.includes('/code/dashboards/gfx/dashboards-icons/settings.svg')) {
+                cy.wrap($el).click();
+            }
+        });
+});
+
 Cypress.Commands.add('chart', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
         const H = win.Highcharts;

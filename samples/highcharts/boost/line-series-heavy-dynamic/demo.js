@@ -22,7 +22,6 @@ function getSeries(n, s) {
             animation: false,
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true,
             requireSorting: false
         });

@@ -127,8 +127,8 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.strictEqual(
         circleAfterUpdateCalled,
-        1,
-        '#15952: afterUpdate event should fire when clicking control point'
+        0,
+        '#15952: afterUpdate event should not fire when clicking control point'
     );
 
     assert.strictEqual(

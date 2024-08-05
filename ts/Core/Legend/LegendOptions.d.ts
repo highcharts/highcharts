@@ -19,9 +19,10 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
-import type EventCallback from '../EventCallback';
+import type E from '../EventCallback';
 import type F from '../Templating';
 import type Legend from './Legend';
 import type PointerEvent from '../PointerEvent';
@@ -45,6 +46,10 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
+export interface LegendEventsOptions {
+    itemClick?: EventCallback<Legend, Event>
+}
+
 export interface LegendOptions {
     align: AlignValue;
     alignColumns: boolean;
@@ -54,6 +59,7 @@ export interface LegendOptions {
     borderWidth?: number;
     className: string;
     enabled: boolean;
+    events?: LegendEventsOptions;
     floating?: boolean;
     itemCheckboxStyle: CSSObject;
     itemDistance?: number;
@@ -92,7 +98,7 @@ export interface LegendOptions {
     y: number;
 }
 
-export type LegendItemClickCallback = EventCallback<PointerEvent>;
+export type LegendItemClickCallback = E<PointerEvent>;
 
 export interface LegendNavigationOptions {
     activeColor: ColorType;

@@ -116,13 +116,12 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         }
     });
 
-    selectorGroupBBox = chart.rangeSelector.group.getBBox();
+    selectorGroupBBox = chart.rangeSelector.buttonGroup.getBBox();
 
-    assert.ok(
-        (chart.plotWidth - selectorGroupBBox.width) / 2 +
-            chart.plotLeft -
-            selectorGroupBBox.x <=
-            1,
+    assert.close(
+        chart.plotLeft + chart.plotWidth / 2,
+        (chart.plotLeft + selectorGroupBBox.x) + selectorGroupBBox.width / 2,
+        5,
         'rangeSelector buttons should be centered correctly (#13014).'
     );
 

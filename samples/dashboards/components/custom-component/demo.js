@@ -70,7 +70,10 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         lang: {
-            videoId: 'Video ID'
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
         },
         contextMenu: {
             enabled: true

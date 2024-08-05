@@ -18,8 +18,8 @@ const gulp = require('gulp');
  */
 function jsDocWebSearch() {
 
-    const libLog = require('./lib/log');
-    const libProcess = require('./lib/process');
+    const libLog = require('../libs/log');
+    const libProcess = require('../libs/process');
 
     if (process.argv.includes('--skip-websearch')) {
         libLog.warn('Skipping...');

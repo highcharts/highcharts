@@ -34,7 +34,7 @@ function task() {
     const generators = require(
         '@highcharts/highcharts-documentation-generators'
     );
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
 
     if (args.old) {
         const generator = generators.TypeScript4;

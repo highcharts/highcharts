@@ -1,18 +1,20 @@
-// Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
+// Data retrieved from: https://ferjedatabanken.no/statistikk
 Highcharts.chart('container', {
     chart: {
         type: 'bar'
     },
     title: {
-        text: 'UEFA CL top scorers by season'
+        text: 'Ferry passengers by vehicle type 2024'
     },
     xAxis: {
-        categories: ['2020/21', '2019/20', '2018/19', '2017/18', '2016/17']
+        categories: [
+            'January', 'February', 'March', 'April', 'May'
+        ]
     },
     yAxis: {
         min: 0,
         title: {
-            text: 'Goals'
+            text: ''
         }
     },
     legend: {
@@ -27,13 +29,13 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Cristiano Ronaldo',
-        data: [4, 4, 6, 15, 12]
+        name: 'Motorcycles',
+        data: [74, 27, 52, 93, 1272]
     }, {
-        name: 'Lionel Messi',
-        data: [5, 3, 12, 6, 11]
+        name: 'Null-emission vehicles',
+        data: [2106, 2398, 3046, 3195, 4916]
     }, {
-        name: 'Robert Lewandowski',
-        data: [5, 15, 8, 5, 8]
+        name: 'Conventional vehicles',
+        data: [12213, 12721, 15242, 16518, 25037]
     }]
 });

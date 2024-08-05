@@ -30,8 +30,8 @@ const TARGET_DIRECTORIES = [
  */
 function task() {
 
-    const fs = require('./lib/fs');
-    const log = require('./lib/log');
+    const fs = require('../libs/fs');
+    const log = require('../libs/log');
 
     return new Promise((resolve, reject) => {
         try {

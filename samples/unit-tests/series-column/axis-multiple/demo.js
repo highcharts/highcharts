@@ -140,7 +140,7 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
 
     assert.notOk(chart.tooltip.isHidden, 'Tooltip is hidden');
 
-    var tooltipXPos = chart.tooltip.now.x;
+    var tooltipXPos = chart.tooltip.label.x;
 
     assert.ok(
         firstSeriesColumnX < tooltipXPos && secondSeriesColumnX > tooltipXPos,
@@ -148,7 +148,7 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
     );
 
     controller.mouseOver(secondSeriesCenterX, seriesCenterY);
-    tooltipXPos = chart.tooltip.now.x;
+    tooltipXPos = chart.tooltip.label.x;
     assert.ok(
         secondSeriesColumnX < tooltipXPos,
         'The position of the tooltip is wrong'

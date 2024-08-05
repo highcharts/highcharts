@@ -428,9 +428,10 @@ QUnit.test(
         let dataLabel = chart.series[0].points[0].dataLabel,
             stackLabel = getStack();
 
-        assert.strictEqual(
+        assert.close(
             stackLabel.parentGroup.translateX + stackLabel.translateX,
             dataLabel.parentGroup.translateX + dataLabel.x,
+            1.1,
             'This stack-label should moved to the same ' +
                 'position as dataLabel #11500'
         );
@@ -808,7 +809,7 @@ QUnit.test('Stack labels - Axis left set', assert => {
     assert.close(
         stackX,
         dataLabelX,
-        1,
+        1.5,
         'the middle of stackLabel and dataLabel should be similar.'
     );
 });

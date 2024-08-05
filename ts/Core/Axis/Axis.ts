@@ -905,10 +905,14 @@ class Axis {
             }
             const value = sign * (val - localMin) * localA;
 
-            returnValue = (!axis.isRadial ? correctFloat(value) : value) +
+            returnValue = value +
                 cvsOffset +
                 (sign * minPixelPadding) +
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
+
+            if (!axis.isRadial) {
+                returnValue = correctFloat(returnValue);
+            }
         }
 
         return returnValue;
@@ -1038,15 +1042,18 @@ class Axis {
             // to fail the isNumber test (#7709).
             translatedValue = clamp(translatedValue, -1e5, 1e5);
 
-
-            x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round(cHeight - translatedValue - transB);
+            x1 = x2 = translatedValue + transB;
+            y1 = y2 = cHeight - translatedValue - transB;
             if (!isNumber(translatedValue)) { // No min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
                 y1 = axisTop;
-                y2 = cHeight - axis.bottom + (chart.scrollablePixelsY || 0);
+                y2 = cHeight - axis.bottom + (axis.options.isInternal ?
+                    0 :
+                    (chart.scrollablePixelsY || 0)
+                ); // #20354, scrollablePixelsY shouldn't be used for navigator
+
 
                 x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 
@@ -3076,7 +3083,11 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * (labelOptions.padding || 0))
+                Math.round(slotWidth - (
+                    horiz ?
+                        2 * (labelOptions.padding || 0) :
+                        labelOptions.distance || 0 // #21172
+                ))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
@@ -3568,7 +3579,7 @@ class Axis {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        if (coll !== 'colorAxis') {
+        if (coll !== 'colorAxis' && clipOffset) {
             const tickSize = this.tickSize('tick');
 
             axisOffset[side] = Math.max(
@@ -3585,10 +3596,9 @@ class Axis {
             // the plot area and axis lines
             const clip = !axis.axisLine || options.offset ?
                 0 :
-                // #4308, #4371:
-                Math.floor(axis.axisLine.strokeWidth() / 2) * 2;
-            (clipOffset as any)[invertedSide] =
-                Math.max((clipOffset as any)[invertedSide], clip);
+                // #4308, #4371
+                axis.axisLine.strokeWidth() / 2;
+            clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
         }
 
         fireEvent(this, 'afterGetOffset');

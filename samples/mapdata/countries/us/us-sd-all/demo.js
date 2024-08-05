@@ -43,7 +43,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-sd-all.topo.json">South Dakota</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-sd-all.topo.json">South Dakota</a>'
         },
 
         mapNavigation: {

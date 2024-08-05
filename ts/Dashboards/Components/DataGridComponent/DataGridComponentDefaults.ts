@@ -52,16 +52,13 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 .closest('.highcharts-datagrid-row');
             const cell = inputElement.closest('.highcharts-datagrid-cell');
 
-            const converter = new DataConverter();
-
             if (
                 parentRow &&
                 parentRow instanceof HTMLElement &&
                 cell &&
                 cell instanceof HTMLElement
             ) {
-                const dataTableRowIndex = parentRow
-                    .dataset.rowIndex;
+                const dataTableRowIndex = parentRow.dataset.rowIndex;
                 const { columnName } = cell.dataset;
 
                 if (
@@ -71,6 +68,8 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                     const table = connector.table;
 
                     if (table) {
+                        const converter = new DataConverter();
+
                         let valueToSet = converter
                             .asGuessedType(inputElement.value);
 
@@ -80,7 +79,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
 
                         table.setCell(
                             columnName,
-                            parseInt(dataTableRowIndex, 10),
+                            Number(dataTableRowIndex),
                             valueToSet
                         );
                     }
