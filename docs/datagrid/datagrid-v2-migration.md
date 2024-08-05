@@ -42,7 +42,7 @@ The main change is CSS styling instead of the build-in API options.
 Since DataGrid v2 we removed the option:
  * cellHeight
 
-so, you should define height by CSS:
+so, you if you want to change the default height by CSS:
 
 ```css
 .highcharts-datagrid-row[data-row-index="1"] td {
@@ -113,22 +113,22 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
     }
 ```
 
-1. Defaults
+**Defaults**
 The options applied to all columns.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridDefaults).
 
-2. Settings
+**Settings**
 Options to control the way DataGrid is rendered.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridSettings).
 
-3. Columns
+**Columns**
 Column options that are applied individually.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
-4. Events
+**Events**
 Events applied to column, column header or a cell.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events).

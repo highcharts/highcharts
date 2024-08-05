@@ -15,7 +15,7 @@ columns: {
       }
   },
   column2: {
-    cellFormat: '<h3>{value}</h3>'
+    cellFormat: '{value}$'
   }
 ```
 

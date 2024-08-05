@@ -6,7 +6,7 @@ When you are ready to create your first simple DataGrid, please follow these ste
 1. Add a div to your webpage with a specific id.
 
 ```html
-<div id="container">
+<div id="container"></div>
 ```
 
 2. In this basic example we are going to create a simple Datagrid. Firstly we
@@ -43,12 +43,14 @@ DataGrid.dataGrid('container', {...})
 DataGrid.dataGrid('container', {
     table: {
         columns: {
-            date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
-            price: [1.5, 2.53, 5, 4.5],
-            metaData: ['a', 'b', 'c', 'd'],
-            icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
+            price: [1.5, 2.53, 5, 4.5]
+        }
+    },
+    defaults: {
+        columns: {
+            sorting: true
         }
     }
 });
@@ -60,8 +62,7 @@ or use the [DataTable](https://www.highcharts.com/docs/dashboards/data-table).
 const columns = {
     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
     weight: [100, 40, 0.5, 200],
-    price: [1.5, 2.53, 5, 4.5],
-    metaData: ['a', 'b', 'c', 'd']
+    price: [1.5, 2.53, 5, 4.5]
 };
 
 DataGrid.dataGrid('container', {
