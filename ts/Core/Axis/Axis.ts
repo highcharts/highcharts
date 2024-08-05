@@ -3940,15 +3940,25 @@ class Axis {
 
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
+                const labels: (SVGElement | undefined)[] = [];
+
                 axis._addedPlotLB = true;
+
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis)
-                                .addPlotBandOrLine(plotLineOptions);
+                            labels.push(
+                                (axis as unknown as PlotLineOrBand.Axis)
+                                    .addPlotBandOrLine(plotLineOptions)
+                                    ?.label
+                            );
                         }
                     );
+
+                chart.labelCollectors.push(
+                    (): (SVGElement | undefined)[] => labels
+                );
             }
 
         } // End if hasData
