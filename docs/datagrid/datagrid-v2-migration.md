@@ -79,7 +79,8 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
             bufferSize: 10,
             strictHeights: false
         }
-    }
+    },
+    columnsIncluded: ['product', 'price', 'weight', 'metaData'],
     columns: {
         weight: {
             className: 'custom-column-class-name',
