@@ -88,7 +88,7 @@ Highcharts.chart('container', {
         }
     },
 
-    //https://tradingeconomics.com/country-list/gdp-annual-growth-rate?continent=africa
+    // https://tradingeconomics.com/country-list/gdp-annual-growth-rate?continent=africa
     series: [{
         data: [{
             id: 'ZW',
