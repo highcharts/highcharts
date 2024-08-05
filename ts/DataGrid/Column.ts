@@ -204,6 +204,19 @@ class Column {
     }
 
     /**
+     * Unregisters a cell from the column.
+     *
+     * @param cell
+     * The cell to unregister.
+     */
+    public unregisterCell(cell: Cell): void {
+        const index = this.cells.indexOf(cell);
+        if (index > -1) {
+            this.cells.splice(index, 1);
+        }
+    }
+
+    /**
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
