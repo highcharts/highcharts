@@ -75,6 +75,7 @@ const connConfig = {
         return modifiedData;
     },
     connectEvent: (isConnected, host, port, user) => {
+        setConnectStatus(isConnected);
         // eslint-disable-next-line max-len
         logAppend(`Client ${isConnected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
     },
@@ -87,6 +88,7 @@ const connConfig = {
         logAppend(`Packet received: ${topic} - ${packet}`);
     },
     errorEvent: error => {
+        setConnectStatus(false);
         logAppend(`<span style="color:red">${error}</span>`);
     }
 };
@@ -175,6 +177,11 @@ function createDashboard() {
             type: 'HTML',
             title: 'MQTT Event Log',
             html: '<pre id="log-content"></pre>'
+        },  {
+            renderTo: 'app-control',
+            type: 'HTML',
+            html: '<button id="clear-log">Clear log</button>' +
+            '<span id="connect-status">disconnected</span>'
         }],
         gui: {
             layouts: [{
@@ -197,6 +204,11 @@ function createDashboard() {
                     cells: [{
                         id: 'html-log'
                     }]
+                }, {
+                    // Application control
+                    cells: [{
+                        id: 'app-control'
+                    }]
                 }]
             }]
         }
@@ -206,15 +218,27 @@ function createDashboard() {
 
 /* *
  *
- *  Event log
+ *  Event log and application control functions
  *
  * */
 let logContent;
+let connectStatus;
 
 window.onload = () => {
+    // Initialize log
     logContent = document.getElementById('log-content');
     logClear();
     logAppend('Application started');
+
+    // Initialize connection status
+    connectStatus = document.getElementById('connect-status');
+
+    // Add event listener to clear log button
+    const clearButton = document.getElementById('clear-log');
+    clearButton.addEventListener('click', () => {
+        logClear();
+        logAppend('Log cleared by user');
+    });
 };
 
 function logAppend(message) {
@@ -230,13 +254,18 @@ function logClear() {
     logContent.innerHTML = '';
 }
 
+function setConnectStatus(isConnected) {
+    connectStatus.innerHTML = isConnected ? 'connected' : 'disconnected';
+    connectStatus.style.color = isConnected ? 'green' : 'red';
+}
+
 
 /* *
  *
- *  MQTT connector class - custom connector
+ * MQTT connector class - custom connector
  *
  *
- * Useful references for Paho MQTT library
+ * Paho MQTT library documentation
  *
  * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
  * https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
@@ -259,22 +288,19 @@ const JSONConverter = modules['Data/Converters/JSONConverter.js'];
 const U = modules['Core/Utilities.js'];
 const { merge } = U;
 
-// Connector instances, indexed by clientId, one MQTT client per connector
-const instanceTable = {};
-
+// Connector instances
+const connectorTable = {};
 
 /* *
  *
- *  Class
+ *  Class MQTTConnector
  *
  * */
 
 class MQTTConnector extends DataConnector {
     /**
-     * Constructs an instance of MQTTConnector
+     * Constructs an instance of MQTTConnector.
      *
-     * @param options
-     * Options for the connector and converter.
      */
     constructor(options) {
         const mergedOptions = merge(
@@ -288,7 +314,6 @@ class MQTTConnector extends DataConnector {
         this.options = mergedOptions;
 
         // Connection status
-        this.connected = false;
         this.packetCount = 0;
 
         // Generate a unique client ID
@@ -296,7 +321,7 @@ class MQTTConnector extends DataConnector {
         this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        instanceTable[clientId] = this;
+        connectorTable[clientId] = this;
     }
 
     /* *
@@ -306,7 +331,7 @@ class MQTTConnector extends DataConnector {
      * */
 
     /**
-     * Sets up the MQTT connection and subscribes to the topic.
+     * Creates the MQTT client.
      *
      */
     async load() {
@@ -328,13 +353,10 @@ class MQTTConnector extends DataConnector {
     }
 
     /**
-     * Connects to an MQTT broker.
+     * Connects to the MQTT broker.
      *
      */
     async connect() {
-        if (this.connected) {
-            throw Error('Already connected');
-        }
         const { user, password, timeout, useSSL, cleanSession } = this.options;
 
         // Connect to broker
@@ -350,13 +372,11 @@ class MQTTConnector extends DataConnector {
     }
 
     /**
-     * Disconnects from an MQTT broker.
+     * Disconnects from the MQTT broker.
      *
      */
     async disconnect() {
-        if (this.connected) {
-            this.mqtt.disconnect();
-        }
+        this.mqtt.disconnect();
     }
 
     /**
@@ -364,26 +384,21 @@ class MQTTConnector extends DataConnector {
      *
      */
     async subscribe() {
-        if (this.connected) {
-            const { topic, qOs, subscribeEvent, failureEvent } = this.options;
-            this.mqtt.subscribe(topic, {
-                qos: qOs,
-                onSuccess: () => {
-                    if (subscribeEvent) {
-                        subscribeEvent(true, topic);
-                    }
-                },
-                onFailure: response => {
-                    if (subscribeEvent) {
-                        failureEvent(response.errorMessage);
-                    }
-                },
-                timeout: 10
-            });
-
-            return;
-        }
-        throw Error('Not connected: subscription not possible');
+        const { topic, qOs, subscribeEvent, failureEvent } = this.options;
+        this.mqtt.subscribe(topic, {
+            qos: qOs,
+            onSuccess: () => {
+                if (subscribeEvent) {
+                    subscribeEvent(true, topic);
+                }
+            },
+            onFailure: response => {
+                if (subscribeEvent) {
+                    failureEvent(response.errorMessage);
+                }
+            },
+            timeout: 10
+        });
     }
 
     /**
@@ -391,30 +406,28 @@ class MQTTConnector extends DataConnector {
      *
      */
     unsubscribe() {
-        if (this.connected) {
-            const { topic, subscribeEvent, failureEvent } = this.options;
+        const { topic, subscribeEvent, failureEvent } = this.options;
 
-            this.mqtt.unsubscribe(topic, {
-                onSuccess: () => {
-                    if (subscribeEvent) {
-                        subscribeEvent(false, topic);
-                    }
-                },
-                onFailure: response => {
-                    if (subscribeEvent) {
-                        failureEvent(response.errorMessage);
-                    }
+        this.mqtt.unsubscribe(topic, {
+            onSuccess: () => {
+                if (subscribeEvent) {
+                    subscribeEvent(false, topic);
                 }
-            });
-
-            if (subscribeEvent) {
-                subscribeEvent(false, topic);
+            },
+            onFailure: response => {
+                if (subscribeEvent) {
+                    failureEvent(response.errorMessage);
+                }
             }
+        });
+
+        if (subscribeEvent) {
+            subscribeEvent(false, topic);
         }
     }
 
     /**
-     * Handle established connection
+     * Process connection success
      *
      */
     onConnect() {
@@ -432,12 +445,12 @@ class MQTTConnector extends DataConnector {
     }
 
     /**
-     * Handle incoming messages
+     * Process incoming message
      *
      */
     onMessageArrived(mqttPacket) {
         // Executes in Paho.MQTT.Client context
-        const connector = instanceTable[this.clientId],
+        const connector = connectorTable[this.clientId],
             converter = connector.converter,
             connTable = connector.table;
 
@@ -465,12 +478,12 @@ class MQTTConnector extends DataConnector {
     }
 
     /**
-     * Handle lost connection
+     * Process lost connection
      *
      */
     onConnectionLost(response) {
         // Executes in Paho.MQTT.Client context
-        const connector = instanceTable[this.clientId];
+        const connector = connectorTable[this.clientId];
         connector.connected = false;
         connector.packetCount = 0;
 
@@ -486,12 +499,11 @@ class MQTTConnector extends DataConnector {
             if (errorEvent) {
                 errorEvent(response.errorMessage);
             }
-            console.error('onConnectionLost:', response.errorMessage);
         }
     }
 
     /**
-     * Handle failure
+     * Process failure
      *
      */
     onFailure(response) {
@@ -502,7 +514,6 @@ class MQTTConnector extends DataConnector {
         if (this.options.errorEvent) {
             this.options.errorEvent(response.errorMessage);
         }
-        console.error('onFailure:', response);
     }
 }
 
@@ -512,6 +523,7 @@ class MQTTConnector extends DataConnector {
  *
  */
 MQTTConnector.defaultOptions = {
+    // MQTT client properties
     host: 'test.mosquitto.org',
     port: 1883,
     user: '',
@@ -521,6 +533,8 @@ MQTTConnector.defaultOptions = {
     topic: 'mqtt',
     useSSL: true,
     cleanSession: true,
+
+    // Custom connector properties
     autoConnect: true,
     autoSubscribe: true
 };

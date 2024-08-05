@@ -37,10 +37,6 @@
  *
  * */
 
-#container {
-    font-size: 13px;
-}
-
 .highcharts-dashboards-component {
     background-color: var(--component-background);
     border-radius: var(--component-rounded-corners);
@@ -57,4 +53,25 @@
     padding: 10px;
     font: "Courier New", Courier, monospace;
     font-size: 12px;
+}
+
+#app-control {
+    padding: 10px;
+    font-size: 12px;
+}
+
+#app-control .highcharts-dashboards-component {
+    margin-bottom: 10px;
+    background-color: var(--highcharts-neutral-color-10);
+    border: 0;
+}
+
+#app-control #connect-status {
+    border: 0;
+    padding: 5px;
+    float: right;
+}
+
+#app-control #connect-status::before {
+    content: "MQTT ";
 }
