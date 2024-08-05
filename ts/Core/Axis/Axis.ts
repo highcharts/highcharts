@@ -3940,19 +3940,17 @@ class Axis {
 
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
-                const labels: (SVGElement | undefined)[] = [];
-
                 axis._addedPlotLB = true;
 
-                (options.plotLines || [])
+                const labels = (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
-                    .forEach(
-                        function (plotLineOptions: any): void {
-                            labels.push(
-                                (axis as unknown as PlotLineOrBand.Axis)
-                                    .addPlotBandOrLine(plotLineOptions)
-                                    ?.label
-                            );
+                    .map(
+                        function (
+                            plotLineOptions: any
+                        ): SVGElement | undefined {
+                            return (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions)
+                                ?.label;
                         }
                     );
 
