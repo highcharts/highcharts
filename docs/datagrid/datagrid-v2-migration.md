@@ -2,7 +2,7 @@ Upgrade DataGrid to v2
 ===
 The core of DataGrid has been changed in the version 2.0. We increased the peformance, flexibility and added accessibility support. It means that API options have been changed and definition of styles or data source are different. We described all changes below. 
 
-### Data source
+## Data source
 In the newest DataGrid, the data source definition has been redesigned. It is a critical upgrade, so please double-check if everything is configured properly.
 
 DataGrid v1
@@ -31,12 +31,12 @@ const grid = DataGrid.dataGrid('container', {
 });
 ```
 
-### Columns
+## Columns
 It is worth to mantion that the `useHTML` parameter has been moved to the `columns` object.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#useHTML).
 
-### Styling
+## Styling
 The main change is CSS styling instead of the build-in API options.
 
 Since DataGrid v2 we removed the option:
@@ -53,7 +53,7 @@ so, you if you want to change the default height by CSS:
 The next main change is a new naming of CSS classes.
 We recommend to read our [article about styling](https://www.highcharts.com/docs/datagrid/style-by-css) the DataGrid 2.0.
 
-### Example of the new DataGrid
+## Example of the new DataGrid
 
 ```js
     table: {
@@ -79,8 +79,7 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
             bufferSize: 10,
             strictHeights: false
         }
-    },
-    columnsIncluded: ['product', 'price', 'weight', 'metaData'],
+    }
     columns: {
         weight: {
             className: 'custom-column-class-name',
@@ -88,50 +87,60 @@ We recommend to read our [article about styling](https://www.highcharts.com/docs
                 return 'V: ' + this.value;
             }
         },
-        price: {
-            headerFormat: '{id} (total)',
-            cellFormat: '$ {value}'
-        },
         metaData: {
             enabled: false
         }
     },
     events: {
         cell: {
-            click: function () { ... },
-            mouseOver: function () { ... },
-            mouseOut: function () { ... },
-            afterEdit: function () { ... }
+            click: function () {
+                // Callback action
+            },
+            mouseOver: function () {
+                // Callback action
+            },
+            mouseOut: function () {
+                // Callback action
+            },
+            afterEdit: function () {
+                // Callback action
+            }
         },
         column: {
-            afterSorting: function () { ... },
-            resize: function () { ... }
+            afterSorting: function () {
+                // Callback action
+            },
+            resize: function () {
+                // Callback action
+            }
         },
         header: {
-            click: function () { ... }
+            click: function () {
+                // Callback action
+            }
         }
     }
 ```
 
-**Defaults**
+### Defaults
 The options applied to all columns.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridDefaults).
 
-**Settings**
+### Settings
 Options to control the way DataGrid is rendered.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridSettings).
 
-**Columns**
+### Columns
 Column options that are applied individually.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
-**Events**
+### Events
 Events applied to column, column header or a cell.
 
 You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events).
 
-### Changelog
+## Changelog
 The rest of changes and new options you can find in the Changelog.
