@@ -212,6 +212,8 @@ abstract class Cell {
      * Destroys the cell.
      */
     public destroy(): void {
+        this.column.unregisterCell(this);
+        this.row.unregisterCell(this);
         this.htmlElement.remove();
     }
 }

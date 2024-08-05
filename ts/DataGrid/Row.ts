@@ -66,6 +66,11 @@ abstract class Row {
      */
     public viewport: Table;
 
+    /**
+     * Flag to determine if the row is being destroyed.
+     */
+    private destroyed: boolean = false;
+
 
     /* *
     *
@@ -129,6 +134,8 @@ abstract class Row {
      * Destroys the row.
      */
     public destroy(): void {
+        this.destroyed = true;
+
         if (!this.htmlElement) {
             return;
         }
@@ -148,6 +155,23 @@ abstract class Row {
      */
     public registerCell(cell: Cell): void {
         this.cells.push(cell);
+    }
+
+    /**
+     * Unregisters a cell from the row.
+     *
+     * @param cell
+     * The cell to unregister.
+     */
+    public unregisterCell(cell: Cell): void {
+        if (!this.destroyed) {
+            return;
+        }
+
+        const index = this.cells.indexOf(cell);
+        if (index > -1) {
+            this.cells.splice(index, 1);
+        }
     }
 }
 
