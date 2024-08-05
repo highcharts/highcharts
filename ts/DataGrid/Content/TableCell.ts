@@ -27,8 +27,10 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
 import Utils from '../../Core/Utilities.js';
+import F from '../../Core/Templating.js';
 
 const { defined, fireEvent } = Utils;
+const { format } = F;
 
 
 /* *
@@ -152,12 +154,8 @@ class TableCell extends Cell {
 
         this.value = value;
 
-        if (!defined(value)) {
-            value = '';
-        }
-
         this.renderHTMLCellContent(
-            this.formatCell(value, this),
+            this.formatCell(),
             element
         );
 
@@ -169,6 +167,33 @@ class TableCell extends Cell {
                 this.value
             );
         }
+    }
+
+    /**
+     * Handle the formatting content of the cell.
+     */
+    private formatCell(): string {
+        const {
+            cellFormat,
+            cellFormatter
+        } = this.column.userOptions;
+
+        let value = this.value;
+        if (!defined(value)) {
+            value = '';
+        }
+
+        let cellContent = '';
+
+        if (cellFormatter) {
+            cellContent = cellFormatter.call(this);
+        } else {
+            cellContent = (
+                cellFormat ? format(cellFormat, this) : value + ''
+            );
+        }
+
+        return cellContent;
     }
 
     /**

@@ -27,9 +27,6 @@ import type DataTable from '../Data/DataTable';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
-import F from '../Core/Templating.js';
-
-const { format } = F;
 
 
 /* *
@@ -118,39 +115,6 @@ abstract class Cell {
         const elementStyle = this.htmlElement.style;
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
-    }
-
-    /**
-     * Handle the formatting content of the cell.
-     *
-     * @param value
-     * The value of cell
-     *
-     * @param ctx
-     * The context of the cell
-     *
-     * @internal
-     */
-    public formatCell(
-        value: string | number | boolean,
-        ctx: Cell
-    ): string {
-        const {
-            cellFormat,
-            cellFormatter
-        } = ctx.column.userOptions;
-
-        let cellContent = '';
-
-        if (cellFormatter) {
-            cellContent = cellFormatter.call(this);
-        } else {
-            cellContent = (
-                cellFormat ? format(cellFormat, ctx) : value + ''
-            );
-        }
-
-        return cellContent;
     }
 
     /**

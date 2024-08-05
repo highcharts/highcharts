@@ -116,6 +116,7 @@ class HeaderCell extends Cell {
         // Add sorting
         this.initColumnSorting();
     }
+
     /**
      * Render the drag handle for resizing columns.
      */
