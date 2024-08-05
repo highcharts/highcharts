@@ -493,6 +493,35 @@ class Axis {
         // List of plotLines/Bands
         axis.plotLinesAndBands = [];
 
+        // Creating labelCollector for plotLines/Bands
+        const collectors = chart.labelCollectors,
+            plotBandCollector = (
+                function (): (SVGElement | undefined)[] {
+                    // It is possible that plotLinesAndBands and options
+                    // is undefined.
+                    const plotLinesAndBands = (
+                        !axis.options?.labels?.allowOverlap &&
+                        axis.plotLinesAndBands
+                    );
+
+                    if (plotLinesAndBands) {
+                        const labels: (SVGElement | undefined)[] = [];
+
+                        for (const { label } of plotLinesAndBands) {
+                            labels.push(label);
+                        }
+                        return labels;
+                    }
+
+                    return [];
+                }
+            );
+
+        // Only add the collector function if it is not present
+        if (!collectors.some((f): boolean => f.name === 'plotBandCollector')) {
+            collectors.push(plotBandCollector);
+        }
+
         // Alternate bands
         axis.alternateBands = {};
 
@@ -3942,23 +3971,15 @@ class Axis {
             if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
 
-                const labels = (options.plotLines || [])
+                (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
-                    .map(
-                        function (
-                            plotLineOptions: any
-                        ): SVGElement | undefined {
-                            return (axis as unknown as PlotLineOrBand.Axis)
-                                .addPlotBandOrLine(plotLineOptions)
-                                ?.label;
+                    .forEach(
+                        function (plotLineOptions: any): void {
+                            (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions);
                         }
                     );
-
-                chart.labelCollectors.push(
-                    (): (SVGElement | undefined)[] => labels
-                );
             }
-
         } // End if hasData
 
         // Remove inactive ticks
