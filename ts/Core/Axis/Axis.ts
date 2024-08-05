@@ -926,7 +926,7 @@ class Axis {
      * @param {number} value
      * A value in terms of axis units.
      *
-     * @param {boolean} paneCoordinates
+     * @param {boolean} [paneCoordinates=false]
      * Whether to return the pixel coordinate relative to the chart or just the
      * axis/pane itself.
      *

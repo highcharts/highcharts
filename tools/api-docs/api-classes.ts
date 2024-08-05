@@ -289,19 +289,49 @@ async function main() {
                     return req.replace(/module:/g, '');
                 }) || void 0,
                 samples: getSamples(info.doclet.tags.sample),
+                deprecated: !!info.doclet.tags.deprecated,
                 children: info.members.map((member: any|TSLib.PropertyInfo) => {
                     const params: Array<string> = [],
                         memberDescription: Array<string> = descriptionFromTags(
                             member.doclet.tags,
                             params
                         );
+                    let returnTypeAdded = false;
 
+                    // Return type
                     if (member.return) {
                         memberDescription.push(
                             '**Return type:** ' +
                             sanitize(member.return.join(' | '))
                         );
+                        returnTypeAdded = true;
                     }
+                    // Return description (and type if not added)
+                    if (member.doclet.tags.return) {
+                        if (!returnTypeAdded) {
+                            memberDescription.push(
+                                '**Return type:** ' +
+                                sanitize(member.doclet.tags.return.reduce(
+                                    (acc, currVal) => {
+                                        return acc + (acc ? ' | ': '') +
+                                            currVal.split('}')[0].slice(1);
+                                    },
+                                    ''
+                                ))
+                            );
+                        }
+                        memberDescription.push(
+                            sanitize(member.doclet.tags.return.reduce(
+                                (acc, currVal) => {
+                                    return acc + (acc ? '\n\n': '') +
+                                        currVal.split('}')[1].trim();
+                                },
+                                ''
+                            ))
+                        );
+                        returnTypeAdded = true;
+                    }
+
 
                     // Nested from value
                     if (member.value && typeof member.value === 'string') {
@@ -346,10 +376,11 @@ async function main() {
                     }
 
                     // TODO: Remove the legacy syntax and this can be removed.
-                    typeListNames = typeListNames.replace('#', '.');
+                    typeListNames = typeListNames.replace(/#\.?/, '.');
 
                     return {
                         ignoreDefault: true,
+                        deprecated: !!member.doclet.tags.deprecated,
                         description: getHTMLDescription(memberDescription),
                         filename: member.meta?.file ||
                             member.doclet?.meta?.file ||
@@ -359,8 +390,6 @@ async function main() {
 
                         isLeaf: !!member.doclet.tags.type ||
                             typeof member.value !== 'object',
-                        // line: 000,
-                        // lineEnd: 000,
                         name: member.name,
 
                         samples: getSamples(member.doclet.tags.sample),
@@ -502,6 +531,12 @@ function parseLine(line: string): string {
                 // TODO: Some links miss Highcharts. prefix
                 return `[${name || link}](${link})`;
             }
+        ).replace(
+            // Converts in links: # (and optional following dot) to a dot.
+            /(\]\(Highcharts\.[^\#]+)\#[\.]?([^\)]+\))/gm,
+            (_, start, end) => {
+                return `${start}.${end}`;
+            }
         )
     );
 }
@@ -600,9 +635,11 @@ async function buildStructure() {
 }
 
 /**
- * Gathers description from doclet tags.
+ * Gathers description from doclet tags for top level options and also for
+ * its members.
  *
- * @param tags Doclet tags
+ * @param {Record<string,Array<string>>} tags Doclet tags
+ * @param {Array<string>} [paramsNames=[]] Array of parameter names to populate
  */
 function descriptionFromTags(
     tags: Record<string,Array<string>>,
@@ -644,6 +681,13 @@ function descriptionFromTags(
             description.push(
                 '**Example:** \n\n```\n' + sanitize(example) +
                 '\n```'
+            );
+        });
+    }
+    if (tags.since) {
+        tags.since.forEach((since: string) => {
+            description.push(
+                '**Since:** ' + sanitize(since)
             );
         });
     }
