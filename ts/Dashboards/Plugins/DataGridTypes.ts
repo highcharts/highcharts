@@ -35,15 +35,15 @@ export type DataGrid = D.DataGrid;
 
 export type DataGridNamespace = typeof D;
 
-export type DataGridColumn = D.Column;
+export type Column = D.Column;
 
-export type DataGridRow = D.Row;
+export type Row = D.Row;
 
-export namespace DataGridCell {
+export namespace Cell {
     export type CellEvent = D.Cell.CellEvent;
 }
 
-export type DataGridCell = D.Cell;
+export type Cell = D.Cell;
 
 export type DataGridOptions = D.Options;
 
