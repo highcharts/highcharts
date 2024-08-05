@@ -10,7 +10,7 @@ DataGrid.dataGrid('container', {
     },
     settings: {
         columns: {
-            resizing: false
+            resizable: false
         }
     }
 });

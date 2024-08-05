@@ -170,7 +170,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        if (dgOptions?.settings?.columns?.resizing) {
+        if (dgOptions?.settings?.columns?.resizable) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 

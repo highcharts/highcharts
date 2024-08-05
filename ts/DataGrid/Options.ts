@@ -124,7 +124,7 @@ export interface ColumnsSettings {
      *
      * @default true
      */
-    resizing?: boolean;
+    resizable?: boolean;
 }
 
 export interface RowsSettings {

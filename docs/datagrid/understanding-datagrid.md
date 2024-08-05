@@ -67,7 +67,7 @@ but you can disable it in the [settings option](https://api.highcharts.com/dashb
 ```js
 settings: {
     columns: {
-        resizing: false
+        resizable: false
     }
 }
 ```
