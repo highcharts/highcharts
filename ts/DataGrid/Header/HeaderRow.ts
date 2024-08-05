@@ -26,6 +26,8 @@ import Row from '../Row.js';
 import Table from '../Table.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
+import Cell from '../Cell.js';
+import Column from '../Column.js';
 
 /* *
  *
@@ -40,17 +42,6 @@ class HeaderRow extends Row {
 
     /* *
     *
-    *  Properties
-    *
-    * */
-
-    /**
-     * The cells of the row.
-     */
-    public cells: HeaderCell[] = [];
-
-    /* *
-    *
     *  Constructor
     *
     * */
@@ -60,12 +51,9 @@ class HeaderRow extends Row {
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
-     *
-     * @param index
-     * The index of the row in the data table.
      */
-    constructor(viewport: Table, index: number) {
-        super(viewport, index);
+    constructor(viewport: Table) {
+        super(viewport);
         this.setRowAttributes();
     }
 
@@ -76,12 +64,15 @@ class HeaderRow extends Row {
     *
     * */
 
+    public override createCell(column: Column): Cell {
+        return new HeaderCell(column, this);
+    }
+
     /**
      * Renders the row's content in the header.
      */
-    public renderColumnsHeaders(): void {
-        const columns = this.viewport.columns;
-        const cells = this.cells;
+    public override render(): void {
+
         // Render element
         this.viewport.theadElement.appendChild(
             this.htmlElement
@@ -91,13 +82,7 @@ class HeaderRow extends Row {
             Globals.classNames.headerRow
         );
 
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const last = new HeaderCell(columns[i], this);
-            last.render();
-            cells.push(last);
-        }
-
-        this.reflow();
+        super.render();
     }
 
     /**

@@ -81,14 +81,14 @@ class HeaderCell extends Cell {
     /**
      * Init element
      */
-    public init(): HTMLTableCellElement {
+    public override init(): HTMLTableCellElement {
         return document.createElement('th', {});
     }
 
     /**
      * Render the cell container.
      */
-    public render(): void {
+    public override render(): void {
         const column = this.column;
         const innerText = column.userOptions.headerFormat ? (
             format(column.userOptions.headerFormat, column)
@@ -142,6 +142,7 @@ class HeaderCell extends Cell {
             );
         }
     }
+
     /**
      * Add click event to the header
      */
@@ -170,6 +171,7 @@ class HeaderCell extends Cell {
 
         this.headerContent?.addEventListener('click', onHeaderClick);
     }
+
     /**
      * Add sorting option to the column.
      */

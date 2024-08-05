@@ -24,7 +24,7 @@ import type Sync from '../../Sync/Sync';
 import type DataCursor from '../../../../Data/DataCursor';
 import type DataGridComponent from '../DataGridComponent.js';
 import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
-import type { Cell } from '../../../Plugins/DataGridTypes';
+import type { TableCell } from '../../../Plugins/DataGridTypes';
 
 import Component from '../../Component';
 import U from '../../../../Core/Utilities.js';
@@ -58,7 +58,7 @@ const syncPair: Sync.SyncPair = {
 
         const { dataCursor: cursor } = board;
 
-        const onCellHover = (e: Cell.CellEvent): void => {
+        const onCellHover = (e: TableCell.TableCellEvent): void => {
             const table = this.getFirstConnector()?.table;
             if (table) {
                 const cell = e.target;

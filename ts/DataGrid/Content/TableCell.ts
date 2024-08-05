@@ -25,7 +25,7 @@
 import type DataTable from '../../Data/DataTable';
 import Cell from '../Cell.js';
 import Column from '../Column';
-import Row from '../Row';
+import TableRow from './TableRow';
 import Utils from '../../Core/Utilities.js';
 import F from '../../Core/Templating.js';
 
@@ -51,6 +51,11 @@ class TableCell extends Cell {
     * */
 
     /**
+     * The row of the cell.
+     */
+    public row: TableRow;
+
+    /**
      * The input element of a cell after mouse focus.
      * @internal
      */
@@ -72,8 +77,9 @@ class TableCell extends Cell {
      * @param row
      * The row of the cell.
      */
-    constructor(column: Column, row: Row) {
+    constructor(column: Column, row: TableRow) {
         super(column, row);
+        this.row = row;
 
         this.column.registerCell(this);
 
@@ -215,7 +221,12 @@ class TableCell extends Cell {
  * */
 
 namespace TableCell {
-
+    /**
+     * Event interface for table cell events.
+     */
+    export interface TableCellEvent {
+        target: TableCell;
+    }
 }
 
 

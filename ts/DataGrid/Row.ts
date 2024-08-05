@@ -23,7 +23,8 @@
  * */
 
 import type Cell from './Cell';
-import TableCell from './Content/TableCell.js';
+import type Column from './Column';
+
 import Table from './Table.js';
 import DGUtils from './Utils.js';
 
@@ -57,11 +58,6 @@ abstract class Row {
     public htmlElement: HTMLTableRowElement;
 
     /**
-     * The index of the row in the data table.
-     */
-    public index: number;
-
-    /**
      * The viewport the row belongs to.
      */
     public viewport: Table;
@@ -69,7 +65,7 @@ abstract class Row {
     /**
      * Flag to determine if the row is being destroyed.
      */
-    private destroyed: boolean = false;
+    private destroyed?: boolean;
 
 
     /* *
@@ -83,14 +79,9 @@ abstract class Row {
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
-     *
-     * @param index
-     * The index of the row in the data table.
      */
-    constructor(viewport: Table, index: number) {
+    constructor(viewport: Table) {
         this.viewport = viewport;
-        this.index = index;
-
         this.htmlElement = makeHTMLElement('tr', {});
     }
 
@@ -102,6 +93,14 @@ abstract class Row {
     * */
 
     /**
+     * Creates a cell in the row.
+     *
+     * @param column
+     * The column the cell belongs to.
+     */
+    public abstract createCell(column: Column): Cell;
+
+    /**
      * Renders the row's content. It does not attach the row element to the
      * viewport nor pushes the rows to the viewport.rows array.
      */
@@ -109,7 +108,7 @@ abstract class Row {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new TableCell(columns[i], this);
+            const cell = this.createCell(columns[i]);
             cell.render();
         }
 
@@ -164,7 +163,7 @@ abstract class Row {
      * The cell to unregister.
      */
     public unregisterCell(cell: Cell): void {
-        if (!this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 

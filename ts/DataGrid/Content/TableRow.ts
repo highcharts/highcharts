@@ -23,9 +23,11 @@
  * */
 
 import type Cell from '../Cell';
-import TableCell from './TableCell.js';
+import type Column from '../Column';
+
 import Row from '../Row.js';
 import Table from '../Table.js';
+import TableCell from './TableCell.js';
 import Globals from '../Globals.js';
 
 /* *
@@ -46,9 +48,10 @@ class TableRow extends Row {
     * */
 
     /**
-     * The cells of the row.
+     * The index of the row in the data table.
      */
-    public cells: Cell[] = [];
+    public index: number;
+
 
     /* *
     *
@@ -66,9 +69,8 @@ class TableRow extends Row {
      * The index of the row in the data table.
      */
     constructor(viewport: Table, index: number) {
-        super(viewport, index);
-        this.htmlElement.style.transform =
-            `translateY(${this.getDefaultTopOffset()}px)`;
+        super(viewport);
+        this.index = index;
 
         this.setRowAttributes();
     }
@@ -80,59 +82,8 @@ class TableRow extends Row {
     *
     * */
 
-    /**
-     * Renders the row's content. It does not attach the row element to the
-     * viewport nor pushes the rows to the viewport.rows array.
-     */
-    public render(): void {
-        const columns = this.viewport.columns;
-        this.htmlElement.classList.add(Globals.classNames.rowElement);
-
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new TableCell(columns[i], this);
-            cell.render();
-        }
-
-        this.reflow();
-    }
-
-    /**
-     * Reflows the row's content dimensions.
-     */
-    public reflow(): void {
-        for (let j = 0, jEnd = this.cells.length; j < jEnd; ++j) {
-            this.cells[j].reflow();
-        }
-
-        const vp = this.viewport;
-        if (vp.rowsWidth) {
-            this.htmlElement.style.width = vp.rowsWidth + 'px';
-        }
-    }
-
-    /**
-     * Destroys the row.
-     */
-    public destroy(): void {
-        if (!this.htmlElement) {
-            return;
-        }
-
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            this.cells[i].destroy();
-        }
-
-        this.htmlElement.remove();
-    }
-
-    /**
-     * Registers a cell in the row.
-     *
-     * @param cell
-     * The cell to register.
-     */
-    public registerCell(cell: Cell): void {
-        this.cells.push(cell);
+    public override createCell(column: Column): Cell {
+        return new TableCell(column, this);
     }
 
     /**
@@ -158,6 +109,8 @@ class TableRow extends Row {
         const idx = this.index;
         const el = this.htmlElement;
 
+        el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
+        el.classList.add(Globals.classNames.rowElement);
         el.setAttribute('data-row-index', idx);
 
         // 1 - index of the head, 1 to avoid indexing from 0

@@ -79,7 +79,7 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-        this.rows[0] = new HeaderRow(viewport, -1);
+        this.rows[0] = new HeaderRow(viewport);
     }
 
 
@@ -100,10 +100,10 @@ class TableHeader {
         }
 
         // TODO: render column grouping headers
-        // this.rows[0].renderGroupedColumnsHeaders();
+        // this.rows[0].renderGroupedColumnHeaders();
 
         // render basic column headers
-        this.rows[0].renderColumnsHeaders();
+        this.rows[0].render();
     }
 
     /**

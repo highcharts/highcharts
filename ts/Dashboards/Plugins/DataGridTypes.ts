@@ -37,13 +37,13 @@ export type DataGridNamespace = typeof D;
 
 export type Column = D.Column;
 
-export type Row = D.Row;
+export type TableRow = D.TableRow;
 
-export namespace Cell {
-    export type CellEvent = D.Cell.CellEvent;
+export namespace TableCell {
+    export type TableCellEvent = D.TableCell.TableCellEvent;
 }
 
-export type Cell = D.Cell;
+export type TableCell = D.TableCell;
 
 export type DataGridOptions = D.Options;
 

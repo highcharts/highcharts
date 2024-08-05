@@ -153,12 +153,7 @@ abstract class Cell {
  * */
 
 namespace Cell {
-    /**
-     * Event interface for cell events.
-     */
-    export interface CellEvent {
-        target: Cell;
-    }
+
 }
 
 
