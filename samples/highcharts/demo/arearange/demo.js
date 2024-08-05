@@ -2,7 +2,7 @@
 
 Highcharts.chart('container', {
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@31c9ab8/samples/data/TempFloridaBergen2023.csv',
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@31c9ab8/samples/data/temp-florida-bergen-2023.csv',
         beforeParse: function (csv) {
             return csv.replace(/\n\n/g, '\n');
         }
