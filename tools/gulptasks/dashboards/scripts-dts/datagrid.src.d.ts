@@ -7,10 +7,10 @@
 import Globals from "./es-modules/DataGrid/Globals";
 
 export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
-export { default as DataGridColumn } from './es-modules/DataGrid/DataGridColumn';
-export { default as DataGridRow } from './es-modules/DataGrid/DataGridRow';
-export { default as DataGridCell } from './es-modules/DataGrid/DataGridCell';
-export { default as DataGridOptions } from './es-modules/DataGrid/DataGridOptions';
+export { default as Column } from './es-modules/DataGrid/Column';
+export { default as Row } from './es-modules/DataGrid/Row';
+export { default as Cell } from './es-modules/DataGrid/Cell';
+export { default as Options } from './es-modules/DataGrid/Options';
 
 export const win: typeof Globals.win;
 

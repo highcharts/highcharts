@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,12 +22,11 @@
  *
  * */
 
-import DataGridCell from './DataGridCell.js';
-import DataGridTable from './DataGridTable.js';
-import Globals from './Globals.js';
-import DGUtils from './Utils.js';
-
-const { makeHTMLElement } = DGUtils;
+import type Cell from '../Cell';
+import TableCell from './TableCell.js';
+import Row from '../Row.js';
+import Table from '../Table.js';
+import Globals from '../Globals.js';
 
 /* *
  *
@@ -37,7 +37,7 @@ const { makeHTMLElement } = DGUtils;
 /**
  * Represents a row in the data grid.
  */
-class DataGridRow {
+class TableRow extends Row {
 
     /* *
     *
@@ -48,23 +48,7 @@ class DataGridRow {
     /**
      * The cells of the row.
      */
-    public cells: DataGridCell[] = [];
-
-    /**
-     * The HTML element of the row.
-     */
-    public htmlElement: HTMLTableRowElement;
-
-    /**
-     * The index of the row in the data table.
-     */
-    public index: number;
-
-    /**
-     * The viewport the row belongs to.
-     */
-    public viewport: DataGridTable;
-
+    public cells: Cell[] = [];
 
     /* *
     *
@@ -81,16 +65,11 @@ class DataGridRow {
      * @param index
      * The index of the row in the data table.
      */
-    constructor(viewport: DataGridTable, index: number) {
-        this.viewport = viewport;
-        this.index = index;
+    constructor(viewport: Table, index: number) {
+        super(viewport, index);
+        this.htmlElement.style.transform =
+            `translateY(${this.getDefaultTopOffset()}px)`;
 
-        this.htmlElement = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement,
-            style: {
-                transform: `translateY(${this.getDefaultTopOffset()}px)`
-            }
-        });
         this.setRowAttributes();
     }
 
@@ -107,9 +86,10 @@ class DataGridRow {
      */
     public render(): void {
         const columns = this.viewport.columns;
+        this.htmlElement.classList.add(Globals.classNames.rowElement);
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new DataGridCell(columns[i], this);
+            const cell = new TableCell(columns[i], this);
             cell.render();
         }
 
@@ -151,7 +131,7 @@ class DataGridRow {
      * @param cell
      * The cell to register.
      */
-    public registerCell(cell: DataGridCell): void {
+    public registerCell(cell: Cell): void {
         this.cells.push(cell);
     }
 
@@ -169,13 +149,6 @@ class DataGridRow {
         if (hovered) {
             this.viewport.dataGrid.hoveredRowIndex = this.index;
         }
-    }
-
-    /**
-     * Returns the default top offset of the row (before adjusting row heights).
-     */
-    public getDefaultTopOffset(): number {
-        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
 
     /**
@@ -198,6 +171,13 @@ class DataGridRow {
             el.classList.add(Globals.classNames.hoveredRow);
         }
     }
+
+    /**
+     * Returns the default top offset of the row (before adjusting row heights).
+     */
+    public getDefaultTopOffset(): number {
+        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
+    }
 }
 
 
@@ -207,7 +187,7 @@ class DataGridRow {
  *
  * */
 
-namespace DataGridRow {
+namespace TableRow {
 
 }
 
@@ -218,4 +198,4 @@ namespace DataGridRow {
  *
  * */
 
-export default DataGridRow;
+export default TableRow;

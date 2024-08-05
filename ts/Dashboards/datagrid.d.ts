@@ -1,5 +1,5 @@
 export { default as DataGrid } from '../DataGrid/DataGrid.js';
-export { default as DataGridColumn } from '../DataGrid/DataGridColumn.js';
-export { default as DataGridRow } from '../DataGrid/DataGridRow.js';
-export { default as DataGridCell } from '../DataGrid/DataGridCell.js';
-export { default as DataGridOptions } from '../DataGrid/DataGridOptions.js';
+export { default as Column } from '../DataGrid/Column.js';
+export { default as Row } from '../DataGrid/Row.js';
+export { default as Cell } from '../DataGrid/Cell.js';
+export { default as Options } from '../DataGrid/Options.js';

@@ -22,14 +22,14 @@
  *
  * */
 
-import type DataGridOptions from './DataGridOptions';
+import type Options from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type ColumnSorting from './Actions/ColumnSorting';
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import DataGridColumn from './DataGridColumn.js';
-import DataGridDefaultOptions from './DataGridDefaultOptions.js';
-import DataGridTable from './DataGridTable.js';
+import Column from './Column.js';
+import DataGridDefaultOptions from './DefaultOptions.js';
+import Table from './Table.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
@@ -70,7 +70,7 @@ class DataGrid {
      */
     public static dataGrid(
         renderTo: string|HTMLElement,
-        options: DataGridOptions
+        options: Options
     ): DataGrid {
         return new DataGrid(renderTo, options);
     }
@@ -133,17 +133,17 @@ class DataGrid {
     /**
      * The options of the data grid.
      */
-    public options?: DataGridOptions;
+    public options?: Options;
 
     /**
      * The user options of the data grid.
      */
-    public userOptions?: DataGridOptions;
+    public userOptions?: Options;
 
     /**
      * The table (viewport) element of the data grid.
      */
-    public viewport?: DataGridTable;
+    public viewport?: Table;
 
     /**
      * The list of columns that should be displayed in the data grid.
@@ -180,7 +180,7 @@ class DataGrid {
      * @param options
      * The options of the data grid.
      */
-    constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
+    constructor(renderTo: string|HTMLElement, options: Options) {
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
 
@@ -207,12 +207,12 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the options.
      */
-    public update(options: DataGridOptions, render: boolean = true): void {
+    public update(options: Options, render: boolean = true): void {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
         if (!this.dataTable || options.table) {
-            this.loadDataTable(this.options.table);
+            this.loadDataTable(this.options?.table);
         }
 
         if (render) {
@@ -296,7 +296,7 @@ class DataGrid {
      * @param id
      * The ID of the column.
      */
-    public getColumn(id: string): DataGridColumn | undefined {
+    public getColumn(id: string): Column | undefined {
         const columns = this.enabledColumns;
         if (!columns) {
             return;
@@ -322,7 +322,7 @@ class DataGrid {
             className: Globals.classNames.tableElement
         }, this.container);
 
-        this.viewport = new DataGridTable(this, this.tableElement);
+        this.viewport = new Table(this, this.tableElement);
 
         // Accessibility
         this.tableElement.setAttribute(
