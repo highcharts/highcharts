@@ -299,7 +299,7 @@ export interface ColumnEvents {
     /**
      * Callback function to be called when the column is resized.
      */
-    resize?: ColumnEventCallback;
+    afterResize?: ColumnEventCallback;
 }
 
 export interface HeaderEvents {
