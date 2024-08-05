@@ -22,12 +22,13 @@
  *
  * */
 
+import type DataTable from '../../Data/DataTable';
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
 import Utils from '../../Core/Utilities.js';
 
-const { fireEvent } = Utils;
+const { defined, fireEvent } = Utils;
 
 
 /* *
@@ -72,6 +73,8 @@ class TableCell extends Cell {
     constructor(column: Column, row: Row) {
         super(column, row);
 
+        this.column.registerCell(this);
+
         this.htmlElement.addEventListener('mouseover', this.onMouseOver);
         this.htmlElement.addEventListener('mouseout', this.onMouseOut);
         this.htmlElement.addEventListener('click', this.onClick);
@@ -83,6 +86,14 @@ class TableCell extends Cell {
     *  Methods
     *
     * */
+
+    /**
+     * Renders the cell.
+     */
+    public render(): void {
+        super.render();
+        this.setValue(this.column.data?.[this.row.index], false);
+    }
 
     /**
      * Sets the hover state of the cell and its row and column.
@@ -126,6 +137,39 @@ class TableCell extends Cell {
             target: this
         });
     };
+
+    /**
+     * Sets the value & updating content of the cell.
+     *
+     * @param value
+     * The raw value to set.
+     *
+     * @param updateTable
+     * Whether to update the table after setting the content.
+     */
+    public setValue(value: DataTable.CellType, updateTable: boolean): void {
+        const element = this.htmlElement;
+
+        this.value = value;
+
+        if (!defined(value)) {
+            value = '';
+        }
+
+        this.renderHTMLCellContent(
+            this.formatCell(value, this),
+            element
+        );
+
+        if (updateTable) {
+            const vp = this.row.viewport;
+            vp.dataTable.setCell(
+                this.column.id,
+                this.row.index,
+                this.value
+            );
+        }
+    }
 
     /**
      * Destroys the cell.

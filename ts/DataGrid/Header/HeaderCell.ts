@@ -101,6 +101,8 @@ class HeaderCell extends Cell {
             className: Globals.classNames.headCellContent
         }, this.htmlElement);
 
+        this.value = innerText;
+
         // Set the accessibility attributes.
         this.htmlElement.setAttribute('scope', 'col');
         this.htmlElement.setAttribute('data-column-id', column.id);

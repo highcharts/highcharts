@@ -28,10 +28,8 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
 import F from '../Core/Templating.js';
-import Utils from '../Core/Utilities.js';
 
 const { format } = F;
-const { defined } = Utils;
 
 
 /* *
@@ -87,10 +85,9 @@ abstract class Cell {
 
         this.column = column;
         this.row = row;
+        this.row.registerCell(this);
 
         this.htmlElement = this.init();
-        this.column.registerCell(this);
-        this.row.registerCell(this);
     }
 
 
@@ -111,40 +108,6 @@ abstract class Cell {
      */
     public render(): void {
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.setValue(this.column.data?.[this.row.index], false);
-    }
-
-    /**
-     * Sets the value & updating content of the cell.
-     *
-     * @param value
-     * The raw value to set.
-     *
-     * @param updateTable
-     * Whether to update the table after setting the content.
-     */
-    public setValue(value: DataTable.CellType, updateTable: boolean): void {
-        const element = this.htmlElement;
-
-        this.value = value;
-
-        if (!defined(value)) {
-            value = '';
-        }
-
-        this.renderHTMLCellContent(
-            this.formatCell(value, this),
-            element
-        );
-
-        if (updateTable) {
-            const vp = this.row.viewport;
-            vp.dataTable.setCell(
-                this.column.id,
-                this.row.index,
-                this.value
-            );
-        }
     }
 
     /**
@@ -200,7 +163,7 @@ abstract class Cell {
      * Parent element where the content should be.
      *
      */
-    private renderHTMLCellContent(
+    public renderHTMLCellContent(
         cellContent: string,
         parentElement: HTMLElement
     ): void {
