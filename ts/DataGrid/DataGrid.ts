@@ -273,7 +273,7 @@ class DataGrid {
         let vp = this.viewport;
         const viewportMeta = vp?.getStateMeta();
 
-        this.enabledColumns = this.getEnabledColumnsIDs();
+        this.enabledColumns = this.getEnabledColumnIDs();
         vp?.destroy();
         if (this.container) {
             this.container.innerHTML = AST.emptyHTML;
@@ -349,10 +349,10 @@ class DataGrid {
      * Returns the array of IDs of columns that should be displayed in the data
      * grid, in the correct order.
      */
-    private getEnabledColumnsIDs(): string[] {
+    private getEnabledColumnIDs(): string[] {
         const columnsOptions = this.options?.columns;
         const columnsIncluded =
-            this.options?.columnsIncluded ??
+            this.options?.settings?.columns?.included ??
             this.dataTable?.getColumnNames();
 
         if (!columnsIncluded?.length) {

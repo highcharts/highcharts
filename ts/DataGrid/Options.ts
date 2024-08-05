@@ -47,7 +47,6 @@ export type CellEventCallback = (this: Cell) => void;
  */
 export type ColumnEventCallback = (this: Column) => void;
 
-
 /**
  * Returns a formatted cell's string.
  */
@@ -73,11 +72,6 @@ export interface Options {
      * Default options for the rows and columns.
      */
     defaults?: DataGridDefaults;
-
-    /**
-     * Columns included in the grid structure.
-     */
-    columnsIncluded?: Array<string>;
 
     /**
      * Options for individual columns.
@@ -119,6 +113,11 @@ export interface ColumnsSettings {
      * @default 'full'
      */
     distribution?: ColumnDistribution;
+
+    /**
+     * Columns included in the grid structure.
+     */
+    included?: Array<string>;
 
     /**
      * Whether the columns should be resizable.
