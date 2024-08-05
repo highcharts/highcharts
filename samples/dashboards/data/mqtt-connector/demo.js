@@ -13,9 +13,6 @@ Highcharts.setOptions({
     legend: {
         enabled: false
     },
-    title: {
-        text: 'Generated Power'
-    },
     xAxis: {
         type: 'datetime',
         labels: {
@@ -58,13 +55,7 @@ const mqttConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
-    password: 'Qs0URPjxnWlcuYBmFWNK',
-    connectionHandler: function (isConnected) {
-        console.log('MQTT broker connection:', isConnected);
-    },
-    errorHandler: function (error) {
-        console.error('Error:', error);
-    }
+    password: 'Qs0URPjxnWlcuYBmFWNK'
 };
 
 // Connector configuration
@@ -78,9 +69,25 @@ const connConfig = {
         const modifiedData = [];
         if (data.aggs) {
             const ts = new Date(data.tst_iso).valueOf();
+            // Generated power in MW
             modifiedData.push([ts, data.aggs[0].P_gen]);
         }
         return modifiedData;
+    },
+    connectEvent: (isConnected, host, port, user) => {
+        // eslint-disable-next-line max-len
+        logAppend(`Client ${isConnected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
+    },
+    subscribeEvent: (isSubscribed, topic) => {
+        logAppend(
+            `Client ${isSubscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
+        );
+    },
+    packetEvent: (topic, packet) => {
+        logAppend(`Packet received: ${topic} - ${packet}`);
+    },
+    errorEvent: error => {
+        logAppend(`<span style="color:red">${error}</span>`);
     }
 };
 
@@ -119,6 +126,11 @@ function createDashboard() {
             },
             sync: {
                 highlight: true
+            },
+            chartOptions: {
+                title: {
+                    text: 'Power Station 1'
+                }
             }
         }, {
             renderTo: 'data-grid-1',
@@ -142,8 +154,12 @@ function createDashboard() {
             },
             sync: {
                 highlight: true
+            },
+            chartOptions: {
+                title: {
+                    text: 'Power Station 2'
+                }
             }
-
         }, {
             renderTo: 'data-grid-2',
             type: 'DataGrid',
@@ -154,25 +170,64 @@ function createDashboard() {
                 highlight: true
             },
             dataGridOptions: dataGridOptions
+        }, {
+            renderTo: 'html-log',
+            type: 'HTML',
+            title: 'MQTT Event Log',
+            html: '<pre id="log-content"></pre>'
         }],
         gui: {
             layouts: [{
                 rows: [{
+                    // For power station 1
                     cells: [{
                         id: 'column-chart-1'
                     }, {
                         id: 'data-grid-1'
                     }]
                 }, {
+                    // For power station 2
                     cells: [{
                         id: 'column-chart-2'
                     }, {
                         id: 'data-grid-2'
                     }]
+                }, {
+                    // Log/info area
+                    cells: [{
+                        id: 'html-log'
+                    }]
                 }]
             }]
         }
     }, true);
+}
+
+
+/* *
+ *
+ *  Event log
+ *
+ * */
+let logContent;
+
+window.onload = () => {
+    logContent = document.getElementById('log-content');
+    logClear();
+    logAppend('Application started');
+};
+
+function logAppend(message) {
+    // Append message with timestamp
+    const time = new Date().toLocaleTimeString();
+    logContent.innerHTML += `${time}: ${message}\n`;
+
+    // Scroll to bottom
+    logContent.scrollTop = logContent.scrollHeight;
+}
+
+function logClear() {
+    logContent.innerHTML = '';
 }
 
 
@@ -198,7 +253,7 @@ const JSONConverter = modules['Data/Converters/JSONConverter.js'];
 const U = modules['Core/Utilities.js'];
 const { merge } = U;
 
-// Connector instances, indexed by clientID
+// Connector instances, indexed by clientId
 const instanceTable = {};
 
 
@@ -226,19 +281,16 @@ class MQTTConnector extends DataConnector {
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
 
-        // Set up event handlers
-        this.connectionHandler = options.connectionHandler;
-
         // Connection status
         this.connected = false;
         this.packetCount = 0;
 
         // Generate a unique client ID
-        const clientID = 'clientID-' + Math.floor(Math.random() * 10000);
-        this.clientID = clientID;
+        const clientId = 'clientId-' + Math.floor(Math.random() * 10000);
+        this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        instanceTable[clientID] = this;
+        instanceTable[clientId] = this;
     }
 
     /* *
@@ -258,7 +310,7 @@ class MQTTConnector extends DataConnector {
             } = connector.options;
 
         // Start MQTT client
-        this.mqtt = new MQTTClient(host, port, this.clientID);
+        this.mqtt = new MQTTClient(host, port, this.clientId);
         this.mqtt.onConnectionLost = this.onConnectionLost;
         this.mqtt.onMessageArrived = this.onMessageArrived;
 
@@ -305,8 +357,12 @@ class MQTTConnector extends DataConnector {
      */
     async subscribe() {
         if (this.connected) {
-            const { topic, qOs } = this.options;
+            const { topic, qOs, subscribeEvent } = this.options;
             this.mqtt.subscribe(topic, { qos: qOs });
+
+            if (subscribeEvent) {
+                subscribeEvent(true, topic);
+            }
             return;
         }
         throw Error('Not connected: subscription not possible');
@@ -318,7 +374,12 @@ class MQTTConnector extends DataConnector {
      */
     unsubscribe() {
         if (this.connected) {
-            this.mqtt.unsubscribe(this.options.topic);
+            const { topic, subscribeEvent } = this.options.topic;
+            this.mqtt.unsubscribe(topic);
+
+            if (subscribeEvent) {
+                subscribeEvent(false, topic);
+            }
         }
     }
 
@@ -328,7 +389,11 @@ class MQTTConnector extends DataConnector {
      */
     onConnect() {
         this.connected = true;
-        this.connectionHandler(true);
+        const { host, port, user, connectEvent } = this.options;
+
+        if (connectEvent) {
+            connectEvent(true, host, port, user);
+        }
 
         // Subscribe to the topic
         this.subscribe();
@@ -345,6 +410,12 @@ class MQTTConnector extends DataConnector {
             connTable = connector.table;
 
         connector.packetCount++;
+
+        // Execute custom packet handler
+        const packetEvent = connector.options.packetEvent;
+        if (packetEvent) {
+            packetEvent(mqttPacket.destinationName, mqttPacket.payloadString);
+        }
 
         // Parse the message
         const data = JSON.parse(mqttPacket.payloadString);
@@ -367,18 +438,25 @@ class MQTTConnector extends DataConnector {
      * Handle lost connection
      *
      */
-    onConnectionLost(responseObject) {
+    onConnectionLost(response) {
         // Executes in Paho.MQTT.Client context
-        if (responseObject.errorCode !== 0) {
-            console.error('onConnectionLost:', responseObject.errorMessage);
-        }
         const connector = instanceTable[this.clientId];
         connector.connected = false;
         connector.packetCount = 0;
 
+        const { connectEvent, errorEvent } = connector.options;
+
         // Execute custom connection handler
-        if (connector.options.connectionHandler) {
-            connector.options.connectionHandler(false);
+        if (connectEvent) {
+            connectEvent(false);
+        }
+
+        if (response.errorCode !== 0) {
+            // Execute custom error handler
+            if (errorEvent) {
+                errorEvent(response.errorMessage);
+            }
+            console.error('onConnectionLost:', response.errorMessage);
         }
     }
 
@@ -387,14 +465,14 @@ class MQTTConnector extends DataConnector {
      *
      */
     onFailure(response) {
-        console.error('Failed to connect:', response);
         this.connected = false;
         this.packetCount = 0;
 
         // Execute custom error handler
-        if (this.options.errorHandler) {
-            this.options.errorHandler(response);
+        if (this.options.errorEvent) {
+            this.options.errorEvent(response.errorMessage);
         }
+        console.error('onFailure:', response);
     }
 }
 
