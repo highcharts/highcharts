@@ -294,8 +294,7 @@ class StockToolsComponent extends AccessibilityComponent {
     }
 
     private announceTool(
-        buttonElement: HTMLElement,
-        submenuClosed: boolean = false
+        buttonElement: HTMLElement
     ): void {
         const toolLabel = buttonElement.dataset.label;
         if (toolLabel) {
@@ -322,8 +321,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 this.chart.langFormat(
                     'stockTools.toolSelected',
                     {
-                        toolLabel,
-                        submenuClosed
+                        toolLabel
                     }
                 )
             );
@@ -364,6 +362,7 @@ class StockToolsComponent extends AccessibilityComponent {
                     // Insert a close button
                     const buttonClone = component.createElement('button');
                     buttonClone.setAttribute('aria-label', 'Close submenu');
+                    buttonClone.setAttribute('role', 'menuitem');
                     buttonClone.textContent = 'Close';
                     buttonClone.style.fontSize = '0.6rem';
                     buttonClone.style.height = '1.2rem';
@@ -456,10 +455,10 @@ class StockToolsComponent extends AccessibilityComponent {
 
                     // Announce here as 'selectButton' event is not fired and
                     // ctrl-option-space works otherwise
-                    component.announceTool(button);
 
                     component.closeSubmenu(submenu);
                     component.focusButton();
+                    component.announceTool(button);
 
                     return component.keyboardNavigationHandler.response.success;
                 }
@@ -540,12 +539,10 @@ class StockToolsComponent extends AccessibilityComponent {
                                     .querySelector('button');
 
                                 if (button) {
-                                    const didCloseSubmenus =
-                                        this.closeOpenSubmenus();
+                                    this.closeOpenSubmenus();
 
                                     this.announceTool(
-                                        button,
-                                        didCloseSubmenus
+                                        button
                                     );
                                 }
                             }

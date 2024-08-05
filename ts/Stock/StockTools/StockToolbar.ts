@@ -334,7 +334,7 @@ class Toolbar {
                 className: 'highcharts-submenu-wrapper'
             }, void 0, buttonWrapper);
 
-        submenuWrapper.setAttribute('role', 'menu');
+        submenuWrapper.setAttribute('role', 'group');
         submenuWrapper.id = 'highcharts-submenu-wrapper-' +
             parentBtn.mainButton.dataset.btnName;
 
@@ -553,7 +553,10 @@ class Toolbar {
         const descriptions = lang.descriptions[btnName];
 
         if (btnName === 'separator') {
-            buttonWrapper.setAttribute('aria-hidden', 'true');
+            mainButton.setAttribute('role', 'separator');
+        } else {
+            mainButton.setAttribute('role', 'menuitem');
+            buttonWrapper.setAttribute('role', 'presentation');
         }
 
         // Set the default aria label
@@ -590,6 +593,8 @@ class Toolbar {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right'
             }, void 0, buttonWrapper);
+
+            submenuArrow.setAttribute('role', 'menuitem');
 
             if (descriptions?.submenuToggleButton) {
                 submenuArrow.setAttribute(
@@ -742,7 +747,7 @@ class Toolbar {
         });
 
         this.toolbar.setAttribute('aria-label', 'Stock tools');
-        this.toolbar.setAttribute('role', 'list');
+        this.toolbar.setAttribute('role', 'menu');
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
