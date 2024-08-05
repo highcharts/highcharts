@@ -612,7 +612,8 @@ QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
 });
 
 QUnit.test('Split tooltip, hovering between series', assert => {
-    const chart = Highcharts.chart('container', {
+    const clock = TestUtilities.lolexInstall(),
+        chart = Highcharts.chart('container', {
             tooltip: {
                 split: true,
                 animation: {
@@ -651,4 +652,6 @@ QUnit.test('Split tooltip, hovering between series', assert => {
         );
         endTest();
     }, 1000);
+
+    TestUtilities.lolexRunAndUninstall(clock);
 });

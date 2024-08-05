@@ -409,7 +409,9 @@ class Tooltip {
      * @return {Highcharts.SVGElement}
      * Tooltip label
      */
-    public getLabel(x: number = 0, y: number = 0): SVGElement {
+    public getLabel(
+        { anchorX, anchorY }: Partial<SVGElement> = { anchorX: 0, anchorY: 0 }
+    ): SVGElement {
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
@@ -486,8 +488,8 @@ class Tooltip {
                 this.label = renderer
                     .label(
                         '',
-                        x,
-                        y,
+                        anchorX,
+                        anchorY,
                         options.shape,
                         void 0,
                         void 0,
@@ -1057,17 +1059,9 @@ class Tooltip {
                             p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
-                    let label;
-
-                    if (wasShared && tooltip.tt) {
-                        const {
-                            anchorX = 0,
-                            anchorY = 0
-                        } = tooltip.tt;
-                        label = tooltip.getLabel(anchorX, anchorY);
-                    } else {
-                        label = tooltip.getLabel();
-                    }
+                    const label = tooltip.getLabel(
+                        wasShared && tooltip.tt || {}
+                    );
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
