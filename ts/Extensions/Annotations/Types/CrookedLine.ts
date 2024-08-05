@@ -97,6 +97,17 @@ class CrookedLine extends Annotation {
         );
     }
 
+    public redraw(animation: boolean | undefined): void {
+
+        this.linkPoints();
+        if (!this.graphic) {
+            this.createElements();
+            this.renderItems(this.shapes);
+        }
+
+        this.redrawItems(this.shapes, animation);
+    }
+
     public addShapes(): void {
         const typeOptions = this.options.typeOptions,
             shape = this.initShape(

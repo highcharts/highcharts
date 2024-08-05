@@ -300,24 +300,26 @@ abstract class Controllable implements ControlTarget {
      * @private
      */
     public update(
-        newOptions: DeepPartial<ControllableOptions>
+        newOptions: DeepPartial<ControllableOptions>,
+        redraw: boolean = true
     ): void {
-        const annotation = this.annotation,
-            options = merge(true, this.options, newOptions),
-            parentGroup = this.graphic.parentGroup,
-            Constructor: any = this.constructor;
 
-        this.destroy();
-        const newControllable = new Constructor(
-            annotation,
-            options,
-            this.index,
-            this.itemType
-        );
-        merge(true, this as any, newControllable);
+        const options = merge(true, this.options, newOptions);
+        if (this.itemType === 'label') {
+            const annotation = this.annotation,
+                Constructor: any = this.constructor;
+            const newControllable = new Constructor(
+                annotation,
+                options,
+                this.index,
+                this.itemType
+            );
+            merge(true, this as Controllable, newControllable);
+        }
 
-        this.render(parentGroup);
-        this.redraw();
+        if (redraw) {
+            this.redraw();
+        }
     }
 
 }

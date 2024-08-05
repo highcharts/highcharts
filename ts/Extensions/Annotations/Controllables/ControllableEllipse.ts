@@ -275,17 +275,21 @@ class ControllableEllipse extends Controllable {
         if (this.graphic) {
             const position = this.getAbsolutePosition(this.points[0]),
                 position2 = this.getAbsolutePosition(this.points[1]),
-                attrs = this.getAttrs(position, position2);
+                attrs = this.getAttrs(position, position2),
+                shapeOptions = this.options
 
             if (position) {
                 this.graphic[animation ? 'animate' : 'attr']({
+
                     cx: attrs.cx,
                     cy: attrs.cy,
                     rx: attrs.rx,
                     ry: attrs.ry,
                     rotation: attrs.angle,
                     rotationOriginX: attrs.cx,
-                    rotationOriginY: attrs.cy
+                    rotationOriginY: attrs.cy,
+                    stroke: shapeOptions.stroke,
+                    strokeWidth: shapeOptions.strokeWidth
                 });
             } else {
                 this.graphic.attr({

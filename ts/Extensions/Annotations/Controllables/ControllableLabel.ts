@@ -416,10 +416,13 @@ class ControllableLabel extends Controllable {
         const options = this.options,
             text = this.text || options.format || options.text,
             label = this.graphic,
-            point = this.points[0];
+            point = this.points[0],
+            attrs = this.attrsFromOptions(this.options),
+            chart = this.annotation.chart;
 
         if (!label) {
-            this.redraw(animation);
+            // create label?
+            // this.redraw(animation);
             return;
         }
 
@@ -428,21 +431,26 @@ class ControllableLabel extends Controllable {
                 format(
                     String(text),
                     point.getLabelConfig(),
-                    this.annotation.chart
+                    chart
                 ) :
-                (options.formatter as any).call(point, this)
+                (options.formatter as any).call(point, this),
+            ...attrs
         });
 
+        if (!chart.styledMode) {
+            label.css(this.options.style);
+        }
+
         const anchor = this.anchor(point);
-        const attrs: (SVGAttributes|null|undefined) = this.position(anchor);
+        const position: (SVGAttributes|null|undefined) = this.position(anchor);
 
-        if (attrs) {
-            label.alignAttr = attrs;
+        if (position) {
+            label.alignAttr = position;
 
-            attrs.anchorX = anchor.absolutePosition.x;
-            attrs.anchorY = anchor.absolutePosition.y;
+            position.anchorX = anchor.absolutePosition.x;
+            position.anchorY = anchor.absolutePosition.y;
 
-            label[animation ? 'animate' : 'attr'](attrs);
+            label[animation ? 'animate' : 'attr'](position);
         } else {
             label.attr({
                 x: 0,
@@ -450,7 +458,7 @@ class ControllableLabel extends Controllable {
             });
         }
 
-        label.placed = !!attrs;
+        label.placed = !!position;
 
         super.redraw(animation);
     }
