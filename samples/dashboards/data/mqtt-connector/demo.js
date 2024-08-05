@@ -235,7 +235,13 @@ function logClear() {
  *
  *  MQTT connector class - custom connector
  *
- * */
+ *
+ * Useful references for Paho MQTT library
+ *
+ * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
+ * https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
+ *
+ */
 
 let MQTTClient;
 try {
@@ -253,7 +259,7 @@ const JSONConverter = modules['Data/Converters/JSONConverter.js'];
 const U = modules['Core/Utilities.js'];
 const { merge } = U;
 
-// Connector instances, indexed by clientId
+// Connector instances, indexed by clientId, one MQTT client per connector
 const instanceTable = {};
 
 
@@ -306,7 +312,7 @@ class MQTTConnector extends DataConnector {
     async load() {
         const connector = this,
             {
-                host, port
+                host, port, autoConnect
             } = connector.options;
 
         // Start MQTT client
@@ -314,7 +320,9 @@ class MQTTConnector extends DataConnector {
         this.mqtt.onConnectionLost = this.onConnectionLost;
         this.mqtt.onMessageArrived = this.onMessageArrived;
 
-        await this.connect();
+        if (autoConnect) {
+            await this.connect();
+        }
 
         return connector;
     }
@@ -357,12 +365,22 @@ class MQTTConnector extends DataConnector {
      */
     async subscribe() {
         if (this.connected) {
-            const { topic, qOs, subscribeEvent } = this.options;
-            this.mqtt.subscribe(topic, { qos: qOs });
+            const { topic, qOs, subscribeEvent, failureEvent } = this.options;
+            this.mqtt.subscribe(topic, {
+                qos: qOs,
+                onSuccess: () => {
+                    if (subscribeEvent) {
+                        subscribeEvent(true, topic);
+                    }
+                },
+                onFailure: response => {
+                    if (subscribeEvent) {
+                        failureEvent(response.errorMessage);
+                    }
+                },
+                timeout: 10
+            });
 
-            if (subscribeEvent) {
-                subscribeEvent(true, topic);
-            }
             return;
         }
         throw Error('Not connected: subscription not possible');
@@ -374,8 +392,20 @@ class MQTTConnector extends DataConnector {
      */
     unsubscribe() {
         if (this.connected) {
-            const { topic, subscribeEvent } = this.options.topic;
-            this.mqtt.unsubscribe(topic);
+            const { topic, subscribeEvent, failureEvent } = this.options;
+
+            this.mqtt.unsubscribe(topic, {
+                onSuccess: () => {
+                    if (subscribeEvent) {
+                        subscribeEvent(false, topic);
+                    }
+                },
+                onFailure: response => {
+                    if (subscribeEvent) {
+                        failureEvent(response.errorMessage);
+                    }
+                }
+            });
 
             if (subscribeEvent) {
                 subscribeEvent(false, topic);
@@ -389,14 +419,16 @@ class MQTTConnector extends DataConnector {
      */
     onConnect() {
         this.connected = true;
-        const { host, port, user, connectEvent } = this.options;
+        const { host, port, user, connectEvent, autoSubscribe } = this.options;
 
         if (connectEvent) {
             connectEvent(true, host, port, user);
         }
 
         // Subscribe to the topic
-        this.subscribe();
+        if (autoSubscribe) {
+            this.subscribe();
+        }
     }
 
     /**
@@ -427,11 +459,9 @@ class MQTTConnector extends DataConnector {
             // First message, initialize columns for data storage
             connTable.setColumns(convTable.getColumns());
         } else {
-            // Subsequent message, append row
+            // Subsequent message, append as row
             connTable.setRows(convTable.getRows());
         }
-
-        // TBD: Invoke data modifier (if any)
     }
 
     /**
@@ -490,7 +520,9 @@ MQTTConnector.defaultOptions = {
     qOs: 0,  // Quality of Service
     topic: 'mqtt',
     useSSL: true,
-    cleanSession: true
+    cleanSession: true,
+    autoConnect: true,
+    autoSubscribe: true
 };
 
 // Register the connector
