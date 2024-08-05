@@ -94,8 +94,8 @@ Highcharts.chart('container', {
         visible: false,
         startOnTick: false,
         endOnTick: false,
-        min: -230,
-        max: 230
+        minPadding: 0.1,
+        maxPadding: 0.15
     },
 
     legend: {
@@ -123,7 +123,7 @@ Highcharts.chart('container', {
             point: {
                 x: 24.25,
                 xAxis: 0,
-                y: 150,
+                y: 140,
                 yAxis: 0
             },
             text: 'Russia banned from<br>the Olympic Games<br> in 2017'
