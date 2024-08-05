@@ -288,6 +288,15 @@ class InfoRegionsComponent extends AccessibilityComponent {
             }
         });
 
+        if (chart.exporting) {
+            // Needed when print logic in exporting does not trigger
+            // rerendering thus repositioning of screen reader DOM elements
+            // (#21554)
+            this.addEvent(chart, 'afterPrint', function (): void {
+                component.updateAllScreenReaderSections();
+            });
+        }
+
         this.announcer = new Announcer(chart, 'assertive');
     }
 
@@ -369,10 +378,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * to get a11y info from series.
      */
     public onChartRender(): void {
-        const component = this;
-
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
         this.setLinkedDescriptionAttrs();
+        this.updateAllScreenReaderSections();
+    }
+
+    public updateAllScreenReaderSections(): void {
+        const component = this;
 
         Object.keys(this.screenReaderSections).forEach(function (
             regionKey: string
@@ -380,7 +392,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
             component.updateScreenReaderSection(regionKey);
         });
     }
-
 
     /**
      * @private
