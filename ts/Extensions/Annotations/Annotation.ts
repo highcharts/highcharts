@@ -872,8 +872,8 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.destroy();
         this.initProperties(chart, options);
         this.init(chart, options);
-        // Update options in chart options, used in exporting (#9767):
-        chart.options.annotations[userOptionsIndex] = options;
+        // Update options in chart options, used in exporting (#9767, #21507):
+        chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
         if (pick(redraw, true)) {
