@@ -8,8 +8,8 @@ Highcharts.chart('container', {
 
     legend: {
         events: {
-            itemClick: function () {
-                const visibility = this.visible ? 'visible' : 'hidden';
+            itemClick: function (e) {
+                const visibility = e.legendItem.visible ? 'visible' : 'hidden';
                 if (!confirm(
                     'The series is currently ' +
                              visibility + '. Do you want to change ' +
