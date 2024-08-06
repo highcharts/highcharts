@@ -59,7 +59,8 @@ const mqttConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
-    password: 'Qs0URPjxnWlcuYBmFWNK'
+    password: 'Qs0URPjxnWlcuYBmFWNK',
+    useSSL: true
 };
 
 // Connector configuration
@@ -559,8 +560,8 @@ MQTTConnector.defaultOptions = {
     password: '',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: 'mqtt',
-    useSSL: true,
+    topic: '',
+    useSSL: false,
     cleanSession: true,
 
     // Custom connector properties
