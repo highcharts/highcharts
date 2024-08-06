@@ -36,6 +36,12 @@
  *  Demo specific
  *
  * */
+.highcharts-dashboards-wrapper {
+    background-color: var(--highcharts-neutral-color-10);
+    border-radius: var(--component-rounded-corners);
+    padding: 10px;
+    overflow: hidden;
+}
 
 .highcharts-dashboards-component {
     background-color: var(--component-background);
@@ -47,9 +53,21 @@
     font-size: 12px;
 }
 
+#html-log {
+    background-color: var(--highcharts-neutral-color-10);
+    border-radius: var(--component-rounded-corners);
+    padding: 10px;
+    max-height: var(--log-height);
+    overflow: scroll;
+}
+
+#html-log .highcharts-dashboards-component-title {
+    text-align: center;
+    font-size: 18px;
+}
+
 #log-content {
     max-height: var(--log-height);
-    overflow-y: auto;
     padding: 10px;
     font: "Courier New", Courier, monospace;
     font-size: 12px;
@@ -74,4 +92,9 @@
 
 #app-control #connect-status::before {
     content: "MQTT ";
+}
+
+#div.description {
+    padding: 10px;
+    font-size: 12px;
 }

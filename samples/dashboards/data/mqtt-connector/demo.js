@@ -4,6 +4,10 @@
  *
  * */
 
+// Global board instance for use in event handlers
+let board = null;
+
+
 // Highcharts common options
 Highcharts.setOptions({
     chart: {
@@ -84,8 +88,13 @@ const connConfig = {
             `Client ${isSubscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
         );
     },
-    packetEvent: (topic, packet) => {
-        logAppend(`Packet received: ${topic} - ${packet}`);
+    packetEvent: (topic, packet, packetCount) => {
+        if (packetCount === 1) {
+            // Extract data that are only needed at startup
+            const data = JSON.parse(packet);
+            setPowerPlantName(topic, data.name);
+        }
+        logAppend(`Packet #${packetCount} received: ${topic} - ${packet}`);
     },
     errorEvent: error => {
         setConnectStatus(false);
@@ -94,9 +103,9 @@ const connConfig = {
 };
 
 
-// Create the dashboard
-function createDashboard() {
-    return Dashboards.board('container', {
+// Create the board
+async function createDashboard() {
+    board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 type: 'MQTT',
@@ -242,12 +251,9 @@ window.onload = () => {
 };
 
 function logAppend(message) {
-    // Append message with timestamp
+    // Prepend message with timestamp
     const time = new Date().toLocaleTimeString();
-    logContent.innerHTML += `${time}: ${message}\n`;
-
-    // Scroll to bottom
-    logContent.scrollTop = logContent.scrollHeight;
+    logContent.innerHTML = `${time}: ${message}\n` + logContent.innerHTML;
 }
 
 function logClear() {
@@ -259,6 +265,25 @@ function setConnectStatus(isConnected) {
     connectStatus.style.color = isConnected ? 'green' : 'red';
 }
 
+function setPowerPlantName(topic, name) {
+    let component;
+
+    if (topic.includes('kraftverk_1')) {
+        component = board.getComponentByCellId('column-chart-1');
+    } else if (topic.includes('kraftverk_2')) {
+        component = board.getComponentByCellId('column-chart-2');
+    }
+
+    // Update chart title
+    component.update({
+        chartOptions: {
+            title: {
+                text: name
+            }
+        }
+    });
+    logAppend('Power plant name: ' + name);
+}
 
 /* *
  *
@@ -454,14 +479,6 @@ class MQTTConnector extends DataConnector {
             converter = connector.converter,
             connTable = connector.table;
 
-        connector.packetCount++;
-
-        // Execute custom packet handler
-        const packetEvent = connector.options.packetEvent;
-        if (packetEvent) {
-            packetEvent(mqttPacket.destinationName, mqttPacket.payloadString);
-        }
-
         // Parse the message
         const data = JSON.parse(mqttPacket.payloadString);
         converter.parse({ data });
@@ -474,6 +491,18 @@ class MQTTConnector extends DataConnector {
         } else {
             // Subsequent message, append as row
             connTable.setRows(convTable.getRows());
+        }
+
+        connector.packetCount++;
+
+        // Execute custom packet handler
+        const packetEvent = connector.options.packetEvent;
+        if (packetEvent) {
+            packetEvent(
+                mqttPacket.destinationName,
+                mqttPacket.payloadString,
+                connector.packetCount
+            );
         }
     }
 
