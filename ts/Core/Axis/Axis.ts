@@ -498,7 +498,7 @@ class Axis {
             plotBandCollector = (
                 function (): (SVGElement | undefined)[] {
                     // It is possible that plotLinesAndBands and options
-                    // is undefined.
+                    // is/becomes undefined.
                     const plotLinesAndBands = (
                         !axis.options?.labels?.allowOverlap &&
                         axis.plotLinesAndBands

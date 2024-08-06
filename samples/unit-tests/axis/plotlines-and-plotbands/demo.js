@@ -850,3 +850,57 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         'plotBand with acrossPanes = true has greater height'
     );
 });
+
+QUnit.test(
+    '#21521: Hiding overlapping plotBand/plotLine labels ',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                xAxis: {
+                    plotLines: [{
+                        value: 1,
+                        label: {
+                            text: '0000000000000000'
+                        }
+                    },
+                    {
+                        value: 1,
+                        label: {
+                            text: '================'
+                        }
+                    },
+                    {
+                        value: 1.01,
+                        label: {
+                            text: '%%%%%%%%%%%%%%%%'
+                        }
+                    }]
+                },
+
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            xAxis = chart.series[0].xAxis,
+            opacityTester = vals => {
+                const plotLinesAndBands = xAxis.plotLinesAndBands;
+
+                for (let i = 0; i < 3; i++) {
+                    assert.strictEqual(
+                        plotLinesAndBands[i].label.opacity,
+                        vals[i],
+                        `Opacity of label number ${i} should be ${vals[i]}`
+                    );
+                }
+            };
+
+        opacityTester([1, 0, 0]);
+
+        chart.series[0].xAxis.update({
+            labels: {
+                allowOverlap: true
+            }
+        });
+
+        opacityTester([1, 1, 1]);
+    }
+);
