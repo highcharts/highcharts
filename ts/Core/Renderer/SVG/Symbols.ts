@@ -62,7 +62,7 @@ function arc(
                 Math.abs((options.end || 0) - start - 2 * Math.PI) <
                 proximity
             ),
-            end = (options.end || 0) - proximity,
+            end = (options.end || 0) - (fullCircle ? proximity : 0),
             innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
             cosStart = Math.cos(start),
