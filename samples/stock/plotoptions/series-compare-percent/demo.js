@@ -48,7 +48,7 @@
     const promises = names.map(name => new Promise(resolve => {
         (async () => {
             const data = await fetch(
-                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/' +
+                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/' +
                 'samples/data/' + name.toLowerCase() + '-c.json'
             )
                 .then(response => response.json());
