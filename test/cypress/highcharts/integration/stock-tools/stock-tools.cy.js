@@ -266,13 +266,13 @@ describe('A11Y - aria-attributes', () => {
         cy.get('@submenu-arrows').first()
             .click()
             .should('have.attr', 'aria-expanded', 'true', 'aria-expanded should be true when expanded')
-            .siblings('ul[role=menu]')
+            .siblings('ul[role=group]')
             .should('be.visible');
 
         cy.get('@submenu-arrows').first()
             .click()
             .should('have.attr', 'aria-expanded', 'false', 'aria-expanded should be returned to false when toggled again')
-            .siblings('ul[role=menu]')
+            .siblings('ul[role=group]')
             .should('not.be.visible');
     });
 
