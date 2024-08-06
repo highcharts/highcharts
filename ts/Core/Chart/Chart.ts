@@ -1351,22 +1351,30 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
-        // Hidden divs offsets should be subtracted, #21888
-        let verticalOffsets = 0;
-        [].forEach.call(
-            this.renderTo.children,
-            (child: HTMLDOMElement): void => {
-                if (child !== this.container) {
-                    verticalOffsets += child.offsetHeight;
+        // Temporarily hide support divs from a11y and others, #21888
+        const nonContainers = [].map.call(
+                this.renderTo.children,
+                (child: HTMLDOMElement): [HTMLElement, string] | undefined => {
+                    if (child !== this.container) {
+                        const display = child.style.display;
+                        child.style.display = 'none';
+                        return [child, display];
+                    }
                 }
+            ) as Array<[HTMLElement, string]>,
+            box = {
+                width: getStyle(this.renderTo, 'width', true) || 0,
+                height: (getStyle(this.renderTo, 'height', true) || 0)
+            };
+
+        // Restore the non-containers
+        nonContainers.filter(Boolean).forEach(
+            ([div, display]): void => {
+                div.style.display = display;
             }
         );
 
-        return {
-            width: getStyle(this.renderTo, 'width', true) || 0,
-            height: (getStyle(this.renderTo, 'height', true) || 0) -
-                verticalOffsets
-        };
+        return box;
     }
 
     /**
