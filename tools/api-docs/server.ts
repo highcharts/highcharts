@@ -25,11 +25,16 @@ import Database from './database';
  * */
 
 
-interface Context {
+interface Context extends Record<string, unknown> {
     node: TreeLib.Option;
+    side: TreeLib.Option;
     platform: string;
-    productModule: string;
-    productName: string;
+    toc: Record<string, ContextTOCItem>
+}
+
+
+interface ContextTOCItem extends Record<string, unknown> {
+    displayName: string;
 }
 
 
@@ -74,31 +79,43 @@ const PATH_ESCAPE = /\.\.?\/|\/\.|\/\//u;
 
 const PORT = 9005;
 
-const PRODUCT_META = [
+const PRODUCT_META: Record<string, Record<string, string>> = [
     {
-        className: 'Highcharts',
+        constructor: 'chart',
         id: 'highcharts',
-        name: 'Highcharts Core'
+        module: 'highcharts',
+        name: 'Highcharts Core',
+        namespace: 'Highcharts'
     },
     {
-        className: 'Highcharts',
+        constructor: 'stockChart',
         id: 'highstock',
-        name: 'Highcharts Stock'
+        module: 'highstock',
+        name: 'Highcharts Stock',
+        namespace: 'Highcharts'
     },
     {
-        className: 'Highcharts',
+        constructor: 'mapChart',
         id: 'highmaps',
-        name: 'Highcharts Maps'
+        module: 'highmaps',
+        name: 'Highcharts Maps',
+        namespace: 'Highcharts'
     },
     {
-        className: 'Highcharts',
+        constructor: 'ganttChart',
         id: 'gantt',
-        name: 'Highcharts Gantt'
+        module: 'highcharts-gantt',
+        name: 'Highcharts Gantt',
+        namespace: 'Highcharts'
     },
     {
-        className: 'Dashboards',
+        constructor: 'board',
         id: 'dashboards',
-        name: 'Highcharts Dashboards'
+        module: 'dashboards',
+        name: 'Highcharts Dashboards',
+        namespace: 'Dashboards',
+        noClassReference: true,
+        noGlobalOptions: true
     }
 ].reduce((obj, product) => {
     obj[product.id] = product;
@@ -120,12 +137,40 @@ async function getContext(
     itemName: string = '',
     version?: number
 ): Promise<Context> {
+    const productMeta = PRODUCT_META[database.product];
+
     return {
-        node: await getOption(database, itemName, version, true),
+        constr: productMeta.constructor,
+        date: (new Date()).toISOString().substring(0, 19).replace('T', ''),
+        node: await getOption(database, itemName, version),
+        side: await getOption(database, itemName, version, true),
         platform: 'JS',
-        productModule: database.product,
-        productName: PRODUCT_META[database.product].name
-    };
+        product: productMeta,
+        productModule: productMeta.module,
+        productName: productMeta.name,
+        toc: await getContextTOC(database)
+    } as Context;
+}
+
+
+async function getContextTOC(
+    database: Database
+) {
+    const toc: Record<string, ContextTOCItem> = {};
+
+    let tocItem: ContextTOCItem;
+    let tocMeta: Record<string, string>;
+
+    for (const key of Object.keys(PRODUCT_META)) {
+        tocMeta = PRODUCT_META[key];
+        tocItem = {
+            active: key === database.product,
+            displayName: tocMeta.name
+        };
+        toc[key] = tocItem;
+    }
+
+    return toc;
 }
 
 
@@ -195,11 +240,12 @@ async function getNav(
     itemName: string = '',
     version?: number
 ): Promise<Nav> {
-    const item = await database.getItem(
-        (itemName === 'index' ? '' : itemName),
-        version
-    );
+    itemName = (itemName === 'index' ? '' : itemName);
+
+    const item = await database.getItem(itemName, version);
     const nav: Nav = (item ? toNav(item) : {});
+
+    console.log([itemName, item]);
 
     let navChildren: Array<Nav> = [];
 
@@ -239,22 +285,6 @@ function toNav(item: Database.Item): Nav {
 
 
 /**
- * Loads old handlebar template.
- *
- * @return
- * Promise of the template delegate to call with a context object.
- */
-async function loadMainTemplate(): Promise<Handlebars.TemplateDelegate> {
-    return Handlebars.compile(
-        await FS.readFile(
-            FSLib.path([__dirname, 'templates/main.handlebars']),
-            'utf8'
-        )
-    );
-}
-
-
-/**
  * Loads new handlebar template and pending partials.
  *
  * @return
@@ -262,13 +292,13 @@ async function loadMainTemplate(): Promise<Handlebars.TemplateDelegate> {
  */
 async function loadServerTemplate(): Promise<Handlebars.TemplateDelegate> {
 
-    Handlebars.registerPartial(
-        'server-sidebar', 
-        await FS.readFile(
-            FSLib.path([__dirname, 'templates/server-sidebar.handlebars']),
-            'utf8'
-        )
-    );
+    // Handlebars.registerPartial(
+    //     'server-sidebar', 
+    //     await FS.readFile(
+    //         FSLib.path([__dirname, 'templates/server-sidebar.handlebars']),
+    //         'utf8'
+    //     )
+    // );
 
     return Handlebars.compile(
         await FS.readFile(
@@ -413,28 +443,35 @@ async function main() {
                         console.log(database.product, option);
                         response200(
                             response,
-                            template(getContext(database, option)),
+                            template(await getContext(database, option)),
                             'html'
                         );
                         return;
                     case 'json':
-                        if (option.startsWith('nav/')) {
-                            file = file.substring(0, file.length - 5);
-                            response200(
-                                response,
-                                JSON.stringify(
-                                    await getNav(database, file),
-                                    void 0,
-                                    '\t'
-                                ),
-                                'json'
-                            );
-                            return;
+                        if (!option.startsWith('nav/')) {
+                            throw new Error();
                         }
-                    default:
+                        file = file.substring(0, file.length - ext.length - 1);
                         response200(
                             response,
-                            await FS.readFile(`${STATIC_PATH}/${file}`, 'utf8'),
+                            JSON.stringify(
+                                await getNav(database, file),
+                                void 0,
+                                '\t'
+                            ),
+                            'json'
+                        );
+                        return;
+                    default:
+                        if (product !== 'static') {
+                            throw new Error();
+                        }
+                        response200(
+                            response,
+                            await FS.readFile(
+                                `${STATIC_PATH}/${file}`,
+                                'utf8'
+                            ),
                             ext
                         );
                         return;
