@@ -122,7 +122,7 @@ const PRODUCT_META: Record<string, Record<string, string>> = [
     return obj;
 }, {});
 
-const STATIC_PATH = FSLib.path([__dirname, 'static']);
+const STATIC_PATH = FSLib.path([__dirname, 'static-server']);
 
 
 /* *
@@ -137,13 +137,15 @@ async function getContext(
     itemName: string = '',
     version?: number
 ): Promise<Context> {
+    const node = await getOption(database, itemName, version);
     const productMeta = PRODUCT_META[database.product];
-
+    const side = await getOption(database, itemName, version, true);
+    console.log(node);
     return {
         constr: productMeta.constructor,
         date: (new Date()).toISOString().substring(0, 19).replace('T', ''),
-        node: await getOption(database, itemName, version),
-        side: await getOption(database, itemName, version, true),
+        node,
+        side,
         platform: 'JS',
         product: productMeta,
         productModule: productMeta.module,
@@ -185,14 +187,15 @@ async function getOption(
             await getOption(database, '', version) :
             TreeLib.createTreeNode({}, '')
     );
-
     const node = await database.getItem(itemName, version);
 
     if (!node) {
+        console.log('X', itemName);
         return root;
     }
 
-    console.log(':', node.name);
+    console.log(':', itemName);
+
     const option = (
         itemName ?
             TreeLib.createTreeNode(root.children, itemName) :
@@ -244,8 +247,6 @@ async function getNav(
 
     const item = await database.getItem(itemName, version);
     const nav: Nav = (item ? toNav(item) : {});
-
-    console.log([itemName, item]);
 
     let navChildren: Array<Nav> = [];
 
@@ -424,23 +425,18 @@ async function main() {
                 const pathItems = path.substring(1).split('/');
 
                 let product =  pathItems[0];
-                let option = (
-                    pathItems.length > 2 ?
-                        pathItems.slice(1).join('/') :
-                        pathItems[1]
-                );
+                let option = pathItems.slice(1).join('/');
 
                 const database = new Database(product);
 
                 let file = FSLib.lastPath(option);
                 let ext = file.split('.').pop();
 
-                console.log(product, option, file, ext);
+                console.log([product, option, file, ext]);
 
                 switch (ext) {
                     case '':
                     case 'html':
-                        console.log(database.product, option);
                         response200(
                             response,
                             template(await getContext(database, option)),
