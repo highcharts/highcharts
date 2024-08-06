@@ -52,7 +52,7 @@ Highcharts.chart('container', {
         },
         name: 'Temperature change',
         title: {
-            text: 'Temp anomaly (compared to 1951-1980 Avg.), from 1880 to 2021'
+            text: 'Temp anomaly (compared to 1951-1980 Avg.)'
         }
     },
     xAxis: {
