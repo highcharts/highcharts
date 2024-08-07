@@ -85,8 +85,10 @@ Example:
 ```js
 DataGrid.dataGrid('container', {
     table: { columns },
-    caption: {
-        text: 'Fruit market'
+    settings: {
+        caption: {
+            text: 'Fruit market'
+        },
     },
     columns: {
         product: {

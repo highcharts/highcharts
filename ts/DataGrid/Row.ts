@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,23 +22,24 @@
  *
  * */
 
-import DataGridCell from './DataGridCell.js';
-import DataGridTable from './DataGridTable.js';
-import Globals from './Globals.js';
+import type Cell from './Cell';
+import type Column from './Column';
+
+import Table from './Table.js';
 import DGUtils from './Utils.js';
 
 const { makeHTMLElement } = DGUtils;
 
 /* *
  *
- *  Class
+ *  Abstract Class of Row
  *
  * */
 
 /**
  * Represents a row in the data grid.
  */
-class DataGridRow {
+abstract class Row {
 
     /* *
     *
@@ -48,7 +50,7 @@ class DataGridRow {
     /**
      * The cells of the row.
      */
-    public cells: DataGridCell[] = [];
+    public cells: Cell[] = [];
 
     /**
      * The HTML element of the row.
@@ -56,14 +58,14 @@ class DataGridRow {
     public htmlElement: HTMLTableRowElement;
 
     /**
-     * The index of the row in the data table.
-     */
-    public index: number;
-
-    /**
      * The viewport the row belongs to.
      */
-    public viewport: DataGridTable;
+    public viewport: Table;
+
+    /**
+     * Flag to determine if the row is being destroyed.
+     */
+    private destroyed?: boolean;
 
 
     /* *
@@ -77,21 +79,10 @@ class DataGridRow {
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
-     *
-     * @param index
-     * The index of the row in the data table.
      */
-    constructor(viewport: DataGridTable, index: number) {
+    constructor(viewport: Table) {
         this.viewport = viewport;
-        this.index = index;
-
-        this.htmlElement = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement,
-            style: {
-                transform: `translateY(${this.getDefaultTopOffset()}px)`
-            }
-        });
-        this.setRowAttributes();
+        this.htmlElement = makeHTMLElement('tr', {});
     }
 
 
@@ -102,6 +93,14 @@ class DataGridRow {
     * */
 
     /**
+     * Creates a cell in the row.
+     *
+     * @param column
+     * The column the cell belongs to.
+     */
+    public abstract createCell(column: Column): Cell;
+
+    /**
      * Renders the row's content. It does not attach the row element to the
      * viewport nor pushes the rows to the viewport.rows array.
      */
@@ -109,7 +108,7 @@ class DataGridRow {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = new DataGridCell(columns[i], this);
+            const cell = this.createCell(columns[i]);
             cell.render();
         }
 
@@ -134,6 +133,8 @@ class DataGridRow {
      * Destroys the row.
      */
     public destroy(): void {
+        this.destroyed = true;
+
         if (!this.htmlElement) {
             return;
         }
@@ -151,51 +152,24 @@ class DataGridRow {
      * @param cell
      * The cell to register.
      */
-    public registerCell(cell: DataGridCell): void {
+    public registerCell(cell: Cell): void {
         this.cells.push(cell);
     }
 
     /**
-     * Adds or removes the hovered CSS class to the row element.
+     * Unregister a cell from the row.
      *
-     * @param hovered
-     * Whether the row should be hovered.
+     * @param cell
+     * The cell to unregister.
      */
-    public setHoveredState(hovered: boolean): void {
-        this.htmlElement.classList[hovered ? 'add' : 'remove'](
-            Globals.classNames.hoveredRow
-        );
-
-        if (hovered) {
-            this.viewport.dataGrid.hoveredRowIndex = this.index;
-        }
-    }
-
-    /**
-     * Returns the default top offset of the row (before adjusting row heights).
-     */
-    public getDefaultTopOffset(): number {
-        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
-    }
-
-    /**
-     * Sets the row HTML element attributes and additional classes.
-     */
-    private setRowAttributes(): void {
-        const idx = this.index;
-        const el = this.htmlElement;
-
-        el.setAttribute('data-row-index', idx);
-
-        // 1 - index of the head, 1 to avoid indexing from 0
-        el.setAttribute('aria-rowindex', idx + 2);
-
-        if (idx % 2 === 1) {
-            el.classList.add(Globals.classNames.rowOdd);
+    public unregisterCell(cell: Cell): void {
+        if (this.destroyed) {
+            return;
         }
 
-        if (this.viewport.dataGrid.hoveredRowIndex === idx) {
-            el.classList.add(Globals.classNames.hoveredRow);
+        const index = this.cells.indexOf(cell);
+        if (index > -1) {
+            this.cells.splice(index, 1);
         }
     }
 }
@@ -207,7 +181,7 @@ class DataGridRow {
  *
  * */
 
-namespace DataGridRow {
+namespace Row {
 
 }
 
@@ -218,4 +192,4 @@ namespace DataGridRow {
  *
  * */
 
-export default DataGridRow;
+export default Row;

@@ -318,10 +318,14 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                columnsIncluded: [
-                    'state', 'demColVotes', 'repColVotes', 'demVoteSummary',
-                    'repVoteSummary', 'totalVotes'
-                ],
+                settings: {
+                    columns: {
+                        included: [
+                            'state', 'demColVotes', 'repColVotes',
+                            'demVoteSummary', 'repVoteSummary', 'totalVotes'
+                        ]
+                    }
+                },
                 columns: {
                     state: {
                         headerFormat: 'State'

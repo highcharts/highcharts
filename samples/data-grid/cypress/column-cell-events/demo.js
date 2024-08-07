@@ -39,7 +39,7 @@ DataGrid.dataGrid('container', {
             afterSorting: function () {
                 doc.getElementById('columnSorting').value = 'afterSorting';
             },
-            resize: function () {
+            afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';
             }
         },

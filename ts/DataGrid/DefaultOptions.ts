@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,7 +22,7 @@
  *
  * */
 
-import type DataGridOptions from './DataGridOptions';
+import type Options from './Options';
 
 import Globals from './Globals.js';
 
@@ -31,11 +32,11 @@ import Globals from './Globals.js';
  *
  * */
 
-const DataGridDefaultOptions: Globals.DeepPartial<DataGridOptions> = {
+const DefaultOptions: Globals.DeepPartial<Options> = {
     settings: {
         columns: {
             distribution: 'full',
-            resizing: true
+            resizable: true
         },
         rows: {
             bufferSize: 10,
@@ -50,4 +51,4 @@ const DataGridDefaultOptions: Globals.DeepPartial<DataGridOptions> = {
  *
  * */
 
-export default DataGridDefaultOptions;
+export default DefaultOptions;
