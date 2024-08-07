@@ -47,7 +47,6 @@ export type CellEventCallback = (this: Cell) => void;
  */
 export type ColumnEventCallback = (this: Column) => void;
 
-
 /**
  * Returns a formatted cell's string.
  */
@@ -75,19 +74,9 @@ export interface Options {
     defaults?: DataGridDefaults;
 
     /**
-     * Columns included in the grid structure.
-     */
-    columnsIncluded?: Array<string>;
-
-    /**
      * Options for individual columns.
      */
     columns?: Record<string, IndividualColumnOptions>;
-
-    /**
-     * Contains options for caption.
-     */
-    caption?: CaptionOptions;
 
     /**
      * Contains events options.
@@ -99,6 +88,11 @@ export interface Options {
  * Options to control the way DataGrid is rendered.
  */
 export interface DataGridSettings {
+    /**
+     * Contains options for caption.
+     */
+    caption?: CaptionOptions;
+
     /**
     * Options to control the columns behavior and rendering.
     */
@@ -121,11 +115,16 @@ export interface ColumnsSettings {
     distribution?: ColumnDistribution;
 
     /**
+     * Columns included in the grid structure.
+     */
+    included?: Array<string>;
+
+    /**
      * Whether the columns should be resizable.
      *
      * @default true
      */
-    resizing?: boolean;
+    resizable?: boolean;
 }
 
 export interface RowsSettings {
@@ -234,6 +233,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
 
 export interface CaptionOptions {
     /**
+     * The custom CSS class name for the caption.
+     */
+    className?: string;
+
+    /**
      * The caption of the datagrid grid.
      */
     text?: string;
@@ -295,7 +299,7 @@ export interface ColumnEvents {
     /**
      * Callback function to be called when the column is resized.
      */
-    resize?: ColumnEventCallback;
+    afterResize?: ColumnEventCallback;
 }
 
 export interface HeaderEvents {

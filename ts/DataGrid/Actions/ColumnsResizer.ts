@@ -184,7 +184,7 @@ class ColumnsResizer {
 
         this.viewport.reflow();
         this.viewport.rowsVirtualizer.adjustRowHeights();
-        this.viewport.dataGrid.options?.events?.column?.resize?.call(
+        this.viewport.dataGrid.options?.events?.column?.afterResize?.call(
             this.draggedColumn
         );
     };

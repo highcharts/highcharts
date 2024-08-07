@@ -25,3 +25,7 @@
 .highcharts-datagrid-column[data-column-id="c"] {
     width: 10%;
 }
+
+.custom-caption-class {
+    text-decoration: underline;
+}

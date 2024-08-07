@@ -170,7 +170,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        if (dgOptions?.settings?.columns?.resizing) {
+        if (dgOptions?.settings?.columns?.resizable) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -320,14 +320,19 @@ class Table {
      * Render caption above the datagrid
      */
     public renderCaption(): void {
-        if (!this.dataGrid.options?.caption?.text) {
+        const captionOptions = this.dataGrid.options?.settings?.caption;
+        if (!captionOptions?.text) {
             return;
         }
 
         this.captionElement = makeHTMLElement('caption', {
-            innerText: this.dataGrid.options.caption.text,
+            innerText: captionOptions.text,
             className: Globals.classNames.captionElement
         }, this.dataGrid.tableElement);
+
+        if (captionOptions.className) {
+            this.captionElement.classList.add(captionOptions.className);
+        }
     }
 
     /**

@@ -25,8 +25,10 @@ Caption
 The caption of the datagrid grid.
 
 ```js
-caption: {
-    text: 'Your title of datagrid'
+settings: {
+    caption: {
+        text: 'Your title of datagrid'
+    }
 }
 ```
 
@@ -65,7 +67,7 @@ but you can disable it in the [settings option](https://api.highcharts.com/dashb
 ```js
 settings: {
     columns: {
-        resizing: false
+        resizable: false
     }
 }
 ```

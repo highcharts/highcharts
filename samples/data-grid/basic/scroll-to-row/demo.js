@@ -11,10 +11,11 @@ const dataGrid = new DataGrid.DataGrid('container', {
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     },
-    caption: {
-        text: 'Title of the new Datagrid.'
-    },
     settings: {
+        caption: {
+            text: 'Title of the new Datagrid with a custom CSS class.',
+            className: 'custom-caption-class'
+        },
         rows: {
             bufferSize: 5
         }

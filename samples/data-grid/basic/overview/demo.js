@@ -15,13 +15,15 @@ DataGrid.dataGrid('container', {
             ]
         }
     },
+    settings: {
+        caption: {
+            text: 'Fruit market'
+        }
+    },
     defaults: {
         columns: {
             editable: false
         }
-    },
-    caption: {
-        text: 'Fruit market'
     },
     columns: {
         product: {

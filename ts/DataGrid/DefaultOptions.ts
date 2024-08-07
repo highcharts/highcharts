@@ -36,7 +36,7 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
     settings: {
         columns: {
             distribution: 'full',
-            resizing: true
+            resizable: true
         },
         rows: {
             bufferSize: 10,
