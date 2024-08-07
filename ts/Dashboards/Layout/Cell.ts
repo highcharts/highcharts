@@ -513,10 +513,13 @@ class Cell extends GUIElement {
         }
     }
 
+    /**
+     * Sets the active state of the cell and resets the state of other cells.
+     */
     public setActiveState(): void {
-        // Reset other boxes
         const cell = this;
 
+        // Reset other boxes
         cell.row.layout.board.mountedComponents.forEach(
             (mountedComponent):void => {
                 if (mountedComponent.cell.container) {
@@ -524,6 +527,7 @@ class Cell extends GUIElement {
                         Globals.classNames.cellActive
                     );
                 }
+                mountedComponent.component.isActive = false;
             }
         );
 
