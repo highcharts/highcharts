@@ -47,7 +47,7 @@ const { merge } = U;
  * */
 
 /**
- * Creates a scrollable grid structure (table).
+ * Creates a grid structure (table).
  */
 class DataGrid {
 
@@ -105,6 +105,7 @@ class DataGrid {
 
     /**
      * Default options for all DataGrid instances.
+     * @internal
      */
     public static readonly defaultOptions = DataGridDefaultOptions;
 
@@ -131,14 +132,16 @@ class DataGrid {
     public tableElement?: HTMLTableElement;
 
     /**
-     * The options of the data grid.
+     * The options of the data grid. Contains the options that were declared
+     * by the user and some of the default options.
      */
     public options?: Options;
 
     /**
-     * The user options of the data grid.
+     * The options that were declared by the user when creating the data grid
+     * or when updating it.
      */
-    public userOptions?: Options;
+    public userOptions?: Partial<Options>;
 
     /**
      * The table (viewport) element of the data grid.
@@ -146,22 +149,26 @@ class DataGrid {
     public viewport?: Table;
 
     /**
-     * The list of columns that should be displayed in the data grid.
+     * The list of columns that are displayed in the data grid.
+     * @internal
      */
     public enabledColumns?: string[];
 
     /**
      * The hovered row index.
+     * @internal
      */
     public hoveredRowIndex?: number;
 
     /**
      * The hovered column ID.
+     * @internal
      */
     public hoveredColumnId?: string;
 
     /**
      * Keeps status of sorted column, when updating datagrid.
+     * @internal
      */
     public columnSortingState?: Record<string, ColumnSorting.SortingState>;
 
@@ -268,6 +275,7 @@ class DataGrid {
     /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
+     * @internal
      */
     public renderViewport(): void {
         let vp = this.viewport;
@@ -374,7 +382,7 @@ class DataGrid {
     private loadDataTable(
         tableOptions?: DataTable | DataTableOptions
     ): void {
-        // If the table is passed as a reference, it should be used istead of
+        // If the table is passed as a reference, it should be used instead of
         // creating a new one.
         if (tableOptions?.id) {
             this.dataTable = tableOptions as DataTable;
@@ -431,7 +439,6 @@ class DataGrid {
  *  Class Namespace
  *
  * */
-
 namespace DataGrid {
 
 }
