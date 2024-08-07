@@ -22,6 +22,7 @@ For basic usage, Highcharts doesn't refer to any files other than highcharts.js/
 
 *   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](https://highcharts.com/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). 
 *   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](https://highcharts.com/docs/getting-started/optional-dependencies) documentation article.
+* Stock Tools icons. By default the icons are loaded dynamically from https://code.highcharts.com. To change where icons should be loaded from see the [iconsURL](https://api.highcharts.com/highstock/navigation.iconsURL) option.
 
 * * *
 

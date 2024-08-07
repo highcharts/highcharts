@@ -89,7 +89,6 @@ Highcharts.chart('container', {
                 '℃</b>'
         }
     }]
-
 });
 
 console.log('Rendered in ' + (new Date() - start) + ' ms');

@@ -6,6 +6,6 @@
     display: none;
 }
 
-#dashboard-row-1 {
-    height: 200px;
+.highcharts-dashboards-cell-state-active {
+    background-color: #f00;
 }

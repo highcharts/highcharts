@@ -992,6 +992,7 @@ class DataGrid {
     ): void {
         const formattedNodes = new AST(cellContent);
 
+        parentElement.innerHTML = '';
         formattedNodes.addToDOM(parentElement);
     }
 

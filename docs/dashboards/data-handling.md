@@ -61,7 +61,7 @@ Each `DataTable` within the `DataPool` is like a specific section or aisle withi
 where everything is organized and stored.
 
 A `DataTable` is created from `DataConnectors`, `DataModifiers`, or other
-`DataTables`. Each table can contain columns, column aliases, and rows. In
+`DataTables`. Each table can contain columns and rows. In
 addition, DataTable also emits events, when changes on the table happen. Changes
 can be directly done on the table or with DataModifiers.
 
