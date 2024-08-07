@@ -187,6 +187,15 @@ class PlotLineOrBand {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;
                 }
+
+                if (
+                    optionsLabel &&
+                    !defined((optionsLabel as PlotBandLabelOptions).inside) &&
+                    options.label
+                ) {
+                    (optionsLabel as PlotBandLabelOptions).inside =
+                    (options.label as PlotBandLabelOptions).inside = true;
+                }
             }
         }
 
@@ -357,7 +366,11 @@ class PlotLineOrBand {
             width: bBoxWidth,
             height: arrayMax(yBounds) - y
         });
-        if (!label.alignValue || label.alignValue === 'left') {
+        if (
+            !label.alignValue ||
+            label.alignValue === 'left' ||
+            defined(inside)
+        ) {
             label.css({
                 width: (
                     optionsLabel.style?.width || (
