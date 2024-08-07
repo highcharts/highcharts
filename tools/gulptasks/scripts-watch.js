@@ -98,5 +98,5 @@ require('./scripts-ts.js');
 
 gulp.task(
     'scripts-watch',
-    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
+    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', 'scripts-code', task)
 );
