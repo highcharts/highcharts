@@ -31,7 +31,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
-    TreemapSeriesGroupAreaThresholdOptions,
     TreemapSeriesLayoutAlgorithmValue,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
@@ -429,19 +428,19 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
-    public getGroup(
+    public applyLayoutAndGrouping(
         series: TreemapSeries,
         level: TreemapSeriesLevelOptions,
         area: TreemapSeries.AreaObject,
         children: TreemapNode[],
-        groupAreaThreshold: TreemapSeriesGroupAreaThresholdOptions | undefined,
         parent: TreemapNode
     ):
         {
             children: TreemapNode[],
             childrenValues: TreemapNode.NodeValuesObject[]
         } {
-        const groupChildren: TreemapNode[] = [],
+        const { groupAreaThreshold } = series.options,
+            groupChildren: TreemapNode[] = [],
             algorithm = pick<
             TreemapSeriesLayoutAlgorithmValue|undefined,
             TreemapSeriesLayoutAlgorithmValue
@@ -464,6 +463,12 @@ class TreemapSeries extends ScatterSeries {
             groupAreaThreshold.enabled &&
             groupAreaThreshold.pixelWidth
         ) {
+            const { pixelWidth, pixelHeight } = groupAreaThreshold,
+                compareHeight = defined(pixelHeight),
+                thresholdArea = pixelHeight ?
+                    pixelWidth * pixelHeight :
+                    pixelWidth * pixelWidth;
+
             childrenValues.forEach((child, i): void => {
                 const x = series.xAxis.toPixels(child.x / series.axisRatio),
                     y = series.yAxis.toPixels(
@@ -481,23 +486,19 @@ class TreemapSeries extends ScatterSeries {
 
                 if (
                     (
-                        !groupAreaThreshold.pixelHeight &&
-                        groupAreaThreshold.pixelWidth &&
+                        compareHeight &&
                         (
-                            a < groupAreaThreshold.pixelWidth ||
-                            b < groupAreaThreshold.pixelWidth ||
-                            area < groupAreaThreshold.pixelWidth *
-                                groupAreaThreshold.pixelWidth
+                            a < pixelWidth ||
+                            b < pixelHeight ||
+                            area < thresholdArea
                         )
                     ) ||
                     (
-                        groupAreaThreshold.pixelHeight &&
-                        groupAreaThreshold.pixelWidth &&
+                        !compareHeight &&
                         (
-                            a < groupAreaThreshold.pixelWidth ||
-                            b < groupAreaThreshold.pixelHeight ||
-                            area < groupAreaThreshold.pixelWidth *
-                                groupAreaThreshold.pixelHeight
+                            a < pixelWidth ||
+                            b < pixelWidth ||
+                            area < thresholdArea
                         )
                     )
                 ) {
@@ -547,15 +548,14 @@ class TreemapSeries extends ScatterSeries {
                 node.point = groupPoint;
                 node.isLeaf = true;
                 node.isGroup = true;
-
                 node.parentNode = parent;
 
                 children = children.filter(
                     (x): boolean => !groupChildren?.includes(x)
                 );
-
                 children.push(node);
 
+                // Calculate the layout one more time after hiding small leafs
                 childrenValues =
                     series[algorithm](area as any, children) as any;
             }
@@ -586,10 +586,10 @@ class TreemapSeries extends ScatterSeries {
     ): void {
         const series = this,
             options = series.options,
-            { groupAreaThreshold } = options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
             alternate = options.alternateStartingDirection;
+
         // Collect all children which should be included
         let children = parent.children.filter((n): boolean => !n.ignore),
             childrenValues: Array<TreemapNode.NodeValuesObject> = [];
@@ -600,12 +600,11 @@ class TreemapSeries extends ScatterSeries {
                 1;
         }
 
-        ({ children, childrenValues } = this.getGroup(
+        ({ children, childrenValues } = this.applyLayoutAndGrouping(
             series,
             level,
             area,
             children,
-            groupAreaThreshold,
             parent
         ));
 
