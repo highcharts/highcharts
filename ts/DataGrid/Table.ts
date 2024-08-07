@@ -157,7 +157,7 @@ class Table {
         tableElement: HTMLTableElement
     ) {
         this.dataGrid = dataGrid;
-        this.dataTable = this.dataGrid.dataTable as DataTable;
+        this.dataTable = this.dataGrid.dataTable?.modified as DataTable;
 
         const dgOptions = dataGrid.options;
 

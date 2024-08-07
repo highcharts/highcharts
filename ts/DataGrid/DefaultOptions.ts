@@ -42,6 +42,13 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
             bufferSize: 10,
             strictHeights: false
         }
+    },
+    defaults: {
+        columns: {
+            sorting: {
+                sortable: true
+            }
+        }
     }
 };
 

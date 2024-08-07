@@ -254,7 +254,7 @@ td.highcharts-datagrid-focused-cell {
 }
 
 /* Sorting */
-.highcharts-datagrid-col-sorting {
+.highcharts-datagrid-column-sortable {
     cursor: pointer;
 }
 
@@ -269,10 +269,10 @@ td.highcharts-datagrid-focused-cell {
     height: 12px;
 }
 
-.highcharts-datagrid-col-sorting-asc .highcharts-datagrid-head-cell-content::after {
+.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-head-cell-content::after {
     content: "▲";
 }
 
-.highcharts-datagrid-col-sorting-desc .highcharts-datagrid-head-cell-content::after {
+.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-head-cell-content::after {
     content: "▼";
 }

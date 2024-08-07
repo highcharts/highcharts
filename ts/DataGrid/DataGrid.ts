@@ -32,6 +32,7 @@ import DataGridDefaultOptions from './DefaultOptions.js';
 import Table from './Table.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
+import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import U from '../Core/Utilities.js';
 
@@ -121,12 +122,6 @@ class DataGrid {
     public dataTable?: DataTable;
 
     /**
-     * The original data source of the data grid.
-     * It allows to recover datagrid to original state after updates.
-     */
-    public originalDataTable?: DataTable;
-
-    /**
      * The HTML element of the table.
      */
     public tableElement?: HTMLTableElement;
@@ -172,6 +167,12 @@ class DataGrid {
      */
     public columnSortingState?: Record<string, ColumnSorting.SortingState>;
 
+    /**
+     * The querying controller.
+     */
+    public querying: QueryingController;
+
+
     /* *
     *
     *  Constructor
@@ -191,11 +192,16 @@ class DataGrid {
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
 
+        this.querying = new QueryingController(this);
+
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
         this.loadDataTable(this.options.table);
-        this.renderViewport();
+
+        void this.querying.proceed().then((): void => {
+            this.renderViewport();
+        });
     }
 
 
@@ -214,13 +220,18 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the options.
      */
-    public update(options: Options, render: boolean = true): void {
+    public async update(
+        options: Options,
+        render: boolean = true
+    ): Promise<void> {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
         if (!this.dataTable || options.table) {
             this.loadDataTable(this.options?.table);
         }
+
+        await this.querying.proceed();
 
         if (render) {
             this.renderViewport();
@@ -379,9 +390,7 @@ class DataGrid {
         return result;
     }
 
-    private loadDataTable(
-        tableOptions?: DataTable | DataTableOptions
-    ): void {
+    private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
         if (tableOptions?.id) {
@@ -389,8 +398,7 @@ class DataGrid {
             return;
         }
 
-        this.dataTable = this.originalDataTable =
-            new DataTable(tableOptions as DataTableOptions);
+        this.dataTable = new DataTable(tableOptions as DataTableOptions);
     }
 
     /**

@@ -53,6 +53,11 @@ export type ColumnEventCallback = (this: Column) => void;
  */
 export type CellFormatterCallback = (this: Cell) => string;
 
+/**
+ * Column sorting order type.
+ */
+export type ColumnSortingOrder = 'asc' | 'desc' | null;
+
 
 /**
  * Options to control the content and the user experience of a grid structure.
@@ -231,16 +236,33 @@ export interface ColumnOptions {
     editable?: boolean;
 
     /**
-     * Whether to allow users to sort values in column. When sorting is enabled,
+     * Column sorting options.
+     */
+    sorting?: ColumnSortingOptions;
+}
+
+export interface ColumnSortingOptions {
+    /**
+     * Whether to allow users to sort values in column. When it is enabled,
      * the column header will be clickable.
      *
-     * When sorting is disabled `false`, this column cannot be sorted directly.
-     * However, the order of rows in this column may still change when other
-     * columns are sorted.
+     * When sorting is disabled `false`, this column cannot be sorted by the
+     * user interface. However, the order of rows in this column may still
+     * change when other columns are sorted.
      *
      * @default true
      */
-    sorting?: boolean;
+    sortable?: boolean;
+}
+
+export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
+    /**
+     * The initial sorting order of the column. Can be either `asc` for
+     * ascending, `desc` for descending, or `null` for disabled.
+     *
+     * @default null
+     */
+    order?: ColumnSortingOrder;
 }
 
 /**
@@ -269,6 +291,8 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     enabled?: boolean;
+
+    sorting?: IndividualColumnSortingOptions;
 }
 
 export interface CaptionOptions {

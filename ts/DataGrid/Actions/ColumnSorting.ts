@@ -23,8 +23,6 @@
  * */
 
 import Column from '../Column.js';
-import DataModifier from '../../Data/Modifiers/DataModifier.js';
-import DataTable from '../../Data/DataTable.js';
 import Globals from '../Globals.js';
 
 /* *
@@ -34,7 +32,7 @@ import Globals from '../Globals.js';
  * */
 
 /**
- * Represents a table header row containing the column names.
+ * Class that manages sorting for a dedicated column.
  */
 class ColumnSorting {
 
@@ -53,11 +51,6 @@ class ColumnSorting {
      * The head element of the column.
      */
     public headElement: HTMLElement;
-
-    /**
-     * Current sorting type on column.
-     */
-    public sortingState: ColumnSorting.SortingState = 'none';
 
 
     /* *
@@ -78,6 +71,8 @@ class ColumnSorting {
     constructor(column: Column, headElement: HTMLElement) {
         this.column = column;
         this.headElement = headElement;
+
+        this.addHeaderElementAttributes();
         this.addSortingEvents();
     }
 
@@ -89,35 +84,38 @@ class ColumnSorting {
     * */
 
     /**
+     * Adds attributes to the column header.
+     */
+    private addHeaderElementAttributes(): void {
+        const sortingOptions = this.column.options.sorting;
+
+        if (sortingOptions?.sortable) {
+            this.headElement.classList.add(Globals.classNames.columnSortable);
+        }
+
+        let className: string | undefined;
+        switch (sortingOptions?.order) {
+            case 'asc':
+                className = Globals.classNames.columnSortedAsc;
+                break;
+            case 'desc':
+                className = Globals.classNames.columnSortedDesc;
+                break;
+        }
+
+        if (className) {
+            this.headElement.classList.add(className);
+        }
+    }
+
+    /**
      * Adds CSS classes and click event to the header of column.
      */
     private addSortingEvents(): void {
-        const dataGrid = this.column.viewport.dataGrid;
-        const columnSortingState =
-            dataGrid.columnSortingState?.[this.column.id];
-
-        if (!dataGrid.dataTable) {
-            return;
-        }
-
         this.column.header?.headerContent?.addEventListener(
             'click',
             this.setSortingState
         );
-
-        this.headElement.classList.add(Globals.classNames.columnSorting);
-
-        if (columnSortingState === 'asc') {
-            this.headElement.classList.add(
-                Globals.classNames.columnSortingAsc
-            );
-        }
-
-        if (columnSortingState === 'desc') {
-            this.headElement.classList.add(
-                Globals.classNames.columnSortingDesc
-            );
-        }
     }
 
     /**
@@ -125,46 +123,24 @@ class ColumnSorting {
      * (ascending, descending or default).
      */
     private setSortingState = (): void => {
-        const dataGrid = this.column.viewport.dataGrid;
-        let state = this.sortingState;
-        let modifier: DataModifier | undefined;
+        const currentOrder = this.column.options.sorting?.order || 'none';
+        const consequents = {
+            none: 'asc',
+            asc: 'desc',
+            desc: null
+        } as const;
 
-        if (
-            dataGrid.columnSortingState &&
-            dataGrid.columnSortingState[this.column.id]
-        ) {
-            state = dataGrid.columnSortingState[this.column.id];
-        } else {
-            dataGrid.columnSortingState = {};
-        }
+        const newOrder = consequents[currentOrder];
 
-        if (state === 'desc') {
-            this.sortingState = 'none';
-        } else if (state === 'none') {
-            modifier = new DataModifier.types.Sort({
-                direction: 'asc',
-                orderByColumn: this.column.id
-            });
-            this.sortingState = 'asc';
-        } else {
-            modifier = new DataModifier.types.Sort({
-                direction: 'desc',
-                orderByColumn: this.column.id
-            });
+        // TODO: Rebuild sorting after impementing the re-rendering of the
+        // rows only, without the whole table. Then, call the `afterSorting`
+        // callback option.
 
-            this.sortingState = 'desc';
-        }
-
-        dataGrid.columnSortingState[this.column.id] = this.sortingState;
-        dataGrid.update({
-            table: modifier ? (
-                modifier.modifyTable(
-                    (dataGrid.dataTable as DataTable).clone()
-                )
-            ) : dataGrid.originalDataTable
+        void this.column.update({
+            sorting: {
+                order: newOrder
+            }
         });
-
-        dataGrid.options?.events?.column?.afterSorting?.call(this.column);
     };
 
     /**

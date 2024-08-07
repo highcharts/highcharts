@@ -178,8 +178,21 @@ class Column {
      * @param options
      * The column options to update.
      */
-    public update(options: IndividualColumnOptions): void {
-        this.viewport.dataGrid.update({
+    public async update(options: IndividualColumnOptions): Promise<void> {
+
+        // Will be changed when implementing the multi-column sorting.
+        const columnOptionRecords = this.viewport.dataGrid.userOptions?.columns;
+        if (options.sorting?.order && columnOptionRecords) {
+            const columnIDs = Object.keys(columnOptionRecords);
+            for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
+                const columnOptions = columnOptionRecords[columnIDs[i]];
+                if (columnOptions.sorting?.order) {
+                    delete columnOptions.sorting.order;
+                }
+            }
+        }
+
+        await this.viewport.dataGrid.update({
             columns: {
                 [this.id]: options
             }
