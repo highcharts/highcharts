@@ -303,7 +303,8 @@ class PlotLineOrBand {
     ): void {
         const plotLine = this,
             axis = plotLine.axis,
-            renderer = axis.chart.renderer;
+            renderer = axis.chart.renderer,
+            inside = (optionsLabel as PlotBandLabelOptions).inside;
 
         let label = plotLine.label;
 
@@ -333,7 +334,7 @@ class PlotLineOrBand {
             if (!axis.chart.styledMode) {
                 label.css(merge({
                     fontSize: '0.8em',
-                    textOverflow: 'ellipsis'
+                    textOverflow: (isBand && !inside) ? '' : 'ellipsis'
                 }, optionsLabel.style));
             }
 
@@ -357,26 +358,26 @@ class PlotLineOrBand {
             height: arrayMax(yBounds) - y
         });
         if (!label.alignValue || label.alignValue === 'left') {
-            const width = (
-                optionsLabel.style?.width || (
-                    (
-                        !isBand ||
-                        (optionsLabel as PlotBandLabelOptions).inside
-                    ) ? (
-                            label.rotation === 90 ?
-                                axis.height - (label.alignAttr.y - axis.top) :
-                                (
-                                    optionsLabel.clip ?
-                                        axis.width :
-                                        axis.chart.chartWidth
-                                ) - (label.alignAttr.x - axis.left)
-                        ) :
-                        bBoxWidth
-                )
-            );
-
             label.css({
-                width: width + 'px'
+                width: (
+                    optionsLabel.style?.width || (
+                        (
+                            !isBand ||
+                            !inside
+                        ) ? (
+                                label.rotation === 90 ?
+                                    axis.height - (
+                                        label.alignAttr.y -
+                                        axis.top
+                                    ) : (
+                                        optionsLabel.clip ?
+                                            axis.width :
+                                            axis.chart.chartWidth
+                                    ) - (label.alignAttr.x - axis.left)
+                            ) :
+                            bBoxWidth
+                    )
+                ) + 'px'
             });
         }
 
