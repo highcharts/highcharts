@@ -358,7 +358,7 @@ class PlotLineOrBand {
         });
         if (!label.alignValue || label.alignValue === 'left') {
             const width = (
-                (optionsLabel as PlotBandLabelOptions).style?.width || (
+                optionsLabel.style?.width || (
                     (
                         !isBand ||
                         (optionsLabel as PlotBandLabelOptions).inside
