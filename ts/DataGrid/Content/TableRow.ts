@@ -117,7 +117,7 @@ class TableRow extends Row {
         el.setAttribute('aria-rowindex', idx + 2);
 
         if (idx % 2 === 1) {
-            el.classList.add(Globals.classNames.odd);
+            el.classList.add(Globals.classNames.rowOdd);
         }
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
