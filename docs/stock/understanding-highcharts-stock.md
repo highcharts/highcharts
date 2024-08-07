@@ -7,7 +7,7 @@ Highcharts Stock is based on Highcharts, meaning it has all the core functionali
 
 Highcharts Stock also supports various financial series types.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/0d6a99a6e3/sample/stock/interactive-docs/series-type allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 540px; border: none;" src=https://www.highcharts.com/samples/embed/stock/plotoptions/series-type-interactive allow="fullscreen"></iframe>
 
 ```js
 chart.series[0].update({
@@ -24,7 +24,7 @@ Allows you to fine tune the range of the chart which is displayed and scroll thr
 
 See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/0d6a99a6e3/sample/stock/interactive-docs/navigator allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 610px; border: none;" src=https://www.highcharts.com/samples/embed/stock/navigator/interactive allow="fullscreen"></iframe>
 
 ```js
 chart.update({
@@ -45,7 +45,7 @@ Range selector
 
 Allows you to quickly select a range to be shown on the chart or specify the exact interval to be shown.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/0d6a99a6e3/sample/stock/interactive-docs/range-selector allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 540px; border: none;" src=https://www.highcharts.com/samples/embed/stock/rangeselector/interactive allow="fullscreen"></iframe>
 
 See [Range selector](https://highcharts.com/docs/stock/range-selector) for more information.
 
@@ -64,7 +64,7 @@ Crosshair
 
 Shows a line perpendicular to the corresponding axis which is following the mouse position or nearest point, depending on the `crosshair.snap` property. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts Core (without Stock module), but are not enabled by default.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/0d6a99a6e3/sample/stock/interactive-docs/crosshair allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 570px; border: none;" src=https://www.highcharts.com/samples/embed/stock/xaxis/crosshair-interactive allow="fullscreen"></iframe>
 
 ```js
 chart.xAxis[0].update({
@@ -81,7 +81,7 @@ Data grouping
 
 Automatically groups multiple points into a single point to improve readability. The displayed value for a grouped point depends on the approximation function which is set by default depending on the series type, but can be manually overwritten. The amount of points in a single group is selected based on the zoom level, data density and user options.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/0d6a99a6e3/sample/stock/interactive-docs/data-grouping allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-interactive allow="fullscreen"></iframe>
 
 See [Data grouping](https://www.highcharts.com/docs/stock/data-grouping) for more information.
 
