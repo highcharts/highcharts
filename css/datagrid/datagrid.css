@@ -152,11 +152,7 @@
     width: 100%;
 }
 
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-row.highcharts-datagrid-column-odd {
-=======
-.highcharts-datagrid-row.highcharts-datagrid-odd {
->>>>>>> .merge_file_srHDzs
     background-color: var(--highcharts-neutral-color-3);
 }
 
@@ -177,11 +173,7 @@
 }
 
 .highcharts-datagrid-hovered-row,
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-row.highcharts-datagrid-column-odd.highcharts-datagrid-hovered-row {
-=======
-.highcharts-datagrid-row.highcharts-datagrid-odd.highcharts-datagrid-hovered-row {
->>>>>>> .merge_file_srHDzs
     background-color: var(--highcharts-highlight-color-10);
 }
 
@@ -193,11 +185,7 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-column-resizer {
-=======
-.highcharts-datagrid-col-resizer {
->>>>>>> .merge_file_srHDzs
     position: absolute;
     top: 0;
     width: 16px;
@@ -208,11 +196,7 @@
     z-index: 10;
 }
 
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-column-resizer::after {
-=======
-.highcharts-datagrid-col-resizer::after {
->>>>>>> .merge_file_srHDzs
     content: "";
     position: absolute;
     display: block;
@@ -223,20 +207,12 @@
     left: 2px;
 }
 
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-column-resizer:hover::after {
-=======
-.highcharts-datagrid-col-resizer:hover::after {
->>>>>>> .merge_file_srHDzs
     border-left: 2px solid var(--highcharts-neutral-color-20);
     border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
-<<<<<<< .merge_file_pjJP1l
 .highcharts-datagrid-head-cell-resized .highcharts-datagrid-column-resizer::after {
-=======
-.highcharts-datagrid-head-cell-resized .highcharts-datagrid-col-resizer::after {
->>>>>>> .merge_file_srHDzs
     border-left: 2px solid var(--highcharts-highlight-color-60);
     border-right: 2px solid var(--highcharts-highlight-color-60);
 }
@@ -245,7 +221,7 @@
     width: 0;
 }
 
-.highcharts-datagrid-no-result-column { /* --------- */
+.highcharts-datagrid-no-result-column {
     text-align: center;
     padding: 10px;
     width: 100%;
@@ -298,6 +274,5 @@ td.highcharts-datagrid-focused-cell {
 }
 
 .highcharts-datagrid-col-sorting-desc .highcharts-datagrid-head-cell-content::after {
->>>>>>> .merge_file_srHDzs
     content: "▼";
 }
