@@ -1264,6 +1264,11 @@ namespace OrdinalAxis {
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
+                        data: series.type === 'timeline' ? series.data : null,
+                        yData: series.type === 'timeline' ? series.yData : null,
+                        getVisibilityMap: series.type === 'timeline' ?
+                            Series.types.timeline.prototype.getVisibilityMap :
+                            null, // #17890
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
