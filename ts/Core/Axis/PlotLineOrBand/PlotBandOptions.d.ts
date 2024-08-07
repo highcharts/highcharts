@@ -35,6 +35,7 @@ export interface PlotBandLabelOptions {
     className?: string;
     clip?: boolean;
     formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    inside?: boolean;
     rotation?: number;
     style?: CSSObject;
     text?: string;
