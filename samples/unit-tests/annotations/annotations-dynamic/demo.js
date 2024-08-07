@@ -257,6 +257,35 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         2,
         '#16011: Shapes should not disappear on update'
     );
+
+    const textAnnotation = chart.addAnnotation({
+        labels: [{
+            point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 0,
+                y: 100000
+            },
+            text: 'Label text',
+            className: 'text-annotation'
+        }]
+    });
+
+    textAnnotation.update({
+        labels: {
+            style: {
+                color: 'yellow'
+            }
+        }
+    });
+
+    chart.removeAnnotation(textAnnotation);
+
+    assert.strictEqual(
+        chart.getSVG().indexOf('text-annotation'),
+        -1,
+        'Annotation is not visible in exported chart after removing (#21507).'
+    );
 });
 
 QUnit.test(

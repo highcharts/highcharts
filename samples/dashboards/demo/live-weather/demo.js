@@ -413,14 +413,12 @@ async function setupDashboard() {
                             board, activeCity,
                             'temperature', true, false
                         );
-                    },
-                    afterLoad: function () {
-                        this.cell.setActiveState();
                     }
                 },
                 states: {
                     active: {
-                        enabled: true
+                        enabled: true,
+                        isActive: true
                     },
                     hover: {
                         enabled: true
