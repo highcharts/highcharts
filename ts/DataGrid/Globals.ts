@@ -84,7 +84,9 @@ namespace Globals {
         noData: classNamePrefix + 'no-data',
         columnSorting: classNamePrefix + 'col-sorting',
         columnSortingAsc: classNamePrefix + 'col-sorting-asc',
-        columnSortingDesc: classNamePrefix + 'col-sorting-desc'
+        columnSortingDesc: classNamePrefix + 'col-sorting-desc',
+        resizerHandles: classNamePrefix + 'column-resizer',
+        resizedColumn: classNamePrefix + 'column-resized'
     };
 
     export const win = window;
