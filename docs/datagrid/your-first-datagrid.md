@@ -10,11 +10,13 @@ When you are ready to create your first simple DataGrid, please follow these ste
 ```
 
 2. In this basic example we are going to create a simple Datagrid. Firstly we
-have to import the Datagrid library.
+have to import (or install) the Datagrid library.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 ```
+
+More information about installation, you can find in our [article](https://www.highcharts.com/docs/datagrid/installation).
 
 3. The DataGrid requires a few basic styles, so you can get the basic one by
 importing the modules to the CSS file as shown below.
