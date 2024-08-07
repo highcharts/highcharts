@@ -53,7 +53,7 @@ async function task() {
 
             if (newJsHash !== jsHash || argv.force || argv.dts) {
                 jsHash = newJsHash;
-                buildTasks.push('scripts-js');
+                buildTasks.push('scripts-js', 'scripts-code');
                 if (argv.dts) {
                     buildTasks.task('jsdoc-dts')();
                 }
