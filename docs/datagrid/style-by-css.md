@@ -26,7 +26,7 @@ The CSS is not included in the library by default, but you can import it like be
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-## Row heights
+## Row/Cell height
 From the performance reasons the height of each row and cell is static and apply ellipsis for a long text.
 However you can disable it by setting `true` for the option [strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights).
 
