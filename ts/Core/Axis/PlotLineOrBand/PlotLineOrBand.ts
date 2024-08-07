@@ -359,8 +359,8 @@ class PlotLineOrBand {
         if (!label.alignValue || label.alignValue === 'left') {
             const width = (
                 (optionsLabel as PlotBandLabelOptions).style?.width || (
-                    !(
-                        isBand &&
+                    (
+                        !isBand ||
                         (optionsLabel as PlotBandLabelOptions).inside
                     ) ? (
                             label.rotation === 90 ?
