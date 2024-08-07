@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,16 +22,15 @@
  *
  * */
 
-import type DataTable from '../Data/DataTable';
+import type DataTable from '../../Data/DataTable';
+import Cell from '../Cell.js';
+import Column from '../Column';
+import TableRow from './TableRow';
+import Utils from '../../Core/Utilities.js';
+import F from '../../Core/Templating.js';
 
-import AST from '../Core/Renderer/HTML/AST.js';
-import DataGridColumn from './DataGridColumn';
-import DataGridRow from './DataGridRow';
-import F from '../Core/Templating.js';
-import Utils from '../Core/Utilities.js';
-
-const { format } = F;
 const { defined, fireEvent } = Utils;
+const { format } = F;
 
 
 /* *
@@ -42,7 +42,7 @@ const { defined, fireEvent } = Utils;
 /**
  * Represents a cell in the data grid.
  */
-class DataGridCell {
+class TableCell extends Cell {
 
     /* *
     *
@@ -51,24 +51,9 @@ class DataGridCell {
     * */
 
     /**
-     * The HTML element of the cell.
-     */
-    public htmlElement: HTMLTableCellElement;
-
-    /**
-     * The column of the cell.
-     */
-    public column: DataGridColumn;
-
-    /**
      * The row of the cell.
      */
-    public row: DataGridRow;
-
-    /**
-     * The raw value of the cell.
-     */
-    public value: DataTable.CellType;
+    public row: TableRow;
 
     /**
      * The input element of a cell after mouse focus.
@@ -92,14 +77,11 @@ class DataGridCell {
      * @param row
      * The row of the cell.
      */
-    constructor(column: DataGridColumn, row: DataGridRow) {
-        this.htmlElement = document.createElement('td');
-
-        this.column = column;
-        this.column.registerCell(this);
-
+    constructor(column: Column, row: TableRow) {
+        super(column, row);
         this.row = row;
-        this.row.registerCell(this);
+
+        this.column.registerCell(this);
 
         this.htmlElement.addEventListener('mouseover', this.onMouseOver);
         this.htmlElement.addEventListener('mouseout', this.onMouseOut);
@@ -117,76 +99,8 @@ class DataGridCell {
      * Renders the cell.
      */
     public render(): void {
-        if (!this.column.data) {
-            return;
-        }
-
-        this.setValue(this.column.data[this.row.index], false);
-        this.row.htmlElement.appendChild(this.htmlElement);
-    }
-
-    /**
-     * Sets the value & updating content of the cell.
-     *
-     * @param value
-     * The raw value to set.
-     *
-     * @param updateTable
-     * Whether to update the table after setting the content.
-     */
-    public setValue(value: DataTable.CellType, updateTable: boolean): void {
-        const element = this.htmlElement;
-
-        this.value = value;
-
-        if (!defined(value)) {
-            value = '';
-        }
-
-        const cellContent = this.formatCell(value, this);
-
-        if (this.column.userOptions.useHTML) {
-            this.renderHTMLCellContent(cellContent, element);
-        } else {
-            element.innerText = cellContent;
-        }
-
-        if (updateTable) {
-            const vp = this.row.viewport;
-            vp.dataTable.setCell(
-                this.column.id,
-                this.row.index,
-                this.value
-            );
-        }
-    }
-
-    /**
-     * Reflows the cell dimensions.
-     */
-    public reflow(): void {
-        const column = this.column;
-        const elementStyle = this.htmlElement.style;
-
-        elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
-    }
-
-    /**
-     * When useHTML enabled, parse the syntax and render HTML.
-     *
-     * @param cellContent
-     * Content to render.
-     *
-     * @param parentElement
-     * Parent element where the content should be.
-     *
-     */
-    private renderHTMLCellContent(
-        cellContent: string,
-        parentElement: HTMLElement
-    ): void {
-        const formattedNodes = new AST(cellContent);
-        formattedNodes.addToDOM(parentElement);
+        super.render();
+        this.setValue(this.column.data?.[this.row.index], false);
     }
 
     /**
@@ -233,24 +147,47 @@ class DataGridCell {
     };
 
     /**
-     * Handle the formatting content of the cell.
+     * Sets the value & updating content of the cell.
      *
      * @param value
-     * The value of cell
+     * The raw value to set.
      *
-     * @param ctx
-     * The context of the cell
-     *
-     * @internal
+     * @param updateTable
+     * Whether to update the table after setting the content.
      */
-    public formatCell(
-        value: string | number | boolean,
-        ctx: DataGridCell
-    ): string {
+    public setValue(value: DataTable.CellType, updateTable: boolean): void {
+        const element = this.htmlElement;
+
+        this.value = value;
+
+        this.renderHTMLCellContent(
+            this.formatCell(),
+            element
+        );
+
+        if (updateTable) {
+            const vp = this.row.viewport;
+            vp.dataTable.setCell(
+                this.column.id,
+                this.row.index,
+                this.value
+            );
+        }
+    }
+
+    /**
+     * Handle the formatting content of the cell.
+     */
+    private formatCell(): string {
         const {
             cellFormat,
             cellFormatter
-        } = ctx.column.userOptions;
+        } = this.column.userOptions;
+
+        let value = this.value;
+        if (!defined(value)) {
+            value = '';
+        }
 
         let cellContent = '';
 
@@ -258,7 +195,7 @@ class DataGridCell {
             cellContent = cellFormatter.call(this);
         } else {
             cellContent = (
-                cellFormat ? format(cellFormat, ctx) : value + ''
+                cellFormat ? format(cellFormat, this) : value + ''
             );
         }
 
@@ -272,7 +209,7 @@ class DataGridCell {
         this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
         this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
         this.htmlElement.removeEventListener('click', this.onClick);
-        this.htmlElement.remove();
+        super.destroy();
     }
 }
 
@@ -283,12 +220,12 @@ class DataGridCell {
  *
  * */
 
-namespace DataGridCell {
+namespace TableCell {
     /**
-     * Event interface for cell events.
+     * Event interface for table cell events.
      */
-    export interface CellEvent {
-        target: DataGridCell;
+    export interface TableCellEvent {
+        target: TableCell;
     }
 }
 
@@ -299,4 +236,4 @@ namespace DataGridCell {
  *
  * */
 
-export default DataGridCell;
+export default TableCell;

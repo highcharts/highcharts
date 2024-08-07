@@ -22,7 +22,7 @@
  *
  * */
 
-import DataGridColumn from '../DataGridColumn.js';
+import Column from '../Column.js';
 import DataModifier from '../../Data/Modifiers/DataModifier.js';
 import DataTable from '../../Data/DataTable.js';
 import Globals from '../Globals.js';
@@ -47,7 +47,7 @@ class ColumnSorting {
     /**
      * The sorted column of the table.
      */
-    public column: DataGridColumn;
+    public column: Column;
 
     /**
      * The head element of the column.
@@ -75,7 +75,7 @@ class ColumnSorting {
      * @param headElement
      * The head element of the column.
      */
-    constructor(column: DataGridColumn, headElement: HTMLElement) {
+    constructor(column: Column, headElement: HTMLElement) {
         this.column = column;
         this.headElement = headElement;
         this.addSortingEvents();
@@ -100,7 +100,7 @@ class ColumnSorting {
             return;
         }
 
-        this.column.headerContent?.addEventListener(
+        this.column.header?.headerContent?.addEventListener(
             'click',
             this.setSortingState
         );

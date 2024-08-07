@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,10 +22,11 @@
  *
  * */
 
-import type { IndividualColumnOptions } from './DataGridOptions';
+import type { IndividualColumnOptions } from './Options';
+import type Cell from './Cell';
+import type HeaderCell from './Header/HeaderCell';
 
-import DataGridCell from './DataGridCell.js';
-import DataGridTable from './DataGridTable.js';
+import Table from './Table.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
 import Utils from '../Core/Utilities.js';
@@ -44,7 +46,7 @@ const { makeHTMLElement } = DGUtils;
 /**
  * Represents a column in the data grid.
  */
-class DataGridColumn {
+class Column {
 
     /* *
     *
@@ -72,7 +74,7 @@ class DataGridColumn {
     /**
      * The viewport (table) the column belongs to.
      */
-    public readonly viewport: DataGridTable;
+    public readonly viewport: Table;
 
     /**
      * The width of the column in the viewport. The interpretation of the
@@ -85,7 +87,7 @@ class DataGridColumn {
     /**
      * The cells of the column.
      */
-    public cells: DataGridCell[] = [];
+    public cells: Cell[] = [];
 
     /**
      * The id of the column (`name` in the Data Table).
@@ -100,12 +102,7 @@ class DataGridColumn {
     /**
      * The type of the column data.
      */
-    public type?: DataGridColumn.Type;
-
-    /**
-     * The header element of the column (the proper cell in the table head).
-     */
-    public headerElement?: HTMLElement;
+    public type?: Column.Type;
 
     /**
      * The user options of the column.
@@ -125,7 +122,7 @@ class DataGridColumn {
     /**
      * The wrapper for content of head.
      */
-    public headerContent?: HTMLElement;
+    public header?: HeaderCell;
 
     /**
      * Sorting column module.
@@ -151,7 +148,7 @@ class DataGridColumn {
      * The index of the column.
      */
     constructor(
-        viewport: DataGridTable,
+        viewport: Table,
         id: string,
         index: number
     ) {
@@ -159,7 +156,7 @@ class DataGridColumn {
             viewport.dataGrid.options?.defaults?.columns ?? {},
             viewport.dataGrid.options?.columns?.[id] ?? {}
         );
-        this.options = merge(DataGridColumn.defaultOptions, this.userOptions);
+        this.options = merge(Column.defaultOptions, this.userOptions);
 
         this.id = id;
         this.index = index;
@@ -174,19 +171,6 @@ class DataGridColumn {
     *  Methods
     *
     * */
-
-    /**
-     * Sets the header element of the column.
-     *
-     * @param headerElement
-     * The head element of the column.
-     */
-    public setHeaderElement(headerElement: HTMLElement): void {
-        this.headerElement = headerElement;
-        if (this.options.className) {
-            headerElement.classList.add(this.options.className);
-        }
-    }
 
     /**
      * Updates the column with new options.
@@ -208,7 +192,7 @@ class DataGridColumn {
      * @param cell
      * The cell to register.
      */
-    public registerCell(cell: DataGridCell): void {
+    public registerCell(cell: Cell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
         if (this.options.className) {
             cell.htmlElement.classList.add(this.options.className);
@@ -217,6 +201,19 @@ class DataGridColumn {
             cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
         }
         this.cells.push(cell);
+    }
+
+    /**
+     * Unregisters a cell from the column.
+     *
+     * @param cell
+     * The cell to unregister.
+     */
+    public unregisterCell(cell: Cell): void {
+        const index = this.cells.indexOf(cell);
+        if (index > -1) {
+            this.cells.splice(index, 1);
+        }
     }
 
     /**
@@ -239,7 +236,7 @@ class DataGridColumn {
      * Whether the column should be hovered.
      */
     public setHoveredState(hovered: boolean): void {
-        this.headerElement?.classList[hovered ? 'add' : 'remove'](
+        this.header?.htmlElement?.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredColumn
         );
 
@@ -323,7 +320,7 @@ class DataGridColumn {
  *
  * */
 
-namespace DataGridColumn {
+namespace Column {
     export type Type = 'number'|'date'|'string'|'boolean';
 }
 
@@ -334,4 +331,4 @@ namespace DataGridColumn {
  *
  * */
 
-export default DataGridColumn;
+export default Column;

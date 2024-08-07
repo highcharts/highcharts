@@ -23,8 +23,8 @@
  *
  * */
 
-import DataGridTable from '../DataGridTable.js';
-import DataGridColumn from '../DataGridColumn.js';
+import Table from '../Table.js';
+import Column from '../Column.js';
 
 
 /* *
@@ -47,12 +47,12 @@ class ColumnsResizer {
     /**
      * The viewport of the data grid.
      */
-    private viewport: DataGridTable;
+    private viewport: Table;
 
     /**
      * The column being dragged.
      */
-    private draggedColumn?: DataGridColumn;
+    private draggedColumn?: Column;
 
     /**
      * The start X position of the drag.
@@ -86,7 +86,7 @@ class ColumnsResizer {
      *
      * */
 
-    constructor(viewport: DataGridTable) {
+    constructor(viewport: Table) {
         this.viewport = viewport;
 
         document.addEventListener('mousemove', this.onDocumentMouseMove);
@@ -121,7 +121,7 @@ class ColumnsResizer {
 
         const leftColW = this.columnStartWidth ?? 0;
         const rightColW = this.nextColumnStartWidth ?? 0;
-        const MIN_WIDTH = DataGridColumn.MIN_COLUMN_WIDTH;
+        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
 
         let newLeftW = leftColW + diff;
         let newRightW = rightColW - diff;
@@ -153,7 +153,7 @@ class ColumnsResizer {
         }
 
         const colW = this.columnStartWidth ?? 0;
-        const MIN_WIDTH = DataGridColumn.MIN_COLUMN_WIDTH;
+        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
 
         let newW = colW + diff;
         if (newW < MIN_WIDTH) {
@@ -184,7 +184,7 @@ class ColumnsResizer {
 
         this.viewport.reflow();
         this.viewport.rowsVirtualizer.adjustRowHeights();
-        this.viewport.dataGrid.options?.events?.column?.resize?.call(
+        this.viewport.dataGrid.options?.events?.column?.afterResize?.call(
             this.draggedColumn
         );
     };
@@ -193,7 +193,7 @@ class ColumnsResizer {
      * Handles the mouse up event on the document.
      */
     private onDocumentMouseUp = (): void => {
-        this.draggedColumn?.headerElement?.classList.remove(
+        this.draggedColumn?.header?.htmlElement?.classList.remove(
             'highcharts-datagrid-head-cell-resized'
         );
 
@@ -215,7 +215,7 @@ class ColumnsResizer {
      */
     public addHandleListeners(
         handle: HTMLElement,
-        column: DataGridColumn
+        column: Column
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
             this.dragStartX = e.pageX;
@@ -225,7 +225,7 @@ class ColumnsResizer {
             this.nextColumnStartWidth =
                 this.viewport.columns[column.index + 1]?.getWidth();
 
-            column.headerElement?.classList.add(
+            column.header?.htmlElement.classList.add(
                 'highcharts-datagrid-head-cell-resized'
             );
         };

@@ -8,6 +8,10 @@
  *
  *  Authors:
  *  - Dawid Dragula
+<<<<<<< .merge_file_P08A15
+=======
+ *  - Sebastian Bochan
+>>>>>>> .merge_file_9UvQaw
  *
  * */
 

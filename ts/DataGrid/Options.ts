@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -21,8 +22,8 @@
 
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type DataGridCell from './DataGridCell';
-import DataGridColumn from './DataGridColumn';
+import type Cell from './Cell';
+import Column from './Column';
 
 
 /* *
@@ -39,24 +40,23 @@ export type ColumnDistribution = 'full' | 'fixed';
 /**
  * Callback function to be called when a cell event is triggered.
  */
-export type DataGridCellEventCallback = (this: DataGridCell) => void;
+export type CellEventCallback = (this: Cell) => void;
 
 /**
  * Callback function to be called when a column event is triggered.
  */
-export type DataGridColumnEventCallback = (this: DataGridColumn) => void;
-
+export type ColumnEventCallback = (this: Column) => void;
 
 /**
  * Returns a formatted cell's string.
  */
-export type CellFormatterCallback = (this: DataGridCell) => string;
+export type CellFormatterCallback = (this: Cell) => string;
 
 
 /**
  * Options to control the content and the user experience of a grid structure.
  */
-export interface DataGridOptions {
+export interface Options {
 
     /**
      * Data table to display in the grid structure.
@@ -74,19 +74,9 @@ export interface DataGridOptions {
     defaults?: DataGridDefaults;
 
     /**
-     * Columns included in the grid structure.
-     */
-    columnsIncluded?: Array<string>;
-
-    /**
      * Options for individual columns.
      */
     columns?: Record<string, IndividualColumnOptions>;
-
-    /**
-     * Contains options for caption.
-     */
-    caption?: CaptionOptions;
 
     /**
      * Contains events options.
@@ -98,6 +88,11 @@ export interface DataGridOptions {
  * Options to control the way DataGrid is rendered.
  */
 export interface DataGridSettings {
+    /**
+     * Contains options for caption.
+     */
+    caption?: CaptionOptions;
+
     /**
     * Options to control the columns behavior and rendering.
     */
@@ -120,11 +115,16 @@ export interface ColumnsSettings {
     distribution?: ColumnDistribution;
 
     /**
+     * Columns included in the grid structure.
+     */
+    included?: Array<string>;
+
+    /**
      * Whether the columns should be resizable.
      *
      * @default true
      */
-    resizing?: boolean;
+    resizable?: boolean;
 }
 
 export interface RowsSettings {
@@ -233,6 +233,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
 
 export interface CaptionOptions {
     /**
+     * The custom CSS class name for the caption.
+     */
+    className?: string;
+
+    /**
      * The caption of the datagrid grid.
      */
     text?: string;
@@ -245,63 +250,63 @@ export interface DataGridEvents {
     /**
      * Events related to the cells.
      */
-    cell?: DataGridCellEvents;
+    cell?: CellEvents;
 
     /**
      * Events related to column.
      */
-    column?: DataGridColumnEvents
+    column?: ColumnEvents
 
     /**
      * Events related to column.
      */
-    header?: DataGridHeaderEvents
+    header?: HeaderEvents
 }
 
 /**
  * Events related to the cells.
  */
-export interface DataGridCellEvents {
+export interface CellEvents {
     /**
      * Callback function to be called when the cell is clicked.
      */
-    click?: DataGridCellEventCallback;
+    click?: CellEventCallback;
 
     /**
      * Callback function to be called when the cell is hovered.
      */
-    mouseOver?: DataGridCellEventCallback;
+    mouseOver?: CellEventCallback;
 
     /**
      * Callback function to be called when the cell is no longer hovered.
      */
-    mouseOut?: DataGridCellEventCallback;
+    mouseOut?: CellEventCallback;
 
     /**
      * Callback function to be called after editing of cell value.
      */
-    afterEdit?: DataGridCellEventCallback;
+    afterEdit?: CellEventCallback;
 }
 
 
-export interface DataGridColumnEvents {
+export interface ColumnEvents {
     /**
      * Callback function to be called when the column is sorted
      * (for instance, after clicking on header).
      */
-    afterSorting?: DataGridColumnEventCallback;
+    afterSorting?: ColumnEventCallback;
 
     /**
      * Callback function to be called when the column is resized.
      */
-    resize?: DataGridColumnEventCallback;
+    afterResize?: ColumnEventCallback;
 }
 
-export interface DataGridHeaderEvents {
+export interface HeaderEvents {
     /**
      * Callback function to be called when the header is clicked.
      */
-    click?: DataGridColumnEventCallback;
+    click?: ColumnEventCallback;
 }
 
 /* *
@@ -310,4 +315,4 @@ export interface DataGridHeaderEvents {
  *
  * */
 
-export default DataGridOptions;
+export default Options;

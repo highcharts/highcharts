@@ -23,7 +23,7 @@
  *
  * */
 
-import DataGridCell from '../DataGridCell.js';
+import TableCell from '../Content/TableCell.js';
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
 
@@ -50,7 +50,7 @@ class CellEditing {
     /**
      * The cell being currently edited.
      */
-    public editedCell?: DataGridCell;
+    public editedCell?: TableCell;
 
     /**
      * Input element for the cell.
@@ -70,7 +70,7 @@ class CellEditing {
      * @param cell
      * The cell that is to be edited.
      */
-    public startEditing(cell: DataGridCell): void {
+    public startEditing(cell: TableCell): void {
         if (this.editedCell === cell) {
             return;
         }
