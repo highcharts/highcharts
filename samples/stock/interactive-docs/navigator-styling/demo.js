@@ -11,7 +11,10 @@
             id: 'aapl-ohlc',
             name: 'AAPL Stock Price',
             data: data
-        }]
+        }],
+        rangeSelector: {
+            selected: 4
+        }
     });
 
     // Set navigator mask to outside/inside
@@ -30,12 +33,12 @@
     });
     // Set and change navigator mask fill
     const maskFillInput = document.getElementById('navigator-mask-fill');
-    maskFillInput.value = chart.navigator.navigatorOptions.maskFill;
+    maskFillInput.value = '#667aff';
     maskFillInput.addEventListener('change', e => {
         const maskFill = e.target.value;
         chart.update({
             navigator: {
-                maskFill: maskFill
+                maskFill: maskFill + '4d'
             }
         });
     });
@@ -50,7 +53,7 @@
             }
         });
     });
-    // Set and change outline width\
+    // Set and change outline width
     const outlineWidthInput = document.getElementById('navigator-slider');
     outlineWidthInput.value = chart.navigator.navigatorOptions.outlineWidth;
     outlineWidthInput.addEventListener('input', e => {
