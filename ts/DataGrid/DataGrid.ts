@@ -67,12 +67,16 @@ class DataGrid {
      * The options of the data grid.
      *
      * @return The new data grid.
+     *
+     * @param afterLoadCallback
+     * The callback that is called after the data grid is loaded.
      */
     public static dataGrid(
         renderTo: string|HTMLElement,
-        options: Options
+        options: Options,
+        afterLoadCallback?: DataGrid.AfterLoadCallback
     ): DataGrid {
-        return new DataGrid(renderTo, options);
+        return new DataGrid(renderTo, options, afterLoadCallback);
     }
 
     /**
@@ -185,8 +189,15 @@ class DataGrid {
      *
      * @param options
      * The options of the data grid.
+     *
+     * @param afterLoadCallback
+     * The callback that is called after the data grid is loaded.
      */
-    constructor(renderTo: string|HTMLElement, options: Options) {
+    constructor(
+        renderTo: string | HTMLElement,
+        options: Options,
+        afterLoadCallback?: DataGrid.AfterLoadCallback
+    ) {
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
 
@@ -200,6 +211,7 @@ class DataGrid {
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
+            afterLoadCallback?.(this);
         });
     }
 
@@ -452,7 +464,7 @@ class DataGrid {
  *
  * */
 namespace DataGrid {
-
+    export type AfterLoadCallback = (dataGrid: DataGrid) => void;
 }
 
 
