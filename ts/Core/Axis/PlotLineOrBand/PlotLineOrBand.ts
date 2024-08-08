@@ -361,22 +361,25 @@ class PlotLineOrBand {
         if (
             !label.alignValue ||
             label.alignValue === 'left' ||
-            inside
+            defined(inside)
         ) {
             label.css({
                 width: (
                     optionsLabel.style?.width || (
-                        !isBand ? (
-                            label.rotation === 90 ?
-                                axis.height - (
-                                    label.alignAttr.y -
+                        (
+                            !isBand ||
+                            !inside
+                        ) ? (
+                                label.rotation === 90 ?
+                                    axis.height - (
+                                        label.alignAttr.y -
                                         axis.top
-                                ) : (
-                                    optionsLabel.clip ?
-                                        axis.width :
-                                        axis.chart.chartWidth
-                                ) - (label.alignAttr.x - axis.left)
-                        ) :
+                                    ) : (
+                                        optionsLabel.clip ?
+                                            axis.width :
+                                            axis.chart.chartWidth
+                                    ) - (label.alignAttr.x - axis.left)
+                            ) :
                             bBoxWidth
                     )
                 ) + 'px'
