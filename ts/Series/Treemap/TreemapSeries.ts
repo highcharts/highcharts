@@ -138,7 +138,6 @@ function onSeriesAfterBindAxes(
     }
 }
 
-
 /* *
  *
  *  Class
@@ -508,7 +507,21 @@ class TreemapSeries extends ScatterSeries {
             });
 
             if (groupChildren.length) {
-                const node = new series.NodeClass().init(
+                const val = groupChildren.reduce(
+                        (acc, child): number => acc + child.val,
+                        0
+                    ),
+                    PointClass = series.pointClass;
+
+                let groupPoint = series.points.find(
+                        (point): boolean =>
+                            point.node.isGroup &&
+                            point.node.parent === parent.id
+                    ),
+                    node = groupPoint?.node;
+
+                if (!groupPoint) {
+                    node = new series.NodeClass().init(
                         `highcharts-grouped-treemap-points-${parent.id || 'root'}`,
                         series.nodeList.length - 1,
                         [],
@@ -516,48 +529,47 @@ class TreemapSeries extends ScatterSeries {
                         parent.level + 1,
                         series,
                         parent.id
-                    ),
-                    val = groupChildren.reduce(
-                        (acc, child): number => acc + child.val,
-                        0
-                    ),
-                    PointClass = series.pointClass;
+                    );
 
-                node.val = val;
-                node.visible = true;
-
-                const groupPoint = new PointClass(series, {
-                    name: groupAreaThreshold.name,
-                    value: val
-                } as any);
-
-                if (series.colorAxis) {
-                    groupPoint.color = series
-                        .colorAxis.toColor(val, groupPoint);
+                    groupPoint = new PointClass(series, {
+                        name: groupAreaThreshold.name,
+                        value: val
+                    } as any);
                 }
 
-                series.points.push(groupPoint);
+                if (node) {
+                    node.val = val;
+                    node.visible = true;
 
-                groupPoint.node = node;
-                groupPoint.formatPrefix = 'groupedNodes';
-                groupPoint.groupedPointsAmount = groupChildren.length;
+                    if (series.colorAxis) {
+                        groupPoint.color = series
+                            .colorAxis.toColor(val, groupPoint);
+                    }
 
-                series.nodeMap[node.id] = node;
-                series.nodeList.push(node);
+                    series.points.push(groupPoint);
 
-                node.point = groupPoint;
-                node.isLeaf = true;
-                node.isGroup = true;
-                node.parentNode = parent;
+                    groupPoint.node = node;
+                    groupPoint.formatPrefix = 'groupedNodes';
+                    groupPoint.groupedPointsAmount = groupChildren.length;
 
-                children = children.filter(
-                    (x): boolean => !groupChildren?.includes(x)
-                );
-                children.push(node);
+                    series.nodeMap[node.id] = node;
+                    series.nodeList.push(node);
 
-                // Calculate the layout one more time after hiding small leafs
-                childrenValues =
-                    series[algorithm](area as any, children) as any;
+                    node.point = groupPoint;
+                    node.isLeaf = true;
+                    node.isGroup = true;
+                    node.parentNode = parent;
+
+                    children = children.filter(
+                        (x): boolean => !groupChildren?.includes(x)
+                    );
+                    children.push(node);
+
+                    // Calculate the layout one more time after hiding small
+                    // leafs
+                    childrenValues =
+                        series[algorithm](area as any, children) as any;
+                }
             }
         }
 
@@ -981,13 +993,6 @@ class TreemapSeries extends ScatterSeries {
                 return d.id;
             }),
             parentList = series.getListOfParents(this.data, allIds);
-
-        // Remove old group points for small nodes
-        Object.keys(parentList).forEach((parentKey): void => {
-            if (series.nodeMap?.[`highcharts-grouped-treemap-points-${parentKey || 'root'}`]) {
-                series.nodeMap[`highcharts-grouped-treemap-points-${parentKey || 'root'}`].point.destroy();
-            }
-        });
 
         series.nodeMap = {};
         series.nodeList = [];
@@ -1556,8 +1561,16 @@ class TreemapSeries extends ScatterSeries {
             updateAxes(existingRootNode.pointValues);
         }
 
+        // Group points are removed during generatePoints method, save them for
+        // later usage
+        const groupPoints = (this.points || []).filter((point): boolean =>
+            point.node.isGroup
+        );
+
         // Call prototype function
         super.translate();
+
+        this.points.push(...groupPoints);
 
         // @todo Only if series.isDirtyData is true
         const tree = series.tree = series.getTree();
