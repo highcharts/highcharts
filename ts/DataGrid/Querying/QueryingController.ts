@@ -24,7 +24,6 @@
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import DataGrid from '../DataGrid.js';
-import DataTable from '../../Data/DataTable.js';
 import SortingController from './SortingController.js';
 
 /* *
