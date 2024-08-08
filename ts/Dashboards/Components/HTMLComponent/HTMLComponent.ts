@@ -286,7 +286,7 @@ class HTMLComponent extends Component {
             cell: '',
             type: 'HTML',
             elements: [{
-                tagName: 'p',
+                tagName: 'span',
                 textContent: '[Your custom HTML here- edit the component]'
             }]
         };
