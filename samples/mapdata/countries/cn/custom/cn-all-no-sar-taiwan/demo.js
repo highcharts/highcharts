@@ -1,14 +1,21 @@
 (async () => {
 
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json'
+        'https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-no-sar-taiwan.topo.json'
     ).then(response => response.json());
 
     // Prepare demo data. The data is joined to map using value of 'hc-key'
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['sz-ma', 10], ['sz-lu', 11], ['sz-sh', 12], ['sz-hh', 13]
+        ['cn-3664', 10], ['cn-gd', 11], ['cn-sh', 12], ['cn-zj', 13],
+        ['cn-ha', 14], ['cn-xz', 15], ['cn-yn', 16], ['cn-ah', 17],
+        ['cn-hu', 18], ['cn-sa', 19], ['cn-cq', 20], ['cn-gz', 21],
+        ['cn-hn', 22], ['cn-sc', 23], ['cn-sx', 24], ['cn-he', 25],
+        ['cn-jx', 26], ['cn-nm', 27], ['cn-gx', 28], ['cn-hl', 29],
+        ['cn-fj', 30], ['cn-bj', 31], ['cn-hb', 32], ['cn-ln', 33],
+        ['cn-sd', 34], ['cn-tj', 35], ['cn-js', 36], ['cn-qh', 37],
+        ['cn-gs', 38], ['cn-xj', 39], ['cn-jl', 40], ['cn-nx', 41]
     ];
 
     // Create the chart
@@ -22,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json">Eswatini</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-no-sar-taiwan.topo.json">China without Hong Kong, Macau, and Taiwan</a>'
         },
 
         mapNavigation: {
