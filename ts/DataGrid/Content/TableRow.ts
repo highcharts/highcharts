@@ -127,6 +127,7 @@ class TableRow extends Row {
 
     /**
      * Returns the default top offset of the row (before adjusting row heights).
+     * @internal
      */
     public getDefaultTopOffset(): number {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;

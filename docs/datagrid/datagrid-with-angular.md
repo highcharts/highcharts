@@ -26,4 +26,4 @@ To create a DataGrid with Angular please follow the steps below: <br>
 
 4. Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes three arguments:
     - `container` - the element where the DataGrid will be rendered, can be an id of the element or the direct reference to the element
-    - `options` - the options object for the DataGrid
+    - `options` - the object options for the DataGrid

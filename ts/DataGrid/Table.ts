@@ -47,7 +47,7 @@ const { getStyle } = Utils;
  * */
 
 /**
- * Represents a table viewport for the data grid.
+ * Represents a table viewport of the data grid.
  */
 class Table {
 
@@ -98,12 +98,14 @@ class Table {
 
     /**
      * The resize observer for the table container.
+     * @internal
      */
     public resizeObserver: ResizeObserver;
 
     /**
      * The rows virtualizer instance that handles the rows rendering &
      * dimensioning logic.
+     * @internal
      */
     public rowsVirtualizer: RowsVirtualizer;
 
@@ -114,12 +116,14 @@ class Table {
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
+     * @internal
      */
     public columnsResizer?: ColumnsResizer;
 
     /**
      * The width of each row in the table. Each of the rows has the same width.
      * Only for the `fixed` column distribution.
+     * @internal
      */
     public rowsWidth?: number;
 
@@ -137,6 +141,7 @@ class Table {
     /**
      * The cell editing instance that handles the manual editing of cells in
      * the data grid.
+     * @internal
      */
     public cellEditing: CellEditing;
 
@@ -300,6 +305,8 @@ class Table {
      *
      * @param index
      * The index of the row to scroll to.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop =
@@ -314,6 +321,8 @@ class Table {
      * The width in pixels.
      *
      * @return The width ratio.
+     *
+     * @internal
      */
     public getRatioFromWidth(width: number): number {
         return width / this.tbodyElement.clientWidth;
@@ -327,6 +336,8 @@ class Table {
      * The width ratio.
      *
      * @returns The width in pixels.
+     *
+     * @internal
      */
     public getWidthFromRatio(ratio: number): number {
         return this.tbodyElement.clientWidth * ratio;
@@ -334,6 +345,7 @@ class Table {
 
     /**
      * Render caption above the datagrid
+     * @internal
      */
     public renderCaption(): void {
         const captionOptions = this.dataGrid.options?.settings?.caption;

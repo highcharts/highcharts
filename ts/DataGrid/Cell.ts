@@ -95,7 +95,8 @@ abstract class Cell {
     * */
 
     /**
-     * Init element
+     * Init element.
+     * @internal
      */
     public init(): HTMLTableCellElement {
         return document.createElement('td', {});
@@ -126,6 +127,7 @@ abstract class Cell {
      * @param parentElement
      * Parent element where the content should be.
      *
+     * @internal
      */
     public renderHTMLCellContent(
         cellContent: string,

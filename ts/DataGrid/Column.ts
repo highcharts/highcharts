@@ -56,11 +56,13 @@ class Column {
 
     /**
      * The minimum width of a column.
+     * @internal
      */
     public static readonly MIN_COLUMN_WIDTH = 20;
 
     /**
      * The default options of the column.
+     * @internal
      */
     public static readonly defaultOptions: IndividualColumnOptions = {};
 
@@ -105,12 +107,13 @@ class Column {
     public type?: Column.Type;
 
     /**
-     * The user options of the column.
+     * The options that were declared by the user when creating the column.
      */
     public readonly userOptions: IndividualColumnOptions;
 
     /**
-     * The options of the column.
+     * The options of the column. Contains the options that were declared by
+     * the user and some of the default options.
      */
     public readonly options: IndividualColumnOptions;
 
@@ -212,7 +215,7 @@ class Column {
     }
 
     /**
-     * Unregisters a cell from the column.
+     * Unregister a cell from the column.
      *
      * @param cell
      * The cell to unregister.
