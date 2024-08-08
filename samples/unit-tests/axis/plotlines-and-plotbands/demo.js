@@ -513,7 +513,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 18, 4, 20),
                     label: {
                         rotation: 90,
-                        text: 'Wide Enough'
+                        text: 'Wide Enough',
+                        inside: false
                     }
                 },
                 {
@@ -522,7 +523,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 25, 8),
                     label: {
                         rotation: 90,
-                        text: 'Too Narrow'
+                        text: 'Too Narrow',
+                        inside: false
                     }
                 }
             ]

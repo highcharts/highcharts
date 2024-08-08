@@ -187,15 +187,6 @@ class PlotLineOrBand {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;
                 }
-
-                if (
-                    optionsLabel &&
-                    !defined((optionsLabel as PlotBandLabelOptions).inside) &&
-                    options.label
-                ) {
-                    (optionsLabel as PlotBandLabelOptions).inside =
-                    (options.label as PlotBandLabelOptions).inside = true;
-                }
             }
         }
 
