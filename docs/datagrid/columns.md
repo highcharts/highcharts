@@ -56,7 +56,7 @@ columns {
 You can also use the [Defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property
 
 ## Events
-The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object which will call functions when editing the cell or column.
+The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object which will call functions when editing the cell or column.
 
 The available events are:
 
@@ -93,26 +93,29 @@ events: {
 ```
 
 ## Sorting
-The DataGrid allows you to set the filtering option per column. The basic one is sorting.
+The DataGrid allows you to set the querying options. The basic one is sorting.
 
 You have three states of sorting:
- * 1 - default
+ * 1 - disabled
  * 2 - descending
  * 3 - ascending
 
-When you click on the header, it triggers the next state in order to the current one.
+When the sortable option is turned on, clicking on the header triggers the next state in order to the current one.
 
-The [sorting](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
+The [sorting](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
 
 ```js
 columns: {
   column1: {
-    sorting: true
+    sorting: {
+      sortable: true,
+      order: 'desc'
+    }
   }
 }
 ```
 
-You can apply sorting to all columns by the [Defaults]() option as described in the first point.
+You can turn off sorting for all columns by the [Defaults]() option as described in the first point.
 
 ```js
 defaults {
@@ -122,3 +125,4 @@ defaults {
 }
 ```
 
+Additionally, you can programmatically sort a column using the [`column.sorting.setOrder`](http://localhost:9005/dashboards/#classes/DataGrid_Actions_ColumnSorting.ColumnSorting#setOrder) method, even if the sortable option is turned off.

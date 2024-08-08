@@ -68,7 +68,9 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
     defaults: {
         columns: {
             editable: true,
-            sorting: true
+            sorting: {
+                sortable: false
+            }
         }
     },
     settings: {
