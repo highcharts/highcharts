@@ -435,7 +435,7 @@ function onBeforeRender(
                                 data = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, data);
-                                s.pointClass.setGanttPointAliases(data);
+                                s.pointClass.setGanttPointAliases(data, chart);
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
