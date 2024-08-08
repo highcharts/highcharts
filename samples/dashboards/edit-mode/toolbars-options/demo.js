@@ -10,12 +10,23 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 editMode: {
-                    hiddenToolbarItems: ['destroy']
+                    toolbarItems: {
+                        destroy: {
+                            enabled: false
+                        }
+                    }
                 },
                 cells: [{
                     id: 'dashboard-col-0',
                     editMode: {
-                        hiddenToolbarItems: ['settings', 'destroy']
+                        toolbarItems: {
+                            destroy: {
+                                enabled: false
+                            },
+                            settings: {
+                                enabled: false
+                            }
+                        }
                     }
                 }, {
                     id: 'dashboard-col-1'

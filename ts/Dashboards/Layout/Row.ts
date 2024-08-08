@@ -20,7 +20,6 @@ import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Layout from './Layout';
-import type MenuItem from '../EditMode/Menu/MenuItem';
 import type Serializable from '../Serializable';
 
 
@@ -560,10 +559,28 @@ namespace Row {
          **/
         editMode?: {
             /**
-             * Array of toolbar items to hide in the edit mode.
-             * Available items are `destroy`, `settings` and `drag`.
+             * Individual options for the toolbar items.
              **/
-            hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
         }
         /**
          * The id of the container element.

@@ -23,7 +23,6 @@
  * */
 
 import type Component from '../Components/Component';
-import type MenuItem from '../EditMode/Menu/MenuItem';
 
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
@@ -154,10 +153,28 @@ namespace CellHTML {
          **/
         editMode?: {
             /**
-             * Array of toolbar items to hide in the edit mode.
-             * Available items are `destroy`, `settings` and `drag`.
+             * Individual options for the toolbar items.
              **/
-            hiddenToolbarItems?: Array<MenuItem.ToolbarItemId>;
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
         }
 
         /**

@@ -178,15 +178,20 @@ class RowEditToolbar extends EditToolbar {
                 toolbar.editMode.board.container
             );
             const rowWidth = rowOffsets.right - rowOffsets.left;
-            const hiddenItems = row.options.editMode?.hiddenToolbarItems || [];
 
-            // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
-                if (hiddenItems.includes(item.options.id)) {
-                    item.deactivate();
-                } else {
+                if (!row.options?.editMode?.toolbarItems) {
                     item.activate();
+                    return;
                 }
+
+                /* eslint-disable-next-line max-len */
+                if (row.options.editMode.toolbarItems[item.options.id as keyof typeof row.options.editMode.toolbarItems]?.enabled === false) {
+                    item.deactivate();
+                    return;
+                }
+
+                item.activate();
             });
 
             offsetX = rowWidth / 2 - toolbar.container.clientWidth / 2;
@@ -207,16 +212,6 @@ class RowEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            /// toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
-
-            // @ToDo - mask is buggy - should be refactored or removed.
-            // if (this.row) {
-            //     super.maskNotEditedElements(
-            //         this.row,
-            //         true
-            //     );
-            //     this.editedRow = this.row;
-            // }
         }
     }
 
