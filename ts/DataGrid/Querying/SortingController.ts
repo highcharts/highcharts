@@ -117,6 +117,8 @@ class SortingController {
                 order
             };
         }
+
+        this.modifier = this.createModifier();
     }
 
     /**
@@ -178,8 +180,6 @@ class SortingController {
             this.initialSorting = stateFromOptions;
             this.setSorting(stateFromOptions.order, stateFromOptions.columnId);
         }
-
-        this.modifier = this.createModifier();
     }
 
     /**

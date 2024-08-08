@@ -24,7 +24,6 @@
 
 import type Options from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type ColumnSorting from './Actions/ColumnSorting';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Column from './Column.js';
@@ -160,12 +159,6 @@ class DataGrid {
      * @internal
      */
     public hoveredColumnId?: string;
-
-    /**
-     * Keeps status of sorted column, when updating datagrid.
-     * @internal
-     */
-    public columnSortingState?: Record<string, ColumnSorting.SortingState>;
 
     /**
      * The querying controller.

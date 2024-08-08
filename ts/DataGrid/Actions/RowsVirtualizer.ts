@@ -123,6 +123,13 @@ class RowsVirtualizer {
         this.viewport.reflow();
 
         // Load & render rows
+        this.render();
+    }
+
+    /**
+     * Renders the rows in the viewport.
+     */
+    public render(): void {
         this.renderRows(this.rowCursor);
         this.adjustRowHeights();
     }

@@ -127,7 +127,7 @@ class Column {
     /**
      * Sorting column module.
      */
-    public columnSorting?: ColumnSorting;
+    public sorting?: ColumnSorting;
 
     /* *
     *
@@ -161,8 +161,9 @@ class Column {
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.data = viewport.dataTable.getColumn(id, true);
         this.width = this.getInitialWidth();
+
+        this.loadData();
     }
 
 
@@ -173,25 +174,19 @@ class Column {
     * */
 
     /**
+     * Loads the data of the column from the viewport's data table.
+     */
+    public loadData(): void {
+        this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
      * Updates the column with new options.
      *
      * @param options
      * The column options to update.
      */
     public async update(options: IndividualColumnOptions): Promise<void> {
-
-        // Will be changed when implementing the multi-column sorting.
-        const columnOptionRecords = this.viewport.dataGrid.userOptions?.columns;
-        if (options.sorting?.order && columnOptionRecords) {
-            const columnIDs = Object.keys(columnOptionRecords);
-            for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
-                const columnOptions = columnOptionRecords[columnIDs[i]];
-                if (columnOptions.sorting?.order) {
-                    delete columnOptions.sorting.order;
-                }
-            }
-        }
-
         await this.viewport.dataGrid.update({
             columns: {
                 [this.id]: options

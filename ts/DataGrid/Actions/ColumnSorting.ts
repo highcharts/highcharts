@@ -22,6 +22,8 @@
  *
  * */
 
+import type { ColumnSortingOrder } from '../Options.js';
+
 import Column from '../Column.js';
 import Globals from '../Globals.js';
 
@@ -73,7 +75,7 @@ class ColumnSorting {
         this.headElement = headElement;
 
         this.addHeaderElementAttributes();
-        this.addSortingEvents();
+        this.addSortingOnClick();
     }
 
 
@@ -87,79 +89,97 @@ class ColumnSorting {
      * Adds attributes to the column header.
      */
     private addHeaderElementAttributes(): void {
-        const sortingOptions = this.column.options.sorting;
+        const col = this.column;
+        const sortingOptions = col.options.sorting;
+        const { currentSorting } = col.viewport.dataGrid.querying.sorting;
+
+        const el = this.headElement;
 
         if (sortingOptions?.sortable) {
-            this.headElement.classList.add(Globals.classNames.columnSortable);
+            el.classList.add(Globals.classNames.columnSortable);
         }
 
-        let className: string | undefined;
-        switch (sortingOptions?.order) {
+        if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
+            el.classList.remove(Globals.classNames.columnSortedAsc);
+            el.classList.remove(Globals.classNames.columnSortedDesc);
+            return;
+        }
+
+        switch (currentSorting?.order) {
             case 'asc':
-                className = Globals.classNames.columnSortedAsc;
+                el.classList.add(Globals.classNames.columnSortedAsc);
+                el.classList.remove(Globals.classNames.columnSortedDesc);
                 break;
             case 'desc':
-                className = Globals.classNames.columnSortedDesc;
+                el.classList.remove(Globals.classNames.columnSortedAsc);
+                el.classList.add(Globals.classNames.columnSortedDesc);
                 break;
-        }
-
-        if (className) {
-            this.headElement.classList.add(className);
         }
     }
 
     /**
      * Adds CSS classes and click event to the header of column.
      */
-    private addSortingEvents(): void {
+    private addSortingOnClick(): void {
+        if (!this.column.options.sorting?.sortable) {
+            return;
+        }
+
         this.column.header?.headerContent?.addEventListener(
             'click',
-            this.setSortingState
+            this.toggleSorting
+        );
+    }
+
+    public async setSortingOrder(order: ColumnSortingOrder): Promise<void> {
+        const viewport = this.column.viewport;
+        const querying = viewport.dataGrid.querying;
+        const sortingController = querying.sorting;
+
+        sortingController.setSorting(order, this.column.id);
+        await querying.proceed();
+
+        viewport.loadModifiedData();
+
+        viewport.columns.forEach((col): void => {
+            col.sorting?.addHeaderElementAttributes();
+        });
+
+        // TODO: Investigate why it is so laggy sometimes
+        viewport.dataGrid.options?.events?.column?.afterSorting?.call(
+            this.column
         );
     }
 
     /**
-     * Apply the dedicated sorting for a column
+     * Toggle sorting order for the column.
      * (ascending, descending or default).
      */
-    private setSortingState = (): void => {
-        const currentOrder = this.column.options.sorting?.order || 'none';
+    private toggleSorting = (): void => {
+        const viewport = this.column.viewport;
+        const querying = viewport.dataGrid.querying;
+        const sortingController = querying.sorting;
+
+        const currentOrder = (
+            sortingController.currentSorting?.columnId === this.column.id ?
+                sortingController.currentSorting.order : null
+        ) || 'none';
+
         const consequents = {
             none: 'asc',
             asc: 'desc',
             desc: null
         } as const;
 
-        const newOrder = consequents[currentOrder];
-
-        // TODO: Rebuild sorting after impementing the re-rendering of the
-        // rows only, without the whole table. Then, call the `afterSorting`
-        // callback option.
-
-        void this.column.update({
-            sorting: {
-                order: newOrder
-            }
-        });
+        void this.setSortingOrder(consequents[currentOrder]);
     };
 
     /**
      * Unbind click event
      */
     public removeEventListeners(): void {
-        this.headElement.removeEventListener('click', this.setSortingState);
+        this.headElement.removeEventListener('click', this.toggleSorting);
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace ColumnSorting {
-    export type SortingState = 'asc' | 'desc' | 'none';
 }
 
 

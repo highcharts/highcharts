@@ -230,6 +230,18 @@ class Table {
     }
 
     /**
+     * Loads the modified data from the data table and renders the rows.
+     */
+    public loadModifiedData(): void {
+        this.dataTable = this.dataGrid.dataTable?.modified as DataTable;
+        this.columns.forEach((column): void => {
+            column.loadData();
+        });
+
+        this.rowsVirtualizer.render();
+    }
+
+    /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
@@ -343,7 +355,7 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.columns.forEach((column): void => {
-            column.columnSorting?.removeEventListeners();
+            column.sorting?.removeEventListeners();
         });
         this.header?.removeHeaderEventListeners();
 

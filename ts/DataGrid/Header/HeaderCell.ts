@@ -176,13 +176,9 @@ class HeaderCell extends Cell {
      * Add sorting option to the column.
      */
     private initColumnSorting(): void {
-        const column = this.column;
+        const { column } = this;
 
-        if (!column.userOptions.sorting) {
-            return;
-        }
-        // Add sorting
-        column.columnSorting = new ColumnSorting(
+        column.sorting = new ColumnSorting(
             column,
             this.htmlElement
         );

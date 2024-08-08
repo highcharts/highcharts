@@ -119,7 +119,7 @@ class QueryingController {
 
         if (modifiers.length > 0) {
             const chainModifier = new ChainModifier({}, ...modifiers);
-            await chainModifier.modify(originalDataTable);
+            await originalDataTable.setModifier(chainModifier);
         } else {
             originalDataTable.modified = originalDataTable;
         }
