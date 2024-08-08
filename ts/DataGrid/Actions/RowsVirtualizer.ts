@@ -153,6 +153,11 @@ class RowsVirtualizer {
         }
 
         this.scroll();
+
+        // Reflow the rendered row cells widths (check redundancy)
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            rows[i].reflow();
+        }
     }
 
     /**

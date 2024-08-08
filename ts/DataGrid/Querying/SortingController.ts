@@ -144,7 +144,7 @@ class SortingController {
             const columnOptions = columnOptionsRecord[columnId];
             const order = columnOptions.sorting?.order;
 
-            if (order && columnOptions.enabled !== false) {
+            if (order) {
                 if (foundOneSortedColumn) {
                     // eslint-disable-next-line no-console
                     console.warn(
