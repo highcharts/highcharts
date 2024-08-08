@@ -52,7 +52,7 @@ QUnit.test('RangeSelector update', function (assert) {
 
     const before = eventCount(chart);
 
-    chart.rangeSelector.update();
+    chart.rangeSelector.update({});
 
     assert.strictEqual(
         eventCount(chart),
