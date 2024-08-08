@@ -26,8 +26,10 @@ import Table from '../Table.js';
 import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
 import TableRow from '../Content/TableRow.js';
+import U from '../../Core/Utilities.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;
+const { defined } = U;
 
 
 /* *
@@ -123,15 +125,34 @@ class RowsVirtualizer {
         this.viewport.reflow();
 
         // Load & render rows
-        this.render();
+        this.renderRows(this.rowCursor);
+        this.adjustRowHeights();
     }
 
     /**
      * Renders the rows in the viewport.
      */
-    public render(): void {
+    public rerender(): void {
+        const rows = this.viewport.rows;
+        const tbody = this.viewport.tbodyElement;
+
+        let oldScrollTop: number | undefined;
+
+        if (rows.length) {
+            oldScrollTop = tbody.scrollTop;
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                rows[i].destroy();
+            }
+            rows.length = 0;
+        }
+
         this.renderRows(this.rowCursor);
-        this.adjustRowHeights();
+
+        if (defined(oldScrollTop)) {
+            tbody.scrollTop = oldScrollTop;
+        }
+
+        this.scroll();
     }
 
     /**

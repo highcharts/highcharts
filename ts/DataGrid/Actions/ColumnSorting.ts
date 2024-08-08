@@ -121,17 +121,16 @@ class ColumnSorting {
      * Adds CSS classes and click event to the header of column.
      */
     private addSortingOnClick(): void {
-        if (!this.column.options.sorting?.sortable) {
+        const { column } = this;
+
+        if (!column.options.sorting?.sortable) {
             return;
         }
 
-        this.column.header?.headerContent?.addEventListener(
-            'click',
-            this.toggleSorting
-        );
+        column.header?.headerContent?.addEventListener('click', this.toggle);
     }
 
-    public async setSortingOrder(order: ColumnSortingOrder): Promise<void> {
+    public async setOrder(order: ColumnSortingOrder): Promise<void> {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
@@ -141,9 +140,9 @@ class ColumnSorting {
 
         viewport.loadModifiedData();
 
-        viewport.columns.forEach((col): void => {
+        for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
-        });
+        }
 
         // TODO: Investigate why it is so laggy sometimes
         viewport.dataGrid.options?.events?.column?.afterSorting?.call(
@@ -155,7 +154,7 @@ class ColumnSorting {
      * Toggle sorting order for the column.
      * (ascending, descending or default).
      */
-    private toggleSorting = (): void => {
+    private toggle = (): void => {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
@@ -171,14 +170,14 @@ class ColumnSorting {
             desc: null
         } as const;
 
-        void this.setSortingOrder(consequents[currentOrder]);
+        void this.setOrder(consequents[currentOrder]);
     };
 
     /**
      * Unbind click event
      */
     public removeEventListeners(): void {
-        this.headElement.removeEventListener('click', this.toggleSorting);
+        this.headElement.removeEventListener('click', this.toggle);
     }
 }
 

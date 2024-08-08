@@ -234,11 +234,11 @@ class Table {
      */
     public loadModifiedData(): void {
         this.dataTable = this.dataGrid.dataTable?.modified as DataTable;
-        this.columns.forEach((column): void => {
+        for (const column of this.columns) {
             column.loadData();
-        });
+        }
 
-        this.rowsVirtualizer.render();
+        this.rowsVirtualizer.rerender();
     }
 
     /**
