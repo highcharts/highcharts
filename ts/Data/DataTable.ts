@@ -10,6 +10,7 @@
  *  - Sophie Bremer
  *  - Gøran Slettemark
  *  - Jomar Hønsi
+ *  - Dawid Dragula
  *
  * */
 
@@ -30,6 +31,7 @@ import type DataTableOptions from './DataTableOptions';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     fireEvent,
     uniqueKey
 } = U;
@@ -177,7 +179,6 @@ class DataTable implements DataEvent.Emitter {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
-        this.rowKeysId = options.rowKeysId;
 
         const columns = options.columns || {},
             columnNames = Object.keys(columns),
@@ -204,7 +205,6 @@ class DataTable implements DataEvent.Emitter {
         }
 
         this.rowCount = rowCount;
-        this.setRowKeysColumn(rowCount);
     }
 
     /* *
@@ -219,15 +219,17 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly id: string;
 
+    private localRowIndexes?: Array<number>;
+
     public modified: DataTable;
 
     private modifier?: DataModifier;
 
+    private originalRowIndexes?: Array<number|undefined>;
+
     private rowCount: number;
 
     private versionTag: string;
-
-    private rowKeysId: string | undefined;
 
     /* *
      *
@@ -271,14 +273,12 @@ class DataTable implements DataEvent.Emitter {
             tableOptions.id = table.id;
         }
 
-        if (table.rowKeysId) {
-            tableOptions.rowKeysId = table.rowKeysId;
-        }
-
         const tableClone: DataTable = new DataTable(tableOptions);
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
+            tableClone.originalRowIndexes = table.originalRowIndexes;
+            tableClone.localRowIndexes = table.localRowIndexes;
         }
 
         table.emit({
@@ -346,15 +346,9 @@ class DataTable implements DataEvent.Emitter {
                 delete columns[columnName];
             }
 
-            let nColumns = Object.keys(columns).length;
-            if (table.rowKeysId && nColumns === 1) {
-                // All columns deleted, remove row keys column
-                delete columns[table.rowKeysId];
-                nColumns = 0;
-            }
-
-            if (!nColumns) {
+            if (!Object.keys(columns).length) {
                 table.rowCount = 0;
+                this.deleteRowIndexReferences();
             }
 
             if (modifier) {
@@ -370,6 +364,20 @@ class DataTable implements DataEvent.Emitter {
 
             return deletedColumns;
         }
+    }
+
+    /**
+     * Deletes the row index references. This is useful when the original table
+     * is deleted, and the references are no longer needed. This table is
+     * then considered an original table or a table that has the same row's
+     * order as the original table.
+     */
+    public deleteRowIndexReferences(): void {
+        delete this.originalRowIndexes;
+        delete this.localRowIndexes;
+
+        // Here, in case of future need, can be implemented updating of the
+        // modified tables' row indexes references.
     }
 
     /**
@@ -732,8 +740,6 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             columnNames = Object.keys(table.columns);
 
-        this.removeRowKeysColumn(columnNames);
-
         return columnNames;
     }
 
@@ -771,7 +777,6 @@ class DataTable implements DataEvent.Emitter {
         columnNames = (
             columnNames || Object.keys(tableColumns)
         );
-        this.removeRowKeysColumn(columnNames);
 
         for (
             let i = 0,
@@ -793,6 +798,28 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
+     * Takes the original row index and returns the local row index in the
+     * modified table for which this function is called.
+     *
+     * @param {number} originalRowIndex
+     * Original row index to get the local row index for.
+     *
+     * @return {number|undefined}
+     * Returns the local row index or `undefined` if not found.
+     */
+    public getLocalRowIndex(
+        originalRowIndex: number
+    ): (number | undefined) {
+        const { localRowIndexes } = this;
+
+        if (localRowIndexes) {
+            return localRowIndexes[originalRowIndex];
+        }
+
+        return originalRowIndex;
+    }
+
+    /**
      * Retrieves the modifier for the table.
      * @private
      *
@@ -801,6 +828,28 @@ class DataTable implements DataEvent.Emitter {
      */
     public getModifier(): (DataModifier | undefined) {
         return this.modifier;
+    }
+
+    /**
+     * Takes the local row index and returns the index of the corresponding row
+     * in the original table.
+     *
+     * @param {number} rowIndex
+     * Local row index to get the original row index for.
+     *
+     * @return {number|undefined}
+     * Returns the original row index or `undefined` if not found.
+     */
+    public getOriginalRowIndex(
+        rowIndex: number
+    ): (number | undefined) {
+        const { originalRowIndexes } = this;
+
+        if (originalRowIndexes) {
+            return originalRowIndexes[rowIndex];
+        }
+
+        return rowIndex;
     }
 
     /**
@@ -921,7 +970,6 @@ class DataTable implements DataEvent.Emitter {
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
         columnNames = (columnNames || Object.keys(columns));
-        this.removeRowKeysColumn(columnNames);
 
         for (
             let i = rowIndex,
@@ -1117,10 +1165,6 @@ class DataTable implements DataEvent.Emitter {
             if (columnName !== newColumnName) {
                 columns[newColumnName] = columns[columnName];
                 delete columns[columnName];
-                if (table.rowKeysId) {
-                    // Ensure that row keys column is last
-                    this.moveRowKeysColumnToLast(columns, table.rowKeysId);
-                }
             }
 
             return true;
@@ -1307,11 +1351,6 @@ class DataTable implements DataEvent.Emitter {
             tableModifier.modifyColumns(table, columns, (rowIndex || 0));
         }
 
-        if (table.rowKeysId) {
-            // Ensure that the row keys column is always last
-            this.moveRowKeysColumnToLast(tableColumns, table.rowKeysId);
-        }
-
         table.emit({
             type: 'afterSetColumns',
             columns,
@@ -1319,68 +1358,6 @@ class DataTable implements DataEvent.Emitter {
             detail: eventDetail,
             rowIndex
         });
-    }
-
-    /**
-     * Sets the row key column. This column is invisible and the cells
-     * serve as identifiers to the rows they are contained in. Accessing
-     * rows by keys instead of indexes is necessary in cases where rows
-     * are rearranged by a DataModifier (e.g. SortModifier or RangeModifier).
-     *
-     * @function Highcharts.DataTable#setRowKeysColumn
-     *
-     * @param {number} nRows
-     * Number of rows to add to the column.
-     *
-     */
-    public setRowKeysColumn(nRows: number): void {
-        const id = this.rowKeysId;
-        if (!id) {
-            return;
-        }
-        this.columns[id] = [];
-        const keysArray = this.columns[id];
-
-        for (let i = 0; i < nRows; i++) {
-            keysArray.push(id + '_' + i);
-        }
-    }
-
-    /**
-     * Get the row key column.
-     *
-     * @function Highcharts.DataTable#getRowKeysColumn
-     *     *
-     * @return {DataTable.Column|undefined}
-     * Returns row keys if rowKeysId is defined, else undefined.
-     */
-    public getRowKeysColumn(): DataTable.Column | undefined {
-        const id = this.rowKeysId;
-        if (id) {
-            return this.columns[id];
-        }
-    }
-
-    /**
-     * Get the row index in the original (unmodified) data table.
-     *
-     * @function Highcharts.DataTable#getRowIndexOriginal
-     *
-     * @param {number} idx
-     * Row index in the modified data table.
-     *
-     * @return {string}
-     * Row index in the original data table.
-     */
-    public getRowIndexOriginal(idx: number): string {
-        const id = this.rowKeysId;
-        if (id) {
-            const rowKeyCol = this.columns[id];
-            const idxOrig = '' + rowKeyCol[idx];
-
-            return idxOrig.split('_')[1];
-        }
-        return String(idx);
     }
 
     /**
@@ -1440,6 +1417,40 @@ class DataTable implements DataEvent.Emitter {
                 });
                 throw error;
             });
+    }
+
+    /**
+     * Sets the original row indexes for the table. It is used to keep the
+     * reference to the original rows when modifying the table.
+     *
+     * @param {Array<number|undefined>} originalRowIndexes
+     * Original row indexes array.
+     *
+     * @param {boolean} omitLocalRowIndexes
+     * Whether to omit the local row indexes calculation. Defaults to `false`.
+     */
+    public setOriginalRowIndexes(
+        originalRowIndexes: Array<number|undefined>,
+        omitLocalRowIndexes: boolean = false
+    ): void {
+        this.originalRowIndexes = originalRowIndexes;
+        if (omitLocalRowIndexes) {
+            return;
+        }
+
+        const modifiedIndexes: number[] = this.localRowIndexes = [];
+        for (
+            let i = 0,
+                iEnd = originalRowIndexes.length,
+                originalIndex: number | undefined;
+            i < iEnd;
+            ++i
+        ) {
+            originalIndex = originalRowIndexes[i];
+            if (defined(originalIndex)) {
+                modifiedIndexes[originalIndex] = i;
+            }
+        }
     }
 
     /**
@@ -1551,10 +1562,6 @@ class DataTable implements DataEvent.Emitter {
             }
         }
 
-        if (this.rowKeysId && !columnNames.includes(this.rowKeysId)) {
-            this.setRowKeysColumn(rowCount);
-        }
-
         if (modifier) {
             modifier.modifyRows(table, rows, rowIndex);
         }
@@ -1566,25 +1573,6 @@ class DataTable implements DataEvent.Emitter {
             rowIndex,
             rows
         });
-    }
-
-    // The row keys column must always be the last column
-    private moveRowKeysColumnToLast(columns: Record<string, DataTable.Column>, id: string): void {
-        const rowKeyColumn = columns[id];
-        delete columns[id];
-        columns[id] = rowKeyColumn;
-    }
-
-    // The row keys column must be removed in some methods
-    // (API backwards compatibility)
-    private removeRowKeysColumn(columnNames: Array<string>): void {
-        if (this.rowKeysId) {
-            const pos = columnNames.indexOf(this.rowKeysId);
-            if (pos !== -1) {
-                // Always the last column
-                columnNames.pop();
-            }
-        }
     }
 }
 
