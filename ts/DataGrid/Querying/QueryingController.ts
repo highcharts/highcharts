@@ -15,14 +15,16 @@
 
 'use strict';
 
-import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
+
 /* *
  *
  *  Imports
  *
  * */
 
+import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import DataGrid from '../DataGrid.js';
+import DataTable from '../../Data/DataTable.js';
 import SortingController from './SortingController.js';
 
 /* *
@@ -119,9 +121,11 @@ class QueryingController {
 
         if (modifiers.length > 0) {
             const chainModifier = new ChainModifier({}, ...modifiers);
-            await originalDataTable.setModifier(chainModifier);
+            const dataTableCopy = originalDataTable.clone();
+            await chainModifier.modify(dataTableCopy.modified);
+            this.dataGrid.presentationTable = dataTableCopy.modified;
         } else {
-            originalDataTable.modified = originalDataTable;
+            this.dataGrid.presentationTable = originalDataTable.modified;
         }
 
         this.sorting.shouldBeUpdated = false;

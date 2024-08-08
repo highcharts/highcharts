@@ -121,6 +121,11 @@ class DataGrid {
     public dataTable?: DataTable;
 
     /**
+     * The presentation table of the data grid.
+     */
+    public presentationTable?: DataTable;
+
+    /**
      * The HTML element of the table.
      */
     public tableElement?: HTMLTableElement;
@@ -392,10 +397,12 @@ class DataGrid {
         // creating a new one.
         if (tableOptions?.id) {
             this.dataTable = tableOptions as DataTable;
+            this.presentationTable = this.dataTable.modified;
             return;
         }
 
-        this.dataTable = new DataTable(tableOptions as DataTableOptions);
+        this.dataTable = this.presentationTable =
+            new DataTable(tableOptions as DataTableOptions);
     }
 
     /**

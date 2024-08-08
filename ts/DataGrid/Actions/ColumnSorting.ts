@@ -138,7 +138,7 @@ class ColumnSorting {
         sortingController.setSorting(order, this.column.id);
         await querying.proceed();
 
-        viewport.loadModifiedData();
+        viewport.loadPresentationData();
 
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();

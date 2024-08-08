@@ -63,7 +63,11 @@ class Table {
     public dataGrid: DataGrid;
 
     /**
-     * The data source of the data grid.
+     * The presentation version of the data table. It has applied modifiers
+     * and is ready to be rendered.
+     *
+     * If you want to modify the data table, you should use the original
+     * instance that is stored in the `dataGrid.dataTable` property.
      */
     public dataTable: DataTable;
 
@@ -157,7 +161,7 @@ class Table {
         tableElement: HTMLTableElement
     ) {
         this.dataGrid = dataGrid;
-        this.dataTable = this.dataGrid.dataTable?.modified as DataTable;
+        this.dataTable = this.dataGrid.presentationTable as DataTable;
 
         const dgOptions = dataGrid.options;
 
@@ -232,8 +236,8 @@ class Table {
     /**
      * Loads the modified data from the data table and renders the rows.
      */
-    public loadModifiedData(): void {
-        this.dataTable = this.dataGrid.dataTable?.modified as DataTable;
+    public loadPresentationData(): void {
+        this.dataTable = this.dataGrid.presentationTable as DataTable;
         for (const column of this.columns) {
             column.loadData();
         }
