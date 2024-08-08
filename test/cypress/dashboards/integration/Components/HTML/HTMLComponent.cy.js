@@ -71,7 +71,7 @@ describe('Updating HTML component.', () => {
             .parent()
             .parent()
             .find('.highcharts-dashboards-edit-accordion-content textarea')
-            .should('have.value', '<p>[Your custom HTML here- edit the component]</p>');
+            .should('have.value', '<span>[Your custom HTML here- edit the component]</span>');
     });
 
     it('Properties should be reflected in the sidebar.', () => {
@@ -102,5 +102,27 @@ describe('Updating HTML component.', () => {
 
         // Assert
         cy.get('@TitleInput').should('have.value', 'Changed title');
+    });
+
+    it('Discarding changes should reset the HTML component', () => {
+        // Act
+        cy.toggleEditMode();
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-1');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn')
+            .contains('span', 'HTML')
+            .closest('.highcharts-dashboards-edit-collapsable-content-header')
+            .click();
+        cy.get('textarea').clear().type('<h1>New title</h1>');
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
+
+        // Assert
+        cy.get('.highcharts-dashboards-component-html').eq(1).should('contain', 'New title');
+
+        // Act
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
+
+        // Assert
+        cy.get('.highcharts-dashboards-component-html').eq(1).should('contain', '[Your custom HTML here- edit the component]');
     });
 });

@@ -231,6 +231,7 @@ class HTMLComponent extends Component {
                 });
         } else if (options.html) {
             this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
         }
 
         this.constructTree();
@@ -272,6 +273,7 @@ class HTMLComponent extends Component {
     public async update(options: Partial<Options>, shouldRerender: boolean = true): Promise<void> {
         if (options.html) {
             this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
 
             this.constructTree();
         }
@@ -301,7 +303,7 @@ class HTMLComponent extends Component {
             this.contentElement.firstChild.remove();
         }
 
-        const parser = new AST(this.elements);
+        const parser = new AST(this.options.elements || []);
         parser.addToDOM(this.contentElement);
     }
 
