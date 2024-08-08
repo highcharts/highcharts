@@ -753,4 +753,16 @@ QUnit.test('Date string extremes', function (assert) {
         'Min and max should override minRange'
     );
 
+    chart.xAxis[0].update({
+        minRange: 1 * 24 * 3600 * 1000
+    });
+
+    chart.xAxis[0].setExtremes('2024-06-11', '2024-06-13');
+
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [Date.UTC(2024, 5, 11), Date.UTC(2024, 5, 13)],
+        'setExtremes should parse the strings as UTC time'
+    );
+
 });

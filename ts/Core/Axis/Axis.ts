@@ -2659,15 +2659,19 @@ class Axis {
      * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
-        min?: number,
-        max?: number,
+        min?: number|string,
+        max?: number|string,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
+        const chart = this.chart;
         this.series.forEach((serie): void => {
             delete serie.kdTree;
         });
+
+        min = chart.time.parse(min);
+        max = chart.time.parse(max);
 
         // Extend the arguments with min and max
         eventArguments = extend(
@@ -2687,7 +2691,7 @@ class Axis {
                 this.eventArgs = e;
 
                 if (redraw) {
-                    this.chart.redraw(animation);
+                    chart.redraw(animation);
                 }
             }
         );
