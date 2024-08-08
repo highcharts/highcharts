@@ -53,11 +53,6 @@ class QueryingController {
      */
     public sorting: SortingController;
 
-    /**
-     * Flag that indicates if the data should be modified.
-     */
-    private foundSignificantChanges: boolean = false;
-
 
     /* *
     *
@@ -68,6 +63,7 @@ class QueryingController {
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;
         this.sorting = new SortingController(dataGrid);
+        /// this.filtering = new FilteringController(dataGrid);
     }
 
 
@@ -78,13 +74,18 @@ class QueryingController {
     * */
 
     /**
-     * Loads all new options and proceeds with the data modification if needed.
-     * Should be called after any change in the data grid options if there's a
-     * possibility that the significant changes were made for querying.
+     * Proceeds with the data modification if needed.
+     *
+     * @param force
+     * If the data should be modified even if the significant options are not
+     * changed.
      */
-    public async proceed(): Promise<void> {
-        this.loadOptions();
-        if (this.foundSignificantChanges) {
+    public async proceed(force: boolean = false): Promise<void> {
+        if (
+            force ||
+            this.sorting.shouldBeUpdated // ||
+            // this.filtering.shouldBeUpdated
+        ) {
             await this.modifyData();
         }
     }
@@ -92,8 +93,8 @@ class QueryingController {
     /**
      * Load all options needed to generate the modifiers.
      */
-    private loadOptions(): void {
-        this.foundSignificantChanges = this.sorting.loadOptions();
+    public loadOptions(): void {
+        this.sorting.loadOptions();
     }
 
     /**
@@ -123,7 +124,8 @@ class QueryingController {
             originalDataTable.modified = originalDataTable;
         }
 
-        this.sorting.after();
+        this.sorting.shouldBeUpdated = false;
+        /// this.filtering.shouldBeUpdated = false;
     }
 }
 

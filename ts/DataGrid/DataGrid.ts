@@ -199,6 +199,7 @@ class DataGrid {
 
         this.loadDataTable(this.options.table);
 
+        this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
         });
@@ -227,11 +228,14 @@ class DataGrid {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
+        let newDataTable = false;
         if (!this.dataTable || options.table) {
             this.loadDataTable(this.options?.table);
+            newDataTable = true;
         }
 
-        await this.querying.proceed();
+        this.querying.loadOptions();
+        await this.querying.proceed(newDataTable);
 
         if (render) {
             this.renderViewport();

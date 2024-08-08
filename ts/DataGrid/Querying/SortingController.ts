@@ -49,19 +49,27 @@ class SortingController {
     private dataGrid: DataGrid;
 
     /**
-     * The column id that is currently sorted.
+     * The current sorting options: column ID and sorting order.
      */
-    public sortedColumnId?: string;
+    public currentSorting?: SortingController.SortingState;
 
     /**
-     * The sorting order of the currently sorted column.
+     * The initial sorting options: column ID and sorting order.
+     * This is the sorting that is applied when the data grid is created or
+     * after the whole viewport is reloaded with changed sorting options.
      */
-    public sortingOrder?: ColumnSortingOrder;
+    private initialSorting?: SortingController.SortingState;
 
     /**
      * The modifier that is applied to the data table.
      */
     public modifier?: SortModifier;
+
+    /**
+     * The flag that indicates if the data should be updated because of the
+     * change in the sorting options.
+     */
+    public shouldBeUpdated: boolean = false;
 
 
     /* *
@@ -88,33 +96,47 @@ class SortingController {
     * */
 
     /**
-     * Should be called after the viewport is updated due to the data
-     * modification.
+     * Sets the sorting state. If the new sorting state is different than the
+     * current one, the `shouldBeUpdated` flag is set to `true`. If the
+     * same, the flag is set to `false`.
+     *
+     * @param order
+     * The sorting order.
+     *
+     * @param columnId
+     * The column ID to sort by.
      */
-    public after(): void {
-
+    public setSorting(order: ColumnSortingOrder, columnId?: string): void {
+        if (
+            this.currentSorting?.columnId !== columnId ||
+            this.currentSorting?.order !== order
+        ) {
+            this.shouldBeUpdated = true;
+            this.currentSorting = {
+                columnId,
+                order
+            };
+        }
     }
 
     /**
-     * Loads sorting options from the data grid options.
+     * Returns the sorting options from the data grid options.
      *
-     * @return
-     * Returns true if the important sorting options were changed. False, when
-     * the sorting options are the same.
+     * @returns The sorting options from the data grid options.
      */
-    public loadOptions(): boolean {
+    private getSortingOptions(): SortingController.SortingState {
         const dataGrid = this.dataGrid,
             columnOptionsRecord = dataGrid.options?.columns;
 
-        let optionsChanged = this.sortedColumnId !== void 0;
-
         if (!columnOptionsRecord) {
-            return optionsChanged;
+            return { order: null };
         }
 
         const columnIDs = Object.keys(columnOptionsRecord);
 
         let foundOneSortedColumn = false;
+        let foundOrder: ColumnSortingOrder = null;
+        let foundColumnId: string | undefined;
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
             const columnOptions = columnOptionsRecord[columnId];
@@ -131,41 +153,51 @@ class SortingController {
                     break;
                 }
 
-                optionsChanged =
-                    this.sortedColumnId !== columnId ||
-                    this.sortingOrder !== order;
-
-                this.sortedColumnId = columnId;
-                this.sortingOrder = order;
                 foundOneSortedColumn = true;
+                foundOrder = order;
+                foundColumnId = columnId;
             }
         }
 
-        if (!foundOneSortedColumn) {
-            if (this.sortedColumnId) {
-                optionsChanged = true;
-            }
+        return {
+            columnId: foundColumnId,
+            order: foundOrder
+        };
+    }
 
-            this.sortedColumnId = void 0;
-            this.sortingOrder = void 0;
+    /**
+     * Loads sorting options from the data grid options.
+     */
+    public loadOptions(): void {
+        const stateFromOptions = this.getSortingOptions();
+
+        if (
+            stateFromOptions.columnId !== this.initialSorting?.columnId ||
+            stateFromOptions.order !== this.initialSorting?.order
+        ) {
+            this.initialSorting = stateFromOptions;
+            this.setSorting(stateFromOptions.order, stateFromOptions.columnId);
         }
 
         this.modifier = this.createModifier();
-
-        return optionsChanged;
     }
 
     /**
      * Returns the sorting modifier based on the loaded sorting options.
      */
     private createModifier(): SortModifier | undefined {
-        if (!this.sortedColumnId || !this.sortingOrder) {
+        if (!this.currentSorting) {
+            return;
+        }
+
+        const { columnId, order } = this.currentSorting;
+        if (!order) {
             return;
         }
 
         return new SortModifier({
-            orderByColumn: this.sortedColumnId,
-            direction: this.sortingOrder
+            orderByColumn: columnId,
+            direction: order
         });
     }
 
@@ -179,6 +211,14 @@ class SortingController {
  * */
 
 namespace SortingController {
+
+    /**
+     * The sorting state interface.
+     */
+    export interface SortingState {
+        columnId?: string;
+        order: ColumnSortingOrder;
+    }
 
 }
 
