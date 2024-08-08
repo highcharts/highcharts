@@ -357,28 +357,26 @@ class PlotLineOrBand {
             width: bBoxWidth,
             height: arrayMax(yBounds) - y
         });
+
         if (
             !label.alignValue ||
             label.alignValue === 'left' ||
-            defined(inside)
+            inside
         ) {
             label.css({
                 width: (
                     optionsLabel.style?.width || (
-                        (
-                            !isBand ||
-                            !inside
-                        ) ? (
-                                label.rotation === 90 ?
-                                    axis.height - (
-                                        label.alignAttr.y -
+                        !isBand ? (
+                            label.rotation === 90 ?
+                                axis.height - (
+                                    label.alignAttr.y -
                                         axis.top
-                                    ) : (
-                                        optionsLabel.clip ?
-                                            axis.width :
-                                            axis.chart.chartWidth
-                                    ) - (label.alignAttr.x - axis.left)
-                            ) :
+                                ) : (
+                                    optionsLabel.clip ?
+                                        axis.width :
+                                        axis.chart.chartWidth
+                                ) - (label.alignAttr.x - axis.left)
+                        ) :
                             bBoxWidth
                     )
                 ) + 'px'
