@@ -138,7 +138,7 @@ class HeaderCell extends Cell {
             )
         ) {
             const handle = makeHTMLElement('div', {
-                className: 'highcharts-datagrid-col-resizer'
+                className: Globals.classNames.resizerHandles
             }, this.htmlElement);
 
             this.column.viewport.columnsResizer?.addHandleListeners(

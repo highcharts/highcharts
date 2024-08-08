@@ -25,6 +25,7 @@
 
 import Table from '../Table.js';
 import Column from '../Column.js';
+import Globals from '../Globals.js';
 
 
 /* *
@@ -194,7 +195,7 @@ class ColumnsResizer {
      */
     private onDocumentMouseUp = (): void => {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
-            'highcharts-datagrid-head-cell-resized'
+            Globals.classNames.resizedColumn
         );
 
         this.dragStartX = void 0;
@@ -226,7 +227,7 @@ class ColumnsResizer {
                 this.viewport.columns[column.index + 1]?.getWidth();
 
             column.header?.htmlElement.classList.add(
-                'highcharts-datagrid-head-cell-resized'
+                Globals.classNames.resizedColumn
             );
         };
 

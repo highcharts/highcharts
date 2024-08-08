@@ -430,14 +430,12 @@ async function setupBoard() {
                         activeScale,
                         true
                     );
-                },
-                afterLoad: function () {
-                    this.cell.setActiveState();
                 }
             },
             states: {
                 active: {
-                    enabled: true
+                    enabled: true,
+                    isActive: true
                 },
                 hover: {
                     enabled: true
