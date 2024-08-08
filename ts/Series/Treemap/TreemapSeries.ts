@@ -1564,7 +1564,7 @@ class TreemapSeries extends ScatterSeries {
         // Group points are removed during generatePoints method, save them for
         // later usage
         const groupPoints = (this.points || []).filter((point): boolean =>
-            point.node.isGroup
+            point.node?.isGroup
         );
 
         // Call prototype function
