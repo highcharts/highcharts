@@ -130,7 +130,8 @@ class RowsVirtualizer {
     }
 
     /**
-     * Renders the rows in the viewport.
+     * Renders the rows in the viewport. It is called when the rows need to be
+     * re-rendered, e.g., after a sort or filter operation.
      */
     public rerender(): void {
         const rows = this.viewport.rows;

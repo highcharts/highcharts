@@ -237,10 +237,15 @@ export interface ColumnOptions {
 
     /**
      * Column sorting options.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
 }
 
+/**
+ * Column sorting options avalable for applying to all columns at once.
+ */
 export interface ColumnSortingOptions {
     /**
      * Whether to allow users to sort values in column. When it is enabled,
@@ -250,11 +255,16 @@ export interface ColumnSortingOptions {
      * user interface. However, the order of rows in this column may still
      * change when other columns are sorted.
      *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
+     *
      * @default true
      */
     sortable?: boolean;
 }
 
+/**
+ * Column sorting options that can be set for each column individually.
+ */
 export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
     /**
      * The initial sorting order of the column. Can be either `asc` for

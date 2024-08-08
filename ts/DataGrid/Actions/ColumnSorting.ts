@@ -118,7 +118,7 @@ class ColumnSorting {
     }
 
     /**
-     * Adds CSS classes and click event to the header of column.
+     * Adds sorting on click event if the column is sortable.
      */
     private addSortingOnClick(): void {
         const { column } = this;
@@ -130,6 +130,14 @@ class ColumnSorting {
         column.header?.headerContent?.addEventListener('click', this.toggle);
     }
 
+    /**
+     * Set sorting order for the column. It will modify the presentation data
+     * and rerender the rows.
+     *
+     * @param order
+     * The order of sorting. It can be `'asc'`, `'desc'` or `null` if the
+     * sorting should be disabled.
+     */
     public async setOrder(order: ColumnSortingOrder): Promise<void> {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
@@ -151,10 +159,9 @@ class ColumnSorting {
     }
 
     /**
-     * Toggle sorting order for the column.
-     * (ascending, descending or default).
+     * Toggle sorting order for the column in the order: asc -> desc -> none
      */
-    private toggle = (): void => {
+    public toggle = (): void => {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
