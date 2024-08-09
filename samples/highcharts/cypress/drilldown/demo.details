@@ -1,0 +1,6 @@
+---
+name: Highcharts drilldown demo for cypress test
+authors:
+  - Kent Wincent Holt
+js_wrap: b
+...
