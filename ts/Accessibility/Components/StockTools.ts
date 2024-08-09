@@ -157,10 +157,15 @@ class StockToolsComponent extends AccessibilityComponent {
     }
 
     private incrementFocusedButtonIndex(): boolean {
-        if (this.focusedButtonIndex !== this.buttons.length - 1) {
-            this.focusedButtonIndex =
-                this.focusedButtonIndex + 1;
+        const atEnd = this.focusedButtonIndex === this.buttons.length - 1;
 
+        if (atEnd && this.submenuParentIndex) {
+            this.closeOpenSubmenus();
+            return true;
+        }
+
+        if (!atEnd) {
+            this.focusedButtonIndex += 1;
             return true;
         }
 
@@ -171,9 +176,15 @@ class StockToolsComponent extends AccessibilityComponent {
     }
 
     private decrementFocusedButtonIndex(): boolean {
-        if (this.focusedButtonIndex !== 0) {
-            this.focusedButtonIndex =
-                this.focusedButtonIndex - 1;
+        const atStart = this.focusedButtonIndex === 0;
+
+        if (atStart && this.submenuParentIndex) {
+            this.closeOpenSubmenus();
+            return true;
+        }
+
+        if (!atStart) {
+            this.focusedButtonIndex -= 1;
 
             return true;
         }
@@ -224,6 +235,12 @@ class StockToolsComponent extends AccessibilityComponent {
 
             if (keyCode === keys.end) {
                 this.focusedButtonIndex = this.buttons.length - 1;
+            }
+
+            if (keyCode === keys.left && component.submenuParentIndex) {
+                component.closeOpenSubmenus();
+                component.focusButton();
+                return component.keyboardNavigationHandler.response.success;
             }
 
             if ([keys.left, keys.up].includes(keyCode)) {
