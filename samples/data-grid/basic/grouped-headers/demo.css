@@ -1,0 +1,15 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#container {
+    height: 250px;
+    margin: 8px;
+}
+
+th {
+    border-right: 1px solid gray;
+    min-width: 180px;
+}
+
+tr {
+    border-bottom: 1px solid red;
+}
