@@ -922,8 +922,9 @@ class Axis {
      *
      * @function Highcharts.Axis#toPixels
      *
-     * @param {number} value
-     * A value in terms of axis units.
+     * @param {number|string} value
+     * A value in terms of axis units. For datetime axes, a timestamp or
+     * date/time string can be given.
      *
      * @param {boolean} paneCoordinates
      * Whether to return the pixel coordinate relative to the chart or just the
@@ -933,11 +934,16 @@ class Axis {
      * Pixel position of the value on the chart or axis.
      */
     public toPixels(
-        value: number,
+        value: number|string,
         paneCoordinates?: boolean
     ): number {
-        return this.translate(value, false, !this.horiz, void 0, true) +
-            (paneCoordinates ? 0 : this.pos);
+        return this.translate(
+            this.chart.time.parse(value) ?? NaN,
+            false,
+            !this.horiz,
+            void 0,
+            true
+        ) + (paneCoordinates ? 0 : this.pos);
     }
 
     /**
