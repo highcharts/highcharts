@@ -89,14 +89,14 @@ const PRODUCT_META: Record<string, Record<string, string>> = [
     },
     {
         constructor: 'stockChart',
-        id: 'highstock',
+        id: 'stock',
         module: 'highstock',
         name: 'Highcharts Stock',
         namespace: 'Highcharts'
     },
     {
         constructor: 'mapChart',
-        id: 'highmaps',
+        id: 'maps',
         module: 'highmaps',
         name: 'Highcharts Maps',
         namespace: 'Highcharts'
@@ -140,7 +140,7 @@ async function getContext(
     const node = await getOption(database, itemName, version);
     const productMeta = PRODUCT_META[database.product];
     const side = await getOption(database, itemName, version, true);
-    console.log(node);
+
     return {
         constr: productMeta.constructor,
         date: (new Date()).toISOString().substring(0, 19).replace('T', ''),
@@ -187,29 +187,23 @@ async function getOption(
             await getOption(database, '', version) :
             TreeLib.createTreeNode({}, '')
     );
-    const node = await database.getItem(itemName, version);
-
-    if (!node) {
-        console.log('X', itemName);
-        return root;
-    }
-
-    console.log(':', itemName);
-
     const option = (
         itemName ?
             TreeLib.createTreeNode(root.children, itemName) :
             root
     );
+    const node = await database.getItem(itemName, version);
 
-    option.doclet.description = node.description;
+    if (node) {
+        option.doclet.description = node.description;
 
-    if (node.deprecated) {
-        option.doclet.deprecated = `${node.deprecated.toFixed(2)}.0`;
-    }
+        if (node.deprecated) {
+            option.doclet.deprecated = `${node.deprecated.toFixed(2)}.0`;
+        }
 
-    if (node.since) {
-        option.doclet.since = `${node.since.toFixed(2)}.0`;
+        if (node.since) {
+            option.doclet.since = `${node.since.toFixed(2)}.0`;
+        }
     }
 
     // Add direct children
@@ -217,7 +211,6 @@ async function getOption(
     let childOption: TreeLib.Option;
 
     for (const child of await database.getItemChildren(itemName, version)) {
-        console.log('>>>', child.name);
 
         childOption = TreeLib.createTreeNode(root.children, child.name);
         childOption.doclet.description = child.description;
@@ -431,8 +424,6 @@ async function main() {
 
                 let file = FSLib.lastPath(option);
                 let ext = file.split('.').pop();
-
-                console.log([product, option, file, ext]);
 
                 switch (ext) {
                     case '':
