@@ -679,6 +679,19 @@ export default PlotLineOrBand;
  */
 
 /**
+ * Wether or not the text of the label can exceed the width of the label.
+ *
+ * @type      {boolean}
+ * @product   highcharts highstock gantt
+ * @sample {highcharts} highcharts/xaxis/plotbands-label-textwidth/
+ *         Displaying text with text-wrapping/ellipsis, or the full text.
+ *
+ * @default   true
+ * @since     11.4.6
+ * @apioption xAxis.plotBands.label.inside
+ */
+
+/**
  * Rotation of the text label in degrees .
  *
  * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/

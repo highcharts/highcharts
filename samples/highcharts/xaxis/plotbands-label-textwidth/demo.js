@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Overflowing text of plotband labels'
+    },
     xAxis: {
         plotBands: [{
             from: 1,
@@ -30,9 +33,21 @@ Highcharts.chart('container', {
                     textOverflow: 'none'
                 }
             }
+        }, {
+            from: 7,
+            to: 8,
+
+            // The boundaries of the text can be configured with 'width'
+            label: {
+                text: 'Seven to eight plotband',
+
+                style: {
+                    width: 30
+                }
+            }
         }]
     },
     series: [{
-        data: [0, 1, 2, 3, 4, 5, 6, 7]
+        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     }]
 });
