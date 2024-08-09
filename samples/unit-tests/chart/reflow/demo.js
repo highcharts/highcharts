@@ -265,8 +265,8 @@ QUnit.test(
         );
 
         chart.renderTo.style.transform = '';
-    });
-
+    }
+);
 
 QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
     if (window.requestAnimationFrame) {
@@ -275,6 +275,8 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
                 data: [3, 5, 1, 3]
             }]
         });
+
+        chart.announcerContainer.style.padding = '20px';
 
         assert.strictEqual(
             chart.chartWidth,
@@ -287,22 +289,50 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
             'Initially chart height should equal 400px.'
         );
 
-        document.getElementById('container').style.width = '500px';
-        document.getElementById('container').style.height = '800px';
-        const done = assert.async();
+        document.getElementById('container').style.height = 'unset';
+
+        const previousHeight = chart.chartHeight,
+            done = assert.async();
+
         setTimeout(() => {
             assert.strictEqual(
-                chart.chartWidth,
-                500,
-                'After updating container width, the chart should adjust its.'
-            );
-            assert.strictEqual(
+                previousHeight,
                 chart.chartHeight,
-                800,
-                'After updating container width, the chart should adjust its.'
+                'Hidden A11y div should increase chart height, #21188.'
             );
-            done();
-        }, 100);
+            chart.announcerContainer.style.padding = '0px';
+
+            document.getElementById('container').style.width = '500px';
+            document.getElementById('container').style.height = '800px';
+            setTimeout(() => {
+                assert.strictEqual(
+                    chart.chartWidth,
+                    500,
+                    `After updating container width, the chart should adjust
+                    its.`
+                );
+                assert.strictEqual(
+                    chart.chartHeight,
+                    800,
+                    `After updating container width, the chart should adjust
+                    its.`
+                );
+                done();
+            }, 150);
+        }, 150);
+
+        const chart2 = Highcharts.chart('container2', {
+            series: [{
+                data: [3, 5, 1, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            chart2.chartHeight,
+            400,
+            `For special HTML + CSS flexbox settings chart shouldn't increase
+            its height infinitely, it should be set to default height #21510.`
+        );
     } else {
         assert.ok(
             true,
