@@ -515,7 +515,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 this.chart.stockTools &&
                     this.chart.stockTools.visible
             ),
-            init: (dir: number): void => {
+            init: (): void => {
                 const chart = this.chart;
                 chart.stockTools?.redraw();
                 if (chart.navigationBindings) {
@@ -552,15 +552,8 @@ class StockToolsComponent extends AccessibilityComponent {
 
                 this.setButtons();
 
-                if (dir === 1) {
-                    this.focusedButtonIndex = 0;
-                }
-
-                if (dir === -1) {
-                    this.focusedButtonIndex =
-                        (this.buttons.length ? this.buttons.length - 1 : 0);
-                }
-
+                // Focus first button
+                this.focusedButtonIndex = 0;
                 this.focusButton();
 
                 // Setup submenu buttons
