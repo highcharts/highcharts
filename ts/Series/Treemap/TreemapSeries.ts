@@ -1570,7 +1570,11 @@ class TreemapSeries extends ScatterSeries {
         // Call prototype function
         super.translate();
 
-        this.points.push(...groupPoints);
+        if (series.options.groupAreaThreshold?.enabled) {
+            this.points.push(...groupPoints);
+        } else {
+            groupPoints.forEach((point): void => point.destroy());
+        }
 
         // @todo Only if series.isDirtyData is true
         const tree = series.tree = series.getTree();

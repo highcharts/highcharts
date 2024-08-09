@@ -70,4 +70,121 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
         rendered.`
     );
 
+    chart.setSize(600, 400);
+
+    series.setData([{
+        value: 600,
+        name: 'A'
+    }, {
+        value: 200,
+        name: 'B'
+    }]);
+
+    assert.strictEqual(
+        series.points.find(point => point.node.isGroup),
+        void 0,
+        `When points are bigger than grouping threshold group point should not
+        exist.`
+    );
+
+    series.setData([{
+        name: 'Parent 1',
+        id: 'par1',
+        color: Highcharts.getOptions().colors[0]
+    }, {
+        value: 600,
+        name: 'A',
+        parent: 'par1'
+    }, {
+        value: 200,
+        name: 'B',
+        parent: 'par1'
+    }, {
+        value: 1,
+        name: 'C',
+        parent: 'par1'
+    }, {
+        value: 3,
+        name: 'D',
+        parent: 'par1'
+    }, {
+        value: 2,
+        name: 'E',
+        parent: 'par1'
+    }, {
+        value: 4,
+        name: 'F',
+        parent: 'par1'
+    }, {
+        value: 2,
+        name: 'G',
+        parent: 'par1'
+    }, {
+        value: 4,
+        name: 'H',
+        parent: 'par1'
+    }, {
+        name: 'Parent 2',
+        id: 'par2',
+        color: Highcharts.getOptions().colors[1]
+    }, {
+        value: 600,
+        name: 'A2',
+        parent: 'par2'
+    }, {
+        value: 200,
+        name: 'B2',
+        parent: 'par2'
+    }, {
+        value: 1,
+        name: 'C2',
+        parent: 'par2'
+    }, {
+        value: 3,
+        name: 'D2',
+        parent: 'par2'
+    }, {
+        value: 2,
+        name: 'E2',
+        parent: 'par2'
+    }, {
+        value: 4,
+        name: 'F2',
+        parent: 'par2'
+    }, {
+        value: 2,
+        name: 'G2',
+        parent: 'par2'
+    }, {
+        value: 4,
+        name: 'H2',
+        parent: 'par2'
+    }], false);
+
+    series.update({
+        groupAreaThreshold: {
+            enabled: true,
+            pixelWidth: 60,
+            pixelHeight: 25
+        },
+        layoutAlgorithm: 'sliceAndDice'
+    });
+
+    assert.strictEqual(
+        series.points.filter(point => point.node.isGroup).length,
+        2,
+        'For two parents there should be two group points.'
+    );
+
+    series.update({
+        groupAreaThreshold: {
+            enabled: false
+        }
+    });
+
+    assert.strictEqual(
+        series.points.find(point => point.node.isGroup),
+        void 0,
+        'If grouping id disabled group points shouldn\'t be rendered.'
+    );
 });
