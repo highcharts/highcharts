@@ -1,3 +1,35 @@
+QUnit.test(
+    'Parsing dates with timezone information',
+    function (assert) {
+        const time = new Highcharts.Time({}),
+            samples = [
+                '2018-03-13T17:00:00+00:00',
+                '2018-03-13T20:00:00+03:00',
+                // '2018-03-13T20:00:00+03',
+                '2018-03-13T17:00:00GMT',
+                '2018-03-13T07:00:00GMT-1000',
+                '2018-03-13T08:00:00GMT-09:00',
+                '2018-03-13T17:00:00UTC',
+                '2018-03-13T18:30:00UTC+0130',
+                '2018-03-13T17:30:00UTC+00:30',
+                '2018-03-13T17:00:00Z'
+            ],
+            expected = new Date(samples[0]).toISOString();
+
+
+        samples
+            .forEach(sample => {
+                const timestamp = time.parse(sample);
+
+                assert.strictEqual(
+                    new Date(timestamp).toISOString(),
+                    expected,
+                    `Parsed dates should be the same. (Input: "${sample}")`
+                );
+            });
+    }
+);
+
 /**
  * Checks that the timezone option is applied and works.
  */

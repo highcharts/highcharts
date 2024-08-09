@@ -52,10 +52,10 @@ export interface PlotBandOptions {
     className?: string;
     color?: ColorType;
     events?: any;
-    from?: number;
+    from?: number|string;
     id?: string;
     label?: PlotBandLabelOptions;
-    to?: number;
+    to?: number|string;
     zIndex?: number;
 }
 

@@ -1225,7 +1225,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
             // to do not change the original point
             pointCopy = merge(point);
             H.seriesTypes.gantt.prototype.pointClass
-                .setGanttPointAliases(pointCopy as any);
+                .setGanttPointAliases(pointCopy as any, axis.chart);
         }
         // Make additional properties available for the
         // formatter

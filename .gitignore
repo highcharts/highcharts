@@ -63,6 +63,7 @@ nbproject/
 *.patch
 /samples/highcharts/common-js/browserify/demo.js
 /samples/highcharts/common-js/webpack/demo.js
+/samples/highcharts/studies/llexl
 /samples/cloud/charts
 /samples/**/candidate.svg
 /samples/**/diff.gif
