@@ -102,6 +102,12 @@ export interface DataGridSettings {
     * Options to control the rows behavior and rendering.
     */
     rows?: RowsSettings;
+
+    /**
+    * Defines the structure of levels in header. Used for grouping columns
+    * headers.
+    */
+    header?: GroupedHeader[];
 }
 
 export interface ColumnsSettings {
@@ -309,6 +315,13 @@ export interface HeaderEvents {
     click?: ColumnEventCallback;
 }
 
+export interface GroupedHeader {
+    headerFormat?: string;
+    useHTML?: boolean;
+    className?: string;
+    columnId?: string;
+    columns?: GroupedHeader[]; 
+}
 /* *
  *
  *  Default Export

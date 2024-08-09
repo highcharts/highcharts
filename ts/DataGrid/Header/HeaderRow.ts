@@ -21,14 +21,16 @@
  *  Imports
  *
  * */
-
+import type { GroupedHeader } from '../Options';
 import Row from '../Row.js';
 import Table from '../Table.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Cell from '../Cell.js';
 import Column from '../Column.js';
+import DGUtils from '../Utils.js';
 
+const { makeHTMLElement } = DGUtils;
 /* *
  *
  *  Class
@@ -71,8 +73,9 @@ class HeaderRow extends Row {
     /**
      * Renders the row's content in the header.
      */
-    public override render(): void {
+    public renderMultipleLevel(level: number): void {
 
+        const header = this.viewport.dataGrid.userOptions?.settings?.header;
         // Render element
         this.viewport.theadElement.appendChild(
             this.htmlElement
@@ -81,8 +84,113 @@ class HeaderRow extends Row {
         this.htmlElement.classList.add(
             Globals.classNames.headerRow
         );
+        
+        // super.render();
+        // TODO: Check why datagrid.getColumn() not working
+        const getColumn = (id: string) => {
+            const enabledColumns = this.viewport.dataGrid.enabledColumns;
+            const columns = this.viewport.columns;
+            if (!enabledColumns) {
+                return;
+            }
+            const columnIndex = enabledColumns.indexOf(id || '');
+            if (columnIndex < 0) {
+                return;
+            }
 
-        super.render();
+            return columns[columnIndex];
+        } 
+
+        if (header) {
+            const columnsOnLevel = this.getColumnsAtLevel(header, level);
+            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+                if (columnsOnLevel[i].columnId) {
+                    const col = getColumn(columnsOnLevel[i].columnId || '');
+                }
+
+                // TODO: Replace with HeaderCell
+                const th = makeHTMLElement('th', {
+                    innerText: columnsOnLevel[i].headerFormat || columnsOnLevel[i].columnId
+                }, this.htmlElement);
+
+                // if (col) {
+                //     const cell = this.createCell(col);
+                //     cell.render();
+                // }
+
+                if (columnsOnLevel[i].columnId) {
+                    th.setAttribute(
+                        'rowSpan',
+                        3 - level
+                    );
+                } else {
+                    th.setAttribute(
+                        'colSpan',
+                        this.countColumnIds(columnsOnLevel[i].columns || [])
+                    );
+                }
+            }
+        } else {
+            super.render();
+        }
+
+        this.reflow();
+    }
+    /**
+     * Get all headers that should be rendered in a level.
+     *
+     * @param level - level that we start
+     * @param targetLevel - max level
+     * @param currentLevel - current level
+     * @returns 
+     */
+    private getColumnsAtLevel (
+        level: GroupedHeader[],
+        targetLevel: number,
+        currentLevel = 0
+    ): GroupedHeader[] {
+        let result:GroupedHeader[] = [];
+    
+        for (let i = 0, iEnd = level.length; i < iEnd; i++) { 
+            if (currentLevel === targetLevel) {
+                result.push(level[i]);
+            }
+            if (level[i].columns) {
+                result = result.concat(
+                    this.getColumnsAtLevel(
+                        level[i].columns || [],
+                        targetLevel,
+                        currentLevel + 1
+                    )
+                );
+            }
+        };
+    
+        return result;
+    }
+
+    /**
+     * Calculates all references to columns in child. It is necessary to set
+     * correct colpan and calculate width. 
+     * 
+     * @param level - level that we start
+     * @returns 
+     */
+    public countColumnIds(level: GroupedHeader[]): number {
+        let count = 0;
+    
+        // (array || []).forEach((item: GroupedHeader):void => {
+        for (let i = 0, iEnd = level.length; i < iEnd; i++) { 
+            if (level[i].columnId) {
+                count++;
+            }
+
+            if (level[i].columns) {
+                count += this.countColumnIds(level[i].columns || []);
+            }
+        };
+    
+        return count;
     }
 
     /**

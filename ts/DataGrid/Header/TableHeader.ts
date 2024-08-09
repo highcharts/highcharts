@@ -25,7 +25,9 @@
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
+import DGUtils from '../Utils.js';
 
+const { makeHTMLElement } = DGUtils;
 /* *
  *
  *  Class
@@ -64,6 +66,10 @@ class TableHeader {
      */
     private headersEvents: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
 
+    /**
+     * Amount of levels in the header, that is used in creating correct rows.
+     */
+    public levels: number;
     /* *
     *
     *  Constructor
@@ -79,7 +85,9 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-        this.rows[0] = new HeaderRow(viewport);
+        this.levels = this.getRowsHeight(
+            viewport.dataGrid.userOptions?.settings?.header
+        ) || 1;
     }
 
 
@@ -94,6 +102,7 @@ class TableHeader {
     public render(): void {
         const vp = this.viewport;
         const dataGrid = vp.dataGrid;
+        // const headers = dataGrid.userOptions?.settings?.header;
 
         if (!dataGrid.enabledColumns) {
             return;
@@ -103,7 +112,14 @@ class TableHeader {
         // this.rows[0].renderGroupedColumnHeaders();
 
         // render basic column headers
-        this.rows[0].render();
+        // this.rows[0] = new HeaderRow(vp);
+        // this.rows[0].render();
+
+        for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
+            const lastRow = new HeaderRow(vp);
+            lastRow.renderMultipleLevel(i);
+            this.rows.push(lastRow);
+        }
     }
 
     /**
@@ -152,6 +168,23 @@ class TableHeader {
         ]);
     }
 
+    private getRowsHeight(scope: any) {
+        let maxDepth = 0;
+
+        for (let i = 0; i < scope.length; i++) {
+            if (scope[i].columns) {
+                const depth = this.getRowsHeight(scope[i].columns);
+                if (depth > maxDepth) {
+                    maxDepth = depth;
+                }
+            } else {
+                scope[i].level = maxDepth;
+            }
+        };
+
+        return maxDepth + 1;
+    }
+    
     /**
      * Scrolls the table head horizontally.
      *

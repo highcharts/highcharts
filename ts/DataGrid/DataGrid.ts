@@ -298,15 +298,15 @@ class DataGrid {
      */
     public getColumn(id: string): Column | undefined {
         const columns = this.enabledColumns;
+
         if (!columns) {
             return;
         }
-
         const columnIndex = columns.indexOf(id);
         if (columnIndex < 0) {
             return;
         }
-
+    
         return this.viewport?.columns[columnIndex];
     }
 
