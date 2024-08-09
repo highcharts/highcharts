@@ -35,7 +35,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../../Core/Series/Treemap/TreemapSeriesOptions' {
+declare module '../../Series/Treemap/TreemapSeriesOptions' {
     interface DrilldownOptions {
         breadcrumbs?: BreadcrumbsOptions;
     }

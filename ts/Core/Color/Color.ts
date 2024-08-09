@@ -66,6 +66,7 @@ class Color implements ColorLike {
     /**
      * Collection of parsers. This can be extended from the outside by pushing
      * parsers to `Color.parsers`.
+     * @private
      */
     public static parsers = [{
         // RGBA color

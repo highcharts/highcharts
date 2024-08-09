@@ -786,8 +786,6 @@ namespace Board {
 
     /**
      * Global dashboard settings.
-     * @internal
-     *
      */
     export const defaultOptions: Board.Options = {
         gui: {

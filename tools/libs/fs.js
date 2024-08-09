@@ -246,7 +246,7 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (FS.existsSync(directoryPath)) {
+    if (isDirectory(directoryPath)) {
         FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);
@@ -310,7 +310,7 @@ function getFilePaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (FS.existsSync(directoryPath)) {
+    if (isDirectory(directoryPath)) {
         FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);
@@ -417,6 +417,28 @@ function isFile(
 
 
 /**
+ * Extracts the last path item. Detects posix paths.
+ *
+ * @param {string} path
+ * Path to extract from.
+ *
+ * @return {string}
+ * Last path item.
+ */
+function lastPath(
+    path
+) {
+    return (
+        Path.sep !== Path.posix.sep &&
+        path.includes(PSEP) &&
+        path.split(PSEP).length > path.split(SEP).length ?
+            Path.posix.basename(path) :
+            Path.basename(path)
+    );
+}
+
+
+/**
  * Creates a path, if it not exists.
  *
  * @param {string} path
@@ -502,22 +524,81 @@ function moveAllFiles(
 
 
 /**
+ * Normalize target file path based on source file path.
+ *
+ * @param {string} sourcePath
+ * File path to use as reference for normalization.
+ *
+ * @param {string} targetPath
+ * File path to normalize.
+ *
+ * @param {boolean} [toPosix]
+ * Convert to a POSIX-uniform path, if set to `true`.
+ *
+ * @return {string}
+ * Normalize target file path.
+ */
+function normalizePath(
+    sourcePath,
+    targetPath,
+    toPosix
+) {
+
+    sourcePath = Path.posix.dirname(path(sourcePath, true));
+    targetPath = path(targetPath, true);
+
+    if (!targetPath.startsWith('.')) {
+        targetPath = Path.posix.relative(sourcePath, targetPath);
+    }
+
+    return path(Path.posix.join(sourcePath, targetPath), toPosix);
+}
+
+
+/**
+ * Extracts the upper path without the last path item. Detects posix paths.
+ *
+ * @param {string} path
+ * Path to extract from.
+ *
+ * @return {string}
+ * Upper parent path.
+ */
+function parentPath(
+    path
+) {
+    return (
+        Path.sep !== Path.posix.sep &&
+        path.includes(PSEP) &&
+        path.split(PSEP).length > path.split(SEP).length ?
+            Path.posix.dirname(path) :
+            Path.dirname(path)
+    );
+}
+
+
+/**
  * Converts from POSIX path to the system-specific path by default. Set the flag
  * to convert to POSIX.
  *
- * @param {string} path
- *        Path to convert.
+ * @param {string|Array<string>} path
+ * Path to convert.
  *
- * @param {boolean} toPosix
- *        Convert to a POSIX-uniform path, if set to `true`.
+ * @param {boolean} [toPosix]
+ * Convert to a POSIX-uniform path, if set to `true`.
  *
  * @return {string}
- *         Converted path.
+ * Converted path.
  */
 function path(
     path,
     toPosix
 ) {
+
+    if (typeof path !== 'string') {
+        path = Path.join(...path);
+    }
+
     if (Path.sep !== Path.posix.sep) {
         return (
             toPosix ?
@@ -550,7 +631,10 @@ module.exports = {
     isDirectory,
     isDotEntry,
     isFile,
+    lastPath,
     makePath,
     moveAllFiles,
+    normalizePath,
+    parentPath,
     path
 };
