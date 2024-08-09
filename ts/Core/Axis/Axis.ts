@@ -595,7 +595,7 @@ class Axis {
      *
      * @function Highcharts.Axis#createCollector
      *
-     * @return {Highcharts.LabelCollectorFunction}
+     * @return {Function}
      * A function which returns labels.
      */
     public createCollector(): Chart.LabelCollectorFunction {
