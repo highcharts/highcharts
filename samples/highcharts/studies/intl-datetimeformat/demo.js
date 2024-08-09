@@ -10,178 +10,82 @@
  * - Fix the `preferredInputType` function in `rangeSelector` to handle
  *   Intl.DateTimeFormat
  * - Defaults for the data grouping `dateTimeLabelFormats`
+ * - Consistent cache for Intl.DateTimeFormat instances
+ * - Smarter object-to-key in Tooltip
  * - API to set definitions and refer to them in templating by a key character
  */
-
-(({ addEvent, Time, wrap }) => {
-    // Look for an object that is not { main, from, to }
-    const isIntlFormat = f => (
-        typeof f === 'object' &&
-        Object.keys(f).some(key => !['main', 'from', 'to'].includes(key))
-    );
-
-    wrap(
-        Time.prototype,
-        'dateFormat',
-        function (proceed, format, timestamp, capitalize) {
-            if (typeof format === 'object') {
-                const dateTimeFormat = Intl.DateTimeFormat(
-                    this.options.locale,
-                    format
-                );
-                return dateTimeFormat.format(timestamp);
-            }
-
-            return proceed(format, timestamp, capitalize);
-        }
-    );
-
-    wrap(
-        Time.prototype,
-        'resolveDTLFormat',
-        function (proceed, f) {
-            f = proceed(f);
-
-            if (isIntlFormat(f)) {
-                f.main = f;
-            }
-
-            return f;
-        }
-    );
-
-    // Pre-compile the date formats for tooltips
-    addEvent(Highcharts.Series, 'afterSetOptions', function () {
-        const dateTimeLabelFormats = this.tooltipOptions.dateTimeLabelFormats;
-
-        Object.keys(dateTimeLabelFormats).forEach((key, i) => {
-            const format = dateTimeLabelFormats[key];
-            if (isIntlFormat(format)) {
-                Highcharts.dateFormats[i] = function (timestamp) {
-                    return Intl.DateTimeFormat(this.options.locale, format)
-                        .format(timestamp);
-                };
-
-                dateTimeLabelFormats[key] = `%${i}`;
-            }
-        });
-    });
-})(Highcharts);
-
 
 Highcharts.setOptions({
     time: {
         // locale: 'en-GB'
     },
 
-    tooltip: {
-        dateTimeLabelFormats: {
-            millisecond: {
-                weekday: 'long',
-                month: 'short',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                fractionalSecondDigits: 3
-            },
-            second: {
-                weekday: 'long',
-                month: 'short',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
-            },
-            minute: {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric'
-            },
-            hour: {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric'
-            },
-            day: {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            },
-            week: {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            },
-            month: {
-                month: 'long',
-                year: 'numeric'
-            },
-            year: {
-                year: 'numeric'
-            }
-        }
-    },
-
     rangeSelector: {
-        // @todo: fix the preferredInputType function
-        _inputDateFormat: {
-            dateStyle: 'long'
+        inputDateFormat: {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
         }
     },
 
-    xAxis: {
-        dateTimeLabelFormats: {
-            millisecond: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                    fractionalSecondDigits: 3
-                }
-            },
-            second: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric'
-                }
-            },
-            minute: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric'
-                }
-            },
-            day: {
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
-            },
-            week: {
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
-            },
-            month: {
-                main: {
-                    month: 'short',
-                    year: '2-digit'
-                }
-            },
-            year: {
-                main: {
-                    year: 'numeric'
+    plotOptions: {
+        series: {
+            dataGrouping: {
+                dateTimeLabelFormats: {
+                    day: [{
+                        dateStyle: 'full'
+                    }]
                 }
             }
         }
     }
 });
+
+// Legacy options
+/*
+Highcharts.setOptions({
+    tooltip: {
+        dateTimeLabelFormats: {
+            millisecond: '%A, %e %b, %H:%M:%S.%L',
+            second: '%A, %e %b, %H:%M:%S',
+            minute: '%A, %e %b, %H:%M',
+            hour: '%A, %e %b, %H:%M',
+            day: '%A, %e %b %Y',
+            week: 'Week from %A, %e %b %Y',
+            month: '%B %Y',
+            year: '%Y'
+        }
+    },
+    xAxis: {
+        dateTimeLabelFormats: {
+            millisecond: {
+                main: '%H:%M:%S.%L'
+            },
+            second: {
+                main: '%H:%M:%S'
+            },
+            minute: {
+                main: '%H:%M'
+            },
+            hour: {
+                main: '%H:%M'
+            }
+            day: {
+                main: '%e %b'
+            },
+            week: {
+                main: '%e %b'
+            },
+            month: {
+                main: '%b \'%y'
+            },
+            year: {
+                main: '%Y'
+            }
+        }
+    }
+});
+// */
 
 (async () => {
 
@@ -199,9 +103,13 @@ Highcharts.setOptions({
             text: 'AAPL Stock Price'
         },
 
+        xAxis: {
+            type: 'datetime'
+        },
+
         series: [{
             name: 'AAPL',
-            data: data,
+            data,
             tooltip: {
                 valueDecimals: 2
             }

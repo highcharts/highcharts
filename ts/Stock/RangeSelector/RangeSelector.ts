@@ -49,6 +49,7 @@ const {
     extend,
     fireEvent,
     isNumber,
+    isString,
     merge,
     objectEach,
     pad,
@@ -99,17 +100,34 @@ declare module './RangeSelectorOptions' {
  * @private
  * @function preferredInputType
  */
-function preferredInputType(format: string): string {
-    const ms = format.indexOf('%L') !== -1;
+function preferredInputType(format: Time.DateTimeFormat): string {
+    const ms = isString(format) ?
+        format.indexOf('%L') !== -1 :
+        // Implemented but not typed as of 2024
+        (format as any).fractionalSecondDigits;
 
     if (ms) {
         return 'text';
     }
 
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
-    const time = ['H', 'k', 'I', 'l', 'M', 'S']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
+    const date = isString(format) ?
+        ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        (format as any).dateStyle || format.day || format.month || format.year;
+
+    const time = isString(format) ?
+        ['H', 'k', 'I', 'l', 'M', 'S']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        (
+            (format as any).timeStyle ||
+            format.hour ||
+            format.minute ||
+            format.second
+        );
 
     if (date && time) {
         return 'datetime-local';
