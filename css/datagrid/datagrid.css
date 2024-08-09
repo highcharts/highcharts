@@ -152,7 +152,7 @@
     width: 100%;
 }
 
-.highcharts-datagrid-row.highcharts-datagrid-odd {
+.highcharts-datagrid-row.highcharts-datagrid-column-odd {
     background-color: var(--highcharts-neutral-color-3);
 }
 
@@ -173,7 +173,7 @@
 }
 
 .highcharts-datagrid-hovered-row,
-.highcharts-datagrid-row.highcharts-datagrid-odd.highcharts-datagrid-hovered-row {
+.highcharts-datagrid-row.highcharts-datagrid-column-odd.highcharts-datagrid-hovered-row {
     background-color: var(--highcharts-highlight-color-10);
 }
 
@@ -221,7 +221,7 @@
     width: 0;
 }
 
-.highcharts-datagrid-no-result-column { /* --------- */
+.highcharts-datagrid-no-result-column {
     text-align: center;
     padding: 10px;
     width: 100%;

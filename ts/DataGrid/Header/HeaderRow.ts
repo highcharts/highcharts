@@ -36,7 +36,7 @@ import Column from '../Column.js';
  * */
 
 /**
- * Represents a row in the data grid.
+ * Represents a row in the data grid header.
  */
 class HeaderRow extends Row {
 
@@ -47,7 +47,7 @@ class HeaderRow extends Row {
     * */
 
     /**
-     * Constructs a row in the data grid.
+     * Constructs a row in the data grid header.
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.

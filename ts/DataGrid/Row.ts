@@ -157,7 +157,7 @@ abstract class Row {
     }
 
     /**
-     * Unregisters a cell from the row.
+     * Unregister a cell from the row.
      *
      * @param cell
      * The cell to unregister.

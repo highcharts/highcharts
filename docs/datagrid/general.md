@@ -1,31 +1,29 @@
 DataGrid
 ===
 
-The DataGrid is a versatile tool registered together with the Highcharts Dashboards package for visualizing and editing tabular data.
-It can be a part of a dashboard or used as a standalone component, but requires a Dashboards license.  
-By incorporating this component, users can effectively interact with data in a structured and editable table format.
-
+The DataGrid is a versatile tool registered together with the Highcharts Dashboards package for visualizing and editing tabular data. It can be a part of a dashboard or used as a standalone component, but requires a Dashboards license. By incorporating this component, users can effectively interact with data in a structured and editable table format.
 
 ## Installation
-- The package can be imported through a script tag from the Highcharts CDN like this:
+The package can be imported through a script tag from the Highcharts CDN like this:
 
-    ```html
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-    ```
+```html
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+```
 
-- Or it can be installed through NPM like this:
+Or it can be installed through NPM like this:
 
-    ```bash
-    npm install @highcharts/dashboards
-    ```
-    Then import the module like this:
+```bash
+npm install @highcharts/dashboards
+```
 
-    ```ts
-    import * as DataGrid from '@highcharts/dashboards/datagrid';
-    ```
+Then import the module as follows:
+
+```ts
+import * as DataGrid from '@highcharts/dashboards/datagrid';
+```
 
 ## Usage
-The DataGrid can be added as a standalone component or as a part of a dashboard.
+The DataGrid can be added as a standalone component or as a part of a Dashboard.
 The following example demonstrates how to use the DataGrid as a standalone component.
 
 First you need to create a container for the DataGrid:
@@ -35,7 +33,7 @@ First you need to create a container for the DataGrid:
 ```
 
 Then you can create the DataGrid instance and add it to the container.
-Note that the DataGrid requires data to be in form of a data table or a data table options object.
+Note that the DataGrid requires data to be in the form of a data table or a data table options object.
 Check [the data documentation](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
 Data Table Options:
@@ -77,11 +75,10 @@ The DataGrid component requires the following styles to be imported in your main
 
 The DataGrid has a number of options that can be used to customize the appearance and behavior of the table.
 
-For example using the [`editable`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) option you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
+For example, using the [`editable`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) option you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
 
-Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, e.g. adding units to them. The key is the column name and the value is the object with the column-specific options.
+Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, for example by adding units to them. The key is the column name and the value is the object with the column-specific options.
 
-Example:
 ```js
 DataGrid.dataGrid('container', {
     table: { columns },

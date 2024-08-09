@@ -27,18 +27,18 @@ The caption of the datagrid grid.
 ```js
 settings: {
     caption: {
-        text: 'Your title of datagrid'
+        text: 'Your title of datagrid'Heade
     }
 }
 ```
 
 For more information on `caption` options see the [API reference]().
 
-Head
+Header
 ---------
 
-The [table head](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHead.DataGridTableHead-1) is a special row, always on the top, containing the column IDs.
-Cells in the `head` are called `headers`. Their content can be edited using the
+The [table header](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHeader) is a special row, always on the top, containing the column IDs.
+Cells in the `header` are called `headerCell`. Their contents can be edited using the
 [`headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 
 
@@ -77,7 +77,7 @@ For more information on the column resizer see the [API reference](https://api.h
 Column
 ---------
 
-Represents a column in the data grid. Options for a column often apply to all cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
+Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
 ```js
 defaults: {

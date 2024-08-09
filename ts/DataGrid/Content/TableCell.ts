@@ -117,7 +117,7 @@ class TableCell extends Cell {
     };
 
     /**
-     * Unsets the hover state of the cell and its row and column.
+     * Unset the hover state of the cell and its row and column.
      */
     private readonly onMouseOut = (): void => {
         const { dataGrid } = this.row.viewport;
