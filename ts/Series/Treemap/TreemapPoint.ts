@@ -56,6 +56,8 @@ class TreemapPoint extends ScatterPoint {
 
     public imageUrl?: string;
 
+    public groupedPointsAmount?: number;
+
     public name!: string;
 
     public node!: TreemapNode;
