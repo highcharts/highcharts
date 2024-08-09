@@ -2171,7 +2171,7 @@ class Series {
          * @private
          */
         function limitedRange(val: number): number {
-            return clamp(val, -1e5, 1e5);
+            return clamp(val, -1e9, 1e9);
         }
 
         // Translate each point

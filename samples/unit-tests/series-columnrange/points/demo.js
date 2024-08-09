@@ -31,7 +31,7 @@ QUnit.test('Long columns and bars (#6835)', function (assert) {
             );
 
             assert.ok(
-                chart.series[0].points[1].graphic.getBBox().height < 150000,
+                chart.series[0].points[1].graphic.getBBox().height < 1500000000,
                 'Height should be acceptable.'
             );
         }
