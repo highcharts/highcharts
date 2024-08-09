@@ -493,6 +493,15 @@ class Axis {
         // List of plotLines/Bands
         axis.plotLinesAndBands = [];
 
+        // Creating labelCollector for plotLines/Bands
+        const collectors = chart.labelCollectors;
+
+        // Only add the collector function if it is not present
+        if (!collectors.some((f): boolean => f.name === 'axisLabelCollector')) {
+            const axisLabelCollector = axis.createCollector();
+            collectors.push(axisLabelCollector);
+        }
+
         // Alternate bands
         axis.alternateBands = {};
 
@@ -579,6 +588,38 @@ class Axis {
         registerEventOptions(axis, options);
 
         fireEvent(this, 'afterInit');
+    }
+    /**
+     * Overridable function which creates a function collecting labels.
+     * The returned function is used for detecting overlapping labels.
+     *
+     * @function Highcharts.Axis#createCollector
+     *
+     * @return {Function}
+     * A function which returns labels.
+     */
+    public createCollector(): Chart.LabelCollectorFunction {
+        const axis = this;
+        return (): (SVGElement | undefined)[] => {
+
+            // It is possible that plotLinesAndBands and options
+            // is/becomes undefined.
+            const plotLinesAndBands = (
+                !axis?.options?.labels?.allowOverlap &&
+                axis?.plotLinesAndBands
+            );
+
+            if (plotLinesAndBands) {
+                const labels: (SVGElement | undefined)[] = [];
+
+                for (const { label } of plotLinesAndBands) {
+                    labels.push(label);
+                }
+                return labels;
+            }
+
+            return [];
+        };
     }
 
     /**
@@ -3941,6 +3982,7 @@ class Axis {
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
+
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -3950,7 +3992,6 @@ class Axis {
                         }
                     );
             }
-
         } // End if hasData
 
         // Remove inactive ticks
