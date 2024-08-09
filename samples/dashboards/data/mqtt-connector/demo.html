@@ -1,0 +1,23 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<!-- Application -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+
+<div id="container"></div>
+
+<div class="description"><p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
+    broker and subscribe to a topic. The data is then displayed in a Highcharts chart and a Dashboard datagrid.
+    The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom Connector 
+    establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The received
+    data are stored in the connector's data table for use in the chart and datagrid. The connector also supports 
+    callbacks for connection status, packet reception and error handling. The connector is a sub-class of the <i>DataConnector</i>
+    and uses the JSON Converter to convert the received data to a format that can be used by the chart and datagrid.</p>
+    <p>The data provider is <b>Sognekraft AS</b>, a Norwegian hydro-electricity producer. The dataset features two
+    power plants: <i>Kråkeelvi</i> and <i>Brekkeelvi</i>. The dataset contains a number of real-time power production
+    parameters but in this particular demo the generated power is displayed (megawatts). The measurement data are updated 
+    every 2 minutes.</p>
+</div>

@@ -1,0 +1,100 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+:root {
+    /* Dimensions */
+    --chart-height: 200px;
+    --log-height: 250px;
+}
+
+/* *
+ *
+ *  Layout
+ *
+ * */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 10px;
+    padding: 10px;
+}
+
+/* *
+ *
+ *  Demo specific
+ *
+ * */
+.highcharts-dashboards-wrapper {
+    background-color: var(--highcharts-neutral-color-10);
+    border-radius: var(--component-rounded-corners);
+    padding: 10px;
+    overflow: hidden;
+}
+
+.highcharts-dashboards-component {
+    background-color: var(--component-background);
+    border-radius: var(--component-rounded-corners);
+    max-height: var(--chart-height);
+}
+
+.highcharts-datagrid-container {
+    font-size: 12px;
+}
+
+#html-log {
+    background-color: var(--highcharts-neutral-color-10);
+    border-radius: var(--component-rounded-corners);
+    padding: 10px;
+    max-height: var(--log-height);
+    overflow: scroll;
+}
+
+#html-log .highcharts-dashboards-component-title {
+    text-align: center;
+    font-size: 18px;
+}
+
+#log-content {
+    max-height: var(--log-height);
+    padding: 10px;
+    font: "Courier New", Courier, monospace;
+    font-size: 12px;
+}
+
+#app-control {
+    padding: 10px;
+    font-size: 12px;
+}
+
+#app-control .highcharts-dashboards-component {
+    margin-bottom: 10px;
+    background-color: var(--highcharts-neutral-color-10);
+    border: 0;
+}
+
+#app-control #connect-status {
+    border: 0;
+    padding: 5px;
+    float: right;
+}
+
+#app-control #connect-status::before {
+    content: "MQTT ";
+}
+
+#div.description {
+    padding: 10px;
+    font-size: 12px;
+}
