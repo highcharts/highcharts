@@ -123,8 +123,6 @@ class SortingController {
 
     /**
      * Returns the sorting options from the data grid options.
-     *
-     * @returns The sorting options from the data grid options.
      */
     private getSortingOptions(): SortingController.SortingState {
         const dataGrid = this.dataGrid,

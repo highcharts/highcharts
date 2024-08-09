@@ -26,10 +26,8 @@ import Table from '../Table.js';
 import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
 import TableRow from '../Content/TableRow.js';
-import U from '../../Core/Utilities.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;
-const { defined } = U;
 
 
 /* *
@@ -149,7 +147,7 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (defined(oldScrollTop)) {
+        if (oldScrollTop !== void 0) {
             tbody.scrollTop = oldScrollTop;
         }
 

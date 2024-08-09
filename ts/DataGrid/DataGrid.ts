@@ -120,12 +120,15 @@ class DataGrid {
     public container?: HTMLElement;
 
     /**
-     * The data source of the data grid.
+     * The data source of the data grid. It contains the original data table
+     * that was passed to the data grid.
      */
     public dataTable?: DataTable;
 
     /**
-     * The presentation table of the data grid.
+     * The presentation table of the data grid. It contains a modified version
+     * of the data table that is used for rendering the data grid content. If
+     * not modified, just a reference to the original data table.
      */
     public presentationTable?: DataTable;
 

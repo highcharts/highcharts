@@ -78,8 +78,6 @@
         "../../../ts/DataGrid/TableHead.ts",
         "../../../ts/DataGrid/Globals.ts",
         "../../../ts/DataGrid/Utils.ts",
-        "../../../ts/DataGrid/Querying/QueryingController.ts",
-        "../../../ts/DataGrid/Querying/SortingController.ts",
 
         // DataGrid - Header
         "../../../ts/DataGrid/Header/HeaderCell.ts",
