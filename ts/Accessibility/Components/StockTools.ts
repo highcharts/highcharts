@@ -161,6 +161,7 @@ class StockToolsComponent extends AccessibilityComponent {
 
         if (atEnd && this.submenuParentIndex) {
             this.closeOpenSubmenus();
+            this.focusedButtonIndex++;
             return true;
         }
 
@@ -229,6 +230,8 @@ class StockToolsComponent extends AccessibilityComponent {
             const component = this;
             const keys = this.keyCodes;
 
+            const currentButton = this.buttons[this.focusedButtonIndex];
+
             if (keyCode === keys.home) {
                 this.focusedButtonIndex = 0;
             }
@@ -242,6 +245,23 @@ class StockToolsComponent extends AccessibilityComponent {
                 component.focusButton();
                 return component.keyboardNavigationHandler.response.success;
             }
+
+            if (
+                keyCode === keys.right &&
+                currentButton.getAttribute('aria-haspopup') === 'true'
+            ) {
+                const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
+                    '#' + currentButton.getAttribute('aria-controls')
+                );
+                if (submenu) {
+                    component.openSubmenu(submenu);
+                    // TODO: Might be more proper to fire an event
+                    currentButton.click();
+
+                    return component.keyboardNavigationHandler.response.success;
+                }
+            }
+
 
             if ([keys.left, keys.up].includes(keyCode)) {
                 component.decrementFocusedButtonIndex();
@@ -353,36 +373,27 @@ class StockToolsComponent extends AccessibilityComponent {
         return 0;
     }
 
-    private onEnterKeyPress(
-        this: StockToolsComponent
-    ): number {
+    private openSubmenu(submenu: HTMLElement): void {
         const component = this;
-        if (!component.focusInPopup) {
-            const button = component.buttons[component.focusedButtonIndex];
 
-            const submenu = button.parentElement
-                ?.querySelector<HTMLElement>(
-                '.highcharts-submenu-wrapper'
+        const button = component.buttons[component.focusedButtonIndex];
+        if (submenu && submenu.dataset.open === 'false') {
+            this.submenuParentIndex = this.focusedButtonIndex;
+
+            // Make submenu traversable by keyboard
+            const childButtons = submenu
+                .querySelectorAll<HTMLElement>(
+                'button'
             );
 
-            if (button.classList.contains('highcharts-submenu-item-arrow')) {
-                if (submenu && submenu.dataset.open === 'false') {
-                    this.submenuParentIndex = this.focusedButtonIndex;
+            if (childButtons?.length) {
+                const mainButton = button
+                    .parentElement
+                    ?.querySelector<HTMLElement>('.highcharts-menu-item-btn');
 
-                    // Make submenu traversable by keyboard
-                    const childButtons = submenu
-                        .querySelectorAll<HTMLElement>(
-                        'button'
-                    );
+                component.buttons = Array.from(childButtons);
 
-                    if (childButtons?.length) {
-                        const mainButton = button
-                            .parentElement
-                            ?.querySelector<HTMLElement>('.highcharts-menu-item-btn');
-
-                        component.buttons = Array.from(childButtons);
-
-                        const indexToFocus =
+                const indexToFocus =
                                 Array.from(childButtons)
                                     .findIndex(
                                         (child): boolean =>
@@ -391,25 +402,41 @@ class StockToolsComponent extends AccessibilityComponent {
                                     );
 
 
-                        component.focusedButtonIndex = (
-                            indexToFocus !== -1 ?
-                                indexToFocus :
-                                0
-                        );
+                component.focusedButtonIndex = (
+                    indexToFocus !== -1 ?
+                        indexToFocus :
+                        0
+                );
 
-                        childButtons.forEach((childButton): void => {
-                            attr(childButton, {
-                                tabindex: -1
-                            });
-                        });
+                childButtons.forEach((childButton): void => {
+                    attr(childButton, {
+                        tabindex: -1
+                    });
+                });
 
-                        // Trigger focus after navigationHandler
-                        // has finished, otherwise selectButton is triggered
-                        setTimeout((): void => {
-                            component.focusButton();
-                        });
-                    }
-                }
+                // Trigger focus after navigationHandler
+                // has finished, otherwise selectButton is triggered
+                setTimeout((): void => {
+                    component.focusButton();
+                });
+            }
+        }
+
+    }
+
+    private onEnterKeyPress(
+        this: StockToolsComponent
+    ): number {
+        const component = this;
+        if (!component.focusInPopup) {
+            const button = component.buttons[component.focusedButtonIndex];
+            const submenu = button.parentElement
+                ?.querySelector<HTMLElement>(
+                '.highcharts-submenu-wrapper'
+            );
+
+            if (button.getAttribute('aria-haspopup') === 'true' && submenu) {
+                component.openSubmenu(submenu);
 
                 return component.keyboardNavigationHandler.response.noHandler;
             }

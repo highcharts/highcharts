@@ -334,7 +334,7 @@ class Toolbar {
                 className: 'highcharts-submenu-wrapper'
             }, void 0, buttonWrapper);
 
-        submenuWrapper.setAttribute('role', 'group');
+        submenuWrapper.setAttribute('role', 'menu');
         submenuWrapper.id = 'highcharts-submenu-wrapper-' +
             parentBtn.mainButton.dataset.btnName;
 
@@ -746,8 +746,9 @@ class Toolbar {
                     guiOptions.toolbarClassName
         });
 
+        this.toolbar.setAttribute('role', 'menubar');
+        this.toolbar.setAttribute('aria-orientation', 'vertical');
         this.toolbar.setAttribute('aria-label', 'Stock tools');
-        this.toolbar.setAttribute('role', 'menu');
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
