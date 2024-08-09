@@ -868,4 +868,26 @@
                 'rangeSelector is a part of fixed elements.'
             );
         });
+
+    QUnit.test(
+        'Gantt using array-based points, #17738',
+        function (assert) {
+            const chart = Highcharts.ganttChart('container', {
+                series: [
+                    {
+                        data: [
+                            [Date.UTC(2014, 10, 20), Date.UTC(2014, 10, 25)],
+                            [Date.UTC(2014, 10, 21), Date.UTC(2014, 10, 26)],
+                            [Date.UTC(2014, 10, 23), Date.UTC(2014, 10, 29)]
+                        ]
+                    }
+                ]
+            });
+
+            assert.strictEqual(
+                chart.series[0].yAxis.tickPositions.length,
+                3,
+                'Array-based points are loaded into the chart'
+            );
+        });
 }());
