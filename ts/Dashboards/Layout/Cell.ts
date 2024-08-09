@@ -22,7 +22,7 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
@@ -603,6 +603,35 @@ namespace Cell {
          * Unique cell id.
          **/
         id: string;
+
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
         /**
          * Width of the cell. Can be a percentage value, pixels or a fraction.
          *
