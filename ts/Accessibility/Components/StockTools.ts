@@ -255,13 +255,6 @@ class StockToolsComponent extends AccessibilityComponent {
                 );
             }
 
-            // Remove the temporary close buttons
-            submenu
-                .querySelectorAll('li.temp-close-button')
-                .forEach((buttonWrapper): void => {
-                    buttonWrapper.remove();
-                });
-
             if (this.submenuParentIndex) {
                 this.focusedButtonIndex =
                         this.submenuParentIndex;
@@ -358,30 +351,6 @@ class StockToolsComponent extends AccessibilityComponent {
             if (button.classList.contains('highcharts-submenu-item-arrow')) {
                 if (submenu && submenu.dataset.open === 'false') {
                     this.submenuParentIndex = this.focusedButtonIndex;
-
-                    // Insert a close button
-                    const buttonClone = component.createElement('button');
-                    buttonClone.setAttribute('aria-label', 'Close submenu');
-                    buttonClone.setAttribute('role', 'menuitem');
-                    buttonClone.textContent = 'Close';
-                    buttonClone.style.fontSize = '0.6rem';
-                    buttonClone.style.height = '1.2rem';
-                    buttonClone.classList.add('highcharts-menu-item-btn');
-
-                    const listItem = component.createElement('li');
-                    listItem.style.height = '1.2rem';
-                    listItem.classList.add('temp-close-button');
-
-                    buttonClone.addEventListener('click', (e):void => {
-                        e.preventDefault();
-
-                        component.closeSubmenu(submenu);
-
-                        component.focusButton();
-                    }, { once: true });
-
-                    listItem.appendChild(buttonClone);
-                    submenu.prepend(listItem);
 
                     // Make submenu traversable by keyboard
                     const childButtons = submenu
