@@ -201,20 +201,20 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
      */
-    public bodyFormatter(items: Array<Point>): Array<string> {
-        return items.map(function (item): string {
-            const tooltipOptions = (item as any).series.tooltipOptions;
+    public bodyFormatter(
+        items: Array<Tooltip.FormatterContextObject>
+    ): Array<string> {
+        return items.map((item): string => {
+            const tooltipOptions = item.series.tooltipOptions,
+                point = item.point,
+                formatPrefix = point.formatPrefix || 'point';
 
             return (
-                (tooltipOptions as any)[
-                    ((item as any).point.formatPrefix || 'point') + 'Formatter'
-                ] ||
-                (item as any).point.tooltipFormatter
+                (tooltipOptions as any)[formatPrefix + 'Formatter'] ||
+                point.tooltipFormatter
             ).call(
-                (item as any).point,
-                tooltipOptions[
-                    ((item as any).point.formatPrefix || 'point') + 'Format'
-                ] || ''
+                point,
+                (tooltipOptions as any)[formatPrefix + 'Format'] || ''
             );
         });
     }

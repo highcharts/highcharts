@@ -374,7 +374,7 @@ function onChartGetAxes(
     if (!this.pane) {
         this.pane = [];
     }
-    this.options.pane = splat(this.options.pane);
+    this.options.pane = splat(this.options.pane || {});
     this.options.pane.forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,

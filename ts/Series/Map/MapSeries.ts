@@ -918,9 +918,11 @@ class MapSeries extends ScatterSeries {
         if (options.joinBy === null) {
             joinBy = '_i';
         }
-        joinBy = this.joinBy = splat(joinBy);
-        if (!joinBy[1]) {
-            joinBy[1] = joinBy[0];
+        if (joinBy) {
+            this.joinBy = splat(joinBy);
+            if (!this.joinBy[1]) {
+                this.joinBy[1] = this.joinBy[0];
+            }
         }
 
         return options;
