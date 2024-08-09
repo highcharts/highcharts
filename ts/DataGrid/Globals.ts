@@ -85,9 +85,9 @@ namespace Globals {
         headCellResized: classNamePrefix + 'head-cell-resized',
         headerRow: classNamePrefix + 'head-row-content',
         noData: classNamePrefix + 'no-data',
-        columnSorting: classNamePrefix + 'column-sorting',
-        columnSortingAsc: classNamePrefix + 'column-sorting-asc',
-        columnSortingDesc: classNamePrefix + 'column-sorting-desc',
+        columnSortable: classNamePrefix + 'column-sortable',
+        columnSortedAsc: classNamePrefix + 'column-sorted-asc',
+        columnSortedDesc: classNamePrefix + 'column-sorted-desc',
         resizerHandles: classNamePrefix + 'column-resizer',
         resizedColumn: classNamePrefix + 'column-resized'
     };

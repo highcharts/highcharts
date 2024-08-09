@@ -130,7 +130,7 @@ class Column {
     /**
      * Sorting column module.
      */
-    public columnSorting?: ColumnSorting;
+    public sorting?: ColumnSorting;
 
     /* *
     *
@@ -164,8 +164,9 @@ class Column {
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.data = viewport.dataTable.getColumn(id, true);
         this.width = this.getInitialWidth();
+
+        this.loadData();
     }
 
 
@@ -176,13 +177,20 @@ class Column {
     * */
 
     /**
+     * Loads the data of the column from the viewport's data table.
+     */
+    public loadData(): void {
+        this.data = this.viewport.dataTable.getColumn(this.id, true);
+    }
+
+    /**
      * Updates the column with new options.
      *
      * @param options
      * The column options to update.
      */
-    public update(options: IndividualColumnOptions): void {
-        this.viewport.dataGrid.update({
+    public async update(options: IndividualColumnOptions): Promise<void> {
+        await this.viewport.dataGrid.update({
             columns: {
                 [this.id]: options
             }

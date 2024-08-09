@@ -11,8 +11,7 @@ DataGrid.dataGrid('container', {
     },
     defaults: {
         columns: {
-            editable: true,
-            sorting: true
+            editable: true
         }
     },
     columns: {
