@@ -245,7 +245,10 @@ async function getNav(
 
     for (const childItem of await database.getItemChildren(itemName, version)) {
         if (childItem && childItem.name) {
-            navChildren.push(toNav(childItem));
+            navChildren.push(toNav(
+                childItem,
+                await database.hasItemChildren(childItem.name, version)
+            ));
         }
     }
 
@@ -257,7 +260,10 @@ async function getNav(
 }
 
 
-function toNav(item: Database.Item): Nav {
+function toNav(
+    item: Database.Item,
+    hasChildren: boolean = false
+): Nav {
     const nav: Nav = {};
 
     if (item.description) {
@@ -269,8 +275,9 @@ function toNav(item: Database.Item): Nav {
     nav.fullname = item.name;
     nav.name = item.name.split('.').pop();
     if (item.doclet.type) {
-        nav.isLeaf = item.doclet.type
-            .every(type => type[0] === type[0].toLowerCase());
+        if (!hasChildren) {
+            nav.isLeaf = true;
+        }
         nav.typeList = { names: item.doclet.type };
     }
 

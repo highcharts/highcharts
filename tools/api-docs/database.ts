@@ -289,6 +289,34 @@ export class Database {
         return children;
     }
 
+    public async hasItemChildren(
+        itemName: string,
+        version?: number
+    ): Promise<boolean> {
+        const data = await this.getData();
+        const nodePath = this.namePrefix + itemName;
+
+        let index = -1;
+
+        for (const name of data.name) {
+
+            ++index;
+
+            if (
+                name.startsWith(nodePath) &&
+                name !== nodePath &&
+                (
+                    !version ||
+                    partOfVersion(getNodeAt(data, index, name), version)
+                )
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     private async saveData(
         data: Data
