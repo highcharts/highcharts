@@ -80,7 +80,7 @@ hapi.ajax = function(p) {
     if (props.dataType === 'json') {
       var json;
       try {
-        json = JSON.parse(/[\[\{].*[\]\}]/.exec(r.responseText)[0]);
+        json = JSON.parse(r.responseText);
       } catch (e) {
         props.error(e, r.responseText);
         return;
@@ -736,10 +736,12 @@ hapi.ajax = function(p) {
     }
 
     function build(data) {
-      globals.innerHTML = '';
+      if (globals) {
+        globals.innerHTML = '';
+      }
       options.innerHTML = '';
       data.children.forEach(function(def) {
-        if (['global', 'lang'].indexOf(def.fullname) >= 0) {
+        if (globals && ['global', 'lang'].indexOf(def.fullname) >= 0) {
           createNode(globals, def, explodeState(state), state, product);
         } else {
           createNode(options, def, explodeState(state), state, product);
