@@ -26,9 +26,6 @@ Dashboards.board('container', {
             id: 'data'
         },
         type: 'DataGrid',
-        renderTo: 'dashboard-col-1',
-        dataGridOptions: {
-            editable: false
-        }
+        renderTo: 'dashboard-col-1'
     }]
 });

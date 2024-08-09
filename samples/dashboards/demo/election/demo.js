@@ -318,26 +318,17 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
+                settings: {
+                    columns: {
+                        included: [
+                            'state', 'demColVotes', 'repColVotes',
+                            'demVoteSummary', 'repVoteSummary', 'totalVotes'
+                        ]
+                    }
+                },
                 columns: {
                     state: {
                         headerFormat: 'State'
-                    },
-                    'postal-code': {
-                        show: false
-                    },
-                    demPercent: {
-                        show: false
-                    },
-                    repPercent: {
-                        show: false
-                    },
-                    demVotes: {
-                        show: false
-                    },
-                    repVotes: {
-                        show: false
                     },
                     demVoteSummary: {
                         headerFormat: 'Dem. votes'

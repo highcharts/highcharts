@@ -636,12 +636,18 @@ const setupDashboard = instanceId => {
             cell: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',
-            visibleColumns: [
-                'InstanceId', 'InstanceType', 'PublicIpAddress', 'State',
-                'HealthIndicator'
-            ],
             dataGridOptions: {
-                editable: false,
+                settings: {
+                    rows: {
+                        strictHeights: true
+                    },
+                    columns: {
+                        included: [
+                            'InstanceId', 'InstanceType', 'PublicIpAddress',
+                            'State', 'HealthIndicator'
+                        ]
+                    }
+                },
                 columns: {
                     InstanceId: {
                         headerFormat: 'ID'
@@ -653,13 +659,21 @@ const setupDashboard = instanceId => {
                         headerFormat: 'Public IP'
                     },
                     HealthIndicator: {
-                        headerFormat: 'Health'
+                        headerFormat: 'Health',
+                        useHTML: true,
+                        cellFormatter: function () {
+                            const val = this.value;
+                            return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
+                                val.toLowerCase()
+                            }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
+                                val
+                            }"/>`;
+                        }
                     }
-
                 },
                 events: {
-                    row: {
-                        click: async function (e) {
+                    cell: {
+                        click: async function () {
                             const enabledPolling = pollingCheckbox.checked;
                             if (enabledPolling) {
                                 // stop polling when is enabled
@@ -667,7 +681,7 @@ const setupDashboard = instanceId => {
                             }
                             board.destroy();
                             setupDashboard(
-                                e.target.parentNode.childNodes[0].innerText
+                                this.row.cells[0].value
                             );
 
                             // run polling when was enabled
@@ -683,12 +697,12 @@ const setupDashboard = instanceId => {
             },
             events: {
                 mount: function () {
+                    const component =
+                        this.board.getComponentByCellId('instances-table');
                     setTimeout(() => {
-                        const currentRow =
-                            document.querySelector(
-                                `[data-original-data="${instance.InstanceId}"]`
-                            ).parentNode;
-                        currentRow.classList.add('current');
+                        component.dataGrid.viewport.rows.find(
+                            row => row.cells[0].value === instance.InstanceId
+                        ).htmlElement.classList.add('current');
                     }, 1);
                 }
             }

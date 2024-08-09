@@ -1,15 +1,12 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 const registeredEvents = [];
 const eventTypes = [
@@ -842,18 +839,11 @@ test('Crossfilter with string values', async function (assert) {
                     text: 'Category'
                 }
             }
-        }, {
-            renderTo: 'bottom',
-            type: 'DataGrid',
-            connector: {
-                id: 'data'
-            }
         }]
     }, true);
 
     const numbersNavigator = dashboard.mountedComponents[0].component;
     const stringsNavigator = dashboard.mountedComponents[1].component;
-    const dataGrid = dashboard.mountedComponents[2].component;
 
     assert.ok(
         numbersNavigator.chart.series[0].yData.length === 7,
@@ -870,7 +860,7 @@ test('Crossfilter with string values', async function (assert) {
     );
 
     const done = assert.async();
-    dataGrid.on('tableChanged', e => {
+    numbersNavigator.on('tableChanged', e => {
         const table = e.connector.table;
 
         // Assert only on the last event
@@ -891,7 +881,7 @@ test('Crossfilter with string values', async function (assert) {
             assert.equal(
                 table.modified.rowCount,
                 1,
-                'DataGrid should have 2 rows after extremes changed.'
+                'DataTable should have 2 rows after extremes changed.'
             );
 
             done();

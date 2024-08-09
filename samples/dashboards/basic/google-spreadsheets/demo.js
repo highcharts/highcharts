@@ -42,19 +42,13 @@ Dashboards.board('container', {
             id: 'conn-raw'
         },
         type: 'DataGrid',
-        title: 'Google Sheet Raw',
-        dataGridOptions: {
-            editable: false
-        }
+        title: 'Google Sheet Raw'
     }, {
         renderTo: 'dashboard-col-1',
         connector: {
             id: 'conn-mod'
         },
         type: 'DataGrid',
-        title: 'Google Sheet Modified',
-        dataGridOptions: {
-            editable: false
-        }
+        title: 'Google Sheet Modified'
     }]
 });

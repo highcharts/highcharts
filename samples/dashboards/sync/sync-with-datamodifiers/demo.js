@@ -72,9 +72,6 @@ Dashboards.board('container', {
                 enabled: true,
                 autoScroll: true
             }
-        },
-        dataGridOptions: {
-            editable: true
         }
     }, {
         // Mirror of the editable datagrid
@@ -88,9 +85,6 @@ Dashboards.board('container', {
                 enabled: true,
                 autoScroll: true
             }
-        },
-        dataGridOptions: {
-            editable: true
         }
     }]
 });

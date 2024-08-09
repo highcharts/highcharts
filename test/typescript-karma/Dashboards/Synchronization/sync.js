@@ -13,6 +13,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 const { test } = QUnit;
 
 
+// DataGrid1 Tests to update
 test('Sync events leak in updated components', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {

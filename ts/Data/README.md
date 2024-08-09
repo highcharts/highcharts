@@ -135,7 +135,7 @@ to retrieve the original order.
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
-    dataTable: new DataTable({
+    table: new DataTable({
         columns: {
             Value: [ 12.34, 45.67, 78.90 ],
             Currency: [ 'EUR', 'DKK', 'NOK' ]
@@ -148,7 +148,7 @@ If a row reference is needed, an index column has to be part of the table:
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
-    dataTable: new DataTable({
+    table: new DataTable({
         columns: {
             '': [1, 2, 3],
             Value: [ 12.34, 45.67, 78.90 ],
@@ -156,7 +156,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
+dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
 ```
 
 

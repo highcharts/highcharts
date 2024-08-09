@@ -72,11 +72,20 @@ Dashboards.board('container', {
                 visibility: true,
                 extremes: true
             },
-            visibleColumns: ['Food', 'Vitamin A'],
             dataGridOptions: {
+                settings: {
+                    columns: {
+                        included: ['Food', 'Vitamin A']
+                    }
+                },
+                defaults: {
+                    columns: {
+                        editable: true
+                    }
+                },
                 columns: {
                     'Vitamin A': {
-                        headerFormat: '{text} (IU)'
+                        headerFormat: '{id} (IU)'
                     }
                 }
             }

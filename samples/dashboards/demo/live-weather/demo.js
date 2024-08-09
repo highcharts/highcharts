@@ -532,8 +532,6 @@ async function setupDashboard() {
                     highlight: true
                 },
                 dataGridOptions: {
-                    cellHeight: 38,
-                    editable: false,
                     columns: {
                         time: {
                             headerFormat: 'Time UTC',

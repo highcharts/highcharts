@@ -125,10 +125,6 @@
     fill: var(--highcharts-neutral-color-60);
 }
 
-.highcharts-column-chart .highcharts-point {
-    cursor: pointer;
-}
-
 .highcharts-stock-chart .highcharts-color-1,
 .highcharts-stock-chart .highcharts-color-2 {
     fill: var(--demo-prediction-color);
@@ -149,51 +145,4 @@
 
 #csv {
     display: none;
-}
-
-/* Popup */
-
-#popup {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff5;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-#popup .container {
-    height: 60%;
-    width: 90%;
-    max-height: 800px;
-    max-width: 900px;
-    min-height: 100px;
-    min-width: 100px;
-    background: #555;
-    position: relative;
-}
-
-#datagrid-container {
-    width: 100%;
-    height: 100%;
-}
-
-#popup .close {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: transparent;
-    border: 0;
-    color: var(--highcharts-neutral-color-100);
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-}
-
-#popup .close:hover {
-    color: #d33;
 }

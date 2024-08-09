@@ -1,6 +1,0 @@
----
- name: Disabling the column headers
- authors:
-   - Dawid Dragula
- js_wrap: b
-...

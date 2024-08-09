@@ -988,7 +988,6 @@ const createBoard = async () => {
             },
             type: 'DataGrid',
             dataGridOptions: {
-                editable: false,
                 columns: [{
                     headerFormat: 'Celestial event',
                     cellFormatter: function () {

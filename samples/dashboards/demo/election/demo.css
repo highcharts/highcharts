@@ -32,46 +32,6 @@
     --comp-min-height: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
-    /* dark mode */
-    :root {
-        /* Others */
-        --color-link: #cca;
-        --container-background: #2f2e38;
-        --color-title: #c8c7d1;
-
-        /* components */
-        --component-background: #e3e3e8;
-        --component-background-optional: #474554;
-        --datagrid-border-color: var(--component-background-optional);
-    }
-
-    #container {
-        background: var(--container-background);
-    }
-
-    #election-chart {
-        --color-axis: #ccc;
-        --color-axis-labels: #ccc;
-        --color-title: #dadae2;
-        --color-text: #dadae2;
-    }
-
-    #elections-selector-wrapper select {
-        color: #f2f1f4;
-        background-color: var(--component-background-optional);
-    }
-
-    #html-control-div {
-        color: #f2f1f4;
-    }
-
-    #election-chart .highcharts-column-series path.highcharts-point,
-    #election-chart-national .highcharts-bar-series path.highcharts-point {
-        stroke: none;
-    }
-}
-
 body {
     font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -103,9 +63,53 @@ body {
 }
 
 #election-grid {
-    --color-hover-background: #5352be;
+    --color-hover-background: #cfccea;
     --color-hover-border: #e7e7ec;
     --color-hover-text: #e7e7ec;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+    :root {
+        /* Others */
+        --color-link: #cca;
+        --container-background: #2f2e38;
+        --color-title: #c8c7d1;
+
+        /* components */
+        --component-background: #e3e3e8;
+        --component-background-optional: #474554;
+        --datagrid-border-color: var(--component-background-optional);
+    }
+
+    #container {
+        background: var(--container-background);
+    }
+
+    #election-grid {
+        --color-hover-background: #252052;
+    }
+
+    #election-chart {
+        --color-axis: #ccc;
+        --color-axis-labels: #ccc;
+        --color-title: #dadae2;
+        --color-text: #dadae2;
+    }
+
+    #elections-selector-wrapper select {
+        color: #f2f1f4;
+        background-color: var(--component-background-optional);
+    }
+
+    #html-control-div {
+        color: #f2f1f4;
+    }
+
+    #election-chart .highcharts-column-series path.highcharts-point,
+    #election-chart-national .highcharts-bar-series path.highcharts-point {
+        stroke: none;
+    }
 }
 
 /* *
@@ -592,14 +596,20 @@ text.highcharts-data-label {
  * */
 
 #election-grid .highcharts-datagrid-container {
-    border: 12px solid var(--datagrid-border-color);
-    min-height: 400px;
+    border-radius: var(--component-rounded-corners);
+    height: 400px;
 }
 
-#election-grid .highcharts-datagrid-row.hovered {
+#election-grid .highcharts-datagrid-container table {
+    border: 0;
+}
+
+#election-grid .highcharts-datagrid-hovered-row {
     background-color: var(--color-hover-background);
-    border-color: var(--color-hover-border);
-    color: var(--color-hover-text);
+}
+
+#election-grid .highcharts-datagrid-hovered-column {
+    background: none;
 }
 
 /* Styling of first row (national results) */
@@ -613,65 +623,8 @@ text.highcharts-data-label {
     border-color: #000;
 }
 
-#election-grid .highcharts-datagrid-column-headers {
-    background-color: #acabba;
-    border-bottom: 1px solid #000;
-}
-
-#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header,
-.highcharts-datagrid-cell {
-    color: #000;
-}
-
-.highcharts-datagrid-cell {
-    border-color: #ccc;
-}
-
-#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(2),
-#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(4) {
-    background-color: var(--highcharts-color-0);
-    color: #fff;
-}
-
-#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(3),
-#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(5) {
-    background-color: var(--highcharts-color-1);
-    color: #fff;
-}
-
-#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(2),
-#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(4) {
-    background-color: var(--highcharts-color-0-light);
-}
-
-#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(3),
-#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(5) {
-    background-color: var(--highcharts-color-1-light);
-}
-
-.highcharts-datagrid-row {
-    background-color: #fff;
-}
-
-.highcharts-datagrid-row:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-#election-grid .highcharts-datagrid-row.hovered,
-#election-grid .highcharts-datagrid-row.hovered .highcharts-datagrid-cell {
-    background-color: #e6e6e6;
-    color: #000;
-}
-
-/* Candidate votes columns */
-#election-grid .highcharts-datagrid-cell:nth-child(4),
-#election-grid .highcharts-datagrid-cell:nth-child(5) {
-    min-width: 70px;
-}
-
-/* Total votes column */
-#election-grid .highcharts-datagrid-cell:nth-child(6) {
-    min-width: 100px;
+.highcharts-datagrid-row[data-row-index="0"] td {
+    height: 60px;
 }
 
 /* Safari fix for manual dark mode */
@@ -753,13 +706,7 @@ text.highcharts-data-label {
         height: 600px;
     }
 
-    #election-chart-national h2,
-    #election-grid .highcharts-datagrid-column-header:nth-child(4),
-    #election-grid .highcharts-datagrid-column-header:nth-child(5),
-    #election-grid .highcharts-datagrid-column-header:nth-child(6),
-    #election-grid .highcharts-datagrid-cell:nth-child(4),
-    #election-grid .highcharts-datagrid-cell:nth-child(5),
-    #election-grid .highcharts-datagrid-cell:nth-child(6) {
+    #election-chart-national h2 {
         display: none;
     }
 }

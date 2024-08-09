@@ -20,31 +20,47 @@ By incorporating this component, users can effectively interact with data in a s
     ```
     Then import the module like this:
 
-    ```typescript
+    ```ts
     import * as DataGrid from '@highcharts/dashboards/datagrid';
     ```
 
 ## Usage
-The DataGrid can be added as a standalone component or as a part of a dashboard. The following example demonstrates how to use the DataGrid as a standalone component.
-
+The DataGrid can be added as a standalone component or as a part of a dashboard.
+The following example demonstrates how to use the DataGrid as a standalone component.
 
 First you need to create a container for the DataGrid:
-```html
+
+```js
 <div id="container"></div>
 ```
 
 Then you can create the DataGrid instance and add it to the container.
-Note that the DataGrid requires data to be in form of a data table.  
+Note that the DataGrid requires data to be in form of a data table or a data table options object.
 Check [the data documentation](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
-```javascript
+Data Table Options:
+```js
 import DataGrid from '@highcharts/dashboards/datagrid';
+DataGrid.dataGrid('container', {
+    table: {
+        columns: {
+            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+            price: [1.5, 2.53, 5, 4.5],
+        }
+    }
+});
+```
 
+Data Table Instance:
+```ts
+import DataGrid from '@highcharts/dashboards/datagrid';
 const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataGrid.DataTable({
-        product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-        price: [1.5, 2.53, 5, 4.5],
-     })
+    table: new DataGrid.DataTable({
+        columns: {
+            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+            price: [1.5, 2.53, 5, 4.5],
+        }
+    })
 });
 ```
 
@@ -57,7 +73,7 @@ The DataGrid component requires the following styles to be imported in your main
 
 
 ## Options
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/data-grid/basic/cells-formatting" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/data-grid/basic/overview" allow="fullscreen"></iframe>
 
 The DataGrid has a number of options that can be used to customize the appearance and behavior of the table.
 
@@ -67,27 +83,33 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 
 Example:
 ```js
-const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataGrid.DataTable({ columns }),
-    editable: false,
+DataGrid.dataGrid('container', {
+    table: { columns },
+    settings: {
+        caption: {
+            text: 'Fruit market'
+        },
+    },
     columns: {
         product: {
-            cellFormat: '{text} No. 1',
-            headerFormat: '{text} name'
+            cellFormat: '{value} No. 1',
+            headerFormat: '{id} name'
         },
         weight: {
             cellFormat: '{value} kg',
-            headerFormat: '{text} (kg)'
+            headerFormat: '{id} (kg)'
         },
         price: {
             cellFormat: '{value} $',
-            headerFormat: '($) {text}'
+            headerFormat: '($) {id}'
         },
         metaData: {
-            show: false
+            enabled: false
         }
     }
 });
 ```
 
-There are more DataGrid options that can be found in [the API](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1).
+A complete list of the API options can be found [here](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridOptions-1.html).
+
+[Go to the next article](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about the DataGrid structure.

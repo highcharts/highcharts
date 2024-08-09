@@ -9,7 +9,7 @@ describe('Multiple connectors', () => {
     });
 
     it('Should highlight series from multiple connectors.', () => {
-        cy.get('#dashboard-col-2 .highcharts-datagrid-cell').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-2 tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(
@@ -27,7 +27,7 @@ describe('Highlight sync affected series id option', () => {
 
     it('Should highlight the proper series when affected series id is defined.', () => {
         cy.get('#radio-2022').click({ force: true });
-        cy.get('#dashboard-col-1 .highcharts-datagrid-cell').eq(0).trigger('mouseover');
+        cy.get('#dashboard-col-1 tr.highcharts-datagrid-row').eq(0).trigger('mouseover');
 
         cy.chart().then(chart => {
             assert.ok(

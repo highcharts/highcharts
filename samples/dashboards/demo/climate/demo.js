@@ -464,11 +464,9 @@ async function setupBoard() {
                 highlight: true
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
                 columns: {
                     time: {
-                        show: false
+                        enabled: false
                     },
                     FD: {
                         headerFormat: 'Days with frost'
@@ -480,10 +478,10 @@ async function setupBoard() {
                         headerFormat: 'Days with rain'
                     },
                     TN: {
-                        show: false
+                        enabled: false
                     },
                     TX: {
-                        show: false
+                        enabled: false
                     },
                     TNC: {
                         headerFormat: 'Average temperature °C',
@@ -492,7 +490,7 @@ async function setupBoard() {
                     TNF: {
                         headerFormat: 'Average temperature °F',
                         cellFormat: '{value:.1f}',
-                        show: false
+                        enabled: false
                     },
                     TXC: {
                         headerFormat: 'Maximum temperature °C',
@@ -501,7 +499,7 @@ async function setupBoard() {
                     TXF: {
                         headerFormat: 'Maximum temperature °F',
                         cellFormat: '{value:.1f}',
-                        show: false
+                        enabled: false
                     }
                 }
             },
@@ -834,16 +832,16 @@ async function updateBoard(board, city, column, scale, newData) {
             dataGridOptions: {
                 columns: {
                     TNC: {
-                        show: showCelsius
+                        enabled: showCelsius
                     },
                     TNF: {
-                        show: !showCelsius
+                        enabled: !showCelsius
                     },
                     TXC: {
-                        show: showCelsius
+                        enabled: showCelsius
                     },
                     TXF: {
-                        show: !showCelsius
+                        enabled: !showCelsius
                     }
                 }
             }

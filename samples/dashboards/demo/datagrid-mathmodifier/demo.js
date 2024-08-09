@@ -119,7 +119,6 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
             columns: {
                 Day: {
                     cellFormatter: function () {
