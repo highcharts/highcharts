@@ -306,7 +306,7 @@ class StockToolsComponent extends AccessibilityComponent {
     private closeOpenSubmenus(): boolean {
         const submenus = this.chart.stockTools
             ?.toolbar.querySelectorAll<HTMLElement>(
-            '.highcharts-submenu-wrapper[data-open="true"]'
+            '[role="menu"][data-open="true"]'
         );
 
         if (submenus?.length) {
@@ -588,11 +588,9 @@ class StockToolsComponent extends AccessibilityComponent {
                     }
                 }
 
-                this.chart.stockTools?.toolbar?.querySelectorAll<HTMLElement>(
-                    '.highcharts-submenu-wrapper'
-                ).forEach((submenu): void => {
-                    submenu.removeAttribute('data-open');
-                });
+                this.closeOpenSubmenus();
+
+
             }
         };
 
