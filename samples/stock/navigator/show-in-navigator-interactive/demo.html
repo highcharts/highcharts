@@ -1,0 +1,20 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="container" class="chart"></div>
+<div id="button-box">
+    <label for="select-series">Change navigator series type:</label>
+    <select name="select-series" id="select-series">
+        <option disabled>Navigator series types:</option>
+        <option value="line">Line</option>
+        <option value="area">Area</option>
+        <option value="column">Column</option>
+    </select><br>
+
+    <input type="checkbox" class="show-in-navigator" data-id="0" checked>
+    <label>Show first series in navigator</label><br>
+    <input type="checkbox" class="show-in-navigator" data-id="1">
+    <label>Show second series in navigator</label><br>
+    <input type="checkbox" class="show-in-navigator" data-id="2">
+    <label>Show third series in navigator</label><br>
+</div>
