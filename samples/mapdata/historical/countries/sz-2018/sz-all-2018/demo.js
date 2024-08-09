@@ -1,14 +1,14 @@
 (async () => {
 
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json'
+        'https://code.highcharts.com/mapdata/historical/countries/sz-2018/sz-all-2018.topo.json'
     ).then(response => response.json());
 
     // Prepare demo data. The data is joined to map using value of 'hc-key'
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['sz-ma', 10], ['sz-lu', 11], ['sz-sh', 12], ['sz-hh', 13]
+        ['sz-lu', 10], ['sz-hh', 11], ['sz-ma', 12], ['sz-sh', 13]
     ];
 
     // Create the chart
@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json">Eswatini</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/sz-2018/sz-all-2018.topo.json">Swaziland (2018)</a>'
         },
 
         mapNavigation: {
