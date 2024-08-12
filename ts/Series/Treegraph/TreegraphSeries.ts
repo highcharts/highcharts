@@ -498,16 +498,6 @@ class TreegraphSeries extends TreemapSeries {
     ): void {
         const visible = point.visible;
 
-        if (this.chart.styledMode) { // #20499
-            // In styled mode with a width property set,
-            // the width should be applied to the
-            // dataLabel. (#20499)
-            const style = point.dlOptions?.style;
-            dataLabel.css({
-                width: style ? style.width : ''
-            });
-        }
-
         // Force position calculation and visibility
         point.visible = true;
 
