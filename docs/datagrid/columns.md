@@ -16,7 +16,7 @@ defaults: {
 ```
 
 ## Column header
-In column options, use the [headerFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the name of the column that is rendered in the header.
+In columns options, use [headerFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the header content for that column.
 
 ```js
 columns: {
