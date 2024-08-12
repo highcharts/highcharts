@@ -524,54 +524,20 @@ class Tooltip {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside) {
-                const label = this.label,
-                    setContainerProp = (
-                        styleProp: any,
-                        value: number
-                    ): void => {
-                        if (container) {
-                            container.style[styleProp] = `${value}px`;
-                        }
-                    };
+                const label = this.label;
                 [label.xSetter, label.ySetter].forEach((
                     setter: (value: number) => void,
                     i: number
                 ): void => {
-                    if (i) {
-                        label.ySetter = (
-                            value: number
-                        ): void => {
-                            setter.call(label, tooltip.distance);
-
-                            label.y = value;
-
-                            setContainerProp('top', value);
-                        };
-                    } else {
-                        label.xSetter = (
-                            value: number
-                        ): void => {
-                            setter.call(label, tooltip.distance);
-
-                            const { translateX = 0, width = 0 } = label,
-                                pixelsTooMuch = (
-                                    (
-                                        translateX +
-                                        width +
-                                        value
-                                    ) -
-                                    doc.documentElement.clientWidth
-                                );
-
-                            if (pixelsTooMuch > 0) {
-                                value -= pixelsTooMuch;
-                            }
-
-                            label.x = value;
-
-                            setContainerProp('left', value);
-                        };
-                    }
+                    label[i ? 'ySetter' : 'xSetter'] = (
+                        value: number
+                    ): void => {
+                        setter.call(label, tooltip.distance);
+                        label[i ? 'y' : 'x'] = value;
+                        if (container) {
+                            container.style[i ? 'top' : 'left'] = `${value}px`;
+                        }
+                    };
                 });
             }
 
@@ -1119,6 +1085,20 @@ class Tooltip {
                             (text as any).join('') :
                             text
                     });
+
+                    // When the length of the label has increased, immediately
+                    // update the x position to prevent tooltip from flowing
+                    // outside the viewport during animation (#21371)
+                    if (this.outside) {
+                        label.attr({
+                            x: clamp(
+                                label.x || 0,
+                                0,
+                                this.getPlayingField().width -
+                                    (label.width || 0)
+                            )
+                        });
+                    }
 
                     if (!styledMode) {
                         label.attr({
