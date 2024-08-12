@@ -1,7 +1,6 @@
 Column options in the Datagrid
 ===
 The DataGrid provides flexible configuration options to meet your specific needs.
-for your requirements.
 
 ## Including columns in Datagrid
 By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
