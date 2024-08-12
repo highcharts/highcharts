@@ -113,7 +113,10 @@ class CellEditing {
             newValue = +newValue;
         }
 
-        cell.setValue(submit ? newValue : cell.value, submit);
+        void cell.setValue(
+            submit ? newValue : cell.value,
+            submit && cell.value !== newValue
+        );
 
         dataGrid.options?.events?.cell?.afterEdit?.call(cell);
 
