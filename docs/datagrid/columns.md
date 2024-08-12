@@ -1,6 +1,6 @@
 Column options in the Datagrid
 ===
-The DataGrid allows you to configure and apply some options that can be useful
+The DataGrid provides flexible configuration options to meet your specific needs.
 for your requirements.
 
 ## Defaults
