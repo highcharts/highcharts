@@ -134,26 +134,26 @@ class SortingController {
 
         const columnIDs = Object.keys(columnOptionsRecord);
 
-        let foundOneSortedColumn = false;
         let foundOrder: ColumnSortingOrder = null;
         let foundColumnId: string | undefined;
-        for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
+        for (let i = columnIDs.length - 1; i > -1; --i) {
             const columnId = columnIDs[i];
             const columnOptions = columnOptionsRecord[columnId];
             const order = columnOptions.sorting?.order;
 
             if (order) {
-                if (foundOneSortedColumn) {
+                if (foundColumnId) {
                     // eslint-disable-next-line no-console
                     console.warn(
                         'DataGrid: Only one column can be sorted at a time. ' +
-                        'Data will be sorted only by the first found column ' +
-                        'with the sorting order defined in the options.'
+                        'Data will be sorted only by the last found column ' +
+                        `with the sorting order defined in the options: "${
+                            foundColumnId
+                        }".`
                     );
                     break;
                 }
 
-                foundOneSortedColumn = true;
                 foundOrder = order;
                 foundColumnId = columnId;
             }

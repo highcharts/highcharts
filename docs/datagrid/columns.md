@@ -120,7 +120,9 @@ You can turn off sorting for all columns by the [Defaults](https://api.highchart
 ```js
 defaults {
   columns: {
-     sorting: true
+    sorting: {
+      sortable: false
+    }
   }
 }
 ```
