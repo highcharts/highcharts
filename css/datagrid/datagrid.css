@@ -269,10 +269,12 @@ td.highcharts-datagrid-focused-cell {
     height: 12px;
 }
 
-.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-head-cell-content::after {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-head-cell-content::after {
     content: "▲";
 }
 
-.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-head-cell-content::after {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-head-cell-content::after {
     content: "▼";
 }
