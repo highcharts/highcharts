@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-
+import type Chart from '../../Chart/Chart';
 import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
@@ -34,6 +34,7 @@ import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     defined,
@@ -72,8 +73,25 @@ class PlotLineOrBand {
      * */
 
     public static compose<T extends typeof Axis>(
+        ChartClass: Chart,
         AxisClass: T
     ): ReturnType<typeof PlotLineOrBandAxis.compose> {
+
+        addEvent(ChartClass, 'afterInit', function (): void {
+            this.labelCollectors.push((): SVGElement[] => {
+                const labels: SVGElement[] = [];
+                this.axes.forEach((axis): void => {
+                    axis.plotLinesAndBands.forEach(({ label }): void => {
+                        if (label) {
+                            labels.push(label);
+                        }
+                    });
+                });
+                return labels;
+            });
+        });
+
+
         return PlotLineOrBandAxis.compose(PlotLineOrBand, AxisClass);
     }
 
