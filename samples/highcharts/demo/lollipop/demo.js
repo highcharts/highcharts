@@ -16,7 +16,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: '2021'
+        text: '2024'
     },
 
     title: {
@@ -40,35 +40,35 @@ Highcharts.chart('container', {
     series: [{
         name: 'Population',
         data: [{
-            name: 'China',
-            y: 1444216107
-        }, {
             name: 'India',
-            y: 1393409038
+            y: 1441719852
+        }, {
+            name: 'China',
+            y: 1425178782
         }, {
             name: 'United States',
-            y: 332915073
+            y: 341814420
         }, {
             name: 'Indonesia',
-            y: 276361783
+            y: 279798049
         }, {
             name: 'Pakistan',
-            y: 225199937
-        }, {
-            name: 'Brazil',
-            y: 213993437
+            y: 245209815
         }, {
             name: 'Nigeria',
-            y: 211400708
+            y: 229152217
+        }, {
+            name: 'Brazil',
+            y: 217637297
         }, {
             name: 'Bangladesh',
-            y: 166303498
+            y: 174701211
         }, {
             name: 'Russia',
-            y: 145912025
+            y: 143957079
         }, {
-            name: 'Mexico',
-            y: 130262216
+            name: 'Ethiopia',
+            y: 129719719
         }]
     }]
 

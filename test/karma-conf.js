@@ -157,7 +157,7 @@ function resolveJSON(js) {
                     'utf8'
                 );
                 codeblocks.push(`window.JSONSources[
-                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/${filename}'
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/${filename}'
                 ] = ${data};`);
             }
         );
@@ -338,7 +338,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/combo-meteogram/demo.js',
 
             // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-ajax/demo.js',
+            'samples/highcharts/demo/line-csv/demo.js',
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',

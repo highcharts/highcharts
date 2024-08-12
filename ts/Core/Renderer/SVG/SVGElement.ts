@@ -1655,6 +1655,21 @@ class SVGElement implements SVGElementLike {
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
 
+        /* Uncomment to debug boxes
+        this.renderer.path([
+            ['M', aX, aY],
+            ['L', bX, bY],
+            ['L', cX, cY],
+            ['L', dX, dY],
+            ['Z']
+        ])
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1
+            })
+            .add();
+        // */
+
         return {
             x,
             y,

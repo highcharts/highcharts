@@ -1360,6 +1360,7 @@ class Navigator {
                 overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
                 type: 'datetime',
+                yAxis: navigatorOptions.yAxis?.id,
                 index: xAxisIndex,
                 isInternal: true,
                 offset: 0,

@@ -663,11 +663,6 @@ text.highcharts-data-label {
     color: #000;
 }
 
-/* Capitalize state names (first column) */
-#election-grid .highcharts-datagrid-cell:nth-child(1) {
-    text-transform: capitalize;
-}
-
 /* Candidate votes columns */
 #election-grid .highcharts-datagrid-cell:nth-child(4),
 #election-grid .highcharts-datagrid-cell:nth-child(5) {

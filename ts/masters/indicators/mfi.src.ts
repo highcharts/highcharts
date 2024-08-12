@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/mfi
  * @requires highcharts
- * @requires modules/stock
+ * @requires highcharts/modules/stock
  *
  * Money Flow Index indicator for Highcharts Stock
  *

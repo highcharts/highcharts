@@ -13,7 +13,7 @@
 
 // Data sources
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
-const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
+const elVoteUrl = 'https://www.highcharts.com/samples/data/us-2008-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 const commonTitle = 'U.S. Presidential Election';
@@ -474,7 +474,7 @@ async function setupDashboard() {
                     const percent = ((popVote / totalVote) * 100).toFixed(1);
 
                     // Accumulate nationwide data
-                    rowObj.state = state.toLowerCase(); // All state names are upper case
+                    rowObj.state = state;
                     rowObj['postal-code'] = postCode;
 
                     if (party === 'REPUBLICAN') {
@@ -548,7 +548,7 @@ async function setupDashboard() {
         for (let i = 1; i < lines.length; i++) {
             const line = lines[i];
             const items = line.split(';');
-            const state = items[0].toUpperCase();
+            const state = items[0];
 
             const obj = {};
             for (let j = 1; j < header.length; j++) {
@@ -823,7 +823,7 @@ async function onStateClicked(board, state) {
     const electionTable = await getElectionTable(board, electionYears[0]);
     const row = electionTable.getRowIndexBy('postal-code', state);
     const stateName = electionTable.getCell('state', row);
-    const stateTitle = stateName.charAt(0).toUpperCase() + stateName.slice(1);
+    const stateTitle = state === 'US' ? 'National' : stateName;
     const yearSelector = document.getElementById('election-year');
 
     // Update chart title
@@ -840,7 +840,7 @@ async function onStateClicked(board, state) {
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">Historic</span>' +
-                    (state === 'US' ? 'National' : stateTitle)
+                    stateTitle
             },
             series: stateSeries
         }
@@ -850,7 +850,7 @@ async function onStateClicked(board, state) {
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">' + yearSelector.value +
-                    '</span>' + (state === 'US' ? 'National' : stateTitle)
+                    '</span>' + stateTitle
             },
             series: yearStateSeries
         }

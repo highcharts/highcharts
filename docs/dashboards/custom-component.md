@@ -123,9 +123,16 @@ To add the custom component to the sidebar, you need to add the two things:
 1. Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
 2. For the `editMode` `sidebar` define the list of the components that will be available in the sidebar.
 Use the exact name which was used to register the component in the `ComponentRegistry`.
+3. To properly display the component name in the sidebar, you can to add the `lang` options to the `editMode` object. If not specified, the component name will be displayed as `[YourComponentName]Component` in this case `YouTubeComponent`.
 ```js
     editMode: {
         enabled: true,
+        lang: {
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
+        },
         contextMenu: {
             enabled: true
         },
@@ -174,7 +181,10 @@ Additionally the `lang` options for the new option can be added.
     editMode: {
         enabled: true,
         lang: {
-            videoId: 'Video ID'
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
         },
         ...
     }

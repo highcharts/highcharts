@@ -448,7 +448,7 @@ function createAndAttachRenderer(
                 .addClass(hasClickHandler ? 'highcharts-tracker' : '');
 
             if (target instanceof ChartClass) {
-                (target.boost as any).markerGroup.translate(
+                target.boost?.markerGroup?.translate(
                     chart.plotLeft,
                     chart.plotTop
                 );
@@ -1503,8 +1503,9 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
-            isScatter = series.is('scatter') && !series.is('bubble');
-
+            isScatter = series.is('scatter') &&
+                !series.is('bubble') &&
+                !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
         // do default behaviour.
