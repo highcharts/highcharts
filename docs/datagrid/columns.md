@@ -117,7 +117,7 @@ columns: {
 }
 ```
 
-But you can also turn off `sortable` for all columns using the [defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
+But you can also turn off `sortable` for all columns using the [`defaults`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
 
 ```js
 defaults {
