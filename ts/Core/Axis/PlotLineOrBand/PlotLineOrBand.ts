@@ -81,15 +81,13 @@ class PlotLineOrBand {
             this.labelCollectors.push((): SVGElement[] => {
                 const labels: SVGElement[] = [];
 
-                this.axes.forEach((axis): void => {
-                    if (!axis.options.labels.allowOverlap) {
-                        axis.plotLinesAndBands.forEach(({ label }): void => {
-                            if (label) {
-                                labels.push(label);
-                            }
-                        });
+                for (const axis of this.axes) {
+                    for (const { label } of axis.plotLinesAndBands) {
+                        if (label) {
+                            labels.push(label);
+                        }
                     }
-                });
+                }
 
                 return labels;
             });
