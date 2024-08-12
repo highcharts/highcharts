@@ -3,6 +3,31 @@ Column options in the Datagrid
 The DataGrid provides flexible configuration options to meet your specific needs.
 for your requirements.
 
+## Including columns in Datagrid
+By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
+This can be modified using the following options:
+- [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included): An array of column IDs specifying which columns from DataTable to display and in what order. If `undefined`, all columns are shown in their original order.
+- [`column.enabled`](http://localhost:9005/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled): A boolean option controlling whether a specific column should be rendered. Defaults to true; set to false to exclude the column from the Datagrid.
+
+```js
+dataTable: {
+  columnA: [...],
+  notIncludedColumn: [...],
+  disabledColumn: [...],
+  columnC: [...]
+},
+settings: {
+  columns: {
+    included: ['columnC', 'disabledColumn', 'columnA']
+  }
+},
+columns: {
+  disabledColumn: {
+    enabled: false
+  }
+}
+```
+
 ## Defaults
 By default, the options from the [defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property are applied to all columns.
 For instance, you can allow editing of cells in all columns in `default.columns` instead of applying an option to each column separately.
