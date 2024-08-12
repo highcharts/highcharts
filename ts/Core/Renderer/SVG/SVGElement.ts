@@ -230,7 +230,7 @@ class SVGElement implements SVGElementLike {
             0
         );
 
-        if (/^[\-0-9\.]+$/.test(ret)) { // Is numerical
+        if (/^-?[\d\.]+$/.test(ret)) { // Is numerical
             ret = parseFloat(ret);
         }
         return ret;
@@ -1442,7 +1442,7 @@ class SVGElement implements SVGElementLike {
             // bounding box as others of the same length. Unless there is inner
             // HTML in the label. In that case, leave the numbers as is (#5899).
             if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/[0-9]/g, '0');
+                cacheKey = cacheKey.replace(/\d/g, '0');
             }
 
             // Properties that affect bounding box
@@ -1654,6 +1654,21 @@ class SVGElement implements SVGElementLike {
             y = Math.min(aY, bY, cY, dY),
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
+
+        /* Uncomment to debug boxes
+        this.renderer.path([
+            ['M', aX, aY],
+            ['L', bX, bY],
+            ['L', cX, cY],
+            ['L', dX, dY],
+            ['Z']
+        ])
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1
+            })
+            .add();
+        // */
 
         return {
             x,

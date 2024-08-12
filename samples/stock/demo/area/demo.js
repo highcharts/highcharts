@@ -115,15 +115,17 @@ Highcharts.setOptions({
             },
             states: {
                 select: {
-                    fill: '#f23644',
+                    fill: '#f96772',
                     style: {
-                        color: '#ffffff'
+                        color: '#000000'
                     }
                 },
                 hover: {
-                    fill: '#f23644',
+                    fill: 'none',
+                    stroke: '#f96772',
+                    'stroke-width': 1,
                     style: {
-                        color: '#000000'
+                        color: '#ffffff'
                     }
                 }
             }
@@ -187,6 +189,7 @@ Highcharts.stockChart('container', {
     },
 
     navigator: {
+        enabled: false,
         xAxis: {
             gridLineWidth: 0
         },
@@ -206,7 +209,9 @@ Highcharts.stockChart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e5fcf4/samples/data/btc-eth.csv'
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e5fcf4/samples/data/btc-eth.csv',
+        firstRowAsNames: false,
+        startRow: 1
     },
 
     tooltip: {
@@ -216,9 +221,10 @@ Highcharts.stockChart('container', {
     },
 
     series: [{
+        name: 'BTC-ETH Price',
         type: 'area',
         tooltip: {
-            valueDecimals: 4,
+            valueDecimals: 2,
             pointFormat: '{point.y}'
         }
     }]

@@ -1,32 +1,57 @@
 Highcharts.chart('container', {
-
     title: {
-        text: 'Logarithmic axis demo'
+        text: 'Growth of Internet Users Worldwide (logarithmic scale)'
+    },
+
+    accessibility: {
+        point: {
+            valueDescriptionFormat:
+                '{xDescription}{separator}{value} million(s)'
+        }
     },
 
     xAxis: {
-        tickInterval: 1,
-        type: 'logarithmic',
-        accessibility: {
-            rangeDescription: 'Range: 1 to 10'
-        }
+        title: {
+            text: 'Year'
+        },
+        categories: [1995, 2000, 2005, 2010, 2015, 2020, 2023]
     },
 
     yAxis: {
         type: 'logarithmic',
-        minorTickInterval: 0.1,
-        accessibility: {
-            rangeDescription: 'Range: 0.1 to 1000'
+        title: {
+            text: 'Number of Internet Users (in millions)'
         }
     },
 
     tooltip: {
         headerFormat: '<b>{series.name}</b><br />',
-        pointFormat: 'x = {point.x}, y = {point.y}'
+        pointFormat: '{point.y} million(s)'
     },
 
     series: [{
-        data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
-        pointStart: 1
+        name: 'Internet Users',
+        keys: ['y', 'color'],
+        data: [
+            [16, '#0000ff'],
+            [361, '#8d0073'],
+            [1018, '#ba0046'],
+            [2025, '#d60028'],
+            [3192, '#eb0014'],
+            [4673, '#fb0004'],
+            [5200, '#ff0000']
+        ],
+        color: {
+            linearGradient: {
+                x1: 0,
+                x2: 0,
+                y1: 1,
+                y2: 0
+            },
+            stops: [
+                [0, '#0000ff'],
+                [1, '#ff0000']
+            ]
+        }
     }]
 });

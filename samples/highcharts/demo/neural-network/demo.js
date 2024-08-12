@@ -66,11 +66,13 @@ Highcharts.chart('container', {
         inverted: true
     },
     title: {
-        text: 'Visualizing a neural network with Highcharts'
+        text: 'Visualizing a neural network with Highcharts',
+        align: 'left'
     },
     subtitle: {
         text: 'You can use the parallel-coordinates module ' +
-            'to visualize a neural network.'
+            'to visualize a neural network.',
+        align: 'left'
     },
     accessibility: {
         typeDescription: 'Neural network chart',
