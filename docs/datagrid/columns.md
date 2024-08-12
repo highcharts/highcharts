@@ -23,7 +23,9 @@ This can be modified using one of the following options:
   }
   ```
 
-- [`column.enabled`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled): A boolean option controlling whether a specific column should be rendered. Defaults to `true`; set to `false` to exclude the column from the Datagrid.
+- The optional [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions) root option can further configure these included columns, and [`columns[columnId].enabled`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled) can exclude specific columns.
+
+Note: If `settings.columns.included` is not set, the `columns` root option can configure all DataTable columns.
 
   ```js
   dataTable: new DataTable({
