@@ -9,12 +9,14 @@ General structure:
 <table>
     <thead>
         <tr>
-            <th>Column header</th>
+            <th>Column header 1</th>
+            <th>Column header 2</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Cell value</td>
+            <td>Cell value 1</td>
+            <td>Cell value 2</td>
         </tr>
     </tbody>
 </table>
