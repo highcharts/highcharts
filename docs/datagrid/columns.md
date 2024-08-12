@@ -5,7 +5,7 @@ for your requirements.
 
 ## Defaults
 By default, the options from the [Defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property are applied to all columns.
-For instance, you can set sorting or editing cells in columns instead of applying an option in each column separately.
+For instance, you can allow editing of cells in all columns in `default.columns` instead of applying an option to each column separately.
 
 ```js
 defaults: {
