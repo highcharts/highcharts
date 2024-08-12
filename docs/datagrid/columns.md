@@ -7,7 +7,7 @@ for your requirements.
 By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
 This can be modified using the following options:
 - [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included): An array of column IDs specifying which columns from DataTable to display and in what order. If `undefined`, all columns are shown in their original order.
-- [`column.enabled`](http://localhost:9005/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled): A boolean option controlling whether a specific column should be rendered. Defaults to true; set to false to exclude the column from the Datagrid.
+- [`column.enabled`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled): A boolean option controlling whether a specific column should be rendered. Defaults to true; set to false to exclude the column from the Datagrid.
 
 ```js
 dataTable: {
