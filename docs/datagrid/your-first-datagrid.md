@@ -18,7 +18,8 @@ have to import (or install) the Datagrid library.
 
 You can find more information about installation in our [article](https://www.highcharts.com/docs/datagrid/installation).
 
-### 3. The DataGrid requires a few basic styles, so you can get the basic one by
+### 3. Import CSS styles
+The DataGrid requires a few basic styles, so you can get the basic one by
 importing the modules to the CSS file as shown below.
 
 ```css
