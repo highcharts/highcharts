@@ -95,14 +95,15 @@ events: {
 ## Sorting
 The DataGrid allows you to set the querying options. The basic one is sorting.
 
-You have three states of sorting:
- * 1 - disabled
- * 2 - descending
- * 3 - ascending
+Sorting object consists of two main configuration options:
+- **`sortable`**: A boolean that determines whether a column can be sorted by the user clicking on the column header. 
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending), `'desc'` (descending), or `null`, which indicates that initial sorting is disabled for that column. Note that only one column can have an `order` set at a time; if multiple columns are specified, only the last one will be considered.
 
-When the sortable option is turned on, clicking on the header triggers the next state in order to the current one.
+See the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting).
 
-The [sorting](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
+When the `sortable` option is enabled, clicking on the header will toggle the sorting order.
+
+The sorting options are available for the individual `columns`.
 
 ```js
 columns: {
@@ -115,7 +116,7 @@ columns: {
 }
 ```
 
-You can turn off sorting for all columns by the [Defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
+But you can also turn off `sortable` for all columns using the [defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
 
 ```js
 defaults {
