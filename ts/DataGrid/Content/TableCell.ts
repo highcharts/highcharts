@@ -154,25 +154,49 @@ class TableCell extends Cell {
      *
      * @param updateTable
      * Whether to update the table after setting the content.
+     *
+     * @param modifyData
+     * Whether to modify the data after setting the content. Defaults to `true`.
+     * Works only when `updateTable` is set to `true`.
      */
-    public setValue(value: DataTable.CellType, updateTable: boolean): void {
+    public async setValue(
+        value: DataTable.CellType,
+        updateTable: boolean,
+        modifyData = true
+    ): Promise<void> {
         const element = this.htmlElement;
 
         this.value = value;
-
         this.renderHTMLCellContent(
             this.formatCell(),
             element
         );
 
-        if (updateTable) {
-            const vp = this.row.viewport;
-            vp.dataTable.setCell(
-                this.column.id,
-                this.row.index,
-                this.value
-            );
+        if (!updateTable) {
+            return;
         }
+
+        const vp = this.column.viewport;
+        const { dataTable: originalDataTable } = vp.dataGrid;
+        const rowTableIndex =
+            this.row.id && originalDataTable?.getLocalRowIndex(this.row.id);
+
+        if (!originalDataTable || rowTableIndex === void 0) {
+            return;
+        }
+
+        originalDataTable.setCell(
+            this.column.id,
+            rowTableIndex,
+            this.value
+        );
+
+        if (!modifyData) {
+            return;
+        }
+
+        await vp.dataGrid.querying.proceed(true);
+        vp.loadPresentationData();
     }
 
     /**
