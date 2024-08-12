@@ -9,13 +9,16 @@ This can be modified using the following options:
 - [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included): An array of column IDs specifying which columns from DataTable to display and in what order. If `undefined`, all columns are shown in their original order.
 - [`column.enabled`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled): A boolean option controlling whether a specific column should be rendered. Defaults to true; set to false to exclude the column from the Datagrid.
 
+Example:
 ```js
-dataTable: {
-  columnA: [...],
-  notIncludedColumn: [...],
-  disabledColumn: [...],
-  columnC: [...]
-},
+dataTable: new DataTable({
+  columns: {
+    columnA: [...],
+    notIncludedColumn: [...],
+    disabledColumn: [...],
+    columnC: [...]
+  }
+}),
 settings: {
   columns: {
     included: ['columnC', 'disabledColumn', 'columnA']
