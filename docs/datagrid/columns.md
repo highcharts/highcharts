@@ -6,7 +6,7 @@ The DataGrid provides flexible configuration options to meet your specific needs
 By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
 This can be modified using one of the following options:
 
-- [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included): An array of column IDs specifying which columns from DataTable to display and in what order. If `undefined`, all columns are shown in their original order.
+- The optional [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included) array of column IDs specifies which DataTable columns to import into the DataGrid and their order. It allows for excluding or reordering columns. If  not set all columns are shown in their original order.
 
   ```js
   dataTable: new DataTable({
