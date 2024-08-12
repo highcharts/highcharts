@@ -107,7 +107,7 @@ class Pointer {
 
     public static hoverChartIndex: (number|undefined);
 
-    public static unbindDocumentMouseUp: (Function|undefined);
+    public static unbindDocumentMouseUp: (Array<Function>|undefined);
 
     public static unbindDocumentTouchEnd: (Function|undefined);
 
@@ -237,7 +237,7 @@ class Pointer {
 
         if (!H.chartCount) {
             if (Pointer.unbindDocumentMouseUp) {
-                Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
+                Pointer.unbindDocumentMouseUp.forEach((e): void => e());
             }
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
@@ -1816,12 +1816,16 @@ class Pointer {
             )
         );
         if (!Pointer.unbindDocumentMouseUp) {
-            Pointer.unbindDocumentMouseUp = addEvent(
+            Pointer.unbindDocumentMouseUp = [];
+        }
+
+        Pointer.unbindDocumentMouseUp.push(
+            addEvent(
                 ownerDoc,
                 'mouseup',
                 this.onDocumentMouseUp.bind(this)
-            );
-        }
+            )
+        );
 
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements

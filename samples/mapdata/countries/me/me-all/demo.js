@@ -8,12 +8,13 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['me-an', 10], ['me-be', 11], ['me-bp', 12], ['me-kl', 13],
-        ['me-da', 14], ['me-mk', 15], ['me-nk', 16], ['me-pu', 17],
-        ['me-pl', 18], ['me-pg', 19], ['me-ti', 20], ['me-sa', 21],
-        ['me-za', 22], ['me-ba', 23], ['me-ce', 24], ['me-bu', 25],
-        ['me-ul', 26], ['me-ro', 27], ['me-pv', 28], ['me-hn', 29],
-        ['me-kt', 30]
+        ['me-hn', 10], ['me-pl', 11], ['me-ro', 12], ['me-an', 13],
+        ['me-ba', 14], ['me-pg', 15], ['me-br', 16], ['me-bp', 17],
+        ['me-bd', 18], ['me-ct', 19], ['me-dg', 20], ['me-kl', 21],
+        ['me-ko', 22], ['me-mk', 23], ['me-nk', 24], ['me-pv', 25],
+        ['me-pž', 26], ['me-tv', 27], ['me-ul', 28], ['me-ša', 29],
+        ['me-žb', 30], ['me-gu', 31], ['me-pe', 32], ['me-tu', 33],
+        ['me-ze', 34]
     ];
 
     // Create the chart
