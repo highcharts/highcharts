@@ -67,7 +67,7 @@ The available events are:
     - `afterEdit` - called after a cell was edited
  - `column`
     - `afterSorting` - called after sorting a column
-    - `resize` - called after resizing a column
+    - `afterResize` - called after resizing a column
  - `header`
     - `click` - called after a click on a column header
 
@@ -80,7 +80,7 @@ events: {
     }
   },
   column: {
-    resize: function () {
+    afterResize: function () {
       // your action
     }
   },
