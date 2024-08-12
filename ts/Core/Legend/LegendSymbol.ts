@@ -112,7 +112,7 @@ namespace LegendSymbol {
             renderer = chart.renderer,
             legendItemGroup = legendItem.group,
             verticalCenter = baseline - Math.round(
-                symbolHeight *
+                (legend.fontMetrics?.b || symbolHeight) *
                 // Render line and marker slightly higher to make room for the
                 // area
                 (hasArea ? 0.4 : 0.3)
