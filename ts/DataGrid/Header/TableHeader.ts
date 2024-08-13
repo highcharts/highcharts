@@ -82,12 +82,12 @@ class TableHeader {
         this.rows[0] = new HeaderRow(viewport);
     }
 
-
     /* *
     *
     *  Methods
     *
     * */
+
     /**
      * Renders the table head content.
      */
@@ -141,6 +141,7 @@ class TableHeader {
      * @param event
      * Callback that is triggered.
      *
+     * @internal
      */
     public addHeaderEvent(
         element: HTMLElement,
@@ -164,7 +165,8 @@ class TableHeader {
     }
 
     /**
-     * Unbind click event
+     * Unbind header events.
+     * @internal
      */
     public removeHeaderEventListeners(): void {
         for (let i = 0, iEnd = this.headersEvents.length; i < iEnd; i++) {

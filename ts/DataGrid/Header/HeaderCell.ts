@@ -41,7 +41,7 @@ const { makeHTMLElement } = DGUtils;
  * */
 
 /**
- * Represents a cell in the data grid.
+ * Represents a cell in the data grid header.
  */
 class HeaderCell extends Cell {
 
@@ -50,6 +50,10 @@ class HeaderCell extends Cell {
     *  Properties
     *
     * */
+
+    /**
+     * The HTML element of the header cell content.
+     */
     public headerContent?: HTMLElement;
 
     /* *
@@ -59,7 +63,7 @@ class HeaderCell extends Cell {
     * */
 
     /**
-     * Constructs a cell in the data grid.
+     * Constructs a cell in the data grid header.
      *
      * @param column
      * The column of the cell.
@@ -79,7 +83,7 @@ class HeaderCell extends Cell {
     * */
 
     /**
-     * Init element
+     * Init element.
      */
     public override init(): HTMLTableCellElement {
         return document.createElement('th', {});
