@@ -56,7 +56,7 @@ const syncPair: Sync.SyncPair = {
             ) {
                 const { row } = cursor;
                 const { viewport } = component.dataGrid;
-                const rowIndex = viewport?.getLocalRowIndex(row, e.table);
+                const rowIndex = viewport?.dataTable?.getLocalRowIndex(row);
 
                 if (rowIndex !== void 0) {
                     component.dataGrid.viewport?.scrollToRow(rowIndex);
