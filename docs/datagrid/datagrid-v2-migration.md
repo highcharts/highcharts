@@ -112,7 +112,7 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
             afterSorting: function () {
                 // Callback action
             },
-            resize: function () {
+            afterResize: function () {
                 // Callback action
             }
         },

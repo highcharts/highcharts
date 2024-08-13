@@ -1,20 +1,22 @@
 Style by CSS
 ===
 
-By default the DataGrid is rendered as a table and all elements are styled by CSS.
-It allows you to style the DataGrid as you need. You can also add your own classes to the elements.
+The DataGrid is rendered as a HTML table and all table elements are styled via CSS.
+All elements have default CSS classes, and you can also append your own custom classes to each element. This allows you to style the table as per your specific styling needs.
 
 General structure:
 ```html
 <table>
     <thead>
         <tr>
-            <th>Column header</th>
+            <th>Column header 1</th>
+            <th>Column header 2</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Cell value</td>
+            <td>Cell value 1</td>
+            <td>Cell value 2</td>
         </tr>
     </tbody>
 </table>
@@ -27,8 +29,8 @@ The CSS is not included in the library by default, but you can import it like be
 ```
 
 ## Row/Cell height
-From the performance reasons the height of every row and cell is static and apply ellipsis for a long text.
-However you can disable it by setting `true` for the option [strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights).
+For performance reasons the height of every row, and hence cell, is static and long texts are truncated with an ellipsis.
+However, you can disable this by setting the [settings.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`
 
 ```js
 settings: {

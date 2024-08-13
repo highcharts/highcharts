@@ -7,7 +7,7 @@ The DataGrid is a tool that can help you visualize your data in a table.
 
 Defaults
 ---------
-Default options for all rows or all columns.
+Default options for all columns.
 
 ```js
 defaults: {

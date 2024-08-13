@@ -1,16 +1,17 @@
 Your first DataGrid
 ===
 
-When you are ready to create your first simple DataGrid, please follow these steps:
+Follow these steps to create your first simple DataGrid:
 
-### 1. Add a div to your webpage with a specific id.
+### 1. Add a div
+Add a `div` to your webpage with a specific id.
 
 ```html
 <div id="container"></div>
 ```
 
-### 2. In this basic example we are going to create a simple Datagrid. First we
-have to import (or install) the Datagrid library.
+### 2. Import (or install) the library
+In this basic example we are going to create a simple Datagrid. First we have to import (or install) the Datagrid library.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
@@ -18,7 +19,8 @@ have to import (or install) the Datagrid library.
 
 You can find more information about installation in our [article](https://www.highcharts.com/docs/datagrid/installation).
 
-### 3. The DataGrid requires a few basic styles, so you can get the basic one by
+### 3. Import CSS styles
+The DataGrid requires a few basic styles, so you can get the basic one by
 importing the modules to the CSS file as shown below.
 
 ```css
@@ -27,7 +29,7 @@ importing the modules to the CSS file as shown below.
 
 You can also use your own styles - check our [docs about styling](https://www.highcharts.com/docs/dashboards/style-by-css).
 
-### 4. We are ready to start working on an actual Datagrid config.
+### 4. Configure the DataGrid
 Inside the script tag, create a new instance of the DataGrid.  
 
 To do so, you have to pass two arguments:  
@@ -40,7 +42,7 @@ For this you can use the factory function `DataGrid.dataGrid`:
 DataGrid.dataGrid('container', {...})
 ```
 
-### 5. As options you have to provide the data that should be rendered:
+As options you have to provide the data that should be rendered:
 ```js
 DataGrid.dataGrid('container', {
     table: {
@@ -69,6 +71,7 @@ DataGrid.dataGrid('container', {
 });
 ```
 
-### 6. With that config your DataGrid should look like the example below:
+6. View the result
+With the config above your DataGrid should look like the example below:
 
 <iframe src="https://www.highcharts.com/samples/embed/data-grid/demo/your-first-datagrid" allow="fullscreen"></iframe>
