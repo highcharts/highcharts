@@ -34,7 +34,7 @@ describe('DataGrid events.', () => {
     });
 
     it('Resize column event.', () => {
-        cy.get('th[data-column-id="product"] > .highcharts-datagrid-col-resizer')
+        cy.get('th[data-column-id="product"] > .highcharts-datagrid-column-resizer')
             .trigger('mousedown')
             .trigger('mousemove', { clientX: 300, clientY: 300 })
             .trigger('mouseup');

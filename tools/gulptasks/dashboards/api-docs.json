@@ -90,7 +90,8 @@
 
         "../../../ts/DataGrid/Actions/CellEditing.ts",
         "../../../ts/DataGrid/Actions/ColumnsResizer.ts",
-        "../../../ts/DataGrid/Actions/RowsVirtualizer.ts"
+        "../../../ts/DataGrid/Actions/ColumnSorting.ts",
+        "../../../ts/DataGrid/Actions/RowsVirtualizer.ts",
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,

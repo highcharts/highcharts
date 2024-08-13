@@ -95,7 +95,11 @@ columns {
 You can also use the [defaults.columns.editable](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property to enable editing of all cells in the DataGrid. This default setting can then be overridden by one or more columns if needed.
 
 ## Events
+<<<<<<< HEAD
+The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object which will call functions when editing the cell or column.
+=======
 The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object which will call functions when actions are performed on cells and columns.
+>>>>>>> dash/datagrid2
 
 The available events are:
 
@@ -132,32 +136,39 @@ events: {
 ```
 
 ## Sorting
-The DataGrid allows you to set the filtering option per column. The basic one is sorting.
 
-You have three states of sorting:
- * 1 - default
- * 2 - descending
- * 3 - ascending
+The optional `sorting` object consists of two configuration options:
+- **`sortable`**: A boolean that determines whether a column can be sorted by the end user clicking on the column header.
 
-When you click on the header, it triggers the next state in order to the current one.
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns only the last one will be considered.
 
-The [sorting](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting) option is available in the `columns`.
+See the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#sorting).
+
+When the `sortable` option is enabled, clicking on the header will toggle the sorting order.
+
+The sorting options are available for the individual `columns`.
 
 ```js
 columns: {
   column1: {
-    sorting: true
+    sorting: {
+      sortable: true,
+      order: 'desc'
+    }
   }
 }
 ```
 
-You can apply sorting to all columns by the [Defaults]() option as described in the first point.
+But you can also turn off `sortable` for all columns using the [`defaults`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
 
 ```js
 defaults {
   columns: {
-     sorting: true
+    sorting: {
+      sortable: false
+    }
   }
 }
 ```
 
+Additionally, you can programmatically sort a column using the [`column.sorting.setOrder`](http://localhost:9005/dashboards/#classes/DataGrid_Actions_ColumnSorting.ColumnSorting#setOrder) method, even if the sortable option is turned off.

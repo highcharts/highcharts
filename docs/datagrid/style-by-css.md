@@ -108,15 +108,15 @@ To style the DataGrid's particular column:
 
 To style column sorting option
 ```css
-.highcharts-dashboards-column-sorting {
+.highcharts-dashboards-column-sortable {
     background-color: blue;
 }
 
-.highcharts-dashboards-column-sorting-asc {
+.highcharts-dashboards-column-sorted-asc {
     background: url(../myImages/arrowTop.png);
 }
 
-.highcharts-dashboards-column-sorting-desc {
+.highcharts-dashboards-column-sorted-desc {
     background: url(../myImages/arrowDown.png);
 }
 ```
