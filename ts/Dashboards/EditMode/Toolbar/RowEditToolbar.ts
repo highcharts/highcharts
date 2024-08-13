@@ -184,9 +184,12 @@ class RowEditToolbar extends EditToolbar {
                     item.activate();
                     return;
                 }
+                const toolbarItems = row.options.editMode.toolbarItems;
 
-                /* eslint-disable-next-line max-len */
-                if (row.options.editMode.toolbarItems[item.options.id as keyof typeof row.options.editMode.toolbarItems]?.enabled === false) {
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
                     item.deactivate();
                     return;
                 }

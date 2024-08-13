@@ -204,9 +204,12 @@ class CellEditToolbar extends EditToolbar {
                     item.activate();
                     return;
                 }
+                const toolbarItems = cell.options.editMode.toolbarItems;
 
-                /* eslint-disable-next-line max-len */
-                if (cell.options.editMode.toolbarItems[item.options.id as keyof typeof cell.options.editMode.toolbarItems]?.enabled === false) {
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
                     item.deactivate();
                     return;
                 }
