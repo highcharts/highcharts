@@ -74,40 +74,26 @@ class HeaderRow extends Row {
      * Renders the row's content in the header.
      */
     public renderMultipleLevel(level: number): void {
-
         const header = this.viewport.dataGrid.userOptions?.settings?.header;
+        const vp = this.viewport;
+
         // Render element
-        this.viewport.theadElement.appendChild(
+        vp.theadElement.appendChild(
             this.htmlElement
         );
 
         this.htmlElement.classList.add(
             Globals.classNames.headerRow
         );
-        
-        // super.render();
-        // TODO: Check why datagrid.getColumn() not working
-        const getColumn = (id: string) => {
-            const enabledColumns = this.viewport.dataGrid.enabledColumns;
-            const columns = this.viewport.columns;
-            if (!enabledColumns) {
-                return;
-            }
-            const columnIndex = enabledColumns.indexOf(id || '');
-            if (columnIndex < 0) {
-                return;
-            }
-
-            return columns[columnIndex];
-        } 
 
         if (header) {
             const columnsOnLevel = this.getColumnsAtLevel(header, level);
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+
                 const cell = this.createCell(
-                    getColumn(columnsOnLevel[i].columnId || '') ||
+                    vp.getColumn(columnsOnLevel[i].columnId || '') ||
                     new Column(
-                        this.viewport,
+                        vp,
                         columnsOnLevel[i].headerFormat || '',
                         i
                     )

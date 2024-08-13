@@ -254,12 +254,18 @@ class DataGrid {
      * The ID of the column.
      */
     public hoverColumn(columnId?: string): void {
+        const vp = this.viewport;
+
+        if (!vp) {
+            return;
+        }
+
         if (this.hoveredColumnId) {
-            this.getColumn(this.hoveredColumnId)?.setHoveredState(false);
+            vp.getColumn(this.hoveredColumnId)?.setHoveredState(false);
         }
 
         if (columnId) {
-            this.getColumn(columnId)?.setHoveredState(true);
+            vp.getColumn(columnId)?.setHoveredState(true);
         }
 
         this.hoveredColumnId = columnId;
@@ -288,26 +294,6 @@ class DataGrid {
         } else {
             this.renderNoData();
         }
-    }
-
-    /**
-     * Returns the column with the provided ID.
-     *
-     * @param id
-     * The ID of the column.
-     */
-    public getColumn(id: string): Column | undefined {
-        const columns = this.enabledColumns;
-
-        if (!columns) {
-            return;
-        }
-        const columnIndex = columns.indexOf(id);
-        if (columnIndex < 0) {
-            return;
-        }
-    
-        return this.viewport?.columns[columnIndex];
     }
 
     /**
