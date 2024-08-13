@@ -22,6 +22,7 @@
  *
  * */
 import type { GroupedHeader } from '../Options';
+import Table from '../Table.js';
 import Row from '../Row.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
@@ -37,13 +38,33 @@ import Column from '../Column.js';
  * Represents a row in the data grid header.
  */
 class HeaderRow extends Row {
+    /* *
+    *
+    *  Properties
+    *
+    * */
 
+    /**
+     * The level in the header.
+     */
+    public level: number;
     /* *
     *
     *  Constructor
     *
     * */
 
+    /**
+     * Constructs a row in the data grid.
+     *
+     * @param viewport
+     * The Data Grid Table instance which the row belongs to.
+     */
+    constructor(viewport: Table, level: number) {
+        super(viewport);
+        this.level = level;
+        this.setRowAttributes();
+    }
     /* *
     *
     *  Methods
@@ -95,7 +116,7 @@ class HeaderRow extends Row {
                     (
                         enabledColumns &&
                         columnId &&
-                        enabledColumns.indexOf(
+                        enabledColumns?.indexOf(
                             columnId
                         ) < 0
                     ) || (
@@ -162,7 +183,7 @@ class HeaderRow extends Row {
         targetLevel: number,
         currentLevel = 0
     ): GroupedHeader[] {
-        let result: GroupedHeader[] = [];
+        let result:GroupedHeader[] = [];
 
         for (let i = 0, iEnd = level.length; i < iEnd; i++) {
             if (currentLevel === targetLevel) {
@@ -180,6 +201,14 @@ class HeaderRow extends Row {
         }
 
         return result;
+    }
+
+    /**
+     * Sets the row HTML element attributes and additional classes.
+     */
+    public setRowAttributes(): void {
+        const el = this.htmlElement;
+        el.setAttribute('aria-rowindex', this.level);
     }
 }
 

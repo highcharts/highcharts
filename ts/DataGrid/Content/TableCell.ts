@@ -154,15 +154,10 @@ class TableCell extends Cell {
      *
      * @param updateTable
      * Whether to update the table after setting the content.
-     *
-     * @param modifyData
-     * Whether to modify the data after setting the content. Defaults to `true`.
-     * Works only when `updateTable` is set to `true`.
      */
     public async setValue(
         value: DataTable.CellType,
-        updateTable: boolean,
-        modifyData = true
+        updateTable: boolean
     ): Promise<void> {
         const element = this.htmlElement;
 
@@ -178,6 +173,10 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
         const { dataTable: originalDataTable } = vp.dataGrid;
+
+        // Taken the local row index of the original datagrid data table, but
+        // in the future it should affect the globally original data table.
+        // (To be done after the DataLayer refinement)
         const rowTableIndex =
             this.row.id && originalDataTable?.getLocalRowIndex(this.row.id);
 
@@ -190,10 +189,6 @@ class TableCell extends Cell {
             rowTableIndex,
             this.value
         );
-
-        if (!modifyData) {
-            return;
-        }
 
         await vp.dataGrid.querying.proceed(true);
         vp.loadPresentationData();
