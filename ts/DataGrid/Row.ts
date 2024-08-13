@@ -63,10 +63,14 @@ abstract class Row {
     public viewport: Table;
 
     /**
+     * The index of the row in the data table.
+     */
+    public index: number;
+
+    /**
      * Flag to determine if the row is being destroyed.
      */
     private destroyed?: boolean;
-
 
     /* *
     *
@@ -80,9 +84,11 @@ abstract class Row {
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
      */
-    constructor(viewport: Table) {
+    constructor(viewport: Table, index: number) {
         this.viewport = viewport;
+        this.index = index;
         this.htmlElement = makeHTMLElement('tr', {});
+        this.setRowAttributes();
     }
 
 
@@ -171,6 +177,11 @@ abstract class Row {
         if (index > -1) {
             this.cells.splice(index, 1);
         }
+    }
+
+    public setRowAttributes(): void {
+        const el = this.htmlElement;
+        el.setAttribute('aria-rowindex', this.index);
     }
 }
 

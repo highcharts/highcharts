@@ -28,9 +28,7 @@ import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Cell from '../Cell.js';
 import Column from '../Column.js';
-import DGUtils from '../Utils.js';
 
-const { makeHTMLElement } = DGUtils;
 /* *
  *
  *  Class
@@ -54,9 +52,8 @@ class HeaderRow extends Row {
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
      */
-    constructor(viewport: Table) {
-        super(viewport);
-        this.setRowAttributes();
+    constructor(viewport: Table, index: number) {
+        super(viewport, index + 1);
     }
 
 
@@ -173,14 +170,6 @@ class HeaderRow extends Row {
         };
     
         return count;
-    }
-
-    /**
-     * Sets the row HTML element attributes and additional classes.
-     */
-    private setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', 1);
     }
 }
 

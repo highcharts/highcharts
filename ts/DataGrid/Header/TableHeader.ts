@@ -108,15 +108,8 @@ class TableHeader {
             return;
         }
 
-        // TODO: render column grouping headers
-        // this.rows[0].renderGroupedColumnHeaders();
-
-        // render basic column headers
-        // this.rows[0] = new HeaderRow(vp);
-        // this.rows[0].render();
-
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
-            const lastRow = new HeaderRow(vp);
+            const lastRow = new HeaderRow(vp, i);
             lastRow.renderMultipleLevel(i);
             this.rows.push(lastRow);
         }
