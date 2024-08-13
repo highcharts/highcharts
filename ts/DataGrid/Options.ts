@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid options
+ *  DataGrid options
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -48,48 +48,54 @@ export type CellEventCallback = (this: Cell) => void;
 export type ColumnEventCallback = (this: Column) => void;
 
 /**
- * Returns a formatted cell's string.
+ * Callback function to be called when a header event is triggered. Returns a
+ * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
+
+/**
+ * Column sorting order type.
+ */
+export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
 
 /**
  * Options to control the content and the user experience of a grid structure.
  */
 export interface Options {
-
-    /**
-     * Data table to display in the grid structure.
-     */
-    table?: DataTable | DataTableOptions;
-
-    /**
-     * Options to control the way DataGrid is rendered.
-     */
-    settings?: DataGridSettings;
-
-    /**
-     * Default options for the rows and columns.
-     */
-    defaults?: DataGridDefaults;
-
     /**
      * Options for individual columns.
      */
     columns?: Record<string, IndividualColumnOptions>;
 
     /**
-     * Contains events options.
+     * Options applied to all elements in the datagrid by default. Can be
+     * overridden by individual options.
+     */
+    defaults?: DataGridDefaults;
+
+    /**
+     * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
+
+    /**
+     * Options to control the way datagrid is rendered.
+     */
+    settings?: DataGridSettings;
+
+    /**
+     * Data table with the data to display in the grid structure.
+     */
+    table?: DataTable | DataTableOptions;
 }
 
 /**
- * Options to control the way DataGrid is rendered.
+ * Options to control the way datagrid is rendered.
  */
 export interface DataGridSettings {
     /**
-     * Contains options for caption.
+     * Options for the table caption.
      */
     caption?: CaptionOptions;
 
@@ -116,17 +122,26 @@ export interface ColumnsSettings {
      * distributed so that the first and the last column are at the edges of
      * the grid. If `fixed`, the columns will have a fixed width in pixels.
      *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/fixed-distribution | Fixed distribution}
+     *
      * @default 'full'
      */
     distribution?: ColumnDistribution;
 
     /**
-     * Columns included in the grid structure.
+     * Columns included in the grid structure- contains the columns IDs.
+     * If not set, all columns will be included. Useful when many columns needs
+     * to be excluded from the grid.
+     *
+     * Individual column options `enabled` options can be set to `false` to
+     * disable a column.
      */
     included?: Array<string>;
 
     /**
      * Whether the columns should be resizable.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/column-resizing-disabled | Column resize disabled}
      *
      * @default true
      */
@@ -154,6 +169,8 @@ export interface RowsSettings {
      * to set this option to `true` for the performance reasons, to avoid the
      * unnecessary calculations.
      *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/strict-row-heights | Strict row heights}
+     *
      * @default false
      */
     strictHeights?: boolean;
@@ -165,7 +182,8 @@ export interface RowsSettings {
 export interface DataGridDefaults {
 
     /**
-     * Default options for the columns.
+     * Default options for all the columns in the datagrid. Can be overridden
+     * by individual column options.
      */
     columns?: ColumnOptions;
 }
@@ -175,16 +193,24 @@ export interface DataGridDefaults {
  * column individually.
  */
 export interface ColumnOptions {
-
     /**
-     * The format of the cell content within the given column of
-     * DataGrid.
+     * The format of the cell content within the given column of the datagrid.
+     * Applied only to cell that are in the table not the column header.
+     *
+     * When not set, the default format `'{id}'` is used.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
+     *
+     * @default undefined
      */
     cellFormat?: string;
 
     /**
      * Callback function for formatting cells within the given column of the
-     * DataGrid.
+     * datagrid. Applied only to cell that are in the table not the column
+     * header.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
      *
      * @return
      * A string to be concatenated in to the common cell's text.
@@ -200,24 +226,59 @@ export interface ColumnOptions {
      * Weather to use HTML to render the cell content. When enabled, other
      * elements than text can be added to the cell ie. images.
      *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/custom-html | Custom HTML}
+     *
      * @default false
      */
     useHTML?: boolean;
 
     /**
-     * Switch to make the column cells editable ('true') or read-only ('false').
+     * Whether to make the column cells editable `true`, or read-only `false`.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Editable columns disabled}
      *
      * @default true
      */
     editable?: boolean;
 
     /**
-     * Allows users to sort values in column
-     * (ascending, descending, or default).
+     * Column sorting options.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
+     */
+    sorting?: ColumnSortingOptions;
+}
+
+/**
+ * Column sorting options avalable for applying to all columns at once.
+ */
+export interface ColumnSortingOptions {
+    /**
+     * Whether to allow users to sort values in column. When it is enabled,
+     * the column header will be clickable.
+     *
+     * When sorting is disabled `false`, this column cannot be sorted by the
+     * user interface. However, the order of rows in this column may still
+     * change when other columns are sorted.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
      *
      * @default true
      */
-    sorting?: boolean;
+    sortable?: boolean;
+}
+
+/**
+ * Column sorting options that can be set for each column individually.
+ */
+export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
+    /**
+     * The initial sorting order of the column. Can be either `asc` for
+     * ascending, `desc` for descending, or `null` for disabled.
+     *
+     * @default null
+     */
+    order?: ColumnSortingOrder;
 }
 
 /**
@@ -225,26 +286,41 @@ export interface ColumnOptions {
  */
 export interface IndividualColumnOptions extends ColumnOptions {
     /**
-     * The custom CSS class name for the column.
+     * The custom CSS class name for the column. Applied only to cell that are
+     * in the table not the column header.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/demo/datagrid-custom-class | Custom class}
+     *
+     * @default undefined
      */
     className?: string;
 
     /**
-     * Whether the column is enabled and should be displayed.
+     * Whether the column is enabled and should be displayed. If `false`, the
+     * column will not be rendered.
+     *
+     * Shorter way to disable multiple columns at once is to use the `included`
+     * array in the `columns` settings.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Disabled meta column}
      *
      * @default true
      */
     enabled?: boolean;
+
+    sorting?: IndividualColumnSortingOptions;
 }
 
 export interface CaptionOptions {
     /**
-     * The custom CSS class name for the caption.
+     * The custom CSS class name for the table caption.
      */
     className?: string;
 
     /**
-     * The caption of the datagrid grid.
+     * The caption of the datagrid.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Caption}
      */
     text?: string;
 }
@@ -255,16 +331,22 @@ export interface CaptionOptions {
 export interface DataGridEvents {
     /**
      * Events related to the cells.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
      */
     cell?: CellEvents;
 
     /**
-     * Events related to column.
+     * Events related to the column.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
      */
     column?: ColumnEvents
 
     /**
-     * Events related to column.
+     * Events related to the header.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-events/ | Datagrid events}
      */
     header?: HeaderEvents
 }
@@ -297,8 +379,8 @@ export interface CellEvents {
 
 export interface ColumnEvents {
     /**
-     * Callback function to be called when the column is sorted
-     * (for instance, after clicking on header).
+     * Callback function to be called when the column is sorted for instance,
+     * after clicking on header.
      */
     afterSorting?: ColumnEventCallback;
 

@@ -128,6 +128,38 @@ class RowsVirtualizer {
     }
 
     /**
+     * Renders the rows in the viewport. It is called when the rows need to be
+     * re-rendered, e.g., after a sort or filter operation.
+     */
+    public rerender(): void {
+        const rows = this.viewport.rows;
+        const tbody = this.viewport.tbodyElement;
+
+        let oldScrollTop: number | undefined;
+
+        if (rows.length) {
+            oldScrollTop = tbody.scrollTop;
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                rows[i].destroy();
+            }
+            rows.length = 0;
+        }
+
+        this.renderRows(this.rowCursor);
+
+        if (oldScrollTop !== void 0) {
+            tbody.scrollTop = oldScrollTop;
+        }
+
+        this.scroll();
+
+        // Reflow the rendered row cells widths (check redundancy)
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            rows[i].reflow();
+        }
+    }
+
+    /**
      * Method called on the viewport scroll event.
      */
     public scroll(): void {

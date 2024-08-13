@@ -24,7 +24,6 @@
 
 import type Options from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type ColumnSorting from './Actions/ColumnSorting';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Column from './Column.js';
@@ -32,6 +31,7 @@ import DataGridDefaultOptions from './DefaultOptions.js';
 import Table from './Table.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
+import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import U from '../Core/Utilities.js';
 
@@ -47,7 +47,7 @@ const { merge } = U;
  * */
 
 /**
- * Creates a scrollable grid structure (table).
+ * Creates a grid structure (table).
  */
 class DataGrid {
 
@@ -67,12 +67,16 @@ class DataGrid {
      * The options of the data grid.
      *
      * @return The new data grid.
+     *
+     * @param afterLoadCallback
+     * The callback that is called after the data grid is loaded.
      */
     public static dataGrid(
         renderTo: string|HTMLElement,
-        options: Options
+        options: Options,
+        afterLoadCallback?: DataGrid.AfterLoadCallback
     ): DataGrid {
-        return new DataGrid(renderTo, options);
+        return new DataGrid(renderTo, options, afterLoadCallback);
     }
 
     /**
@@ -105,6 +109,7 @@ class DataGrid {
 
     /**
      * Default options for all DataGrid instances.
+     * @internal
      */
     public static readonly defaultOptions = DataGridDefaultOptions;
 
@@ -115,15 +120,17 @@ class DataGrid {
     public container?: HTMLElement;
 
     /**
-     * The data source of the data grid.
+     * The data source of the data grid. It contains the original data table
+     * that was passed to the data grid.
      */
     public dataTable?: DataTable;
 
     /**
-     * The original data source of the data grid.
-     * It allows to recover datagrid to original state after updates.
+     * The presentation table of the data grid. It contains a modified version
+     * of the data table that is used for rendering the data grid content. If
+     * not modified, just a reference to the original data table.
      */
-    public originalDataTable?: DataTable;
+    public presentationTable?: DataTable;
 
     /**
      * The HTML element of the table.
@@ -131,14 +138,16 @@ class DataGrid {
     public tableElement?: HTMLTableElement;
 
     /**
-     * The options of the data grid.
+     * The options of the data grid. Contains the options that were declared
+     * by the user and some of the default options.
      */
     public options?: Options;
 
     /**
-     * The user options of the data grid.
+     * The options that were declared by the user when creating the data grid
+     * or when updating it.
      */
-    public userOptions?: Options;
+    public userOptions?: Partial<Options>;
 
     /**
      * The table (viewport) element of the data grid.
@@ -146,24 +155,28 @@ class DataGrid {
     public viewport?: Table;
 
     /**
-     * The list of columns that should be displayed in the data grid.
+     * The list of columns that are displayed in the data grid.
+     * @internal
      */
     public enabledColumns?: string[];
 
     /**
      * The hovered row index.
+     * @internal
      */
     public hoveredRowIndex?: number;
 
     /**
      * The hovered column ID.
+     * @internal
      */
     public hoveredColumnId?: string;
 
     /**
-     * Keeps status of sorted column, when updating datagrid.
+     * The querying controller.
      */
-    public columnSortingState?: Record<string, ColumnSorting.SortingState>;
+    public querying: QueryingController;
+
 
     /* *
     *
@@ -179,16 +192,30 @@ class DataGrid {
      *
      * @param options
      * The options of the data grid.
+     *
+     * @param afterLoadCallback
+     * The callback that is called after the data grid is loaded.
      */
-    constructor(renderTo: string|HTMLElement, options: Options) {
+    constructor(
+        renderTo: string | HTMLElement,
+        options: Options,
+        afterLoadCallback?: DataGrid.AfterLoadCallback
+    ) {
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
+
+        this.querying = new QueryingController(this);
 
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
         this.loadDataTable(this.options.table);
-        this.renderViewport();
+
+        this.querying.loadOptions();
+        void this.querying.proceed().then((): void => {
+            this.renderViewport();
+            afterLoadCallback?.(this);
+        });
     }
 
 
@@ -207,13 +234,21 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the options.
      */
-    public update(options: Options, render: boolean = true): void {
+    public async update(
+        options: Options,
+        render: boolean = true
+    ): Promise<void> {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
+        let newDataTable = false;
         if (!this.dataTable || options.table) {
             this.loadDataTable(this.options?.table);
+            newDataTable = true;
         }
+
+        this.querying.loadOptions();
+        await this.querying.proceed(newDataTable);
 
         if (render) {
             this.renderViewport();
@@ -274,6 +309,7 @@ class DataGrid {
     /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
+     * @internal
      */
     public renderViewport(): void {
         let vp = this.viewport;
@@ -357,17 +393,16 @@ class DataGrid {
         return result;
     }
 
-    private loadDataTable(
-        tableOptions?: DataTable | DataTableOptions
-    ): void {
-        // If the table is passed as a reference, it should be used istead of
+    private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+        // If the table is passed as a reference, it should be used instead of
         // creating a new one.
         if (tableOptions?.id) {
             this.dataTable = tableOptions as DataTable;
+            this.presentationTable = this.dataTable.modified;
             return;
         }
 
-        this.dataTable = this.originalDataTable =
+        this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
     }
 
@@ -417,9 +452,8 @@ class DataGrid {
  *  Class Namespace
  *
  * */
-
 namespace DataGrid {
-
+    export type AfterLoadCallback = (dataGrid: DataGrid) => void;
 }
 
 
