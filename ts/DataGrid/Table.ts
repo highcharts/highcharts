@@ -420,52 +420,6 @@ class Table {
             this.reflow();
         }
     }
-
-    /**
-     * Get the row index in the given table from the current vieport's row
-     * index.
-     *
-     * @param index
-     * Current index of the row in the data grid viewport.
-     *
-     * @param table
-     * The table to which the index should be converted.
-     */
-    public getTableRowIndex(
-        index: number,
-        table: DataTable
-    ): number | undefined {
-        const originalRowIndex = this.dataTable.getOriginalRowIndex(index);
-        if (originalRowIndex === void 0) {
-            return;
-        }
-
-        return table.getLocalRowIndex(originalRowIndex);
-    }
-
-    /**
-     * Get the row index in the current viewport from the given table's row
-     * index.
-     *
-     * @param index
-     * The index of the row in the table.
-     *
-     * @param table
-     * The table from which the index should be converted.
-     *
-     * @returns
-     */
-    public getLocalRowIndex(
-        index: number,
-        table: DataTable
-    ): number | undefined {
-        const originalRowIndex = table.getOriginalRowIndex(index);
-        if (originalRowIndex === void 0) {
-            return;
-        }
-
-        return this.dataTable.getLocalRowIndex(originalRowIndex);
-    }
 }
 
 namespace Table {
