@@ -96,7 +96,7 @@ events: {
 The DataGrid allows you to set the querying options. The basic one is sorting.
 
 The optional `sorting` object consists of two configuration options:
-- **`sortable`**: A boolean that determines whether a column can be sorted by the user clicking on the column header.
+- **`sortable`**: A boolean that determines whether a column can be sorted by the end user clicking on the column header.
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending), `'desc'` (descending), or `null`, which indicates that initial sorting is disabled for that column. Note that only one column can have an `order` set at a time; if multiple columns are specified, only the last one will be considered.
 
