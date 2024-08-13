@@ -3,7 +3,8 @@ Your first DataGrid
 
 Follow these steps to create your first simple DataGrid:
 
-### 1. Add a div to your webpage with a specific id.
+### 1. Add a div
+Add a `div` to your webpage with a specific id.
 
 ```html
 <div id="container"></div>
