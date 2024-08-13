@@ -104,27 +104,23 @@ class HeaderRow extends Row {
         if (header) {
             const columnsOnLevel = this.getColumnsAtLevel(header, level);
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+                const cell = this.createCell(
+                    getColumn(columnsOnLevel[i].columnId || '') ||
+                    new Column(
+                        this.viewport,
+                        columnsOnLevel[i].headerFormat || '',
+                        i
+                    )
+                );
+                cell.render();
+                
                 if (columnsOnLevel[i].columnId) {
-                    const col = getColumn(columnsOnLevel[i].columnId || '');
-                }
-
-                // TODO: Replace with HeaderCell
-                const th = makeHTMLElement('th', {
-                    innerText: columnsOnLevel[i].headerFormat || columnsOnLevel[i].columnId
-                }, this.htmlElement);
-
-                // if (col) {
-                //     const cell = this.createCell(col);
-                //     cell.render();
-                // }
-
-                if (columnsOnLevel[i].columnId) {
-                    th.setAttribute(
+                    cell.htmlElement.setAttribute(
                         'rowSpan',
                         3 - level
                     );
                 } else {
-                    th.setAttribute(
+                    cell.htmlElement.setAttribute(
                         'colSpan',
                         this.countColumnIds(columnsOnLevel[i].columns || [])
                     );
