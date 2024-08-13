@@ -65,7 +65,7 @@ const syncPair: Sync.SyncPair = {
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.index,
+                    row: cell.row.id,
                     column: cell.column.id,
                     state: 'dataGrid.hoverRow' + groupKey
                 });
