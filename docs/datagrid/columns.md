@@ -93,7 +93,6 @@ events: {
 ```
 
 ## Sorting
-The DataGrid allows you to set the querying options. The basic one is sorting.
 
 Sorting object consists of two main configuration options:
 - **`sortable`**: A boolean that determines whether a column can be sorted by the user clicking on the column header.
