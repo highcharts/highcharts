@@ -10,8 +10,8 @@ Add a `div` to your webpage with a specific id.
 <div id="container"></div>
 ```
 
-### 2. In this basic example we are going to create a simple Datagrid. First we
-have to import (or install) the Datagrid library.
+### 2. Import (or install) the library
+In this basic example we are going to create a simple Datagrid. First we have to import (or install) the Datagrid library.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
