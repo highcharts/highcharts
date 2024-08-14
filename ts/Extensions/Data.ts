@@ -1770,7 +1770,7 @@ class Data {
      *
      * @function Highcharts.Data#getData
      *
-     * @return {Array<DataColumnsArray>|undefined} Data rows
+     * @return {Array<Array<DataValueType>>|undefined} Data rows
      */
     public getData(): (Array<DataColumnsArray>|undefined) {
         if (this.columns) {
