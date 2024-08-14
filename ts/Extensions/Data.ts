@@ -75,6 +75,14 @@ interface DataBeforeParseCallbackFunction {
     (csv: string): string;
 }
 
+interface DataColumnsArray extends Array<DataValueType> {
+    isDatetime?: boolean;
+    isNumeric?: boolean;
+    mixed?: boolean;
+    name?: string;
+    unsorted?: boolean;
+}
+
 interface DataCompleteCallbackFunction {
     (chartOptions: Partial<Options>): void;
 }
@@ -82,7 +90,7 @@ interface DataCompleteCallbackFunction {
 interface DataOptions {
     afterComplete?: DataAfterCompleteCallbackFunction;
     beforeParse?: DataBeforeParseCallbackFunction;
-    columns?: Array<Array<DataValueType>>;
+    columns?: Array<DataColumnsArray>;
     columnsURL?: string;
     columnTypes?: Array<'string'|'number'|'float'|'date'>;
     complete?: DataCompleteCallbackFunction;
@@ -104,7 +112,7 @@ interface DataOptions {
     lineDelimiter?: string;
     parsed?: DataParsedCallbackFunction;
     parseDate?: DataParseDateCallbackFunction;
-    rows?: Array<Array<DataValueType>>;
+    rows?: Array<DataColumnsArray>;
     rowsURL?: string;
     seriesMapping?: Array<Record<string, number>>;
     sort?: boolean;
@@ -117,7 +125,7 @@ interface DataParseDateCallbackFunction {
     (dateValue: string): number;
 }
 interface DataParsedCallbackFunction {
-    (columns: Array<Array<DataValueType>>): (boolean|undefined);
+    (columns: Array<DataColumnsArray>): (boolean|undefined);
 }
 interface DataValueCountObject {
     global: number;
@@ -232,13 +240,13 @@ class Data {
      * @function Highcharts.Data.rowsToColumns
      */
     public static rowsToColumns(
-        rows: (Array<Array<DataValueType>>|undefined)
-    ): (Array<Array<DataValueType>>|undefined) {
+        rows: (Array<DataColumnsArray>|undefined)
+    ): (Array<DataColumnsArray>|undefined) {
         let row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<DataValueType>>|undefined);
+            columns: (Array<DataColumnsArray>|undefined);
 
         if (rows) {
             columns = [];
@@ -284,13 +292,7 @@ class Data {
     public alternativeFormat?: string;
     public chart: Chart;
     public chartOptions: Partial<Options>;
-    public columns?: Array<Array<DataValueType> & {
-        isDatetime?: boolean;
-        isNumeric?: boolean;
-        mixed?: boolean;
-        name?: string;
-        unsorted?: boolean;
-    }>;
+    public columns?: Array<DataColumnsArray>;
     public dateFormat?: string;
     public decimalRegex?: RegExp;
     public firstRowAsNames?: boolean;
@@ -861,7 +863,7 @@ class Data {
                 stable = [],
                 max: Array<number> = [];
 
-            let thing: Array<DataValueType>,
+            let thing: DataColumnsArray,
                 guessedFormat: Array<string> = [],
                 calculatedFormat: string,
                 i = 0,
@@ -1061,7 +1063,7 @@ class Data {
      *
      * @function Highcharts.Data#parseTable
      */
-    public parseTable(): Array<Array<DataValueType>> {
+    public parseTable(): Array<DataColumnsArray> {
         const options = this.options,
             columns = this.columns || [],
             startRow = options.startRow || 0,
@@ -1239,7 +1241,7 @@ class Data {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: Array<Array<DataValueType>>
+                    res: Array<DataColumnsArray>
                 ): void {
                     chart.update({
                         data: {
@@ -1248,7 +1250,7 @@ class Data {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: Array<Array<DataValueType>>
+                        res: Array<DataColumnsArray>
                     ): void {
                         chart.update({
                             data: {
@@ -1461,7 +1463,7 @@ class Data {
             columns = this.columns = this.columns || [],
             firstRowAsNames = this.firstRowAsNames,
             isXColumn = this.valueCount?.xColumns.indexOf(col) !== -1,
-            backup: Array<DataValueType> = [],
+            backup: DataColumnsArray = [],
             chartOptions = this.chartOptions,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
@@ -1768,9 +1770,9 @@ class Data {
      *
      * @function Highcharts.Data#getData
      *
-     * @return {Array<Array<DataValueType>>|undefined} Data rows
+     * @return {Array<DataColumnsArray>|undefined} Data rows
      */
-    public getData(): (Array<Array<DataValueType>>|undefined) {
+    public getData(): (Array<DataColumnsArray>|undefined) {
         if (this.columns) {
             return this.rowsToColumns(this.columns)?.slice(1);
         }
@@ -1931,26 +1933,32 @@ class Data {
                 }
 
                 // Add the series
-                series[seriesIndex] = { data };
+                series[seriesIndex] = {
+                    data,
+                    pointStart: data[0] && (builder.pointIsArray ?
+                        (data[0] as Array<number>)?.[0] :
+                        (data[0] as Record<string, number>)?.x
+                    ) || void 0
+                };
                 if (builder.name) {
                     series[seriesIndex].name = builder.name;
                 }
                 if (type === 'category') {
                     series[seriesIndex].turboThreshold = 0;
+                    series[seriesIndex].pointStart = 0;
                 }
             }
 
-
             // Do the callback
-            chartOptions = {
-                series: series
-            };
+            chartOptions = { series };
             if (type) {
                 chartOptions.xAxis = {
                     type: type
                 };
                 if (type === 'category') {
                     chartOptions.xAxis.uniqueNames = false;
+                } else {
+                    chartOptions.xAxis.categories = false;
                 }
             }
 
@@ -2018,7 +2026,7 @@ class Data {
                 delete chartOptions.data.columns;
             }
 
-            this.init(chartOptions.data || {});
+            this.init(chartOptions.data || {}, chartOptions);
         }
     }
 }
