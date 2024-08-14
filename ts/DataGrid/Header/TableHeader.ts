@@ -21,7 +21,7 @@
  *  Imports
  *
  * */
-
+import type { GroupedHeader } from '../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
@@ -69,7 +69,7 @@ class TableHeader {
     /**
      * Amount of levels in the header, that is used in creating correct rows.
      */
-    public levels: number;
+    public levels: number = 1;
     /* *
     *
     *  Constructor
@@ -85,9 +85,13 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-        this.levels = this.getRowsHeight(
-            viewport.dataGrid.userOptions?.settings?.header
-        ) || 1;
+    
+        if (viewport.dataGrid.userOptions?.settings?.header) {
+            this.levels = this.getRowsLevels(
+                viewport.dataGrid.userOptions?.settings?.header
+            );
+        }
+
     }
 
     /* *
@@ -102,14 +106,13 @@ class TableHeader {
     public render(): void {
         const vp = this.viewport;
         const dataGrid = vp.dataGrid;
-        // const headers = dataGrid.userOptions?.settings?.header;
 
         if (!dataGrid.enabledColumns) {
             return;
         }
 
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
-            const lastRow = new HeaderRow(vp, i);
+            const lastRow = new HeaderRow(vp, i + 1); // avoid indexing from 0
             lastRow.renderMultipleLevel(i);
             this.rows.push(lastRow);
         }
@@ -162,12 +165,18 @@ class TableHeader {
         ]);
     }
 
-    private getRowsHeight(scope: any) {
+    /**
+     * Returns amount of rows for the current cell in header tree.
+     * 
+     * @param scope - structure of header
+     * @returns 
+     */
+    private getRowsLevels(scope: GroupedHeader[]) {
         let maxDepth = 0;
 
-        for (let i = 0; i < scope.length; i++) {
+        for (let i = 0, iEnd = scope.length; i < iEnd; i++) {
             if (scope[i].columns) {
-                const depth = this.getRowsHeight(scope[i].columns);
+                const depth = this.getRowsLevels(scope[i].columns || []);
                 if (depth > maxDepth) {
                     maxDepth = depth;
                 }

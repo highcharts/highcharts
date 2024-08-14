@@ -402,6 +402,7 @@ export interface GroupedHeader {
     useHTML?: boolean;
     className?: string;
     columnId?: string;
+    level?: number;
     columns?: GroupedHeader[]; 
 }
 /* *

@@ -123,16 +123,24 @@
     border-left: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-head-cell-content {
-    display: block;
+.highcharts-datagrid-header-cell-content {
+    display: flex;
+    position: absolute;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 10px;
     padding-left: 3px;
     width: 100%;
+    height: 100%;
+    top: 0px;
+    align-items: center;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
+}
+
+.highcharts-datagrid-header-cell-content span {
+    flex: 1;
 }
 
 .highcharts-datagrid-table tbody {
@@ -212,7 +220,7 @@
     border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-head-cell-resized .highcharts-datagrid-column-resizer::after {
+.highcharts-datagrid-header-cell-resized .highcharts-datagrid-column-resizer::after {
     border-left: 2px solid var(--highcharts-highlight-color-60);
     border-right: 2px solid var(--highcharts-highlight-color-60);
 }
@@ -258,9 +266,9 @@ td.highcharts-datagrid-focused-cell {
     cursor: pointer;
 }
 
-.highcharts-datagrid-head-cell-content::after {
+.highcharts-datagrid-header-cell-content::after {
     right: 10px;
-    top: 6px;
+    top: calc(50% - 10px);
     bottom: 50%;
     color: var(--highcharts-neutral-color-60);
     position: absolute;
@@ -270,11 +278,11 @@ td.highcharts-datagrid-focused-cell {
 }
 
 /* stylelint-disable-next-line max-line-length */
-.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-head-cell-content::after {
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-header-cell-content::after {
     content: "▲";
 }
 
 /* stylelint-disable-next-line max-line-length */
-.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-head-cell-content::after {
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-header-cell-content::after {
     content: "▼";
 }

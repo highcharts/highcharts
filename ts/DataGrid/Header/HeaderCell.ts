@@ -86,7 +86,9 @@ class HeaderCell extends Cell {
      * Init element.
      */
     public override init(): HTMLTableCellElement {
-        return document.createElement('th', {});
+        const elem = document.createElement('th', {});
+        elem.classList.add(Globals.classNames.headerCell);
+        return elem;
     }
 
     /**
@@ -94,31 +96,36 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const innerText = column.userOptions.headerFormat ? (
+        const isSingleColumn = this.row.viewport.getColumn(this.column.id);
+        
+        this.value = column.userOptions.headerFormat ? (
             format(column.userOptions.headerFormat, column)
         ) : column.id;
 
         // Render th elements
         this.row.htmlElement.appendChild(this.htmlElement);
         this.headerContent = makeHTMLElement('div', {
-            innerText: innerText,
-            className: Globals.classNames.headCellContent
+            className: Globals.classNames.headerCellContent
         }, this.htmlElement);
 
-        this.value = innerText;
+        makeHTMLElement('span', {
+            innerText: this.value
+        }, this.headerContent);
 
         // Set the accessibility attributes.
         this.htmlElement.setAttribute('scope', 'col');
         this.htmlElement.setAttribute('data-column-id', column.id);
 
-        // Add resizing
-        this.renderColumnDragHandles();
+        if (isSingleColumn) {
+            // Add resizing
+            this.renderColumnDragHandles();
 
-        // Add API click event
-        this.initColumnClickEvent();
+            // Add API click event
+            this.initColumnClickEvent();
 
-        // Add sorting
-        this.initColumnSorting();
+            // Add sorting
+            this.initColumnSorting();
+        }
     }
 
     /**

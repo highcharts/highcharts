@@ -53,7 +53,7 @@ class HeaderRow extends Row {
      * The Data Grid Table instance which the row belongs to.
      */
     constructor(viewport: Table, index: number) {
-        super(viewport, index + 1);
+        super(viewport, index);
     }
 
 
@@ -85,15 +85,19 @@ class HeaderRow extends Row {
 
         if (header) {
             const columnsOnLevel = this.getColumnsAtLevel(header, level);
-            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
 
+            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
                 const cell = this.createCell(
-                    vp.getColumn(columnsOnLevel[i].columnId || '') ||
-                    new Column(
+                    (
+                        vp.getColumn(
+                            columnsOnLevel[i].columnId || ''
+                        )
+                    ) || (
+                        new Column(
                         vp,
                         columnsOnLevel[i].headerFormat || '',
                         i
-                    )
+                    ))
                 );
                 cell.render();
                 
