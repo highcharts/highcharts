@@ -88,9 +88,9 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 ['dataGridOptions', 'settings', 'columns', 'distribution'],
             type: 'select',
             selectOptions: [{
-                name: 'Full'
+                name: 'full'
             }, {
-                name: 'Fixed'
+                name: 'fixed'
             }]
         }, {
             name: 'Text truncation',

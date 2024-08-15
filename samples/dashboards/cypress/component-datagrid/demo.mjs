@@ -4,6 +4,7 @@ import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
 
+
 Highcharts.win.Highcharts = Highcharts;
 
 
@@ -24,6 +25,12 @@ Dashboards.board('container', {
                 csv: csvData
             }
         }]
+    },
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true
+        }
     },
     gui: {
         layouts: [{

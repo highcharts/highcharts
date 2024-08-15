@@ -1,5 +1,5 @@
 describe('layout resize on window changes', () => {
-    before(() => {
+    beforeEach(() => {
         cy.visit('/dashboards/cypress/component-datagrid');
     });
 
@@ -109,5 +109,60 @@ describe('layout resize on window changes', () => {
 
     it('The dataGridOptions should be applied to the component.', () => {
         cy.get('th').eq(1).should('have.text', 'Vitamin A (IU)');
+    });
+
+    it('The editableOptions should be visible in the sidebar and should show the correct values.', () => {
+        cy.toggleEditMode();
+        cy.openCellEditSidebar('#dashboard-col-1');
+
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Editable table').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text')
+            .contains('Editable table')
+            .next()
+            .find('input[type="checkbox"]')
+            .should('be.checked');
+
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Resizable columns').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text')
+            .contains('Resizable columns')
+            .next()
+            .find('input[type="checkbox"]')
+            .should('be.checked');
+
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text')
+            .contains('Sortable columns')
+            .next()
+            .find('input[type="checkbox"]')
+            .should('be.checked');
+
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Columns distribution').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-dropdown.highcharts-dashboards-edit-collapsable-content-header')
+            .eq(1)
+            .find('.highcharts-dashboards-edit-dropdown-button-content > span')
+            .should('have.text', 'full');
+
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Text truncation').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text')
+            .contains('Text truncation')
+            .next()
+            .find('input[type="checkbox"]')
+            .should('not.be.checked');
+    });
+
+    it('Changing options in the sidebar should update the grid.', () => {
+        // Act
+        cy.toggleEditMode();
+        cy.openCellEditSidebar('#dashboard-col-1');
+
+        //Assert
+        cy.get('.highcharts-datagrid-column-sortable').should('exist');
+
+        // Act
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
+
+        // Assert
+        cy.get('.highcharts-datagrid-column-sortable').should('not.exist');
     });
 });
