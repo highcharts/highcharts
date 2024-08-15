@@ -73,6 +73,7 @@ class HeaderRow extends Row {
     public renderMultipleLevel(level: number): void {
         const header = this.viewport.dataGrid.userOptions?.settings?.header;
         const vp = this.viewport;
+        const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
         vp.theadElement.appendChild(
@@ -87,6 +88,29 @@ class HeaderRow extends Row {
             const columnsOnLevel = this.getColumnsAtLevel(header, level);
 
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+                // Skip hidden column
+                const colSpan =
+                    this.countColumnIds(columnsOnLevel[i].columns || []);
+                const dataColumn = vp.getColumn(
+                    columnsOnLevel[i].columnId || ''
+                );
+
+                // Skip hidden column or header when all columns are hidden.
+                if (
+                    (
+                        enabledColumns &&
+                        columnsOnLevel[i].columnId &&
+                        enabledColumns.indexOf(
+                            columnsOnLevel[i].columnId as string
+                        ) < 0
+                    ) || (
+                        !dataColumn &&
+                        colSpan === 0
+                    )
+                ) {
+                    continue;
+                }
+
                 const cell = this.createCell(
                     (
                         vp.getColumn(
@@ -109,7 +133,7 @@ class HeaderRow extends Row {
                 } else {
                     cell.htmlElement.setAttribute(
                         'colSpan',
-                        this.countColumnIds(columnsOnLevel[i].columns || [])
+                        colSpan
                     );
                 }
             }
@@ -161,10 +185,14 @@ class HeaderRow extends Row {
      */
     public countColumnIds(level: GroupedHeader[]): number {
         let count = 0;
-    
-        // (array || []).forEach((item: GroupedHeader):void => {
-        for (let i = 0, iEnd = level.length; i < iEnd; i++) { 
-            if (level[i].columnId) {
+        const enabledColumns = this.viewport.dataGrid.enabledColumns;
+
+        for (let i = 0, iEnd = level.length; i < iEnd; i++) {
+            if (
+                enabledColumns &&
+                level[i].columnId &&
+                enabledColumns.indexOf(level[i].columnId as string) > -1
+            ) {
                 count++;
             }
 
