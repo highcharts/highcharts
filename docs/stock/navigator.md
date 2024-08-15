@@ -15,7 +15,7 @@ navigator: {
 
 The navigator is enabled by default for the first series in all Highcharts Stock charts. To configure which series are shown in the navigator, use the [`series.showInNavigator`](https://api.highcharts.com/highstock/plotOptions.series.showInNavigator) option.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/2bcd21fc46/sample/stock/interactive-docs/show-in-navigator allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/stock/navigator/show-in-navigator-interactive allow="fullscreen"></iframe>
 
 ```js
 series: {
@@ -27,7 +27,7 @@ To configure the options for the navigator series, you can set per-series option
 
 Each part of the navigator, like handles, masks, navigator axes, outline, etc. can be individually styled and modified.
 
-<iframe style="width: 100%; height: 660px; border: none;" src=https://highcharts.github.io/highcharts-utils/samples/#gh/2bcd21fc46/sample/stock/interactive-docs/navigator-styling allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 660px; border: none;" src=https://www.highcharts.com/samples/embed/stock/navigator/styling-interactive allow="fullscreen"></iframe>
 
 ```js
 navigator: {
