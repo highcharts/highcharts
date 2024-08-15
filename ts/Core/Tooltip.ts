@@ -1086,6 +1086,20 @@ class Tooltip {
                             text
                     });
 
+                    // When the length of the label has increased, immediately
+                    // update the x position to prevent tooltip from flowing
+                    // outside the viewport during animation (#21371)
+                    if (this.outside) {
+                        label.attr({
+                            x: clamp(
+                                label.x || 0,
+                                0,
+                                this.getPlayingField().width -
+                                    (label.width || 0)
+                            )
+                        });
+                    }
+
                     if (!styledMode) {
                         label.attr({
                             stroke: (
