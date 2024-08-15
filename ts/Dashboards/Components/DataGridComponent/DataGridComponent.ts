@@ -213,6 +213,18 @@ class DataGridComponent extends Component {
         });
     }
 
+    public getEditableOptions(): Options {
+        const componentOptions = this.options;
+        const dataGridOptions = this.dataGrid?.options;
+
+        return merge(
+            {
+                dataGridOptions: dataGridOptions
+            },
+            componentOptions
+        );
+    }
+
     public override getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds = sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
