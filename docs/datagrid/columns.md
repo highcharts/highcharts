@@ -54,7 +54,7 @@ defaults: {
 }
 ```
 
-## Column header
+## Column headers
 In columns options, use [headerFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the header content for that column.
 
 ```js
@@ -64,6 +64,48 @@ columns: {
   }
 }
 ```
+### Multiple level header
+Column headers can be grouped into sections, so you can create your own multiple level header.
+
+![multilevelheader.png](multilevelheader.png)
+
+```js
+settings: {
+  header: [
+    {
+      columnId: 'id'
+    },
+    {
+      headerFormat: 'Product',
+      columns: [{
+        headerFormat: 'Product name',
+        columnId: 'product'
+      }, {
+        headerFormat: 'Units',
+        columns: [{
+          columnId: 'weight'
+        }, {
+          columnId: 'price'
+        }]
+      }]
+    },
+    {
+      headerFormat: 'Product info',
+      columns: [{
+        headerFormat: 'Meta',
+        columns: [{
+          columnId: 'url'
+        }, {
+          columnId: 'icon'
+        }]
+      }]
+    }
+  ]
+},
+
+```
+
+You can find more informations in our API docs
 
 ## How to format cells
 The [cellFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [cellFormatter](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter) option allow you to customize the cells content and format in that column.

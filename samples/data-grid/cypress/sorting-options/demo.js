@@ -54,7 +54,7 @@ window.dataGrid = DataGrid.dataGrid('container', {
     }
 
     applyBtnEl.addEventListener('click', () => {
-        dg.getColumn(columnSelectEl.value).sorting.setOrder(
+        dg.viewport.getColumn(columnSelectEl.value).sorting.setOrder(
             orderSelectEl.value
         );
     });
