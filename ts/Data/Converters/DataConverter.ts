@@ -583,8 +583,6 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Parse a date and return it as a number.
      *
-     * @function Highcharts.Data#parseDate
-     *
      * @param {string} value
      * Value to parse.
      *
@@ -592,7 +590,7 @@ class DataConverter implements DataEvent.Emitter {
      * Which of the predefined date formats
      * to use to parse date values.
      */
-    private parseDate(value: string, dateFormatProp?: string): number {
+    public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this,
             options = converter.options;
 

@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -127,6 +128,7 @@ class RangeModifier extends DataModifier {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
+        let indexes: Array<number|undefined> = [];
 
         const {
             additive,
@@ -160,8 +162,10 @@ class RangeModifier extends DataModifier {
                 if (i > 0 && !additive) {
                     modified.deleteRows();
                     modified.setRows(rows);
+                    modified.setOriginalRowIndexes(indexes, true);
                     columns = modified.getColumns();
                     rows = [];
+                    indexes = [];
                 }
 
                 rangeColumn = (columns[range.column] || []);
@@ -170,7 +174,8 @@ class RangeModifier extends DataModifier {
                     let j = 0,
                         jEnd = rangeColumn.length,
                         cell: DataTable.CellType,
-                        row: (DataTable.Row|undefined);
+                        row: DataTable.Row | undefined,
+                        originalRowIndex: number | undefined;
                     j < jEnd;
                     ++j
                 ) {
@@ -196,14 +201,17 @@ class RangeModifier extends DataModifier {
                         cell >= range.minValue &&
                         cell <= range.maxValue
                     ) {
-                        row = (
-                            additive ?
-                                table.getRow(j) :
-                                modified.getRow(j)
-                        );
+                        if (additive) {
+                            row = table.getRow(j);
+                            originalRowIndex = table.getOriginalRowIndex(j);
+                        } else {
+                            row = modified.getRow(j);
+                            originalRowIndex = modified.getOriginalRowIndex(j);
+                        }
 
                         if (row) {
                             rows.push(row);
+                            indexes.push(originalRowIndex);
                         }
                     }
                 }
@@ -211,6 +219,7 @@ class RangeModifier extends DataModifier {
 
             modified.deleteRows();
             modified.setRows(rows);
+            modified.setOriginalRowIndexes(indexes);
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });

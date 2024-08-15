@@ -4,7 +4,11 @@ Highcharts.chart('container', {
         height: '100%'
     },
     title: {
-        text: 'Carbon emissions around the world (2014)',
+        text: 'Carbon emissions around the world (2022)',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Source: <a href="https://en.wikipedia.org/wiki/List_of_countries_by_carbon_dioxide_emissions" target="_blank">Wikipedia</a>',
         align: 'left'
     },
     tooltip: {
@@ -44,473 +48,473 @@ Highcharts.chart('container', {
         name: 'Europe',
         data: [{
             name: 'Germany',
-            value: 767.1
+            value: 673.6
         }, {
             name: 'Croatia',
-            value: 20.7
+            value: 17.2
         },
         {
             name: 'Belgium',
-            value: 97.2
+            value: 90.4
         },
         {
             name: 'Czech Republic',
-            value: 111.7
+            value: 111.5
         },
         {
             name: 'Netherlands',
-            value: 158.1
+            value: 134.7
         },
         {
             name: 'Spain',
-            value: 241.6
+            value: 254.4
         },
         {
             name: 'Ukraine',
-            value: 249.1
+            value: 132.5
         },
         {
             name: 'Poland',
-            value: 298.1
+            value: 322.0
         },
         {
             name: 'France',
-            value: 323.7
+            value: 315.5
         },
         {
             name: 'Romania',
-            value: 78.3
+            value: 77.3
         },
         {
             name: 'United Kingdom',
-            value: 415.4
+            value: 340.6
         }, {
             name: 'Turkey',
-            value: 353.2
+            value: 481.2
         }, {
             name: 'Italy',
-            value: 337.6
+            value: 322.9
         },
         {
             name: 'Greece',
-            value: 71.1
+            value: 56.8
         },
         {
             name: 'Austria',
-            value: 69.8
+            value: 61.2
         },
         {
             name: 'Belarus',
-            value: 67.7
+            value: 57.4
         },
         {
             name: 'Serbia',
-            value: 59.3
+            value: 56.9
         },
         {
             name: 'Finland',
-            value: 54.8
+            value: 37.3
         },
         {
             name: 'Bulgaria',
-            value: 51.2
+            value: 50.1
         },
         {
             name: 'Portugal',
-            value: 48.3
+            value: 41.3
         },
         {
             name: 'Norway',
-            value: 44.4
+            value: 42.2
         },
         {
             name: 'Sweden',
-            value: 44.3
+            value: 37.8
         },
         {
             name: 'Hungary',
-            value: 43.7
+            value: 47.3
         },
         {
             name: 'Switzerland',
-            value: 40.2
+            value: 36.1
         },
         {
             name: 'Denmark',
-            value: 40
+            value: 29.2
         },
         {
             name: 'Slovakia',
-            value: 34.7
+            value: 35.2
         },
         {
             name: 'Ireland',
-            value: 34.6
+            value: 37.8
         },
         {
             name: 'Croatia',
-            value: 20.7
+            value: 17.2
         },
         {
             name: 'Estonia',
-            value: 19.4
+            value: 10.8
         },
         {
             name: 'Slovenia',
-            value: 16.7
+            value: 13.9
         },
         {
             name: 'Lithuania',
-            value: 12.3
+            value: 13.3
         },
         {
             name: 'Luxembourg',
-            value: 10.4
+            value: 7.6
         },
         {
             name: 'Macedonia',
-            value: 9.5
+            value: 8.3
         },
         {
             name: 'Moldova',
-            value: 7.8
+            value: 8.7
         },
         {
             name: 'Latvia',
-            value: 7.5
+            value: 6.7
         },
         {
             name: 'Cyprus',
-            value: 7.2
+            value: 7.5
         }]
     }, {
         name: 'Africa',
         data: [{
             name: 'Senegal',
-            value: 8.2
+            value: 12.1
         },
         {
             name: 'Cameroon',
-            value: 9.2
+            value: 10.1
         },
         {
             name: 'Zimbabwe',
-            value: 13.1
+            value: 10.2
         },
         {
             name: 'Ghana',
-            value: 14.1
+            value: 24.5
         },
         {
             name: 'Kenya',
-            value: 14.1
+            value: 21.5
         },
         {
             name: 'Sudan',
-            value: 17.3
+            value: 24.5
         },
         {
             name: 'Tunisia',
-            value: 24.3
+            value: 35.9
         },
         {
             name: 'Angola',
-            value: 25
+            value: 20.2
         },
         {
             name: 'Libya',
-            value: 50.6
+            value: 62.7
         },
         {
             name: 'Ivory Coast',
-            value: 7.3
+            value: 14.5
         },
         {
             name: 'Morocco',
-            value: 60.7
+            value: 72.6
         },
         {
             name: 'Ethiopia',
-            value: 8.9
+            value: 21.1
         },
         {
             name: 'United Republic of Tanzania',
-            value: 9.1
+            value: 17.0
         },
         {
             name: 'Nigeria',
-            value: 93.9
+            value: 122.8
         },
         {
             name: 'South Africa',
-            value: 392.7
+            value: 405.0
         }, {
             name: 'Egypt',
-            value: 225.1
+            value: 266.0
         }, {
             name: 'Algeria',
-            value: 141.5
+            value: 177.1
         }]
     }, {
         name: 'Oceania',
         data: [{
             name: 'Australia',
-            value: 409.4
+            value: 393.2
         },
         {
             name: 'New Zealand',
-            value: 34.1
+            value: 32.4
         },
         {
             name: 'Papua New Guinea',
-            value: 7.1
+            value: 4.7
         }]
     }, {
         name: 'North America',
         data: [{
             name: 'Costa Rica',
-            value: 7.6
+            value: 8.6
         },
         {
             name: 'Honduras',
-            value: 8.4
+            value: 10.6
         },
         {
             name: 'Jamaica',
-            value: 8.3
+            value: 6.1
         },
         {
             name: 'Panama',
-            value: 10.2
+            value: 11.4
         },
         {
             name: 'Guatemala',
-            value: 12
+            value: 20.1
         },
         {
             name: 'Dominican Republic',
-            value: 23.4
+            value: 23.5
         },
         {
             name: 'Cuba',
-            value: 30.2
+            value: 24.8
         },
         {
             name: 'USA',
-            value: 5334.5
+            value: 4853.8
         }, {
             name: 'Canada',
-            value: 566
+            value: 582.1
         }, {
             name: 'Mexico',
-            value: 456.3
+            value: 487.8
         }]
     }, {
         name: 'South America',
         data: [{
             name: 'El Salvador',
-            value: 7.2
+            value: 8.0
         },
         {
             name: 'Uruguay',
-            value: 8.1
+            value: 8.5
         },
         {
             name: 'Bolivia',
-            value: 17.8
+            value: 22.0
         },
         {
             name: 'Trinidad and Tobago',
-            value: 34
+            value: 29.2
         },
         {
             name: 'Ecuador',
-            value: 43
+            value: 46.1
         },
         {
             name: 'Chile',
-            value: 78.6
+            value: 92.9
         },
         {
             name: 'Peru',
-            value: 52
+            value: 61.6
         },
         {
             name: 'Colombia',
-            value: 74.1
+            value: 88.5
         },
         {
             name: 'Brazil',
-            value: 501.1
+            value: 466.8
         }, {
             name: 'Argentina',
-            value: 199
+            value: 184.0
         },
         {
             name: 'Venezuela',
-            value: 195.2
+            value: 96.9
         }]
     }, {
         name: 'Asia',
         data: [{
             name: 'Nepal',
-            value: 6.5
+            value: 15.8
         },
         {
             name: 'Georgia',
-            value: 6.5
+            value: 12.0
         },
         {
             name: 'Brunei Darussalam',
-            value: 7.4
+            value: 9.4
         },
         {
             name: 'Kyrgyzstan',
-            value: 7.4
+            value: 10.3
         },
         {
             name: 'Afghanistan',
-            value: 7.9
+            value: 5.7
         },
         {
             name: 'Myanmar',
-            value: 9.1
+            value: 37.4
         },
         {
             name: 'Mongolia',
-            value: 14.7
+            value: 22.1
         },
         {
             name: 'Sri Lanka',
-            value: 16.6
+            value: 18.5
         },
         {
             name: 'Bahrain',
-            value: 20.5
+            value: 38.0
         },
         {
             name: 'Yemen',
-            value: 22.6
+            value: 12.3
         },
         {
             name: 'Jordan',
-            value: 22.3
+            value: 23.6
         },
         {
             name: 'Lebanon',
-            value: 21.1
+            value: 23.8
         },
         {
             name: 'Azerbaijan',
-            value: 31.7
+            value: 37.1
         },
         {
             name: 'Singapore',
-            value: 47.8
+            value: 53.4
         },
         {
             name: 'Hong Kong',
-            value: 49.9
+            value: 32.4
         },
         {
             name: 'Syria',
-            value: 52.7
+            value: 28.2
         },
         {
             name: 'DPR Korea',
-            value: 59.9
+            value: 54.4
         },
         {
             name: 'Israel',
-            value: 64.8
+            value: 61.8
         },
         {
             name: 'Turkmenistan',
-            value: 70.6
+            value: 69.9
         },
         {
             name: 'Oman',
-            value: 74.3
+            value: 91.6
         },
         {
             name: 'Qatar',
-            value: 88.8
+            value: 102.6
         },
         {
             name: 'Philippines',
-            value: 96.9
+            value: 155.4
         },
         {
             name: 'Kuwait',
-            value: 98.6
+            value: 110.1
         },
         {
             name: 'Uzbekistan',
-            value: 122.6
+            value: 132.4
         },
         {
             name: 'Iraq',
-            value: 139.9
+            value: 193.8
         },
         {
             name: 'Pakistan',
-            value: 158.1
+            value: 199.3
         },
         {
             name: 'Vietnam',
-            value: 190.2
+            value: 327.9
         },
         {
             name: 'United Arab Emirates',
-            value: 201.1
+            value: 218.8
         },
         {
             name: 'Malaysia',
-            value: 227.5
+            value: 277.5
         },
         {
             name: 'Kazakhstan',
-            value: 236.2
+            value: 245.9
         },
         {
             name: 'Thailand',
-            value: 272
+            value: 282.4
         },
         {
             name: 'Taiwan',
-            value: 276.7
+            value: 275.6
         },
         {
             name: 'Indonesia',
-            value: 453
+            value: 692.2
         },
         {
             name: 'Saudi Arabia',
-            value: 494.8
+            value: 607.9
         },
         {
             name: 'Japan',
-            value: 1278.9
+            value: 1082.6
         },
         {
             name: 'China',
-            value: 10540.8
+            value: 12667.4
         },
         {
             name: 'India',
-            value: 2341.9
+            value: 2693.0
         },
         {
             name: 'Russia',
-            value: 1766.4
+            value: 1909.0
         },
         {
             name: 'Iran',
-            value: 618.2
+            value: 686.4
         },
         {
             name: 'Korea',
-            value: 610.1
+            value: 635.5
         }]
     }]
 });
