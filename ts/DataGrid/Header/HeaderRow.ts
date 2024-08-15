@@ -104,7 +104,7 @@ class HeaderRow extends Row {
                 if (columnsOnLevel[i].columnId) {
                     cell.htmlElement.setAttribute(
                         'rowSpan',
-                        3 - level
+                        (this.viewport.header?.levels || 1) - level
                     );
                 } else {
                     cell.htmlElement.setAttribute(

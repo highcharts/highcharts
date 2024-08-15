@@ -118,39 +118,16 @@ class HeaderCell extends Cell {
 
         if (isSingleColumn) {
             // Add resizing
-            this.renderColumnDragHandles();
+            this.column.viewport.columnsResizer?.renderColumnDragHandles(
+                this.column,
+                this
+            );
 
             // Add API click event
             this.initColumnClickEvent();
 
             // Add sorting
             this.initColumnSorting();
-        }
-    }
-
-    /**
-     * Render the drag handle for resizing columns.
-     */
-    private renderColumnDragHandles(): void {
-        const column = this.column;
-        const vp = column.viewport;
-
-        if (
-            vp.columnsResizer && (
-                vp.columnDistribution !== 'full' ||
-                (
-                    vp.dataGrid.enabledColumns &&
-                    column.index < vp.dataGrid.enabledColumns.length - 1
-                )
-            )
-        ) {
-            const handle = makeHTMLElement('div', {
-                className: Globals.classNames.resizerHandles
-            }, this.htmlElement);
-
-            this.column.viewport.columnsResizer?.addHandleListeners(
-                handle, column
-            );
         }
     }
 

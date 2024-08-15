@@ -36,9 +36,9 @@ DataGrid.dataGrid('container', {
                 columns: [{
                     headerFormat: 'Meta',
                     columns: [{
-                        columnId: 'icon'
-                    }, {
                         columnId: 'url'
+                    }, {
+                        columnId: 'icon'
                     }]
                 }]
             }
