@@ -135,8 +135,6 @@
 .highcharts-datagrid-header-cell-content {
     display: flex;
     position: absolute;
-    overflow: hidden;
-    text-overflow: ellipsis;
     padding-right: 10px;
     padding-left: 3px;
     width: 100%;
@@ -150,6 +148,8 @@
 
 .highcharts-datagrid-header-cell-content span {
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .highcharts-datagrid-table tbody {
