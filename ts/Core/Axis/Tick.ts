@@ -225,7 +225,7 @@ class Tick {
         // The context value
         let value = this.parameters.category || (
             categories ?
-                pick(categories[pos], names[pos], '') :
+                pick(categories[pos], names[pos], pos) :
                 pos
         );
         if (log && isNumber(value)) {
@@ -821,6 +821,7 @@ class Tick {
             x = xy.x,
             y = xy.y,
             axisStart = axis.pos,
+            categories = axis.categories,
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
@@ -830,7 +831,14 @@ class Tick {
         if (
             !axis.chart.polar &&
             tick.isNew &&
-            (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
+            (
+                correctFloat(pxPos) < axisStart ||
+                pxPos > axisEnd || (
+                    categories && categories.length ? !(
+                        pos >= 0 && pos < categories.length
+                    ) : false
+                )
+            )
         ) {
             opacity = 0;
         }
