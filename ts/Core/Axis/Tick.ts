@@ -225,7 +225,7 @@ class Tick {
         // The context value
         let value = this.parameters.category || (
             categories ?
-                pick(categories[pos], names[pos], pos) :
+                pick(categories[pos], names[pos], '') :
                 pos
         );
         if (log && isNumber(value)) {
