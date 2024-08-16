@@ -127,7 +127,7 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    categories?: Array<string>|true;
+    categories?: Array<string>|boolean;
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
