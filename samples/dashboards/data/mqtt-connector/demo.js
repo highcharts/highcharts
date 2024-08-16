@@ -288,10 +288,11 @@ function setPowerPlantName(topic, name) {
 
 /* *
  *
- * MQTT connector class - custom connector
+ * MQTT connector class - a custom DataConnector,
+ * interfacing with the Paho MQTT library
  *
  *
- * Paho MQTT library documentation
+ * Paho MQTT client documentation
  *
  * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
  *
@@ -307,11 +308,10 @@ try {
 
 /* eslint-disable no-underscore-dangle */
 const modules = Dashboards._modules;
-
-const DataConnector = modules['Data/Connectors/DataConnector.js'];
-const JSONConverter = modules['Data/Converters/JSONConverter.js'];
-const U = modules['Core/Utilities.js'];
-const { merge } = U;
+const DataConnector = Dashboards.DataConnector;
+// eslint-disable-next-line max-len
+const JSONConverter = modules['Data/Converters/JSONConverter.js']; // TBD: use namespace when becoming available
+const merge = Highcharts.merge;
 
 // Connector instances
 const connectorTable = {};
@@ -356,10 +356,13 @@ class MQTTConnector extends DataConnector {
      * */
 
     /**
-     * Creates the MQTT client.
+     * Creates the MQTT client and initiates the connection
+     * if autoConnect is set to true.
      *
      */
     async load() {
+        super.load();
+
         const connector = this,
             {
                 host, port, autoConnect
