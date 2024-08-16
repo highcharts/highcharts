@@ -189,7 +189,7 @@ the second step regarding adding the data to the `DataTable`.
 
 ### Custom Connector Tutorial
 
-This tutorial shows how to implement a `Custom Data Connector` for the *MQTT protocol* and how to deploy it in a simple Highcharts dashboard application. The connector is implemented in JavaScript and is independent of the application.
+This tutorial shows how to implement a `Custom Data Connector` for the *MQTT protocol* and how to deploy it in a simple Highcharts Dashboards application. The connector is implemented in JavaScript and is independent of the application.
 
 #### About MQTT
 [MQTT](https://en.wikipedia.org/wiki/MQTT) is the de-facto standard protocol for low resource, low power devices and is widely used in [IoT](https://en.wikipedia.org/wiki/Internet_of_things) applications across a wide range of industries: Mobile Internet, Smart Hardware, Internet of Vehicles, Smart Cities, Telemedicine, Power, Oil, Energy, and other fields.
