@@ -398,11 +398,30 @@ export interface HeaderEvents {
 }
 
 export interface GroupedHeader {
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
     headerFormat?: string;
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     */
     useHTML?: boolean;
+    /**
+     * The custom CSS class name for the table caption.
+     */
     className?: string;
+    /**
+     * The id of column with data.
+     */
     columnId?: string;
+    /**
+     * Current level of header in the whole header tree.
+     */
     level?: number;
+    /**
+     * Columns that are displayed below the header.
+     */
     columns?: GroupedHeader[]; 
 }
 /* *

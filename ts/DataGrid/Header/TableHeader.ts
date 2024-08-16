@@ -171,7 +171,7 @@ class TableHeader {
      * @param scope - structure of header
      * @returns 
      */
-    private getRowsLevels(scope: GroupedHeader[]) {
+    private getRowsLevels(scope: GroupedHeader[]):number {
         let maxDepth = 0;
 
         for (let i = 0, iEnd = scope.length; i < iEnd; i++) {
