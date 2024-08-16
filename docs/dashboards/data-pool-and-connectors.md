@@ -242,7 +242,9 @@ Although the `JSONConnector` and the `MQTTConnector` have much in common there a
 
 #### MQTT client options
 
-The `MQTTConnector` uses the PAHO client library version 1.0 for access control and communication with the MQTT Broker. The client options are the following:
+The `MQTTConnector` uses the [PAHO client library](https://eclipse.dev/paho/index.php?page=clients/js/index.php) (version 1.1.0) for access control and communication with the MQTT Broker. This library supports MQTT versions 3.1 and 3.1.1.
+
+The client options are the following:
 
 * host - the name of the MQTT broker (e.g. mqtt.mosquitto.com or mqtt.sognekraft.no)
 * port - 8083 for secure connections, otherwise 1083

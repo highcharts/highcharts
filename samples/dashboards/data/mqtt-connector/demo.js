@@ -294,14 +294,13 @@ function setPowerPlantName(topic, name) {
  * Paho MQTT library documentation
  *
  * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
- * https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
  *
  */
 
 let MQTTClient;
 try {
     // eslint-disable-next-line no-undef
-    MQTTClient = Paho.MQTT.Client;
+    MQTTClient = Paho.Client;
 } catch (e) {
     console.error('Paho MQTT library not found:', e);
 }
@@ -475,7 +474,7 @@ class MQTTConnector extends DataConnector {
      *
      */
     onMessageArrived(mqttPacket) {
-        // Executes in Paho.MQTT.Client context
+        // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
             connTable = connector.table;
@@ -512,7 +511,7 @@ class MQTTConnector extends DataConnector {
      *
      */
     onConnectionLost(response) {
-        // Executes in Paho.MQTT.Client context
+        // Executes in Paho.Client context
         const connector = connectorTable[this.clientId];
         connector.connected = false;
         connector.packetCount = 0;
