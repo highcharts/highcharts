@@ -23,6 +23,8 @@ glob('samples/**/demo.js', async (err, matches) => {
             continue;
         }
         const js = await (await fs.readFile(file)).toString();
+
+        let count = 0;
         const modifiedJs = js.replace(
             /Date\.UTC\((\d{4}),\s?(\d{1,2}),\s?(\d{1,2})\)/ug,
             (match, year, month, day) => {
@@ -31,6 +33,7 @@ glob('samples/**/demo.js', async (err, matches) => {
                     (Number(month) + 1).toString().padStart(2, '0'),
                     day.padStart(2, '0')
                 ];
+                count++;
                 return '\'' + formattedDate.join('-') + '\'';
             }
         );
@@ -38,6 +41,7 @@ glob('samples/**/demo.js', async (err, matches) => {
 
         //*
         if (modifiedJs !== js) {
+            console.log('Modified', count, file); // eslint-disable-line
             await fs.writeFile(file, modifiedJs, 'utf-8');
         }
         // */
