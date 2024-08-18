@@ -7,7 +7,7 @@
  * node tools/remove-date-utc.js
  */
 
-
+const colors = require('colors');
 const fs = require('fs').promises;
 const glob = require('glob');
 
@@ -26,16 +26,27 @@ glob('samples/**/demo.js', async (err, matches) => {
 
         let count = 0;
         const modifiedJs = js.replace(
-            /Date\.UTC\((\d{4}),\s?(\d{1,2}),\s?(\d{1,2})\)/ug,
-            (match, year, month, day) => {
+            // /Date\.UTC\((\d{4}),\s?(\d{1,2}),\s?(\d{1,2})\)/ug,
+            /Date\.UTC\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})(?:,\s*(\d{1,2}))?\)/ug,
+            (match, year, month, day, hour) => {
                 const formattedDate = [
                     year,
                     (Number(month) + 1).toString().padStart(2, '0'),
                     day.padStart(2, '0')
                 ];
                 count++;
-                return '\'' + formattedDate.join('-') + '\'';
+
+                let s = formattedDate.join('-');
+                if (hour) {
+                    s += ` ${hour.padStart(2, '0')}:00`;
+                }
+
+                return `'${s}'`;
             }
+        );
+
+        const remaining = modifiedJs.match(
+            /Date\.UTC\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/ug
         );
 
 
@@ -45,6 +56,10 @@ glob('samples/**/demo.js', async (err, matches) => {
             await fs.writeFile(file, modifiedJs, 'utf-8');
         }
         // */
+
+        if (remaining) {
+            console.log('  - Remaining'.red, remaining.length, file); // eslint-disable-line
+        }
 
         //*
         if (i > 100) {

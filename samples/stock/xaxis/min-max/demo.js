@@ -6,8 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'xAxis: {min: Date.UTC(2010, 8, 1), max: Date.UTC(2014, 8, ' +
-                '1)}'
+            text: 'xAxis.min = 2010-09-01, xAxis.max = 2014-09-01'
         },
 
         xAxis: {
