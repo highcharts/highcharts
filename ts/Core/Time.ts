@@ -355,10 +355,10 @@ class Time {
                 // `getTimezoneOffset`. According to
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
-                [2, 3, 8, 9, 10].indexOf(month) !== -1 &&
+                [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
 
-                // DST transitions only occur in the night-time
-                (hours < 5 || hours > 22)
+                // DST transitions occur only in the night-time
+                (hours < 5 || hours > 20)
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 
