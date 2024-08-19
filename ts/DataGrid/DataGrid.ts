@@ -594,14 +594,15 @@ class DataGrid {
         this.prevTop = i;
 
         const columnsInPresentationOrder = this.columnNames;
-        const rowCount = this.dataTable.modified.getRowCount();
+        const presentationTable = this.dataTable.modified;
+        const rowCount = presentationTable.modified.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
-            rowElement.dataset.rowIndex = String(i);
+            rowElement.dataset.rowIndex =
+                presentationTable.getOriginalRowIndex(i)?.toString();
 
             const cellElements = rowElement.childNodes;
-
 
             for (
                 let k = 0, kEnd = columnsInPresentationOrder.length;
@@ -992,6 +993,7 @@ class DataGrid {
     ): void {
         const formattedNodes = new AST(cellContent);
 
+        parentElement.innerHTML = '';
         formattedNodes.addToDOM(parentElement);
     }
 

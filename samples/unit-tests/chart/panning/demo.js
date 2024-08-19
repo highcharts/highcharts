@@ -232,7 +232,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 });
 
-QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
+QUnit.test('Stock panning (#6276, #21319)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 600
@@ -291,8 +291,8 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     assert.strictEqual(chart.xAxis[0].max, 1514505600000, 'Initial max');
 
     // Pan
-    controller.mouseDown(100, 200, { shiftKey: true }, true);
-    controller.mouseMove(300, 200, { shiftKey: true }, true);
+    controller.mouseDown(100, 200, { shiftKey: true });
+    controller.mouseMove(300, 200, { shiftKey: true });
     controller.mouseUp();
 
     assert.ok(chart.xAxis[0].min < initialMin, 'Has panned');
@@ -338,6 +338,20 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         oldExtremes,
         chart.xAxis[0].getExtremes(),
         '#20809, panning outside chart extremes should not do anything.'
+    );
+
+    // #21319
+    chart.update({
+        xAxis: {
+            ordinal: false
+        }
+    });
+    controller.pan([300, 200], [100, 200]);
+    assert.strictEqual(
+        chart.resetZoomButton,
+        undefined,
+        `resetZoomButton should not be rendered while panning on non-ordinal
+        axes. (#21319)`
     );
 });
 

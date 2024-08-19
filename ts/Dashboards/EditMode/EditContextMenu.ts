@@ -57,7 +57,7 @@ class EditContextMenu extends Menu {
             langKey: 'editMode',
             events: {
                 click: function (this: MenuItem): void {
-                    (this.menu as EditContextMenu).editMode.onEditModeToggle();
+                    (this.menu as EditContextMenu).editMode.toggleEditMode();
                 }
             }
         }

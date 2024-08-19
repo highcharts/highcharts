@@ -363,6 +363,9 @@ namespace ColumnDataLabel {
                             );
                             size = dataLabel.getBBox().height || 21;
 
+                            dataLabel.lineHeight = chart.renderer.fontMetrics(
+                                dataLabel.text || dataLabel
+                            ).h + 2 * dataLabel.padding;
                             point.distributeBox = {
                                 target: (
                                     (
@@ -370,12 +373,11 @@ namespace ColumnDataLabel {
                                             ?.natural.y || 0
                                     ) -
                                     labelPosition.top +
-                                    size / 2
+                                    dataLabel.lineHeight / 2
                                 ),
                                 size,
                                 rank: point.y
                             };
-
                             positions.push(point.distributeBox);
                         }
                     });
@@ -399,7 +401,11 @@ namespace ColumnDataLabel {
                         labelPosition = dataLabel.dataLabelPosition,
                         naturalY = labelPosition?.natural.y || 0,
                         connectorPadding = dataLabelOptions
-                            .connectorPadding || 0;
+                            .connectorPadding || 0,
+                        lineHeight = dataLabel.lineHeight || 21,
+                        bBox = dataLabel.getBBox(),
+                        topOffset = (lineHeight - bBox.height) / 2;
+
 
                     let x = 0,
                         y = naturalY,
@@ -460,7 +466,7 @@ namespace ColumnDataLabel {
                                     ).radialDistributionX(
                                         series,
                                         point,
-                                        y,
+                                        y - topOffset,
                                         naturalY,
                                         dataLabel
                                     );
@@ -484,11 +490,11 @@ namespace ColumnDataLabel {
                             y: y +
                                 (dataLabelOptions.y || 0) - // (#12985)
                                 // Vertically center
-                                dataLabel.getBBox().height / 2
+                                lineHeight / 2
                         };
 
                         labelPosition.computed.x = x;
-                        labelPosition.computed.y = y;
+                        labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
                         if (pick(dataLabelOptions.crop, true)) {

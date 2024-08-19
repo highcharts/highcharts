@@ -585,6 +585,35 @@ function updateRectSize(
     }
 }
 
+/**
+ * Compares two arrays of strings, checking their length and if corresponding
+ * elements are equal.
+ *
+ * @param {string[]} a
+ *        The first array to compare.
+ * @param {string[]} b
+ *        The second array to compare.
+ * @return {boolean}
+ *          Return `true` if the arrays are equal, otherwise `false`.
+ */
+function shallowArraysEqual(
+    a: String[] | undefined,
+    b: String[] | undefined
+): boolean {
+    if (!defined(a) || !defined(b)) {
+        return false;
+    }
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /* *
  *
  *  Default Export
@@ -600,6 +629,7 @@ const StockToolsUtilities = {
     isNotNavigatorYAxis,
     isPriceIndicatorEnabled,
     manageIndicators,
+    shallowArraysEqual,
     updateHeight,
     updateNthPoint,
     updateRectSize

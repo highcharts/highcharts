@@ -1580,11 +1580,7 @@ class Chart {
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
-        css(renderTo, {
-            overflow: 'hidden',
-            // #21144, retest and remove in future version of Chrome
-            pointerEvents: H.isChrome ? 'fill' : 'auto'
-        });
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -3667,7 +3663,8 @@ class Chart {
             { inverted } = this;
 
         let hasZoomed = false,
-            displayButton: boolean|undefined;
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -3848,6 +3845,10 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
+                        if (axis.isPanning) {
+                            isAnyAxisPanning = true; // #21319
+                        }
+
                         axis.setExtremes(
                             reset ? void 0 : newMin,
                             reset ? void 0 : newMax,
@@ -3891,8 +3892,12 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button
-                if (displayButton && !this.resetZoomButton) {
+                // Show or hide the Reset zoom button, but not while panning
+                if (
+                    displayButton &&
+                    !isAnyAxisPanning &&
+                    !this.resetZoomButton
+                ) {
                     this.showResetZoom();
                 } else if (!displayButton && this.resetZoomButton) {
                     this.resetZoomButton = this.resetZoomButton.destroy();

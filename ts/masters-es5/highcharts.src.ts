@@ -7,8 +7,6 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from '../masters/highcharts.src.js';
-import MSPointer from '../Core/MSPointer.js';
 declare global {
     interface Math {
         sign(x: number): number;
@@ -17,59 +15,62 @@ declare global {
         setPrototypeOf<T>(o: T, proto: object | null): T;
     }
 }
+// Loads polyfills as a module to force them to load first.
+import './polyfills.js';
+import Highcharts from '../masters/highcharts.src.js';
+import MSPointer from '../Core/MSPointer.js';
+import ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject.js';
 const G: AnyRecord = Highcharts;
 if (MSPointer.isRequired()) {
-    G.Pointer.dissolve();
     G.Pointer = MSPointer;
     MSPointer.compose(G.Chart);
 }
-if (!Array.prototype.includes) {
-    // eslint-disable-next-line no-extend-native
-    Array.prototype.includes = function <T> (
-        searchElement: T,
-        fromIndex?: number
-    ): boolean {
-        return this.indexOf(searchElement, fromIndex) > -1;
-    };
-}
-if (!Array.prototype.find) {
-    // eslint-disable-next-line no-extend-native
-    Array.prototype.find = function <T> (
-        predicate: (search: T, index: number, array: any[]) => boolean,
-        thisArg?: T
-    ): T | undefined {
-        for (let i = 0; i < this.length; i++) {
-            if (predicate.call(thisArg, this[i], i, this)) {
-                return this[i];
+// SVG 1.1 shadow filter override, IE11 compatible. #21098
+G.SVGRenderer.getShadowFilterContent = function (
+    options: ShadowOptionsObject
+): any[] {
+    return [
+        {
+            tagName: 'feFlood',
+            attributes: {
+                "flood-color": options.color,
+                "flood-opacity": options.opacity,
+                result: 'flood'
             }
+        },
+        {
+            tagName: 'feComposite',
+            attributes: {
+                in: 'flood',
+                in2: 'SourceAlpha',
+                operator: 'in',
+                result: 'shadowColor'
+            }
+        },
+        {
+            tagName: 'feOffset',
+            attributes: {
+                dx: options.offsetX,
+                dy: options.offsetY,
+                result: 'offsetShadow'
+            }
+        },
+        {
+            tagName: 'feGaussianBlur',
+            attributes: {
+            in: 'offsetShadow',
+                stdDeviation: options.width / 2,
+                result: 'offsetShadow'
+            }
+        },
+        {
+            tagName: 'feMerge',
+            children: [
+                { tagName: 'feMergeNode', attributes: { in: 'blurredShadow' } },
+                { tagName: 'feMergeNode', attributes: { in: 'SourceGraphic' } }
+            ]
         }
-    };
-}
-if (!Object.entries) {
-    Object.entries = function <T> (obj: Record<string, T>): Array<[string, T]> {
-        const keys = Object.keys(obj),
-            iEnd = keys.length,
-            entries = [] as Array<[string, T]>;
-
-        for (let i = 0; i < iEnd; ++i) {
-            entries.push([keys[i], obj[keys[i]]]);
-        }
-
-        return entries;
-    };
-}
-if (!Object.values) {
-    Object.values = function <T>(obj: Record<string, T>): Array<T> {
-        const keys = Object.keys(obj),
-            iEnd = keys.length,
-            values = [] as Array<T>;
-
-        for (let i = 0; i < iEnd; ++i) {
-            values.push(obj[keys[i]]);
-        }
-
-        return values;
-    };
-}
+    ];
+};
 // Default Export
 export default G;
