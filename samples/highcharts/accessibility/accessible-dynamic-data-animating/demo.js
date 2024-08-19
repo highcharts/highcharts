@@ -35,11 +35,7 @@ const chart = Highcharts.chart('container', {
 
 let intervalId;
 let isAnimating = false;
-
 const toggleButton = document.getElementById('toggle');
-toggleButton.onclick = function () {
-    toggleAnimation();
-};
 
 function toggleAnimation() {
     if (isAnimating) {
@@ -63,6 +59,7 @@ function toggleAnimation() {
     }
     isAnimating = !isAnimating;
 }
+toggleButton.onclick = toggleAnimation;
 
 // Start animating by default
 toggleAnimation();
