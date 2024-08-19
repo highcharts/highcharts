@@ -2276,8 +2276,9 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Split the tooltip into one label per series, with the header close
-         * to the axis. This is recommended over [shared](#tooltip.shared)
+         * Show tooltip for all points with the same X value. Splits the tooltip
+         * into one label per series, with the header close to the axis.
+         * This is recommended over [shared](#tooltip.shared)
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
@@ -2532,6 +2533,7 @@ const defaultOptions: DefaultOptions = {
         shape: 'callout',
 
         /**
+         * Show information in the tooltip for all points with the same X value.
          * When the tooltip is shared, the entire plot area will capture mouse
          * movement or touch events. Tooltip texts for series types with ordered
          * data (not pie, scatter, flags etc) will be shown in a single bubble.
