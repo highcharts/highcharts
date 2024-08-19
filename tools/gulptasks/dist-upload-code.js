@@ -6,8 +6,8 @@
 const gulp = require('gulp');
 const glob = require('glob');
 const fs = require('fs');
-const log = require('./lib/log');
-const { isDirectory, isDotEntry } = require('./lib/fs');
+const log = require('../libs/log');
+const { isDirectory, isDotEntry } = require('../libs/fs');
 const {
     uploadFiles,
     getGitIgnoreMeProperties,
@@ -154,9 +154,17 @@ function uploadProductPackage(productProps, options = {}) {
         gfxFilesToVersionedDir = [...gfxFilesToVersionedDir, ...gfxFiles.map(file => toS3FilePath(file, localPath, cdnpath, versionPath))];
     });
 
+    // eslint-disable-next-line no-undef
+    const zipWithoutVersion = structuredClone(zipFile);
+    zipWithoutVersion.to =
+        zipWithoutVersion.to.replace('-' + version, '-latest');
+
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: [zipFile],
+        files: [
+            zipFile,
+            zipWithoutVersion
+        ],
         name: prettyName
     }));
 

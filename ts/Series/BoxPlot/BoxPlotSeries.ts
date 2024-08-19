@@ -29,6 +29,7 @@ const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
+    crisp,
     extend,
     merge,
     pick
@@ -131,12 +132,10 @@ class BoxPlotSeries extends ColumnSeries {
             lowPlot,
             medianPlot,
             medianPath: (SVGPath|undefined),
-            crispCorr,
-            crispX = 0,
             boxPath: (SVGPath|undefined),
             graphic: (SVGElement|undefined),
             width,
-            left,
+            x,
             right,
             halfWidth,
             pointWiskerLength;
@@ -154,15 +153,15 @@ class BoxPlotSeries extends ColumnSeries {
 
             if (typeof point.plotY !== 'undefined') {
 
-                // Crisp vector coordinates
-                width = Math.round(shapeArgs.width);
-                left = Math.floor(shapeArgs.x);
-                right = left + width;
-                halfWidth = Math.round(width / 2);
-                q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
-                q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
-                highPlot = Math.floor(point.highPlot);
-                lowPlot = Math.floor(point.lowPlot);
+                // Vector coordinates
+                width = shapeArgs.width;
+                x = shapeArgs.x;
+                right = x + width;
+                halfWidth = width / 2;
+                q1Plot = doQuartiles ? point.q1Plot : point.lowPlot;
+                q3Plot = doQuartiles ? point.q3Plot : point.lowPlot;
+                highPlot = point.highPlot;
+                lowPlot = point.lowPlot;
 
                 if (!graphic) {
                     point.graphic = graphic = renderer.g('point')
@@ -262,32 +261,35 @@ class BoxPlotSeries extends ColumnSeries {
                 let d: SVGPath;
 
                 // The stem
-                crispCorr = (point.stem.strokeWidth() % 2) / 2;
-                crispX = left + halfWidth + crispCorr;
+                const stemX = crisp(
+                    (point.plotX || 0) + (series.pointXOffset || 0) +
+                        ((series.barW || 0) / 2),
+                    point.stem.strokeWidth()
+                );
                 d = [
                     // Stem up
-                    ['M', crispX, q3Plot],
-                    ['L', crispX, highPlot],
+                    ['M', stemX, q3Plot],
+                    ['L', stemX, highPlot],
 
                     // Stem down
-                    ['M', crispX, q1Plot],
-                    ['L', crispX, lowPlot]
+                    ['M', stemX, q1Plot],
+                    ['L', stemX, lowPlot]
                 ];
                 point.stem[verb]({ d });
 
                 // The box
                 if (doQuartiles) {
-                    crispCorr = (point.box.strokeWidth() % 2) / 2;
-                    q1Plot = Math.floor(q1Plot) + crispCorr;
-                    q3Plot = Math.floor(q3Plot) + crispCorr;
-                    left += crispCorr;
-                    right += crispCorr;
+                    const boxStrokeWidth = point.box.strokeWidth();
+                    q1Plot = crisp(q1Plot, boxStrokeWidth);
+                    q3Plot = crisp(q3Plot, boxStrokeWidth);
+                    x = crisp(x, boxStrokeWidth);
+                    right = crisp(right, boxStrokeWidth);
                     d = [
-                        ['M', left, q3Plot],
-                        ['L', left, q1Plot],
+                        ['M', x, q3Plot],
+                        ['L', x, q1Plot],
                         ['L', right, q1Plot],
                         ['L', right, q3Plot],
-                        ['L', left, q3Plot],
+                        ['L', x, q3Plot],
                         ['Z']
                     ];
                     point.box[verb]({ d });
@@ -295,31 +297,35 @@ class BoxPlotSeries extends ColumnSeries {
 
                 // The whiskers
                 if (whiskerLength) {
-                    crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
-                    highPlot = highPlot + crispCorr;
-                    lowPlot = lowPlot + crispCorr;
-                    pointWiskerLength = (/%$/).test(whiskerLength as any) ?
-                        halfWidth * parseFloat(whiskerLength as any) / 100 :
-                        (whiskerLength as any) / 2;
+                    const whiskerStrokeWidth = point.whiskers.strokeWidth();
+                    highPlot = crisp(point.highPlot, whiskerStrokeWidth);
+                    lowPlot = crisp(point.lowPlot, whiskerStrokeWidth);
+                    pointWiskerLength = (
+                        typeof whiskerLength === 'string' &&
+                        (/%$/).test(whiskerLength)
+                    ) ?
+                        halfWidth * parseFloat(whiskerLength) / 100 :
+                        Number(whiskerLength) / 2;
                     d = [
                         // High whisker
-                        ['M', crispX - pointWiskerLength, highPlot],
-                        ['L', crispX + pointWiskerLength, highPlot],
+                        ['M', crisp(stemX - pointWiskerLength), highPlot],
+                        ['L', crisp(stemX + pointWiskerLength), highPlot],
 
                         // Low whisker
-                        ['M', crispX - pointWiskerLength, lowPlot],
-                        ['L', crispX + pointWiskerLength, lowPlot]
+                        ['M', crisp(stemX - pointWiskerLength), lowPlot],
+                        ['L', crisp(stemX + pointWiskerLength), lowPlot]
                     ];
                     point.whiskers[verb]({ d });
                 }
 
                 // The median
-                medianPlot = Math.round(point.medianPlot);
-                crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
-                medianPlot = medianPlot + crispCorr;
+                medianPlot = crisp(
+                    point.medianPlot,
+                    point.medianShape.strokeWidth()
+                );
 
                 d = [
-                    ['M', left, medianPlot],
+                    ['M', x, medianPlot],
                     ['L', right, medianPlot]
                 ];
                 point.medianShape[verb]({ d });

@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nu-all.topo.json">Nunavut</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-nu-all.topo.json">Nunavut</a>'
         },
 
         mapNavigation: {

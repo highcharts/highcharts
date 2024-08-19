@@ -19,3 +19,21 @@ describe('Multiple connectors', () => {
         });
     });
 });
+
+describe('Highlight sync affected series id option', () => {
+    before(()=>{
+        cy.visit('dashboards/sync/highcharts-highlight-affected-series');
+    });
+
+    it('Should highlight the proper series when affected series id is defined.', () => {
+        cy.get('#radio-2022').click({ force: true });
+        cy.get('#dashboard-col-1 .highcharts-datagrid-cell').eq(0).trigger('mouseover');
+
+        cy.chart().then(chart => {
+            assert.ok(
+                chart.series[2].points[0].state === 'hover',
+                'Affected series id is set to 2022.'
+            );
+        });
+    });
+});

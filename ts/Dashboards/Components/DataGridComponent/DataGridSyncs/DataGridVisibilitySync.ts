@@ -42,6 +42,9 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as DataGridComponent;
+        const syncOptions = this.sync.syncConfig.visibility;
+        const groupKey = syncOptions.group ?
+            ':' + syncOptions.group : '';
 
         const { board } = component;
 
@@ -56,7 +59,7 @@ const syncPair: Sync.SyncPair = {
             dataGrid.update({
                 columns: {
                     [columnName]: {
-                        show: cursor.state !== 'series.hide'
+                        show: cursor.state !== 'series.hide' + groupKey
                     }
                 }
             });
@@ -74,8 +77,16 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            cursor.addListener(table.id, 'series.show', handleVisibilityChange);
-            cursor.addListener(table.id, 'series.hide', handleVisibilityChange);
+            cursor.addListener(
+                table.id,
+                'series.show' + groupKey,
+                handleVisibilityChange
+            );
+            cursor.addListener(
+                table.id,
+                'series.hide' + groupKey,
+                handleVisibilityChange
+            );
         };
 
         const unregisterCursorListeners = (): void => {
@@ -87,10 +98,14 @@ const syncPair: Sync.SyncPair = {
             }
 
             cursor.removeListener(
-                table.id, 'series.show', handleVisibilityChange
+                table.id,
+                'series.show' + groupKey,
+                handleVisibilityChange
             );
             cursor.removeListener(
-                table.id, 'series.hide', handleVisibilityChange
+                table.id,
+                'series.hide' + groupKey,
+                handleVisibilityChange
             );
         };
 

@@ -1,0 +1,10 @@
+---
+name: Donut chart
+authors:
+  - Hubert Kozik
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Pie charts
+...

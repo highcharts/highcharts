@@ -111,7 +111,7 @@ export interface AxisLabelOptions {
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
     indentation: number;
     overflow: OptionsOverflowValue;
-    padding: number;
+    padding?: number;
     reserveSpace?: boolean;
     rotation?: number|'auto';
     staggerLines: number;
@@ -127,7 +127,7 @@ export interface AxisOptions {
     alignTicks: boolean;
     allowDecimals?: boolean;
     alternateGridColor?: ColorType;
-    categories?: Array<string>|true;
+    categories?: Array<string>|boolean;
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);

@@ -73,7 +73,7 @@ namespace Globals {
 
     export const win = window;
     export const userAgent = (win.navigator && win.navigator.userAgent) || '';
-    export const isChrome = userAgent.indexOf('Chrome') !== -1;
+    export const isChrome = win.chrome;
     export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
 
 }

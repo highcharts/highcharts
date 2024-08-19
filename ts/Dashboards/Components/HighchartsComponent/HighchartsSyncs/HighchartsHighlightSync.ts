@@ -35,6 +35,8 @@ import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
+import U from '../../../Utilities.js';
+const { error } = U;
 
 /* *
 *
@@ -92,6 +94,7 @@ function getModifiedTableOffset(
  * */
 
 const defaultOptions: HighchartsHighlightSyncOptions = {
+    affectedSeriesId: null,
     highlightPoint: true,
     showTooltip: true,
     showCrosshair: true
@@ -107,6 +110,8 @@ const syncPair: Sync.SyncPair = {
         const { chart, board } = component;
         const highlightOptions =
             this.sync.syncConfig.highlight as HighchartsHighlightSyncOptions;
+        const groupKey = highlightOptions.group ?
+            ':' + highlightOptions.group : '';
 
         if (!highlightOptions.enabled || !chart) {
             return;
@@ -160,7 +165,7 @@ const syncPair: Sync.SyncPair = {
                                 type: 'position',
                                 row: offset + this.index,
                                 column: columnName,
-                                state: 'point.mouseOver'
+                                state: 'point.mouseOver' + groupKey
                             });
                         },
                         mouseOut: function (): void {
@@ -176,7 +181,7 @@ const syncPair: Sync.SyncPair = {
                                 type: 'position',
                                 row: offset + this.index,
                                 column: columnName,
-                                state: 'point.mouseOut'
+                                state: 'point.mouseOut' + groupKey
                             });
                         }
                     }
@@ -207,13 +212,17 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as HCComponent;
+        const groupKey = this.sync.syncConfig.highlight.group ?
+            ':' + this.sync.syncConfig.highlight.group : '';
 
         const { chart, board } = component;
 
         const getHoveredPoint = (
             e: DataCursor.Event
         ): Point | undefined => {
-            const table = e.table;
+            const { table, cursor } = e;
+            const highlightOptions = this.sync
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
             const modifier = table.getModifier();
 
             let offset = 0;
@@ -224,13 +233,31 @@ const syncPair: Sync.SyncPair = {
                 );
             }
 
-            if (chart && chart.series?.length) {
-                const cursor = e.cursor;
-                if (cursor.type === 'position') {
-                    let series;
+            if (chart && chart.series?.length && cursor.type === 'position') {
+                let series: Series | undefined;
+                const seriesId = highlightOptions.affectedSeriesId;
 
-                    const seriesIds =
-                        Object.keys(component.seriesFromConnector);
+                if (highlightOptions.affectedSeriesId) {
+                    const foundSeries = chart.get(
+                        highlightOptions.affectedSeriesId
+                    ) as Series;
+
+                    if (foundSeries?.points) {
+                        series = foundSeries;
+                    } else {
+                        error(
+                            'No series with ID \'' + seriesId + '\' found in ' +
+                            'the chart. Affected series will be selected ' +
+                            'according to the column assignment.'
+                        );
+                    }
+                }
+
+                if (!series) {
+                    const seriesIds = Object.keys(
+                        component.seriesFromConnector
+                    );
+
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
@@ -272,12 +299,12 @@ const syncPair: Sync.SyncPair = {
                             }
                         }
                     }
+                }
 
-                    if (series?.visible && cursor.row !== void 0) {
-                        const point = series.data[cursor.row - offset];
-                        if (point?.visible) {
-                            return point;
-                        }
+                if (series?.visible && cursor.row !== void 0) {
+                    const point = series.data[cursor.row - offset];
+                    if (point?.visible) {
+                        return point;
                     }
                 }
             }
@@ -319,7 +346,7 @@ const syncPair: Sync.SyncPair = {
                     true
                 );
 
-                if (chart.tooltip && points) {
+                if (chart.tooltip && points?.hoverPoints.length) {
                     tooltip.refresh(
                         useSharedTooltip ? points.hoverPoints : point
                     );
@@ -438,16 +465,16 @@ const syncPair: Sync.SyncPair = {
                 }
 
                 cursor.addListener(
-                    table.id, 'point.mouseOver', handleCursor
+                    table.id, 'point.mouseOver' + groupKey, handleCursor
                 );
                 cursor.addListener(
-                    table.id, 'dataGrid.hoverRow', handleCursor
+                    table.id, 'dataGrid.hoverRow' + groupKey, handleCursor
                 );
                 cursor.addListener(
-                    table.id, 'point.mouseOut', handleCursorOut
+                    table.id, 'point.mouseOut' + groupKey, handleCursorOut
                 );
                 cursor.addListener(
-                    table.id, 'dataGrid.hoverOut', handleCursorOut
+                    table.id, 'dataGrid.hoverOut' + groupKey, handleCursorOut
                 );
             }
         };
@@ -466,16 +493,16 @@ const syncPair: Sync.SyncPair = {
                 }
 
                 cursor.removeListener(
-                    table.id, 'point.mouseOver', handleCursor
+                    table.id, 'point.mouseOver' + groupKey, handleCursor
                 );
                 cursor.removeListener(
-                    table.id, 'dataGrid.hoverRow', handleCursor
+                    table.id, 'dataGrid.hoverRow' + groupKey, handleCursor
                 );
                 cursor.removeListener(
-                    table.id, 'point.mouseOut', handleCursorOut
+                    table.id, 'point.mouseOut' + groupKey, handleCursorOut
                 );
                 cursor.removeListener(
-                    table.id, 'dataGrid.hoverOut', handleCursorOut
+                    table.id, 'dataGrid.hoverOut' + groupKey, handleCursorOut
                 );
             }
         };

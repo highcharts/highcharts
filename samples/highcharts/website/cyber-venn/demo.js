@@ -797,7 +797,7 @@ setTimeout(function () {
 
     document.getElementById(
         'terms'
-    ).addEventListener('mouseover', function (e) {
+    ).addEventListener('mouseover', function () {
         document.getElementById('tip').style.opacity = 1;
         document.getElementById('tip').style.visibility = 'visible';
     });

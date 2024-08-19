@@ -81,6 +81,7 @@ namespace Responsive {
         ): void;
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
+        updatingResponsive: boolean;
     }
 
     export interface CurrentObject {
@@ -224,7 +225,10 @@ namespace Responsive {
             // Undo previous rules. Before we apply a new set of rules, we
             // need to roll back completely to base options (#6291).
             if (currentResponsive) {
+                this.currentResponsive = void 0;
+                this.updatingResponsive = true;
                 this.update(currentResponsive.undoOptions, redraw, true);
+                this.updatingResponsive = false;
             }
 
             if (ruleIds) {
@@ -243,9 +247,9 @@ namespace Responsive {
                     mergedOptions: mergedOptions,
                     undoOptions: undoOptions
                 };
-
-                this.update(mergedOptions, redraw, true);
-
+                if (!this.updatingResponsive) {
+                    this.update(mergedOptions, redraw, true);
+                }
             } else {
                 this.currentResponsive = void 0;
             }

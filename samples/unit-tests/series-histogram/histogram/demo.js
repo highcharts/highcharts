@@ -829,6 +829,7 @@ QUnit.test('#12077 - Histogram long digits.', function (assert) {
                     {
                         length: 10000
                     },
+                    // eslint-disable-next-line no-loss-of-precision
                     () => 6.6429209090989899214
                 ),
                 id: 's1'

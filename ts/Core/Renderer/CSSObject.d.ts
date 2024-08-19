@@ -76,6 +76,7 @@ export interface CSSObject {
     marginTop?: string|0;
     'max-height'?: string;
     'max-width'?: string;
+    mixedBlendMode?: string;
     MozBoxShadow?: string;
     MozTransform?: string;
     opacity?: number;

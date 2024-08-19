@@ -24,7 +24,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
 import GraphLayout from '../GraphLayoutComposition.js';
@@ -62,6 +62,8 @@ const {
     pick
 } = U;
 
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -198,7 +200,7 @@ class NetworkgraphSeries extends Series {
         if (this.layout) {
             this.layout.removeElementFromCollection(
                 this,
-                this.layout.series
+                this.layout.series as Array<this>
             );
         }
         NodesComposition.destroy.call(this);

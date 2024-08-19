@@ -27,10 +27,10 @@ import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
 import type JSON from '../Core/JSON';
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
 const {
-    dataTableCellToString,
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
@@ -70,6 +70,22 @@ class DataGrid {
      * Default options for all DataGrid instances.
      */
     public static readonly defaultOptions = DataGridDefaults;
+
+    /**
+     * Factory function for data grid instances.
+     *
+     * @param container
+     * Element or element ID to create the grid structure into.
+     *
+     * @param options
+     * Options to create the grid structure.
+     */
+    public static dataGrid(
+        container: (string | HTMLElement),
+        options: Globals.DeepPartial<DataGridOptions>
+    ): DataGrid {
+        return new DataGrid(container, options);
+    }
 
     /* *
      *
@@ -578,14 +594,15 @@ class DataGrid {
         this.prevTop = i;
 
         const columnsInPresentationOrder = this.columnNames;
-        const rowCount = this.dataTable.modified.getRowCount();
+        const presentationTable = this.dataTable.modified;
+        const rowCount = presentationTable.modified.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
-            rowElement.dataset.rowIndex = String(i);
+            rowElement.dataset.rowIndex =
+                presentationTable.getOriginalRowIndex(i)?.toString();
 
             const cellElements = rowElement.childNodes;
-
 
             for (
                 let k = 0, kEnd = columnsInPresentationOrder.length;
@@ -595,9 +612,14 @@ class DataGrid {
                 const cell = cellElements[k] as HTMLElement,
                     column = columnsInPresentationOrder[k],
                     value = this.dataTable.modified
-                        .getCell(columnsInPresentationOrder[k], i);
+                        .getCell(columnsInPresentationOrder[k], i),
+                    formattedContent = this.formatCell(value, column);
 
-                cell.textContent = this.formatCell(value, column);
+                if (this.options.useHTML) {
+                    this.renderHTMLCellContent(formattedContent, cell);
+                } else {
+                    cell.textContent = formattedContent;
+                }
 
                 // TODO: consider adding these dynamically to the input element
                 cell.dataset.originalData = '' + value;
@@ -774,7 +796,6 @@ class DataGrid {
      * @internal
      */
     private updateScrollingLength(): void {
-        const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.modified.getRowCount() - 1;
         let height = 0;
         const top = i - this.getNumRowsToDraw();
@@ -783,20 +804,6 @@ class DataGrid {
         // Explicit height is needed for overflow: hidden to work, to make sure
         // innerContainer is not scrollable by user input
         this.innerContainer.style.height = outerHeight + 'px';
-
-        // Calculate how many of the bottom rows is needed to potentially
-        // overflow innerContainer and use it to add extra rows to scrollHeight
-        // to ensure it is possible to scroll to the last row when rows have
-        // variable heights
-        for (let j = 0; j < this.rowElements.length; j++) {
-            const cellElements = this.rowElements[j].childNodes;
-            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.modified
-                        .getCell(columnsInPresentationOrder[k], i - j)
-                );
-            }
-        }
 
         this.scrollContainer.appendChild(this.innerContainer);
 
@@ -968,6 +975,26 @@ class DataGrid {
         }
 
         return formattedCell.toString();
+    }
+
+    /**
+     * When useHTML enabled, parse the syntax and render HTML.
+     *
+     * @param cellContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     *
+     */
+    private renderHTMLCellContent(
+        cellContent: string,
+        parentElement: HTMLElement
+    ): void {
+        const formattedNodes = new AST(cellContent);
+
+        parentElement.innerHTML = '';
+        formattedNodes.addToDOM(parentElement);
     }
 
     /**

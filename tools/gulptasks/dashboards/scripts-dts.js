@@ -4,7 +4,7 @@
 
 
 const fs = require('fs');
-const fsLib = require('../lib/fs');
+const fsLib = require('../../libs/fs');
 const gulp = require('gulp');
 const path = require('path');
 
@@ -51,7 +51,7 @@ const DTS_FOLDERS = [
  * Promise to keep.
  */
 async function scriptsDTS() {
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     const {
         bundleTargetFolder,

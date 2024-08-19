@@ -8,9 +8,9 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['us-ct-003', 10], ['us-ct-009', 11], ['us-ct-015', 12],
-        ['us-ct-005', 13], ['us-ct-001', 14], ['us-ct-013', 15],
-        ['us-ct-007', 16], ['us-ct-011', 17]
+        ['us-ct-09170', 10], ['us-ct-09120', 11], ['us-ct-09190', 12],
+        ['us-ct-09160', 13], ['us-ct-09140', 14], ['us-ct-09130', 15],
+        ['us-ct-09180', 16], ['us-ct-09150', 17], ['us-ct-09110', 18]
     ];
 
     // Create the chart
@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ct-all.topo.json">Connecticut</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ct-all.topo.json">Connecticut</a>'
         },
 
         mapNavigation: {

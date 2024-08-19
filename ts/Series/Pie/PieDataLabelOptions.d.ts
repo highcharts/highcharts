@@ -25,7 +25,6 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
  * */
 
 export interface PieDataLabelOptions extends DataLabelOptions {
-    alignTo?: string;
     connectorColor?: ColorType;
     connectorPadding?: number;
     connectorShape?: (string|DataLabel.ConnectorShapeFunction);

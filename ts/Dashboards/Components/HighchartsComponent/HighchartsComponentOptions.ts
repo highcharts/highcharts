@@ -271,6 +271,18 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  */
 export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
     /**
+     * ID of the series that should be affected by the highlight. If not
+     * defined, the appropriate series will be found according to the column
+     * assignment. This option only makes sense with `tooltip.shared: false`.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/highcharts-highlight-affected-series | Affected Series ID Option }
+     *
+     * @default null
+     */
+    affectedSeriesId?: string|null;
+    /**
      * Whether the marker should be synced. When hovering over a point in
      * other component in the same group, the 'hover' state is enabled at
      * the corresponding point in this component.

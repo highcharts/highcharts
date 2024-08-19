@@ -103,7 +103,7 @@ Highcharts.chart('container', {
             title: null,
             name: 'Panthera pardus',
             color: '#fcc657',
-            image: '../samples/graphics/horizontal-organizational-chart/' +
+            image: 'https://www.highcharts.com/samples/graphics/horizontal-organizational-chart/' +
                 'panthera.png',
             custom: {
                 info: 'Panthera is a genus within the Felidae family that ' +
@@ -138,8 +138,7 @@ Highcharts.chart('container', {
             id: 'Taxidea taxus',
             name: 'Taxidea taxus',
             color: '#C4B1A0',
-            image: '../samples/graphics/horizontal-organizational-chart/' +
-                'taxidea-taxus.png',
+            image: 'https://www.highcharts.com/samples/graphics/horizontal-organizational-chart/taxidea-taxus.png',
             custom: {
                 info: 'Taxidea taxus is a North American badger, somewhat ' +
                     'similar in appearance to the European badger, although ' +
@@ -153,7 +152,7 @@ Highcharts.chart('container', {
             name: 'Lutra lutra',
             color: '#C4B1A0',
             image:
-                '../samples/graphics/horizontal-organizational-chart/lutra.png',
+                'https://www.highcharts.com/samples/graphics/horizontal-organizational-chart/lutra.png',
             custom: {
                 info: 'Lutra is a semiaquatic mammal native to Eurasia. The ' +
                     'most widely distributed member of the otter subfamily ' +
@@ -182,7 +181,7 @@ Highcharts.chart('container', {
             id: 'Canis latrans',
             name: 'Canis latrans',
             color: '#B0ACA2',
-            image: '../samples/graphics/horizontal-organizational-chart/' +
+            image: 'https://www.highcharts.com/samples/graphics/horizontal-organizational-chart/' +
                 'canis-latrans.png',
             custom: {
                 info: 'Canis latrans, is a canine native to North America. ' +
@@ -194,7 +193,7 @@ Highcharts.chart('container', {
             id: 'Canis lupus',
             name: 'Canis lupus',
             color: '#B0ACA2',
-            image: '../samples/graphics/horizontal-organizational-chart/' +
+            image: 'https://www.highcharts.com/samples/graphics/horizontal-organizational-chart/' +
                 'canis-lupus.png',
             custom: {
                 info: 'Canis lupus is a canine native to the wilderness and ' +

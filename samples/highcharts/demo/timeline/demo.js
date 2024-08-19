@@ -56,9 +56,9 @@ Highcharts.chart('container', {
             description: '10 April 2019, first direct photograph of a black ' +
                 'hole and its vicinity.'
         }, {
-            name: '2020: Private spaceflight',
-            description: '30 May 2020, first orbital human spaceflight ' +
-                'launched by a private company (SpaceX).'
+            name: '2024: Moon Sample',
+            description: '25 June 2024, First samples returned from the far ' +
+                'side of the Moon.'
         }]
     }]
 });

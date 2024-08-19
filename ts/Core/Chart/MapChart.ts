@@ -301,7 +301,7 @@ namespace MapChart {
         if (typeof path === 'string') {
             path = path
                 // Move letters apart
-                .replace(/([A-Za-z])/g, ' $1 ')
+                .replace(/([A-Z])/gi, ' $1 ')
                 // Trim
                 .replace(/^\s*/, '').replace(/\s*$/, '');
 
@@ -311,7 +311,7 @@ namespace MapChart {
             const split = path.split(/[ ,;]+/);
 
             arr = split.map((item): (number|string) => {
-                if (!/[A-Za-z]/.test(item)) {
+                if (!/[A-Z]/i.test(item)) {
                     return parseFloat(item);
                 }
                 return item;

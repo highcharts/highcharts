@@ -38,7 +38,7 @@ Options:
 
 
 async function dist() {
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     if (argv.helpme) {
         // eslint-disable-next-line no-console

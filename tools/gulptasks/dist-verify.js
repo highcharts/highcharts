@@ -6,7 +6,7 @@ const { task } = require('gulp');
 const assert = require('node:assert');
 const { existsSync } = require('node:fs');
 const { join } = require('node:path');
-const { message } = require('./lib/log');
+const { message } = require('../libs/log');
 
 const DIST_DIR = './build/dist';
 const HIGHCHARTS_PATHS = [

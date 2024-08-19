@@ -76,4 +76,28 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
         'Tooltip should show after hovering over a point even with ' +
         'pointer-events set (#19025)'
     );
+
+    chart.series[0].setData([{
+        x: 1706719944000,
+        y: 2
+    }], false);
+
+    chart.update({
+        time: {
+            timezone: 'America/Chicago'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            pointFormat: '{#if point} {point.x: %e %b %y %I:%M} {/if}'
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.ok(
+        chart.tooltip.label.text.textStr.includes('31 Jan 24 10:52'),
+        'Timezone should be calculated correctly for templating string, #20816.'
+    );
 });

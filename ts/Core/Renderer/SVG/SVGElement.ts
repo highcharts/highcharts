@@ -56,6 +56,7 @@ const {
     addEvent,
     attr,
     createElement,
+    crisp,
     css,
     defined,
     erase,
@@ -69,6 +70,7 @@ const {
     objectEach,
     pick,
     pInt,
+    pushUnique,
     replaceNested,
     syncTimeout,
     uniqueKey
@@ -87,11 +89,6 @@ declare module '../CSSObject' {
     interface CSSObject {
         strokeWidth?: (number|string);
     }
-}
-
-interface TextPathObject {
-    path: SVGElement;
-    undo: Function;
 }
 
 /* *
@@ -156,7 +153,7 @@ class SVGElement implements SVGElementLike {
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
     public alignOptions?: AlignObject;
-    public alignTo?: string;
+    public alignTo?: BBoxObject|string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
@@ -196,14 +193,12 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     public textWidth?: number;
-    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
     public translateY?: number;
     public visibility?: 'hidden'|'inherit'|'visible';
     public width?: number;
     public x?: number;
-    public xAlign?: number;
     public y?: number;
     // @todo public zIndex?: number;
 
@@ -235,7 +230,7 @@ class SVGElement implements SVGElementLike {
             0
         );
 
-        if (/^[\-0-9\.]+$/.test(ret)) { // Is numerical
+        if (/^-?[\d\.]+$/.test(ret)) { // Is numerical
             ret = parseFloat(ret);
         }
         return ret;
@@ -394,7 +389,7 @@ class SVGElement implements SVGElementLike {
      * @param {boolean} [alignByTranslate]
      *        Align element by translation.
      *
-     * @param {string|Highcharts.BBoxObject} [box]
+     * @param {string|Highcharts.BBoxObject} [alignTo]
      *        The box to align to, needs a width and height. When the box is a
      *        string, it refers to an object in the Renderer. For example, when
      *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
@@ -409,17 +404,16 @@ class SVGElement implements SVGElementLike {
     public align(
         alignOptions?: AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|BBoxObject),
+        alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
         const attribs: SVGAttributes = {},
             renderer = this.renderer,
-            alignedObjects = renderer.alignedObjects;
+            alignedObjects = renderer.alignedObjects,
+            initialAlignment = Boolean(alignOptions);
 
         let x: number,
             y: number,
-            animateX = true,
-            alignTo: string|undefined,
             alignFactor: number|undefined,
             vAlignFactor: number|undefined;
 
@@ -427,13 +421,7 @@ class SVGElement implements SVGElementLike {
         if (alignOptions) {
             this.alignOptions = alignOptions;
             this.alignByTranslate = alignByTranslate;
-            if (!box || isString(box)) {
-                this.alignTo = alignTo = box || 'renderer';
-                // Prevent duplicates, like legendGroup after resize
-                erase(alignedObjects, this);
-                alignedObjects.push(this);
-                box = void 0; // Reassign it below
-            }
+            this.alignTo = alignTo;
 
         // When called on resize, no arguments are supplied
         } else {
@@ -442,19 +430,31 @@ class SVGElement implements SVGElementLike {
             alignTo = this.alignTo;
         }
 
-        box = pick(
-            box,
-            (renderer as any)[alignTo as any],
-            renderer as any
+        const alignToKey = !alignTo || isString(alignTo) ?
+            alignTo || 'renderer' :
+            void 0;
+        // When aligned to a key, automatically re-align on redraws
+        if (alignToKey) {
+            // Prevent duplicates, like legendGroup after resize
+            if (initialAlignment) {
+                pushUnique(alignedObjects, this);
+            }
+            alignTo = void 0; // Do not use the box
+        }
+
+        const alignToBox: BBoxObject = pick(
+            alignTo,
+            (renderer as any)[alignToKey as any],
+            renderer
         );
 
         // Assign variables
         const align = alignOptions.align,
             vAlign = alignOptions.verticalAlign;
         // Default: left align
-        x = ((box as any).x || 0) + (alignOptions.x || 0);
+        x = (alignToBox.x || 0) + (alignOptions.x || 0);
         // Default: top align
-        y = ((box as any).y || 0) + (alignOptions.y || 0);
+        y = (alignToBox.y || 0) + (alignOptions.y || 0);
 
         // Align
         if (align === 'right') {
@@ -463,10 +463,7 @@ class SVGElement implements SVGElementLike {
             alignFactor = 2;
         }
         if (alignFactor) {
-            animateX = x !== this.xAlign;
-            this.xAlign = x;
-
-            x += ((box as any).width - (alignOptions.width || 0)) /
+            x += ((alignToBox.width || 0) - (alignOptions.width || 0)) /
                 alignFactor;
         }
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
@@ -479,26 +476,17 @@ class SVGElement implements SVGElementLike {
             vAlignFactor = 2;
         }
         if (vAlignFactor) {
-            y += ((box as any).height - (alignOptions.height || 0)) /
+            y += ((alignToBox.height || 0) - (alignOptions.height || 0)) /
                 vAlignFactor;
         }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
         if (redraw) {
-
-            // Right- and center-aligned labels should not animate when we're
-            // only changing the text (#20965)
-            if (!animateX) {
-                this.attr({
-                    [alignByTranslate ? 'translateX' : 'x']: x
-                });
-            }
             this[this.placed ? 'animate' : 'attr'](attribs);
             this.placed = true;
         }
         this.alignAttr = attribs;
-
         return this;
     }
 
@@ -777,7 +765,7 @@ class SVGElement implements SVGElementLike {
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|this) {
-        const element = this.element,
+        const { element } = this,
             symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
         let key,
@@ -907,21 +895,26 @@ class SVGElement implements SVGElementLike {
         rect: RectangleObject,
         strokeWidth?: number
     ): RectangleObject {
-        const wrapper = this;
-
-        strokeWidth = strokeWidth || rect.strokeWidth || 0;
         // Math.round because strokeWidth can sometimes have roundoff errors
-        const normalizer = Math.round(strokeWidth) % 2 / 2;
+        strokeWidth = Math.round(strokeWidth || rect.strokeWidth || 0);
 
-        // Normalize for crisp edges
-        rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
-        rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
-        rect.width = Math.floor(
-            (rect.width || wrapper.width || 0) - 2 * normalizer
-        );
-        rect.height = Math.floor(
-            (rect.height || wrapper.height || 0) - 2 * normalizer
-        );
+        const x1 = rect.x || this.x || 0,
+            y1 = rect.y || this.y || 0,
+            x2 = (rect.width || this.width || 0) + x1,
+            y2 = (rect.height || this.height || 0) + y1,
+            // Find all the rounded coordinates for corners
+            x = crisp(x1, strokeWidth),
+            y = crisp(y1, strokeWidth),
+            x2Crisp = crisp(x2, strokeWidth),
+            y2Crisp = crisp(y2, strokeWidth);
+
+        extend(rect, {
+            x,
+            y,
+            width: x2Crisp - x,
+            height: y2Crisp - y
+        });
+
         if (defined(rect.strokeWidth)) {
             rect.strokeWidth = strokeWidth;
         }
@@ -1288,7 +1281,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // Remove from alignObjects
-        if (wrapper.alignTo) {
+        if (wrapper.alignOptions) {
             erase(renderer.alignedObjects, wrapper);
         }
 
@@ -1449,7 +1442,7 @@ class SVGElement implements SVGElementLike {
             // bounding box as others of the same length. Unless there is inner
             // HTML in the label. In that case, leave the numbers as is (#5899).
             if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/[0-9]/g, '0');
+                cacheKey = cacheKey.replace(/\d/g, '0');
             }
 
             // Properties that affect bounding box
@@ -1471,7 +1464,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // No cache found
-        if (!bBox) {
+        if (!bBox || bBox.polygon) {
 
             // SVG elements
             if (isSVG || renderer.forExport) {
@@ -1560,6 +1553,14 @@ class SVGElement implements SVGElementLike {
             if (rotation) {
                 bBox = this.getRotatedBox(bBox, rotation);
             }
+
+            // Create a reference to catch changes to bBox
+            const e = { bBox };
+
+            fireEvent(this, 'afterGetBBox', e);
+
+            // Pick up any changes after the fired event
+            bBox = e.bBox;
         }
 
         // Cache it. When loading a chart in a hidden iframe in Firefox and
@@ -1576,6 +1577,7 @@ class SVGElement implements SVGElementLike {
             }
             cache[cacheKey] = bBox;
         }
+
         return bBox;
     }
 
@@ -1653,11 +1655,32 @@ class SVGElement implements SVGElementLike {
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
 
+        /* Uncomment to debug boxes
+        this.renderer.path([
+            ['M', aX, aY],
+            ['L', bX, bY],
+            ['L', cX, cY],
+            ['L', dX, dY],
+            ['Z']
+        ])
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1
+            })
+            .add();
+        // */
+
         return {
             x,
             y,
             width: boxWidth,
-            height: boxHeight
+            height: boxHeight,
+            polygon: [
+                [aX, aY],
+                [bX, bY],
+                [cX, cY],
+                [dX, dY]
+            ]
         };
     }
 
@@ -1813,6 +1836,21 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
+     * Re-align an aligned text or label after setting the text.
+     *
+     * @private
+     * @function Highcharts.SVGElement#reAlign
+     *
+     */
+    protected reAlign(): void {
+        if (this.alignOptions?.width && this.alignOptions.align !== 'left') {
+            this.alignOptions.width = this.getBBox().width;
+            this.placed = false; // Block animation
+            this.align();
+        }
+    }
+
+    /**
      * Remove a class name from the element.
      *
      * @function Highcharts.SVGElement#removeClass
@@ -1900,123 +1938,6 @@ class SVGElement implements SVGElementLike {
                     existingGradient.radAttr
                 )
             );
-        }
-
-        return this;
-    }
-
-    /**
-     * Set a text path for a `text` or `label` element, allowing the text to
-     * flow along a path.
-     *
-     * In order to unset the path for an existing element, call `setTextPath`
-     * with `{ enabled: false }` as the second argument.
-     *
-     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
-     *
-     * @function Highcharts.SVGElement#setTextPath
-     *
-     * @param {Highcharts.SVGElement|undefined} path
-     *        Path to follow. If undefined, it allows changing options for the
-     *        existing path.
-     *
-     * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     *        Options.
-     *
-     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
-     */
-    public setTextPath(
-        path: SVGElement|undefined,
-        textPathOptions: AnyRecord
-    ): this {
-
-        // Defaults
-        textPathOptions = merge(true, {
-            enabled: true,
-            attributes: {
-                dy: -5,
-                startOffset: '50%',
-                textAnchor: 'middle'
-            }
-        }, textPathOptions);
-
-        const url = this.renderer.url,
-            textWrapper = this.text || this,
-            textPath = textWrapper.textPath,
-            { attributes, enabled } = textPathOptions;
-
-        path = path || (textPath && textPath.path);
-
-        // Remove previously added event
-        if (textPath) {
-            textPath.undo();
-        }
-
-        if (path && enabled) {
-            const undo = addEvent(textWrapper, 'afterModifyTree', (
-                e: AnyRecord
-            ): void => {
-
-                if (path && enabled) {
-
-                    // Set ID for the path
-                    let textPathId = path.attr('id');
-                    if (!textPathId) {
-                        path.attr('id', textPathId = uniqueKey());
-                    }
-
-                    // Set attributes for the <text>
-                    const textAttribs: SVGAttributes = {
-                        // `dx`/`dy` options must by set on <text> (parent), the
-                        // rest should be set on <textPath>
-                        x: 0,
-                        y: 0
-                    };
-
-                    if (defined(attributes.dx)) {
-                        textAttribs.dx = attributes.dx;
-                        delete attributes.dx;
-                    }
-                    if (defined(attributes.dy)) {
-                        textAttribs.dy = attributes.dy;
-                        delete attributes.dy;
-                    }
-                    textWrapper.attr(textAttribs);
-
-
-                    // Handle label properties
-                    this.attr({ transform: '' });
-                    if (this.box) {
-                        this.box = this.box.destroy();
-                    }
-
-                    // Wrap the nodes in a textPath
-                    const children = e.nodes.slice(0);
-                    e.nodes.length = 0;
-                    e.nodes[0] = {
-                        tagName: 'textPath',
-                        attributes: extend(attributes, {
-                            'text-anchor': attributes.textAnchor,
-                            href: `${url}#${textPathId}`
-                        }),
-                        children
-                    };
-                }
-            });
-
-            // Set the reference
-            textWrapper.textPath = { path, undo };
-
-        } else {
-            textWrapper.attr({ dx: 0, dy: 0 });
-            delete textWrapper.textPath;
-        }
-
-        if (this.added) {
-
-            // Rebuild text after added
-            textWrapper.textCache = '';
-            this.renderer.buildText(textWrapper);
         }
 
         return this;
@@ -2188,8 +2109,10 @@ class SVGElement implements SVGElementLike {
 
             this.textStr = value;
             if (this.added) {
-                this.renderer.buildText(this as any);
+                this.renderer.buildText(this);
             }
+
+            this.reAlign();
         }
     }
 

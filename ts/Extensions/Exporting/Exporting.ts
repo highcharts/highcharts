@@ -49,7 +49,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -255,7 +255,7 @@ namespace Exporting {
         /TapHighlightColor/,
         /^transition/,
         /^length$/, // #7700
-        /^[0-9]+$/ // #17538
+        /^\d+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
@@ -330,16 +330,11 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme;
+        const theme = chart.styledMode ? {} : btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
         );
-
-        if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
 
         if (onclick) {
             callback = function (
@@ -376,21 +371,14 @@ namespace Exporting {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 30);
+            theme.paddingLeft = pick(theme.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
-            extend(attr, {
+            extend(theme, {
                 width: btnOptions.width,
                 height: btnOptions.height,
                 padding: 0
             });
-        }
-
-
-        if (!chart.styledMode) {
-            attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
         }
 
         const button: SVGElement = renderer
@@ -399,7 +387,7 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr,
+                theme,
                 void 0,
                 void 0,
                 void 0,
@@ -422,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)
@@ -1090,7 +1082,7 @@ namespace Exporting {
                 .toLowerCase()
                 .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
                 .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '') // Preserve only latin
+                .replace(/[^a-z\d\-]/g, '') // Preserve only latin
                 .replace(/^[\-]+/g, '') // Dashes in the start
                 .replace(/[\-]+/g, '-') // Dashes in a row
                 .substr(0, 24)
@@ -1317,9 +1309,9 @@ namespace Exporting {
      */
     function hyphenate(prop: string): string {
         return prop.replace(
-            /([A-Z])/g,
-            function (a: string, b: string): string {
-                return '-' + b.toLowerCase();
+            /[A-Z]/g,
+            function (match: string): string {
+                return '-' + match.toLowerCase();
             }
         );
     }
@@ -1412,6 +1404,9 @@ namespace Exporting {
 
                 i = denylist.length;
                 while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
                     denylisted = (
                         denylist[i].test(prop) ||
                         typeof val === 'function'
@@ -1478,8 +1473,9 @@ namespace Exporting {
                         defaults: Record<string, string> = {};
                     for (const key in s) {
                         if (
+                            key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
-                            !/^[0-9]+$/.test(key)
+                            !/^\d+$/.test(key)
                         ) {
                             defaults[key] = s[key];
                         }
@@ -1751,18 +1747,18 @@ namespace Exporting {
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
-            .replace(/jQuery[0-9]+="[^"]+"/g, '')
+            .replace(/jQuery\d+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
             .replace(/url\([^#]+#/g, 'url(#')
             .replace(
                 /<svg /,
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
-            .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
+            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
             // Batik doesn't support rgba fills and strokes (#3095)
             .replace(
-                /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
+                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
                 '$1="rgb($2)" $1-opacity="$3"'
             )
 

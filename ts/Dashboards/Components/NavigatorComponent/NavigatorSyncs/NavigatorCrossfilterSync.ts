@@ -52,6 +52,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as NavigatorComponent;
+        const syncOptions = this.sync.syncConfig.crossfilter;
+        const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = async (
             extremes: Axis.ExtremesObject
@@ -86,11 +88,21 @@ const syncPair: Sync.SyncPair = {
                 dataCursor.emitCursor(
                     table,
                     {
-                        type: 'range',
-                        columns: [filterColumn],
-                        firstRow: 0,
-                        lastRow: table.getRowCount() - 1,
-                        state: 'crossfilter'
+                        type: 'position',
+                        column: filterColumn,
+                        row: table.getRowIndexBy(filterColumn, min),
+                        state: 'crossfilter' + groupKey
+                    },
+                    extremes as unknown as Event
+                );
+
+                dataCursor.emitCursor(
+                    table,
+                    {
+                        type: 'position',
+                        column: filterColumn,
+                        row: table.getRowIndexBy(filterColumn, max),
+                        state: 'crossfilter' + groupKey
                     },
                     extremes as unknown as Event
                 );

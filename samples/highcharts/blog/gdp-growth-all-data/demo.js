@@ -1,4 +1,4 @@
-function displayData() {
+window.displayData = function () {
 
     const iso2 = document.getElementById('Country_Select').value;
     // Get indicator code from SelectList
@@ -66,4 +66,4 @@ function displayData() {
     }).catch(function (error) {
         console.log(error);
     });
-}
+};

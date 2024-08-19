@@ -18,7 +18,9 @@
  * */
 
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
+import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
 import _DataGrid from '../DataGrid/DataGrid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
@@ -46,7 +48,10 @@ import '../Data/Modifiers/SortModifier.js';
 declare global {
     interface DataGridNamespace {
         win: typeof Globals.win;
+        AST: typeof AST;
         DataGrid: typeof _DataGrid;
+        dataGrid: typeof _DataGrid.dataGrid;
+        DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataConnector: typeof DataConnector;
@@ -69,9 +74,12 @@ declare global {
 
 const G = Globals as unknown as DataGridNamespace;
 
+G.AST = AST;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
+G.DataConverter = DataConverter;
 G.DataGrid = _DataGrid;
+G.dataGrid = _DataGrid.dataGrid;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;

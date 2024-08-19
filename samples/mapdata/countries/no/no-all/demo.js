@@ -8,9 +8,10 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['no-vl', 10], ['no-mr', 11], ['no-ag', 12], ['no-no', 13],
-        ['no-vi', 14], ['no-ro', 15], ['no-tf', 16], ['no-td', 17],
-        ['no-os', 18], ['no-vt', 19], ['no-in', 20]
+        ['no-vf', 10], ['no-te', 11], ['no-ro', 12], ['no-of', 13],
+        ['no-os', 14], ['no-ak', 15], ['no-fi', 16], ['no-td', 17],
+        ['no-mr', 18], ['no-tr', 19], ['no-no', 20], ['no-bu', 21],
+        ['no-ag', 22], ['no-in', 23], ['no-vl', 24]
     ];
 
     // Create the chart
@@ -24,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-all.topo.json">Norway, admin1</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-all.topo.json">Norway</a>'
         },
 
         mapNavigation: {

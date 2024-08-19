@@ -37,7 +37,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/vn/vn-all.topo.json">Vietnam</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/vn/vn-all.topo.json">Vietnam</a>'
         },
 
         mapNavigation: {

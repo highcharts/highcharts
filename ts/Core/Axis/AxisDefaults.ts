@@ -1026,11 +1026,13 @@ namespace AxisDefaults {
 
             /**
              * The pixel padding for axis labels, to ensure white space between
-             * them.
+             * them. Defaults to 4 for horizontal axes, 1 for vertical.
              *
+             * @type      {number}
+             * @default   undefined
              * @product   highcharts gantt
+             * @apioption xAxis.labels.padding
              */
-            padding: 5,
 
             /**
              * Whether to reserve space for the labels. By default, space is

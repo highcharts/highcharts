@@ -268,9 +268,9 @@ function isProductMaster(filePath) {
 async function scriptsESX(
     options
 ) {
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     options = typeof options === 'object' ? options : {};
 

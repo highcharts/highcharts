@@ -99,7 +99,7 @@ fetch(urlCountry).then(function (response) {
                 }
 
                 // Create the Chart
-                const chart = new Highcharts.Chart({
+                Highcharts.chart({
 
                     chart: {
                         type: 'spline',
