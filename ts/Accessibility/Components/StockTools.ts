@@ -246,26 +246,28 @@ class StockToolsComponent extends AccessibilityComponent {
                 return component.keyboardNavigationHandler.response.success;
             }
 
+            if (
+                keyCode === keys.right &&
+                currentButton.getAttribute('aria-haspopup') === 'true'
+            ) {
+                const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
+                    '#' + currentButton.getAttribute('aria-controls')
+                );
+                if (submenu) {
+                    component.openSubmenu(submenu);
+                    // TODO: Might be more proper to fire an event
+                    currentButton.click();
+
+                    return component.keyboardNavigationHandler.response.success;
+                }
+            }
+
 
             if ([keys.left, keys.up].includes(keyCode)) {
                 component.decrementFocusedButtonIndex();
             }
             if ([keys.right, keys.down].includes(keyCode)) {
                 component.incrementFocusedButtonIndex();
-                if (currentButton.getAttribute('aria-haspopup') === 'true') {
-                    const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
-                        '#' + currentButton.getAttribute('aria-controls')
-                    );
-                    if (submenu) {
-                        component.openSubmenu(submenu);
-                        // TODO: Might be more proper to fire an event
-
-                        component.chart.stockTools?.showSubmenu(
-                            submenu,
-                            submenu.parentElement ?? submenu
-                        );
-                    }
-                }
             }
 
             component.focusButton();
