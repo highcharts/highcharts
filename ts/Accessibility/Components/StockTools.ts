@@ -44,6 +44,7 @@ class StockToolsComponent extends AccessibilityComponent {
     public init(): void {
         this.announcer = new Announcer(this.chart, 'polite');
 
+
         if (this.chart.stockTools && this.chart.stockTools.wrapper) {
             this.chart.stockTools?.wrapper.setAttribute(
                 'aria-hidden',
@@ -160,9 +161,7 @@ class StockToolsComponent extends AccessibilityComponent {
         const atEnd = this.focusedButtonIndex === this.buttons.length - 1;
 
         if (atEnd && this.submenuParentIndex) {
-            this.closeOpenSubmenus();
-            this.focusedButtonIndex++;
-            return true;
+            return false;
         }
 
         if (!atEnd) {
@@ -180,8 +179,7 @@ class StockToolsComponent extends AccessibilityComponent {
         const atStart = this.focusedButtonIndex === 0;
 
         if (atStart && this.submenuParentIndex) {
-            this.closeOpenSubmenus();
-            return true;
+            return false;
         }
 
         if (!atStart) {
@@ -246,27 +244,41 @@ class StockToolsComponent extends AccessibilityComponent {
                 return component.keyboardNavigationHandler.response.success;
             }
 
-            if (
-                keyCode === keys.right &&
-                currentButton.getAttribute('aria-haspopup') === 'true'
-            ) {
-                const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
-                    '#' + currentButton.getAttribute('aria-controls')
-                );
-                if (submenu) {
-                    component.openSubmenu(submenu);
-                    // TODO: Might be more proper to fire an event
-                    currentButton.click();
+            if (keyCode === keys.right) {
+                if (
+                    currentButton.getAttribute('aria-haspopup') === 'true'
+                ) {
+                    const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
+                        '#' + currentButton.getAttribute('aria-controls')
+                    );
+                    if (submenu) {
+                        component.openSubmenu(submenu);
+                        // TODO: Might be more proper to fire an event
+                        component.chart.stockTools?.showSubmenu(
+                            submenu,
+                            submenu.parentElement ?? submenu
+                        );
 
-                    return component.keyboardNavigationHandler.response.success;
+                        return component.keyboardNavigationHandler.response
+                            .success;
+                    }
                 }
+
+                // Close submenu, go to next
+                component.closeOpenSubmenus();
+                component.incrementFocusedButtonIndex();
+            }
+
+            if (keyCode === keys.left) {
+                // Close submenu, go to previous
+                component.closeOpenSubmenus();
             }
 
 
             if ([keys.left, keys.up].includes(keyCode)) {
                 component.decrementFocusedButtonIndex();
             }
-            if ([keys.right, keys.down].includes(keyCode)) {
+            if ([keys.down].includes(keyCode)) {
                 component.incrementFocusedButtonIndex();
             }
 
