@@ -53,13 +53,13 @@ Highcharts.Point.prototype.highlight = function (event) {
 };
 
 /**
- * Synchronize zooming through the setExtremes event handler.
+ * Synchronize extremes (zooming) through the setExtremes event handler.
  */
 function syncExtremes(e) {
     const thisChart = this.chart;
 
     if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
-        Highcharts.each(Highcharts.charts, function (chart) {
+        Highcharts.charts.forEach(chart => {
             if (chart !== thisChart) {
                 if (chart.xAxis[0].setExtremes) { // It is null while updating
                     chart.xAxis[0].setExtremes(
@@ -75,89 +75,108 @@ function syncExtremes(e) {
     }
 }
 
-// Get the data. The contents of the data file can be viewed at
-Highcharts.ajax({
-    url: 'https://www.highcharts.com/samples/data/activity.json',
-    dataType: 'text',
-    success: function (activity) {
-
-        activity = JSON.parse(activity);
-        activity.datasets.forEach(function (dataset, i) {
-
-            // Add X values
-            dataset.data = Highcharts.map(dataset.data, function (val, j) {
-                return [activity.xData[j], val];
-            });
-
-            const chartDiv = document.createElement('div');
-            chartDiv.className = 'chart';
-            document.getElementById('container').appendChild(chartDiv);
-
-            Highcharts.chart(chartDiv, {
-                chart: {
-                    marginLeft: 40, // Keep all charts left aligned
-                    spacingTop: 20,
-                    spacingBottom: 20
-                },
-                title: {
-                    text: dataset.name,
-                    align: 'left',
-                    margin: 0,
-                    x: 30
-                },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                xAxis: {
-                    crosshair: true,
-                    events: {
-                        setExtremes: syncExtremes
-                    },
-                    labels: {
-                        format: '{value} km'
-                    },
-                    accessibility: {
-                        description: 'Kilometers',
-                        rangeDescription: '0km to 6.5km'
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: null
-                    }
-                },
-                tooltip: {
-                    positioner: function () {
-                        return {
-                            // right aligned
-                            x: this.chart.chartWidth - this.label.width,
-                            y: 10 // align to title
-                        };
-                    },
-                    borderWidth: 0,
-                    backgroundColor: 'none',
-                    pointFormat: '{point.y}',
-                    headerFormat: '',
-                    shadow: false,
-                    style: {
-                        fontSize: '18px'
-                    },
-                    valueDecimals: dataset.valueDecimals
-                },
-                series: [{
-                    data: dataset.data,
-                    name: dataset.name,
-                    type: dataset.type,
-                    color: Highcharts.getOptions().colors[i],
-                    fillOpacity: 0.3,
-                    tooltip: {
-                        valueSuffix: ' ' + dataset.unit
-                    }
-                }]
-            });
-        });
+/**
+ * Resets chart zoom on selection event.
+ */
+function resetZoom(e) {
+    // Prevent feedback loop
+    if (e.resetSelection) {
+        return;
     }
-});
+
+    // Zoom out all other charts on selection
+    Highcharts.charts.forEach(chart => {
+        if (chart !== e.target) {
+            chart.zoomOut();
+        }
+    });
+}
+
+(async () => {
+    // Get the data
+    const activity = await fetch(
+        'https://www.highcharts.com/samples/data/activity.json'
+    ).then(res => res.json());
+
+    // Loop the data sets and create one chart each
+    activity.datasets.forEach(function (dataset, i) {
+        // Add X values
+        dataset.data = dataset.data.map((val, j) => [activity.xData[j], val]);
+
+        const chartDiv = document.createElement('div');
+        chartDiv.className = 'chart';
+        document.getElementById('container').appendChild(chartDiv);
+
+        Highcharts.chart(chartDiv, {
+            chart: {
+                marginLeft: 40, // Keep all charts left aligned
+                spacingTop: 20,
+                spacingBottom: 20,
+                zooming: {
+                    type: 'x'
+                },
+                events: {
+                    selection: resetZoom
+                }
+            },
+            title: {
+                text: dataset.name,
+                align: 'left',
+                margin: 0,
+                x: 30
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: {
+                crosshair: true,
+                events: {
+                    setExtremes: syncExtremes
+                },
+                labels: {
+                    format: '{value} km'
+                },
+                accessibility: {
+                    description: 'Kilometers',
+                    rangeDescription: '0km to 6.5km'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+            tooltip: {
+                positioner: function () {
+                    return {
+                        // right aligned
+                        x: this.chart.chartWidth - this.label.width,
+                        y: 10 // align to title
+                    };
+                },
+                borderWidth: 0,
+                backgroundColor: 'none',
+                pointFormat: '{point.y}',
+                headerFormat: '',
+                shadow: false,
+                style: {
+                    fontSize: '18px'
+                },
+                valueDecimals: dataset.valueDecimals
+            },
+            series: [{
+                data: dataset.data,
+                name: dataset.name,
+                type: dataset.type,
+                color: Highcharts.getOptions().colors[i],
+                fillOpacity: 0.3,
+                tooltip: {
+                    valueSuffix: ' ' + dataset.unit
+                }
+            }]
+        });
+    });
+})();

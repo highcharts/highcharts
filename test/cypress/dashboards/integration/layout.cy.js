@@ -157,8 +157,8 @@ describe('Components in multiple layouts', () => {
                 'Components are assigned to each dashboard.'
             );
 
-            cy.get('#container #dashboard-col-0 .highcharts-dashboards-component-content').should('exist');
-            cy.get('#container2 #dashboard-col-0 .highcharts-dashboards-component-content').should('exist');
+            cy.get('#container #dashboard-col-0 .highcharts-dashboards-component-html-content').should('exist');
+            cy.get('#container2 #dashboard-col-0 .highcharts-dashboards-component-html-content').should('exist');
         });
     });
 });

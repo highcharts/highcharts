@@ -9,13 +9,18 @@ jobs:
     environment: browserstack
     
     steps:
+    - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+      uses: browserstack/github-actions/setup-env@master
+      with:
+        username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+        access-key: ${{ secrets.BROWSERSTACK_KEY }}
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
     - name: Install dependencies
       run: |
-        npm ci
+        npm i
         npm i https://github.com/browserstack/node-js-playwright-browserstack.git
 
     - name: Build Highcharts
