@@ -818,7 +818,7 @@ class TreemapSeries extends ScatterSeries {
 
             // If setRootNode is allowed, set a point cursor on clickables &
             // add drillId to point
-            if (allowTraversingTree && point.graphic) {
+            if (allowTraversingTree && point.graphic && !point.node.isGroup) {
                 point.drillId = options.interactByLeaf ?
                     series.drillToByLeaf(point) :
                     series.drillToByGroup(point);
@@ -835,10 +835,7 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false;
 
         if (
-            (
-                !point.node.isLeaf ||
-                point.node.isGroup
-            ) &&
+            (!point.node.isLeaf) &&
             (point.node.level - this.nodeMap[this.rootNode].level) === 1
         ) {
             drillId = point.id;
