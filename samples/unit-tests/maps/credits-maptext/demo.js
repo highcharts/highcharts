@@ -122,6 +122,21 @@ QUnit.test('Credits', function (assert) {
         'precedence'
     );
 
+    const href = 'www.example.com';
+
+    chart.update({
+        credits: {
+            href
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.credits.href,
+        href,
+        `Setting credits.href in MapChart should work and shouldn't be removed,
+        #21581.`
+    );
+
     // Reset
     delete Highcharts.defaultOptions.credits.mapText;
     delete Highcharts.defaultOptions.credits.mapTextFull;
