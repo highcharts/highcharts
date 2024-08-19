@@ -53,8 +53,8 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-
         command: "node utils/server --localOnly",
+        url: "http://127.0.0.1:3030",
         reuseExistingServer: !process.env.CI,
     },
 });
