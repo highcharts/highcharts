@@ -50,54 +50,79 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['title'],
             type: 'input'
         }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }, {
-            name: 'Grid caption',
-            propertyPath: ['dataGridOptions', 'settings', 'caption', 'text'],
-            type: 'input'
-        }, {
-            name: 'Editable table',
-            isStandalone: true,
-            propertyPath:
-                ['dataGridOptions', 'defaults', 'columns', 'editable'],
-            type: 'toggle'
-        }, {
-            name: 'Resizable columns',
-            isStandalone: true,
-            propertyPath:
-                ['dataGridOptions', 'settings', 'columns', 'resizable'],
-            type: 'toggle'
-        }, {
-            name: 'Sortable columns',
-            isStandalone: true,
-            propertyPath:
-                [
-                    'dataGridOptions',
-                    'defaults',
-                    'columns',
-                    'sorting',
-                    'sortable'
-                ],
-            type: 'toggle'
-        }, {
-            name: 'Columns distribution',
-            isStandalone: true,
-            propertyPath:
-                ['dataGridOptions', 'settings', 'columns', 'distribution'],
-            type: 'select',
-            selectOptions: [{
-                name: 'full'
-            }, {
-                name: 'fixed'
+            name: 'DataGrid options',
+            type: 'nested',
+            nestedOptions: [{
+                name: 'General',
+                options: [
+                    {
+                        name: 'caption',
+                        propertyPath: ['caption'],
+                        type: 'input'
+                    }, {
+                        name: 'Grid caption',
+                        propertyPath:
+                            ['dataGridOptions', 'settings', 'caption', 'text'],
+                        type: 'input'
+                    }, {
+                        name: 'Editable table',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'defaults',
+                                'columns',
+                                'editable'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Resizable columns',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'settings',
+                                'columns',
+                                'resizable'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Sortable columns',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'defaults',
+                                'columns',
+                                'sorting',
+                                'sortable'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Columns distribution',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'settings',
+                                'columns',
+                                'distribution'
+                            ],
+                        type: 'select',
+                        selectOptions: [{
+                            name: 'full'
+                        }, {
+                            name: 'fixed'
+                        }]
+                    }, {
+                        name: 'Text truncation',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'settings',
+                                'rows',
+                                'strictHeights'
+                            ],
+                        type: 'toggle'
+                    }
+                ]
             }]
-        }, {
-            name: 'Text truncation',
-            isStandalone: true,
-            propertyPath:
-                ['dataGridOptions', 'settings', 'rows', 'strictHeights'],
-            type: 'toggle'
         }
     ],
     onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
