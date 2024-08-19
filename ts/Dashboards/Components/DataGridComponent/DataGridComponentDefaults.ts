@@ -60,12 +60,12 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath: ['caption'],
                         type: 'input'
                     }, {
-                        name: 'Grid caption',
+                        name: 'DataGrid caption/title',
                         propertyPath:
                             ['dataGridOptions', 'settings', 'caption', 'text'],
                         type: 'input'
                     }, {
-                        name: 'Editable table',
+                        name: 'Editable DataGrid',
                         propertyPath:
                             [
                                 'dataGridOptions',
@@ -111,7 +111,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                             name: 'fixed'
                         }]
                     }, {
-                        name: 'Text truncation',
+                        name: 'Cell text truncation',
                         propertyPath:
                             [
                                 'dataGridOptions',
