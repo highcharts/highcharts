@@ -417,6 +417,7 @@ export interface GroupedHeader {
     columnId?: string;
     /**
      * Current level of header in the whole header tree.
+     * @private
      */
     level?: number;
     /**

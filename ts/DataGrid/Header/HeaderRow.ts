@@ -63,7 +63,7 @@ class HeaderRow extends Row {
     *
     * */
 
-    public override createCell(column: Column): Cell {
+    public override createCell(column: Column): HeaderCell {
         return new HeaderCell(column, this);
     }
 
@@ -94,14 +94,19 @@ class HeaderRow extends Row {
                 const dataColumn = vp.getColumn(
                     columnsOnLevel[i].columnId || ''
                 );
+                const {
+                    useHTML,
+                    headerFormat,
+                    columnId
+                } = columnsOnLevel[i];
 
                 // Skip hidden column or header when all columns are hidden.
                 if (
                     (
                         enabledColumns &&
-                        columnsOnLevel[i].columnId &&
+                        columnId &&
                         enabledColumns.indexOf(
-                            columnsOnLevel[i].columnId as string
+                            columnId as string
                         ) < 0
                     ) || (
                         !dataColumn &&
@@ -114,18 +119,27 @@ class HeaderRow extends Row {
                 const cell = this.createCell(
                     (
                         vp.getColumn(
-                            columnsOnLevel[i].columnId || ''
+                            columnId || ''
                         )
                     ) || (
                         new Column(
                         vp,
-                        columnsOnLevel[i].headerFormat || '',
+                        headerFormat || '',
                         i
                     ))
                 );
+
+                if (headerFormat) {
+                    cell.userOptions.headerFormat = headerFormat;
+                }
+
+                if (useHTML) {
+                    cell.userOptions.useHTML = useHTML;
+                }
+
                 cell.render();
                 
-                if (columnsOnLevel[i].columnId) {
+                if (columnId) {
                     cell.htmlElement.setAttribute(
                         'rowSpan',
                         (this.viewport.header?.levels || 1) - level

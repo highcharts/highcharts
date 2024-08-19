@@ -3,7 +3,7 @@ DataGrid.dataGrid('container', {
         columns: {
             id: ['1', '2', '3', '4'],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-            weight: [100, 40, 0.5, 200],
+            weight: [100, 40, 0.5, 200, 100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5],
             url: ['http://path1.to', 'http://path2.to', 'http://path2.to', 'http://path3.to'],
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
@@ -24,6 +24,7 @@ DataGrid.dataGrid('container', {
                     columns: [{
                         columnId: 'weight'
                     }, {
+                        headerFormat: 'Custom Price',
                         columnId: 'price'
                     }]
                 }]
@@ -51,6 +52,9 @@ DataGrid.dataGrid('container', {
     columns: {
         product: {
             headerFormat: '{id} name'
+        },
+        weight: {
+            headerFormat: 'Custom weight'
         }
     }
 });
