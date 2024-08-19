@@ -694,7 +694,7 @@ class TreemapSeries extends ScatterSeries {
             points = series.points.filter(function (
                 n: TreemapPoint
             ): boolean {
-                return n.node.visible;
+                return n.node.visible || defined(n.dataLabel);
             });
 
         let options: DataLabelOptions,
@@ -729,7 +729,7 @@ class TreemapSeries extends ScatterSeries {
             // Merge custom options with point options
             point.dlOptions = merge(options, point.options.dataLabels);
         }
-        super.drawDataLabels();
+        super.drawDataLabels(points);
     }
 
     /**
