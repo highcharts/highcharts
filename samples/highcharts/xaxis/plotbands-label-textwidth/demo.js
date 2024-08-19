@@ -9,7 +9,7 @@ Highcharts.chart('container', {
 
             // Set 'inside' to 'false' to display the full text
             label: {
-                text: 'One to two plotband',
+                text: 'This label overflows',
                 inside: false
             }
         }, {
@@ -18,7 +18,7 @@ Highcharts.chart('container', {
 
             // 'inside' defaults to 'true' and adds ellipsis by default
             label: {
-                text: 'Three to four plotband'
+                text: 'Ellipsis by default'
             }
         }, {
             from: 5,
@@ -26,7 +26,7 @@ Highcharts.chart('container', {
 
             // 'inside' defaults to 'true'..
             label: {
-                text: 'Five to six plotband',
+                text: 'This label wraps to multiple lines',
 
                 style: {
                     // Set 'textOverflow' to 'none' to make the text wrap
@@ -39,7 +39,7 @@ Highcharts.chart('container', {
 
             // The boundaries of the text can be configured with 'width'
             label: {
-                text: 'Seven to eight plotband',
+                text: 'Fixed width',
 
                 style: {
                     width: 30
