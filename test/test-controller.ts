@@ -281,6 +281,24 @@ class TestController {
             (evt as any)[key] = extra[key];
         });
 
+        // Extend each touch with pageX and pageY after chart offset corrections
+        if ((evt as any).touches) {
+            const twoFingers = (evt as any).touches.length === 2;
+            (evt as any).touches.forEach(
+                (touch: { pageX: number; pageY: number; }, i: any) =>
+                {
+                    if (twoFingers) {
+                        const sign = i ? 1 : -1;
+                        touch.pageX += 11 * sign;
+                        touch.pageY += 11 * sign;
+                    } else {
+                        touch.pageX = extra.pageX;
+                        touch.pageY = extra.pageY;
+                    }
+                }
+            );
+        }
+
         return evt;
     }
 
@@ -846,11 +864,11 @@ class TestController {
             };
 
             if (i === 0) {
-                this.touchStart(chartX, chartY, undefined, extra, debug);
+                this.touchStart(movePoint1[0], movePoint1[1], undefined, extra, debug);
             }
-            this.touchMove(chartX, chartY, undefined, extra, debug);
+            this.touchMove(movePoint1[0], movePoint1[1], undefined, extra, debug);
             if (i === ie) {
-                this.touchEnd(chartX, chartY, undefined, extra, debug);
+                this.touchEnd(movePoint1[0], movePoint1[1], undefined, extra, debug);
             }
         }
     }

@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -379,11 +380,20 @@ class SortModifier extends DataModifier {
             }
             modified.setColumns({ [orderInColumn]: column });
         } else {
+            const originalIndexes: Array<number|undefined> = [];
             const rows: Array<DataTable.Row> = [];
+
+            let rowReference: SortRowReference;
             for (let i = 0; i < rowCount; ++i) {
-                rows.push(rowReferences[i].row);
+                rowReference = rowReferences[i];
+
+                originalIndexes.push(
+                    modified.getOriginalRowIndex(rowReference.index)
+                );
+                rows.push(rowReference.row);
             }
             modified.setRows(rows, 0);
+            modified.setOriginalRowIndexes(originalIndexes);
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });

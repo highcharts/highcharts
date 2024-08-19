@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Hubert Kozik
+ requiresManualTesting: true
+ js_wrap: b
+...
