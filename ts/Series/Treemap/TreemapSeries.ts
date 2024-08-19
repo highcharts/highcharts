@@ -485,22 +485,9 @@ class TreemapSeries extends ScatterSeries {
                     area = a * b;
 
                 if (
-                    (
-                        compareHeight &&
-                        (
-                            a < pixelWidth ||
-                            b < pixelHeight ||
-                            area < thresholdArea
-                        )
-                    ) ||
-                    (
-                        !compareHeight &&
-                        (
-                            a < pixelWidth ||
-                            b < pixelWidth ||
-                            area < thresholdArea
-                        )
-                    )
+                    a < pixelWidth ||
+                    b < (compareHeight ? pixelHeight : pixelWidth) ||
+                    area < thresholdArea
                 ) {
                     groupChildren.push(children[i]);
                     children[i].visible = false;
