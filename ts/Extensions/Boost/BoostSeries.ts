@@ -728,10 +728,7 @@ function exitBoost(
     }
 
     // #21106, clean up boost clipping on the series groups.
-    const target = (chart.seriesGroup || series.group);
-    if (target) {
-        target.clip();
-    }
+    (chart.seriesGroup || series.group)?.clip();
 }
 
 /**
