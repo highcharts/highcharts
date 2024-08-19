@@ -54,7 +54,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['caption'],
             type: 'input'
         }, {
-            name: 'Grid caption',
+            name: 'DataGrid caption/title',
             propertyPath: ['dataGridOptions', 'settings', 'caption', 'text'],
             type: 'input'
         }, {
