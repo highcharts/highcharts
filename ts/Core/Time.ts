@@ -328,8 +328,8 @@ class Time {
     public makeTime(
         year: number,
         month: number,
-        date?: number,
-        hours?: number,
+        date: number = 1,
+        hours: number = 0,
         minutes?: number,
         seconds?: number,
         milliseconds?: number
@@ -337,29 +337,46 @@ class Time {
         // eslint-disable-next-line new-cap
         let d = this.Date.UTC(
             year,
-            month || 0,
-            date ?? 1,
-            hours || 0,
+            month,
+            date,
+            hours,
             minutes || 0,
             seconds || 0,
             milliseconds || 0
         );
-        const offset = this.getTimezoneOffset(d);
-        d += offset;
-        const newOffset = this.getTimezoneOffset(d);
 
-        if (offset !== newOffset) {
-            d += newOffset - offset;
+        if (this.timezone !== 'UTC') {
+            const offset = this.getTimezoneOffset(d);
+            d += offset;
 
-        // A special case for transitioning from summer time to winter time.
-        // When the clock is set back, the same time is repeated twice, i.e.
-        // 02:30 am is repeated since the clock is set back from 3 am to 2 am.
-        // We need to make the same time as local Date does.
-        } else if (
-            offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-            !hasOldSafariBug
-        ) {
-            d -= 36e5;
+            // Adjustments close to DST transitions
+            if (
+                // Optimize for speed by limiting the number of calls to
+                // `getTimezoneOffset`. According to
+                // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
+                // DST change may only occur in these months.
+                [2, 3, 8, 9, 10].indexOf(month) !== -1 &&
+
+                // DST transitions only occur in the night-time
+                (hours < 5 || hours > 22)
+            ) {
+                const newOffset = this.getTimezoneOffset(d);
+
+                if (offset !== newOffset) {
+                    d += newOffset - offset;
+
+                // A special case for transitioning from summer time to winter
+                // time. When the clock is set back, the same time is repeated
+                // twice, i.e. 02:30 am is repeated since the clock is set back
+                // from 3 am to 2 am. We need to make the same time as local
+                // Date does.
+                } else if (
+                    offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
+                    !hasOldSafariBug
+                ) {
+                    d -= 36e5;
+                }
+            }
         }
         return d;
     }
