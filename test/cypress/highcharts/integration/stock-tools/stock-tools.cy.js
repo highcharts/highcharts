@@ -247,43 +247,61 @@ describe('A11Y - aria-attributes', () => {
         cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
-    it('Stock tools container should have aria-label', () => {
-        cy.get('.highcharts-stocktools-toolbar').should('have.attr', 'aria-label', 'Stock tools');
+    describe('Top level attributes', () => {
+        it('Stock tools container should have aria-label', () => {
+            cy.get('.highcharts-stocktools-toolbar')
+                .should('have.attr', 'aria-label', 'Stock tools');
+        });
+
+        it('should have menubar role with vertical orientation', () => {
+            cy.get('.highcharts-stocktools-toolbar')
+                .should('have.attr', 'role', 'menubar')
+                .should('have.attr', 'aria-orientation', 'vertical');
+        });
+
+        it('All top level buttons should have aria-labels on first render', () => {
+            cy.get('.highcharts-stocktools-toolbar > li > button')
+                .should('have.attr', 'aria-label');
+        });
+
+        it('should have presentation role on all list items', () => {
+            cy.get('.highcharts-stocktools-toolbar > li')
+                .should('have.attr', 'role', 'presentation');
+        });
+    });
+
+    describe('Submenu behaviour', () => {
+        it('Has correct aria-expanded attributes', () => {
+            cy.get('.highcharts-stocktools-toolbar > li > button.highcharts-submenu-item-arrow')
+                .as('submenu-arrows')
+                .should('have.attr', 'aria-expanded', 'false')
+                .should('have.attr', 'aria-haspopup', 'true')
+                .should('have.attr', 'aria-controls');
+
+            cy.get('@submenu-arrows').first()
+                .click()
+                .should('have.attr', 'aria-expanded', 'true', 'aria-expanded should be true when expanded')
+                .siblings('ul[role=menu]')
+                .should('be.visible');
+
+            cy.get('@submenu-arrows').first()
+                .click()
+                .should('have.attr', 'aria-expanded', 'false', 'aria-expanded should be returned to false when toggled again')
+                .siblings('ul[role=menu]')
+                .should('not.be.visible');
+        });
+
+        it('Should update aria-label of main button when selecting submenu item', () => {
+            cy.get('.highcharts-label-annotation .highcharts-submenu-item-arrow').click();
+
+            // Select the "circle" simple shapes tool in the submenu
+            cy.get('[data-btn-name="circle"]').click();
+
+            // Main button should now select the circle tool
+            cy.get('[title="Simple shapes"] button').first()
+                .should('have.attr', 'aria-label', 'Select circle tool');
+        });
 
     });
 
-    it('All top level buttons should have aria-labels on first render', () => {
-        cy.get('.highcharts-stocktools-toolbar > li > button').should('have.attr', 'aria-label');
-    });
-
-    it('Has correct aria-expanded attributes', () => {
-        cy.get('.highcharts-stocktools-toolbar > li > button.highcharts-submenu-item-arrow')
-            .as('submenu-arrows')
-            .should('have.attr', 'aria-expanded', 'false')
-            .should('have.attr', 'aria-haspopup', 'true')
-            .should('have.attr', 'aria-controls');
-
-        cy.get('@submenu-arrows').first()
-            .click()
-            .should('have.attr', 'aria-expanded', 'true', 'aria-expanded should be true when expanded')
-            .siblings('ul[role=menu]')
-            .should('be.visible');
-
-        cy.get('@submenu-arrows').first()
-            .click()
-            .should('have.attr', 'aria-expanded', 'false', 'aria-expanded should be returned to false when toggled again')
-            .siblings('ul[role=menu]')
-            .should('not.be.visible');
-    });
-
-    it('Should update aria-label of main button when selecting submenu item', () => {
-        cy.get('.highcharts-label-annotation .highcharts-submenu-item-arrow').click();
-
-        // Select the "circle" simple shapes tool in the submenu
-        cy.get('[data-btn-name="circle"]').click();
-
-        // Main button should now select the circle tool
-        cy.get('[title="Simple shapes"] button').first()
-            .should('have.attr', 'aria-label', 'Select circle tool');
-    });
 });

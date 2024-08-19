@@ -556,8 +556,9 @@ class Toolbar {
             mainButton.setAttribute('role', 'separator');
         } else {
             mainButton.setAttribute('role', 'menuitem');
-            buttonWrapper.setAttribute('role', 'presentation');
         }
+
+        buttonWrapper.setAttribute('role', 'presentation');
 
         // Set the default aria label
         if (
