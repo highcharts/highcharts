@@ -58,7 +58,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['dataGridOptions', 'settings', 'caption', 'text'],
             type: 'input'
         }, {
-            name: 'Editable table',
+            name: 'Editable DataGrid',
             isStandalone: true,
             propertyPath:
                 ['dataGridOptions', 'defaults', 'columns', 'editable'],
