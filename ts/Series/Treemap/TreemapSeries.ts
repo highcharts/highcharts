@@ -31,7 +31,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
-    TreemapSeriesLayoutAlgorithmValue,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from './TreemapSeriesOptions';
@@ -62,6 +61,7 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
+import TreemapPointOptions from './TreemapPointOptions';
 const {
     addEvent,
     correctFloat,
@@ -295,8 +295,8 @@ class TreemapSeries extends ScatterSeries {
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
-        const childrenArea: Array<unknown> = [];
+    ): Array<TreemapNode.NodeValuesObject> {
+        const childrenArea: Array<TreemapNode.NodeValuesObject> = [];
 
         let pTot,
             direction = parent.direction,
@@ -329,7 +329,9 @@ class TreemapSeries extends ScatterSeries {
                 x: pX,
                 y: pY,
                 width: pW,
-                height: pH
+                height: pH,
+                direction: 0,
+                val: 0
             });
             if (directionChange) {
                 direction = 1 - direction;
@@ -343,9 +345,9 @@ class TreemapSeries extends ScatterSeries {
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         const series = this,
-            childrenArea: Array<unknown> = [],
+            childrenArea: Array<TreemapNode.NodeValuesObject> = [],
             plot: TreemapAlgorithmGroup.PlotObject = {
                 x: parent.x,
                 y: parent.y,
@@ -429,32 +431,31 @@ class TreemapSeries extends ScatterSeries {
 
     public applyLayoutAndGrouping(
         series: TreemapSeries,
-        level: TreemapSeriesLevelOptions,
-        area: TreemapSeries.AreaObject,
+        level: TreemapSeriesLevelOptions | undefined,
+        area: TreemapNode.NodeValuesObject,
         children: TreemapNode[],
         parent: TreemapNode
     ):
         {
             children: TreemapNode[],
             childrenValues: TreemapNode.NodeValuesObject[]
-        } {
+        } | undefined {
         const { groupAreaThreshold } = series.options,
             groupChildren: TreemapNode[] = [],
-            algorithm = pick<
-            TreemapSeriesLayoutAlgorithmValue|undefined,
-            TreemapSeriesLayoutAlgorithmValue
-            >(
+            algorithm = pick(
                 (
-                    (series as any)[
-                        (level && level.layoutAlgorithm) as any
-                    ] &&
+                    level?.layoutAlgorithm &&
+                    series[level?.layoutAlgorithm] &&
                     level.layoutAlgorithm
                 ),
-                series.options.layoutAlgorithm as any
+                series.options.layoutAlgorithm
             );
 
-        let childrenValues: Array<TreemapNode.NodeValuesObject> =
-            series[algorithm](area as any, children) as any;
+        if (!algorithm) {
+            return;
+        }
+
+        let childrenValues = series[algorithm](area, children);
 
         if (
             parent.visible &&
@@ -534,31 +535,34 @@ class TreemapSeries extends ScatterSeries {
                     groupPoint = new PointClass(series, {
                         name: groupAreaThreshold.name,
                         value: val
-                    } as any);
+                    } as TreemapPointOptions);
                 }
 
                 if (node) {
-                    node.val = val;
-                    node.visible = true;
-
                     if (series.colorAxis) {
                         groupPoint.color = series
                             .colorAxis.toColor(val, groupPoint);
                     }
 
+                    merge(true, groupPoint, {
+                        node,
+                        formatPrefix: 'groupedNodes',
+                        groupedPointsAmount: groupChildren.length
+                    });
+
                     series.points.push(groupPoint);
 
-                    groupPoint.node = node;
-                    groupPoint.formatPrefix = 'groupedNodes';
-                    groupPoint.groupedPointsAmount = groupChildren.length;
+                    merge(true, node, {
+                        point: groupPoint,
+                        isLeaf: true,
+                        isGroup: true,
+                        parentNode: parent,
+                        val,
+                        visible: true
+                    });
 
                     series.nodeMap[node.id] = node;
                     series.nodeList.push(node);
-
-                    node.point = groupPoint;
-                    node.isLeaf = true;
-                    node.isGroup = true;
-                    node.parentNode = parent;
 
                     children = children.filter(
                         (x): boolean => !groupChildren?.includes(x)
@@ -567,8 +571,7 @@ class TreemapSeries extends ScatterSeries {
 
                     // Calculate the layout one more time after hiding small
                     // leafs
-                    childrenValues =
-                        series[algorithm](area as any, children) as any;
+                    childrenValues = series[algorithm](area, children);
                 }
             }
         }
@@ -594,7 +597,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public calculateChildrenAreas(
         parent: TreemapNode,
-        area: TreemapSeries.AreaObject
+        area: TreemapNode.NodeValuesObject
     ): void {
         const series = this,
             options = series.options,
@@ -618,7 +621,7 @@ class TreemapSeries extends ScatterSeries {
             area,
             children,
             parent
-        ));
+        ) || { children, childrenValues });
 
         let i = -1;
         for (const child of children) {
@@ -1503,28 +1506,28 @@ class TreemapSeries extends ScatterSeries {
     public sliceAndDice(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmFill(true, parent, children);
     }
 
     public squarified(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmLowAspectRatio(true, parent, children);
     }
 
     public strip(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmLowAspectRatio(false, parent, children);
     }
 
     public stripes(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmFill(false, parent, children);
     }
 

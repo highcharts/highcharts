@@ -262,7 +262,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
      */
-    layoutAlgorithm?: string;
+    layoutAlgorithm?: TreemapSeriesLayoutAlgorithmValue;
 
     /**
      * Can set the layoutStartingDirection option on a specific level.
@@ -273,7 +273,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @validvalue ["vertical", "horizontal"]
      */
-    layoutStartingDirection?: string;
+    layoutStartingDirection?: TreemapSeriesLayoutStartingDirectionValue;
 
     /**
      * Decides which level takes effect from the options set in the levels
