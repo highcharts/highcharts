@@ -93,7 +93,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 name: 'fixed'
             }]
         }, {
-            name: 'Text truncation',
+            name: 'Cell text truncation',
             isStandalone: true,
             propertyPath:
                 ['dataGridOptions', 'settings', 'rows', 'strictHeights'],
