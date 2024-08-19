@@ -244,7 +244,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 return component.keyboardNavigationHandler.response.success;
             }
 
-            if (keyCode === keys.right) {
+            if (keyCode === keys.right || keyCode === keys.down) {
                 if (
                     currentButton.getAttribute('aria-haspopup') === 'true'
                 ) {
@@ -264,9 +264,10 @@ class StockToolsComponent extends AccessibilityComponent {
                     }
                 }
 
-                // Close submenu, go to next
-                component.closeOpenSubmenus();
-                component.incrementFocusedButtonIndex();
+                if (keyCode === keys.right) {
+                    // Close submenu, go to next
+                    component.closeOpenSubmenus();
+                }
             }
 
             if (keyCode === keys.left) {
@@ -274,11 +275,10 @@ class StockToolsComponent extends AccessibilityComponent {
                 component.closeOpenSubmenus();
             }
 
-
             if ([keys.left, keys.up].includes(keyCode)) {
                 component.decrementFocusedButtonIndex();
             }
-            if ([keys.down].includes(keyCode)) {
+            if ([keys.right, keys.down].includes(keyCode)) {
                 component.incrementFocusedButtonIndex();
             }
 
