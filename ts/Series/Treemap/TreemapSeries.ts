@@ -523,6 +523,8 @@ class TreemapSeries extends ScatterSeries {
                         name: groupAreaThreshold.name,
                         value: val
                     } as TreemapPointOptions);
+
+                    series.points.push(groupPoint);
                 }
 
                 if (node) {
@@ -537,7 +539,6 @@ class TreemapSeries extends ScatterSeries {
                         groupedPointsAmount: groupChildren.length
                     });
 
-                    series.points.push(groupPoint);
 
                     merge(true, node, {
                         point: groupPoint,
@@ -1538,21 +1539,26 @@ class TreemapSeries extends ScatterSeries {
 
         const existingRootNode = series.nodeMap?.[rootId];
 
-        // Update axis extremes according to the root node after traversing
-        // based of existing node
+        // Update axis extremes based on existing node according to the root
+        // node after traversing only for grouping feature
         if (
             options.allowTraversingTree &&
             !series.isDirtyData &&
-            existingRootNode
+            existingRootNode &&
+            series.options.groupAreaThreshold?.enabled
         ) {
             updateAxes(existingRootNode.pointValues);
         }
 
-        // Group points are removed during generatePoints method, save them for
-        // later usage
-        const groupPoints = (this.points || []).filter((point): boolean =>
-            point.node?.isGroup
-        );
+        // Group points are removed, but not destroyed during generatePoints
+        // method, save them for later usage
+        const groupPoints = (this.points || []).filter((point): boolean => {
+            if (point.node?.isGroup) {
+                point.node.visible = false; // Hide group node
+                return true;
+            }
+            return false;
+        });
 
         // Call prototype function
         super.translate();
@@ -1656,15 +1662,7 @@ class TreemapSeries extends ScatterSeries {
             });
         }
 
-        // Update axis extremes according to the root node only if root node
-        // didn't exist before
-        if (
-            options.allowTraversingTree &&
-            (
-                series.isDirtyData ||
-                !existingRootNode
-            )
-        ) {
+        if (options.allowTraversingTree) {
             updateAxes(rootNode.pointValues);
         }
 
