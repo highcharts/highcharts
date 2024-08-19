@@ -31,7 +31,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT DEMO LINK accessibility/before-chart-format -->
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/before-chart-format allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/timeline)
 
@@ -51,7 +51,8 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT DEMO LINK accessibility/value-description-format -->
+
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/value-description-format allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bubble)
 
@@ -82,12 +83,15 @@ Options are also available for specifying value prefixes and suffixes. Uses `too
 Highcharts.chart('container', {
     accessibility: {
         point: {
-            valueSuffix: 'millions'
+            valueSuffix: '%'
         }
     },
     // ...
 });
 ```
+
+Example with `tooltip.valueSuffix`:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-pie allow="fullscreen"></iframe>
 
 ### Additional text descriptions
 
@@ -131,8 +135,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-
-<!-- INSERT DEMO LINK accessibility/point-description-enabled-threshold -->
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/point-description-enabled-threshold allow="fullscreen"></iframe>
 
 It is possible to set a similar [threshold for keyboard navigation](https://api.highcharts.com/highcharts/accessibility.keyboardNavigation.seriesNavigation.pointNavigationEnabledThreshold), but this is disabled by default.
 
@@ -150,7 +153,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT DEMO LINK accessibility/expose-as-group-only -->
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/expose-as-group-only allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/art-grants)
 
@@ -181,7 +184,8 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT DEMO LINK accessibility/range-description-axis-description-->
+
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/range-description-axis-description allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/arearange)
 
