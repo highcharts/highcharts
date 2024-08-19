@@ -223,7 +223,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * `tooltip.formatter` callback function and `point.isGroupNode` flag.
          *
          * @type      {string}
-         * @default   + {point.groupedPointsAmount} more...
+         * @default   '+ {point.groupedPointsAmount} more...'
          * @apioption tooltip.groupedNodesFormat
          */
         groupedNodesFormat: '<span>+ {point.groupedPointsAmount} more...' +
@@ -615,9 +615,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * dataLabels, etc.
          *
          * @type {string}
-         *
          * @since next
-         *
          * @product highcharts
          */
         name: 'Grouped nodes'

@@ -503,7 +503,7 @@ class TreemapSeries extends ScatterSeries {
 
                 let groupPoint = series.points.find(
                         (point): boolean =>
-                            point.node.isGroup &&
+                            (point.node.isGroup || false) &&
                             point.node.parent === parent.id
                     ),
                     node = groupPoint?.node;
@@ -1643,7 +1643,7 @@ class TreemapSeries extends ScatterSeries {
         series.calculateChildrenAreas(tree, seriesArea);
 
         const groupNodes = series.nodeList.filter((node): boolean =>
-            node.isGroup
+            node.isGroup || false
         );
 
         // Logic for point colors

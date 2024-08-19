@@ -112,9 +112,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * Enable or disable Treemap grouping.
      *
      * @type {boolean}
-     *
      * @since next
-     *
      * @product highcharts
      */
     enabled: boolean;
@@ -123,9 +121,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * The pixel threshold width of area, which is used in Treemap grouping.
      *
      * @type {number}
-     *
      * @since next
-     *
      * @product highcharts
      *
      */
@@ -135,9 +131,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * The pixel threshold height of area, which is used in Treemap grouping.
      *
      * @type {number}
-     *
      * @since next
-     *
      * @product highcharts
      */
     pixelHeight?: number;
@@ -147,9 +141,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * etc.
      *
      * @type {string}
-     *
      * @since next
-     *
      * @product highcharts
      */
     name: string;
@@ -671,7 +663,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * `tooltip.formatter` callback function and `point.isGroupNode` flag.
      *
      * @type      {string}
-     * @default   + {point.groupedPointsAmount} more...
+     * @default   '+ {point.groupedPointsAmount} more...'
      * @apioption tooltip.groupedNodesFormat
      */
 

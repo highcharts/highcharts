@@ -37,7 +37,7 @@ class TreemapNode {
     childrenTotal = 0;
     ignore?: boolean;
     isLeaf?: boolean;
-    isGroup: boolean = false;
+    isGroup?: boolean;
     levelDynamic?: number;
     name?: string;
     parent?: string;
