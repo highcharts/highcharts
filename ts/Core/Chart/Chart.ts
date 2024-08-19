@@ -1601,7 +1601,8 @@ class Chart {
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none', // #13503
                 'touch-action': 'manipulation',
-                outline: 'none'
+                outline: 'none',
+                padding: '0px'
             }, optionsChart.style || {});
         }
 
