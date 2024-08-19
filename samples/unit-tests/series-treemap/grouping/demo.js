@@ -187,4 +187,39 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
         void 0,
         'If grouping id disabled group points shouldn\'t be rendered.'
     );
+
+    series.update({
+        allowTraversingTree: true,
+        groupAreaThreshold: {
+            enabled: true
+        }
+    });
+
+    series.setRootNode('par1');
+
+    assert.strictEqual(
+        series.points.find(point =>
+            point.node.isGroup && point.node.parent === 'par1'
+        ).drillId,
+        void 0,
+        'Traversing should not be possible for grouped node.'
+    );
+
+    series.setRootNode('');
+
+    const tooltipText = 'New tooltip content';
+
+    chart.update({
+        tooltip: {
+            groupedNodesFormat: tooltipText
+        }
+    });
+
+    series.points.find(point => point.node.isGroup).onMouseOver();
+
+    assert.strictEqual(
+        chart.tooltip.label.text.textStr,
+        tooltipText,
+        'Tooltip format for grouped nodes should be updated correctly.'
+    );
 });
