@@ -70,7 +70,7 @@
     "@typescript-eslint/parser": "5.62.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
-    "browserstack-node-sdk": "^1.34.8",
+    "browserstack-node-sdk": "^1.34.10",
     "bundle-declarations-webpack-plugin": "^5.1.1",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
