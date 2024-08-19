@@ -249,7 +249,7 @@ class Toolbar {
                 const selectedSubmenuButton =
                     submenuWrapper
                         .querySelector(
-                            `button[data-btn-name*=${mainButton.dataset.selectedTool}]`
+                            `button[data-btn-name=${mainButton.dataset.selectedTool}]`
                         );
 
                 selectedSubmenuButton?.parentElement?.classList
@@ -580,7 +580,8 @@ class Toolbar {
         // Save these for use when updating the aria-label on submenu selection
         if (!('label' in mainButton.dataset)) {
             if (btnName !== 'separator') {
-                mainButton.dataset.label = lang.gui[btnName]?.toLowerCase();
+                mainButton.dataset.label = lang.gui[btnName]?.toLowerCase()
+                    .replace(' ', '-');
                 mainButton.dataset.btnName = btnName;
             }
         }

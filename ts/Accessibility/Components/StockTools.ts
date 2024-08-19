@@ -244,30 +244,29 @@ class StockToolsComponent extends AccessibilityComponent {
                 return component.keyboardNavigationHandler.response.success;
             }
 
-            if (keyCode === keys.right || keyCode === keys.down) {
-                if (
-                    currentButton.getAttribute('aria-haspopup') === 'true'
-                ) {
-                    const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
-                        '#' + currentButton.getAttribute('aria-controls')
+            if (
+                currentButton.getAttribute('aria-haspopup') === 'true' &&
+                keyCode === keys.down
+            ) {
+                const submenu = currentButton.parentElement?.querySelector<HTMLElement>(
+                    '#' + currentButton.getAttribute('aria-controls')
+                );
+                if (submenu) {
+                    component.openSubmenu(submenu);
+                    // TODO: Might be more proper to fire an event
+                    component.chart.stockTools?.showSubmenu(
+                        submenu,
+                        submenu.parentElement ?? submenu
                     );
-                    if (submenu) {
-                        component.openSubmenu(submenu);
-                        // TODO: Might be more proper to fire an event
-                        component.chart.stockTools?.showSubmenu(
-                            submenu,
-                            submenu.parentElement ?? submenu
-                        );
 
-                        return component.keyboardNavigationHandler.response
-                            .success;
-                    }
+                    return component.keyboardNavigationHandler.response
+                        .success;
                 }
+            }
 
-                if (keyCode === keys.right) {
-                    // Close submenu, go to next
-                    component.closeOpenSubmenus();
-                }
+            if (keyCode === keys.right) {
+                // Close submenu, go to next
+                component.closeOpenSubmenus();
             }
 
             if (keyCode === keys.left) {
