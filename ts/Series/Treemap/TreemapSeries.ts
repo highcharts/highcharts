@@ -52,6 +52,7 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapNode from './TreemapNode.js';
 import TreemapPoint from './TreemapPoint.js';
+import TreemapPointOptions from './TreemapPointOptions';
 import TreemapSeriesDefaults from './TreemapSeriesDefaults.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
@@ -61,7 +62,6 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
-import TreemapPointOptions from './TreemapPointOptions';
 const {
     addEvent,
     correctFloat,
@@ -1554,7 +1554,7 @@ class TreemapSeries extends ScatterSeries {
         // method, save them for later usage
         const groupPoints = (this.points || []).filter((point): boolean => {
             if (point.node?.isGroup) {
-                point.node.visible = false; // Hide group node
+                point.node.visible = false;
                 return true;
             }
             return false;
