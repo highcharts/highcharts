@@ -3678,21 +3678,22 @@ class Chart {
 
             let newMin = axis.toValue(minPx, true) +
                 // Don't apply offset for selection (#20784)
-                    (selection ? 0 : minPointOffset * pointRangeDirection),
+                    (
+                        selection || axis.isOrdinal ?
+                            0 : minPointOffset * pointRangeDirection
+                    ),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
+                    // Don't apply offset for selection (#20784)
+
+                    // Polar zoom tests failed when this was not
+                    // commented:
+                    // (axis.isXAxis && axis.pointRangePadding) ||
                     (
-                        selection ? // Don't apply offset for selection (#20784)
-                            0 :
-                            (
-                                (minPointOffset * pointRangeDirection) ||
-                                // Polar zoom tests failed when this was not
-                                // commented:
-                                // (axis.isXAxis && axis.pointRangePadding) ||
-                                0
-                            )
+                        selection || axis.isOrdinal ?
+                            0 : ((minPointOffset * pointRangeDirection) || 0)
                     ),
                 allExtremes = axis.allExtremes;
 
