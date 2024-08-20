@@ -106,7 +106,7 @@ namespace Bindings {
         board: Board,
         cell?: Cell
     ): Promise<(Component|void)> {
-        const optionsStates = (options as any).states;
+        const optionsStates = options.states;
         const optionsEvents = options.events;
         const renderTo = options.renderTo || options.cell;
 
@@ -208,27 +208,39 @@ namespace Bindings {
             })
         });
 
+        if (
+            cell &&
+            optionsStates?.active?.enabled &&
+            optionsStates?.active?.isActive
+        ) {
+            cell.setActiveState();
+            component.isActive = true;
+        }
+
         fireEvent(component, 'mount');
 
         // Events
-        if (optionsEvents && optionsEvents.click) {
-            addEvent(componentContainer, 'click', ():void => {
-                optionsEvents.click();
+        addEvent(componentContainer, 'click', ():void => {
+            // Call the component's click callback
+            if (optionsEvents && optionsEvents.click) {
+                optionsEvents.click.call(component);
+            }
 
-                if (
-                    cell &&
-                    component &&
-                    componentContainer &&
-                    optionsStates &&
-                    optionsStates.active
-                ) {
-                    cell.setActiveState();
-                }
-            });
-        }
+            // Default behavior
+            if (
+                cell &&
+                component &&
+                componentContainer &&
+                optionsStates?.active?.enabled
+            ) {
+                cell.setActiveState();
+                component.isActive = true;
+            }
+        });
+
 
         // States
-        if (optionsStates?.hover) {
+        if (optionsStates?.hover?.enabled) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
 

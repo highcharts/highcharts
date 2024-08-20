@@ -1,0 +1,14 @@
+---
+name: 'Same x-axis, different intervals'
+authors:
+  - Markus Barstad
+js_wrap: b
+alt_text: >-
+  A chart of annual surface temperature change from 1880 to 2021,
+  employing a line and a column series which displays the same data,
+  at different intervals.
+tags:
+  - Highcharts demo
+categories:
+  - Combinations
+...

@@ -552,6 +552,17 @@ QUnit.test('DataTable.setModifier', function (assert) {
                 },
                 'Modified table should contain sorted columns.'
             );
+
+            assert.deepEqual(
+                [
+                    table.modified.originalRowIndexes,
+                    table.modified.localRowIndexes
+                ],
+                [void 0, void 0],
+                'Table sorted with `orderInColumn` option should not change ' +
+                'the row indexes of the original table.'
+            );
+
             return table;
         })
         .then((table) => {
@@ -567,7 +578,30 @@ QUnit.test('DataTable.setModifier', function (assert) {
                     y: [3, 2, 1] 
                 },
                 'Modified table should contain sorted columns.'
-            )
+            );
+
+            assert.strictEqual(
+                table.modified.getLocalRowIndex(1), 2,
+                'Sorted table should allow to retrieve the local row index' +
+                'from the origianl row index.'
+            );
+
+            assert.strictEqual(
+                table.modified.getOriginalRowIndex(2), 1,
+                'Sorted table should allow to retrieve the original row index' +
+                'from the local row index.'
+            );
+
+            table.modified.deleteRowIndexReferences();
+            assert.deepEqual(
+                [
+                    table.modified.originalRowIndexes,
+                    table.modified.localRowIndexes
+                ],
+                [void 0, void 0],
+                'The `deleteRowIndexReferences` method should remove row ' +
+                'index references.'
+            );
             return table;
         })
         .catch((e) =>
