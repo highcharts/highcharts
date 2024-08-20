@@ -768,7 +768,8 @@ namespace DataLabel {
                                 // the width should be applied to the
                                 // dataLabel. (#20499)
                                 dataLabel.css({
-                                    width: style.width
+                                    width: style.width,
+                                    textOverflow: style.textOverflow
                                 });
                             }
 
