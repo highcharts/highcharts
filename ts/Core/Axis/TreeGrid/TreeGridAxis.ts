@@ -51,14 +51,12 @@ const {
     addEvent,
     find,
     fireEvent,
-    isArray,
     isObject,
     isString,
     merge,
     pick,
     removeEvent,
-    wrap,
-    splat
+    wrap
 } = U;
 
 /* *
@@ -425,50 +423,24 @@ function onBeforeRender(
 
             if (isDirty) {
 
-                const seriesHasPrimitivePoints: boolean[] = [];
-
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
-                    const seriesData = (s.options.data || []),
-                        firstPoint = seriesData[0],
-                        // Check if the first point is a simple array of values.
-                        // If so we assume that this is the case for all points.
-                        foundPrimitivePoint = (
-                            Array.isArray(firstPoint) &&
-                            !(firstPoint as any).find(
-                                (value: any): boolean => (
-                                    typeof value === 'object'
-                                )
-                            )
-                        );
-
-                    seriesHasPrimitivePoints.push(foundPrimitivePoint);
-
                     if (s.visible) {
                         // Push all data to array
-                        seriesData.forEach(function (
+                        (s.options.data || []).forEach(function (
                             data
                         ): void {
 
-                            // For using keys, or when using primitive points,
-                            // rebuild the data structure
-                            if (
-                                foundPrimitivePoint ||
-                                (s.options.keys && s.options.keys.length)
-                            ) {
-                                data = s.pointClass.prototype
+                            data = {
+                                ...s.pointClass.prototype
                                     .optionsToObject
-                                    .call({ series: s }, data);
-                                s.pointClass.setGanttPointAliases(data);
-                            }
-                            if (isObject(data, true)) {
-                                // Set series index on data. Removed again
-                                // after use.
-                                (data as PointOptions).seriesIndex = (
-                                    numberOfSeries
-                                );
-                                arr.push(data as PointOptions);
-                            }
+                                    .call({ series: s }, data),
+                                seriesIndex: numberOfSeries
+                            };
+
+                            s.pointClass.setGanttPointAliases(data);
+
+                            arr.push(data as PointOptions);
                         });
 
                         // Increment series index
@@ -507,37 +479,35 @@ function onBeforeRender(
                 axis.hasNames = true;
                 axis.treeGrid.tree = treeGrid.tree;
 
-                // Update yData now that we have calculated the y values
-                axis.series.forEach(function (series, index): void {
+                axis.series.forEach(function (series): void {
                     const axisData = (
                         series.options.data || []
                     ).map(function (
                         d: (PointOptions|PointShortOptions)
                     ): (PointOptions|PointShortOptions) {
 
-                        if (
-                            seriesHasPrimitivePoints[index] ||
-                            (
-                                isArray(d) &&
-                                series.options.keys &&
-                                series.options.keys.length
-                            )
-                        ) {
-                            // Get the axisData from the data array used to
-                            // build the treeGrid where has been modified
-                            data.forEach(function (
-                                point: GanttPointOptions
-                            ): void {
-                                const toArray = splat(d);
+                        // Get the axisData from the data array used to
+                        // build the treeGrid where has been modified
+                        data.forEach(function (
+                            point: GanttPointOptions
+                        ): void {
+                            // Const toArray = splat(d);
+                            d = series.pointClass.prototype
+                                .optionsToObject
+                                .call({ series: series }, d);
 
-                                if (
-                                    toArray.indexOf(point.x) >= 0 &&
-                                    toArray.indexOf(point.x2) >= 0
-                                ) {
-                                    d = point;
-                                }
-                            });
-                        }
+                            series.pointClass.setGanttPointAliases(d);
+
+                            if (
+                                (point.x) === d.x &&
+                                (point.x2) === (
+                                    d as GanttPointOptions
+                                ).x2
+                            ) {
+                                d = point;
+                            }
+                        });
+
                         return isObject(d, true) ? merge(d) : d;
                     });
 
