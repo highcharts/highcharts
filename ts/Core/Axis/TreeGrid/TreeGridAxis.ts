@@ -484,12 +484,13 @@ function onBeforeRender(
                 axis.treeGrid.tree = treeGrid.tree;
 
                 axis.series.forEach(function (series): void {
+                    const buildGanttPoint = buildGanttPointFunc(series);
+
                     const axisData = (
                         series.options.data || []
                     ).map(function (
                         d: (PointOptions|PointShortOptions)
                     ): (PointOptions|PointShortOptions) {
-                        const buildGanttPoint = buildGanttPointFunc(series);
 
                         // Get the axisData from the data array used to
                         // build the treeGrid where has been modified
