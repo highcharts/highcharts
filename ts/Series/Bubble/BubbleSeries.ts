@@ -176,18 +176,29 @@ function onAxisFoundExtremes(
 }
 
 function onAxisAfterRender(this: Axis): void {
-    const { ticks, tickPositions, dataMin, dataMax } = this;
-    let tickCount = tickPositions.length;
+    const {
+            ticks,
+            tickPositions,
+            dataMin,
+            dataMax,
+            categories,
+            options
+        } = this,
+        type = options.type;
 
-    while (tickCount--) {
-        const tick = ticks[tickPositions[tickCount]];
-        if (
-            tick.pos &&
-            tick.pos > (dataMax || 0) ||
-            tick.pos < (dataMin || 0)
-        ) {
-            if (tick.label) {
-                tick.label.hide();
+    if ((categories && categories.length) || type === 'category') {
+        let tickCount = tickPositions.length;
+
+        while (tickCount--) {
+            const tick = ticks[tickPositions[tickCount]];
+            if (
+                tick.pos &&
+                tick.pos > (dataMax || 0) ||
+                tick.pos < (dataMin || 0)
+            ) {
+                if (tick.label) {
+                    tick.label.hide();
+                }
             }
         }
     }
