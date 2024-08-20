@@ -924,7 +924,7 @@ class Axis {
      *
      * @param {number|string} value
      * A value in terms of axis units. For datetime axes, a timestamp or
-     * date/time string can be given.
+     * date/time string is accepted.
      *
      * @param {boolean} paneCoordinates
      * Whether to return the pixel coordinate relative to the chart or just the
@@ -2646,11 +2646,11 @@ class Axis {
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param {number} [newMin]
-     * The new minimum value.
+     * @param {number|string} [newMin]
+     * The new minimum value. For datetime axes, date strings are accepted.
      *
-     * @param {number} [newMax]
-     * The new maximum value.
+     * @param {number|string} [newMax]
+     * The new maximum value. For datetime axes, date strings are accepted.
      *
      * @param {boolean} [redraw=true]
      * Whether to redraw the chart or wait for an explicit call to

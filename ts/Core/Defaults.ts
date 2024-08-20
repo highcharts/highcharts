@@ -468,7 +468,7 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * // Apply time settings by instance
-     * let chart = Highcharts.chart('container', {
+     * const chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },
