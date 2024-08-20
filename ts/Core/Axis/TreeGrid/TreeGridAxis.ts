@@ -441,15 +441,10 @@ function onBeforeRender(
                         (s.options.data || []).forEach(function (
                             data
                         ): void {
-
-                            data = {
+                            arr.push({
                                 ...buildGanttPoint(data),
                                 seriesIndex: numberOfSeries
-                            };
-
-                            s.pointClass.setGanttPointAliases(data);
-
-                            arr.push(data as PointOptions);
+                            } as PointOptions);
                         });
 
                         // Increment series index
