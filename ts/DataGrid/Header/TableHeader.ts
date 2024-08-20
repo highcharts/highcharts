@@ -190,7 +190,7 @@ class TableHeader {
                 if (depth > maxDepth) {
                     maxDepth = depth;
                 }
-            } else {
+            } else if (scope[i].level) {
                 scope[i].level = maxDepth;
             }
         }

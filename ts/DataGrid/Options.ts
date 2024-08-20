@@ -135,6 +135,8 @@ export interface ColumnsSettings {
      *
      * Individual column options `enabled` options can be set to `false` to
      * disable a column.
+     *
+     * @private
      */
     included?: Array<string>;
 

@@ -22,7 +22,7 @@
  *
  * */
 
-import type Options from './Options';
+import type { Options, GroupedHeader } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -372,8 +372,10 @@ class DataGrid {
      */
     private getEnabledColumnIDs(): string[] {
         const columnsOptions = this.options?.columns;
+        const header = this.options?.settings?.header;
         const columnsIncluded =
-            this.options?.settings?.columns?.included ??
+            this.options?.settings?.columns?.included ||
+            this.getColumnIds(header || [], false) ||
             this.dataTable?.getColumnNames();
 
         if (!columnsIncluded?.length) {
@@ -403,6 +405,52 @@ class DataGrid {
 
         this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
+    }
+
+    /**
+     * Calculates all references to columnIds on all levels below defined level.
+     *
+     * @param columns
+     * Structure that we start calculation
+     *
+     * @param [onlyEnabledColumns=true]
+     * Extract all columns from header or columns filtered by enabled param
+     * @returns
+     */
+    public getColumnIds(
+        columns: GroupedHeader[],
+        onlyEnabledColumns: boolean = true
+    ): Array<string> {
+        let columnIds:Array<string> = [];
+        const enabledColumns = this.enabledColumns;
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            if (onlyEnabledColumns) {
+                if (
+                    columns[i].columnId &&
+                    enabledColumns &&
+                    enabledColumns.indexOf(columns[i].columnId as string) > -1
+                ) {
+                    columnIds.push(columns[i].columnId as string);
+                }
+            } else {
+                if (columns[i].columnId || typeof columns[i] === 'string') {
+                    columnIds.push(
+                        columns[i].columnId || (columns[i] as string)
+                    );
+                }
+            }
+
+            if (columns[i].columns) {
+                columnIds = columnIds.concat(
+                    this.getColumnIds(
+                        columns[i].columns || [],
+                        onlyEnabledColumns
+                    )
+                );
+            }
+        }
+
+        return columnIds;
     }
 
     /**

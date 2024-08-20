@@ -76,18 +76,18 @@ class HeaderRow extends Row {
 
         if (header) {
             const columnsOnLevel = this.getColumnsAtLevel(header, level);
-
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
                 // Skip hidden column
                 const colSpan =
-                    this.countColumnIds(columnsOnLevel[i].columns || []);
-                const dataColumn = vp.getColumn(
-                    columnsOnLevel[i].columnId || ''
-                );
+                    vp.dataGrid.getColumnIds(
+                        columnsOnLevel[i].columns || []
+                    ).length;
+                const columnId = (typeof columnsOnLevel[i] === 'string' ?
+                    columnsOnLevel[i] : columnsOnLevel[i].columnId) as string;
+                const dataColumn = vp.getColumn(columnId || '');
                 const {
                     useHTML,
-                    headerFormat,
-                    columnId
+                    headerFormat
                 } = columnsOnLevel[i];
 
                 // Skip hidden column or header when all columns are hidden.
@@ -96,7 +96,7 @@ class HeaderRow extends Row {
                         enabledColumns &&
                         columnId &&
                         enabledColumns.indexOf(
-                            columnId as string
+                            columnId
                         ) < 0
                     ) || (
                         !dataColumn &&
@@ -108,9 +108,7 @@ class HeaderRow extends Row {
 
                 const cell = this.createCell(
                     (
-                        vp.getColumn(
-                            columnId || ''
-                        )
+                        vp.getColumn(columnId)
                     ) || (
                         new Column(
                             vp,
@@ -182,35 +180,6 @@ class HeaderRow extends Row {
         }
 
         return result;
-    }
-
-    /**
-     * Calculates all references to columns in child. It is necessary to set
-     * correct colpan and calculate width.
-     *
-     * @param level
-     * Level that we start
-     * @returns
-     */
-    public countColumnIds(level: GroupedHeader[]): number {
-        let count = 0;
-        const enabledColumns = this.viewport.dataGrid.enabledColumns;
-
-        for (let i = 0, iEnd = level.length; i < iEnd; i++) {
-            if (
-                enabledColumns &&
-                level[i].columnId &&
-                enabledColumns.indexOf(level[i].columnId as string) > -1
-            ) {
-                count++;
-            }
-
-            if (level[i].columns) {
-                count += this.countColumnIds(level[i].columns || []);
-            }
-        }
-
-        return count;
     }
 }
 
