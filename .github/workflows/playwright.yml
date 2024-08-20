@@ -62,6 +62,12 @@ jobs:
       run: |
         chromedriver --url-base=/wd/hub &
         sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+
+    - name: 'BrowserStackLocal Setup'
+      uses: 'browserstack/github-actions/setup-local@master'
+      with:
+        local-testing: start
+        local-identifier: 'playwright-highcharts'
     - name: Run Playwright tests
       env: 
         BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_KEY }}
@@ -75,3 +81,8 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+    - name: 'BrowserStackLocal Stop'
+      uses: 'browserstack/github-actions/setup-local@master'
+      with:
+        local-testing: stop
