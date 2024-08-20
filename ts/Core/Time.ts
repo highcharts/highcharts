@@ -211,8 +211,8 @@ class Time {
 
     /**
      * Get a date in terms of numbers (year, month, day etc) for further
-     * processing. Takes the current `timezone` setting into account. Inverse
-     * of `makeTime`.
+     * processing. Takes the current `timezone` setting into account. Inverse of
+     * `makeTime` and the native `Date` constructor and `Date.UTC`.
      *
      * The date is returned in array format with the following indices:
      *
@@ -227,12 +227,13 @@ class Time {
      *
      * @function Highcharts.Time#toParts
      *
-     * @param {number} [timestamp]
+     * @param {number|Date} [timestamp]
      *                 The timestamp in milliseconds since January 1st 1970.
+     *                 A Date object is also accepted.
      *
-     * @return {Array<number>} The date parts array format.
+     * @return {Array<number>} The date parts in array format.
      */
-    public toParts(timestamp?: number): number[] {
+    public toParts(timestamp?: number|Date): number[] {
         const [
             weekday,
             dayOfMonth,
@@ -260,7 +261,7 @@ class Time {
             minutes,
             seconds,
             // Milliseconds
-            Math.floor(timestamp || 0) % 1000,
+            Math.floor(Number(timestamp) || 0) % 1000,
             // Weekday index
             spanishWeekdayIndex(weekday)
         ].map(Number);
