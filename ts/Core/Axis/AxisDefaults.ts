@@ -1241,8 +1241,11 @@ namespace AxisDefaults {
          */
 
         /**
-         * The maximum value of the axis. If `null`, the max value is
+         * The maximum value of the axis. If `undefined`, the max value is
          * automatically calculated.
+         *
+         * If a datetime string is passed, it is parsed into epoch time
+         * according to the time zone given in [time.timezone](#time.timezone).
          *
          * If the [endOnTick](#yAxis.endOnTick) option is true, the `max` value
          * might be rounded up.
@@ -1259,7 +1262,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/min-max/
          *         Fixed min and max on X axis
          *
-         * @type      {number|null}
+         * @type      {number|string|null}
          * @apioption xAxis.max
          */
 
@@ -1297,8 +1300,11 @@ namespace AxisDefaults {
          */
 
         /**
-         * The minimum value of the axis. If `null` the min value is
+         * The minimum value of the axis. If `undefined`, the min value is
          * automatically calculated.
+         *
+         * If a datetime string is passed, it is parsed into epoch time
+         * according to the time zone given in [time.timezone](#time.timezone).
          *
          * If the [startOnTick](#yAxis.startOnTick) option is true (default),
          * the `min` value might be rounded down.
@@ -1316,7 +1322,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/min-max/
          *         Set min and max on X axis
          *
-         * @type      {number|null}
+         * @type      {number|string|null}
          * @apioption xAxis.min
          */
 

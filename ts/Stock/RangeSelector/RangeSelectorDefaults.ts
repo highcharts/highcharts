@@ -421,14 +421,15 @@ const rangeSelector: RangeSelectorOptions = {
     },
 
     /**
-     * A custom callback function to parse values entered in the input boxes
-     * and return a valid JavaScript time as milliseconds since 1970.
-     * The first argument passed is a value to parse,
-     * second is a boolean indicating use of the UTC time.
+     * A custom callback function to parse values entered in the input boxes and
+     * return a valid JavaScript time as milliseconds since 1970. The first
+     * argument passed is the value to parse, second is a boolean indicating use
+     * of UTC time. The third is a reference to the `time` object. Time zone can
+     * be read from `time.timezone`.
      *
-     * This will only get called for inputs of type `text`. Since v8.2.3,
-     * the input type is dynamically determined based on the granularity
-     * of the `inputDateFormat` and the browser support.
+     * This will only get called for inputs of type `text`. Since v8.2.3, the
+     * input type is dynamically determined based on the granularity of the
+     * `inputDateFormat` and the browser support.
      *
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector

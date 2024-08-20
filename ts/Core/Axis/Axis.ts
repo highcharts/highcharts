@@ -36,7 +36,6 @@ import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -923,8 +922,9 @@ class Axis {
      *
      * @function Highcharts.Axis#toPixels
      *
-     * @param {number} value
-     * A value in terms of axis units.
+     * @param {number|string} value
+     * A value in terms of axis units. For datetime axes, a timestamp or
+     * date/time string is accepted.
      *
      * @param {boolean} paneCoordinates
      * Whether to return the pixel coordinate relative to the chart or just the
@@ -934,11 +934,16 @@ class Axis {
      * Pixel position of the value on the chart or axis.
      */
     public toPixels(
-        value: number,
+        value: number|string,
         paneCoordinates?: boolean
     ): number {
-        return this.translate(value, false, !this.horiz, void 0, true) +
-            (paneCoordinates ? 0 : this.pos);
+        return this.translate(
+            this.chart.time.parse(value) ?? NaN,
+            false,
+            !this.horiz,
+            void 0,
+            true
+        ) + (paneCoordinates ? 0 : this.pos);
     }
 
     /**
@@ -1260,7 +1265,8 @@ class Axis {
     public adjustForMinRange(): void {
         const axis = this,
             options = axis.options,
-            logarithmic = axis.logarithmic;
+            logarithmic = axis.logarithmic,
+            time = axis.chart.time;
 
         let { max, min, minRange } = axis,
             zoomOffset,
@@ -1322,7 +1328,7 @@ class Axis {
             // If min and max options have been set, don't go beyond it
             minArgs = [
                 min - zoomOffset,
-                pick(options.min, min - zoomOffset)
+                time.parse(options.min) ?? (min - zoomOffset)
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
@@ -1334,7 +1340,7 @@ class Axis {
 
             maxArgs = [
                 min + minRange,
-                pick(options.max, min + minRange)
+                time.parse(options.max) ?? (min + minRange)
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
@@ -1348,7 +1354,7 @@ class Axis {
             // Now if the max is adjusted, adjust the min back
             if (max - min < minRange) {
                 minArgs[0] = max - minRange;
-                minArgs[1] = pick(options.min, max - minRange);
+                minArgs[1] = time.parse(options.min) ?? (max - minRange);
                 min = arrayMax(minArgs);
             }
         }
@@ -1670,6 +1676,7 @@ class Axis {
                 options,
                 softThreshold
             } = axis,
+            time = chart.time,
             threshold = isNumber(axis.threshold) ? axis.threshold : void 0,
             minRange = axis.minRange || 0,
             { ceiling, floor, linkedTo, softMax, softMin } = options,
@@ -1694,8 +1701,8 @@ class Axis {
         }
 
         // Min or max set either by zooming/setExtremes or initial options
-        hardMin = pick(axis.userMin, options.min);
-        hardMax = pick(axis.userMax, options.max);
+        hardMin = pick(axis.userMin, time.parse(options.min));
+        hardMax = pick(axis.userMax, time.parse(options.max));
 
         // Linked axis gets the extremes from the parent axis
         if (linkedParent) {
@@ -2639,11 +2646,11 @@ class Axis {
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param {number} [newMin]
-     * The new minimum value.
+     * @param {number|string} [newMin]
+     * The new minimum value. For datetime axes, date strings are accepted.
      *
-     * @param {number} [newMax]
-     * The new maximum value.
+     * @param {number|string} [newMax]
+     * The new maximum value. For datetime axes, date strings are accepted.
      *
      * @param {boolean} [redraw=true]
      * Whether to redraw the chart or wait for an explicit call to
@@ -2658,15 +2665,19 @@ class Axis {
      * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
-        min?: number,
-        max?: number,
+        min?: number|string,
+        max?: number|string,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
+        const chart = this.chart;
         this.series.forEach((serie): void => {
             delete serie.kdTree;
         });
+
+        min = chart.time.parse(min);
+        max = chart.time.parse(max);
 
         // Extend the arguments with min and max
         eventArguments = extend(
@@ -2686,7 +2697,7 @@ class Axis {
                 this.eventArgs = e;
 
                 if (redraw) {
-                    this.chart.redraw(animation);
+                    chart.redraw(animation);
                 }
             }
         );
@@ -4161,7 +4172,7 @@ class Axis {
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions: PlotLineOptions;
+            crossOptions: Axis.PlotLinePathOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -4448,7 +4459,11 @@ namespace Axis {
         lineWidth?: number;
         old?: boolean;
         /** @internal */
+        chartX?: number;
+        chartY?: number;
+        isCrosshair?: boolean;
         path?: SVGPath;
+        point?: Point;
         reverse?: boolean;
         translatedValue?: number;
         value?: number;

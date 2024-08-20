@@ -109,7 +109,7 @@ QUnit.test(
             'Series 1;Task 1;Start: Monday, 1 Jun, 18:00;End: Tuesday, 2 ' +
             'Jun, 18:00;',
             'The tooltip should show the start and end shifted 6 hours ' +
-            'relative to UTC.'
+                'relative to UTC.'
         );
     }
 );

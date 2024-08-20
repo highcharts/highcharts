@@ -22,7 +22,7 @@ Note that **datetime** axes are based on milliseconds, so for example an interva
 
 On **logarithmic** axes, the `tickInterval` is based on powers, so a `tickInterval` of 1 means one tick on each of 0.1, 1, 10, 100 etc. A `tickInterval` of 2 means a tick of 0.1, 10, 1000 etc. A `tickInterval` of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
-The `tickPixelInterval` option sets an approximate pixel interval of the tick marks based on a pixel value (if `tickInterval` is null). This makes it work well with responsive layouts, ensuring a reasonable distance between ticks regardless of the chart size and axis length. It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
+The `tickPixelInterval` option sets an approximate pixel interval of the tick marks based on a pixel value (if `tickInterval` is nullish). This makes it work well with responsive layouts, ensuring a reasonable distance between ticks regardless of the chart size and axis length. It doesn't apply to categorized axis. Defaults to 72 for the y-axis and 100 for the x-axis.
 
 ### Minor ticks
 
@@ -30,11 +30,12 @@ If the [minorTickInterval](https://api.highcharts.com/highcharts/xAxis.minorTick
 
 ### Labels
 
-The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a formatter function:
+The axis labels can be found along the axis showing the value of the data it corresponds to. Labels can also be customized using a format string or a formatter function:
 
 
     yAxis: {
         labels: {
+            format: '{value}%', // provides the same result as:
             formatter: function() {
                 return this.value + ' %';
             }
@@ -182,19 +183,7 @@ If you would like to show zero and negative values on a logarithmic axis in High
 
 A datetime axis prints labels of round date values in appropriate intervals. Internally, a datetime axis is a linear numeric axis based on milliseconds since midnight Jan 1, 1970, as specified by the JavaScript Date object. Depending on the scale the datetime label will either be represented as time or a date.
 
-Some useful functions are:
-
-
-    // Get time in millis for UTC
-    Date.UTC(year,month,day,hours,minutes,seconds,millisec)
-
-    // Get time in millis for your local time
-    Date.parse("Month day, year");
-
-    // Built in Highcharts date formatter based on the [PHP strftime](https://php.net/manual/en/function.strftime.php) (see [API reference](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat) for usage)
-    Highcharts.dateFormat("Month: %m Day: %d Year: %Y", 20, false);
-
-Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.
+On datetime axes, all time settings may be given either as milliseconds, date strings, or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`. Date strings are parsed and assigned the current timezone as given in the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option, or to the timezone indicated in the time string itself.
 
 In Highcharts Stock the x-axis is always a datetime axis.
 

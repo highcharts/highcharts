@@ -348,18 +348,6 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * This option is deprecated since v6.0.5. Instead, use
-         * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-         * individual time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.getTimezoneOffset
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
          * [time.timezone](#time.timezone) that supports individual time
          * settings per chart.
          *
@@ -480,7 +468,7 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * // Apply time settings by instance
-     * let chart = Highcharts.chart('container', {
+     * const chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },
@@ -523,26 +511,6 @@ const defaultOptions: DefaultOptions = {
          * @product   highcharts highstock gantt
          */
         Date: void 0,
-        /**
-         * A callback to return the time zone offset for a given datetime. It
-         * takes the timestamp in terms of milliseconds since January 1 1970,
-         * and returns the timezone offset in minutes. This provides a hook
-         * for drawing time based charts in specific time zones using their
-         * local DST crossover dates, with the help of external libraries.
-         *
-         * This option is deprecated as of v11.4.1 and will be removed in a
-         * future release. Use the [time.timezone](#time.timezone) option
-         * instead.
-         *
-         * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
-         *         Use moment.js to draw Oslo time regardless of browser locale
-         *
-         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
-         * @since     4.1.0
-         * @deprecated 11.4.2
-         * @product   highcharts highstock gantt
-         */
-        getTimezoneOffset: void 0,
 
         /**
          * A named time zone. Supported time zone names rely on the browser
@@ -590,6 +558,13 @@ const defaultOptions: DefaultOptions = {
          * time zone settings. Local time can be used when the data is loaded
          * in real time or when correct Daylight Saving Time transitions are
          * required.
+         *
+         * Setting `useUTC` to true is equivalent to setting `time.timezone` to
+         * `"UTC"`. Setting `useUTC` to false is equivalent to setting
+         * `time.timezone` to `undefined`. Since v12, The `timezone` option
+         * takes precedence.
+         *
+         * @see [time.timezone](#timezone)
          *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default

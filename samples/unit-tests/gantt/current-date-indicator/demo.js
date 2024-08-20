@@ -258,7 +258,7 @@
             'container',
             Highcharts.merge(defaultConfig, {
                 time: {
-                    timezoneOffset: -5
+                    timezoneOffset: -60
                 }
             })
         );
