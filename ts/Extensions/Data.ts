@@ -37,6 +37,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
+    diffObjects,
     extend,
     fireEvent,
     isNumber,
@@ -1998,17 +1999,27 @@ class Data {
             options.afterComplete = function (
                 dataOptions?: Partial<Options>
             ): void {
-                // Avoid setting axis options unless the type changes. Running
-                // Axis.update will cause the whole structure to be destroyed
-                // and rebuilt, and animation is lost.
                 if (dataOptions) {
-                    if (
-                        dataOptions.xAxis &&
-                        chart.xAxis[0] &&
-                        (dataOptions.xAxis as any).type ===
-                        chart.xAxis[0].options.type
-                    ) {
-                        delete dataOptions.xAxis;
+                    // Avoid setting axis options unless they change. Running
+                    // Axis.update will cause the whole structure to be
+                    // destroyed and rebuilt, and animation is lost.
+                    if (dataOptions.xAxis && chart.xAxis[0].options) {
+                        dataOptions.xAxis = diffObjects(
+                            dataOptions.xAxis,
+                            chart.xAxis[0].options
+                        );
+
+                        if (!Object.keys(dataOptions.xAxis).length) {
+                            delete dataOptions.xAxis;
+
+                            // If the axis hasn't changed, opt-in for smooth
+                            // points update.
+                            (dataOptions?.series || []).forEach(function (
+                                seriesOptions: SeriesOptions
+                            ): void {
+                                delete seriesOptions.pointStart;
+                            });
+                        }
                     }
 
                     // @todo looks not right:
