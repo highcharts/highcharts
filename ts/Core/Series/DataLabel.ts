@@ -763,7 +763,7 @@ namespace DataLabel {
                                 dataLabel.css(style).shadow(
                                     labelOptions.shadow
                                 );
-                            } else if (style.width) { // #20499
+                            } else if (style.width) {
                                 // In styled mode with a width property set,
                                 // the width should be applied to the
                                 // dataLabel. (#20499)
