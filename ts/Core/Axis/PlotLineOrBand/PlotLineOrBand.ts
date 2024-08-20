@@ -145,13 +145,13 @@ class PlotLineOrBand {
         const { axis, options } = this,
             { horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
+            { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
-            renderer = axis.chart.renderer,
 
             // These properties only exist on either band or line
-            to = (options as PlotBandOptions).to,
-            from = (options as PlotBandOptions).from,
-            value = (options as PlotLineOptions).value,
+            to = time.parse((options as PlotBandOptions).to),
+            from = time.parse((options as PlotBandOptions).from),
+            value = time.parse((options as PlotLineOptions).value),
             borderWidth = (options as PlotBandOptions).borderWidth;
 
         let optionsLabel = options.label,

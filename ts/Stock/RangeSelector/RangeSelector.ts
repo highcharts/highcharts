@@ -51,9 +51,7 @@ const {
     isNumber,
     merge,
     objectEach,
-    pad,
     pick,
-    pInt,
     splat
 } = U;
 
@@ -900,43 +898,7 @@ class RangeSelector {
         useUTC: boolean,
         time?: Time
     ): number {
-        const hasTimezone = (str: string): boolean =>
-            str.length > 6 &&
-            (str.lastIndexOf('-') === str.length - 6 ||
-            str.lastIndexOf('+') === str.length - 6);
-
-        let input = inputDate.split('/').join('-').split(' ').join('T');
-        if (input.indexOf('T') === -1) {
-            input += 'T00:00';
-        }
-        let date = Date.parse(input);
-
-        if (!hasTimezone(input) && isNumber(date)) {
-            const offset = time?.getTimezoneOffset(date) || 0,
-                hours = Math.floor(offset / 36e5),
-                minutes = Math.abs(Math.round((offset % 36e5) / 6e4));
-
-            input += (offset <= 0 ? '+' : '') + `${pad(hours)}:${pad(minutes)}`;
-            date = Date.parse(input);
-        }
-
-        // If the value isn't parsed directly to a value by the
-        // browser's Date.parse method, try
-        // parsing it a different way
-        if (!isNumber(date)) {
-            const parts = inputDate.split('-');
-            date = Date.UTC(
-                pInt(parts[0]),
-                pInt(parts[1]) - 1,
-                pInt(parts[2])
-            );
-        }
-
-        if (time && isNumber(date)) {
-            date += time.getTimezoneOffset(date);
-        }
-
-        return date;
+        return time?.parse(inputDate) || 0;
     }
 
     /**

@@ -702,10 +702,14 @@ class Series {
     public autoIncrement(x?: number): number {
 
         const options = this.options,
-            pointIntervalUnit = options.pointIntervalUnit,
-            relativeXValue = options.relativeXValue,
+            {
+                pointIntervalUnit,
+                relativeXValue
+            } = this.options,
             time = this.chart.time,
-            xIncrement = this.xIncrement ?? options.pointStart ?? 0;
+            xIncrement = this.xIncrement ??
+                time.parse(options.pointStart) ??
+                0;
 
         let pointInterval: number;
 
@@ -1319,7 +1323,10 @@ class Series {
             yData = this.yData,
             pointArrayMap = series.pointArrayMap,
             valueCount = pointArrayMap && pointArrayMap.length,
-            keys = options.keys;
+            keys = options.keys,
+            // Use time parsing only when the xAxis is dateTime
+            time = xAxis?.dateTime && chart.time;
+
         let i,
             pt,
             updatedData,
@@ -1403,7 +1410,9 @@ class Series {
                         } else {
                             for (i = 0; i < dataLength; i++) {
                                 pt = data[i];
-                                (xData as any)[i] = (pt as any)[0];
+                                (xData as any)[i] =
+                                    time?.parse((pt as any)[0]) ??
+                                    (pt as any)[0];
                                 (yData as any)[i] =
                                     (pt as any).slice(1, valueCount + 1);
                             }
@@ -1429,7 +1438,9 @@ class Series {
                         } else {
                             for (i = 0; i < dataLength; i++) {
                                 pt = data[i];
-                                (xData as any)[i] = (pt as any)[indexOfX];
+                                (xData as any)[i] =
+                                    time?.parse((pt as any)[indexOfX]) ??
+                                    (pt as any)[indexOfX];
                                 (yData as any)[i] = (pt as any)[indexOfY];
                             }
                         }
