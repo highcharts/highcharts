@@ -182,6 +182,7 @@ function onAxisAfterRender(this: Axis): void {
     while (tickCount--) {
         const tick = ticks[tickPositions[tickCount]];
         if (
+            tick.pos &&
             tick.pos > (dataMax || 0) ||
             tick.pos < (dataMin || 0)
         ) {
