@@ -415,7 +415,17 @@ function onBeforeRender(
                             series.isDirtyData ||
                             series.isDirty;
                     })
-                );
+                ),
+                buildGanttPointFunc = (series: GanttSeries): Function => (
+                    point: PointOptions|PointShortOptions
+                ): GanttPointOptions => {
+                    point = series.pointClass.prototype
+                        .optionsToObject
+                        .call({ series: series }, point);
+
+                    series.pointClass.setGanttPointAliases(point);
+                    return point;
+                };
 
             let numberOfSeries = 0,
                 data: Array<PointOptions>,
@@ -426,15 +436,14 @@ function onBeforeRender(
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
                     if (s.visible) {
+                        const buildGanttPoint = buildGanttPointFunc(s);
                         // Push all data to array
                         (s.options.data || []).forEach(function (
                             data
                         ): void {
 
                             data = {
-                                ...s.pointClass.prototype
-                                    .optionsToObject
-                                    .call({ series: s }, data),
+                                ...buildGanttPoint(data),
                                 seriesIndex: numberOfSeries
                             };
 
@@ -485,21 +494,17 @@ function onBeforeRender(
                     ).map(function (
                         d: (PointOptions|PointShortOptions)
                     ): (PointOptions|PointShortOptions) {
+                        const buildGanttPoint = buildGanttPointFunc(series);
 
                         // Get the axisData from the data array used to
                         // build the treeGrid where has been modified
                         data.forEach(function (
                             point: GanttPointOptions
                         ): void {
-                            // Const toArray = splat(d);
-                            d = series.pointClass.prototype
-                                .optionsToObject
-                                .call({ series: series }, d);
-
-                            series.pointClass.setGanttPointAliases(d);
+                            d = buildGanttPoint(d);
 
                             if (
-                                (point.x) === d.x &&
+                                (point.x) === (d as GanttPointOptions).x &&
                                 (point.x2) === (
                                     d as GanttPointOptions
                                 ).x2
@@ -508,7 +513,7 @@ function onBeforeRender(
                             }
                         });
 
-                        return isObject(d, true) ? merge(d) : d;
+                        return d;
                     });
 
                     // Avoid destroying points when series is not visible
