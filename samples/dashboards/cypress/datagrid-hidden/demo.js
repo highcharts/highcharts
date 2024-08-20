@@ -1,7 +1,7 @@
 const container = document.getElementById('container');
 
 const dataGrid = DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

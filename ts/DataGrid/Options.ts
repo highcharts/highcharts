@@ -87,7 +87,7 @@ export interface Options {
     /**
      * Data table with the data to display in the grid structure.
      */
-    table?: DataTable | DataTableOptions;
+    dataTable?: DataTable | DataTableOptions;
 }
 
 /**
