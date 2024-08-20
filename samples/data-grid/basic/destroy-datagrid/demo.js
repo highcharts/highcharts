@@ -1,5 +1,5 @@
 const options = {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

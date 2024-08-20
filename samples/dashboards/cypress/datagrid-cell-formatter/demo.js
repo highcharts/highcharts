@@ -1,5 +1,5 @@
 DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             date: [Date.UTC(2022, 0, 1)],
             product: ['Apples']
