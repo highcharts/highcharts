@@ -520,6 +520,12 @@ const defaultOptions: DefaultOptions = {
          * provides a warning and falls back to returning a 0 offset,
          * corresponding to the UTC time zone.
          *
+         * The time zone affects axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`.
+         *
+         * Setting `timezone` to `undefined` falls back to the default browser
+         * timezone setting.
+         *
          * Until v11.2.0, this option depended on moment.js.
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
@@ -528,7 +534,7 @@ const defaultOptions: DefaultOptions = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: void 0,
+        timezone: 'UTC',
 
         /**
          * The timezone offset in minutes. Positive values are west, negative
@@ -561,8 +567,7 @@ const defaultOptions: DefaultOptions = {
          *
          * Setting `useUTC` to true is equivalent to setting `time.timezone` to
          * `"UTC"`. Setting `useUTC` to false is equivalent to setting
-         * `time.timezone` to `undefined`. Since v12, The `timezone` option
-         * takes precedence.
+         * `time.timezone` to `undefined`.
          *
          * @see [time.timezone](#timezone)
          *
@@ -570,8 +575,10 @@ const defaultOptions: DefaultOptions = {
          *         True by default
          * @sample {highcharts} highcharts/time/useutc-false/
          *         False
+         *
+         * @deprecated
          */
-        useUTC: true
+        useUTC: void 0
     },
 
     chart: ChartDefaults,

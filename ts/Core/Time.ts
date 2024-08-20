@@ -180,17 +180,19 @@ class Time {
         options: Time.TimeOptions = {}
     ): void {
 
-        let timezone = options.timezone;
+        let timezone: string|undefined = options.timezone ?? 'UTC';
 
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
-        const { timezoneOffset, useUTC = true } = options;
+        const { timezoneOffset, useUTC } = options;
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
-        timezone ??= useUTC ? 'UTC' : void 0;
+        if (defined(useUTC)) {
+            timezone = useUTC ? 'UTC' : void 0;
+        }
 
         // The Etc/GMT time zones do not support offsets with half-hour
         // resolutions
