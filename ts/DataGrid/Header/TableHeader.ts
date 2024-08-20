@@ -25,9 +25,7 @@ import type { GroupedHeader } from '../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
-import DGUtils from '../Utils.js';
 
-const { makeHTMLElement } = DGUtils;
 /* *
  *
  *  Class
@@ -85,7 +83,7 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-    
+
         if (viewport.dataGrid.userOptions?.settings?.header) {
             this.levels = this.getRowsLevels(
                 viewport.dataGrid.userOptions?.settings?.header
@@ -112,7 +110,7 @@ class TableHeader {
         }
 
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
-            const lastRow = new HeaderRow(vp, i + 1); // avoid indexing from 0
+            const lastRow = new HeaderRow(vp, i + 1); // Avoid indexing from 0
             lastRow.renderMultipleLevel(i);
             this.rows.push(lastRow);
         }
@@ -124,6 +122,7 @@ class TableHeader {
     public reflow(): void {
         const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
         const vp = this.viewport;
+        const header = vp.header;
 
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const column = this.columns[i];
@@ -141,6 +140,15 @@ class TableHeader {
         if (vp.rowsWidth) {
             vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
                 offsetWidth - clientWidth + 'px';
+        }
+
+        if (header) {
+            const cells = header.rows[header.rows.length - 1].cells;
+            const cellHtmlElement = cells[cells.length - 1].htmlElement;
+
+            cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
+                cellHtmlElement.offsetWidth +
+                (offsetWidth - clientWidth) + 'px';
         }
     }
 
@@ -167,9 +175,11 @@ class TableHeader {
 
     /**
      * Returns amount of rows for the current cell in header tree.
-     * 
-     * @param scope - structure of header
-     * @returns 
+     *
+     * @param scope
+     * Structure of header
+     *
+     * @returns
      */
     private getRowsLevels(scope: GroupedHeader[]):number {
         let maxDepth = 0;
@@ -183,11 +193,11 @@ class TableHeader {
             } else {
                 scope[i].level = maxDepth;
             }
-        };
+        }
 
         return maxDepth + 1;
     }
-    
+
     /**
      * Scrolls the table head horizontally.
      *

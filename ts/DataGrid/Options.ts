@@ -423,7 +423,7 @@ export interface GroupedHeader {
     /**
      * Columns that are displayed below the header.
      */
-    columns?: GroupedHeader[]; 
+    columns?: GroupedHeader[];
 }
 /* *
  *

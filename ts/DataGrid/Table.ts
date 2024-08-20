@@ -437,7 +437,7 @@ class Table {
         if (columnIndex < 0) {
             return;
         }
-    
+
         return this.columns[columnIndex];
     }
 }

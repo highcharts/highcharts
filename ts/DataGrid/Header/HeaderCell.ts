@@ -137,9 +137,9 @@ class HeaderCell extends Cell {
         this.htmlElement.setAttribute('data-column-id', column.id);
 
         if (column.index === 0) {
-            this.htmlElement.classList.add(Globals.classNames.columnFirst)
+            this.htmlElement.classList.add(Globals.classNames.columnFirst);
         }
- 
+
         if (isSingleColumn) {
             // Add resizing
             this.column.viewport.columnsResizer?.renderColumnDragHandles(

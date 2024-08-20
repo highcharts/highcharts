@@ -23,10 +23,8 @@
  * */
 import type { GroupedHeader } from '../Options';
 import Row from '../Row.js';
-import Table from '../Table.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
-import Cell from '../Cell.js';
 import Column from '../Column.js';
 
 /* *
@@ -46,17 +44,6 @@ class HeaderRow extends Row {
     *
     * */
 
-    /**
-     * Constructs a row in the data grid header.
-     *
-     * @param viewport
-     * The Data Grid Table instance which the row belongs to.
-     */
-    constructor(viewport: Table, index: number) {
-        super(viewport, index);
-    }
-
-
     /* *
     *
     *  Methods
@@ -69,6 +56,9 @@ class HeaderRow extends Row {
 
     /**
      * Renders the row's content in the header.
+     *
+     * @param level
+     * The current level in the header tree
      */
     public renderMultipleLevel(level: number): void {
         const header = this.viewport.dataGrid.userOptions?.settings?.header;
@@ -123,10 +113,11 @@ class HeaderRow extends Row {
                         )
                     ) || (
                         new Column(
-                        vp,
-                        headerFormat || '',
-                        i
-                    ))
+                            vp,
+                            headerFormat || '',
+                            i
+                        )
+                    )
                 );
 
                 if (headerFormat) {
@@ -138,7 +129,7 @@ class HeaderRow extends Row {
                 }
 
                 cell.render();
-                
+
                 if (columnId) {
                     cell.htmlElement.setAttribute(
                         'rowSpan',
@@ -160,19 +151,22 @@ class HeaderRow extends Row {
     /**
      * Get all headers that should be rendered in a level.
      *
-     * @param level - level that we start
-     * @param targetLevel - max level
-     * @param currentLevel - current level
-     * @returns 
+     * @param level
+     * Level that we start
+     * @param targetLevel
+     * Max level
+     * @param currentLevel
+     * Current level
+     * @returns
      */
-    private getColumnsAtLevel (
+    private getColumnsAtLevel(
         level: GroupedHeader[],
         targetLevel: number,
         currentLevel = 0
     ): GroupedHeader[] {
         let result:GroupedHeader[] = [];
-    
-        for (let i = 0, iEnd = level.length; i < iEnd; i++) { 
+
+        for (let i = 0, iEnd = level.length; i < iEnd; i++) {
             if (currentLevel === targetLevel) {
                 result.push(level[i]);
             }
@@ -185,17 +179,18 @@ class HeaderRow extends Row {
                     )
                 );
             }
-        };
-    
+        }
+
         return result;
     }
 
     /**
      * Calculates all references to columns in child. It is necessary to set
-     * correct colpan and calculate width. 
-     * 
-     * @param level - level that we start
-     * @returns 
+     * correct colpan and calculate width.
+     *
+     * @param level
+     * Level that we start
+     * @returns
      */
     public countColumnIds(level: GroupedHeader[]): number {
         let count = 0;
@@ -213,8 +208,8 @@ class HeaderRow extends Row {
             if (level[i].columns) {
                 count += this.countColumnIds(level[i].columns || []);
             }
-        };
-    
+        }
+
         return count;
     }
 }

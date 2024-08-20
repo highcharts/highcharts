@@ -26,7 +26,6 @@ import type Options from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import Column from './Column.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
 import Table from './Table.js';
 import DataGridUtils from './Utils.js';

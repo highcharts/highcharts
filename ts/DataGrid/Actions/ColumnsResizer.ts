@@ -143,9 +143,15 @@ class ColumnsResizer {
         column.width = vp.getRatioFromWidth(newLeftW);
         nextColumn.width = vp.getRatioFromWidth(newRightW);
     }
-    
+
     /**
      * Render the drag handle for resizing columns.
+     *
+     * @param column
+     * The reference to rendered column
+     *
+     * @param cell
+     * The reference to rendered cell, where hadles should be added
      */
     public renderColumnDragHandles(column: Column, cell: Cell): void {
         const vp = column.viewport;

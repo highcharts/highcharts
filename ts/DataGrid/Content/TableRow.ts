@@ -104,7 +104,7 @@ class TableRow extends Row {
         el.classList.add(Globals.classNames.rowElement);
         el.setAttribute('data-row-index', idx);
 
-        // calculate levels of header, 1 to avoid indexing from 0
+        // Calculate levels of header, 1 to avoid indexing from 0
         el.setAttribute(
             'aria-rowindex',
             idx + (this.viewport.header?.levels || 1) + 1
