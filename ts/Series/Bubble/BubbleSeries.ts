@@ -182,11 +182,12 @@ function onAxisAfterRender(this: Axis): void {
             dataMin = 0,
             dataMax = 0,
             categories,
-            options
+            options,
+            series
         } = this,
         type = options.type;
 
-    if (this.series.find((s): boolean => s.bubblePadding === true)) {
+    if (series.find((s): boolean => s.bubblePadding === true)) {
         if ((categories && categories.length) || type === 'category') {
             let tickCount = tickPositions.length;
 
@@ -195,10 +196,8 @@ function onAxisAfterRender(this: Axis): void {
                     pos = tick?.pos || 0;
 
 
-                if (tick?.label) {
-                    tick.label[
-                        (pos > dataMax || pos < dataMin) ? 'hide' : 'show'
-                    ]();
+                if (tick?.label && (pos > dataMax || pos < dataMin)) {
+                    tick.label.hide();
                 }
             }
         }
