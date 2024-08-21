@@ -2,46 +2,6 @@ Column options in the Datagrid
 ===
 The DataGrid provides flexible configuration options to meet your specific needs.
 
-## Including columns in DataGrid
-By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
-This can be modified using one of the following options:
-
-- The optional [`settings.columns.included`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#included) array of column IDs specifies which DataTable columns to import into the DataGrid and their order. It allows for excluding or reordering columns. If  not set all columns are shown in their original order.
-
-  ```js
-  dataTable: new DataTable({
-    columns: {
-      a: [...],
-      b: [...],
-      c: [...]
-    }
-  }),
-  settings: {
-    columns: {
-      included: ['c', 'a']
-    }
-  }
-  ```
-
-- The optional [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions) root option can further configure these included columns, and [`columns[columnId].enabled`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions#enabled) can exclude specific columns.
-
-Note: If `settings.columns.included` is not set, the `columns` root option can configure all DataTable columns.
-
-  ```js
-  dataTable: new DataTable({
-    columns: {
-      a: [...],
-      b: [...],
-      c: [...]
-    }
-  }),
-  columns: {
-    a: {
-      enabled: false
-    }
-  }
-  ```
-
 ## Defaults
 By default, the options from the [defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property are applied to all columns.
 For instance, you can allow editing of cells in all columns in `default.columns` instead of applying an option to each column separately.
@@ -64,8 +24,19 @@ columns: {
   }
 }
 ```
-### Multiple level header
-Column headers can be grouped into sections, so you can create your own multiple level header.
+
+### Customize headers
+By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
+This can be modified using the [settings.header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSetting#header) option to define columns (or order) that you would like ot display.
+
+```js
+settings: {
+  header: ['a', 'price', 'weight']
+}
+
+```
+
+Columns headers can be grouped into sections, so you can create your own multiple level header.
 
 ![multilevelheader.png](multilevelheader.png)
 
@@ -101,11 +72,9 @@ settings: {
       }]
     }
   ]
-},
+}
 
 ```
-
-You can find more informations in our API docs
 
 ## How to format cells
 The [cellFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [cellFormatter](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter) option allow you to customize the cells content and format in that column.

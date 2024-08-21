@@ -17,7 +17,7 @@ DataGrid.dataGrid('container', {
             {
                 headerFormat: 'Product',
                 columns: [{
-                    headerFormat: 'Product name test',
+                    headerFormat: 'Product name',
                     columnId: 'product'
                 }, {
                     headerFormat: 'Units',
