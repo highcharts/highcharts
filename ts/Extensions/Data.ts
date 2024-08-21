@@ -2009,6 +2009,14 @@ class Data {
                             chart.xAxis[0].options
                         );
 
+                        if (
+                            !chart.xAxis[0].options.categories &&
+                            !dataOptions.xAxis.categories
+                        ) {
+                            // Clear if both are falsely.
+                            delete dataOptions.xAxis.categories;
+                        }
+
                         if (!Object.keys(dataOptions.xAxis).length) {
                             delete dataOptions.xAxis;
 
