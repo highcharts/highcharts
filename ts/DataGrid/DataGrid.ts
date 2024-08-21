@@ -373,10 +373,12 @@ class DataGrid {
     private getEnabledColumnIDs(): string[] {
         const columnsOptions = this.options?.columns;
         const header = this.options?.settings?.header;
-        const columnsIncluded =
-            this.options?.settings?.columns?.included ||
-            this.getColumnIds(header || [], false) ||
-            this.dataTable?.getColumnNames();
+        const headerColumns = this.getColumnIds(header || [], false);
+        let columnsIncluded = this.options?.settings?.columns?.included ||
+        (
+            headerColumns && headerColumns.length > 0 ?
+                headerColumns : this.dataTable?.getColumnNames()
+        )
 
         if (!columnsIncluded?.length) {
             return [];

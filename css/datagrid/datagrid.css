@@ -119,17 +119,14 @@
     border-top: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-table thead tr:first-child {
+.highcharts-datagrid-table thead tr:first-child,
+.highcharts-datagrid-table thead th.highcharts-datagrid-column-first {
     border-top: none;
 }
 
 .highcharts-datagrid-table thead th {
     position: relative;
     border-left: 1px solid var(--highcharts-neutral-color-20);
-}
-
-.highcharts-datagrid-table thead th.highcharts-datagrid-column-first {
-    border-left: none;
 }
 
 .highcharts-datagrid-header-cell-content {
