@@ -162,7 +162,7 @@ class HeaderRow extends Row {
         targetLevel: number,
         currentLevel = 0
     ): GroupedHeader[] {
-        let result:GroupedHeader[] = [];
+        let result: GroupedHeader[] = [];
 
         for (let i = 0, iEnd = level.length; i < iEnd; i++) {
             if (currentLevel === targetLevel) {
