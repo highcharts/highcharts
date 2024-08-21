@@ -194,7 +194,7 @@ function onAxisAfterRender(this: Axis): void {
                 pos = tick?.pos || 0;
 
 
-            if (tick.label) {
+            if (tick?.label) {
                 tick.label[
                     (pos > dataMax || pos < dataMin) ? 'hide' : 'show'
                 ]();
