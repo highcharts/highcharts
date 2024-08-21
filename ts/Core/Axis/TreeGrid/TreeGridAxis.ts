@@ -49,6 +49,7 @@ const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
 const {
     addEvent,
+    defined,
     find,
     fireEvent,
     isObject,
@@ -503,13 +504,20 @@ function onBeforeRender(
                             d = buildGanttPoint(d);
 
                             if (
-                                (point.x || point.start) === (
-                                    (d as GanttPointOptions).x ||
-                                    (d as GanttPointOptions).start
-                                ) &&
-                                (point.x2 || point.end) === (
-                                    (d as GanttPointOptions).x2 ||
-                                    (d as GanttPointOptions).end
+                                (
+                                    (point.x || point.start) === (
+                                        (d as GanttPointOptions).x ||
+                                        (d as GanttPointOptions).start
+                                    ) &&
+                                    (point.x2 || point.end) === (
+                                        (d as GanttPointOptions).x2 ||
+                                        (d as GanttPointOptions).end
+                                    )
+                                ) ||
+                                (
+                                    defined(point.id) && (
+                                        point.id === (d as GanttPointOptions).id
+                                    )
                                 )
                             ) {
                                 d = point;
