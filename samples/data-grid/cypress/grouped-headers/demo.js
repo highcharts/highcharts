@@ -11,9 +11,7 @@ window.dataGrid = DataGrid.dataGrid('container', {
     },
     settings: {
         header: [
-            {
-                columnId: 'id'
-            },
+            'id',
             {
                 headerFormat: 'Product',
                 columns: [{
@@ -23,8 +21,6 @@ window.dataGrid = DataGrid.dataGrid('container', {
                     headerFormat: 'Units',
                     columns: [{
                         columnId: 'weight'
-                    }, {
-                        columnId: 'price'
                     }]
                 }]
             },
@@ -33,8 +29,6 @@ window.dataGrid = DataGrid.dataGrid('container', {
                 columns: [{
                     headerFormat: 'Meta',
                     columns: [{
-                        columnId: 'url'
-                    }, {
                         columnId: 'icon'
                     }]
                 }]
@@ -45,11 +39,8 @@ window.dataGrid = DataGrid.dataGrid('container', {
         product: {
             headerFormat: '{id} test'
         },
-        // icon: {
-        //     enabled: false
-        // }
-        // url: {
-        //     enabled: false
-        // }
+        price: {
+            enabled: true
+        }
     }
 });

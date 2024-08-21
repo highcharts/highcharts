@@ -8,7 +8,7 @@ describe('DataGrid events.', () => {
     });
 
     it('Hidden columns.', () => {
-        cy.get('table thead tr:nth-child(3) th').should('have.length', 4);
+        cy.get('table thead tr:nth-child(3) th').should('have.length', 2);
         cy.window().then((win) => {
             win.dataGrid.update({
                 columns: {
@@ -19,7 +19,9 @@ describe('DataGrid events.', () => {
             });
 
             // Hidden column
-            cy.get('table thead tr:nth-child(3) th').should('have.length', 3);
+            cy.get('table thead tr:nth-child(3) th').should('have.length', 1);
+            cy.get('th').contains('price').should('not.exist');
+            cy.get('th').contains('url').should('not.exist');
         });
     });
 
@@ -36,7 +38,7 @@ describe('DataGrid events.', () => {
             // If all columns in group are hidden, hide the group.
             cy.get('table thead tr:nth-child(1) th').should('have.length', 2);
             cy.get('table thead tr:nth-child(2) th').should('have.length', 2);
-            cy.get('table thead tr:nth-child(3) th').should('have.length', 2);
+            cy.get('table thead tr:nth-child(3) th').should('have.length', 1);
         });
     });
 
