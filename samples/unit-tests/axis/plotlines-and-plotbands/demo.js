@@ -858,20 +858,23 @@ QUnit.test(
     function (assert) {
         const chart = Highcharts.chart('container', {
                 xAxis: {
-                    plotLines: [{
-                        value: 1,
+                    plotBands: [{
+                        from: 0,
+                        to: 1,
                         label: {
                             text: '0000000000000000'
                         }
                     },
                     {
-                        value: 1,
+                        from: 0,
+                        to: 1,
                         label: {
                             text: '================'
                         }
                     },
                     {
-                        value: 1.01,
+                        from: 0,
+                        to: 1,
                         label: {
                             text: '%%%%%%%%%%%%%%%%'
                         }
@@ -898,9 +901,29 @@ QUnit.test(
         opacityTester([1, 0, 0]);
 
         chart.series[0].xAxis.update({
-            labels: {
-                allowOverlap: true
-            }
+            plotBands: [{
+                from: 0,
+                to: 1,
+                label: {
+                    text: '0000000000000000',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '================',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '%%%%%%%%%%%%%%%%'
+                }
+            }]
         });
 
         opacityTester([1, 1, 1]);

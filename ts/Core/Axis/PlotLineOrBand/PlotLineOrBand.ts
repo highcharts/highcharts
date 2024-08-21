@@ -83,11 +83,11 @@ class PlotLineOrBand {
 
                 for (const axis of this.axes) {
 
-                    if (!axis.options.labels.allowOverlap) {
-                        for (const { label } of axis.plotLinesAndBands) {
-                            if (label) {
-                                labels.push(label);
-                            }
+                    for (const { label, options } of axis.plotLinesAndBands) {
+                        if (label && !(
+                            options as PlotBandOptions)?.label?.allowOverlap
+                        ) {
+                            labels.push(label);
                         }
                     }
                 }
@@ -699,6 +699,18 @@ export default PlotLineOrBand;
  * @default   center
  * @since     2.1
  * @apioption xAxis.plotBands.label.align
+ */
+
+/**
+ * Whether or not the label can be hidden if it overlaps with another label.
+ *
+ * @sample {highcharts} highcharts/xaxis/plotbands-label-allowoverlap/
+ *         A Plotband label overlapping another
+ *
+ * @type      {boolean}
+ * @default   undefined
+ * @since     11.4.8
+ * @apioption xAxis.plotBands.label.allowOverlap
  */
 
 /**
