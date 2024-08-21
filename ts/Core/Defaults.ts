@@ -136,6 +136,17 @@ const defaultOptions: DefaultOptions = {
     lang: {
 
         /**
+         * The browser locale to use for date formatting. Defaults to
+         * `undefined`, which takes the client's default locale.
+         *
+         * Use `en-GB`, British English, for approximate consistency with
+         * Highcharts v < 12.
+         *
+         * @since next
+         */
+        locale: void 0,
+
+        /**
          * The loading text that appears when the chart is set into the loading
          * state following a call to `chart.showLoading`.
          */
@@ -143,46 +154,42 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`.
+         * in `Highcharts.dateFormat()`. Defaults to 'undefined',
+         * meaning the default month names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
          * @default ["January", "February", "March", "April", "May", "June",
          *          "July", "August", "September", "October", "November",
          *          "December"]
          */
-        months: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
-        ],
+        months: void 0,
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`.
+         * to the `%b` format in `Highcharts.dateFormat()`. Defaults to
+         * 'undefined', meaning the default short month names are used according
+         * to the `lang.locale` setting.
          *
          * @type    {Array<string>}
          * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
          *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
          */
-        shortMonths: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
+        shortMonths: void 0,
 
         /**
-         * An array containing the weekday names.
+         * An array containing the weekday names. Defaults to 'undefined',
+         * meaning the default weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-         *          "Friday", "Saturday"]
          */
-        weekdays: [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday'
-        ],
+        weekdays: void 0,
 
         /**
-         * Short week days, starting Sunday. If not specified, Highcharts uses
-         * the first three letters of the `lang.weekdays` option.
+         * Short week days, starting Sunday. Defaults to 'undefined', meaning
+         * the default short weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @sample highcharts/lang/shortweekdays/
          *         Finnish two-letter abbreviations
@@ -2902,6 +2909,7 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
+    let time = H.time;
     fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
@@ -2909,8 +2917,8 @@ function setOptions(
 
     // Update the time object
     if (options.time || options.global) {
-        if (H.time) {
-            H.time.update(merge(
+        if (time) {
+            time.update(merge(
                 defaultOptions.global,
                 defaultOptions.time,
                 options.global,
@@ -2926,10 +2934,15 @@ function setOptions(
              * @name Highcharts.time
              * @type {Highcharts.Time}
              */
-            H.time = defaultTime;
+            time = defaultTime;
         }
     }
 
+    if (options.lang && 'locale' in options.lang) {
+        time.update({ locale: options.lang.locale as string|Array<string> });
+    }
+
+    H.time = time;
     return defaultOptions;
 }
 

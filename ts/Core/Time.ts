@@ -165,6 +165,14 @@ class Time {
 
     public Date: typeof Date = win.Date;
 
+    private months!: Array<string>;
+
+    private shortMonths!: Array<string>;
+
+    private weekdays!: Array<string>;
+
+    private shortWeekdays!: Array<string>;
+
     /* *
      *
      *  Functions
@@ -214,6 +222,32 @@ class Time {
             timezone?.indexOf('Etc/GMT') !== 0;
 
         this.timezone = timezone;
+
+        // Assign default time formats from locale strings
+        (
+            ['months', 'shortMonths', 'weekdays', 'shortWeekdays'] as
+            Array<'months'|'shortMonths'|'weekdays'|'shortWeekdays'>
+        ).forEach(
+            (name): void => {
+                const isMonth = /months/i.test(name),
+                    isShort = /short/.test(name),
+                    options: Time.DateTimeFormatOptions = { timeZone: 'UTC' };
+
+                options[
+                    isMonth ? 'month' : 'weekday'
+                ] = isShort ? 'short' : 'long';
+                this[name] = (
+                    isMonth ?
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] :
+                        [3, 4, 5, 6, 7, 8, 9]
+                ).map(
+                    (position): string => this.dateFormat(
+                        options,
+                        (isMonth ? 31 : 1) * 24 * 36e5 * position
+                    )
+                );
+            }
+        );
     }
 
     /**
@@ -280,7 +314,7 @@ class Time {
     private dateTimeFormat(
         options: Intl.DateTimeFormatOptions,
         timestamp?: number|Date,
-        locale?: string
+        locale?: string|Array<string>
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
 
@@ -534,8 +568,10 @@ class Time {
                     weekday
                 ] = this.toParts(timestamp),
                 lang = H.defaultOptions.lang,
-                langWeekdays = (lang && lang.weekdays as any),
-                shortWeekdays = (lang && lang.shortWeekdays),
+                langWeekdays = lang?.weekdays || this.weekdays,
+                shortWeekdays = lang?.shortWeekdays || this.shortWeekdays,
+                months = lang?.months || this.months,
+                shortMonths = lang?.shortMonths || this.shortMonths,
 
                 // List all format keys. Custom formats can be added from the
                 // outside.
@@ -561,9 +597,9 @@ class Time {
 
                         // Month
                         // Short month, like 'Jan'
-                        b: lang.shortMonths[month],
+                        b: shortMonths[month],
                         // Long month, like 'January'
-                        B: lang.months[month],
+                        B: months[month],
                         // Two digit month number, 01 through 12
                         m: pad(month + 1),
                         // Month number, 1 through 12 (#8150)
@@ -601,7 +637,7 @@ class Time {
 
             // Do the replaces
             objectEach(replacements, function (
-                val: (string|Function),
+                val: (string|number|Function),
                 key: string
             ): void {
                 if (isString(format)) {
@@ -1012,8 +1048,7 @@ namespace Time {
     );
     export interface TimeOptions {
         Date?: any;
-        /// getTimezoneOffset?: Function;
-        locale?: string;
+        locale?: string|Array<string>;
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;
