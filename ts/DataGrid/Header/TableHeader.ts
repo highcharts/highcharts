@@ -110,9 +110,9 @@ class TableHeader {
         }
 
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
-            const lastRow = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            lastRow.renderMultipleLevel(i);
-            this.rows.push(lastRow);
+            const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
+            row.renderMultipleLevel(i);
+            this.rows.push(row);
         }
     }
 
