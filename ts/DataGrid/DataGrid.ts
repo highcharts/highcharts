@@ -219,7 +219,10 @@ class DataGrid {
 
         // Display an error if the renderTo is wrong
         if (!container) {
-            console.error('Missing container');
+            console.error(`
+                Rendering div not found. It is unable to find the HTML element
+                to render the DataGrid in.
+            `);
             return;
         }
 
