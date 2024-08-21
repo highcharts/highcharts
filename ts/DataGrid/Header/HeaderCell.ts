@@ -67,7 +67,7 @@ class HeaderCell extends Cell {
     /**
      * Reference to options in settings header.
      */
-    public userOptions: Partial<ColumnOptions> = {};
+    public options: Partial<ColumnOptions> = {};
 
     /* *
     *
@@ -110,10 +110,10 @@ class HeaderCell extends Cell {
     public override render(): void {
         const column = this.column;
         const isSingleColumn = this.row.viewport.getColumn(this.column.id);
-        const userOptions = merge(column.userOptions, this.userOptions);
+        const options = merge(column.options, this.options);
 
-        this.value = userOptions.headerFormat ? (
-            format(userOptions.headerFormat, column)
+        this.value = options.headerFormat ? (
+            format(options.headerFormat, column)
         ) : column.id;
 
         // Render content of th element
@@ -123,7 +123,7 @@ class HeaderCell extends Cell {
         }, this.htmlElement);
         this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
-        if (userOptions.useHTML) {
+        if (options.useHTML) {
             this.renderHTMLCellContent(
                 this.value,
                 this.contentWrapper

@@ -12,18 +12,17 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    columns: {
-        icon: {
-            sorting: {
-                sortable: false
-            }
-        },
-        price: {
-            sorting: {
-                order: 'asc'
-            }
+    columns: [{
+        id: 'product',
+        sorting: {
+            sortable: false
         }
-    },
+    }, {
+        id: 'price',
+        sorting: {
+            order: 'asc'
+        }
+    }],
     events: {
         column: {
             afterSorting: function () {

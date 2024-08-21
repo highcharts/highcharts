@@ -13,7 +13,6 @@ Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 const { test } = QUnit;
 
 
-// DataGrid1 Tests to update
 test('Sync events leak in updated components', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
@@ -85,6 +84,9 @@ test('Sync events leak in updated components', async function (assert) {
         };
 
         await component.update({});
+
+        // Disconnect the resize observer to avoid errors in the test
+        component.dataGrid?.viewport.resizeObserver.disconnect();
 
         return Object.keys(events).every((key) => (
             events[key] === component.hcEvents[key]?.length

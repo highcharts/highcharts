@@ -13,17 +13,16 @@ const dataGrid = DataGrid.dataGrid('container', {
             metaData: ['a', 'b', 'c', 'd']
         }
     },
-    columns: {
-        product: {
-            editable: true
-        },
-        weight: {
-            editable: true
-        },
-        metaData: {
-            enabled: false
-        }
-    }
+    columns: [{
+        id: 'product',
+        editable: true
+    }, {
+        id: 'weight',
+        editable: true
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });
 
 /**

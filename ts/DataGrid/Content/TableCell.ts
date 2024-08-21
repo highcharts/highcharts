@@ -182,7 +182,7 @@ class TableCell extends Cell {
         const {
             cellFormat,
             cellFormatter
-        } = this.column.userOptions;
+        } = this.column.options;
 
         let value = this.value;
         if (!defined(value)) {

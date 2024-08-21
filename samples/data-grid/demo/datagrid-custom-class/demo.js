@@ -11,9 +11,8 @@ DataGrid.dataGrid('container', {
             editable: true
         }
     },
-    columns: {
-        weight: {
-            className: 'custom-column-class-name'
-        }
-    }
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name'
+    }]
 });

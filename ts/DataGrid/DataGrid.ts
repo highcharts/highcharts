@@ -24,6 +24,7 @@
 
 import type { Options, GroupedHeader } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
+import type Column from './Column';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
@@ -114,6 +115,12 @@ class DataGrid {
 
 
     /**
+     * The user options declared for the columns as an object of column ID to
+     * column options.
+     */
+    public columnOptionsMap?: Record<string, Column.Options>;
+
+    /**
      * The container of the data grid.
      */
     public container?: HTMLElement;
@@ -200,15 +207,14 @@ class DataGrid {
         options: Options,
         afterLoadCallback?: DataGrid.AfterLoadCallback
     ) {
-        this.userOptions = options;
-        this.options = merge(DataGrid.defaultOptions, options);
+        this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
 
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
-        this.loadDataTable(this.options.table);
+        this.loadDataTable(this.options?.table);
 
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
@@ -225,6 +231,27 @@ class DataGrid {
      * */
 
     /**
+     * Loads the user options to all the important fields.
+     *
+     * @param userOptions
+     * The options that were declared by the user.
+     */
+    private loadUserOptions(userOptions: Partial<Options>): void {
+        this.userOptions = userOptions;
+        this.options = merge(DataGrid.defaultOptions, this.userOptions);
+
+        const columnOptionsArray = this.options?.columns;
+        if (!columnOptionsArray) {
+            return;
+        }
+        const columnOptionsObj: Record<string, Column.Options> = {};
+        for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
+            columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
+        }
+        this.columnOptionsMap = columnOptionsObj;
+    }
+
+    /**
      * Updates the data grid with new options.
      *
      * @param options
@@ -237,8 +264,7 @@ class DataGrid {
         options: Options,
         render: boolean = true
     ): Promise<void> {
-        this.userOptions = merge(this.userOptions, options);
-        this.options = merge(DataGrid.defaultOptions, this.userOptions);
+        this.loadUserOptions(options);
 
         let newDataTable = false;
         if (!this.dataTable || options.table) {
@@ -371,24 +397,32 @@ class DataGrid {
      * grid, in the correct order.
      */
     private getEnabledColumnIDs(): string[] {
-        const columnsOptions = this.options?.columns;
+        const { columnOptionsMap } = this;
         const header = this.options?.settings?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        let columnsIncluded = this.options?.settings?.columns?.included ||
-        (
-            headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnNames()
-        )
+        let columnsIncluded: Array<string> | undefined;
+
+        if (headerColumns?.length) {
+            columnsIncluded = headerColumns;
+        } else {
+            columnsIncluded =
+                this.options?.settings?.columns?.included ??
+                this.dataTable?.getColumnNames();
+        }
 
         if (!columnsIncluded?.length) {
             return [];
+        }
+
+        if (!columnOptionsMap) {
+            return columnsIncluded;
         }
 
         let columnName: string;
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             columnName = columnsIncluded[i];
-            if (columnsOptions?.[columnName]?.enabled !== false) {
+            if (columnOptionsMap?.[columnName]?.enabled !== false) {
                 result.push(columnName);
             }
         }

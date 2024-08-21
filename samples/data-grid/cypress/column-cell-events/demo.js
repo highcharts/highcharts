@@ -14,11 +14,6 @@ DataGrid.dataGrid('container', {
             editable: true
         }
     },
-    columns: {
-        product: {
-            editable: true
-        }
-    },
     events: {
         cell: {
             click: function () {

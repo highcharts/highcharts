@@ -60,12 +60,6 @@ class Column {
      */
     public static readonly MIN_COLUMN_WIDTH = 20;
 
-    /**
-     * The default options of the column.
-     * @internal
-     */
-    public static readonly defaultOptions: IndividualColumnOptions = {};
-
 
     /* *
     *
@@ -107,15 +101,9 @@ class Column {
     public type?: Column.Type;
 
     /**
-     * The options that were declared by the user when creating the column.
+     * The options of the column.
      */
-    public readonly userOptions: IndividualColumnOptions;
-
-    /**
-     * The options of the column. Contains the options that were declared by
-     * the user and some of the default options.
-     */
-    public readonly options: IndividualColumnOptions;
+    public readonly options: Column.Options;
 
     /**
      * The index of the column in the viewport.
@@ -155,11 +143,10 @@ class Column {
         id: string,
         index: number
     ) {
-        this.userOptions = merge(
+        this.options = merge(
             viewport.dataGrid.options?.defaults?.columns ?? {},
-            viewport.dataGrid.options?.columns?.[id] ?? {}
+            viewport.dataGrid.columnOptionsMap?.[id] ?? {}
         );
-        this.options = merge(Column.defaultOptions, this.userOptions);
 
         this.id = id;
         this.index = index;
@@ -181,20 +168,6 @@ class Column {
      */
     public loadData(): void {
         this.data = this.viewport.dataTable.getColumn(this.id, true);
-    }
-
-    /**
-     * Updates the column with new options.
-     *
-     * @param options
-     * The column options to update.
-     */
-    public async update(options: IndividualColumnOptions): Promise<void> {
-        await this.viewport.dataGrid.update({
-            columns: {
-                [this.id]: options
-            }
-        });
     }
 
     /**
@@ -333,6 +306,7 @@ class Column {
 
 namespace Column {
     export type Type = 'number'|'date'|'string'|'boolean';
+    export type Options = Omit<IndividualColumnOptions, 'id'>;
 }
 
 

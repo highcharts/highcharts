@@ -26,12 +26,11 @@ const dataGrid = new DataGrid.DataGrid('container', {
             cellFormat: 'V: {value}'
         }
     },
-    columns: {
-        d: {
-            headerFormat: 'Col D',
-            cellFormat: '{row.index}%'
-        }
-    }
+    columns: [{
+        id: 'd',
+        headerFormat: 'Col D',
+        cellFormat: '{row.index}%'
+    }]
 });
 
 document.getElementById('scroll').addEventListener('submit', e => {

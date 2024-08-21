@@ -126,19 +126,19 @@ class SortingController {
      */
     private getSortingOptions(): SortingController.SortingState {
         const dataGrid = this.dataGrid,
-            columnOptionsRecord = dataGrid.options?.columns;
+            { columnOptionsMap } = dataGrid;
 
-        if (!columnOptionsRecord) {
+        if (!columnOptionsMap) {
             return { order: null };
         }
 
-        const columnIDs = Object.keys(columnOptionsRecord);
+        const columnIDs = Object.keys(columnOptionsMap);
 
         let foundOrder: ColumnSortingOrder = null;
         let foundColumnId: string | undefined;
         for (let i = columnIDs.length - 1; i > -1; --i) {
             const columnId = columnIDs[i];
-            const columnOptions = columnOptionsRecord[columnId];
+            const columnOptions = columnOptionsMap[columnId];
             const order = columnOptions.sorting?.order;
 
             if (order) {

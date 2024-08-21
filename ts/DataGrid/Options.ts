@@ -66,7 +66,7 @@ export interface Options {
     /**
      * Options for individual columns.
      */
-    columns?: Record<string, IndividualColumnOptions>;
+    columns?: Array<IndividualColumnOptions>;
 
     /**
      * Options applied to all elements in the datagrid by default. Can be
@@ -309,6 +309,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * The id of the column in the data table for which the options are applied.
+     */
+    id: string;
 
     sorting?: IndividualColumnSortingOptions;
 }

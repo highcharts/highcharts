@@ -35,12 +35,8 @@ window.dataGrid = DataGrid.dataGrid('container', {
             }
         ]
     },
-    columns: {
-        product: {
-            headerFormat: '{id} test'
-        },
-        price: {
-            enabled: true
-        }
-    }
+    columns: [{
+        id: 'product',
+        headerFormat: '{id} test'
+    }]
 });

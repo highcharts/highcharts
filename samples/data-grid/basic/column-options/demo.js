@@ -13,15 +13,14 @@ DataGrid.dataGrid('container', {
             editable: true
         }
     },
-    columns: {
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormatter: function () {
-                return 'V: ' + this.value;
-            }
-        },
-        metaData: {
-            enabled: false
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cellFormatter: function () {
+            return 'V: ' + this.value;
         }
-    }
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });

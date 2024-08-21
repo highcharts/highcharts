@@ -6,15 +6,14 @@ const initialOptions = {
             editable: true
         }
     },
-    columns: {
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormat: 'V: ${value}'
-        },
-        metaData: {
-            enabled: false
-        }
-    }
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cellFormat: 'V: ${value}'
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 };
 
 const dataGrid = DataGrid.dataGrid('container', {

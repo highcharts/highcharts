@@ -49,12 +49,11 @@ DataGrid.dataGrid('container', {
             }
         }
     },
-    columns: {
-        product: {
-            headerFormat: '{id} name'
-        },
-        weight: {
-            headerFormat: 'Custom weight'
-        }
-    }
+    columns: [{
+        id: 'product',
+        headerFormat: '{id} name'
+    }, {
+        id: 'weight',
+        headerFormat: 'Custom weight'
+    }]
 });

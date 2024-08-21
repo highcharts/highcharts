@@ -119,11 +119,11 @@ class HeaderRow extends Row {
                 );
 
                 if (headerFormat) {
-                    cell.userOptions.headerFormat = headerFormat;
+                    cell.options.headerFormat = headerFormat;
                 }
 
                 if (useHTML) {
-                    cell.userOptions.useHTML = useHTML;
+                    cell.options.useHTML = useHTML;
                 }
 
                 cell.render();
