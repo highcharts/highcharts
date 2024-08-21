@@ -451,17 +451,20 @@ function onBeforeRender(
                         ): void {
 
                             // For using keys - rebuild the data structure
+
                             data = s.pointClass.prototype
                                 .optionsToObject
                                 .call({ series: s }, data);
                             s.pointClass.setGanttPointAliases(data);
 
-                            // Set series index on data. Removed again
-                            // after use.
-                            (data as PointOptions).seriesIndex = (
-                                numberOfSeries
-                            );
-                            arr.push(data as PointOptions);
+                            if (isObject(data, true)) {
+                                // Set series index on data. Removed again
+                                // after use.
+                                (data as PointOptions).seriesIndex = (
+                                    numberOfSeries
+                                );
+                                arr.push(data as PointOptions);
+                            }
                         });
                         // Increment series index
                         if (uniqueNames === true) {
