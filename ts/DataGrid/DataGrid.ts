@@ -212,8 +212,6 @@ class DataGrid {
      * @param renderTo
      * The render target (html element or id) of the data grid.
      *
-     * @returns
-     * The container element of the data grid.
      */
     private initContainers(renderTo: string|HTMLElement): void {
         const container =
