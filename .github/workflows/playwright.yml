@@ -1,12 +1,12 @@
 name: Playwright Browserstack Tests
 on:
-  pull_request:
-    branches: [ main, master ]
+  workflow_dispatch
 jobs:
   test_playwright:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     environment: browserstack
+    name: Playwright
     
     steps:
     - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
