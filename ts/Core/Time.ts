@@ -624,26 +624,11 @@ class Time {
                     'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
                 );
 
-            let dateTimeFormat: Intl.DateTimeFormat;
-
-            /// sentenceCase ??= format.sentenceCase;
-            try {
-                dateTimeFormat = new Intl.DateTimeFormat(
-                    this.options.locale,
-                    extend({ timeZone }, format)
-                );
-            } catch (e) {
-                // @todo: This is likely to throw error 34 not only for wrong
-                // timezone, but also for wrong format options. Should be
-                // handled separately.
-                error(34);
-                dateTimeFormat = new Intl.DateTimeFormat(
-                    this.options.locale,
-                    format
-                );
-            }
-
-            format = dateTimeFormat.format(timestamp);
+            format = this.dateTimeFormat(
+                extend({ timeZone }, format),
+                timestamp,
+                this.options.locale
+            );
         }
 
         // Optionally capitalize the string and return
