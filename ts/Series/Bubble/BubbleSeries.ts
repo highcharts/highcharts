@@ -179,8 +179,8 @@ function onAxisAfterRender(this: Axis): void {
     const {
             ticks,
             tickPositions,
-            dataMin,
-            dataMax,
+            dataMin = 0,
+            dataMax = 0,
             categories,
             options
         } = this,
@@ -191,9 +191,9 @@ function onAxisAfterRender(this: Axis): void {
 
         while (tickCount--) {
             const tick = ticks[tickPositions[tickCount]],
-                pos = tick['pos'] || 0;
+                pos = tick?.pos || 0;
 
-            if (pos > (dataMax || 0) || pos < (dataMin || 0)) {
+            if (pos > dataMax || pos < dataMin) {
                 if (tick.label) {
                     tick.label.hide();
                 }
