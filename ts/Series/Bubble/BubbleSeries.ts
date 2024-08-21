@@ -193,10 +193,10 @@ function onAxisAfterRender(this: Axis): void {
 
             while (tickCount--) {
                 const tick = ticks[tickPositions[tickCount]],
-                    pos = tick?.pos || 0;
+                    pos = tick.pos || 0;
 
 
-                if (tick?.label && (pos > dataMax || pos < dataMin)) {
+                if (tick.label && (pos > dataMax || pos < dataMin)) {
                     tick.label.hide();
                 }
             }
