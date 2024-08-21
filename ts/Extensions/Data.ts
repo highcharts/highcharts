@@ -18,6 +18,7 @@
  *
  * */
 
+import type XAxisOptions from '../Core/Axis/AxisOptions';
 import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
@@ -1804,10 +1805,7 @@ class Data {
             options = this.options,
             allSeriesBuilders: SeriesBuilder[] = [];
 
-        let type: (
-                'linear'|'logarithmic'|'datetime'|'category'|'treegrid'|
-                undefined
-            ),
+        let type: XAxisOptions['type'] = 'linear',
             series: Array<SeriesOptions>,
             data: SeriesOptions['data'],
             i: number,
@@ -1952,15 +1950,13 @@ class Data {
 
             // Do the callback
             chartOptions = { series };
-            if (type) {
-                chartOptions.xAxis = {
-                    type: type
-                };
-                if (type === 'category') {
-                    chartOptions.xAxis.uniqueNames = false;
-                } else {
-                    chartOptions.xAxis.categories = false;
-                }
+            chartOptions.xAxis = {
+                type
+            };
+            if (type === 'category') {
+                chartOptions.xAxis.uniqueNames = false;
+            } else {
+                chartOptions.xAxis.categories = false;
             }
 
             if (options.complete) {
@@ -2008,6 +2004,14 @@ class Data {
                             dataOptions.xAxis,
                             chart.xAxis[0].options
                         );
+
+                        if (
+                            !chart.xAxis[0].options.categories &&
+                            !dataOptions.xAxis.categories
+                        ) {
+                            // Clear if both are falsely.
+                            delete dataOptions.xAxis.categories;
+                        }
 
                         if (!Object.keys(dataOptions.xAxis).length) {
                             delete dataOptions.xAxis;
