@@ -90,7 +90,7 @@
                 document.querySelector('#info h2').innerHTML = points[0].name;
             } else {
                 document.querySelector('#info #flag')
-                    .className = 'flag';
+                    .className = 'hidden';
                 document.querySelector(
                     '#info h2'
                 ).innerHTML = 'Comparing countries';

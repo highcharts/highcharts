@@ -1351,10 +1351,30 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
-        return {
-            width: getStyle(this.renderTo, 'width', true) || 0,
-            height: getStyle(this.renderTo, 'height', true) || 0
-        };
+        // Temporarily hide support divs from a11y and others, #21888
+        const nonContainers = [].map.call(
+                this.renderTo.children,
+                (child: HTMLDOMElement): [HTMLElement, string] | undefined => {
+                    if (child !== this.container) {
+                        const display = child.style.display;
+                        child.style.display = 'none';
+                        return [child, display];
+                    }
+                }
+            ) as Array<[HTMLElement, string]>,
+            box = {
+                width: getStyle(this.renderTo, 'width', true) || 0,
+                height: (getStyle(this.renderTo, 'height', true) || 0)
+            };
+
+        // Restore the non-containers
+        nonContainers.filter(Boolean).forEach(
+            ([div, display]): void => {
+                div.style.display = display;
+            }
+        );
+
+        return box;
     }
 
     /**
@@ -1370,7 +1390,12 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            containerBox = chart.getContainerBox();
+            containerBox = chart.getContainerBox(),
+            enableDefaultHeight = containerBox.height > 1 &&
+                !( // #21510, prevent infinite reflow
+                    !chart.renderTo.parentElement?.style.height &&
+                        chart.renderTo.style.height === '100%'
+                );
 
         /**
          * The current pixel width of the chart.
@@ -1394,7 +1419,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (containerBox.height > 1 ? containerBox.height : 400)
+            (enableDefaultHeight ? containerBox.height : 400)
         );
 
         chart.containerBox = containerBox;
@@ -1555,11 +1580,7 @@ class Chart {
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
-        css(renderTo, {
-            overflow: 'hidden',
-            // #21144, retest and remove in future version of Chrome
-            pointerEvents: H.isChrome ? 'fill' : 'auto'
-        });
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -1576,7 +1597,8 @@ class Chart {
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none', // #13503
                 'touch-action': 'manipulation',
-                outline: 'none'
+                outline: 'none',
+                padding: '0px'
             }, optionsChart.style || {});
         }
 
@@ -1785,7 +1807,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout as any);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
