@@ -22,15 +22,10 @@
 
 import type { Point } from '../../../Plugins/HighchartsTypes';
 import type Sync from '../../Sync/Sync';
-import type {
-    RangeModifierOptions,
-    RangeModifierRangeOptions
-} from '../../../../Data/Modifiers/RangeModifierOptions';
 import type HCComponent from '../HighchartsComponent.js';
 import type {
     HighchartsHighlightSyncOptions
 } from '../HighchartsComponentOptions';
-import type DataTable from '../../../../Data/DataTable';
 import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
@@ -38,54 +33,6 @@ import DataCursor from '../../../../Data/DataCursor.js';
 import U from '../../../Utilities.js';
 const { error } = U;
 
-/* *
-*
-*  Utility Functions
-*
-* */
-
-/**
- * Utility function that returns the first row index
- * if the table has been modified by a range modifier
- *
- * @param {DataTable} table
- * The table to get the offset from.
- *
- * @param {RangeModifierOptions} modifierOptions
- * The modifier options to use
- *
- * @return {number}
- * The row offset of the modified table.
- */
-function getModifiedTableOffset(
-    table: DataTable,
-    modifierOptions: RangeModifierOptions
-): number {
-    const { ranges } = modifierOptions;
-
-    if (ranges) {
-        const minRange = ranges.reduce(
-            (minRange, currentRange): RangeModifierRangeOptions => {
-                if (currentRange.minValue > minRange.minValue) {
-                    minRange = currentRange;
-                }
-                return minRange;
-
-            }, ranges[0]
-        );
-
-        const tableRowIndex = table.getRowIndexBy(
-            minRange.column,
-            minRange.minValue
-        );
-
-        if (tableRowIndex) {
-            return tableRowIndex;
-        }
-    }
-
-    return 0;
-}
 
 /* *
  *
@@ -130,6 +77,7 @@ const syncPair: Sync.SyncPair = {
                 continue;
             }
 
+            const presTable = table?.modified;
             const colAssignment = connectorHandler.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
@@ -153,33 +101,17 @@ const syncPair: Sync.SyncPair = {
                     events: {
                         // Emit table cursor
                         mouseOver: function (): void {
-                            let offset = 0;
-                            const modifier = table.getModifier();
-                            if (modifier?.options.type === 'Range') {
-                                offset = getModifiedTableOffset(
-                                    table,
-                                    modifier.options as RangeModifierOptions
-                                );
-                            }
                             cursor.emitCursor(table, {
                                 type: 'position',
-                                row: offset + this.index,
+                                row: presTable.getOriginalRowIndex(this.index),
                                 column: columnName,
                                 state: 'point.mouseOver' + groupKey
                             });
                         },
                         mouseOut: function (): void {
-                            let offset = 0;
-                            const modifier = table.getModifier();
-                            if (modifier?.options.type === 'Range') {
-                                offset = getModifiedTableOffset(
-                                    table,
-                                    modifier.options as RangeModifierOptions
-                                );
-                            }
                             cursor.emitCursor(table, {
                                 type: 'position',
-                                row: offset + this.index,
+                                row: presTable.getOriginalRowIndex(this.index),
                                 column: columnName,
                                 state: 'point.mouseOut' + groupKey
                             });
@@ -223,15 +155,6 @@ const syncPair: Sync.SyncPair = {
             const { table, cursor } = e;
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
-            const modifier = table.getModifier();
-
-            let offset = 0;
-
-            if (modifier && modifier.options.type === 'Range') {
-                offset = getModifiedTableOffset(
-                    table, modifier.options as RangeModifierOptions
-                );
-            }
 
             if (chart && chart.series?.length && cursor.type === 'position') {
                 let series: Series | undefined;
@@ -301,8 +224,14 @@ const syncPair: Sync.SyncPair = {
                     }
                 }
 
-                if (series?.visible && cursor.row !== void 0) {
-                    const point = series.data[cursor.row - offset];
+                const row = cursor.row;
+                if (series?.visible && row !== void 0) {
+                    const rowIndex = table.modified.getLocalRowIndex(row);
+                    if (rowIndex === void 0) {
+                        return;
+                    }
+
+                    const point = series.data[rowIndex];
                     if (point?.visible) {
                         return point;
                     }

@@ -12,6 +12,11 @@ window.dataGrid = DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
+    defaults: {
+        columns: {
+            editable: true
+        }
+    },
     columns: {
         icon: {
             sorting: {
