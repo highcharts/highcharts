@@ -186,18 +186,20 @@ function onAxisAfterRender(this: Axis): void {
         } = this,
         type = options.type;
 
-    if ((categories && categories.length) || type === 'category') {
-        let tickCount = tickPositions.length;
+    if (this.series.find((s): boolean => s.bubblePadding === true)) {
+        if ((categories && categories.length) || type === 'category') {
+            let tickCount = tickPositions.length;
 
-        while (tickCount--) {
-            const tick = ticks[tickPositions[tickCount]],
-                pos = tick?.pos || 0;
+            while (tickCount--) {
+                const tick = ticks[tickPositions[tickCount]],
+                    pos = tick?.pos || 0;
 
 
-            if (tick?.label) {
-                tick.label[
-                    (pos > dataMax || pos < dataMin) ? 'hide' : 'show'
-                ]();
+                if (tick?.label) {
+                    tick.label[
+                        (pos > dataMax || pos < dataMin) ? 'hide' : 'show'
+                    ]();
+                }
             }
         }
     }
