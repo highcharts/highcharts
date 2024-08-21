@@ -48,9 +48,14 @@ class TableRow extends Row {
     * */
 
     /**
-     * The index of the row in the data table.
+     * The local index of the row in the presentation data table.
      */
     public index: number;
+
+    /**
+     * The index of the row in the original data table (ID).
+     */
+    public id?: number;
 
 
     /* *
@@ -71,6 +76,7 @@ class TableRow extends Row {
     constructor(viewport: Table, index: number) {
         super(viewport);
         this.index = index;
+        this.id = viewport.dataTable.getOriginalRowIndex(index);
 
         this.setRowAttributes();
     }
@@ -111,7 +117,14 @@ class TableRow extends Row {
 
         el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
         el.classList.add(Globals.classNames.rowElement);
+
+        // Index of the row in the presentation data table
         el.setAttribute('data-row-index', idx);
+
+        // Index of the row in the original data table (ID)
+        if (this.id !== void 0) {
+            el.setAttribute('data-row-id', this.id);
+        }
 
         // 1 - index of the head, 1 to avoid indexing from 0
         el.setAttribute('aria-rowindex', idx + 2);

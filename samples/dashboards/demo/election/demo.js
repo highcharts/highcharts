@@ -326,6 +326,13 @@ async function setupDashboard() {
                         ]
                     }
                 },
+                defaults: {
+                    columns: {
+                        sorting: {
+                            sortable: false
+                        }
+                    }
+                },
                 columns: {
                     state: {
                         headerFormat: 'State'

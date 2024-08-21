@@ -65,7 +65,7 @@ const syncPair: Sync.SyncPair = {
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.index,
+                    row: cell.row.id,
                     column: cell.column.id,
                     state: 'dataGrid.hoverRow' + groupKey
                 });
@@ -123,16 +123,22 @@ const syncPair: Sync.SyncPair = {
 
             const { row, column } = cursor;
             const { dataGrid } = component;
+            const viewport = dataGrid?.viewport;
 
-            if (row === void 0 || !dataGrid) {
+            if (row === void 0 || !viewport) {
+                return;
+            }
+
+            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            if (rowIndex === void 0) {
                 return;
             }
 
             if (highlightOptions.autoScroll) {
-                dataGrid.viewport?.scrollToRow(row);
+                viewport.scrollToRow(rowIndex);
             }
 
-            dataGrid.hoverRow(row);
+            dataGrid.hoverRow(rowIndex);
             dataGrid.hoverColumn(column);
         };
 
