@@ -418,12 +418,15 @@ function onBeforeRender(
                 ),
                 buildGanttPointFunc = (series: GanttSeries): Function => (
                     point: PointOptions|PointShortOptions
-                ): GanttPointOptions => {
-                    point = series.pointClass.prototype
-                        .optionsToObject
-                        .call({ series: series }, point);
+                ): PointOptions|PointShortOptions => {
+                    if (series.pointClass.setGanttPointAliases) {
 
-                    series.pointClass.setGanttPointAliases(point);
+                        point = series.pointClass.prototype
+                            .optionsToObject
+                            .call({ series: series }, point);
+
+                        series.pointClass.setGanttPointAliases(point);
+                    }
                     return point;
                 };
 
@@ -500,10 +503,14 @@ function onBeforeRender(
                             d = buildGanttPoint(d);
 
                             if (
-                                (point.x) === (d as GanttPointOptions).x &&
-                                (point.x2) === (
-                                    d as GanttPointOptions
-                                ).x2
+                                (point.x || point.start) === (
+                                    (d as GanttPointOptions).x ||
+                                    (d as GanttPointOptions).start
+                                ) &&
+                                (point.x2 || point.end) === (
+                                    (d as GanttPointOptions).x2 ||
+                                    (d as GanttPointOptions).end
+                                )
                             ) {
                                 d = point;
                             }
