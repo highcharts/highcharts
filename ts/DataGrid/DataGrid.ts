@@ -79,28 +79,6 @@ class DataGrid {
         return new DataGrid(renderTo, options, afterLoadCallback);
     }
 
-    /**
-     * Initializes the container of the data grid.
-     *
-     * @param renderTo
-     * The render target (html element or id) of the data grid.
-     *
-     * @returns
-     * The container element of the data grid.
-     */
-    private static initContainer(renderTo: string|HTMLElement): HTMLElement {
-        if (typeof renderTo === 'string') {
-            const existingContainer = win.document.getElementById(renderTo);
-            if (existingContainer) {
-                return existingContainer;
-            }
-            return makeDiv(Globals.classNames.container, renderTo);
-        }
-        renderTo.classList.add(Globals.classNames.container);
-        return renderTo;
-    }
-
-
     /* *
     *
     *  Properties
@@ -118,6 +96,11 @@ class DataGrid {
      * The container of the data grid.
      */
     public container?: HTMLElement;
+
+    /**
+     * The content container of the data grid.
+     */
+    public contentWrapper?: HTMLElement;
 
     /**
      * The data source of the data grid. It contains the original data table
@@ -206,9 +189,7 @@ class DataGrid {
 
         this.querying = new QueryingController(this);
 
-        this.container = DataGrid.initContainer(renderTo);
-        this.container.classList.add(Globals.classNames.container);
-
+        this.initContainers(renderTo);
         this.loadDataTable(this.options.dataTable);
 
         this.querying.loadOptions();
@@ -224,6 +205,33 @@ class DataGrid {
      *  Methods
      *
      * */
+    
+    /**
+     * Initializes the container of the data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     */
+    private initContainers(renderTo: string|HTMLElement): void {
+        const container =
+            (typeof renderTo === 'string') ? win.document.getElementById(renderTo) : renderTo;
+
+        // Display an error if the renderTo is wrong
+        if (!container) {
+            console.error(`
+                Rendering div not found. It is unable to find the HTML element
+                to render the DataGrid in.
+            `);
+            return;
+        }
+
+        this.container = container;
+        this.container.innerHTML = AST.emptyHTML;
+        this.contentWrapper = makeHTMLElement('div', {
+            className: Globals.classNames.container
+        }, this.container);
+    }
 
     /**
      * Updates the data grid with new options.
@@ -311,8 +319,8 @@ class DataGrid {
 
         this.enabledColumns = this.getEnabledColumnIDs();
         vp?.destroy();
-        if (this.container) {
-            this.container.innerHTML = AST.emptyHTML;
+        if (this.contentWrapper) {
+            this.contentWrapper.innerHTML = AST.emptyHTML;
         }
 
         if (this.enabledColumns.length > 0) {
@@ -350,13 +358,9 @@ class DataGrid {
      * Renders the table (viewport) of the data grid.
      */
     private renderTable(): void {
-        if (!this.container) {
-            return;
-        }
-
         this.tableElement = makeHTMLElement('table', {
             className: Globals.classNames.tableElement
-        }, this.container);
+        }, this.contentWrapper);
 
         this.viewport = new Table(this, this.tableElement);
 
@@ -371,14 +375,10 @@ class DataGrid {
      * Renders a message that there is no data to display.
      */
     private renderNoData(): void {
-        if (!this.container) {
-            return;
-        }
-
         makeHTMLElement('div', {
             className: Globals.classNames.noData,
             innerText: 'No data to display'
-        }, this.container);
+        }, this.contentWrapper);
     }
 
     /**
