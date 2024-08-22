@@ -115,7 +115,7 @@ export interface DataGridSettings {
     *
     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
     */
-    header?: GroupedHeaderOptions[];
+    header?: Array<GroupedHeaderOptions|string>;
 }
 
 export interface ColumnsSettings {

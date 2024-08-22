@@ -182,17 +182,17 @@ class TableHeader {
      *
      * @returns
      */
-    private getRowLevels(scope: GroupedHeaderOptions[]):number {
+    private getRowLevels(
+        scope: Array<GroupedHeaderOptions | string>
+    ): number {
         let maxDepth = 0;
 
-        for (let i = 0, iEnd = scope.length; i < iEnd; i++) {
-            if (scope[i].columns) {
-                const depth = this.getRowLevels(scope[i].columns || []);
+        for (const item of scope) {
+            if (typeof item !== 'string' && item.columns) {
+                const depth = this.getRowLevels(item.columns);
                 if (depth > maxDepth) {
                     maxDepth = depth;
                 }
-            } else if (scope[i].level) {
-                scope[i].level = maxDepth;
             }
         }
 

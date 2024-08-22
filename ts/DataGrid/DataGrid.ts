@@ -421,34 +421,26 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: GroupedHeaderOptions[],
+        columns: Array<GroupedHeaderOptions|string>,
         onlyEnabledColumns: boolean = true
-    ): Array<string> {
-        let columnIds:Array<string> = [];
-        const enabledColumns = this.enabledColumns;
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            if (onlyEnabledColumns) {
-                if (
-                    columns[i].columnId &&
-                    enabledColumns &&
-                    enabledColumns.indexOf(columns[i].columnId as string) > -1
-                ) {
-                    columnIds.push(columns[i].columnId as string);
-                }
-            } else {
-                if (columns[i].columnId || typeof columns[i] === 'string') {
-                    columnIds.push(
-                        columns[i].columnId || (columns[i] as string)
-                    );
-                }
+    ): string[] {
+        let columnIds: string[] = [];
+        const { enabledColumns } = this;
+
+        for (const column of columns) {
+            const columnId: string | undefined =
+                typeof column === 'string' ? column : column.columnId;
+
+            if (
+                columnId &&
+                (!onlyEnabledColumns || (enabledColumns?.includes(columnId)))
+            ) {
+                columnIds.push(columnId);
             }
 
-            if (columns[i].columns) {
+            if (typeof column !== 'string' && column.columns) {
                 columnIds = columnIds.concat(
-                    this.getColumnIds(
-                        columns[i].columns || [],
-                        onlyEnabledColumns
-                    )
+                    this.getColumnIds(column.columns, onlyEnabledColumns)
                 );
             }
         }

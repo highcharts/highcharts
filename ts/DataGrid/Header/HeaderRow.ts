@@ -101,14 +101,17 @@ class HeaderRow extends Row {
 
         const columnsOnLevel = this.getColumnsAtLevel(header, level);
         for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
-            // Skip hidden column
-            const colSpan = vp.dataGrid.getColumnIds(
-                columnsOnLevel[i].columns || []
-            ).length;
-            const columnId = (typeof columnsOnLevel[i] === 'string' ?
-                columnsOnLevel[i] : columnsOnLevel[i].columnId) as string;
+            const column = columnsOnLevel[i];
+            const colSpan =
+                (typeof column !== 'string' && column.columns) ?
+                    vp.dataGrid.getColumnIds(column.columns).length : 0;
+            const columnId = typeof column === 'string' ?
+                column : column.columnId;
             const dataColumn = vp.getColumn(columnId || '');
-            const { useHTML, headerFormat } = columnsOnLevel[i];
+            const useHTML = (typeof column !== 'string') ?
+                column.useHTML : void 0;
+            const headerFormat = (typeof column !== 'string') ?
+                column.headerFormat : void 0;
 
             // Skip hidden column or header when all columns are hidden.
             if (
@@ -121,7 +124,7 @@ class HeaderRow extends Row {
             }
 
             const cell = this.createCell(
-                vp.getColumn(columnId) ||
+                vp.getColumn(columnId || '') ||
                 new Column(
                     vp,
                     headerFormat?.replace(/<[^>]*>/g, '') || '', // Remove HTML tags and empty spaces.
@@ -163,20 +166,21 @@ class HeaderRow extends Row {
      * @returns
      */
     private getColumnsAtLevel(
-        level: GroupedHeaderOptions[],
+        level: Array<GroupedHeaderOptions | string>,
         targetLevel: number,
-        currentLevel = 0
-    ): GroupedHeaderOptions[] {
-        let result:GroupedHeaderOptions[] = [];
+        currentLevel: number = 0
+    ): Array<GroupedHeaderOptions|string> {
+        let result: Array<GroupedHeaderOptions|string> = [];
 
-        for (let i = 0, iEnd = level.length; i < iEnd; i++) {
+        for (const column of level) {
             if (currentLevel === targetLevel) {
-                result.push(level[i]);
+                result.push(column);
             }
-            if (level[i].columns) {
+
+            if (typeof column !== 'string' && column.columns) {
                 result = result.concat(
                     this.getColumnsAtLevel(
-                        level[i].columns || [],
+                        column.columns,
                         targetLevel,
                         currentLevel + 1
                     )
