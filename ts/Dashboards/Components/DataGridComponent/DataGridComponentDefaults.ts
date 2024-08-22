@@ -50,20 +50,35 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['title'],
             type: 'input'
         }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }, {
             name: 'DataGrid options',
             type: 'nested',
             nestedOptions: [{
                 name: 'General',
                 options: [
                     {
-                        name: 'caption',
-                        propertyPath: ['caption'],
-                        type: 'input'
-                    }, {
-                        name: 'DataGrid caption/title',
+                        name: 'Caption/title',
                         propertyPath:
                             ['dataGridOptions', 'settings', 'caption', 'text'],
                         type: 'input'
+                    }, {
+                        name: 'Columns distribution',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'settings',
+                                'columns',
+                                'distribution'
+                            ],
+                        type: 'select',
+                        selectOptions: [{
+                            name: 'full'
+                        }, {
+                            name: 'fixed'
+                        }]
                     }, {
                         name: 'Editable DataGrid',
                         propertyPath:
@@ -96,21 +111,6 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                             ],
                         type: 'toggle'
                     }, {
-                        name: 'Columns distribution',
-                        propertyPath:
-                            [
-                                'dataGridOptions',
-                                'settings',
-                                'columns',
-                                'distribution'
-                            ],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'full'
-                        }, {
-                            name: 'fixed'
-                        }]
-                    }, {
                         name: 'Cell text truncation',
                         propertyPath:
                             [
@@ -123,6 +123,14 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                     }
                 ]
             }]
+        }, {
+            name: 'DataGrid class name',
+            propertyPath: ['dataGridClassName'],
+            type: 'input'
+        }, {
+            name: 'DataGrid ID',
+            propertyPath: ['dataGridID'],
+            type: 'input'
         }
     ],
     onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
