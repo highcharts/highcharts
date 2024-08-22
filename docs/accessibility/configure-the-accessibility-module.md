@@ -45,9 +45,10 @@ To configure what screen readers read out for individual data points, see the [`
 Highcharts.chart('container', {
     accessibility: {
         point: {
-            valueDescriptionFormat: '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
+            valueDescriptionFormat:
+            'On {xDescription}, there were {point.y}'
         }
-    },
+    }
     // ...
 });
 ```
@@ -128,10 +129,10 @@ Be aware that for charts with a large number of data points, individual data poi
 ```js
 Highcharts.chart('container', {
     accessibility: {
-            series: {
-                pointDescriptionEnabledThreshold: 100
-            }
-        },
+        series: {
+            pointDescriptionEnabledThreshold: 1
+        }
+    },
     // ...
 });
 ```
@@ -143,13 +144,14 @@ It is also always possible to expose a data series as a group only - without exp
 
 ```js
 Highcharts.chart('container', {
-    plotOptions: {
-        line: {
-            accessibility: {
-                exposeAsGroupOnly: true
-            },
-        }
-    },
+    series: [{
+        accessibility: {
+            exposeAsGroupOnly: true,
+            descriptionFormat: 'Emma did not reach her step goal which was ' +
+                '70000 steps in one week. She walked {sum} steps.'
+        },
+        // ..
+    }]
     // ...
 });
 ```

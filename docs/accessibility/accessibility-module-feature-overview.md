@@ -46,8 +46,6 @@ Demo with pattern fills:
 Demo with series markers:
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-avg-temp' allow="fullscreen"></iframe>
 
-
-
 Voice input
 -----------
 New since Highcharts version 7.1 is support for voice input software. Similarly to keyboard navigation, this is a technology that is beneficial to users with mobility impairments, but has potential benefits for all users.
