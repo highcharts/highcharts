@@ -450,12 +450,17 @@ function onBeforeRender(
                             data
                         ): void {
 
-                            // For using keys - rebuild the data structure
-
-                            data = s.pointClass.prototype
-                                .optionsToObject
-                                .call({ series: s }, data);
-                            s.pointClass.setGanttPointAliases(data);
+                            // For using keys, or when using primitive points,
+                            // rebuild the data structure
+                            if (
+                                foundPrimitivePoint ||
+                                 (s.options.keys && s.options.keys.length)
+                            ) {
+                                data = s.pointClass.prototype
+                                    .optionsToObject
+                                    .call({ series: s }, data);
+                                s.pointClass.setGanttPointAliases(data);
+                            }
 
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
@@ -509,11 +514,11 @@ function onBeforeRender(
 
                         if (
                             seriesHasPrimitivePoints[index] ||
-                                (
-                                    isArray(d) &&
-                                    series.options.keys &&
-                                    series.options.keys.length
-                                )
+                            (
+                                isArray(d) &&
+                                series.options.keys &&
+                                series.options.keys.length
+                            )
                         ) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
