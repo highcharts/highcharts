@@ -1,11 +1,11 @@
-name: Highcharts Browserstack tests
+name: testing playwright
 
 on:
   pull_request:
     branches: [ main, master ]
 
 jobs:
-  test_bs:
+  test_browserstack:
     runs-on: ubuntu-latest
     environment: browserstack
     name: Playwright
@@ -16,7 +16,6 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -42,11 +41,11 @@ jobs:
         with:
           username:  ${{ secrets.BROWSERSTACK_USER }}
           access-key: ${{ secrets.BROWSERSTACK_KEY }}
+
       - name: 'BrowserStackLocal Setup'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
           local-testing: start
-          local-identifier: 'playwright-highcharts'
           local-args: '--proxy-server=127.0.0.1 --proxy-port=3030'
 
       - name: Run Playwright tests
@@ -56,7 +55,7 @@ jobs:
         run: |
           npx browserstack-node-sdk playwright test
 
-      - name: 'BrowserStackLocal Stop'
+          - name: 'Stop BrowserStackLocal'
         uses: 'browserstack/github-actions/setup-local@master'
         with:
-          local-testing: stop
+          local-testing: 'stop'

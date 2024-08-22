@@ -6,7 +6,7 @@ platforms:
     browserName: chrome
     osVersion: 12.0
 parallelsPerPlatform: 1
-debug: false
+debug: true
 browserstackLocal: true
 networkLogs: false
 consoleLogs: errors
