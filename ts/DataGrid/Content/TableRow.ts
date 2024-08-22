@@ -125,7 +125,7 @@ class TableRow extends Row {
          // Calculate levels of header, 1 to avoid indexing from 0
         el.setAttribute(
             'aria-rowindex',
-            idx + (this.viewport.header?.levels || 1) + 1
+            idx + (this.viewport.header?.levels ?? 1) + 1
         );
 
         if (idx % 2 === 1) {
