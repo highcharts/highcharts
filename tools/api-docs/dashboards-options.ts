@@ -113,8 +113,6 @@ async function addOption(
     let resolved: TSLib.CodeInfo;
     let value: TSLib.Value;
 
-    const debug = item.name === 'components';
-
     switch (codeInfo.kind) {
 
         case 'Class':
@@ -200,7 +198,6 @@ async function addOption(
                 codeInfo.kind === 'Variable' &&
                 codeInfo.name !== 'defaultOptions'
             ) {
-                debug && console.log('EXIT');
                 return;
             }
             value = codeInfo.value;
@@ -219,9 +216,10 @@ async function addOption(
 
             }
             if (codeInfo.type) {
-                item.doclet.type = TSLib.extractTypes(codeInfo.type);
-                // debug && console.log(codeInfo.type, item.doclet.type);
-                for (const type of item.doclet.type) {
+                item.doclet.type = TSLib.extractTypes(codeInfo.type, true);
+                for (let type of item.doclet.type) {
+                    type = type.replace(/^Array<(.*)>$/u, '$1');
+                    type = type.replace(/^Partial<(.*)>$/u, '$1');
                     if (type.endsWith('Options')) {
                         resolved = TSLib.resolveReference(
                             codeInfo,

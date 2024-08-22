@@ -14,6 +14,7 @@ import Handlebars from 'handlebars';
 import FS from 'node:fs/promises';
 import HTTP from 'node:http';
 import FSLib from '../libs/fs';
+import Marked from 'marked';
 import TreeLib from '../libs/tree';
 import Database from './database';
 
@@ -195,10 +196,22 @@ async function getOption(
     const node = await database.getItem(itemName, version);
 
     if (node) {
-        option.doclet.description = node.description;
+        option.doclet.description =
+            Marked.parse(jsdoc2Markdown(node.description));
 
         if (node.deprecated) {
             option.doclet.deprecated = `${node.deprecated.toFixed(2)}.0`;
+        }
+
+        if (node.doclet) {
+            if (node.doclet.default) {
+                if (forNavigation) {
+                    (option.doclet as any).default =
+                        node.doclet.default.join(',');
+                } else {
+                    option.doclet.defaultvalue = node.doclet.default.join(',');
+                }
+            }
         }
 
         if (node.since) {
@@ -213,7 +226,8 @@ async function getOption(
     for (const child of await database.getItemChildren(itemName, version)) {
 
         childOption = TreeLib.createTreeNode(root.children, child.name);
-        childOption.doclet.description = child.description;
+        childOption.doclet.description =
+            Marked.parse(jsdoc2Markdown(child.description));
 
         if (child.doclet.type) {
             childOption.doclet.type = {
@@ -260,6 +274,11 @@ async function getNav(
 }
 
 
+function jsdoc2Markdown(text: string): string {
+    return text.replaceAll(/\{@link\s+(\S*?)\s*\|\s*(.*?)\s*\}/gu, '[$2]($1)');
+}
+
+
 function toNav(
     item: Database.Item,
     hasChildren: boolean = false
@@ -267,7 +286,7 @@ function toNav(
     const nav: Nav = {};
 
     if (item.description) {
-        nav.description = item.description;
+        nav.description = Marked.parse(jsdoc2Markdown(item.description));
     }
     if (item.meta.file) {
         nav.filename = item.meta.file;
@@ -432,48 +451,46 @@ async function main() {
                 let file = FSLib.lastPath(option);
                 let ext = file.split('.').pop();
 
-                switch (ext) {
-                    case '':
-                    case 'html':
-                        response200(
-                            response,
-                            template(await getContext(database, option)),
-                            'html'
-                        );
-                        return;
-                    case 'json':
-                        if (!option.startsWith('nav/')) {
-                            throw new Error();
-                        }
-                        file = file.substring(0, file.length - ext.length - 1);
-                        response200(
-                            response,
-                            JSON.stringify(
-                                await getNav(database, file),
-                                void 0,
-                                '\t'
-                            ),
-                            'json'
-                        );
-                        return;
-                    default:
-                        if (product !== 'static') {
-                            throw new Error();
-                        }
-                        response200(
-                            response,
-                            await FS.readFile(
-                                `${STATIC_PATH}/${file}`,
-                                'utf8'
-                            ),
-                            ext
-                        );
-                        return;
+                if (ext === 'json') {
+                    if (!option.startsWith('nav/')) {
+                        throw new Error();
+                    }
+                    file = file.substring(0, file.length - ext.length - 1);
+                    response200(
+                        response,
+                        JSON.stringify(
+                            await getNav(database, file),
+                            void 0,
+                            '\t'
+                        ),
+                        'json'
+                    );
+                    return;
                 }
+
+                if (product === 'static') {
+                    response200(
+                        response,
+                        await FS.readFile(
+                            `${STATIC_PATH}/${file}`,
+                            'utf8'
+                        ),
+                        ext
+                    );
+                    return;
+                }
+
+                response200(
+                    response,
+                    template(await getContext(database, option)),
+                    'html'
+                );
 
             } catch (error) {
                 console.error(`${error}`);
-                response404(response, path);
+                if (!response.headersSent) {
+                    response404(response, path);
+                }
             }
         })
         .listen(PORT);

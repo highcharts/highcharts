@@ -607,7 +607,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: ConnectorHandler.ConnectorOptions[] = (
+        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -1070,7 +1070,7 @@ namespace Component {
         /**
          * Connector options
          */
-        connector?: ConnectorOptions | ConnectorOptions[];
+        connector?: (ConnectorOptions|Array<ConnectorOptions>);
         /**
          * Sets an ID for the component's container.
          */
