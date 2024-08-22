@@ -22,7 +22,7 @@
  *
  * */
 
-import type { Options, GroupedHeader } from './Options';
+import type { Options, GroupedHeaderOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -420,7 +420,7 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: GroupedHeader[],
+        columns: GroupedHeaderOptions[],
         onlyEnabledColumns: boolean = true
     ): Array<string> {
         let columnIds:Array<string> = [];

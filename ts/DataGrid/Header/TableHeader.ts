@@ -21,7 +21,7 @@
  *  Imports
  *
  * */
-import type { GroupedHeader } from '../Options';
+import type { GroupedHeaderOptions } from '../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
@@ -84,9 +84,9 @@ class TableHeader {
         this.viewport = viewport;
         this.columns = viewport.columns;
 
-        if (viewport.dataGrid.userOptions?.settings?.header) {
-            this.levels = this.getRowsLevels(
-                viewport.dataGrid.userOptions?.settings?.header
+        if (viewport.dataGrid.options?.settings?.header) {
+            this.levels = this.getRowLevels(
+                viewport.dataGrid.options?.settings?.header
             );
         }
 
@@ -142,6 +142,7 @@ class TableHeader {
                 offsetWidth - clientWidth + 'px';
         }
 
+        // Adjust cell's width when scrollbar is enabled.
         if (header) {
             const cells = header.rows[header.rows.length - 1].cells;
             const cellHtmlElement = cells[cells.length - 1].htmlElement;
@@ -181,12 +182,12 @@ class TableHeader {
      *
      * @returns
      */
-    private getRowsLevels(scope: GroupedHeader[]):number {
+    private getRowLevels(scope: GroupedHeaderOptions[]):number {
         let maxDepth = 0;
 
         for (let i = 0, iEnd = scope.length; i < iEnd; i++) {
             if (scope[i].columns) {
-                const depth = this.getRowsLevels(scope[i].columns || []);
+                const depth = this.getRowLevels(scope[i].columns || []);
                 if (depth > maxDepth) {
                     maxDepth = depth;
                 }

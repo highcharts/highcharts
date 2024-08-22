@@ -21,7 +21,7 @@
  *  Imports
  *
  * */
-import type { GroupedHeader } from '../Options';
+import type { GroupedHeaderOptions } from '../Options';
 import Table from '../Table.js';
 import Row from '../Row.js';
 import Globals from '../Globals.js';
@@ -82,87 +82,63 @@ class HeaderRow extends Row {
      * The current level in the header tree
      */
     public renderMultipleLevel(level: number): void {
-        const header = this.viewport.dataGrid.userOptions?.settings?.header;
+        const header = this.viewport.dataGrid.options?.settings?.header;
         const vp = this.viewport;
         const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
-        vp.theadElement.appendChild(
-            this.htmlElement
-        );
+        vp.theadElement.appendChild(this.htmlElement);
+        this.htmlElement.classList.add(Globals.classNames.headerRow);
 
-        this.htmlElement.classList.add(
-            Globals.classNames.headerRow
-        );
-
-        if (header) {
-            const columnsOnLevel = this.getColumnsAtLevel(header, level);
-            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
-                // Skip hidden column
-                const colSpan =
-                    vp.dataGrid.getColumnIds(
-                        columnsOnLevel[i].columns || []
-                    ).length;
-                const columnId = (typeof columnsOnLevel[i] === 'string' ?
-                    columnsOnLevel[i] : columnsOnLevel[i].columnId) as string;
-                const dataColumn = vp.getColumn(columnId || '');
-                const {
-                    useHTML,
-                    headerFormat
-                } = columnsOnLevel[i];
-
-                // Skip hidden column or header when all columns are hidden.
-                if (
-                    (
-                        enabledColumns &&
-                        columnId &&
-                        enabledColumns?.indexOf(
-                            columnId
-                        ) < 0
-                    ) || (
-                        !dataColumn &&
-                        colSpan === 0
-                    )
-                ) {
-                    continue;
-                }
-
-                const cell = this.createCell(
-                    (
-                        vp.getColumn(columnId)
-                    ) || (
-                        new Column(
-                            vp,
-                            headerFormat || '',
-                            i
-                        )
-                    )
-                );
-
-                if (headerFormat) {
-                    cell.userOptions.headerFormat = headerFormat;
-                }
-
-                if (useHTML) {
-                    cell.userOptions.useHTML = useHTML;
-                }
-
-                cell.render();
-
-                if (columnId) {
-                    cell.htmlElement.setAttribute(
-                        'rowSpan',
-                        (this.viewport.header?.levels || 1) - level
-                    );
-                } else {
-                    cell.htmlElement.setAttribute(
-                        'colSpan',
-                        colSpan
-                    );
-                }
-            }
-        } else {
+        if (!header) {
             super.render();
+            this.reflow();
+            return;
+        }
+
+        const columnsOnLevel = this.getColumnsAtLevel(header, level);
+        for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+            // Skip hidden column
+            const colSpan = vp.dataGrid.getColumnIds(
+                columnsOnLevel[i].columns || []
+            ).length;
+            const columnId = (typeof columnsOnLevel[i] === 'string' ?
+                columnsOnLevel[i] : columnsOnLevel[i].columnId) as string;
+            const dataColumn = vp.getColumn(columnId || '');
+            const { useHTML, headerFormat } = columnsOnLevel[i];
+
+            // Skip hidden column or header when all columns are hidden.
+            if (
+                (
+                    columnId &&
+                    enabledColumns && enabledColumns?.indexOf(columnId) < 0
+                ) || (!dataColumn && colSpan === 0 )
+            ) {
+                continue;
+            }
+
+            const cell = this.createCell(
+                vp.getColumn(columnId) || new Column(vp, headerFormat || '', i)
+            );
+
+            if (headerFormat) {
+                cell.userOptions.headerFormat = headerFormat;
+            }
+
+            if (useHTML) {
+                cell.userOptions.useHTML = useHTML;
+            }
+
+            cell.render();
+
+            if (columnId) {
+                cell.htmlElement.setAttribute(
+                    'rowSpan',
+                    (this.viewport.header?.levels || 1) - level
+                );
+            } else {
+                cell.htmlElement.setAttribute('colSpan', colSpan);
+            }
         }
 
         this.reflow();
@@ -179,11 +155,11 @@ class HeaderRow extends Row {
      * @returns
      */
     private getColumnsAtLevel(
-        level: GroupedHeader[],
+        level: GroupedHeaderOptions[],
         targetLevel: number,
         currentLevel = 0
-    ): GroupedHeader[] {
-        let result:GroupedHeader[] = [];
+    ): GroupedHeaderOptions[] {
+        let result:GroupedHeaderOptions[] = [];
 
         for (let i = 0, iEnd = level.length; i < iEnd; i++) {
             if (currentLevel === targetLevel) {

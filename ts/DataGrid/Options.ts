@@ -113,7 +113,7 @@ export interface DataGridSettings {
     * Defines the structure of levels in header. Used for grouping columns
     * headers.
     */
-    header?: GroupedHeader[];
+    header?: GroupedHeaderOptions[];
 }
 
 export interface ColumnsSettings {
@@ -399,7 +399,10 @@ export interface HeaderEvents {
     click?: ColumnEventCallback;
 }
 
-export interface GroupedHeader {
+/**
+ * Options to control the structure of table header.
+ */
+export interface GroupedHeaderOptions {
     /**
      * The format of the column header. Use `{id}` to display the column id.
      */
@@ -425,7 +428,7 @@ export interface GroupedHeader {
     /**
      * Columns that are displayed below the header.
      */
-    columns?: GroupedHeader[];
+    columns?: GroupedHeaderOptions[];
 }
 /* *
  *
