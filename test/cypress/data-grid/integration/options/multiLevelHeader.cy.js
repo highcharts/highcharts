@@ -42,7 +42,7 @@ describe('DataGrid events.', () => {
         });
     });
 
-    it('Sorting.', () => {
+    it('Grouped headers should be not sortable.', () => {
         // Click header that has direct reference to column
         cy.get('th[data-column-id="id"]')
             .click()

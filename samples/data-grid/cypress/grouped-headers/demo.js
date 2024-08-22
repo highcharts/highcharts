@@ -23,8 +23,7 @@ window.dataGrid = DataGrid.dataGrid('container', {
                         columnId: 'weight'
                     }]
                 }]
-            },
-            {
+            }, {
                 headerFormat: 'Product info',
                 columns: [{
                     headerFormat: 'Meta',
