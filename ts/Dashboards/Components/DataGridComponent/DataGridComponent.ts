@@ -169,7 +169,7 @@ class DataGridComponent extends Component {
                 this.getFirstConnector()?.table?.id
             ) {
                 this.dataGrid.update({
-                    table: this.getFirstConnector()?.table?.modified
+                    dataTable: this.getFirstConnector()?.table?.modified
                 }, false);
             }
 
@@ -209,7 +209,7 @@ class DataGridComponent extends Component {
 
     public override onTableChanged(): void {
         this.dataGrid?.update({
-            table: this.getFirstConnector()?.table?.modified
+            dataTable: this.getFirstConnector()?.table?.modified
         });
     }
 
@@ -257,10 +257,10 @@ class DataGridComponent extends Component {
         // Remove the table from the options copy if the connector is set.
         const optionsCopy = merge(this.options);
         if (optionsCopy.connector?.id) {
-            delete optionsCopy.dataGridOptions?.table;
-        } else if (optionsCopy.dataGridOptions?.table?.id) {
-            optionsCopy.dataGridOptions.table = {
-                columns: optionsCopy.dataGridOptions.table.columns
+            delete optionsCopy.dataGridOptions?.dataTable;
+        } else if (optionsCopy.dataGridOptions?.dataTable?.id) {
+            optionsCopy.dataGridOptions.dataTable = {
+                columns: optionsCopy.dataGridOptions.dataTable.columns
             };
         }
 
@@ -294,7 +294,7 @@ class DataGridComponent extends Component {
         const dataTable = this.getFirstConnector()?.table;
         const dataGridOptions = this.options.dataGridOptions ?? {};
         if (dataTable) {
-            dataGridOptions.table = dataTable.modified;
+            dataGridOptions.dataTable = dataTable.modified;
         }
 
         return new DGN.DataGrid(this.contentElement, dataGridOptions);

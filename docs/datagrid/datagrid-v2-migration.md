@@ -15,7 +15,7 @@ const grid = new DataGrid.DataGrid('container', {
 DataGrid v2
 ```js
 const grid = DataGrid.dataGrid('container', {
-    table: new DataTable({
+    dataTable: new DataTable({
         columns
     })
 });
@@ -25,7 +25,7 @@ or
 
 ```js
 const grid = DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: { ... }
     }
 });
@@ -56,7 +56,7 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
 ## Example of the new DataGrid
 
 ```js
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
