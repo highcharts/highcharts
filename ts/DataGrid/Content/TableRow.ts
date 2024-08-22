@@ -114,6 +114,9 @@ class TableRow extends Row {
         el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
         el.classList.add(Globals.classNames.rowElement);
 
+        // Index of the row in the presentation data table
+        el.setAttribute('data-row-index', idx);
+
         // Index of the row in the original data table (ID)
         if (this.id !== void 0) {
             el.setAttribute('data-row-id', this.id);
@@ -124,7 +127,6 @@ class TableRow extends Row {
             'aria-rowindex',
             idx + (this.viewport.header?.levels || 1) + 1
         );
-
 
         if (idx % 2 === 1) {
             el.classList.add(Globals.classNames.rowOdd);
