@@ -8,10 +8,10 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['ee-6019', 10], ['ee-ha', 11], ['ee-ta', 12], ['ee-hi', 13],
-        ['ee-ln', 14], ['ee-pr', 15], ['ee-sa', 16], ['ee-iv', 17],
-        ['ee-jr', 18], ['ee-jn', 19], ['ee-lv', 20], ['ee-pl', 21],
-        ['ee-ra', 22], ['ee-vg', 23], ['ee-vd', 24], ['ee-vr', 25]
+        ['ee-74', 10], ['ee-68', 11], ['ee-39', 12], ['ee-56', 13],
+        ['ee-45', 14], ['ee-37', 15], ['ee-60', 16], ['ee-79', 17],
+        ['ee-81', 18], ['ee-84', 19], ['ee-64', 20], ['ee-52', 21],
+        ['ee-71', 22], ['ee-87', 23], ['ee-50', 24]
     ];
 
     // Create the chart

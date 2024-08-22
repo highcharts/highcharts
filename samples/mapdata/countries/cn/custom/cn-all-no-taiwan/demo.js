@@ -1,7 +1,7 @@
 (async () => {
 
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.topo.json'
+        'https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-no-taiwan.topo.json'
     ).then(response => response.json());
 
     // Prepare demo data. The data is joined to map using value of 'hc-key'
@@ -34,7 +34,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.topo.json">China with Hong Kong and Macau</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-no-taiwan.topo.json">China without Taiwan</a>'
         },
 
         mapNavigation: {
