@@ -179,7 +179,8 @@
     overflow: hidden;
 }
 
-.highcharts-datagrid-table td:first-child {
+.highcharts-datagrid-table td:first-child,
+.highcharts-datagrid-table thead th.highcharts-datagrid-column-first {
     border-left: none;
 }
 
