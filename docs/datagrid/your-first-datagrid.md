@@ -45,7 +45,7 @@ DataGrid.dataGrid('container', {...})
 As options you have to provide the data that should be rendered:
 ```js
 DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
@@ -65,7 +65,7 @@ const columns = {
 };
 
 DataGrid.dataGrid('container', {
-    table: new DataTable({
+    dataTable: new DataTable({
         columns
     })
 });

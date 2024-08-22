@@ -190,7 +190,7 @@ class DataGrid {
         this.querying = new QueryingController(this);
 
         this.initContainers(renderTo);
-        this.loadDataTable(this.options.table);
+        this.loadDataTable(this.options.dataTable);
 
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
@@ -250,8 +250,8 @@ class DataGrid {
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
         let newDataTable = false;
-        if (!this.dataTable || options.table) {
-            this.loadDataTable(this.options?.table);
+        if (!this.dataTable || options.dataTable) {
+            this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
         }
 
