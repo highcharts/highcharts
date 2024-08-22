@@ -112,6 +112,8 @@ export interface DataGridSettings {
     /**
     * Defines the structure of levels in header. Used for grouping columns
     * headers.
+    *
+    * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
     */
     header?: GroupedHeaderOptions[];
 }
@@ -422,6 +424,7 @@ export interface GroupedHeaderOptions {
     columnId?: string;
     /**
      * Current level of header in the whole header tree.
+     * @internal
      * @private
      */
     level?: number;

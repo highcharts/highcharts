@@ -122,7 +122,7 @@ class TableRow extends Row {
             el.setAttribute('data-row-id', this.id);
         }
 
-         // Calculate levels of header, 1 to avoid indexing from 0
+        // Calculate levels of header, 1 to avoid indexing from 0
         el.setAttribute(
             'aria-rowindex',
             idx + (this.viewport.header?.levels ?? 1) + 1

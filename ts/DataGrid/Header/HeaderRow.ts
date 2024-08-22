@@ -59,6 +59,9 @@ class HeaderRow extends Row {
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
+     *
+     * @param level
+     * The current level of header that is rendered.
      */
     constructor(viewport: Table, level: number) {
         super(viewport);
@@ -112,13 +115,18 @@ class HeaderRow extends Row {
                 (
                     columnId &&
                     enabledColumns && enabledColumns?.indexOf(columnId) < 0
-                ) || (!dataColumn && colSpan === 0 )
+                ) || (!dataColumn && colSpan === 0)
             ) {
                 continue;
             }
 
             const cell = this.createCell(
-                vp.getColumn(columnId) || new Column(vp, headerFormat || '', i)
+                vp.getColumn(columnId) ||
+                new Column(
+                    vp,
+                    headerFormat?.replace(/<[^>]*>/g, '') || '', // Remove HTML tags and empty spaces.
+                    i
+                )
             );
 
             if (headerFormat) {

@@ -374,11 +374,11 @@ class DataGrid {
         const columnsOptions = this.options?.columns;
         const header = this.options?.settings?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        let columnsIncluded = this.options?.settings?.columns?.included ||
+        const columnsIncluded = this.options?.settings?.columns?.included ||
         (
             headerColumns && headerColumns.length > 0 ?
                 headerColumns : this.dataTable?.getColumnNames()
-        )
+        );
 
         if (!columnsIncluded?.length) {
             return [];
@@ -410,7 +410,8 @@ class DataGrid {
     }
 
     /**
-     * Calculates all references to columnIds on all levels below defined level.
+     * Extracts all references to columnIds on all levels below defined level
+     * in the settings.header structure.
      *
      * @param columns
      * Structure that we start calculation

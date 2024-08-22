@@ -141,6 +141,11 @@ class HeaderCell extends Cell {
         }
 
         if (isSingleColumn) {
+            // Add user column classname
+            if (column.options.className) {
+                this.htmlElement.classList.add(column.options.className);
+            }
+
             // Add resizing
             this.column.viewport.columnsResizer?.renderColumnDragHandles(
                 this.column,
