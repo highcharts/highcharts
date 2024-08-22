@@ -321,9 +321,7 @@ class Time {
         let dTL = this.dTLCache[cacheKey];
 
         if (!dTL) {
-            options = extend({
-                timeZone: this.timezone
-            }, options);
+            options.timeZone ??= this.timezone;
             try {
                 dTL = new Intl.DateTimeFormat(locale, options);
             } catch (e) {
