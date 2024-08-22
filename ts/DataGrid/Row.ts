@@ -78,9 +78,6 @@ abstract class Row {
      *
      * @param viewport
      * The Data Grid Table instance which the row belongs to.
-     *
-     * @param index
-     * The index of rendered row
      */
     constructor(viewport: Table) {
         this.viewport = viewport;
