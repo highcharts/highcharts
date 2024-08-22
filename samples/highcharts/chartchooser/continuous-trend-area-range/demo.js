@@ -35,6 +35,10 @@ Highcharts.chart('container', {
         complete: function (options) {
             options.series[0].name = 'Possible wind';
             options.series[1].name = 'Expected wind';
+
+            // Remove xAxis options to disregard the data module's axis type
+            // automatic detection.
+            delete options.xAxis;
         }
     },
 
