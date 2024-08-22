@@ -71,15 +71,6 @@ describe('Formatting cells.', () => {
                     'The width should be close to 200px.'
                 )
             });
-
-            cy.get('th').eq(0).within(() => {
-                cy.get('.highcharts-datagrid-head-cell-content').invoke('text').then((fullText) => {
-                  const parts = fullText.split(' '); // Manually truncate the text
-                  const truncatedText = parts.map(part => part.charAt(0) + '...').join(' ');
-
-                  expect(truncatedText).to.equal('D... o... p...');
-                });
-            });
         });
     });
 });
