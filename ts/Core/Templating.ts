@@ -31,7 +31,8 @@ const {
     isNumber,
     isObject,
     pick,
-    pInt
+    pInt,
+    ucfirst
 } = U;
 
 interface MatchObject {
@@ -74,6 +75,7 @@ const helpers: Record<string, Function> = {
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
+    ucfirst,
     unless: (condition: string[]|undefined): boolean => !condition
 };
 
@@ -124,7 +126,7 @@ const helpers: Record<string, Function> = {
  * @param {number} timestamp
  *        The JavaScript timestamp.
  *
- * @param {boolean} [capitalize=false]
+ * @param {boolean} [upperCaseFirst=false]
  *        Upper case first letter in the return.
  *
  * @return {string}
@@ -133,9 +135,9 @@ const helpers: Record<string, Function> = {
 function dateFormat(
     format: string,
     timestamp: number,
-    capitalize?: boolean
+    upperCaseFirst?: boolean
 ): string {
-    return defaultTime.dateFormat(format, timestamp, capitalize);
+    return defaultTime.dateFormat(format, timestamp, upperCaseFirst);
 }
 
 /**

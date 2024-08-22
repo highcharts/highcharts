@@ -35,7 +35,8 @@ const {
     objectEach,
     pad,
     splat,
-    timeUnits
+    timeUnits,
+    ucfirst
 } = U;
 
 /* *
@@ -537,7 +538,7 @@ class Time {
      * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
-     * @param {boolean} [sentenceCase=false]
+     * @param {boolean} [upperCaseFirst=false]
      *        Upper case first letter in the return.
      *
      * @return {string}
@@ -546,7 +547,7 @@ class Time {
     public dateFormat(
         format: Time.DateTimeFormat,
         timestamp?: number,
-        sentenceCase?: boolean
+        upperCaseFirst?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang?.invalidDate || '';
@@ -665,13 +666,8 @@ class Time {
             );
         }
 
-        // Optionally capitalize the string and return
-        return sentenceCase ?
-            (
-                format.substr(0, 1).toUpperCase() +
-                format.substr(1)
-            ) :
-            format;
+        // Optionally sentence-case the string and return
+        return upperCaseFirst ? ucfirst(format) : format;
     }
 
     /**
@@ -1020,7 +1016,6 @@ class Time {
 namespace Time {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
-        /// sentenceCase?: boolean;
         dateStyle?: 'full'|'long'|'medium'|'short';
         fractionalSecondDigits?: number;
         timeStyle?: 'full'|'long'|'medium'|'short';

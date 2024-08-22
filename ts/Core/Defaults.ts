@@ -2593,7 +2593,7 @@ const defaultOptions: DefaultOptions = {
          * @type      {string}
          * @apioption tooltip.headerFormat
          */
-        headerFormat: '<span style="font-size: 0.8em">{point.key}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
 
         /**
          * The HTML of the null point's line in the tooltip. Works analogously
