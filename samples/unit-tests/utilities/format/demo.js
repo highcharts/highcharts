@@ -180,6 +180,12 @@ QUnit.module('Format', () => {
             'Prototypes should not be accessible through format strings'
         );
 
+        assert.strictEqual(
+            format('{ucfirst (point.date:søndag %Y-%m-%d)}', { point }),
+            'Søndag 2012-01-01',
+            'Non-ASCII characters should be preserved in formats'
+        );
+
         // Reset
         Highcharts.setOptions({
             lang: {
