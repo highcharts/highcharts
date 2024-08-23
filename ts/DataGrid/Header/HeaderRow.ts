@@ -112,6 +112,8 @@ class HeaderRow extends Row {
                 column.useHTML : void 0;
             const headerFormat = (typeof column !== 'string') ?
                 column.headerFormat : void 0;
+            const className = (typeof column !== 'string') ?
+                column.className : void 0;
 
             // Skip hidden column or header when all columns are hidden.
             if (
@@ -123,7 +125,7 @@ class HeaderRow extends Row {
                 continue;
             }
 
-            const cell = this.createCell(
+            const headerCell = this.createCell(
                 vp.getColumn(columnId || '') ||
                 new Column(
                     vp,
@@ -133,22 +135,30 @@ class HeaderRow extends Row {
             );
 
             if (headerFormat) {
-                cell.userOptions.headerFormat = headerFormat;
+                headerCell.userOptions.headerFormat = headerFormat;
             }
 
             if (useHTML) {
-                cell.userOptions.useHTML = useHTML;
+                headerCell.userOptions.useHTML = useHTML;
             }
 
-            cell.render();
+            if (className) {
+                headerCell.userOptions.className = className;
+            }
+
+            headerCell.render();
+            headerCell.columns =
+                typeof column !== 'string' ? column.columns : void 0;
 
             if (columnId) {
-                cell.htmlElement.setAttribute(
+                headerCell.htmlElement.setAttribute(
                     'rowSpan',
                     (this.viewport.header?.levels || 1) - level
                 );
             } else {
-                cell.htmlElement.setAttribute('colSpan', colSpan);
+                if (colSpan > 1) {
+                    headerCell.htmlElement.setAttribute('colSpan', colSpan);
+                }
             }
         }
 

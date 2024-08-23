@@ -415,7 +415,7 @@ export interface GroupedHeaderOptions {
      */
     useHTML?: boolean;
     /**
-     * The custom CSS class name for the table caption.
+     * The custom CSS class name for the header.
      */
     className?: string;
     /**
