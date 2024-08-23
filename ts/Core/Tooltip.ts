@@ -1700,7 +1700,7 @@ class Tooltip {
                         series.chart.time.dateFormat(format, timestamp);
                     xDateFormat = '%0';
                 }
-                ((labelConfig.point?.tooltipDateKeys) || ['key']).forEach(
+                (labelConfig.point?.tooltipDateKeys || ['key']).forEach(
                     (key: string): void => {
                         formatString = formatString.replace(
                             new RegExp('point\.' + key + '([ \)}])', ''),
