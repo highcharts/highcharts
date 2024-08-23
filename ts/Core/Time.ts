@@ -329,14 +329,14 @@ class Time {
                 if (/Invalid time zone/i.test((e as Error).message)) {
                     error(34);
                     options.timeZone = 'UTC';
+                    dTL = new Intl.DateTimeFormat(locale, options);
                 }
-                dTL = new Intl.DateTimeFormat(locale, options);
             }
         }
 
         this.dTLCache[cacheKey] = dTL;
 
-        return dTL.format(timestamp);
+        return dTL?.format(timestamp) || '';
     }
 
     /**
@@ -657,13 +657,14 @@ class Time {
                     (60000 * 60),
                 timeZone = this.options.timezone || (
                     'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
-                );
+                ),
+                { prefix = '', suffix = '' } = format;
 
-            format = this.dateTimeFormat(
+            format = prefix + this.dateTimeFormat(
                 extend({ timeZone }, format),
                 timestamp,
                 this.options.locale
-            );
+            ) + suffix;
         }
 
         // Optionally sentence-case the string and return
@@ -1018,6 +1019,8 @@ namespace Time {
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
         fractionalSecondDigits?: number;
+        prefix?: string;
+        suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
     }
 

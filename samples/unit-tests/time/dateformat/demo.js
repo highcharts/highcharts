@@ -195,3 +195,30 @@ QUnit.test(
         ], 'Week should be correct for every hour in local time zone');
     }
 );
+
+QUnit.test(
+    'Time formats with object config',
+    assert => {
+        const time = new Highcharts.Time({
+            locale: 'en-US',
+            timezone: 'UTC'
+        });
+
+        const res = time.dateFormat({
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            prefix: 'Prefix ',
+            suffix: ' Suffix'
+        }, Date.UTC(2023, 11, 31, 23, 59, 59));
+
+        assert.strictEqual(
+            res,
+            'Prefix December 31, 2023 at 11:59:59 PM Suffix',
+            'Date should be formatted correctly.'
+        );
+    }
+);
