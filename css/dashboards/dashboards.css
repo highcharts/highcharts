@@ -76,14 +76,8 @@
         --highcharts-dashboards-content-hover-color: rgb(0, 0, 0);
     }
 
-    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
-        filter: invert(1) brightness(1);
-    }
-
-    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
-        filter: invert(1) brightness(1);
-    }
-
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn,
     .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
     .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
         filter: invert(1) brightness(1);
@@ -95,10 +89,7 @@
         filter: invert(1);
     }
 
-    .highcharts-dashboards-edit-sidebar-title {
-        filter: brightness(0) invert(1);
-    }
-
+    .highcharts-dashboards-edit-sidebar-title,
     .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
         filter: brightness(0) invert(1);
     }
@@ -134,20 +125,13 @@
     --highcharts-dashboards-content-hover-color: rgb(0, 0, 0);
 }
 
-.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
-    filter: invert(1) brightness(1);
-}
-
 /* stylelint-disable max-line-length */
-.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
-    filter: invert(1) brightness(1);
-}
-
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn,
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn,
 .highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
 .highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
     filter: invert(1) brightness(1);
 }
-
 /* stylelint-enable max-line-length */
 
 .highcharts-dark .highcharts-dashboards-edit-popup-close,
@@ -156,28 +140,18 @@
     filter: invert(1);
 }
 
-.highcharts-dark .highcharts-dashboards-edit-sidebar-title {
-    filter: brightness(0) invert(1);
-}
-
+.highcharts-dark .highcharts-dashboards-edit-sidebar-title,
 .highcharts-dark .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
     filter: brightness(0) invert(1);
 }
 
-.highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
-    filter: none;
-}
-
 /* stylelint-disable max-line-length */
-.highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
-    filter: none;
-}
-
+.highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn,
+.highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn,
 .highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
 .highcharts-light .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
     filter: none;
 }
-
 /* stylelint-enable max-line-length */
 
 .highcharts-light .highcharts-dashboards-edit-popup-close,
@@ -186,10 +160,7 @@
     filter: brightness(1) invert(0);
 }
 
-.highcharts-light .highcharts-dashboards-edit-sidebar-title {
-    filter: brightness(0) invert(0);
-}
-
+.highcharts-light .highcharts-dashboards-edit-sidebar-title,
 .highcharts-light .highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toolbar-item div {
     filter: brightness(0) invert(0);
 }
@@ -204,7 +175,6 @@
     background-color: var(--highcharts-dashboards-content-hover-color);
     color: var(--highcharts-neutral-color-100);
 }
-
 /* stylelint-enable max-line-length */
 
 .highcharts-dashboards,
