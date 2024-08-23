@@ -14,7 +14,7 @@ Keyboard navigation can be tested in the demo below. Use the tab-key to navigate
 
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-line' allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/art-grants)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-line)
 
 Screen Readers
 --------------
@@ -40,11 +40,17 @@ With the Accessibility module, Highcharts comes with built in support for Window
 Demo with higher contrast themes: 
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-switch-theme' allow="fullscreen"></iframe>
 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-switch-theme)
+
 Demo with pattern fills:
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-pattern-fill-one' allow="fullscreen"></iframe>
 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-pattern-fill-one)
+
 Demo with series markers:
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-avg-temp' allow="fullscreen"></iframe>
+
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-avg-temp)
 
 Voice input
 -----------

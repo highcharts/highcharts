@@ -68,6 +68,8 @@ The example shows a simple configuration with title, subtitle and some data:
 The configuration above gives us this chart:
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/not-accessible-simple-config allow="fullscreen"></iframe>
 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/not-accessible-simple-config)
+
 We can improve this chart with just a few options. If you add `series.name`, `yAxis.title.text`, `xAxis.title.text`, `xAxis.categories` and `tooltip.valueSuffix`.
 
 After adding the options, the configuration now looks like this:
@@ -111,6 +113,8 @@ After adding the options, the configuration now looks like this:
 
 The following example demonstrates a simple configuration with chart title, series name, titles for both the axis and value suffix for the tooltip:
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-simple-config allow="fullscreen"></iframe>
+
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-simple-config)
 
 By adding these options, you have already improved the charts readability both visually and for assistive technology. It is important to note that above configuration does not require any customization of the Accessibility options. This demonstrates the power of Highcharts' default accessibility support by just including the module. By simply providing meaningful titles and names, you can create a chart that is accessible to a wide range of users. For more complex charts or specific accessibility needs, you can further customize the options within the Accessibility module.
 

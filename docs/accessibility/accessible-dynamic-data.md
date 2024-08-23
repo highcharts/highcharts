@@ -30,6 +30,8 @@ To configure the announcements, see [`accessibility.announceNewData`](https://a
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-dynamic allow="fullscreen"></iframe>
 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dynamic)
+
 By defining the [`accessibility.announceNewData.announcementFormatter`](https://api.highcharts.com/highcharts/accessibility.announceNewData.announcementFormatter) it is possible to add logic for which updates to make an announcement for. This enables you to for example only announce new data that is critical, or for a certain data series.
 
 ```js

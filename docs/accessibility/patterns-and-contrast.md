@@ -23,12 +23,14 @@ Consider using a [high contrast theme](https://www.highcharts.com/docs/chart-des
 ### Dash styles
 Consider applying [dash styles](https://api.highcharts.com/highcharts/plotOptions.line.dashStyle) to line series. This will make lines distinguishable even on poor black/white prints. See the [live demo of dash styles](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle/).
 
-  <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-dashstyle allow="fullscreen"></iframe>
-
-For more examples of dash styles, you can take a look at this demo showing the name of different dash styles:
- <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/series-dashstyle-all allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-dashstyle allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all)
+
+For more examples of dash styles, you can take a look at this demo showing the name of different dash styles:
+ <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-dashstyle allow="fullscreen"></iframe>
+ 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dashstyle)
 
 ### Pattern fill
 Consider applying a pattern fill to areas, columns or plot bands. This can be accomplished through the pattern fill module. Pattern fills can be very useful for distinguishing series visually, if correctly used. For more information, see our [documentation on pattern fills](https://www.highcharts.com/docs/chart-design-and-style/pattern-fills).

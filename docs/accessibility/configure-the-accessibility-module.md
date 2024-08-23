@@ -33,7 +33,7 @@ Highcharts.chart('container', {
 ```
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/before-chart-format allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/timeline)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/before-chart-format )
 
 If more detailed control is required, the [`accessibility.screenReaderSection.beforeChartFormatter`](https://api.highcharts.com/highcharts/accessibility.screenReaderSection.beforeChartFormatter) option allows for specifying a function to return the HTML string, receiving the chart as an argument.
 
@@ -55,7 +55,7 @@ Highcharts.chart('container', {
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/value-description-format allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bubble)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/value-description-format)
 
 If more detailed control is required, the [`accessibility.point.descriptionFormatter`](https://api.highcharts.com/highcharts/accessibility.point.descriptionFormatter) option allows for specifying a function to return the entire description of the point, receiving the point as an argument.
 
@@ -93,6 +93,8 @@ Highcharts.chart('container', {
 
 Example with `tooltip.valueSuffix`:
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-pie allow="fullscreen"></iframe>
+
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-pie)
 
 ### Additional text descriptions
 
@@ -138,6 +140,8 @@ Highcharts.chart('container', {
 ```
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/point-description-enabled-threshold allow="fullscreen"></iframe>
 
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/point-description-enabled-threshold)
+
 It is possible to set a similar [threshold for keyboard navigation](https://api.highcharts.com/highcharts/accessibility.keyboardNavigation.seriesNavigation.pointNavigationEnabledThreshold), but this is disabled by default.
 
 It is also always possible to expose a data series as a group only - without exposing the individual data points - by using the [`series.accessibility.exposeAsGroupOnly`](https://api.highcharts.com/highcharts/series.line.accessibility.exposeAsGroupOnly) option. 
@@ -157,7 +161,7 @@ Highcharts.chart('container', {
 ```
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/expose-as-group-only allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/art-grants)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/expose-as-group-only)
 
 For large data series, [sonification](https://www.highcharts.com/docs/sonification/getting-started) can be a great tool for making trends and patterns more accessible to screen reader users.
 
@@ -189,6 +193,6 @@ Highcharts.chart('container', {
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/range-description-axis-description allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/arearange)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/range-description-axis-description)
 
 See more [demos using the Accessibility module](https://www.highcharts.com/demo#accessible-charts).
