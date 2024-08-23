@@ -242,36 +242,36 @@ namespace OfflineExporting {
             }
         }
         for (const foundClass of classAttrList) {
-            const className = foundClass.split('"')[1].split('"')[0];
-            const foundRule = cssRules.find(
-                (rule): boolean => (
-                    rule.cssText.split('{')[0].trim() === `.${className}`
-                )
-            );
-            const ruleStyle = (foundRule as CSSStyleRule)?.style;
+            const className = foundClass.split('"')[1].split('"')[0],
+                foundRule = cssRules.find(
+                    (rule): boolean => (
+                        rule.cssText.split('{')[0].trim() === `.${className}`
+                    )
+                ),
+                ruleStyle = (foundRule as CSSStyleRule)?.style;
 
 
             if (ruleStyle) {
+                const ruleStyleLen = ruleStyle.length,
+                    styleAttrList = [],
+                    styleRegex = new RegExp(
+                        `<.*?(?:${
+                            foundClass
+                        }).*?(style=".*?").*?>|<.*?(style=".*?").*?(?:${
+                            foundClass
+                        }).*?>`, 'gm'
+                    );
                 let styleStr = '',
                     matches;
 
-                for (let j = 0; j < ruleStyle.length; j++) {
+                for (let j = 0; j < ruleStyleLen; j++) {
                     const styleDec = ruleStyle.item(j);
                     styleStr += `${styleDec}: ${
                         ruleStyle.getPropertyValue(styleDec)
                     };`;
                 }
 
-                const styleAttrList = [];
-                const re = new RegExp(
-                    `<.*?(?:${
-                        foundClass
-                    }).*?(style=".*?").*?>|<.*?(style=".*?").*?(?:${
-                        foundClass
-                    }).*?>`, 'gm'
-                );
-
-                while ((matches = re.exec(svg)) !== null) {
+                while ((matches = styleRegex.exec(svg)) !== null) {
                     const validMatch = matches[1] || matches[2];
                     if (validMatch) {
                         styleAttrList.push(validMatch);
