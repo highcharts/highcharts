@@ -395,9 +395,9 @@ function onBeforeRender(
     const chart = e.target,
         axes = chart.axes;
 
-    (axes.filter(function (axis): boolean {
-        return axis.options.type === 'treegrid';
-    }) as Array<TreeGridAxisComposition>).forEach(
+    (axes.filter(
+        (axis): boolean => axis.type === 'treegrid'
+    ) as Array<TreeGridAxisComposition>).forEach(
         function (axis: TreeGridAxisComposition): void {
             const options = axis.options || {},
                 labelOptions = options.labels,
@@ -556,7 +556,7 @@ function wrapGenerateTick(
 ): void {
     const axis = this,
         mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
-        isTreeGrid = axis.options.type === 'treegrid',
+        isTreeGrid = axis.type === 'treegrid',
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
@@ -792,7 +792,7 @@ function wrapSetTickInterval(
         linkedParent = typeof options.linkedTo === 'number' ?
             this.chart[axis.coll]?.[options.linkedTo] :
             void 0,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
         axis.min = pick(axis.userMin, options.min, axis.dataMin);
@@ -843,8 +843,7 @@ function wrapRedraw(
     proceed: Function
 ): void {
     const axis = this,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = this.type === 'treegrid';
 
     if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos): void {

@@ -305,6 +305,7 @@ class Axis {
     public transA!: number;
     public transB!: number;
     public translationSlope!: number;
+    public type?: 'linear'|'logarithmic'|'datetime'|'category'|'treegrid';
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
@@ -408,10 +409,13 @@ class Axis {
          */
         axis.setOptions(userOptions);
 
-
         const options = this.options,
-            labelsOptions = options.labels,
-            type = options.type;
+            labelsOptions = options.labels;
+
+        // Set the type and fire an event
+        this.type = this.options.type;
+        fireEvent(this, 'afterSetType');
+
 
         /**
          * User's options for this axis without defaults.
@@ -436,7 +440,7 @@ class Axis {
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
-        axis.hasNames = type === 'category' || options.categories === true;
+        axis.hasNames = this.type === 'category' || options.categories === true;
 
         /**
          * If categories are present for the axis, names are used instead of
@@ -1713,7 +1717,7 @@ class Axis {
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== linkedParent.options.type) {
+            if (this.type !== linkedParent.type) {
                 // Can't link axes of different type
                 error(11, true, chart);
             }
