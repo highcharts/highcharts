@@ -43,26 +43,26 @@ One simple, yet effective way to enhance the accessibility of your charts is by 
 
 The example shows a simple configuration with title, subtitle and some data:
 ```js
+Highcharts.chart('container', {
     chart: {
             type: 'column'
-        },
-        title: {
-            text: 'Corn vs wheat estimated production for 2020',
-            align: 'left'
-        },
-        subtitle: {
-            text:
-                'Source: indexmundi',
-            align: 'left'
-        },
-        series: [
-            {
-                data: [406292, 260000, 107000, 68300, 27500, 14500]
-            },
-            {
-                data: [51086, 136000, 5500, 141000, 107180, 77000]
-            }
-        ]
+    },
+    title: {
+        text: 'Corn vs wheat estimated production for 2020',
+        align: 'left'
+    },
+    subtitle: {
+        text:
+            'Source: indexmundi',
+        align: 'left'
+    },
+    series: [{
+            data: [406292, 260000, 107000, 68300, 27500, 14500]
+        }, {
+            data: [51086, 136000, 5500, 141000, 107180, 77000]
+        }]
+    // ...
+});
 ```
 
 The configuration above gives us this chart:
@@ -74,6 +74,7 @@ We can improve this chart with just a few options. If you add `series.name`, `yA
 
 After adding the options, the configuration now looks like this:
 ```js
+Highcharts.chart('container', {
     chart: {
             type: 'column'
         },
@@ -109,6 +110,8 @@ After adding the options, the configuration now looks like this:
                 data: [51086, 136000, 5500, 141000, 107180, 77000]
             }
         ]
+    // ...
+});
 ```
 
 The following example demonstrates a simple configuration with chart title, series name, titles for both the axis and value suffix for the tooltip:
