@@ -73,6 +73,7 @@ jobs:
       uses: 'browserstack/github-actions/setup-local@master'
       with:
         local-testing: start
+        local-identifier: 'abc123'
 
     - name: Run Playwright tests
       env:

@@ -13,7 +13,7 @@ const caps = {
   "browserstack.accessKey":
     process.env.BROWSERSTACK_ACCESS_KEY || "<ACCESS_KEY>",
   "browserstack.local": process.env.BROWSERSTACK_LOCAL || false,
-  "browserstack.localIdentifier": process.env.BROWSERSTACK_LOCAL_IDENTIFIER || "",
+  "browserstack.localIdentifier": process.env.BROWSERSTACK_LOCAL_IDENTIFIER || "abc123",
 };
 
 console.log(caps);
