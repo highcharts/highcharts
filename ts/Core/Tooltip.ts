@@ -1675,7 +1675,7 @@ class Tooltip {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
-        let xDateFormat = tooltipOptions.xDateFormat,
+        let xDateFormat = tooltipOptions.xDateFormat || '',
             formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
 
         fireEvent(this, 'headerFormatter', e, function (
@@ -1708,8 +1708,8 @@ class Tooltip {
                         ['key']).forEach(
                     function (key: string): void {
                         formatString = formatString.replace(
-                            '{point.' + key + '}',
-                            '{point.' + key + ':' + xDateFormat + '}'
+                            new RegExp('point\.' + key + '([ \)}])', ''),
+                            `(point.${key}:${xDateFormat})$1`
                         );
                     }
                 );
