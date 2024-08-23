@@ -124,17 +124,17 @@ QUnit.module('Format', () => {
         assert.strictEqual(
             format(
                 '{value:<span style="font-size: 12px; font-weight: bold">' +
-                '%a</span> %b %e}',
+                '%Y</span>-%m-%d}',
                 { value: Date.UTC(2023, 5, 5, 12) }
             ),
-            '<span style="font-size: 12px; font-weight: bold">Mon</span> Jun ' +
-            ' 5',
+            '<span style="font-size: 12px; font-weight: bold">' +
+                '2023</span>-06-05',
             'HTML inside format should be preserved'
         );
 
         assert.strictEqual(
-            '',
             Highcharts.format('{point.y}', {}),
+            '',
             'Do not choke on undefined objects (node-export-server#31)'
         );
 
@@ -432,6 +432,32 @@ QUnit.module('Format', () => {
             ),
             'Task 50% completed',
             'Subexpression in conditional body should work'
+        );
+
+        assert.strictEqual(
+            format(
+                '{ucfirst "hello world"}',
+                {
+                    point: {
+                        key: Date.UTC(2024, 0, 1)
+                    }
+                }
+            ),
+            'Hello world',
+            'String literal argument'
+        );
+
+        assert.strictEqual(
+            format(
+                '{ucfirst (point.key:date %Y-%m-%d)}',
+                {
+                    point: {
+                        key: Date.UTC(2024, 7, 23)
+                    }
+                }
+            ),
+            'Date 2024-08-23',
+            'Date formatting with string output should be preserved'
         );
 
     });

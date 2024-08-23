@@ -198,6 +198,9 @@ function format(str = '', ctx: any, chart?: Chart): string {
         if ((n = Number(key)).toString() === key) {
             return n;
         }
+        if (/^".+"$/.test(key)) {
+            return key.slice(1, -1);
+        }
 
         // Variables and constants
         return getNestedProperty(key, ctx);
@@ -301,7 +304,25 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Pass the helpers the amount of arguments defined by the function,
             // then the match as the last argument.
             const args: unknown[] = [match],
-                parts = expression.split(' ');
+                parts: Array<string> = [],
+                len = expression.length;
+
+            let start = 0,
+                insideString = false;
+            for (i = 0; i <= len; i++) {
+                const char = expression.charAt(i);
+                if (char === '"') {
+                    insideString = !insideString;
+                }
+
+                if (
+                    !insideString &&
+                    (char === ' ' || i === len)
+                ) {
+                    parts.push(expression.substr(start, i - start));
+                    start = i + 1;
+                }
+            }
 
             i = helpers[fn].length;
             while (i--) {
@@ -343,6 +364,12 @@ function format(str = '', ctx: any, chart?: Chart): string {
                     }
                 } else {
                     replacement = time.dateFormat(segment, replacement);
+
+                    // Use string literal in order to be preserved in the outer
+                    // expression
+                    if (hasSub) {
+                        replacement = `"${replacement}"`;
+                    }
                 }
             }
         }
