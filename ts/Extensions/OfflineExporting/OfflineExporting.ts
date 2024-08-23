@@ -214,7 +214,11 @@ namespace OfflineExporting {
                         'svg' : imageType.split('/')[1]
                 )
             ),
-            scale = options.scale || 1;
+            scale = options.scale || 1,
+            classAttrList = svg.match(/class="(.*?)"/gm) || [],
+            sheets = H.doc.styleSheets,
+            cssRules: CSSRule[] = [],
+            sheetCount = sheets.length;
         let svgurl: string,
             blob,
             finallyHandler: Function,
@@ -222,7 +226,86 @@ namespace OfflineExporting {
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
             objectURLRevoke = true,
-            pdfFont = options.pdfFont;
+            pdfFont = options.pdfFont,
+            svgWithClassesParsed = svg;
+
+        for (let i = 0; i < sheetCount; i++) {
+            const sheetRules = sheets.item(i)?.cssRules;
+            if (sheetRules) {
+                const ruleListLength = sheetRules.length;
+                for (let j = 0; j < ruleListLength; j++) {
+                    const cssRule = sheetRules.item(j);
+                    if (cssRule) {
+                        cssRules.push(cssRule);
+                    }
+                }
+            }
+        }
+        for (const foundClass of classAttrList) {
+            const className = foundClass.split('"')[1].split('"')[0];
+            const foundRule = cssRules.find(
+                (rule): boolean => (
+                    rule.cssText.split('{')[0].trim() === `.${className}`
+                )
+            );
+            const ruleStyle = (foundRule as CSSStyleRule)?.style;
+
+
+            if (ruleStyle) {
+                let styleStr = '',
+                    matches;
+
+                for (let j = 0; j < ruleStyle.length; j++) {
+                    const styleDec = ruleStyle.item(j);
+                    styleStr += `${styleDec}: ${
+                        ruleStyle.getPropertyValue(styleDec)
+                    };`;
+                }
+
+                const styleAttrList = [];
+                const re = new RegExp(
+                    `<.*?(?:${
+                        foundClass
+                    }).*?(style=".*?").*?>|<.*?(style=".*?").*?(?:${
+                        foundClass
+                    }).*?>`, 'gm'
+                );
+
+                while ((matches = re.exec(svg)) !== null) {
+                    const validMatch = matches[1] || matches[2];
+                    if (validMatch) {
+                        styleAttrList.push(validMatch);
+                    }
+                }
+
+                if (styleAttrList.length) {
+                    for (const foundStyle of styleAttrList) {
+                        const styleStrParts = foundStyle.split('"');
+                        svgWithClassesParsed = svgWithClassesParsed.replace(
+                            foundStyle,
+                            (
+                                styleStrParts[0] +
+                                '"' +
+                                styleStrParts[1] +
+                                styleStr +
+                                '"'
+                            )
+                        );
+                    }
+                } else {
+                    svgWithClassesParsed = (
+                        svgWithClassesParsed.replace(
+                            foundClass,
+                            `style="${styleStr}"`
+                        )
+                    );
+                }
+
+                svgWithClassesParsed = (
+                    svgWithClassesParsed.replace(foundClass, '')
+                );
+            }
+        }
 
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
