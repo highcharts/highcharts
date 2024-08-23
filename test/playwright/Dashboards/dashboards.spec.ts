@@ -17,7 +17,7 @@ const caps = {
 };
 
 const test = base.extend({
-    page: async ({ _page, playwright }, use) => {
+    page: async ({ page, playwright }, use) => {
         const vDevice = await playwright._android.connect(
           `wss://cdp.browserstack.com/playwright?caps=${encodeURIComponent(
             JSON.stringify(caps)
