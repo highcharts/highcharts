@@ -1696,12 +1696,8 @@ class Tooltip {
             if (dateTime && xDateFormat) {
                 if (isObject(xDateFormat)) {
                     const format = xDateFormat;
-                    dateFormats[0] = function (timestamp): string {
-                        return new Intl.DateTimeFormat(
-                            this.options.locale,
-                            format
-                        ).format(timestamp);
-                    };
+                    dateFormats[0] = (timestamp): string =>
+                        series.chart.time.dateFormat(format, timestamp);
                     xDateFormat = '%0';
                 }
                 ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
