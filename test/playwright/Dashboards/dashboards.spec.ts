@@ -3,8 +3,8 @@ import { test as base, expect } from '@playwright/test';
 // BrowserStack Specific Capabilities.
 // Set 'browserstack.local:true For Local testing
 const caps = {
-  osVersion: "13.0",
-  deviceName: "Samsung Galaxy S23", // "Samsung Galaxy S22 Ultra", "Google Pixel 7 Pro", "OnePlus 9", etc.
+  osVersion: "12.0",
+  deviceName: "Samsung Galaxy S22", // "Samsung Galaxy S22 Ultra", "Google Pixel 7 Pro", "OnePlus 9", etc.
   browserName: "chrome",
   realMobile: "true",
   name: "My android playwright test",
@@ -16,8 +16,27 @@ const caps = {
   "browserstack.localIdentifier": process.env.BROWSERSTACK_LOCAL_IDENTIFIER || "",
 };
 
+console.log(caps);
+
+const patchMobileCaps = (name, title) => {
+  let combination = name.split(/@browserstack/)[0];
+  let [browerCaps, osCaps] = combination.split(/:/);
+  let [browser, deviceName] = browerCaps.split(/@/);
+  let osCapsSplit = osCaps.split(/ /);
+  let os = osCapsSplit.shift();
+  let osVersion = osCapsSplit.join(" ");
+  caps.deviceName = deviceName ? deviceName : "Samsung Galaxy S22 Ultra";
+  caps.osVersion = osVersion ? osVersion : "12.0";
+  caps.name = title;
+  caps.realMobile = "true";
+};
+
 const test = base.extend({
-    page: async ({ page, playwright }, use) => {
+    page: async ({ page, playwright }, use, testInfo) => {
+        patchMobileCaps(
+            testInfo.project.name,
+            `${testInfo.file} - ${testInfo.title}`
+        );
         const vDevice = await playwright._android.connect(
           `wss://cdp.browserstack.com/playwright?caps=${encodeURIComponent(
             JSON.stringify(caps)
