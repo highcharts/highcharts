@@ -226,8 +226,7 @@ namespace OfflineExporting {
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
             objectURLRevoke = true,
-            pdfFont = options.pdfFont,
-            svgWithClassesParsed = svg;
+            pdfFont = options.pdfFont;
 
         for (let i = 0; i < sheetCount; i++) {
             const sheetRules = sheets.item(i)?.cssRules;
@@ -281,7 +280,7 @@ namespace OfflineExporting {
                 if (styleAttrList.length) {
                     for (const foundStyle of styleAttrList) {
                         const styleStrParts = foundStyle.split('"');
-                        svgWithClassesParsed = svgWithClassesParsed.replace(
+                        svg = svg.replace(
                             foundStyle,
                             (
                                 styleStrParts[0] +
@@ -293,16 +292,16 @@ namespace OfflineExporting {
                         );
                     }
                 } else {
-                    svgWithClassesParsed = (
-                        svgWithClassesParsed.replace(
+                    svg = (
+                        svg.replace(
                             foundClass,
                             `style="${styleStr}"`
                         )
                     );
                 }
 
-                svgWithClassesParsed = (
-                    svgWithClassesParsed.replace(foundClass, '')
+                svg = (
+                    svg.replace(foundClass, '')
                 );
             }
         }
