@@ -87,3 +87,73 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Hard series and axis update by data module update, datetime axis',
+    function (assert) {
+        const csv1 =
+                'Chart,Apples\n2018-03-13T13:00:00Z,4\n2018-03-13T14:00:00Z,' +
+                '2\n2018-03-13T15:00:00Z,1\n2018-03-13T16:00:00Z,' +
+                '4\n2018-03-13T17:00:00Z,2',
+            csv2 =
+                'Chart,Apples\n2018-03-13T14:00:00Z,2\n2018-03-13T15:00:00Z,' +
+                '1\n2018-03-13T16:00:00Z,4\n2018-03-13T17:00:00Z,' +
+                '2\n2018-03-13T18:00:00Z,5',
+            csvLinear = 'Chart,Apples\n1,2\n2,1\n3,4\n4,2\n7,5';
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 600
+            },
+            series: [{
+                data: [
+                    [1, 2],
+                    [5, 5]
+                ]
+            }],
+            xAxis: {
+                type: 'category'
+            },
+            data: {}
+        });
+
+        chart.update({
+            data: {
+                csv: csv1
+            }
+        });
+        assert.ok(
+            chart.xAxis[0].options.type === 'category' &&
+            chart.series[0].points.length === 5,
+            'xAxis type=category should forces data module to use categories'
+        );
+
+        // Clear type to check update from a type different than "category"
+        chart.update({
+            xAxis: [{
+                type: 'linear'
+            }]
+        });
+        chart.update({
+            data: {
+                csv: csv2
+            }
+        });
+
+        assert.ok(
+            chart.xAxis[0].options.type === 'datetime',
+            'xAxis type=linear should be changed by data module to datetime'
+        );
+
+        chart.update({
+            data: {
+                csv: csvLinear
+            }
+        });
+
+        assert.ok(
+            chart.xAxis[0].options.type === 'linear',
+            'xAxis type=datetime should be changed by data module to liear'
+        );
+    }
+);

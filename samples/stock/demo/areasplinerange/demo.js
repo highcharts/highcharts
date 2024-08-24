@@ -1,8 +1,9 @@
 (async () => {
 
     // Notice that the dataset has missing data
+    // Data taken from https://seklima.met.no/
     const data = await fetch(
-        'https://www.highcharts.com/samples/data/range.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d2270f7c/samples/data/temp-range.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {

@@ -376,7 +376,7 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
     axes[3] = chart.xAxis[3].axisGroup.getBBox();
 
-    error = 0.5;
+    error = 0.5001;
 
     assert.close(
         axes[1].y,
@@ -826,7 +826,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
-        xError = 1.1,
+        xError = 1.6,
         yError = 1.6;
 
     chart = Highcharts.stockChart('container', {

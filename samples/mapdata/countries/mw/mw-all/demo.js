@@ -13,7 +13,7 @@
         ['mw-ni', 18], ['mw-sa', 19], ['mw-ba', 20], ['mw-ck', 21],
         ['mw-th', 22], ['mw-cr', 23], ['mw-ns', 24], ['mw-zo', 25],
         ['mw-bl', 26], ['mw-1649', 27], ['mw-mj', 28], ['mw-ph', 29],
-        ['mw-mw', 30], ['mw-1011', 31], ['mw-ct', 32], ['mw-ks', 33],
+        ['mw-mw', 30], ['mw-ka', 31], ['mw-ct', 32], ['mw-ks', 33],
         ['mw-mz', 34], ['mw-na', 35], ['mw-nk', 36], ['mw-ru', 37]
     ];
 
@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mw/mw-all.topo.json">Malawi</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mw/mw-all.topo.json">Malawi</a>'
         },
 
         mapNavigation: {

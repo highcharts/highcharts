@@ -8,11 +8,11 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['la-ou', 10], ['la-ph', 11], ['la-bl', 12], ['la-kh', 13],
-        ['la-at', 14], ['la-bk', 15], ['la-xe', 16], ['la-lm', 17],
-        ['la-xa', 18], ['la-ch', 19], ['la-sl', 20], ['la-sv', 21],
-        ['la-vt', 22], ['la-vi', 23], ['la-xi', 24], ['la-ho', 25],
-        ['la-lp', 26]
+        ['la-at', 10], ['la-bk', 11], ['la-bl', 12], ['la-ch', 13],
+        ['la-ho', 14], ['la-kh', 15], ['la-lm', 16], ['la-lp', 17],
+        ['la-ou', 18], ['la-ph', 19], ['la-xa', 20], ['la-sl', 21],
+        ['la-sv', 22], ['la-vt', 23], ['la-vi', 24], ['la-xs', 25],
+        ['la-xe', 26], ['la-xi', 27]
     ];
 
     // Create the chart
@@ -26,7 +26,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/la/la-all.topo.json">Laos</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/la/la-all.topo.json">Laos</a>'
         },
 
         mapNavigation: {

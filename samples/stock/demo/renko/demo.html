@@ -1,0 +1,27 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Renko series in technical analysis is designed to filter out minor
+        fluctuations in price data by focusing solely on significant price
+        movements. Unlike typical charting methods that consider time and
+        volume, Renko charts are only influenced by price changes. Each brick in
+        a Renko chart represents a movement in price up or down by a predefined
+        amount, known as the brick size or box size. Bricks are placed in the
+        next column only when the movement in the price is opposite to the
+        direction of the previous brick, effectively highlighting trends and
+        reversals.
+
+        <p>This series requires a <code>[Close Price, Date]</code> format data
+            and all of the calculations are done under the hood.</p>
+
+        <p>The brick size/box size is set to <code>5</code>, but it can be
+            easily changed to any other number by changing the second parameter
+            in <code>linearDataToRenko</code> function call.
+        </p>
+    </p>
+</figure>

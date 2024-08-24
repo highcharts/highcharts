@@ -27,7 +27,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tn/tn-all.topo.json">Tunisia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tn/tn-all.topo.json">Tunisia</a>'
         },
 
         mapNavigation: {

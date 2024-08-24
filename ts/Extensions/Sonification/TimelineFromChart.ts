@@ -51,7 +51,6 @@ export interface PropMetrics extends ExtremesCache {
 }
 
 const isNoteDefinition = (str: string): boolean =>
-    // eslint-disable-next-line require-unicode-regexp
     (/^([a-g][#b]?)[0-8]$/i).test(str);
 
 

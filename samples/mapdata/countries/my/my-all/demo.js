@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/my/my-all.topo.json">Malaysia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/my/my-all.topo.json">Malaysia</a>'
         },
 
         mapNavigation: {

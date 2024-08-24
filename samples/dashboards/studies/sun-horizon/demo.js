@@ -620,8 +620,7 @@ const createBoard = async () => {
                             inactive: {
                                 enabled: false
                             }
-                        },
-                        turboThreshold: Infinity
+                        }
                     },
                     flags: {
                         borderRadius: 3,

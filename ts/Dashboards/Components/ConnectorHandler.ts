@@ -15,6 +15,7 @@ import Component from './Component';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import DataTable from '../../Data/DataTable.js';
 
+import Cell from '../Layout/Cell.js';
 import Globals from '../Globals.js';
 
 /* *
@@ -126,7 +127,9 @@ class ConnectorHandler {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            component.cell?.setLoadingState();
+            if (component.cell instanceof Cell) {
+                component.cell.setLoadingState();
+            }
 
             const connector = await dataPool.getConnector(connectorId);
             this.setConnector(connector);

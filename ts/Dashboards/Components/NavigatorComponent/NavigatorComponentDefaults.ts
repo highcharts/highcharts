@@ -35,6 +35,10 @@ import Component from '../Component.js';
 
 const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
     type: 'Navigator',
+    className: [
+        Component.defaultOptions.className,
+        `${Component.defaultOptions.className}-navigator`
+    ].join(' '),
     chartOptions: {
         chart: {
             animation: false,
