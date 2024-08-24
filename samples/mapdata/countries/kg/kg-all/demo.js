@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kg/kg-all.topo.json">Kyrgyzstan</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kg/kg-all.topo.json">Kyrgyzstan</a>'
         },
 
         mapNavigation: {

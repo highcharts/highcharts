@@ -1,8 +1,11 @@
 Edit mode
 ===
 
-Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
-To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.
+Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).  
+When the dashboard is declared with custom HTML structure, the edit mode is limited to the component settings only.
+
+## Introduction
+To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.  
 The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
@@ -37,8 +40,7 @@ In addition, this option has to be enabled in the dashboard config:
 editMode: {
     enabled: true,
     contextMenu: {
-        enabled: true,
-        items: ['editMode']
+        enabled: true
     }
 },
 ```
@@ -51,10 +53,13 @@ When edit mode is enabled, the appearance of the dashboard changes. When hoverin
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
+Note that when dashboard is declared with custom HTML structure, only the component setting can be edited. The layout cannot be changed.
+
 Next to the burger menu, the [Add Component](#add-component) button is added.
 
-
 ## Add Component
+
+Available only when dashboard is declared with the layout system- using the `gui` configuration.
 
 The `Add Component` button allows the user to add a new component. When clicked, a sidebar appears, which lets you choose the type of component you want to add and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
 
@@ -156,3 +161,58 @@ items: [{
 
 Use the context menu on the upper-right corner to enable and explore the edit mode.
 <iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
+
+
+## Edit mode events
+
+Event listeners can be added to the `board.editMode` object, which will call callback functions when editing the layout or any component.
+
+The available events are:
+ - `componentChanged` - fired after accepting changes in the component editing sidebar.
+ - `componentChangesDiscarded` - fired after discarding changes in the component editing sidebar.
+ - `layoutChanged` - called after changes to the layout are changed. It has 6 types:
+    - `newLayout` - called after a new layout was added to a board,
+    - `newComponent` - called after a new component was added to a board,
+    - `rowDestroyed` - called after a row was deleted,
+    - `cellDestroyed` - called after a cell was deleted,
+    - `cellDragEnd` - called after a cell was moved,
+    - `rowDragEnd` - called after a row was moved.
+
+Example:
+```js
+U.addEvent(editMode, 'componentChanged', e => {
+    console.log('Component Changed', e);
+});
+
+U.addEvent(editMode, 'componentChangesDiscarded', e => {
+    console.log('Component Changes Discarded', e);
+});
+
+U.addEvent(editMode, 'layoutChanged', e => {
+    console.log('Layout Changed', e);
+});
+```
+
+See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/).
+
+## Styling
+
+All default styles for the edit mode are defined in the `dashboards.css` file. It can be imported to your project by adding the following line to your CSS file:
+
+```css
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+```
+
+You can override them by adding your own styles to your project, for example:
+
+```css
+.highcharts-dashboards-edit-sidebar {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+```
+
+Note that most elements used for editing the dashboard (popups, toolbars, handles, etc.) have a high (~9999) z-index value, so they are always on top of the other elements.
+If you want to change this behavior, you can override the z-index value in your CSS file.

@@ -18,8 +18,7 @@ Dashboards.board('container', {
             enabled: false
         },
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
@@ -66,6 +65,10 @@ Dashboards.board('container', {
                         }]
                     }]
                 }]
+            }, {
+                name: 'connectorName',
+                propertyPath: ['connector', 'id'],
+                type: 'select'
             }],
             chartOptions: {
                 plotOptions: {
@@ -73,6 +76,12 @@ Dashboards.board('container', {
                         animation: false,
                         marker: {
                             radius: 10
+                        },
+                        events: {
+                            update: function () {
+                                document.getElementById('marker-radius').value =
+                                    this.options.marker.radius;
+                            }
                         }
                     }
                 },

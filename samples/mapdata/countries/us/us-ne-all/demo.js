@@ -52,7 +52,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ne-all.topo.json">Nebraska</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ne-all.topo.json">Nebraska</a>'
         },
 
         mapNavigation: {

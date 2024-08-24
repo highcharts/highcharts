@@ -137,10 +137,12 @@ const EditGlobals: EditGlobals = {
         confirmButton: 'Confirm',
         confirmDestroyCell: 'Do you really want to destroy the cell?',
         confirmDestroyRow: 'Do you really want to destroy the row?',
+        confirmDiscardChanges: 'Do you really want to discard the changes?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
+        htmlInput: 'HTML',
         id: 'Id',
         off: 'off',
         on: 'on',
@@ -151,7 +153,7 @@ const EditGlobals: EditGlobals = {
         viewFullscreen: 'View in full screen',
         sidebar: {
             HTML: 'HTML',
-            layout: 'Layout',
+            row: 'Row',
             Highcharts: 'Highcharts',
             DataGrid: 'DataGrid',
             KPI: 'KPI'
@@ -307,6 +309,10 @@ namespace EditGlobals {
          */
         confirmDestroyRow: string;
         /**
+         * @default 'Do you really want to discard the changes?'
+         */
+        confirmDiscardChanges: string;
+        /**
          * @default 'Data labels'
          */
         dataLabels: string;
@@ -368,9 +374,9 @@ namespace EditGlobals {
          */
         HTML: string;
         /**
-         * @default 'Layout'
+         * @default 'Row'
          */
-        layout: string;
+        row: string;
         /**
          * @default 'Highcharts'
          */

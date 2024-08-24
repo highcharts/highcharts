@@ -160,7 +160,6 @@ QUnit.skip('getTimezoneOffset', function (assert) {
 QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
     Highcharts.setOptions({
         global: {
-            useUTC: true,
             timezone: 'Europe/London'
         }
     });
@@ -226,8 +225,7 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
 
     Highcharts.setOptions({
         global: {
-            useUTC: true,
-            timezone: undefined
+            timezone: 'UTC'
         }
     });
 });

@@ -368,7 +368,7 @@ addEvent(Chart, 'update', function (
     // case (#6615)
     if ('scrollbar' in options && chart.navigator) {
         merge(true, chart.options.scrollbar, options.scrollbar);
-        chart.navigator.update({});
+        chart.navigator.update({ enabled: !!chart.navigator.navigatorEnabled });
         delete options.scrollbar;
     }
 });
@@ -752,19 +752,15 @@ namespace StockChart {
             // Get the related axes based options.*Axis setting #2810
             axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
             for (const A of axes2) {
-                if (
-                    defined(A.options.id) ?
-                        A.options.id.indexOf('navigator') === -1 :
-                        true
-                ) {
+                if (!A.options.isInternal) {
                     const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-                        rax = (
+                        relatedAxis: Axis = (
                             defined((A.options as any)[a]) ?
                                 (chart as any)[a][(A.options as any)[a]] :
                                 (chart as any)[a][0]
                         );
 
-                    if (axis === rax) {
+                    if (axis === relatedAxis) {
                         axes.push(A);
                     }
                 }

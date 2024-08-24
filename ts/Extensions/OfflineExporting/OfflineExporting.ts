@@ -387,9 +387,13 @@ namespace OfflineExporting {
                 outlineElements =
                     el.getElementsByClassName('highcharts-text-outline');
                 while (outlineElements.length > 0) {
-                    el.removeChild(outlineElements[0]);
+                    const outline = outlineElements[0];
+                    if (outline.parentNode) {
+                        outline.parentNode.removeChild(outline);
+                    }
                 }
             });
+
 
             const svgNode = dummySVGContainer.querySelector('svg');
             if (svgNode) {

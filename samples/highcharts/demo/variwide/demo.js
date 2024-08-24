@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Labor Costs in Europe, 2016'
+        text: 'Labor Costs in Europe, 2023'
     },
 
     subtitle: {
@@ -28,24 +28,23 @@ Highcharts.chart('container', {
     series: [{
         name: 'Labor Costs',
         data: [
-            ['Norway', 50.2, 335504],
-            ['Denmark', 42, 277339],
-            ['Belgium', 39.2, 421611],
-            ['Sweden', 38, 462057],
-            ['France', 35.6, 2228857],
-            ['Netherlands', 34.3, 702641],
-            ['Finland', 33.2, 215615],
-            ['Germany', 33.0, 3144050],
-            ['Austria', 32.7, 349344],
-            ['Ireland', 30.4, 275567],
-            ['Italy', 27.8, 1672438],
-            ['United Kingdom', 26.7, 2366911],
-            ['Spain', 21.3, 1113851],
-            ['Greece', 14.2, 175887],
-            ['Portugal', 13.7, 184933],
-            ['Czech Republic', 10.2, 176564],
-            ['Poland', 8.6, 424269],
-            ['Romania', 5.5, 169578]
+            ['Norway', 51.9, 448716],
+            ['Denmark', 48.1, 376430],
+            ['Belgium', 47.1, 584699],
+            ['Netherlands', 43.3, 1034086],
+            ['France', 42.2, 2822455],
+            ['Germany', 41.3, 4122210],
+            ['Austria', 40.9, 478190],
+            ['Ireland', 40.2, 504620],
+            ['Sweden', 38.9, 540651],
+            ['Finland', 37.1, 274880],
+            ['Italy', 29.8, 2085375],
+            ['Spain', 24.6, 1461889],
+            ['Czech Republic', 18.0, 317387],
+            ['Portugal', 17.0, 265525],
+            ['Greece', 15.7, 220303],
+            ['Poland', 14.5, 750801],
+            ['Romania', 11.0, 324578]
 
         ],
         dataLabels: {

@@ -2,12 +2,12 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://www.highcharts.com/samples/data/usdeur.json'
+        'https://demo-live-data.highcharts.com/aapl-c.json'
     ).then(response => response.json());
 
     const startDate = new Date(data[data.length - 1][0]);
-    let minRate = 1,
-        maxRate = 0,
+    let minRate = null,
+        maxRate = null,
         date,
         rate,
         index;
@@ -23,14 +23,14 @@
 
     for (index = data.length - 1; index >= 0; index = index - 1) {
         date = data[index][0]; // data[i][0] is date
-        rate = data[index][1]; // data[i][1] is exchange rate
+        rate = data[index][1]; // data[i][1] is stock price
         if (date < startPeriod) {
             break; // stop measuring highs and lows
         }
-        if (rate > maxRate) {
+        if (rate > maxRate || maxRate === null) {
             maxRate = rate;
         }
-        if (rate < minRate) {
+        if (rate < minRate || minRate === null) {
             minRate = rate;
         }
     }
@@ -43,12 +43,12 @@
         },
 
         title: {
-            text: 'USD to EUR exchange rate'
+            text: 'AAPL Stock Price'
         },
 
         yAxis: {
             title: {
-                text: 'Exchange rate'
+                text: 'Stock price'
             },
             plotLines: [{
                 value: minRate,
@@ -56,7 +56,8 @@
                 dashStyle: 'shortdash',
                 width: 2,
                 label: {
-                    text: 'Last quarter minimum'
+                    text: 'Last quarter minimum',
+                    y: 15
                 }
             }, {
                 value: maxRate,
@@ -70,10 +71,10 @@
         },
 
         series: [{
-            name: 'USD to EUR',
+            name: 'AAPL Stock Price',
             data: data,
             tooltip: {
-                valueDecimals: 4
+                valueDecimals: 2
             }
         }]
     });

@@ -54,7 +54,7 @@ import type VariablePieSeries from './VariablePieSeries';
  *
  * @product highcharts
  *
- * @requires modules/variable-pie.js
+ * @requires modules/variable-pie
  */
 export interface VariablePieSeriesOptions extends PieSeriesOptions {
 

@@ -50,7 +50,7 @@ import type TilemapSeriesOptions from './TilemapSeriesOptions';
  * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
  *               dataSorting, boostThreshold, boostBlending
  * @product      highcharts highmaps
- * @requires     modules/tilemap.js
+ * @requires     modules/tilemap
  * @optionparent plotOptions.tilemap
  */
 const TilemapSeriesDefaults: TilemapSeriesOptions = {
@@ -140,7 +140,7 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  *            pointRange, shadow, stack, dataSorting, boostThreshold,
  *            boostBlending
  * @product   highcharts highmaps
- * @requires  modules/tilemap.js
+ * @requires  modules/tilemap
  * @apioption series.tilemap
  */
 

@@ -9,6 +9,11 @@ const { getLatestCommitShaSync } = require('../tools/libs/git');
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
 
+const highchartsCSS = fs.readFileSync(
+    path.join(__dirname, '../code/css/highcharts.css'),
+    'utf8'
+);
+
 /**
  * Get browserstack credentials from the environment variables.
  * e.g for Mac/Linux run the below with correct credentials or
@@ -123,7 +128,6 @@ function resolveJSON(js) {
         }
 
         if (data) {
-
             if (/json$/.test(filename)) {
                 codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
             }
@@ -132,6 +136,7 @@ function resolveJSON(js) {
             }
         }
     }
+
     codeblocks.push(js);
 
     // Add some files that are referenced by variables in the demos, so we're
@@ -152,7 +157,7 @@ function resolveJSON(js) {
                     'utf8'
                 );
                 codeblocks.push(`window.JSONSources[
-                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/${filename}'
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/${filename}'
                 ] = ${data};`);
             }
         );
@@ -333,7 +338,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/combo-meteogram/demo.js',
 
             // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-ajax/demo.js',
+            'samples/highcharts/demo/line-csv/demo.js',
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
@@ -489,8 +494,32 @@ module.exports = function (config) {
                     // Replace external data sources with internal data samples
                     js = resolveJSON(js);
 
+
                     // unit tests
-                    if (path.indexOf('unit-tests') !== -1) {
+                    if (path.includes('unit-tests')) {
+                        // Inject css for
+                        if (/styledMode:\s+true/.test(js)) {
+                            js =`window.highchartsCSS = \`${highchartsCSS}\`;`
+                            + `
+                            QUnit.testStart(()=>{
+                                Highcharts.setOptions({
+                                    chart: {
+                                        events: {
+                                            load: function () {
+                                                window.setHCStyles(this);
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+
+                            QUnit.testDone(()=>{
+                                document.querySelector("#test-hc-styles")?.remove();
+                            });
+                            `
+                                + js;
+                        }
+
                         done(js);
                         return;
                     }
@@ -727,10 +756,6 @@ function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Include highcharts.css, to be inserted into the SVG in
     // karma-setup.js:getSVG
     if (scriptBody.indexOf('styledMode: true') !== -1) {
-        const highchartsCSS = fs.readFileSync(
-            path.join(__dirname, '../code/css/highcharts.css'),
-            'utf8'
-        );
         html += `<style id="highcharts.css">${highchartsCSS}</style>`;
 
         let demoCSS = fs.readFileSync(

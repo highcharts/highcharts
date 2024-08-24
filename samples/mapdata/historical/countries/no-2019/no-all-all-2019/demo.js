@@ -164,7 +164,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-all-all-2019.topo.json">Norway, admin2 (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-all-all-2019.topo.json">Norway, admin2 (2019)</a>'
         },
 
         mapNavigation: {

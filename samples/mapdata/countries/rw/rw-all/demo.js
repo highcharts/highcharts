@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/rw/rw-all.topo.json">Rwanda</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/rw/rw-all.topo.json">Rwanda</a>'
         },
 
         mapNavigation: {

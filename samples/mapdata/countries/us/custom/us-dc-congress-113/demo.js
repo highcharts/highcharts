@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-dc-congress-113.topo.json">District of Columbia congressional districts</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-dc-congress-113.topo.json">District of Columbia congressional districts</a>'
         },
 
         mapNavigation: {

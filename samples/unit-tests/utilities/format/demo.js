@@ -186,6 +186,13 @@ QUnit.module('Format', () => {
             'Non-ASCII characters should be preserved in formats'
         );
 
+        assert.strictEqual(
+            format('{value:%b \u2019%y}', { value: 1706745600000 }),
+            'Feb ’24',
+            `Right single quotation mark shouldn't disable the format method,
+            #21124.`
+        );
+
         // Reset
         Highcharts.setOptions({
             lang: {

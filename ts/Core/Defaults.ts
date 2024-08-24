@@ -527,6 +527,12 @@ const defaultOptions: DefaultOptions = {
          * provides a warning and falls back to returning a 0 offset,
          * corresponding to the UTC time zone.
          *
+         * The time zone affects axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`.
+         *
+         * Setting `timezone` to `undefined` falls back to the default browser
+         * timezone setting.
+         *
          * Until v11.2.0, this option depended on moment.js.
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
@@ -535,7 +541,7 @@ const defaultOptions: DefaultOptions = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: void 0,
+        timezone: 'UTC',
 
         /**
          * The timezone offset in minutes. Positive values are west, negative
@@ -568,8 +574,7 @@ const defaultOptions: DefaultOptions = {
          *
          * Setting `useUTC` to true is equivalent to setting `time.timezone` to
          * `"UTC"`. Setting `useUTC` to false is equivalent to setting
-         * `time.timezone` to `undefined`. Since v12, The `timezone` option
-         * takes precedence.
+         * `time.timezone` to `undefined`.
          *
          * @see [time.timezone](#timezone)
          *
@@ -577,8 +582,10 @@ const defaultOptions: DefaultOptions = {
          *         True by default
          * @sample {highcharts} highcharts/time/useutc-false/
          *         False
+         *
+         * @deprecated
          */
-        useUTC: true
+        useUTC: void 0
     },
 
     chart: ChartDefaults,
@@ -1123,6 +1130,34 @@ const defaultOptions: DefaultOptions = {
          * A CSS class name to apply to the legend group.
          */
         className: 'highcharts-no-tooltip',
+
+        /**
+         * General event handlers for the legend. These event hooks can
+         * also be attached to the legend at run time using the
+         * `Highcharts.addEvent` function.
+         *
+         * @declare Highcharts.LegendEventsOptionsObject
+         *
+         * @private
+         */
+        events: {},
+
+        /**
+         * Fires when the legend item belonging to the series is clicked. One
+         * parameter, `event`, is passed to the function. The default action
+         * is to toggle the visibility of the series, point or data class. This
+         * can be prevented by returning `false` or calling
+         * `event.preventDefault()`.
+         *
+         * @sample {highcharts} highcharts/legend/itemclick/
+         *         Confirm hiding and showing
+         * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
+         *         Confirm toggle visibility of pie slices
+         *
+         * @type      {Highcharts.LegendItemClickCallbackFunction}
+         * @context   Highcharts.Legend
+         * @apioption legend.events.itemClick
+         */
 
         /**
          * When the legend is floating, the plot area ignores it and is allowed
@@ -2230,8 +2265,9 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Split the tooltip into one label per series, with the header close
-         * to the axis. This is recommended over [shared](#tooltip.shared)
+         * Shows tooltip for all points with the same X value. Splits the
+         * tooltip into one label per series, with the header close to the axis.
+         * This is recommended over [shared](#tooltip.shared)
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
@@ -2528,11 +2564,12 @@ const defaultOptions: DefaultOptions = {
         shape: 'callout',
 
         /**
-         * When the tooltip is shared, the entire plot area will capture mouse
-         * movement or touch events. Tooltip texts for series types with ordered
-         * data (not pie, scatter, flags etc) will be shown in a single bubble.
-         * This is recommended for single series charts and for tablet/mobile
-         * optimized charts.
+         * Shows information in the tooltip for all points with the same X
+         * value. When the tooltip is shared, the entire plot area will capture
+         * mouse movement or touch events. Tooltip texts for series types with
+         * ordered data (not pie, scatter, flags etc) will be shown in a single
+         * bubble. This is recommended for single series charts and for
+         * tablet/mobile optimized charts.
          *
          * See also [tooltip.split](#tooltip.split), that is better suited for
          * charts with many series, especially line-type series. The

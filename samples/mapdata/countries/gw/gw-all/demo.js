@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gw/gw-all.topo.json">Guinea Bissau</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gw/gw-all.topo.json">Guinea Bissau</a>'
         },
 
         mapNavigation: {
