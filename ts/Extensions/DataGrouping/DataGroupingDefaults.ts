@@ -19,6 +19,7 @@
 import type {
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
+import type Time from '../../Core/Time';
 
 /* *
  *
@@ -30,55 +31,192 @@ import type {
  * Common options
  * @private
  */
+
+// The first one is the point or start value, the second is the start value if
+// we're dealing with range, the third one is the end value if dealing with a
+// range
+const dateTimeLabelFormats: Record<string, Array<Time.DateTimeFormat>> = {
+    millisecond: [
+        // '%A, %e %b, %H:%M:%S.%L',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            fractionalSecondDigits: 3
+        },
+        // '%A, %e %b, %H:%M:%S.%L',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            fractionalSecondDigits: 3
+        },
+        // '-%H:%M:%S.%L'
+        {
+            prefix: '-',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            fractionalSecondDigits: 3
+        }
+    ],
+    second: [
+        // '%A, %e %b, %H:%M:%S',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        },
+        // '%A, %e %b, %H:%M:%S',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        },
+        // '-%H:%M:%S'
+        {
+            prefix: '-',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        }
+    ],
+    minute: [
+        // '%A, %e %b, %H:%M',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        // '%A, %e %b, %H:%M',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        // '-%H:%M'
+        {
+            prefix: '-',
+            hour: 'numeric',
+            minute: 'numeric'
+        }
+    ],
+    hour: [
+        // '%A, %e %b, %H:%M',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        // '%A, %e %b, %H:%M',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
+        // '-%H:%M'
+        {
+            prefix: '-',
+            hour: 'numeric',
+            minute: 'numeric'
+        }
+    ],
+    day: [
+        // '%A, %e %b %Y',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        },
+        // '%A, %e %b',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short'
+        },
+        // '-%A, %e %b %Y'
+        {
+            prefix: '-',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        }
+    ],
+    week: [
+        // 'Week from %A, %e %b %Y',
+        {
+            prefix: 'week from ',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        },
+        // '%A, %e %b',
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short'
+        },
+        // '-%A, %e %b %Y'
+        {
+            prefix: '-',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        }
+    ],
+    month: [
+        // '%B %Y',
+        {
+            month: 'long',
+            year: 'numeric'
+        },
+        // '%B',
+        {
+            month: 'long'
+        },
+        // '-%B %Y'
+        {
+            prefix: '-',
+            month: 'long',
+            year: 'numeric'
+        }
+    ],
+    year: [
+        '%Y',
+        '%Y',
+        '-%Y'
+    ]
+};
+
 const common = {
     /// enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
     groupPixelWidth: 2,
-    // The first one is the point or start value, the second is the start
-    // value if we're dealing with range, the third one is the end value if
-    // dealing with a range
-    dateTimeLabelFormats: {
-        millisecond: [
-            '%A, %e %b, %H:%M:%S.%L',
-            '%A, %e %b, %H:%M:%S.%L',
-            '-%H:%M:%S.%L'
-        ],
-        second: [
-            '%A, %e %b, %H:%M:%S',
-            '%A, %e %b, %H:%M:%S',
-            '-%H:%M:%S'
-        ],
-        minute: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
-        ],
-        hour: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
-        ],
-        day: [
-            '%A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
-        ],
-        week: [
-            'Week from %A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
-        ],
-        month: [
-            '%B %Y',
-            '%B',
-            '-%B %Y'
-        ],
-        year: [
-            '%Y',
-            '%Y',
-            '-%Y'
-        ]
-    }
+    dateTimeLabelFormats
     /// smoothed = false, // enable this for navigator series only
 };
 

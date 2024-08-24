@@ -466,7 +466,7 @@ QUnit.test('DataGrouping unequal series length', function (assert) {
     let content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
     assert.equal(
         content,
-        'Thursday,  1 Jan, 00:00-01:59',
+        'Thursday, 1 Jan, 00:00-01:59',
         `Tooltip\'s content should show correct group range for the point with
         anchor: middle`
     );
@@ -482,7 +482,7 @@ QUnit.test('DataGrouping unequal series length', function (assert) {
     content = chart.tooltip.tt.text.element.childNodes[0].innerHTML;
     assert.equal(
         content,
-        'Thursday,  1 Jan, 10:00-11:59',
+        'Thursday, 1 Jan, 10:00-11:59',
         `Tooltip's content should show correct group range of the last point
         when lastAnchor is set to 'lastPoint'`
     );
