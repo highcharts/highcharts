@@ -119,15 +119,14 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            columns: {
-                Day: {
-                    cellFormatter: function () {
-                        return new Date(this.value)
-                            .toISOString()
-                            .substring(0, 10);
-                    }
+            columns: [{
+                id: 'Day',
+                cellFormatter: function () {
+                    return new Date(this.value)
+                        .toISOString()
+                        .substring(0, 10);
                 }
-            }
+            }]
         }
     }]
 });

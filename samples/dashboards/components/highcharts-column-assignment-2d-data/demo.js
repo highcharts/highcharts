@@ -51,11 +51,10 @@ Dashboards.board('container', {
                     editable: true
                 }
             },
-            columns: {
-                time: {
-                    editable: false
-                }
-            }
+            columns: [{
+                id: 'time',
+                editable: false
+            }]
         }
     }]
 });

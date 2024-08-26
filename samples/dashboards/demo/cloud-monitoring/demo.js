@@ -648,29 +648,28 @@ const setupDashboard = instanceId => {
                         ]
                     }
                 },
-                columns: {
-                    InstanceId: {
-                        headerFormat: 'ID'
-                    },
-                    InstanceType: {
-                        headerFormat: 'Type'
-                    },
-                    PublicIpAddress: {
-                        headerFormat: 'Public IP'
-                    },
-                    HealthIndicator: {
-                        headerFormat: 'Health',
-                        useHTML: true,
-                        cellFormatter: function () {
-                            const val = this.value;
-                            return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
-                                val.toLowerCase()
-                            }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
-                                val
-                            }"/>`;
-                        }
+                columns: [{
+                    id: 'InstanceId',
+                    headerFormat: 'ID'
+                }, {
+                    id: 'InstanceType',
+                    headerFormat: 'Type'
+                }, {
+                    id: 'PublicIpAddress',
+                    headerFormat: 'Public IP'
+                }, {
+                    id: 'HealthIndicator',
+                    headerFormat: 'Health',
+                    useHTML: true,
+                    cellFormatter: function () {
+                        const val = this.value;
+                        return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
+                            val.toLowerCase()
+                        }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
+                            val
+                        }"/>`;
                     }
-                },
+                }],
                 events: {
                     cell: {
                         click: async function () {

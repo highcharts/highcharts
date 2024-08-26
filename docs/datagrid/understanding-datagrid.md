@@ -87,16 +87,15 @@ defaults: {
         useHTML: true
     }
 },
-columns: {
-    column1: {
-        cellFormat: '<h3>{value}</h3>'
-    },
-    column2: {
-        cellFormatter: function () {
-            return '<a href="' + this.value + '">URL</a>';
-        }
+columns: [{
+    id: 'column1',
+    cellFormat: '<h3>{value}</h3>'
+}, {
+    id: 'column2',
+    cellFormatter: function () {
+        return '<a href="' + this.value + '">URL</a>';
     }
-}
+}]
 ```
 
 For more information on the column element see the [API reference](https://api.highcharts.com/dashboards/typedoc/classes/DataGrid_DataGridColumn.DataGridColumn-1.html).

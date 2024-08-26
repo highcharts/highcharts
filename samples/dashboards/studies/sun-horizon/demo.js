@@ -989,6 +989,7 @@ const createBoard = async () => {
             type: 'DataGrid',
             dataGridOptions: {
                 columns: [{
+                    id: '0',
                     headerFormat: 'Celestial event',
                     cellFormatter: function () {
                         const str = this.value
@@ -996,8 +997,8 @@ const createBoard = async () => {
                             .toLowerCase();
                         return str.charAt(0).toUpperCase() + str.slice(1);
                     }
-                },
-                {
+                }, {
+                    id: '1',
                     headerFormat: 'Time',
                     // @todo Fix after #20444
                     // cellFormat: '{value:%H:%M}'

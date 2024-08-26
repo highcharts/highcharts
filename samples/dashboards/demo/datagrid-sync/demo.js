@@ -125,11 +125,10 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            columns: {
-                'Vitamin A': {
-                    editable: true
-                }
-            }
+            columns: [{
+                id: 'Vitamin A',
+                editable: true
+            }]
         }
     }]
 });

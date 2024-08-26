@@ -18,11 +18,10 @@ defaults: {
 In columns options, use [headerFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the header content for that column.
 
 ```js
-columns: {
-  column1: {
-    headerFormat: 'Custom header text'
-  }
-}
+columns: [{
+  id: 'column1',
+  headerFormat: 'Custom header text'
+}]
 ```
 
 ### Customize headers
@@ -44,36 +43,32 @@ Columns headers can be grouped into sections, so you can create your own multipl
 
 ```js
 settings: {
-  header: [
-    {
-      columnId: 'id'
-    },
-    {
-      headerFormat: 'Product',
+  header: [{
+    columnId: 'id'
+  }, {
+    headerFormat: 'Product',
+    columns: [{
+      headerFormat: 'Product name',
+      columnId: 'product'
+    }, {
+      headerFormat: 'Units',
       columns: [{
-        headerFormat: 'Product name',
-        columnId: 'product'
+        columnId: 'weight'
       }, {
-        headerFormat: 'Units',
-        columns: [{
-          columnId: 'weight'
-        }, {
-          columnId: 'price'
-        }]
+        columnId: 'price'
       }]
-    },
-    {
-      headerFormat: 'Product info',
+    }]
+  }, {
+    headerFormat: 'Product info',
+    columns: [{
+      headerFormat: 'Meta',
       columns: [{
-        headerFormat: 'Meta',
-        columns: [{
-          columnId: 'url'
-        }, {
-          columnId: 'icon'
-        }]
+        columnId: 'url'
+      }, {
+        columnId: 'icon'
       }]
-    }
-  ]
+    }]
+  }]
 }
 
 ```
@@ -83,26 +78,25 @@ The [cellFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Data
 
 
 ```js
-columns: {
-  column1: {
-    cellFormatter: function () {
-        return 'V: ' + this.value;
-    }
-  },
-  column2: {
-    cellFormat: '{value}$'
+columns: [{
+  id: 'column1',
+  cellFormatter: function () {
+    return 'V: ' + this.value;
   }
+}, {
+  id: 'column2',
+  cellFormat: '{value}$'
+}]
 ```
 
 ### How to edit cells
 Every cell in a column can be edited on the fly by the end user. Set the [editable](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable) option to true.
 
 ```js
-columns {
-  column1: {
-    editable: true
-  }
-}
+columns: [{
+  id: 'column1',
+  editable: true
+}]
 ```
 
 You can also use the [defaults.columns.editable](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property to enable editing of all cells in the DataGrid. This default setting can then be overridden by one or more columns if needed.
@@ -158,14 +152,13 @@ When the `sortable` option is enabled, clicking on the header will toggle the so
 The sorting options are available for the individual `columns`.
 
 ```js
-columns: {
-  column1: {
-    sorting: {
-      sortable: true,
-      order: 'desc'
-    }
+columns: [{
+  id: 'column1',
+  sorting: {
+    sortable: true,
+    order: 'desc'
   }
-}
+}]
 ```
 
 But you can also turn off `sortable` for all columns using the [`defaults`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.

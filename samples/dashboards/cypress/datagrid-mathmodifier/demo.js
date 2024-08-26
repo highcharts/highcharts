@@ -91,11 +91,10 @@ Dashboards.board('container', {
                         editable: true
                     }
                 },
-                columns: {
-                    USD: {
-                        editable: false
-                    }
-                }
+                columns: [{
+                    id: 'USD',
+                    editable: false
+                }]
             },
             sync: {
                 highlight: true

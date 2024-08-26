@@ -134,11 +134,10 @@ DataGrid.dataGrid('container', {
             weight: [100, 40, 0.5, 200]
         }
     },
-    columns: {
-        weight: {
-            className: 'custom-column-class-name'
-        }
-    }
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name'
+    }]
 });
 ```
 

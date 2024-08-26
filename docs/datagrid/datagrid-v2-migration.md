@@ -82,17 +82,16 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
             strictHeights: false
         }
     }
-    columns: {
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormatter: function () {
-                return 'V: ' + this.value;
-            }
-        },
-        metaData: {
-            enabled: false
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cellFormatter: function () {
+            return 'V: ' + this.value;
         }
-    },
+    }, {
+        id: 'metaData',
+        enabled: false
+    }],
     events: {
         cell: {
             click: function () {

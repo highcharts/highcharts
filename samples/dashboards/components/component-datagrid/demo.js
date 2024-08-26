@@ -43,14 +43,13 @@ Dashboards.board('container', {
             id: 'data'
         },
         dataGridOptions: {
-            columns: {
-                Revenue: {
-                    headerFormat: '{id} (€)'
-                },
-                Category: {
-                    enabled: false
-                }
-            }
+            columns: [{
+                id: 'Revenue',
+                headerFormat: '{id} (€)'
+            }, {
+                id: 'Category',
+                enabled: false
+            }]
         }
     }]
 });

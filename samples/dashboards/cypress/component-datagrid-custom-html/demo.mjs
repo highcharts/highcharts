@@ -83,11 +83,10 @@ Dashboards.board('container', {
                         editable: true
                     }
                 },
-                columns: {
-                    'Vitamin A': {
-                        headerFormat: '{id} (IU)'
-                    }
-                }
+                columns: [{
+                    id: 'Vitamin A',
+                    headerFormat: '{id} (IU)'
+                }]
             }
         }
     ]
