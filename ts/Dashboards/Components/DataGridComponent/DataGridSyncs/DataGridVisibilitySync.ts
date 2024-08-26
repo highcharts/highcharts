@@ -56,14 +56,10 @@ const syncPair: Sync.SyncPair = {
             }
 
             const columnId = cursor.column;
-            // TODO: Reimplement update method on the specific column
-            // dataGrid.update({
-            //     columns: [
-            //         [columnId]: {
-            //             enabled: cursor.state !== 'series.hide' + groupKey
-            //         }
-            //     ]
-            // });
+            dataGrid.updateColumns([{
+                id: columnId,
+                enabled: cursor.state !== 'series.hide' + groupKey
+            }]);
         };
 
         const registerCursorListeners = (): void => {
