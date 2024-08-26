@@ -358,6 +358,7 @@ class Time {
             M: { minute: 'numeric' },
             H: { hour: '2-digit' },
             k: { hour: 'numeric' },
+            E: { weekday: 'narrow' },
             a: { weekday: 'short' },
             A: { weekday: 'long' },
             d: { day: '2-digit' },
@@ -365,6 +366,7 @@ class Time {
             b: { month: 'short' },
             B: { month: 'long' },
             m: { month: '2-digit' },
+            o: { month: 'numeric' },
             y: { year: '2-digit' },
             Y: { year: 'numeric' }
         };
@@ -544,8 +546,9 @@ class Time {
      * Supported format keys:
      * | Key  | Description                     | Notes on locale-aware format |
      * -------|----------------------------------------------|-------|
-     * | `%a` | Short weekday, like 'Mon'                    |       |
      * | `%A` | Long weekday, like 'Monday'                  |       |
+     * | `%a` | Short weekday, like 'Mon'                    |       |
+     * | `%E` | Narrow weekday, single character             |       |
      * | `%d` | Two digit day of the month, 01 to 31         |       |
      * | `%e` | Day of the month, 1 through 31               |       |
      * | `%w` | Day of the week, 0 through 6                 | N/A   |
