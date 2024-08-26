@@ -12,7 +12,7 @@ const caps = {
   "browserstack.username": process.env.BROWSERSTACK_USERNAME || "<USERNAME>",
   "browserstack.accessKey":
     process.env.BROWSERSTACK_ACCESS_KEY || "<ACCESS_KEY>",
-  "browserstack.local": process.env.BROWSERSTACK_LOCAL || false,
+  "browserstack.local": process.env.BROWSERSTACK_LOCAL || true,
   "browserstack.localIdentifier": process.env.BROWSERSTACK_LOCAL_IDENTIFIER || "abc123",
 };
 
