@@ -536,12 +536,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                    fractionalSecondDigits: 3
-                },
+                main: '%[HMSL]',
                 range: false
             },
             /**
@@ -558,11 +553,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric'
-                },
+                main: '%[HMS]',
                 range: false
             },
             /**
@@ -579,10 +570,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric'
-                },
+                main: '%[HM]',
                 range: false
             },
             /**
@@ -599,10 +587,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric'
-                },
+                main: '%[HM]',
                 range: false
             },
             /**
@@ -619,10 +604,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
+                main: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -638,10 +620,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
+                main: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -657,10 +636,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
-                main: {
-                    month: 'short',
-                    year: 'numeric'
-                }
+                main: '%[bY]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -676,9 +652,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: {
-                    year: 'numeric'
-                }
+                main: '%Y'
             }
         },
 
