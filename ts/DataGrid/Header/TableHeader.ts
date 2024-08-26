@@ -164,7 +164,7 @@ class TableHeader {
 
             cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
                 cellHtmlElement.offsetWidth +
-                (offsetWidth - clientWidth) + 'px';
+                (offsetWidth - clientWidth - 1) + 'px';
         }
     }
 
