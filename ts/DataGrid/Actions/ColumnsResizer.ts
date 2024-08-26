@@ -26,6 +26,9 @@
 import Table from '../Table.js';
 import Column from '../Column.js';
 import Globals from '../Globals.js';
+import DGUtils from '../Utils.js';
+import Cell from '../Cell.js';
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -139,6 +142,37 @@ class ColumnsResizer {
 
         column.width = vp.getRatioFromWidth(newLeftW);
         nextColumn.width = vp.getRatioFromWidth(newRightW);
+    }
+
+    /**
+     * Render the drag handle for resizing columns.
+     *
+     * @param column
+     * The reference to rendered column
+     *
+     * @param cell
+     * The reference to rendered cell, where hadles should be added
+     */
+    public renderColumnDragHandles(column: Column, cell: Cell): void {
+        const vp = column.viewport;
+
+        if (
+            vp.columnsResizer && (
+                vp.columnDistribution !== 'full' ||
+                (
+                    vp.dataGrid.enabledColumns &&
+                    column.index < vp.dataGrid.enabledColumns.length - 1
+                )
+            )
+        ) {
+            const handle = makeHTMLElement('div', {
+                className: Globals.classNames.resizerHandles
+            }, cell.htmlElement);
+
+            vp.columnsResizer?.addHandleListeners(
+                handle, column
+            );
+        }
     }
 
     /**

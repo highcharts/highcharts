@@ -56,8 +56,6 @@ class TableRow extends Row {
      * The index of the row in the original data table (ID).
      */
     public id?: number;
-
-
     /* *
     *
     *  Constructor
@@ -77,10 +75,8 @@ class TableRow extends Row {
         super(viewport);
         this.index = index;
         this.id = viewport.dataTable.getOriginalRowIndex(index);
-
         this.setRowAttributes();
     }
-
 
     /* *
     *
@@ -111,7 +107,7 @@ class TableRow extends Row {
     /**
      * Sets the row HTML element attributes and additional classes.
      */
-    private setRowAttributes(): void {
+    public setRowAttributes(): void {
         const idx = this.index;
         const el = this.htmlElement;
 
@@ -126,8 +122,11 @@ class TableRow extends Row {
             el.setAttribute('data-row-id', this.id);
         }
 
-        // 1 - index of the head, 1 to avoid indexing from 0
-        el.setAttribute('aria-rowindex', idx + 2);
+        // Calculate levels of header, 1 to avoid indexing from 0
+        el.setAttribute(
+            'aria-rowindex',
+            idx + (this.viewport.header?.levels ?? 1) + 1
+        );
 
         if (idx % 2 === 1) {
             el.classList.add(Globals.classNames.rowOdd);

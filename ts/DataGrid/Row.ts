@@ -67,7 +67,6 @@ abstract class Row {
      */
     private destroyed?: boolean;
 
-
     /* *
     *
     *  Constructor

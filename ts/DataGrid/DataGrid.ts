@@ -22,11 +22,10 @@
  *
  * */
 
-import type Options from './Options';
+import type { Options, GroupedHeaderOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import Column from './Column.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
 import Table from './Table.js';
 import DataGridUtils from './Utils.js';
@@ -297,12 +296,18 @@ class DataGrid {
      * The ID of the column.
      */
     public hoverColumn(columnId?: string): void {
+        const vp = this.viewport;
+
+        if (!vp) {
+            return;
+        }
+
         if (this.hoveredColumnId) {
-            this.getColumn(this.hoveredColumnId)?.setHoveredState(false);
+            vp.getColumn(this.hoveredColumnId)?.setHoveredState(false);
         }
 
         if (columnId) {
-            this.getColumn(columnId)?.setHoveredState(true);
+            vp.getColumn(columnId)?.setHoveredState(true);
         }
 
         this.hoveredColumnId = columnId;
@@ -332,26 +337,6 @@ class DataGrid {
         } else {
             this.renderNoData();
         }
-    }
-
-    /**
-     * Returns the column with the provided ID.
-     *
-     * @param id
-     * The ID of the column.
-     */
-    public getColumn(id: string): Column | undefined {
-        const columns = this.enabledColumns;
-        if (!columns) {
-            return;
-        }
-
-        const columnIndex = columns.indexOf(id);
-        if (columnIndex < 0) {
-            return;
-        }
-
-        return this.viewport?.columns[columnIndex];
     }
 
     /**
@@ -387,9 +372,13 @@ class DataGrid {
      */
     private getEnabledColumnIDs(): string[] {
         const columnsOptions = this.options?.columns;
-        const columnsIncluded =
-            this.options?.settings?.columns?.included ??
-            this.dataTable?.getColumnNames();
+        const header = this.options?.settings?.header;
+        const headerColumns = this.getColumnIds(header || [], false);
+        const columnsIncluded = this.options?.settings?.columns?.included ||
+        (
+            headerColumns && headerColumns.length > 0 ?
+                headerColumns : this.dataTable?.getColumnNames()
+        );
 
         if (!columnsIncluded?.length) {
             return [];
@@ -418,6 +407,45 @@ class DataGrid {
 
         this.dataTable = this.presentationTable =
             new DataTable(tableOptions as DataTableOptions);
+    }
+
+    /**
+     * Extracts all references to columnIds on all levels below defined level
+     * in the settings.header structure.
+     *
+     * @param columns
+     * Structure that we start calculation
+     *
+     * @param [onlyEnabledColumns=true]
+     * Extract all columns from header or columns filtered by enabled param
+     * @returns
+     */
+    public getColumnIds(
+        columns: Array<GroupedHeaderOptions|string>,
+        onlyEnabledColumns: boolean = true
+    ): string[] {
+        let columnIds: string[] = [];
+        const { enabledColumns } = this;
+
+        for (const column of columns) {
+            const columnId: string | undefined =
+                typeof column === 'string' ? column : column.columnId;
+
+            if (
+                columnId &&
+                (!onlyEnabledColumns || (enabledColumns?.includes(columnId)))
+            ) {
+                columnIds.push(columnId);
+            }
+
+            if (typeof column !== 'string' && column.columns) {
+                columnIds = columnIds.concat(
+                    this.getColumnIds(column.columns, onlyEnabledColumns)
+                );
+            }
+        }
+
+        return columnIds;
     }
 
     /**

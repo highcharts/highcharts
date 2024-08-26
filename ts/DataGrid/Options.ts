@@ -108,6 +108,14 @@ export interface DataGridSettings {
     * Options to control the rows behavior and rendering.
     */
     rows?: RowsSettings;
+
+    /**
+    * Defines the structure of levels in header. Used for grouping columns
+    * headers.
+    *
+    * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
+    */
+    header?: Array<GroupedHeaderOptions|string>;
 }
 
 export interface ColumnsSettings {
@@ -129,6 +137,8 @@ export interface ColumnsSettings {
      *
      * Individual column options `enabled` options can be set to `false` to
      * disable a column.
+     *
+     * @private
      */
     included?: Array<string>;
 
@@ -391,6 +401,38 @@ export interface HeaderEvents {
     click?: ColumnEventCallback;
 }
 
+/**
+ * Options to control the structure of table header.
+ */
+export interface GroupedHeaderOptions {
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    headerFormat?: string;
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     */
+    useHTML?: boolean;
+    /**
+     * The custom CSS class name for the header.
+     */
+    className?: string;
+    /**
+     * The id of column with data.
+     */
+    columnId?: string;
+    /**
+     * Current level of header in the whole header tree.
+     * @internal
+     * @private
+     */
+    level?: number;
+    /**
+     * Columns that are displayed below the header.
+     */
+    columns?: GroupedHeaderOptions[];
+}
 /* *
  *
  *  Default Export

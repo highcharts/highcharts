@@ -22,6 +22,7 @@
  *
  * */
 
+import type { IndividualColumnOptions, GroupedHeaderOptions } from '../Options';
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
@@ -29,9 +30,11 @@ import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
 import Templating from '../../Core/Templating.js';
 import ColumnSorting from './../Actions/ColumnSorting.js';
+import Utilities from '../../Core/Utilities.js';
 
 const { format } = Templating;
 const { makeHTMLElement } = DGUtils;
+const { merge } = Utilities;
 
 
 /* *
@@ -55,6 +58,21 @@ class HeaderCell extends Cell {
      * The HTML element of the header cell content.
      */
     public headerContent?: HTMLElement;
+
+    /**
+     * The HTML element of the header cell content wrapper.
+     */
+    private contentWrapper?: HTMLElement;
+
+    /**
+     * Reference to options in settings header.
+     */
+    public userOptions: Partial<IndividualColumnOptions> = {};
+
+    /**
+     * Columns
+     */
+    public columns?: GroupedHeaderOptions[];
 
     /* *
     *
@@ -86,7 +104,9 @@ class HeaderCell extends Cell {
      * Init element.
      */
     public override init(): HTMLTableCellElement {
-        return document.createElement('th', {});
+        const elem = document.createElement('th', {});
+        elem.classList.add(Globals.classNames.headerCell);
+        return elem;
     }
 
     /**
@@ -94,56 +114,54 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const innerText = column.userOptions.headerFormat ? (
-            format(column.userOptions.headerFormat, column)
+        const isSingleColumn = this.row.viewport.getColumn(this.column.id);
+        const userOptions = merge(column.userOptions, this.userOptions);
+
+        this.value = userOptions.headerFormat ? (
+            format(userOptions.headerFormat, column)
         ) : column.id;
 
-        // Render th elements
+        // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
         this.headerContent = makeHTMLElement('div', {
-            innerText: innerText,
-            className: Globals.classNames.headCellContent
+            className: Globals.classNames.headerCellContent
         }, this.htmlElement);
+        this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
-        this.value = innerText;
+        if (userOptions.useHTML) {
+            this.renderHTMLCellContent(
+                this.value,
+                this.contentWrapper
+            );
+        } else {
+            this.contentWrapper.innerText = this.value;
+        }
 
         // Set the accessibility attributes.
         this.htmlElement.setAttribute('scope', 'col');
         this.htmlElement.setAttribute('data-column-id', column.id);
 
-        // Add resizing
-        this.renderColumnDragHandles();
+        if (this.userOptions.className) {
+            this.htmlElement.classList.add(this.userOptions.className);
+        }
 
-        // Add API click event
-        this.initColumnClickEvent();
+        if (isSingleColumn) {
+            // Add user column classname
+            if (column.userOptions.className) {
+                this.htmlElement.classList.add(column.userOptions.className);
+            }
 
-        // Add sorting
-        this.initColumnSorting();
-    }
-
-    /**
-     * Render the drag handle for resizing columns.
-     */
-    private renderColumnDragHandles(): void {
-        const column = this.column;
-        const vp = column.viewport;
-
-        if (
-            vp.columnsResizer && (
-                vp.columnDistribution !== 'full' ||
-                (
-                    vp.dataGrid.enabledColumns &&
-                    column.index < vp.dataGrid.enabledColumns.length - 1
-                )
-            )
-        ) {
-            const handle = makeHTMLElement('div', {
-                className: Globals.classNames.resizerHandles
-            }, this.htmlElement);
-
-            this.column.viewport.columnsResizer?.addHandleListeners(
-                handle, column
+            // Add resizing
+            this.column.viewport.columnsResizer?.renderColumnDragHandles(
+                this.column,
+                this
             );
+
+            // Add API click event
+            this.initColumnClickEvent();
+
+            // Add sorting
+            this.initColumnSorting();
         }
     }
 

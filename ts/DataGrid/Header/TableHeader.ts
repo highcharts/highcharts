@@ -21,10 +21,11 @@
  *  Imports
  *
  * */
-
+import type { GroupedHeaderOptions } from '../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
+import HeaderCell from './HeaderCell';
 
 /* *
  *
@@ -64,6 +65,10 @@ class TableHeader {
      */
     private headersEvents: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
 
+    /**
+     * Amount of levels in the header, that is used in creating correct rows.
+     */
+    public levels: number = 1;
     /* *
     *
     *  Constructor
@@ -79,7 +84,13 @@ class TableHeader {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.columns = viewport.columns;
-        this.rows[0] = new HeaderRow(viewport);
+
+        if (viewport.dataGrid.options?.settings?.header) {
+            this.levels = this.getRowLevels(
+                viewport.dataGrid.options?.settings?.header
+            );
+        }
+
     }
 
     /* *
@@ -99,11 +110,11 @@ class TableHeader {
             return;
         }
 
-        // TODO: render column grouping headers
-        // this.rows[0].renderGroupedColumnHeaders();
-
-        // render basic column headers
-        this.rows[0].render();
+        for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
+            const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
+            row.renderMultipleLevel(i);
+            this.rows.push(row);
+        }
     }
 
     /**
@@ -112,23 +123,48 @@ class TableHeader {
     public reflow(): void {
         const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
         const vp = this.viewport;
+        const header = vp.header;
+        const rows = this.rows;
 
-        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-            const column = this.columns[i];
-            const td = column.header?.htmlElement;
+        for (const row of rows) {
+            for (const cell of row.cells) {
+                const headerCell = cell as HeaderCell;
+                const th = cell.htmlElement;
 
-            if (!td) {
-                continue;
+                if (!th) {
+                    continue;
+                }
+
+                let width = 0;
+
+                if (headerCell.columns) {
+                    for (const col of headerCell.columns) {
+                        width +=
+                            (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
+                    }
+                } else {
+                    width = cell.column.getWidth();
+                }
+
+                // Set the width of the column. Max width is needed for the
+                // overflow: hidden to work.
+                th.style.width = th.style.maxWidth = width + 'px';
             }
-
-            // Set the width of the column. Max width is needed for the
-            // overflow: hidden to work.
-            td.style.width = td.style.maxWidth = column.getWidth() + 'px';
         }
 
         if (vp.rowsWidth) {
             vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
                 offsetWidth - clientWidth + 'px';
+        }
+
+        // Adjust cell's width when scrollbar is enabled.
+        if (header) {
+            const cells = header.rows[header.rows.length - 1].cells;
+            const cellHtmlElement = cells[cells.length - 1].htmlElement;
+
+            cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
+                cellHtmlElement.offsetWidth +
+                (offsetWidth - clientWidth) + 'px';
         }
     }
 
@@ -151,6 +187,31 @@ class TableHeader {
             element,
             event
         ]);
+    }
+
+    /**
+     * Returns amount of rows for the current cell in header tree.
+     *
+     * @param scope
+     * Structure of header
+     *
+     * @returns
+     */
+    private getRowLevels(
+        scope: Array<GroupedHeaderOptions | string>
+    ): number {
+        let maxDepth = 0;
+
+        for (const item of scope) {
+            if (typeof item !== 'string' && item.columns) {
+                const depth = this.getRowLevels(item.columns);
+                if (depth > maxDepth) {
+                    maxDepth = depth;
+                }
+            }
+        }
+
+        return maxDepth + 1;
     }
 
     /**

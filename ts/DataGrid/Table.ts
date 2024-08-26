@@ -420,6 +420,26 @@ class Table {
             this.reflow();
         }
     }
+
+    /**
+     * Returns the column with the provided ID.
+     *
+     * @param id
+     * The ID of the column.
+     */
+    public getColumn(id: string): Column | undefined {
+        const columns = this.dataGrid.enabledColumns;
+
+        if (!columns) {
+            return;
+        }
+        const columnIndex = columns.indexOf(id);
+        if (columnIndex < 0) {
+            return;
+        }
+
+        return this.columns[columnIndex];
+    }
 }
 
 namespace Table {
