@@ -2440,63 +2440,21 @@ const defaultOptions: DefaultOptions = {
          */
         dateTimeLabelFormats: {
             /** @internal */
-            millisecond: {
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                fractionalSecondDigits: 3
-            },
+            millisecond: '%[AebHMSL]',
             /** @internal */
-            second: {
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
-            },
+            second: '%[AebHMS]',
             /** @internal */
-            minute: {
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric'
-            },
+            minute: '%[AebHM]',
             /** @internal */
-            hour: {
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric'
-            },
+            hour: '%[AebHM]',
             /** @internal */
-            day: {
-                year: 'numeric',
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric'
-            },
+            day: '%[AebY]',
             /** @internal */
-            week: {
-                year: 'numeric',
-                month: 'short',
-                weekday: 'long',
-                day: 'numeric'
-            },
+            week: 'Week from %[AebY]',
             /** @internal */
-            month: {
-                month: 'long',
-                year: 'numeric'
-            },
+            month: '%[BY]',
             /** @internal */
-            year: {
-                year: 'numeric'
-            }
+            year: '%Y'
         },
 
         /**

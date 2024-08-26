@@ -187,6 +187,12 @@ QUnit.module('Format', () => {
         );
 
         assert.strictEqual(
+            format('{ucfirst (point.date:%[Ymd])}', { point }),
+            '01/01/2012',
+            'Locale-aware date formats should work in expressions'
+        );
+
+        assert.strictEqual(
             format('{value:%b \u2019%y}', { value: 1706745600000 }),
             'Feb ’24',
             `Right single quotation mark shouldn't disable the format method,
