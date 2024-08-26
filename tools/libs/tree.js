@@ -612,7 +612,7 @@ module.exports = {
 
 /**
  * @typedef OptionMeta
- * @property {string} [default]
+ * @property {boolean|null|number|string} [default]
  * @property {string} fullname
  * @property {string} name
  */

@@ -41,6 +41,7 @@ interface ContextTOCItem extends Record<string, unknown> {
 
 interface Nav {
     children?: Array<Nav>;
+    default?: (boolean|null|number|string);
     deprecated?: string;
     description?: string;
     filename?: string;
@@ -275,7 +276,9 @@ async function getNav(
 
 
 function jsdoc2Markdown(text: string): string {
-    return text.replaceAll(/\{@link\s+(\S*?)\s*\|\s*(.*?)\s*\}/gu, '[$2]($1)');
+    return text
+        .replaceAll(/\{@link\s+(\S*?)\s*\|\s*(.*?)\s*\}/gu, '[$2]($1)')
+        .replaceAll(/\{@link\s+(\S*?)\s*\}/gu, '[link]($1)');
 }
 
 
@@ -294,6 +297,9 @@ function toNav(
     nav.fullname = item.name;
     nav.name = item.name.split('.').pop();
     if (item.doclet.type) {
+        if (item.doclet.default) {
+            nav.default = item.doclet.default[item.doclet.default.length - 1];
+        }
         if (!hasChildren) {
             nav.isLeaf = true;
         }

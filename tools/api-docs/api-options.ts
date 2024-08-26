@@ -328,6 +328,7 @@ function addTreeNode(
 
     const _treeNode = getTreeNode(_fullname);
     const _nodeDoclet = _treeNode.doclet;
+    const _nodeMeta = _treeNode.meta;
 
     let _array: Array<Record<string, (string|Array<string>)>>;
     let _split: Array<string>;
@@ -347,8 +348,23 @@ function addTreeNode(
 
             case 'default':
             case 'defaultvalue':
-                _nodeDoclet.defaultvalue =
+                let _value: (boolean|number|string|undefined) =
                     TSLib.extractTagText(_infoDoclet, _tag, true);
+
+                if (typeof _value !== 'undefined') {
+                    if (!isNaN(Number(_value))) {
+                        _value = Number(_value);
+                    } else {
+                        _value = {
+                            false: false,
+                            null: null,
+                            true: true
+                        }[_value] || _value;
+                    }
+
+                    _nodeDoclet.defaultvalue = _value;
+                    _nodeMeta.default = _value;
+                }
                 break;
 
             case 'description':

@@ -185,6 +185,7 @@ async function addOption(
             for (const member of codeInfo.members) {
                 if (
                     member.kind === 'Class' ||
+                    member.kind === 'Property' ||
                     member.kind === 'Variable'
                 ) {
                     moreInfos.push(member);

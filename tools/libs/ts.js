@@ -1770,7 +1770,7 @@ function getInfoValue(
         getDeconstructInfos(node, includeNodes) ||
         getFunctionCallInfo(node, includeNodes) ||
         getFunctionInfo(node, includeNodes) ||
-        getObjectInfo(node, includeNodes) ||
+        // getObjectInfo(node, includeNodes) ||
         getReferenceInfo(node, includeNodes) ||
         getVariableInfo(node, includeNodes)
     );
