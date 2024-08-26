@@ -50,10 +50,41 @@ const test = base.extend({
 
         await vPage.close();
         await vDevice.close();
-    }
+    },
+  beforeEach: [
+    async ({ page }, use) => {
+      await page
+        .context()
+        .tracing.start({ screenshots: true, snapshots: true, sources: true });
+      await use();
+    },
+    { auto: true },
+  ],
+
+  afterEach: [
+    async ({ page }, use, testInfo) => {
+      await use();
+      if (testInfo.status == "failed") {
+        await page
+          .context()
+          .tracing.stop({ path: `${testInfo.outputDir}/trace.zip` });
+        await page.screenshot({ path: `${testInfo.outputDir}/screenshot.png` });
+        await testInfo.attach("screenshot", {
+          path: `${testInfo.outputDir}/screenshot.png`,
+          contentType: "image/png",
+        });
+        await testInfo.attach("trace", {
+          path: `${testInfo.outputDir}/trace.zip`,
+          contentType: "application/zip",
+        });
+      }
+    },
+    { auto: true },
+  ],
 })
 
 test('stock tools gui is working', async ({ page }) => {
+
     const baseUrl = 'http://localhost:3030/samples/view?mobile=true&path=/';
     await page.goto(baseUrl + 'highcharts/cypress/stock-tools-gui');
     await page.locator('.highcharts-indicators').first().click();
