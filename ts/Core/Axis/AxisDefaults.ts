@@ -2111,9 +2111,10 @@ namespace AxisDefaults {
          *         Logarithmic with extension to emulate negative values
          *
          * @type    {Highcharts.AxisTypeValue}
+         * @default linear
          * @product highcharts gantt
+         * @apioption xAxis.type
          */
-        type: 'linear',
 
         /**
          * If there are multiple axes on the same side of the chart, the pixel

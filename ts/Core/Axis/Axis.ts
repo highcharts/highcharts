@@ -413,7 +413,7 @@ class Axis {
             labelsOptions = options.labels;
 
         // Set the type and fire an event
-        this.type = this.options.type;
+        this.type = this.options.type || 'linear';
         fireEvent(this, 'afterSetType');
 
 
