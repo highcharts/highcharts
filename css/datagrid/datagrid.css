@@ -180,7 +180,8 @@
 }
 
 .highcharts-datagrid-table td:first-child,
-.highcharts-datagrid-table thead th.highcharts-datagrid-column-first {
+.highcharts-datagrid-table thead th.highcharts-datagrid-column-first,
+.highcharts-datagrid-table thead tr:first-child th:first-child {
     border-left: none;
 }
 

@@ -100,6 +100,7 @@ class HeaderRow extends Row {
         }
 
         const columnsOnLevel = this.getColumnsAtLevel(header, level);
+
         for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
             const column = columnsOnLevel[i];
             const colSpan =
@@ -146,6 +147,13 @@ class HeaderRow extends Row {
                 headerCell.options.className = className;
             }
 
+            // Add class to disable left border on first column
+            if (dataColumn?.index === 0 && i === 0) {
+                headerCell.htmlElement.classList.add(
+                    Globals.classNames.columnFirst
+                );
+            }
+
             headerCell.render();
             headerCell.columns =
                 typeof column !== 'string' ? column.columns : void 0;
@@ -176,13 +184,13 @@ class HeaderRow extends Row {
      * @returns
      */
     private getColumnsAtLevel(
-        level: Array<GroupedHeaderOptions | string>,
+        scope: Array<GroupedHeaderOptions | string>,
         targetLevel: number,
         currentLevel: number = 0
     ): Array<GroupedHeaderOptions|string> {
         let result: Array<GroupedHeaderOptions|string> = [];
 
-        for (const column of level) {
+        for (const column of scope) {
             if (currentLevel === targetLevel) {
                 result.push(column);
             }
