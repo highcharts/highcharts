@@ -19,7 +19,6 @@
 import type {
     SeriesTypePlotOptions
 } from '../../Core/Series/SeriesType';
-import type Time from '../../Core/Time';
 
 /* *
  *
@@ -31,58 +30,55 @@ import type Time from '../../Core/Time';
  * Common options
  * @private
  */
-
-// The first one is the point or start value, the second is the start value if
-// we're dealing with range, the third one is the end value if dealing with a
-// range
-const dateTimeLabelFormats: Record<string, Array<Time.DateTimeFormat>> = {
-    millisecond: [
-        '%[AebHMSL]',
-        '%[AebHMSL]',
-        '-%[HMSL]'
-    ],
-    second: [
-        '%[AebHMS]',
-        '%[AebHMS]',
-        '-%[HMS]'
-    ],
-    minute: [
-        '%[AebHM]',
-        '%[AebHM]',
-        '-%[HM]'
-    ],
-    hour: [
-        '%[AebHM]',
-        '%[AebHM]',
-        '-%[HM]'
-    ],
-    day: [
-        '%[AebY]',
-        '%[Aeb]',
-        '-%[AebY]'
-    ],
-    week: [
-        'week from %[AebY]',
-        '%[Aeb]',
-        '-%[AebY]'
-    ],
-    month: [
-        '%[BY]',
-        '%[B]',
-        '-%[BY]'
-    ],
-    year: [
-        '%Y',
-        '%Y',
-        '-%Y'
-    ]
-};
-
 const common = {
     /// enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
     groupPixelWidth: 2,
-    dateTimeLabelFormats
+    // The first one is the point or start value, the second is the start
+    // value if we're dealing with range, the third one is the end value if
+    // dealing with a range
+    dateTimeLabelFormats: {
+        millisecond: [
+            '%[AebHMSL]',
+            '%[AebHMSL]',
+            '-%[HMSL]'
+        ],
+        second: [
+            '%[AebHMS]',
+            '%[AebHMS]',
+            '-%[HMS]'
+        ],
+        minute: [
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
+        ],
+        hour: [
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
+        ],
+        day: [
+            '%[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
+        ],
+        week: [
+            'week from %[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
+        ],
+        month: [
+            '%[BY]',
+            '%[B]',
+            '-%[BY]'
+        ],
+        year: [
+            '%Y',
+            '%Y',
+            '-%Y'
+        ]
+    }
     /// smoothed = false, // enable this for navigator series only
 };
 

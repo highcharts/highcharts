@@ -122,14 +122,7 @@ const defaultOptions: CurrentDateIndicatorOptions = {
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */
-        format: {
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric'
-        },
+        format: '%[abdYHM]',
         formatter: function (
             this: PlotLineOrBand,
             value?: number,
