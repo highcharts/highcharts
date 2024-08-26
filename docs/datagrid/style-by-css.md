@@ -128,7 +128,7 @@ See how the `CSS class` can be added to the column:
 
 ```ts
 DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200]

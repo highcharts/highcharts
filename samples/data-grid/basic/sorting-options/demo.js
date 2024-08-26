@@ -3,7 +3,7 @@ const orderSelectEl = document.getElementById('select-order');
 const applyBtnEl = document.getElementById('apply-btn');
 
 DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
@@ -53,7 +53,7 @@ DataGrid.dataGrid('container', {
     }
 
     applyBtnEl.addEventListener('click', () => {
-        dg.getColumn(columnSelectEl.value).sorting.setOrder(
+        dg.viewport.getColumn(columnSelectEl.value).sorting.setOrder(
             orderSelectEl.value
         );
     });

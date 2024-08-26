@@ -21,7 +21,8 @@
  *  Imports
  *
  * */
-import type { GroupedHeader } from '../Options';
+import type { GroupedHeaderOptions } from '../Options';
+import Table from '../Table.js';
 import Row from '../Row.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
@@ -37,13 +38,36 @@ import Column from '../Column.js';
  * Represents a row in the data grid header.
  */
 class HeaderRow extends Row {
+    /* *
+    *
+    *  Properties
+    *
+    * */
 
+    /**
+     * The level in the header.
+     */
+    public level: number;
     /* *
     *
     *  Constructor
     *
     * */
 
+    /**
+     * Constructs a row in the data grid.
+     *
+     * @param viewport
+     * The Data Grid Table instance which the row belongs to.
+     *
+     * @param level
+     * The current level of header that is rendered.
+     */
+    constructor(viewport: Table, level: number) {
+        super(viewport);
+        this.level = level;
+        this.setRowAttributes();
+    }
     /* *
     *
     *  Methods
@@ -61,87 +85,81 @@ class HeaderRow extends Row {
      * The current level in the header tree
      */
     public renderMultipleLevel(level: number): void {
-        const header = this.viewport.dataGrid.userOptions?.settings?.header;
+        const header = this.viewport.dataGrid.options?.settings?.header;
         const vp = this.viewport;
         const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
-        vp.theadElement.appendChild(
-            this.htmlElement
-        );
+        vp.theadElement.appendChild(this.htmlElement);
+        this.htmlElement.classList.add(Globals.classNames.headerRow);
 
-        this.htmlElement.classList.add(
-            Globals.classNames.headerRow
-        );
+        if (!header) {
+            super.render();
+            this.reflow();
+            return;
+        }
 
-        if (header) {
-            const columnsOnLevel = this.getColumnsAtLevel(header, level);
-            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
-                // Skip hidden column
-                const colSpan =
-                    vp.dataGrid.getColumnIds(
-                        columnsOnLevel[i].columns || []
-                    ).length;
-                const columnId = (typeof columnsOnLevel[i] === 'string' ?
-                    columnsOnLevel[i] : columnsOnLevel[i].columnId) as string;
-                const dataColumn = vp.getColumn(columnId || '');
-                const {
-                    useHTML,
-                    headerFormat
-                } = columnsOnLevel[i];
+        const columnsOnLevel = this.getColumnsAtLevel(header, level);
+        for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+            const column = columnsOnLevel[i];
+            const colSpan =
+                (typeof column !== 'string' && column.columns) ?
+                    vp.dataGrid.getColumnIds(column.columns).length : 0;
+            const columnId = typeof column === 'string' ?
+                column : column.columnId;
+            const dataColumn = vp.getColumn(columnId || '');
+            const useHTML = (typeof column !== 'string') ?
+                column.useHTML : void 0;
+            const headerFormat = (typeof column !== 'string') ?
+                column.headerFormat : void 0;
+            const className = (typeof column !== 'string') ?
+                column.className : void 0;
 
-                // Skip hidden column or header when all columns are hidden.
-                if (
-                    (
-                        enabledColumns &&
-                        columnId &&
-                        enabledColumns.indexOf(
-                            columnId
-                        ) < 0
-                    ) || (
-                        !dataColumn &&
-                        colSpan === 0
-                    )
-                ) {
-                    continue;
-                }
+            // Skip hidden column or header when all columns are hidden.
+            if (
+                (
+                    columnId &&
+                    enabledColumns && enabledColumns?.indexOf(columnId) < 0
+                ) || (!dataColumn && colSpan === 0)
+            ) {
+                continue;
+            }
 
-                const cell = this.createCell(
-                    (
-                        vp.getColumn(columnId)
-                    ) || (
-                        new Column(
-                            vp,
-                            headerFormat || '',
-                            i
-                        )
-                    )
+            const headerCell = this.createCell(
+                vp.getColumn(columnId || '') ||
+                new Column(
+                    vp,
+                    headerFormat?.replace(/<[^>]*>/g, '') || '', // Remove HTML tags and empty spaces.
+                    i
+                )
+            );
+
+            if (headerFormat) {
+                headerCell.options.headerFormat = headerFormat;
+            }
+
+            if (useHTML) {
+                headerCell.options.useHTML = useHTML;
+            }
+
+            if (className) {
+                headerCell.options.className = className;
+            }
+
+            headerCell.render();
+            headerCell.columns =
+                typeof column !== 'string' ? column.columns : void 0;
+
+            if (columnId) {
+                headerCell.htmlElement.setAttribute(
+                    'rowSpan',
+                    (this.viewport.header?.levels || 1) - level
                 );
-
-                if (headerFormat) {
-                    cell.options.headerFormat = headerFormat;
-                }
-
-                if (useHTML) {
-                    cell.options.useHTML = useHTML;
-                }
-
-                cell.render();
-
-                if (columnId) {
-                    cell.htmlElement.setAttribute(
-                        'rowSpan',
-                        (this.viewport.header?.levels || 1) - level
-                    );
-                } else {
-                    cell.htmlElement.setAttribute(
-                        'colSpan',
-                        colSpan
-                    );
+            } else {
+                if (colSpan > 1) {
+                    headerCell.htmlElement.setAttribute('colSpan', colSpan);
                 }
             }
-        } else {
-            super.render();
         }
 
         this.reflow();
@@ -158,20 +176,21 @@ class HeaderRow extends Row {
      * @returns
      */
     private getColumnsAtLevel(
-        level: GroupedHeader[],
+        level: Array<GroupedHeaderOptions | string>,
         targetLevel: number,
-        currentLevel = 0
-    ): GroupedHeader[] {
-        let result:GroupedHeader[] = [];
+        currentLevel: number = 0
+    ): Array<GroupedHeaderOptions|string> {
+        let result: Array<GroupedHeaderOptions|string> = [];
 
-        for (let i = 0, iEnd = level.length; i < iEnd; i++) {
+        for (const column of level) {
             if (currentLevel === targetLevel) {
-                result.push(level[i]);
+                result.push(column);
             }
-            if (level[i].columns) {
+
+            if (typeof column !== 'string' && column.columns) {
                 result = result.concat(
                     this.getColumnsAtLevel(
-                        level[i].columns || [],
+                        column.columns,
                         targetLevel,
                         currentLevel + 1
                     )
@@ -180,6 +199,14 @@ class HeaderRow extends Row {
         }
 
         return result;
+    }
+
+    /**
+     * Sets the row HTML element attributes and additional classes.
+     */
+    public setRowAttributes(): void {
+        const el = this.htmlElement;
+        el.setAttribute('aria-rowindex', this.level);
     }
 }
 

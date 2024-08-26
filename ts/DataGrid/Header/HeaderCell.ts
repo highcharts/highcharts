@@ -22,7 +22,8 @@
  *
  * */
 
-import type { ColumnOptions } from '../Options';
+import type { GroupedHeaderOptions } from '../Options';
+
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
@@ -67,7 +68,12 @@ class HeaderCell extends Cell {
     /**
      * Reference to options in settings header.
      */
-    public options: Partial<ColumnOptions> = {};
+    public options: Partial<Column.Options> = {};
+
+    /**
+     * Columns
+     */
+    public columns?: GroupedHeaderOptions[];
 
     /* *
     *
@@ -140,7 +146,16 @@ class HeaderCell extends Cell {
             this.htmlElement.classList.add(Globals.classNames.columnFirst);
         }
 
+        if (this.options.className) {
+            this.htmlElement.classList.add(this.options.className);
+        }
+
         if (isSingleColumn) {
+            // Add user column classname
+            if (column.options.className) {
+                this.htmlElement.classList.add(column.options.className);
+            }
+
             // Add resizing
             this.column.viewport.columnsResizer?.renderColumnDragHandles(
                 this.column,

@@ -1,5 +1,5 @@
 window.dataGrid = DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             id: ['1', '2', '3', '4'],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -23,8 +23,7 @@ window.dataGrid = DataGrid.dataGrid('container', {
                         columnId: 'weight'
                     }]
                 }]
-            },
-            {
+            }, {
                 headerFormat: 'Product info',
                 columns: [{
                     headerFormat: 'Meta',

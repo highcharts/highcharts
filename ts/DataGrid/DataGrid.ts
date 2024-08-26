@@ -22,7 +22,7 @@
  *
  * */
 
-import type { Options, GroupedHeader } from './Options';
+import type { Options, GroupedHeaderOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Column from './Column';
 
@@ -214,7 +214,7 @@ class DataGrid {
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
-        this.loadDataTable(this.options?.table);
+        this.loadDataTable(this.options?.dataTable);
 
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
@@ -267,8 +267,8 @@ class DataGrid {
         this.loadUserOptions(options);
 
         let newDataTable = false;
-        if (!this.dataTable || options.table) {
-            this.loadDataTable(this.options?.table);
+        if (!this.dataTable || options.dataTable) {
+            this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
         }
 
@@ -400,15 +400,10 @@ class DataGrid {
         const { columnOptionsMap } = this;
         const header = this.options?.settings?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        let columnsIncluded: Array<string> | undefined;
-
-        if (headerColumns?.length) {
-            columnsIncluded = headerColumns;
-        } else {
-            columnsIncluded =
-                this.options?.settings?.columns?.included ??
-                this.dataTable?.getColumnNames();
-        }
+        const columnsIncluded = this.options?.settings?.columns?.included || (
+            headerColumns && headerColumns.length > 0 ?
+                headerColumns : this.dataTable?.getColumnNames()
+        );
 
         if (!columnsIncluded?.length) {
             return [];
@@ -444,7 +439,8 @@ class DataGrid {
     }
 
     /**
-     * Calculates all references to columnIds on all levels below defined level.
+     * Extracts all references to columnIds on all levels below defined level
+     * in the settings.header structure.
      *
      * @param columns
      * Structure that we start calculation
@@ -454,34 +450,26 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: GroupedHeader[],
+        columns: Array<GroupedHeaderOptions|string>,
         onlyEnabledColumns: boolean = true
-    ): Array<string> {
-        let columnIds:Array<string> = [];
-        const enabledColumns = this.enabledColumns;
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            if (onlyEnabledColumns) {
-                if (
-                    columns[i].columnId &&
-                    enabledColumns &&
-                    enabledColumns.indexOf(columns[i].columnId as string) > -1
-                ) {
-                    columnIds.push(columns[i].columnId as string);
-                }
-            } else {
-                if (columns[i].columnId || typeof columns[i] === 'string') {
-                    columnIds.push(
-                        columns[i].columnId || (columns[i] as string)
-                    );
-                }
+    ): string[] {
+        let columnIds: string[] = [];
+        const { enabledColumns } = this;
+
+        for (const column of columns) {
+            const columnId: string | undefined =
+                typeof column === 'string' ? column : column.columnId;
+
+            if (
+                columnId &&
+                (!onlyEnabledColumns || (enabledColumns?.includes(columnId)))
+            ) {
+                columnIds.push(columnId);
             }
 
-            if (columns[i].columns) {
+            if (typeof column !== 'string' && column.columns) {
                 columnIds = columnIds.concat(
-                    this.getColumnIds(
-                        columns[i].columns || [],
-                        onlyEnabledColumns
-                    )
+                    this.getColumnIds(column.columns, onlyEnabledColumns)
                 );
             }
         }

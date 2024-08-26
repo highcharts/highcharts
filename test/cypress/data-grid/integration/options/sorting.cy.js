@@ -70,4 +70,25 @@ describe('DataGrid events.', () => {
 
         cy.get('th[data-column-id="icon"]').should('have.class', 'highcharts-datagrid-column-sorted-asc');
     });
+
+    it ('Editing a cell in sorted column should resort the table.', () => {
+        cy.get('th[data-column-id="weight"]').click();
+        cy.get('tr[data-row-index="1"] td[data-column-id="weight"]').click()
+            .type('000').type('{enter}');
+
+        cy.window().its('dataGrid').then(dataGrid => {
+            const { rows } = dataGrid.viewport;
+            const lastRow = rows[rows.length - 1];
+
+            expect(
+                lastRow.cells[0].value,
+                'Last rendered row should be `Pears`.',
+            ).to.equal('Pears');
+
+            expect(
+                dataGrid.presentationTable.columns.weight,
+                'Weight column should be sorted.',
+            ).to.deep.equal([0.5, 100, 200, 40000]);
+        });
+    })
 });

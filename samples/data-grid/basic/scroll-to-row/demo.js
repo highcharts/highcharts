@@ -1,5 +1,5 @@
 const dataGrid = new DataGrid.DataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),
             b: Array.from({ length: 1000 }, (_, i) =>

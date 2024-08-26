@@ -42,7 +42,7 @@ Cells in the `header` are called `headerCell`. Their contents can be edited usin
 [`headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 
 The API allows you to group headers into sections.
-You can find more information about in our [Columns article](https://www.highcharts.com/docs/dashboards/columns).
+You can find more information about in our [Columns article](/docs/dashboards/columns).
 
 Row
 ---------

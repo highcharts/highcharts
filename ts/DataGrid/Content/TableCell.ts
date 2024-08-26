@@ -155,24 +155,43 @@ class TableCell extends Cell {
      * @param updateTable
      * Whether to update the table after setting the content.
      */
-    public setValue(value: DataTable.CellType, updateTable: boolean): void {
+    public async setValue(
+        value: DataTable.CellType,
+        updateTable: boolean
+    ): Promise<void> {
         const element = this.htmlElement;
 
         this.value = value;
-
         this.renderHTMLCellContent(
             this.formatCell(),
             element
         );
 
-        if (updateTable) {
-            const vp = this.row.viewport;
-            vp.dataTable.setCell(
-                this.column.id,
-                this.row.index,
-                this.value
-            );
+        if (!updateTable) {
+            return;
         }
+
+        const vp = this.column.viewport;
+        const { dataTable: originalDataTable } = vp.dataGrid;
+
+        // Taken the local row index of the original datagrid data table, but
+        // in the future it should affect the globally original data table.
+        // (To be done after the DataLayer refinement)
+        const rowTableIndex =
+            this.row.id && originalDataTable?.getLocalRowIndex(this.row.id);
+
+        if (!originalDataTable || rowTableIndex === void 0) {
+            return;
+        }
+
+        originalDataTable.setCell(
+            this.column.id,
+            rowTableIndex,
+            this.value
+        );
+
+        await vp.dataGrid.querying.proceed(true);
+        vp.loadPresentationData();
     }
 
     /**

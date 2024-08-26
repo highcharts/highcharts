@@ -87,7 +87,7 @@ export interface Options {
     /**
      * Data table with the data to display in the grid structure.
      */
-    table?: DataTable | DataTableOptions;
+    dataTable?: DataTable | DataTableOptions;
 }
 
 /**
@@ -112,8 +112,10 @@ export interface DataGridSettings {
     /**
     * Defines the structure of levels in header. Used for grouping columns
     * headers.
+    *
+    * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
     */
-    header?: GroupedHeader[];
+    header?: Array<GroupedHeaderOptions|string>;
 }
 
 export interface ColumnsSettings {
@@ -404,7 +406,10 @@ export interface HeaderEvents {
     click?: ColumnEventCallback;
 }
 
-export interface GroupedHeader {
+/**
+ * Options to control the structure of table header.
+ */
+export interface GroupedHeaderOptions {
     /**
      * The format of the column header. Use `{id}` to display the column id.
      */
@@ -415,7 +420,7 @@ export interface GroupedHeader {
      */
     useHTML?: boolean;
     /**
-     * The custom CSS class name for the table caption.
+     * The custom CSS class name for the header.
      */
     className?: string;
     /**
@@ -424,13 +429,14 @@ export interface GroupedHeader {
     columnId?: string;
     /**
      * Current level of header in the whole header tree.
+     * @internal
      * @private
      */
     level?: number;
     /**
      * Columns that are displayed below the header.
      */
-    columns?: GroupedHeader[];
+    columns?: GroupedHeaderOptions[];
 }
 /* *
  *

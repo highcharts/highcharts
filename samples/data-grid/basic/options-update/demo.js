@@ -17,7 +17,7 @@ const initialOptions = {
 };
 
 const dataGrid = DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes', 'Peaches', 'Cherries', 'Strawberries', 'Blueberries',

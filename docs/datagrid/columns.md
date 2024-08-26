@@ -33,12 +33,14 @@ This can be modified using the [settings.header](https://api.highcharts.com/dash
 settings: {
   header: ['a', 'price', 'weight']
 }
-
 ```
 
 Columns headers can be grouped into sections, so you can create your own multiple level header.
 
 ![multilevelheader.png](multilevelheader.png)
+
+
+<iframe src="https://www.highcharts.com/samples/embed/data-grid/basic/grouped-headers" allow="fullscreen"></iframe>
 
 ```js
 settings: {

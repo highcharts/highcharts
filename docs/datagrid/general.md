@@ -40,7 +40,7 @@ Data Table Options:
 ```js
 import DataGrid from '@highcharts/dashboards/datagrid';
 DataGrid.dataGrid('container', {
-    table: {
+    dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             price: [1.5, 2.53, 5, 4.5],
@@ -53,7 +53,7 @@ Data Table Instance:
 ```ts
 import DataGrid from '@highcharts/dashboards/datagrid';
 const grid = new DataGrid.DataGrid('container', {
-    table: new DataGrid.DataTable({
+    dataTable: new DataGrid.DataTable({
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             price: [1.5, 2.53, 5, 4.5],
@@ -81,7 +81,7 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 
 ```js
 DataGrid.dataGrid('container', {
-    table: { columns },
+    dataTable: { columns },
     settings: {
         caption: {
             text: 'Fruit market'
