@@ -169,4 +169,21 @@ describe('layout resize on window changes', () => {
         // Assert
         cy.get('.highcharts-datagrid-column-sortable').should('not.exist');
     });
+
+    it('Discarding changes should not be applied to the grid.', () => {
+        // Assert
+        cy.get('.highcharts-datagrid-column-sortable').should('exist');
+
+        // Act
+        cy.toggleEditMode();
+        cy.openCellEditSidebar('#dashboard-col-1');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Sortable columns').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
+
+        // Assert
+        cy.get('.highcharts-datagrid-column-sortable').should('exist');
+    });
 });

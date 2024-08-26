@@ -297,7 +297,12 @@ class DataGridComponent extends Component {
             dataGridOptions.dataTable = dataTable.modified;
         }
 
-        return new DGN.DataGrid(this.contentElement, dataGridOptions);
+        const dataGridInstance =
+            new DGN.DataGrid(this.contentElement, dataGridOptions);
+
+        this.options.dataGridOptions = dataGridInstance.options;
+
+        return dataGridInstance;
     }
 }
 
