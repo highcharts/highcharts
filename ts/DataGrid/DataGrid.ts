@@ -22,7 +22,7 @@
  *
  * */
 
-import type { Options, GroupedHeaderOptions } from './Options';
+import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Column from './Column';
 
@@ -118,7 +118,7 @@ class DataGrid {
      * The user options declared for the columns as an object of column ID to
      * column options.
      */
-    public columnOptionsMap?: Record<string, Column.Options>;
+    public columnOptionsMap: Record<string, Column.Options> = {};
 
     /**
      * The container of the data grid.
@@ -233,12 +233,15 @@ class DataGrid {
     /**
      * Loads the user options to all the important fields.
      *
-     * @param userOptions
+     * @param newOptions
      * The options that were declared by the user.
      */
-    private loadUserOptions(userOptions: Partial<Options>): void {
-        this.userOptions = userOptions;
-        this.options = merge(DataGrid.defaultOptions, this.userOptions);
+    private loadUserOptions(newOptions: Partial<Options>): void {
+        this.userOptions = merge(this.userOptions ?? {}, newOptions);
+        this.options = merge(
+            this.options ?? DataGrid.defaultOptions,
+            this.userOptions
+        );
 
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
@@ -252,7 +255,9 @@ class DataGrid {
     }
 
     /**
-     * Updates the data grid with new options.
+     * Updates the data grid with new options. It overrides the existing column
+     * options array. If you want to merge the column options, use the
+     * `updateColumns` method instead.
      *
      * @param options
      * The options of the data grid that should be updated.
@@ -273,11 +278,53 @@ class DataGrid {
         }
 
         this.querying.loadOptions();
-        await this.querying.proceed(newDataTable);
 
         if (render) {
+            await this.querying.proceed(newDataTable);
             this.renderViewport();
         }
+    }
+
+    /**
+     * Updates the columns of the data grid with new options. Unlike the
+     * `update` method, it does not override the existing column options array.
+     * Instead, it merges the provided options with the existing options.
+     *
+     * @param options
+     * The options of the columns that should be updated.
+     *
+     * @param render
+     * Whether to re-render the data grid after updating the columns.
+     */
+    public async updateColumns(
+        options: IndividualColumnOptions[],
+        render: boolean = true
+    ): Promise<void> {
+        const columnOptions = this.userOptions?.columns ?? [];
+
+        for (let i = 0, iEnd = options.length; i < iEnd; ++i) {
+            const columnId = options[i].id;
+            if (!columnId) {
+                continue;
+            }
+
+            const indexInPrevOptions = columnOptions?.findIndex(
+                (prev): boolean => prev.id === columnId
+            );
+
+            if (indexInPrevOptions === -1) {
+                columnOptions.push(options[i]);
+            } else {
+                columnOptions[indexInPrevOptions] = merge(
+                    columnOptions[indexInPrevOptions],
+                    options[i]
+                );
+            }
+        }
+
+        await this.update({
+            columns: columnOptions
+        }, render);
     }
 
     /**

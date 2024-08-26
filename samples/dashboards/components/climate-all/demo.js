@@ -979,26 +979,20 @@ async function updateBoard(board, city, column, scale, newData) {
     if (newData) {
         const showCelsius = scale === 'C';
 
-        // TODO(DD): Update the columns option to use the new API
         // Update city grid selection
-        await selectionGrid.update({
-            dataGridOptions: {
-                columns: {
-                    TNC: {
-                        enabled: showCelsius
-                    },
-                    TNF: {
-                        enabled: !showCelsius
-                    },
-                    TXC: {
-                        enabled: showCelsius
-                    },
-                    TXF: {
-                        enabled: !showCelsius
-                    }
-                }
-            }
-        });
+        await selectionGrid.dataGrid.updateColumns([{
+            id: 'TNC',
+            enabled: showCelsius
+        }, {
+            id: 'TNF',
+            enabled: !showCelsius
+        }, {
+            id: 'TXC',
+            enabled: showCelsius
+        }, {
+            id: 'TXF',
+            enabled: !showCelsius
+        }]);
 
         // Update city chart selection
         await cityChart.update({
