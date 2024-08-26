@@ -69,16 +69,6 @@ export interface Options extends Component.Options {
      */
     dataGridOptions?: DataGridOptions;
 
-    /**
-     * The set of options like `dataGridClassName` and `dataGridID`.
-     */
-    chartClassName?: string;
-
-    /**
-     * The id that is applied to the chart's container.
-     */
-    chartID?: string;
-
     /** @private */
     tableAxisMap?: Record<string, string | null>;
 

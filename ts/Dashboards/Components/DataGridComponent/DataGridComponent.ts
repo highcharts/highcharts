@@ -143,13 +143,7 @@ class DataGridComponent extends Component {
         this.options = options as Options;
         this.type = 'DataGrid';
 
-        if (this.options.dataGridClassName) {
-            this.contentElement.classList.add(this.options.dataGridClassName);
-        }
-
-        if (this.options.dataGridID) {
-            this.contentElement.id = this.options.dataGridID;
-        }
+        this.setOptions();
     }
 
     /* *
@@ -160,6 +154,7 @@ class DataGridComponent extends Component {
 
     public override async update(options: Partial<Options>): Promise<void> {
         await super.update(options);
+        this.setOptions();
 
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
@@ -281,6 +276,19 @@ class DataGridComponent extends Component {
     }
 
     /**
+     * Sets the options for the data grid component content container.
+     */
+    private setOptions(): void {
+        if (this.options.dataGridClassName) {
+            this.contentElement.classList.add(this.options.dataGridClassName);
+        }
+
+        if (this.options.dataGridID) {
+            this.contentElement.id = this.options.dataGridID;
+        }
+    }
+
+    /**
      * Function to create the DataGrid.
      *
      * @returns The DataGrid.
@@ -342,7 +350,7 @@ namespace DataGridComponent {
         dataGridOptions?: string;
 
         /** @private */
-        chartClassName?: string;
+        dataGridClassName?: string;
 
         /** @private */
         chartID?: string;
