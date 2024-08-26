@@ -37,173 +37,39 @@ import type Time from '../../Core/Time';
 // range
 const dateTimeLabelFormats: Record<string, Array<Time.DateTimeFormat>> = {
     millisecond: [
-        // '%A, %e %b, %H:%M:%S.%L',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            fractionalSecondDigits: 3
-        },
-        // '%A, %e %b, %H:%M:%S.%L',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            fractionalSecondDigits: 3
-        },
-        // '-%H:%M:%S.%L'
-        {
-            prefix: '-',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            fractionalSecondDigits: 3
-        }
+        '%[AebHMSL]',
+        '%[AebHMSL]',
+        '-%[HMSL]'
     ],
     second: [
-        // '%A, %e %b, %H:%M:%S',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        },
-        // '%A, %e %b, %H:%M:%S',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        },
-        // '-%H:%M:%S'
-        {
-            prefix: '-',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-        }
+        '%[AebHMS]',
+        '%[AebHMS]',
+        '-%[HMS]'
     ],
     minute: [
-        // '%A, %e %b, %H:%M',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric'
-        },
-        // '%A, %e %b, %H:%M',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric'
-        },
-        // '-%H:%M'
-        {
-            prefix: '-',
-            hour: 'numeric',
-            minute: 'numeric'
-        }
+        '%[AebHM]',
+        '%[AebHM]',
+        '-%[HM]'
     ],
     hour: [
-        // '%A, %e %b, %H:%M',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric'
-        },
-        // '%A, %e %b, %H:%M',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric'
-        },
-        // '-%H:%M'
-        {
-            prefix: '-',
-            hour: 'numeric',
-            minute: 'numeric'
-        }
+        '%[AebHM]',
+        '%[AebHM]',
+        '-%[HM]'
     ],
     day: [
-        // '%A, %e %b %Y',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        },
-        // '%A, %e %b',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short'
-        },
-        // '-%A, %e %b %Y'
-        {
-            prefix: '-',
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        }
+        '%[AebY]',
+        '%[Aeb]',
+        '-%[AebY]'
     ],
     week: [
-        // 'Week from %A, %e %b %Y',
-        {
-            prefix: 'week from ',
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        },
-        // '%A, %e %b',
-        {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short'
-        },
-        // '-%A, %e %b %Y'
-        {
-            prefix: '-',
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        }
+        'week from %[AebY]',
+        '%[Aeb]',
+        '-%[AebY]'
     ],
     month: [
-        // '%B %Y',
-        {
-            month: 'long',
-            year: 'numeric'
-        },
-        // '%B',
-        {
-            month: 'long'
-        },
-        // '-%B %Y'
-        {
-            prefix: '-',
-            month: 'long',
-            year: 'numeric'
-        }
+        '%[BY]',
+        '%[B]',
+        '-%[BY]'
     ],
     year: [
         '%Y',
