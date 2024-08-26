@@ -114,10 +114,12 @@ describe('layout resize on window changes', () => {
     it('The editableOptions should be visible in the sidebar and should show the correct values.', () => {
         cy.toggleEditMode();
         cy.openCellEditSidebar('#dashboard-col-1');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Editable table').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Editable DataGrid').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
-            .contains('Editable table')
+            .contains('Editable DataGrid')
             .next()
             .find('input[type="checkbox"]')
             .should('be.checked');
@@ -142,9 +144,9 @@ describe('layout resize on window changes', () => {
             .find('.highcharts-dashboards-edit-dropdown-button-content > span')
             .should('have.text', 'full');
 
-        cy.get('.highcharts-dashboards-edit-label-text').contains('Text truncation').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-label-text').contains('Cell text truncation').should('be.visible');
         cy.get('.highcharts-dashboards-edit-label-text')
-            .contains('Text truncation')
+            .contains('Cell text truncation')
             .next()
             .find('input[type="checkbox"]')
             .should('not.be.checked');
@@ -154,6 +156,8 @@ describe('layout resize on window changes', () => {
         // Act
         cy.toggleEditMode();
         cy.openCellEditSidebar('#dashboard-col-1');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('DataGrid options').click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
         //Assert
         cy.get('.highcharts-datagrid-column-sortable').should('exist');
