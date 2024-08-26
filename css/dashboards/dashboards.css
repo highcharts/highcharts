@@ -989,7 +989,7 @@
 }
 
 .highcharts-dashboards-edit-overlay-active {
-    z-index: 9998;
+    z-index: 9996;
     display: block;
     background-color: var(--highcharts-dashboards-overlay-color);
 }
@@ -1224,6 +1224,15 @@
 
 .highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
     display: none;
+}
+
+.highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-standalone-element {
+    padding: 0;
+}
+
+.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-toggle-container {
+    justify-content: space-between;
+    padding: 4px;
 }
 
 /* stylelint-disable-next-line max-line-length */
