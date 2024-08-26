@@ -69,6 +69,13 @@ jobs:
         chromedriver --url-base=/wd/hub &
         sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
+
+    - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+      uses: browserstack/github-actions/setup-env@master
+      with:
+        username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+        access-key: ${{ secrets.BROWSERSTACK_KEY }}
+
     - name: 'BrowserStackLocal Setup'
       uses: 'browserstack/github-actions/setup-local@master'
       with:
