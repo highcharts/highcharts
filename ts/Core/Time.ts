@@ -406,24 +406,26 @@ class Time {
         // Extend shorthand hour timezone offset like +02
         // .replace(/([+-][0-9]{2})$/, '$1:00');
 
+        // Check if the string has time zone information
+        const hasTimezone = s.indexOf('Z') > -1 ||
+                /([+-][0-9]{2}):?[0-9]{2}$/.test(s),
+            isYYYYMMDD = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s);
+
+        if (!hasTimezone && !isYYYYMMDD) {
+            s += 'Z';
+        }
+
         const ts = Date.parse(s);
 
         if (isNumber(ts)) {
             // Unless the string contains time zone information, convert from
             // the local time result of `Date.parse` via UTC into the current
             // timezone of the time object.
-            if (!/[+-][0-9]{2}:?[0-9]{2}|Z$/.test(s)) {
-                // MMMM-YY-DD is parsed as UTC, all other formats are local
-                // unless a time zone is specified
-                const parsedAsUTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s),
-                    tsUTC = ts - (
-                        parsedAsUTC ?
-                            0 :
-                            new Date(ts).getTimezoneOffset() * 60000
-                    );
-                return tsUTC + this.getTimezoneOffset(tsUTC);
-            }
-            return ts;
+            return ts + (
+                (!hasTimezone || isYYYYMMDD) ?
+                    this.getTimezoneOffset(ts) :
+                    0
+            );
         }
     }
 

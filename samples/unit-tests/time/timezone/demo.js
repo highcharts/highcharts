@@ -52,7 +52,7 @@ QUnit.test(
                 // Crossover, 23:00 is repeated
                 'Sat, 25 Mar 2023 23:00:00 GMT',
                 'Sat, 25 Mar 2023 23:00:00 GMT',
-                'Sun, 26 Mar 2023 01:00:00 GMT',
+                'Sun, 26 Mar 2023 00:00:00 GMT',
                 'Sun, 26 Mar 2023 01:00:00 GMT'
             ],
             'Parsed dates should be correct.'
