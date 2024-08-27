@@ -221,9 +221,7 @@ td.highcharts-datagrid-focused-cell {
 
 .highcharts-datagrid-focused-cell input,
 .highcharts-datagrid-focused-cell input:focus {
-    border: 1px solid #0000ed;
     border-radius: 0;
-    background-color: #b7d4ff;
     width: 100%;
     height: 100%;
     outline: none;
@@ -314,9 +312,14 @@ td.highcharts-datagrid-focused-cell {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-
 .highcharts-datagrid-header-cell-content::after {
     color: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-datagrid-focused-cell input,
+.highcharts-datagrid-focused-cell input:focus {
+    border: 1px solid #0000ed;
+    background-color: #b7d4ff;
 }
 
 /* End Light Theme */
