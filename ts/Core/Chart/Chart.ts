@@ -3704,13 +3704,17 @@ class Chart {
 
             let newMin = axis.toValue(minPx, true) +
                 // Don't apply offset for selection (#20784)
-                    (selection ? 0 : minPointOffset * pointRangeDirection),
+                    (
+                        selection || axis.isOrdinal ?
+                            0 : minPointOffset * pointRangeDirection
+                    ),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        selection ? // Don't apply offset for selection (#20784)
+                        // Don't apply offset for selection (#20784)
+                        selection || axis.isOrdinal ?
                             0 :
                             (
                                 (minPointOffset * pointRangeDirection) ||
