@@ -245,9 +245,20 @@ class DataGrid {
      *
      * @param newOptions
      * The options that were declared by the user.
+     *
+     * @param overrideExistingOnes
+     * Whether to override or merge the new options with the existing options.
+     * Default is `false`.
      */
-    private loadUserOptions(newOptions: Partial<Options>): void {
-        this.userOptions = merge(this.userOptions ?? {}, newOptions);
+    private loadUserOptions(
+        newOptions: Partial<Options>,
+        overrideExistingOnes: boolean = false
+    ): void {
+        this.userOptions = overrideExistingOnes ? newOptions : merge(
+            this.userOptions ?? {},
+            newOptions
+        );
+
         this.options = merge(
             this.options ?? DataGrid.defaultOptions,
             this.userOptions
@@ -270,19 +281,29 @@ class DataGrid {
      * `updateColumns` method instead.
      *
      * @param options
-     * The options of the data grid that should be updated.
+     * The options of the data grid that should be updated. If not provieded,
+     * the update will be proceeded based on the `this.userOptions` property.
      *
      * @param render
      * Whether to re-render the data grid after updating the options.
+     *
+     * @param oneToOne
+     * If true, the data grid will be updated one-to-one with the provided
+     * options by replacing the existing options with the new ones instead of
+     * merging them.
      */
     public async update(
-        options: Options,
-        render: boolean = true
+        options: Options = {},
+        render: boolean = true,
+        oneToOne = false
     ): Promise<void> {
-        this.loadUserOptions(options);
+        this.loadUserOptions(options, oneToOne);
 
         let newDataTable = false;
-        if (!this.dataTable || options.dataTable) {
+        if (
+            !oneToOne && (!this.dataTable || options.dataTable) ||
+            oneToOne && (options.dataTable?.id !== this.dataTable?.id)
+        ) {
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
         }
@@ -298,17 +319,23 @@ class DataGrid {
     /**
      * Updates the columns of the data grid with new options. Unlike the
      * `update` method, it does not override the existing column options array.
-     * Instead, it merges the provided options with the existing options.
+     * Instead, it merges the provided options with the existing ones.
      *
      * @param options
      * The options of the columns that should be updated.
      *
      * @param render
      * Whether to re-render the data grid after updating the columns.
+     *
+     * @param oneToOne
+     * If true, the columns will be updated one-to-one with the provided
+     * options by replacing the existing options with the new ones instead of
+     * merging them.
      */
     public async updateColumns(
         options: IndividualColumnOptions[],
-        render: boolean = true
+        render: boolean = true,
+        oneToOne = false
     ): Promise<void> {
         const columnOptions = this.userOptions?.columns ?? [];
 
@@ -324,6 +351,8 @@ class DataGrid {
 
             if (indexInPrevOptions === -1) {
                 columnOptions.push(options[i]);
+            } else if (oneToOne) {
+                columnOptions[indexInPrevOptions] = options[i];
             } else {
                 columnOptions[indexInPrevOptions] = merge(
                     columnOptions[indexInPrevOptions],
