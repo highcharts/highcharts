@@ -177,9 +177,9 @@ namespace OfflineExporting {
      * - **type:** File type of resulting download. Default is `image/png`.
      *
      * - **scale:** Scaling factor of downloaded image compared to source.
-     * Default is `1`.
      *
      * - **libURL:** URL pointing to location of dependency scripts to download
+     * Default is `1`.
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
@@ -215,9 +215,8 @@ namespace OfflineExporting {
                 )
             ),
             scale = options.scale || 1,
-            classAttrList = svg.match(/class="(.*?)"/gm) || [],
             sheets = H.doc.styleSheets,
-            cssRules: CSSRule[] = [],
+            svgParts = svg.split('>'),
             sheetCount = sheets.length;
         let svgurl: string,
             blob,
@@ -226,85 +225,38 @@ namespace OfflineExporting {
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
             objectURLRevoke = true,
-            pdfFont = options.pdfFont;
+            pdfFont = options.pdfFont,
+            inlineCss = '';
 
         for (let i = 0; i < sheetCount; i++) {
             const sheetRules = sheets.item(i)?.cssRules;
             if (sheetRules) {
                 const ruleListLength = sheetRules.length;
                 for (let j = 0; j < ruleListLength; j++) {
-                    const cssRule = sheetRules.item(j);
-                    if (cssRule) {
-                        cssRules.push(cssRule);
+                    const cssRule = sheetRules.item(j),
+                        selectorText = (
+                            cssRule as CSSStyleRule
+                        )?.selectorText || '';
+
+                    if (
+                        cssRule &&
+                        selectorText.startsWith('.') &&
+                        svg.includes(selectorText.split('.')[1])
+                    ) {
+                        inlineCss += cssRule.cssText;
                     }
                 }
             }
         }
-        for (const foundClass of classAttrList) {
-            const className = foundClass.split('"')[1].split('"')[0],
-                foundRule = cssRules.find(
-                    (rule): boolean => (
-                        rule.cssText.split('{')[0].trim() === `.${className}`
-                    )
-                ),
-                ruleStyle = (foundRule as CSSStyleRule)?.style;
 
+        svgParts[0] += `>
+            <style type="text/css">
+                <![CDATA[
+                    ${inlineCss}
+                ]]>
+            </style`;
 
-            if (ruleStyle) {
-                const ruleStyleLen = ruleStyle.length,
-                    styleAttrList = [],
-                    styleRegex = new RegExp(
-                        `<.*?(?:${
-                            foundClass
-                        }).*?(style=".*?").*?>|<.*?(style=".*?").*?(?:${
-                            foundClass
-                        }).*?>`, 'gm'
-                    );
-                let styleStr = '',
-                    matches;
-
-                for (let j = 0; j < ruleStyleLen; j++) {
-                    const styleDec = ruleStyle.item(j);
-                    styleStr += `${styleDec}: ${
-                        ruleStyle.getPropertyValue(styleDec)
-                    };`;
-                }
-
-                while ((matches = styleRegex.exec(svg)) !== null) {
-                    const validMatch = matches[1] || matches[2];
-                    if (validMatch) {
-                        styleAttrList.push(validMatch);
-                    }
-                }
-
-                if (styleAttrList.length) {
-                    for (const foundStyle of styleAttrList) {
-                        const styleStrParts = foundStyle.split('"');
-                        svg = svg.replace(
-                            foundStyle,
-                            (
-                                styleStrParts[0] +
-                                '"' +
-                                styleStrParts[1] +
-                                styleStr +
-                                '"'
-                            )
-                        );
-                    }
-                } else {
-                    svg = (
-                        svg.replace(
-                            foundClass,
-                            `style="${styleStr}"`
-                        )
-                    );
-                }
-
-                svg = (
-                    svg.replace(foundClass, '')
-                );
-            }
-        }
+        svg = svgParts.join('>');
 
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
@@ -975,6 +927,7 @@ namespace OfflineExporting {
         failedLoadCallback: Function,
         finallyCallback?: Function
     ): void {
+
         let img = new win.Image(),
             taintedHandler: Function;
         const loadHandler = (): void => {
