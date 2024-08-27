@@ -1,0 +1,8 @@
+---
+ name: Highcharts A11y-a-long
+ authors:
+   - Sophie Bremer
+   - Øystein Moseng
+ js_wrap: b
+ requiresManualTesting: true
+...
