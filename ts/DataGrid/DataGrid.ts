@@ -66,17 +66,57 @@ class DataGrid {
      * @param options
      * The options of the data grid.
      *
-     * @return The new data grid.
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
      *
-     * @param afterLoadCallback
-     * The callback that is called after the data grid is loaded.
+     * @return
+     * The new data grid.
      */
     public static dataGrid(
         renderTo: string|HTMLElement,
         options: Options,
-        afterLoadCallback?: DataGrid.AfterLoadCallback
-    ): DataGrid {
-        return new DataGrid(renderTo, options, afterLoadCallback);
+        async?: boolean
+    ): DataGrid;
+
+    /**
+     * Creates a new data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @param options
+     * The options of the data grid.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     *
+     * @return
+     * Promise that resolves with the new data grid.
+     */
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async: true
+    ): Promise<DataGrid>;
+
+    // Implementation
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async?: boolean
+    ): (DataGrid | Promise<DataGrid>) {
+
+        if (async) {
+            return new Promise<DataGrid>((resolve): void => {
+                void new DataGrid(renderTo, options, (dataGrid): void => {
+                    resolve(dataGrid);
+                });
+            });
+        }
+
+        return new DataGrid(renderTo, options);
     }
 
     /* *
@@ -254,15 +294,17 @@ class DataGrid {
         newOptions: Partial<Options>,
         overrideExistingOnes: boolean = false
     ): void {
-        this.userOptions = overrideExistingOnes ? newOptions : merge(
-            this.userOptions ?? {},
-            newOptions
-        );
 
-        this.options = merge(
-            this.options ?? DataGrid.defaultOptions,
-            this.userOptions
-        );
+        if (overrideExistingOnes) {
+            this.userOptions = newOptions;
+            this.options = merge(DataGrid.defaultOptions, newOptions);
+        } else {
+            this.userOptions = merge(this.userOptions ?? {}, newOptions);
+            this.options = merge(
+                this.options ?? DataGrid.defaultOptions,
+                this.userOptions
+            );
+        }
 
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
@@ -272,6 +314,7 @@ class DataGrid {
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
         }
+
         this.columnOptionsMap = columnOptionsObj;
     }
 
