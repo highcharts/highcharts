@@ -2142,8 +2142,9 @@ namespace AxisDefaults {
          *
          * @since     4.2.7
          * @product   highcharts gantt
+         * @type      {boolean}
+         * @default   true
          */
-        uniqueNames: true,
 
         /**
          * Datetime axis only. An array determining what time intervals the
