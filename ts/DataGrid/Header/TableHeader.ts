@@ -26,6 +26,8 @@ import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import HeaderCell from './HeaderCell';
+import Utils from '../../Core/Utilities.js';
+const { getStyle } = Utils;
 
 /* *
  *
@@ -125,6 +127,12 @@ class TableHeader {
         const vp = this.viewport;
         const header = vp.header;
         const rows = this.rows;
+        const tableEl = header?.viewport.dataGrid.tableElement;
+        const theadEL = header?.viewport.theadElement;
+        const theadBorder =
+            theadEL && getStyle(theadEL, 'border-right-width', true) || 0;
+        const tableBorder = (
+            tableEl && getStyle(tableEl, 'border-right-width', true)) || 0;
 
         for (const row of rows) {
             for (const cell of row.cells) {
@@ -154,17 +162,20 @@ class TableHeader {
 
         if (vp.rowsWidth) {
             vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
-                offsetWidth - clientWidth + 'px';
+                (offsetWidth - clientWidth - theadBorder - tableBorder) + 'px';
         }
 
         // Adjust cell's width when scrollbar is enabled.
-        if (header) {
+        if (
+            header &&
+            ((offsetWidth - clientWidth) > (theadBorder + tableBorder))
+        ) {
             const cells = header.rows[header.rows.length - 1].cells;
             const cellHtmlElement = cells[cells.length - 1].htmlElement;
 
             cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
                 cellHtmlElement.offsetWidth +
-                (offsetWidth - clientWidth - 1) + 'px';
+                (offsetWidth - clientWidth - theadBorder - tableBorder) + 'px';
         }
     }
 
