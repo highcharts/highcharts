@@ -216,7 +216,6 @@ namespace OfflineExporting {
             ),
             scale = options.scale || 1,
             sheets = H.doc.styleSheets,
-            svgParts = svg.split('>'),
             sheetCount = sheets.length;
         let svgurl: string,
             blob,
@@ -230,8 +229,10 @@ namespace OfflineExporting {
 
         for (let i = 0; i < sheetCount; i++) {
             const sheetRules = sheets.item(i)?.cssRules;
+
             if (sheetRules) {
                 const ruleListLength = sheetRules.length;
+
                 for (let j = 0; j < ruleListLength; j++) {
                     const cssRule = sheetRules.item(j),
                         selectorText = (
@@ -249,14 +250,15 @@ namespace OfflineExporting {
             }
         }
 
-        svgParts[0] += `>
+        svg = svg.replace(
+            /(<[^>]*?>)/,
+            `$1
             <style type="text/css">
                 <![CDATA[
                     ${inlineCss}
                 ]]>
-            </style`;
-
-        svg = svgParts.join('>');
+            </style>`
+        );
 
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
