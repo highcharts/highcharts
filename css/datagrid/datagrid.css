@@ -237,7 +237,7 @@
     outline: none;
 }
 
-/* ==== Light Theme ==== */
+/* ==== Default Theme ==== */
 .highcharts-datagrid-container {
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
@@ -317,4 +317,4 @@
     background-color: #b7d4ff;
 }
 
-/* End Light Theme */
+/* End Default Theme */
