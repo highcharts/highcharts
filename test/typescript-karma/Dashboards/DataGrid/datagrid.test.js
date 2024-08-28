@@ -109,9 +109,8 @@ test('DataGrid update methods', async function (assert) {
     assert.strictEqual(
         dataGrid.getOptionsJSON(),
         '{"dataTable":{"columns":{"product":["Apples","Pears","Plums","Bananas"],"weight":[100,40,0.5,200],' +
-        '"price":[1.5,2.53,5,4.5]}},"columns":[{"id":"weight"},{"id":"product","headerFormat":"Column 1","c' +
-        'ellFormat":"text 2"},{"id":"price","headerFormat":"Column 2"},{"id":"imaginary-column","headerForm' +
-        'at":"New One!"}]}',
+        '"price":[1.5,2.53,5,4.5]}},"columns":[{"id":"product"},{"id":"price","headerFormat":"Column 2"},{"' +
+        'id":"imaginary-column","headerFormat":"New One!"}]}',
         'The getOptionsJSON method should return the correct JSON string.'
     )
 
