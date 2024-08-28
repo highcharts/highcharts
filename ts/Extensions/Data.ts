@@ -18,6 +18,7 @@
  *
  * */
 
+import type XAxisOptions from '../Core/Axis/AxisOptions';
 import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
@@ -37,6 +38,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
+    diffObjects,
     extend,
     fireEvent,
     isNumber,
@@ -1803,10 +1805,7 @@ class Data {
             options = this.options,
             allSeriesBuilders: SeriesBuilder[] = [];
 
-        let type: (
-                'linear'|'logarithmic'|'datetime'|'category'|'treegrid'|
-                undefined
-            ),
+        let type: XAxisOptions['type'] = 'linear',
             series: Array<SeriesOptions>,
             data: SeriesOptions['data'],
             i: number,
@@ -1951,15 +1950,13 @@ class Data {
 
             // Do the callback
             chartOptions = { series };
-            if (type) {
-                chartOptions.xAxis = {
-                    type: type
-                };
-                if (type === 'category') {
-                    chartOptions.xAxis.uniqueNames = false;
-                } else {
-                    chartOptions.xAxis.categories = false;
-                }
+            chartOptions.xAxis = {
+                type
+            };
+            if (type === 'category') {
+                chartOptions.xAxis.uniqueNames = false;
+            } else {
+                chartOptions.xAxis.categories = false;
             }
 
             if (options.complete) {
@@ -1998,17 +1995,35 @@ class Data {
             options.afterComplete = function (
                 dataOptions?: Partial<Options>
             ): void {
-                // Avoid setting axis options unless the type changes. Running
-                // Axis.update will cause the whole structure to be destroyed
-                // and rebuilt, and animation is lost.
                 if (dataOptions) {
-                    if (
-                        dataOptions.xAxis &&
-                        chart.xAxis[0] &&
-                        (dataOptions.xAxis as any).type ===
-                        chart.xAxis[0].options.type
-                    ) {
-                        delete dataOptions.xAxis;
+                    // Avoid setting axis options unless they change. Running
+                    // Axis.update will cause the whole structure to be
+                    // destroyed and rebuilt, and animation is lost.
+                    if (dataOptions.xAxis && chart.xAxis[0].options) {
+                        dataOptions.xAxis = diffObjects(
+                            dataOptions.xAxis,
+                            chart.xAxis[0].options
+                        );
+
+                        if (
+                            !chart.xAxis[0].options.categories &&
+                            !dataOptions.xAxis.categories
+                        ) {
+                            // Clear if both are falsely.
+                            delete dataOptions.xAxis.categories;
+                        }
+
+                        if (!Object.keys(dataOptions.xAxis).length) {
+                            delete dataOptions.xAxis;
+
+                            // If the axis hasn't changed, opt-in for smooth
+                            // points update.
+                            (dataOptions?.series || []).forEach(function (
+                                seriesOptions: SeriesOptions
+                            ): void {
+                                delete seriesOptions.pointStart;
+                            });
+                        }
                     }
 
                     // @todo looks not right:

@@ -3704,13 +3704,17 @@ class Chart {
 
             let newMin = axis.toValue(minPx, true) +
                 // Don't apply offset for selection (#20784)
-                    (selection ? 0 : minPointOffset * pointRangeDirection),
+                    (
+                        selection || axis.isOrdinal ?
+                            0 : minPointOffset * pointRangeDirection
+                    ),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        selection ? // Don't apply offset for selection (#20784)
+                        // Don't apply offset for selection (#20784)
+                        selection || axis.isOrdinal ?
                             0 :
                             (
                                 (minPointOffset * pointRangeDirection) ||
@@ -3805,7 +3809,12 @@ class Chart {
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to override
             // them.
-            if (!axis.isOrdinal || scale !== 1 || reset) {
+            if (
+                !axis.isOrdinal ||
+                axis.options.overscroll || // #21316
+                scale !== 1 ||
+                reset
+            ) {
                 // If the new range spills over, either to the min or max,
                 // adjust it.
                 if (newMin < floor) {

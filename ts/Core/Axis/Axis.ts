@@ -926,7 +926,7 @@ class Axis {
      * @param {number} value
      * A value in terms of axis units.
      *
-     * @param {boolean} paneCoordinates
+     * @param {boolean} [paneCoordinates=false]
      * Whether to return the pixel coordinate relative to the chart or just the
      * axis/pane itself.
      *
@@ -3941,6 +3941,7 @@ class Axis {
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
+
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -3950,7 +3951,6 @@ class Axis {
                         }
                     );
             }
-
         } // End if hasData
 
         // Remove inactive ticks
