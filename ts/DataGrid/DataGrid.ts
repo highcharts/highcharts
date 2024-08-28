@@ -330,22 +330,21 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the options.
      *
-     * @param oneToOne
-     * If true, the data grid will be updated one-to-one with the provided
-     * options by replacing the existing options with the new ones instead of
-     * merging them.
+     * @param override
+     * If true, the column options will be updated by replacing the existing
+     * options with the new ones instead of merging them.
      */
     public async update(
         options: Options = {},
         render: boolean = true,
-        oneToOne = false
+        override = false
     ): Promise<void> {
-        this.loadUserOptions(options, oneToOne);
+        this.loadUserOptions(options, override);
 
         let newDataTable = false;
         if (
-            !oneToOne && (!this.dataTable || options.dataTable) ||
-            oneToOne && (options.dataTable?.id !== this.dataTable?.id)
+            !override && (!this.dataTable || options.dataTable) ||
+            override && (options.dataTable?.id !== this.dataTable?.id)
         ) {
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
@@ -370,15 +369,14 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the columns.
      *
-     * @param oneToOne
-     * If true, the columns will be updated one-to-one with the provided
-     * options by replacing the existing options with the new ones instead of
-     * merging them.
+     * @param override
+     * If true, the column options will be updated by replacing the existing
+     * options with the new ones instead of merging them.
      */
     public async updateColumns(
         options: IndividualColumnOptions[],
         render: boolean = true,
-        oneToOne = false
+        override = false
     ): Promise<void> {
         const columnOptions = this.userOptions?.columns ?? [];
 
@@ -394,7 +392,7 @@ class DataGrid {
 
             if (indexInPrevOptions === -1) {
                 columnOptions.push(options[i]);
-            } else if (oneToOne) {
+            } else if (override) {
                 columnOptions[indexInPrevOptions] = options[i];
             } else {
                 columnOptions[indexInPrevOptions] = merge(

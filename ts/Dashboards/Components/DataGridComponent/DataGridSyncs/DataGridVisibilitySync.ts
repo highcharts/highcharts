@@ -56,7 +56,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             const columnId = cursor.column;
-            dataGrid.updateColumns([{
+            void dataGrid.updateColumns([{
                 id: columnId,
                 enabled: cursor.state !== 'series.hide' + groupKey
             }]);
