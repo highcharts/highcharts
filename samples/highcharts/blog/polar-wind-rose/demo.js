@@ -41,7 +41,9 @@ Highcharts.data({
             },
 
             xAxis: {
-                tickmarkPlacement: 'on'
+                tickmarkPlacement: 'on',
+                type: 'category',
+                uniqueNames: false
             },
 
             yAxis: {

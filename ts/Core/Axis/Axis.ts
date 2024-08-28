@@ -409,14 +409,14 @@ class Axis {
          * @type {Highcharts.AxisOptions}
          */
         axis.setOptions(userOptions);
-        axis.uniqueNames ??= axis.options.uniqueNames ?? true;
 
-        const options = this.options,
+        const options = axis.options,
             labelsOptions = options.labels;
 
         // Set the type and fire an event
-        this.type ??= this.options.type || 'linear';
-        fireEvent(this, 'afterSetType');
+        axis.type ??= options.type || 'linear';
+        axis.uniqueNames ??= options.uniqueNames ?? true;
+        fireEvent(axis, 'afterSetType');
 
         /**
          * User's options for this axis without defaults.
