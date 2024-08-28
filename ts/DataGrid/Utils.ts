@@ -124,6 +124,18 @@ namespace DataGridUtils {
 
         return 0;
     }
+
+    /**
+     * Check HTML tags in the string.
+     *
+     * @param str
+     * Text to verify.
+     *
+     * @returns
+     */
+    export function isHTML(str: string): boolean {
+        return str.indexOf('<') !== -1;
+    }
 }
 
 

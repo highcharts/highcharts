@@ -28,9 +28,11 @@ import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../Core/Utilities.js';
 import F from '../../Core/Templating.js';
+import DGUtils from '../Utils.js';
 
 const { defined, fireEvent } = Utils;
 const { format } = F;
+const { isHTML } = DGUtils;
 
 
 /* *
@@ -159,18 +161,18 @@ class TableCell extends Cell {
         value: DataTable.CellType,
         updateTable: boolean
     ): Promise<void> {
-        const element = this.htmlElement;
-        const isHTML = value?.toString().indexOf('<') === -1;
-
         this.value = value;
 
-        if (isHTML) {
+        const element = this.htmlElement;
+        const cellContent = this.formatCell();
+
+        if (isHTML(cellContent)) {
             this.renderHTMLCellContent(
-                this.formatCell(),
+                cellContent,
                 element
             );
         } else {
-            element.innerText = this.formatCell();
+            element.innerText = cellContent;
         }
 
         if (!updateTable) {
