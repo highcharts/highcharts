@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.4.6",
+  "version": "11.4.7",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
@@ -66,12 +66,14 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
+    "chatgpt": "^5.2.5",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
     "eslint-config-eslint": "7.0.0",
+    "eslint-plugin-brackets": "^0.1.3",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
     "eslint-plugin-jsdoc": "^48.2.0",
     "eslint-plugin-node": "^11.1.0",
@@ -146,9 +148,5 @@
       "stylelint"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {
-    "chatgpt": "^5.2.5",
-    "eslint-plugin-brackets": "^0.1.3"
-  }
+  "license": "SEE LICENSE IN <license.txt>"
 }

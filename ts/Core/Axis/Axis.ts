@@ -1040,7 +1040,7 @@ class Axis {
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e9, 1e9);
 
             x1 = x2 = translatedValue + transB;
             y1 = y2 = cHeight - translatedValue - transB;
@@ -3941,6 +3941,7 @@ class Axis {
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
+
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -3950,7 +3951,6 @@ class Axis {
                         }
                     );
             }
-
         } // End if hasData
 
         // Remove inactive ticks

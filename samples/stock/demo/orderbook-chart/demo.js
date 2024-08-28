@@ -44,12 +44,45 @@ Highcharts.chart('container', {
         marginTop: 70,
         events: {
             load() {
-                setInterval(() => {
-                    if (this.series) {
-                        updateData(this);
+                const chart = this,
+                    toggleButton = document.getElementById('animation-toggle');
+
+                let intervalId = null;
+                const toggleInterval = () => {
+                    if (intervalId) {
+                        chart.update({
+                            accessibility: {
+                                enabled: true
+                            }
+                        });
+                        clearInterval(intervalId);
+                        intervalId = null;
+                        toggleButton.innerText = 'Start animation';
+                    } else {
+                        chart.update({
+                            accessibility: {
+                                enabled: false
+                            }
+                        });
+                        intervalId = setInterval(() => {
+                            if (this.series) {
+                                updateData(this);
+                            }
+                        }, 200);
+                        toggleButton.innerText = 'Stop animation';
                     }
-                }, 200);
+                };
+
+                toggleButton.addEventListener('click', toggleInterval);
+                toggleInterval();
             }
+        }
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormat: 'Price: {price:.1f}USD, ' +
+                '{series.name}: {y}'
         }
     },
 
@@ -80,12 +113,18 @@ Highcharts.chart('container', {
         visible: false,
         title: {
             text: 'Market depth / price'
+        },
+        accessibility: {
+            description: 'Bid orders'
         }
     }, {
         opposite: true,
         visible: false,
         title: {
             text: 'Market depth / price'
+        },
+        accessibility: {
+            description: 'Ask orders'
         }
     }],
 
@@ -192,7 +231,7 @@ Highcharts.chart('container', {
             format: '{point.price:,.1f}'
         }],
         name: 'Asks',
-        color: '#d76769',
+        color: '#ce4548',
         data: asksData
     }, {
         dataLabels: [{
@@ -213,7 +252,7 @@ Highcharts.chart('container', {
             format: '{point.price:,.1f}'
         }],
         name: 'Bids',
-        color: '#42b3f0',
+        color: '#107db7',
         data: bidsData,
         yAxis: 1
     }]
