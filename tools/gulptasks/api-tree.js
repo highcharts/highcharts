@@ -53,6 +53,7 @@ OPTIONS:
  */
 async function apiTree(_, source) {
     const FSLib = require('../libs/fs');
+    const TreeLib = require('../libs/tree');
     const TSLib = require('../libs/ts');
     const LogLib = require('../libs/log');
     const argv = require('yargs').argv;
@@ -79,9 +80,13 @@ async function apiTree(_, source) {
             [moduleSource] :
             FSLib
                 .getFilePaths(moduleSource, true)
-                .filter(path => !(
-                    path.endsWith('Options.d.ts') ||
-                    path.endsWith('Options.ts')
+                .filter(path => (
+                    path.endsWith('.ts') &&
+                    !(
+                        path.endsWith('.src.ts') ||
+                        path.endsWith('Options.d.ts') ||
+                        path.endsWith('Options.ts')
+                    )
                 ))
     );
     const optionFiles = (
@@ -119,7 +124,7 @@ async function apiTree(_, source) {
 
     await FS.writeFile(
         'tree-modules.json',
-        TSLib.toJSONString(moduleTree, '    '),
+        TreeLib.toJSONString(TreeLib.sortJSONTree(moduleTree), '    '),
         'utf8'
     );
 
@@ -149,7 +154,7 @@ async function apiTree(_, source) {
 
     await FS.writeFile(
         'tree-options.json',
-        TSLib.toJSONString(optionTree, '    '),
+        TreeLib.toJSONString(TreeLib.sortJSONTree(optionTree), '    '),
         'utf8'
     );
 

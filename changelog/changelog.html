@@ -14199,28 +14199,31 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
-              <a id="highcharts-dashboards-v2.2.0"></a>
-              <span>Highcharts Dashboards v2.2.0 (2024-08-14)</span>
-              <a class="release-header-hashtag" href="#highcharts-dashboards-v2.2.0">#</a>
-              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-2.2.0.zip" title="Download the zip archive for Highcharts Dashboards v2.2.0"><i class="fas fa-download"></i></a></span>
+              <a id="highcharts-dashboards-v2.3.0"></a>
+              <span>Highcharts Dashboards v2.3.0 (2024-08-26)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v2.3.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-2.3.0.zip" title="Download the zip archive for Highcharts Dashboards v2.3.0"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
+              <li>Added the possibility of setting toolbar visibility for individual components, closes <a href="https://github.com/highcharts/highcharts/issues/20907">#20907</a>.</li>
               <li>Removed column aliases from <code>DataTable</code>, API documentation, and affected samples. Closes <a href="https://github.com/highcharts/highcharts/issues/21485">#21485</a>.</li>
               <li>Added methods (<a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getLocalRowIndex">getLocalRowIndex</a> &amp; <a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getOriginalRowIndex">getOriginalRowIndex</a>) for referencing between rows of original and modified data tables.</li>
               <li>Changed the <code>layout</code> element in the Add component sidebar to a <code>row</code> and improved the look when added.</li>
               <li>Added an <code>HTML</code> text field in the sidebar to control and edit the content of the HTML component.</li>
+              <li>Added support for the <a href="https://api.highcharts.com/dashboards/data.beforeParse">beforeParse</a> callback in the <code>GoogleSheetsConnector</code> options. Closes <a href="https://github.com/highcharts/highcharts/issues/21235">#21235</a>.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
 
-                <div id="hd-heading-2-2-0-bug-fixes" class="card-header">
-                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v2.2.0">
-                    <button aria-label="Bug Fixes Highcharts-dashboards v2.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-2-2-0"><span> Bug fixes </span></button>
+                <div id="hd-heading-2-3-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v2.3.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v2.3.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-2-3-0"><span> Bug fixes </span></button>
                   </h4>
                 </div>
-                <div id="bug-fixes-hd-2-2-0" class="collapse" aria-labelledby="hd-heading-2-2-0-bug-fixes" data-parent=".accordion">
+                <div id="bug-fixes-hd-2-3-0" class="collapse" aria-labelledby="hd-heading-2-3-0-bug-fixes" data-parent=".accordion">
                   <div class="card-body">
                     <ul>
+                      <li>Fixed some smaller issues with the HTML component.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21615">#21615</a>, when the <code>useHTML</code> was enabled, content in a cell was not rendered correctly when scrolling.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21280">#21280</a>, it was impossible to set the component active state, so added <code>isAcitve</code> flag.</li>
                       <li>Fixed <a href="https://api.highcharts.com/dashboards/data.parseDate">parseDate</a> in <code>DataConverter</code> was private.</li>
@@ -14233,6 +14236,12 @@
                 </div>
               </div>
             </div>
+            <h3 class="release-header">
+              <a id="highcharts-dashboards-v2.2.0"></a>
+              <span>Highcharts Dashboards v2.2.0 (2024-07-08)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v2.2.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-2.2.0.zip" title="Download the zip archive for Highcharts Dashboards v2.2.0"><i class="fas fa-download"></i></a></span>
+            </h3>
             <h3 class="release-header">
               <a id="highcharts-dashboards-v2.1.0"></a>
               <span>Highcharts Dashboards v2.1.0 (2024-05-22)</span>
