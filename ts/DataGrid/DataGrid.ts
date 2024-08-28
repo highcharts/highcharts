@@ -259,9 +259,8 @@ class DataGrid {
      *
      */
     private initContainers(renderTo: string|HTMLElement): void {
-        const container = typeof renderTo === 'string' ?
-            win.document.getElementById(renderTo) :
-            renderTo;
+        const container = (typeof renderTo === 'string') ?
+            win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {

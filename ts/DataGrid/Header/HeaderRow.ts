@@ -175,7 +175,7 @@ class HeaderRow extends Row {
     /**
      * Get all headers that should be rendered in a level.
      *
-     * @param level
+     * @param scope
      * Level that we start
      * @param targetLevel
      * Max level
