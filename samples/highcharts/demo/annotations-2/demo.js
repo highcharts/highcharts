@@ -7182,10 +7182,8 @@ Highcharts.chart('container', {
             draggable: '',
             allowOverlap: true,
             labelOptions: {
-                backgroundColor: 'rgba(255,255,255,0.5)',
                 allowOverlap: true,
-                verticalAlign: 'top',
-                shape: 'callout'
+                shape: 'connector'
             },
             labels: [
                 {
@@ -7194,37 +7192,42 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2020, 7, 20),
-                        y: 20
+                        y: 106
                     },
-                    distance: 50,
-                    text: '5 for 1 Stock split'
+                    x: -100,
+                    y: 10,
+                    text: '5 for 1 Stock split announcement'
                 },
                 {
                     point: {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2020, 11, 21),
-                        y: 50
+                        y: 172
                     },
                     text: 'Inclusion to S&P 500 Index',
-                    y: 40
+                    x: -70,
+                    y: -20
                 },
                 {
                     point: {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2021, 3, 1),
-                        y: 60
+                        y: 192
                     },
-                    text: 'Record earnings in Q1 2021'
+                    text: 'Record earnings in Q1 2021',
+                    y: -50,
+                    x: -20
                 },
                 {
                     point: {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2021, 10, 1),
-                        y: 200
+                        y: 336
                     },
+                    x: -100,
                     text: 'Stock Sale by Elon Musk'
                 },
                 {
@@ -7232,30 +7235,25 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2022, 2, 0),
-                        y: 260
+                        y: 257
                     },
                     // eslint-disable-next-line quotes
-                    text: `Berlin's giga factory opening`
+                    text: `Berlin's giga factory opening`,
+                    x: -5,
+                    y: 100
+
                 },
                 {
                     point: {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2022, 3, 12),
-                        y: 233
+                        y: 304
                     },
                     // eslint-disable-next-line quotes
-                    text: `Musk's Twitter aquisition`
-                }
-            ]
-        },
-        {
-            draggable: '',
-            labelOptions: {
-                allowOverlap: true,
-                shape: 'connector'
-            },
-            labels: [
+                    text: `Musk's Twitter aquisition`,
+                    x: 300
+                },
                 {
                     point: {
                         xAxis: 0,
@@ -7285,7 +7283,7 @@ Highcharts.chart('container', {
                         y: 112
                     },
                     x: -100,
-                    text: 'Tesla Model S announced'
+                    text: 'Tesla Model S Plaid announced'
                 }
             ]
         }
