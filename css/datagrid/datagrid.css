@@ -92,6 +92,10 @@
     overflow: hidden;
 }
 
+.highcharts-datagrid-mock-column {
+    width: 0;
+}
+
 /* Table */
 .highcharts-datagrid-table {
     width: 100%;
