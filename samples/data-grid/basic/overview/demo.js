@@ -20,10 +20,8 @@ DataGrid.dataGrid('container', {
             text: 'Fruit market'
         }
     },
-    defaults: {
-        columns: {
-            editable: false
-        }
+    columnDefaults: {
+        editable: true
     },
     columns: [{
         id: 'product',

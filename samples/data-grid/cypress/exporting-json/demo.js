@@ -13,10 +13,8 @@ const dataGrid = DataGrid.dataGrid('container', {
             metaData: ['a', 'b', 'c', 'd']
         }
     },
-    defaults: {
-        columns: {
-            editable: true
-        }
+    columnDefaults: {
+        editable: true
     },
     columns: [{
         id: 'metaData',

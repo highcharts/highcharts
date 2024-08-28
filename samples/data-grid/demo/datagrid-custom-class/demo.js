@@ -6,10 +6,8 @@ DataGrid.dataGrid('container', {
             price: [1.5, 2.53, 5, 4.5]
         }
     },
-    defaults: {
-        columns: {
-            editable: true
-        }
+    columnDefaults: {
+        editable: true
     },
     columns: [{
         id: 'weight',

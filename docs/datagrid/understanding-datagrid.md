@@ -10,10 +10,8 @@ Defaults
 Default options for all columns.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 
@@ -82,10 +80,8 @@ Column
 Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
 ```js
-defaults: {
-    columns: {
-        useHTML: true
-    }
+columnDefaults: {
+    useHTML: true
 },
 columns: [{
     id: 'column1',
@@ -116,10 +112,8 @@ Value editor
 Allows you to edit the main value of the cell.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 

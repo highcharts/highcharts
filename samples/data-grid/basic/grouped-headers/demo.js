@@ -40,13 +40,6 @@ DataGrid.dataGrid('container', {
             }
         ]
     },
-    defaults: {
-        columns: {
-            sorting: {
-                enabled: true
-            }
-        }
-    },
     columns: [{
         id: 'product',
         className: 'custom-column-product-class',

@@ -9,10 +9,8 @@ DataGrid.dataGrid('container', {
             metaData: ['a', 'b', 'c', 'd']
         }
     },
-    defaults: {
-        columns: {
-            editable: true
-        }
+    columnDefaults: {
+        editable: true
     },
     events: {
         cell: {

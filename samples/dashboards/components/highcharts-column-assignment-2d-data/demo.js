@@ -46,10 +46,8 @@ Dashboards.board('container', {
             id: 'data'
         },
         dataGridOptions: {
-            defaults: {
-                columns: {
-                    editable: true
-                }
+            columnDefaults: {
+                editable: true
             },
             columns: [{
                 id: 'time',

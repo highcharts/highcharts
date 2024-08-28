@@ -144,7 +144,7 @@ class Column {
         index: number
     ) {
         this.options = merge(
-            viewport.dataGrid.options?.defaults?.columns ?? {},
+            viewport.dataGrid.options?.columnDefaults ?? {},
             viewport.dataGrid.columnOptionsMap?.[id] ?? {}
         );
 

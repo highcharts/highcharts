@@ -9,11 +9,9 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    defaults: {
-        columns: {
-            editable: true,
-            useHTML: true
-        }
+    columnDefaults: {
+        editable: true,
+        useHTML: true
     },
     columns: [{
         id: 'date',

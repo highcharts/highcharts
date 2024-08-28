@@ -43,11 +43,9 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
             strictHeights: false
         }
     },
-    defaults: {
-        columns: {
-            sorting: {
-                sortable: true
-            }
+    columnDefaults: {
+        sorting: {
+            sortable: true
         }
     }
 };

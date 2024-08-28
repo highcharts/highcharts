@@ -78,10 +78,8 @@ Dashboards.board('container', {
                         included: ['Food', 'Vitamin A']
                     }
                 },
-                defaults: {
-                    columns: {
-                        editable: true
-                    }
+                columnDefaults: {
+                    editable: true
                 },
                 columns: [{
                     id: 'Vitamin A',

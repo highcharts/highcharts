@@ -20,11 +20,9 @@ const dataGrid = new DataGrid.DataGrid('container', {
             bufferSize: 5
         }
     },
-    defaults: {
-        columns: {
-            headerFormat: 'Col-{id}',
-            cellFormat: 'V: {value}'
-        }
+    columnDefaults: {
+        headerFormat: 'Col-{id}',
+        cellFormat: 'V: {value}'
     },
     columns: [{
         id: 'd',

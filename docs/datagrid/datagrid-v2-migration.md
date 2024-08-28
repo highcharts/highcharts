@@ -65,14 +65,12 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    defaults: {
-        columns: {
-            editable: true,
-            sorting: {
-                sortable: false
-            }
+    columnDefaults: {
+        editable: true,
+        sorting: {
+            sortable: false
         }
-    },
+    }
     settings: {
         columns: {
             distribution: 'full'
