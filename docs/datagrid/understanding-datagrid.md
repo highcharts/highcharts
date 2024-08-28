@@ -15,7 +15,7 @@ columnDefaults: {
 }
 ```
 
-For more information on `default` options see the [API reference]().
+For more information on `columnDefaults` options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
 
 Caption
 ---------
@@ -23,14 +23,12 @@ Caption
 The caption of the datagrid grid.
 
 ```js
-settings: {
-    caption: {
-        text: 'Your title of datagrid'Heade
-    }
+caption: {
+    text: 'Title of the DataGrid'
 }
 ```
 
-For more information on `caption` options see the [API reference]().
+For more information on `caption` options see the [API reference](http://localhost:9005/dashboards/#interfaces/DataGrid_Options.Options-1#caption).
 
 Header
 ---------

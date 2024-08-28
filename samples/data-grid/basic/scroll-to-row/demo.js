@@ -12,13 +12,13 @@ const dataGrid = new DataGrid.DataGrid('container', {
         }
     },
     settings: {
-        caption: {
-            text: 'Title of the new Datagrid with a custom CSS class.',
-            className: 'custom-caption-class'
-        },
         rows: {
             bufferSize: 5
         }
+    },
+    caption: {
+        text: 'Title of the new Datagrid with a custom CSS class.',
+        className: 'custom-caption-class'
     },
     columnDefaults: {
         headerFormat: 'Col-{id}',

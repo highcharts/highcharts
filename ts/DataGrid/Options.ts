@@ -80,6 +80,11 @@ export interface Options {
     events?: DataGridEvents;
 
     /**
+     * Options for the table caption.
+     */
+    caption?: CaptionOptions;
+
+    /**
      * Options to control the way datagrid is rendered.
      */
     settings?: DataGridSettings;
@@ -94,11 +99,6 @@ export interface Options {
  * Options to control the way datagrid is rendered.
  */
 export interface DataGridSettings {
-    /**
-     * Options for the table caption.
-     */
-    caption?: CaptionOptions;
-
     /**
     * Options to control the columns behavior and rendering.
     */
