@@ -128,7 +128,9 @@ class HeaderCell extends Cell {
         }, this.htmlElement);
         this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
-        if (userOptions.useHTML) {
+        const isHTML = this.value?.toString().indexOf('<') === -1;
+
+        if (isHTML) {
             this.renderHTMLCellContent(
                 this.value,
                 this.contentWrapper

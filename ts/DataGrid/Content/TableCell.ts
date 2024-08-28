@@ -160,12 +160,18 @@ class TableCell extends Cell {
         updateTable: boolean
     ): Promise<void> {
         const element = this.htmlElement;
+        const isHTML = value?.toString().indexOf('<') === -1;
 
         this.value = value;
-        this.renderHTMLCellContent(
-            this.formatCell(),
-            element
-        );
+
+        if (isHTML) {
+            this.renderHTMLCellContent(
+                this.formatCell(),
+                element
+            );
+        } else {
+            element.innerText = this.formatCell();
+        }
 
         if (!updateTable) {
             return;
