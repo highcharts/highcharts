@@ -1972,6 +1972,11 @@ class Data {
                 }
             }
 
+            // Merge the xAxisOptions for the standalone Data module
+            if (!this.chart) {
+                merge(true, chartOptions, { xAxis: this.xAxisOptions || {} });
+            }
+
             options.complete?.(chartOptions);
 
             // The afterComplete hook is used internally to avoid conflict with
