@@ -33,7 +33,7 @@ DataGrid.dataGrid('container', {
             }
         }
     }
-}, dg => {
+}, true).then(dg => {
     const currentSorting = dg.querying.sorting.currentSorting;
 
     dg.enabledColumns.forEach(columnId => {
