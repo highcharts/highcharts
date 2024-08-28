@@ -200,10 +200,10 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         /**
-         * The minimum for the Z value range. Defaults to the highest Z
+         * The maximum for the Z value range. Defaults to the highest Z
          * value in the data.
          *
-         * @see [zMax](#plotOptions.mapbubble.zMin)
+         * @see [zMax](#plotOptions.mapbubble.zMax)
          *
          * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
@@ -217,7 +217,7 @@ class MapBubbleSeries extends BubbleSeries {
          * The minimum for the Z value range. Defaults to the lowest Z value
          * in the data.
          *
-         * @see [zMax](#plotOptions.mapbubble.zMax)
+         * @see [zMin](#plotOptions.mapbubble.zMin)
          *
          * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
