@@ -814,6 +814,8 @@ async function updateBoard(board, city, column, scale, newData) {
     });
 
     if (newData) {
+        const { dataGrid } = selectionGrid;
+
         // Update KPIs
         await kpiData.update({
             title: city,
@@ -827,19 +829,10 @@ async function updateBoard(board, city, column, scale, newData) {
         const showCelsius = scale === 'C';
 
         // Update city grid selection
-        await selectionGrid.dataGrid.updateColumns([{
-            id: 'TNC',
-            enabled: showCelsius
-        }, {
-            id: 'TNF',
-            enabled: !showCelsius
-        }, {
-            id: 'TXC',
-            enabled: showCelsius
-        }, {
-            id: 'TXF',
-            enabled: !showCelsius
-        }]);
+        await dataGrid.updateColumn('TNC', { enabled: showCelsius }, false);
+        await dataGrid.updateColumn('TNF', { enabled: !showCelsius }, false);
+        await dataGrid.updateColumn('TXC', { enabled: showCelsius }, false);
+        await dataGrid.updateColumn('TXF', { enabled: !showCelsius });
 
         // Update city chart
         const options = cityChart.chartOptions;

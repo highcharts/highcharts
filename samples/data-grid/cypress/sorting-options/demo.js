@@ -2,7 +2,7 @@ const columnSelectEl = document.getElementById('select-column');
 const orderSelectEl = document.getElementById('select-order');
 const applyBtnEl = document.getElementById('apply-btn');
 
-window.dataGrid = DataGrid.dataGrid('container', {
+DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -36,7 +36,9 @@ window.dataGrid = DataGrid.dataGrid('container', {
             }
         }
     }
-}, dg => {
+}, true).then(dg => {
+    window.dataGrid = dg;
+
     const currentSorting = dg.querying.sorting.currentSorting;
 
     dg.enabledColumns.forEach(columnId => {
@@ -60,5 +62,4 @@ window.dataGrid = DataGrid.dataGrid('container', {
             orderSelectEl.value
         );
     });
-
 });
