@@ -89,17 +89,16 @@ const connConfig = {
             `Client ${isSubscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
         );
     },
-    packetEvent: (topic, packet, packetCount) => {
+    packetEvent: (topic, data, packetCount) => {
         if (packetCount === 1) {
-            // Extract data that are only needed at startup
-            const data = JSON.parse(packet);
             setPowerPlantName(topic, data.name);
         }
-        logAppend(`Packet #${packetCount} received: ${topic} - ${packet}`);
+        logAppend(`Packet #${packetCount} received: ${topic}`);
     },
-    errorEvent: error => {
+    errorEvent: (code, message) => {
         setConnectStatus(false);
-        logAppend(`<span style="color:red">${error}</span>`);
+        // eslint-disable-next-line max-len
+        logAppend(`<span class="error">${message} (error code #${code})</span>`);
     }
 };
 
@@ -187,11 +186,11 @@ async function createDashboard() {
             type: 'HTML',
             title: 'MQTT Event Log',
             html: '<pre id="log-content"></pre>'
-        },  {
+        }, {
             renderTo: 'app-control',
             type: 'HTML',
             html: '<button id="clear-log">Clear log</button>' +
-            '<span id="connect-status">disconnected</span>'
+                '<span id="connect-status">disconnected</span>'
         }],
         gui: {
             layouts: [{
@@ -346,7 +345,41 @@ class MQTTConnector extends DataConnector {
         this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        connectorTable[clientId] = this;
+        const connector = this;
+        connectorTable[clientId] = connector;
+
+        // Process MQTT specific connector events
+        connector.on('connectEvent', event => {
+            const eventCallback = connector.options.connectEvent;
+            if (eventCallback) {
+                const ed = event.detail;
+                eventCallback(ed.connected, ed.host, ed.port, ed.user);
+            }
+        });
+
+        connector.on('subscribeEvent', event => {
+            const eventCallback = connector.options.subscribeEvent;
+            if (eventCallback) {
+                const ed = event.detail;
+                eventCallback(ed.subscribed, ed.topic);
+            }
+        });
+
+        connector.on('packetEvent', event => {
+            const eventCallback = connector.options.packetEvent;
+            if (eventCallback) {
+                const ed = event.detail;
+                eventCallback(ed.topic, event.data, ed.count);
+            }
+        });
+
+        connector.on('errorEvent', event => {
+            const eventCallback = connector.options.errorEvent;
+            if (eventCallback) {
+                const ed = event.detail;
+                eventCallback(ed.errorCode, ed.errorMessage);
+            }
+        });
     }
 
     /* *
@@ -412,18 +445,21 @@ class MQTTConnector extends DataConnector {
      *
      */
     async subscribe() {
-        const { topic, qOs, subscribeEvent, failureEvent } = this.options;
+        const { topic, qOs } = this.options;
         this.mqtt.subscribe(topic, {
             qos: qOs,
             onSuccess: () => {
-                if (subscribeEvent) {
-                    subscribeEvent(true, topic);
-                }
+                this.emit({
+                    type: 'subscribeEvent',
+                    detail: {
+                        subscribed: true,
+                        topic: topic
+                    }
+                });
             },
             onFailure: response => {
-                if (subscribeEvent) {
-                    failureEvent(response.errorMessage);
-                }
+                // Execute custom error handler
+                this.onFailure(response);
             },
             timeout: 10
         });
@@ -434,24 +470,23 @@ class MQTTConnector extends DataConnector {
      *
      */
     unsubscribe() {
-        const { topic, subscribeEvent, failureEvent } = this.options;
+        const { topic } = this.options;
 
         this.mqtt.unsubscribe(topic, {
             onSuccess: () => {
-                if (subscribeEvent) {
-                    subscribeEvent(false, topic);
-                }
+                this.emit({
+                    type: 'subscribeEvent',
+                    detail: {
+                        subscribed: false,
+                        topic: topic
+                    }
+                });
             },
             onFailure: response => {
-                if (subscribeEvent) {
-                    failureEvent(response.errorMessage);
-                }
+                // Execute custom error handler
+                this.onFailure(response);
             }
         });
-
-        if (subscribeEvent) {
-            subscribeEvent(false, topic);
-        }
     }
 
     /**
@@ -459,12 +494,20 @@ class MQTTConnector extends DataConnector {
      *
      */
     onConnect() {
-        this.connected = true;
-        const { host, port, user, connectEvent, autoSubscribe } = this.options;
+        const { host, port, user, autoSubscribe } = this.options;
 
-        if (connectEvent) {
-            connectEvent(true, host, port, user);
-        }
+        this.connected = true;
+
+        // Execute custom connect handler
+        this.emit({
+            type: 'connectEvent',
+            detail: {
+                connected: true,
+                host: host,
+                port: port,
+                user: user
+            }
+        });
 
         // Subscribe to the topic
         if (autoSubscribe) {
@@ -499,14 +542,14 @@ class MQTTConnector extends DataConnector {
         connector.packetCount++;
 
         // Execute custom packet handler
-        const packetEvent = connector.options.packetEvent;
-        if (packetEvent) {
-            packetEvent(
-                mqttPacket.destinationName,
-                mqttPacket.payloadString,
-                connector.packetCount
-            );
-        }
+        connector.emit({
+            type: 'packetEvent',
+            data,
+            detail: {
+                topic: mqttPacket.destinationName,
+                count: connector.packetCount
+            }
+        });
     }
 
     /**
@@ -516,22 +559,25 @@ class MQTTConnector extends DataConnector {
     onConnectionLost(response) {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId];
-        connector.connected = false;
-        connector.packetCount = 0;
+        const { host, port, user } = connector.options;
 
-        const { connectEvent, errorEvent } = connector.options;
-
-        // Execute custom connection handler
-        if (connectEvent) {
-            connectEvent(false);
-        }
-
-        if (response.errorCode !== 0) {
-            // Execute custom error handler
-            if (errorEvent) {
-                errorEvent(response.errorMessage);
+        // Execute custom connect handler
+        connector.emit({
+            type: 'connectEvent',
+            detail: {
+                connected: false,
+                host: host,
+                port: port,
+                user: user
             }
+        });
+
+        if (response.errorCode === 0) {
+            return;
         }
+
+        // Execute custom error handler
+        connector.onFailure(response);
     }
 
     /**
@@ -543,9 +589,13 @@ class MQTTConnector extends DataConnector {
         this.packetCount = 0;
 
         // Execute custom error handler
-        if (this.options.errorEvent) {
-            this.options.errorEvent(response.errorMessage);
-        }
+        this.emit({
+            type: 'errorEvent',
+            detail: {
+                errorCode: response.errorCode,
+                errorMessage: response.errorMessage
+            }
+        });
     }
 }
 

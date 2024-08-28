@@ -73,6 +73,10 @@
     font-size: 12px;
 }
 
+#log-content span.error {
+    color: red;
+}
+
 #app-control {
     padding: 10px;
     font-size: 12px;
