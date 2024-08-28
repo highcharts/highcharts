@@ -402,10 +402,10 @@ class BubbleSeries extends ScatterSeries {
         turboThreshold: 0,
 
         /**
-         * The minimum for the Z value range. Defaults to the highest Z value
+         * The maximum for the Z value range. Defaults to the highest Z value
          * in the data.
          *
-         * @see [zMin](#plotOptions.bubble.zMin)
+         * @see [zMax](#plotOptions.bubble.zMax)
          *
          * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
@@ -425,7 +425,7 @@ class BubbleSeries extends ScatterSeries {
          * The minimum for the Z value range. Defaults to the lowest Z value
          * in the data.
          *
-         * @see [zMax](#plotOptions.bubble.zMax)
+         * @see [zMin](#plotOptions.bubble.zMin)
          *
          * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
