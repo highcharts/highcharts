@@ -321,10 +321,10 @@ class DataGrid {
     /**
      * Updates the data grid with new options. It overwrites the existing column
      * options array. If you want to merge the column options, use the
-     * `updateColumns` method instead.
+     * `updateColumn` method instead.
      *
      * @param options
-     * The options of the data grid that should be updated. If not provieded,
+     * The options of the data grid that should be updated. If not provided,
      * the update will be proceeded based on the `this.userOptions` property.
      *
      * @param render
@@ -359,12 +359,16 @@ class DataGrid {
     }
 
     /**
-     * Updates the columns of the data grid with new options. Unlike the
+     * Updates the column of the data grid with new options. Unlike the
      * `update` method, it does not overwrite the existing column options array.
      * Instead, it merges the provided options with the existing ones.
      *
+     * @param columnId
+     * The ID of the column that should be updated.
+     *
      * @param options
-     * The options of the columns that should be updated.
+     * The options of the columns that should be updated. If null,
+     * column options for this column ID will be removed.
      *
      * @param render
      * Whether to re-render the data grid after updating the columns.
@@ -373,35 +377,40 @@ class DataGrid {
      * If true, the column options will be updated by replacing the existing
      * options with the new ones instead of merging them.
      */
-    public async updateColumns(
-        options: IndividualColumnOptions[],
+    public async updateColumn(
+        columnId: string,
+        options: Omit<IndividualColumnOptions, 'id'> | null,
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
         const columnOptions = this.userOptions?.columns ?? [];
 
-        for (let i = 0, iEnd = options.length; i < iEnd; ++i) {
-            const columnId = options[i].id;
-            if (!columnId) {
-                continue;
-            }
+        const indexInPrevOptions = columnOptions?.findIndex(
+            (prev): boolean => prev.id === columnId
+        );
 
-            const indexInPrevOptions = columnOptions?.findIndex(
-                (prev): boolean => prev.id === columnId
+        if (options === null) {
+            if (indexInPrevOptions !== -1) {
+                columnOptions.splice(indexInPrevOptions, 1);
+            }
+        } else if (indexInPrevOptions === -1) {
+            columnOptions.push({
+                id: columnId,
+                ...options
+            });
+        } else if (overwrite) {
+            columnOptions[indexInPrevOptions] = {
+                id: columnId,
+                ...options
+            };
+        } else {
+            columnOptions[indexInPrevOptions] = merge(
+                columnOptions[indexInPrevOptions],
+                options
             );
-
-            if (indexInPrevOptions === -1) {
-                columnOptions.push(options[i]);
-            } else if (overwrite) {
-                columnOptions[indexInPrevOptions] = options[i];
-            } else {
-                columnOptions[indexInPrevOptions] = merge(
-                    columnOptions[indexInPrevOptions],
-                    options[i]
-                );
-            }
         }
 
+        // Check if to need specify columns here
         await this.update({
             columns: columnOptions
         }, render);

@@ -59,13 +59,8 @@ test('DataGrid update methods', async function (assert) {
         'Update method without arguments should update the columns array with the userOptions.'
     );
 
-    dataGrid.updateColumns([{
-        id: 'weight',
-        headerFormat: undefined
-    }, {
-        id: 'price',
-        headerFormat: 'Price Column'
-    }], false);
+    dataGrid.updateColumn('weight', { headerFormat: undefined }, false);
+    dataGrid.updateColumn('price', { headerFormat: 'Price Column' }, false);
 
     assert.deepEqual(
         dataGrid.options.columns,
@@ -88,26 +83,16 @@ test('DataGrid update methods', async function (assert) {
         'updateColumns method should update the columns array by mergin by ids'
     );
 
-    dataGrid.updateColumns([{
-        id: 'weight'
-    }, {
-        id: 'price',
-        headerFormat: 'Column 2'
-    }, {
-        id: 'imaginary-column',
-        headerFormat: 'New One!'
-    }], false, true);
+    dataGrid.updateColumn('weight', null);
+    dataGrid.updateColumn('price', { headerFormat: 'Column 2' }, false, true);
+    dataGrid.updateColumn('product', {}, false, true);
+    dataGrid.updateColumn('imaginary-column', { headerFormat: 'New One!' }, false);
 
     assert.deepEqual(
         dataGrid.options.columns,
         [
             {
-                id: 'weight'
-            },
-            {
-                id: 'product',
-                headerFormat: 'Column 1',
-                cellFormat: 'text 2'
+                id: 'product'
             },
             {
                 id: 'price',
