@@ -31,11 +31,6 @@ const grid = DataGrid.dataGrid('container', {
 });
 ```
 
-## Columns
-It is worth mentioning that the `useHTML` parameter has been moved to the `columns` object.
-
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#useHTML).
-
 ## Styling
 The main change is CSS styling instead of the built-in API options.
 
