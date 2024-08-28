@@ -196,7 +196,7 @@ export interface AxisOptions {
     title: AxisTitleOptions;
     top?: (number|string);
     type?: ('linear'|'logarithmic'|'datetime'|'category'|'treegrid');
-    uniqueNames: boolean;
+    uniqueNames?: boolean;
     visible: boolean;
     width?: (number|string);
     zIndex: number;

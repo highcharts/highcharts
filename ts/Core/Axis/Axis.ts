@@ -305,7 +305,8 @@ class Axis {
     public transA!: number;
     public transB!: number;
     public translationSlope!: number;
-    public type?: 'linear'|'logarithmic'|'datetime'|'category'|'treegrid';
+    public type?: AxisOptions['type'];
+    public uniqueNames?: boolean;
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
@@ -408,14 +409,14 @@ class Axis {
          * @type {Highcharts.AxisOptions}
          */
         axis.setOptions(userOptions);
+        axis.uniqueNames ??= axis.options.uniqueNames ?? true;
 
         const options = this.options,
             labelsOptions = options.labels;
 
         // Set the type and fire an event
-        this.type = this.options.type || 'linear';
+        this.type ??= this.options.type || 'linear';
         fireEvent(this, 'afterSetType');
-
 
         /**
          * User's options for this axis without defaults.
@@ -1433,7 +1434,7 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames && names ?
+            nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
