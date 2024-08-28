@@ -75,6 +75,8 @@ function changeOpacity(elements, opacity, transition) {
 let chartNum = 0;
 let chartToMake;
 
+//CHARTS
+
 // arc
 const arc = {
     chart: {
@@ -98,22 +100,8 @@ const arc = {
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1'],
 
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -30,
-        verticalAlign: 'bottom',
-        text: 'Arc Diagram'
+        text: ''
     },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/arc-diagram">See full demo</a>'
-    },
-
     accessibility: {
         screenReaderSection: {
             beforeChartFormat: '',
@@ -345,20 +333,7 @@ const cr = {
         enabled: false
     },
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -32,
-        verticalAlign: 'bottom',
-        text: 'Column Range Chart'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/columnrange">See full demo</a>'
+        text: ''
     },
     colors: colors,
     xAxis: {
@@ -472,20 +447,7 @@ const sk = {
     },
     colors: ['#8087E8', '#6699A1', '#DA6D85', '#78758C'],
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -32,
-        verticalAlign: 'bottom',
-        text: 'Sankey Chart'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/sankey-diagram">See full demo</a>'
+        text: ''
     },
     credits: {
         enabled: false
@@ -612,23 +574,8 @@ const str = {
         enabled: false
     },
     title: {
-        floating: true,
-        align: 'left',
-        y: -48,
-        x: 10,
-        verticalAlign: 'bottom',
-        text: 'Streamgraph Chart'
+        text: ''
     },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -28,
-        x: 10,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
-    },
-
     xAxis: {
         maxPadding: 0,
         margin: 20,
@@ -1025,22 +972,7 @@ const rb = {
         enabled: false
     },
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -48,
-        x: 12,
-        verticalAlign: 'bottom',
-        text: 'Radial Bar Chart'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -32,
-        x: 12,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/polar-radial-bar">See full demo</a>'
+        text: ''
     },
     pane: {
         size: '1000%',
@@ -1157,22 +1089,8 @@ const strOld = {
     },
 
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -32,
-        verticalAlign: 'bottom',
-        text: 'Streamgraph Chart'
+        text: ''
     },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
-    },
-
     xAxis: {
         min: Date.UTC(2014, 1, 1),
         max: Date.UTC(2020, 1, 1),
@@ -2390,19 +2308,7 @@ function jellypus() {
             enabled: false
         },
         title: {
-            floating: true,
-            align: 'left',
-            y: -32,
-            verticalAlign: 'bottom',
-            text: 'Network Graph'
-        },
-        subtitle: {
-            floating: true,
-            useHTML: true,
-            verticalAlign: 'bottom',
-            align: 'left',
-            y: -12,
-            text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/network-graph">See full demo</a>'
+            text: ''
         },
         plotOptions: {
             series: {
@@ -3194,22 +3100,7 @@ function cs() {
             }
         },
         title: {
-            floating: true,
-            useHTML: true,
-            align: 'left',
-            y: -30,
-            verticalAlign: 'bottom',
-            text: `<div>Dynamic Candlestick Chart&nbsp;
-            <span id="stop">(Stop animation)</span></div>`
-        },
-        subtitle: {
-            floating: true,
-            useHTML: true,
-            verticalAlign: 'bottom',
-            align: 'left',
-            y: -12,
-            text: `<a target="_top" href="https://www.highcharts.com/demo/stock/live-candlestick">
-            See full demo</a>`
+            text: ''
         },
         xAxis: {
             overscroll: 500000,
@@ -4397,21 +4288,8 @@ function barchartRace() {
                 enabled: false
             },
             title: {
-                floating: true,
-                align: 'left',
-                y: -30,
-                verticalAlign: 'bottom',
-                text: 'Bar Chart Race'
+                text: ''
             },
-            subtitle: {
-                floating: true,
-                useHTML: true,
-                verticalAlign: 'bottom',
-                align: 'left',
-                y: -12,
-                text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/bar-race">See full demo</a>'
-            },
-
             legend: {
                 enabled: false
             },
@@ -4578,20 +4456,7 @@ const spb = {
         '#6699A1'
     ],
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -32,
-        verticalAlign: 'bottom',
-        text: 'Split Packed<br>Bubble Chart'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/packed-bubble-split">See full demo</a>'
+        text: ''
     },
     tooltip: {
         backgroundColor: '#474554',
@@ -5153,20 +5018,7 @@ const dw = {
     },
     colors: colors,
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -32,
-        verticalAlign: 'bottom',
-        text: 'Dependency Wheel'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
+        text: ''
     },
     accessibility: {
         screenReaderSection: {
@@ -5298,20 +5150,7 @@ const fc = {
         enabled: false
     },
     title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -30,
-        verticalAlign: 'bottom',
-        text: 'Funnel Chart'
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/funnel">See full demo</a>'
+        text: ''
     },
     plotOptions: {
         series: {
@@ -5454,22 +5293,8 @@ function geoHeatMap() {
                 enabled: false
             },
             title: {
-                floating: true,
-                useHTML: true,
-                align: 'left',
-                y: -32,
-                verticalAlign: 'bottom',
-                text: 'GeoHeatMap'
+                text: ''
             },
-            subtitle: {
-                floating: true,
-                useHTML: true,
-                verticalAlign: 'bottom',
-                align: 'left',
-                y: -15,
-                text: '<a target="_top" href="https://www.highcharts.com/demo/maps/geoheatmap-orthographic">See full demo</a>'
-            },
-
             legend: {
                 enabled: false,
                 floating: true
@@ -5609,7 +5434,8 @@ function gantt() {
             animation: {
                 duration: 2000,
                 easing: 'easeOutQuint'
-            }
+            },
+            height: 370
         },
         colors: colors,
         plotOptions: {
@@ -5731,20 +5557,7 @@ function gantt() {
             'Owner: {#if point.owner}{point.owner}{else}unassigned{/if}'
         },
         title: {
-            floating: true,
-            useHTML: true,
-            align: 'left',
-            y: -7,
-            verticalAlign: 'bottom',
-            text: 'Gantt Chart'
-        },
-        subtitle: {
-            floating: true,
-            useHTML: true,
-            verticalAlign: 'bottom',
-            align: 'left',
-            y: 10,
-            text: '<a target="_top" href="https://www.highcharts.com/demo/gantt/project-management">See full demo</a>'
+            text: ''
         },
         xAxis: [{
             labels: {
@@ -5848,9 +5661,79 @@ function gantt() {
 
 // chart load order
 const charts = [
-    jellypus,  str, cs, barchartRace,
-    spb, dw, fc, geoHeatMap, gantt, strOld, arc, rb,
-    sk, cr
+    
+    {
+        chart: jellypus,
+        title: 'Network Graph',
+        demo: 'https://www.highcharts.com/demo/highcharts/network-graph'
+    },
+    {
+        chart: str,
+        title: 'Streamgraph Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph'
+    },
+    {
+        chart: cs,
+        title: 'Dynamic Candlestick Chart&nbsp;<span id="stop">(Stop animation)</span>',
+        demo: 'https://www.highcharts.com/demo/stock/live-candlestick'
+    },
+    {
+        chart: barchartRace,
+        title: 'Bar Chart Race',
+        demo: 'https://www.highcharts.com/demo/highcharts/bar-race'
+    },
+    {
+        chart: spb,
+        title: 'Split PackedBubble Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/packed-bubble-split'
+    },
+    {
+        chart: dw,
+        title: 'Dependency Wheel',
+        demo: 'https://www.highcharts.com/demo/highcharts/dependency-wheel'
+    },
+    {
+        chart: fc,
+        title: 'Funnel Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/funnel'
+    },
+    
+    {
+        chart: geoHeatMap,
+        title: 'GeoHeatMap',
+        demo: 'https://www.highcharts.com/demo/maps/geoheatmap-orthographic'
+    },
+     {
+        chart: gantt,
+        title: 'Gantt Chart',
+        demo: 'https://www.highcharts.com/demo/gantt/project-management'
+    },
+   
+    {
+        chart: strOld,
+        title: 'Streamgraph Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph'
+    },
+    {
+        chart: arc,
+        title: 'Arc Diagram',
+        demo: 'https://www.highcharts.com/demo/highcharts/arc-diagram'
+    },
+    {
+        chart: rb,
+        title: 'Radial Bar Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/polar-radial-bar'
+    },
+    {
+        chart: sk,
+        title: 'Sankey Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/sankey-diagram'
+    },
+    {
+        chart: cr,
+        title: 'Column Range Chart',
+        demo: 'https://www.highcharts.com/demo/highcharts/columnrange'
+    }
 ];
 
 // for a11y
@@ -5986,7 +5869,15 @@ function makeChart() {
         chartNum = 0;
     }
 
-    chartToMake = charts[chartNum];
+    chartToMake = charts[chartNum].chart;
+
+    document.getElementById('chart-title').innerHTML = charts[chartNum].title;
+
+    const demoNum = chartNum;
+    document.getElementById('demo-link').addEventListener('click', function () {
+        window.open(charts[demoNum].demo, '_top');
+    });
+
 
     if (typeof chartToMake === 'function') {
         if (chartToMake === barchartRace) {
@@ -6039,6 +5930,8 @@ function makeChart() {
     if (chartToMake !== geoHeatMap && chartToMake !== barchartRace) {
         getChartDescription(chartNum);
     }
+
+    
 
     chartNum = chartNum + 1;
 }
