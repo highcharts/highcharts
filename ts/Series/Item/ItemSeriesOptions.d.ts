@@ -181,7 +181,7 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      *
      * @type {string}
      */
-    layout?: string;
+    layout?: 'horizontal'|'vertical';
 
     /**
      * @extends plotOptions.series.marker

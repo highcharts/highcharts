@@ -65,6 +65,10 @@ async function distRelease() {
     });
 
     // Remove deprecated files and folders
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'es-modules', 'Core'),
+        true
+    );
 
     fsLib.deleteDirectory(
         path.join(distRepository, 'css', 'dashboards'),

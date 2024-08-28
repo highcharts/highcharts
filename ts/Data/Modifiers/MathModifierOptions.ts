@@ -81,8 +81,6 @@ export interface MathModifierOptions extends DataModifierOptions {
     /**
      * Array of column formulas that will be used to replace the column
      * values in their columns.
-     * @private
-     * @todo Implement
      */
     columnFormulas?: Array<MathModifierColumnFormulaOptions>;
 
