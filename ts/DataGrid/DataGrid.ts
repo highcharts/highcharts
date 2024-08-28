@@ -410,7 +410,6 @@ class DataGrid {
             );
         }
 
-        // Check if to need specify columns here
         await this.update({
             columns: columnOptions
         }, render);
