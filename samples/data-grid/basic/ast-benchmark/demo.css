@@ -1,0 +1,20 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+.content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item {
+    flex: 1 1 calc(50% - 20px);
+    padding: 10px;
+}
+
+#container,
+#container2,
+#container3,
+#container4 {
+    height: 200px;
+    width: 100%;
+    margin: 10px 0;
+}
