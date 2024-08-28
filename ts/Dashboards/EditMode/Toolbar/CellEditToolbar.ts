@@ -199,8 +199,21 @@ class CellEditToolbar extends EditToolbar {
             const x = cellOffsets.right - toolbarWidth - toolbarMargin;
             const y = cellOffsets.top + toolbarMargin;
 
-            // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
+                if (!cell.options?.editMode?.toolbarItems) {
+                    item.activate();
+                    return;
+                }
+                const toolbarItems = cell.options.editMode.toolbarItems;
+
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
+                    item.deactivate();
+                    return;
+                }
+
                 item.activate();
             });
 

@@ -103,9 +103,9 @@ class SidebarPopup extends BaseForm {
                 className: 'highcharts-dashboards-component-placeholder',
                 html: `
                     <h2> Placeholder </h2>
-                    <p> This placeholder can be deleted when you add extra
+                    <span> This placeholder can be deleted when you add extra
                         components to this row.
-                    </p>
+                    </span>
                     `
             }, board);
 
@@ -335,6 +335,7 @@ class SidebarPopup extends BaseForm {
 
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
+                e.preventDefault();
                 if (sidebar.editMode.dragDrop) {
 
                     // Workaround for Firefox, where mouseleave is not triggered
