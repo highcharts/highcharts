@@ -634,6 +634,29 @@ class DataGrid {
 
         return JSON.stringify(json);
     }
+
+    /**
+     * Returns the current DataGrid options as a JSON string.
+     *
+     * @param onlyUserOptions
+     * Whether to return only the user options or all options (user options
+     * merged with the default ones). Default is `true`.
+     *
+     * @returns
+     * Options as a JSON string.
+     */
+    public getOptionsJSON(onlyUserOptions = true): string {
+        const optionsCopy =
+            onlyUserOptions ? merge(this.userOptions) : merge(this.options);
+
+        if (optionsCopy.dataTable?.id) {
+            optionsCopy.dataTable = {
+                columns: optionsCopy.dataTable.columns
+            };
+        }
+
+        return JSON.stringify(optionsCopy);
+    }
 }
 
 
