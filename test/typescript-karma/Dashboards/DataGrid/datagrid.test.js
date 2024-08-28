@@ -118,7 +118,7 @@ test('DataGrid update methods', async function (assert) {
                 headerFormat: 'New One!'
             }
         ],
-        'updateColumns method one-to-one should replace the column options according to the IDs.'
+        'updateColumns method with ovewriting should replace the column options according to the IDs.'
     );
 
     dataGrid.update({}, false, true);
@@ -126,6 +126,6 @@ test('DataGrid update methods', async function (assert) {
     assert.deepEqual(
         dataGrid.userOptions,
         {},
-        'One-to-one dataGrid update should replace the user options.'
+        'DataGrid update with overwrite should replace the user options.'
     );
 });

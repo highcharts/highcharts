@@ -286,16 +286,16 @@ class DataGrid {
      * @param newOptions
      * The options that were declared by the user.
      *
-     * @param overrideExistingOnes
-     * Whether to override or merge the new options with the existing options.
+     * @param overwrite
+     * Whether to overwrite or merge the new options with the existing options.
      * Default is `false`.
      */
     private loadUserOptions(
         newOptions: Partial<Options>,
-        overrideExistingOnes: boolean = false
+        overwrite: boolean = false
     ): void {
 
-        if (overrideExistingOnes) {
+        if (overwrite) {
             this.userOptions = newOptions;
             this.options = merge(DataGrid.defaultOptions, newOptions);
         } else {
@@ -319,7 +319,7 @@ class DataGrid {
     }
 
     /**
-     * Updates the data grid with new options. It overrides the existing column
+     * Updates the data grid with new options. It overwrites the existing column
      * options array. If you want to merge the column options, use the
      * `updateColumns` method instead.
      *
@@ -330,21 +330,21 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the options.
      *
-     * @param override
+     * @param overwrite
      * If true, the column options will be updated by replacing the existing
      * options with the new ones instead of merging them.
      */
     public async update(
         options: Options = {},
         render: boolean = true,
-        override = false
+        overwrite = false
     ): Promise<void> {
-        this.loadUserOptions(options, override);
+        this.loadUserOptions(options, overwrite);
 
         let newDataTable = false;
         if (
-            !override && (!this.dataTable || options.dataTable) ||
-            override && (options.dataTable?.id !== this.dataTable?.id)
+            !overwrite && (!this.dataTable || options.dataTable) ||
+            overwrite && (options.dataTable?.id !== this.dataTable?.id)
         ) {
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
@@ -360,7 +360,7 @@ class DataGrid {
 
     /**
      * Updates the columns of the data grid with new options. Unlike the
-     * `update` method, it does not override the existing column options array.
+     * `update` method, it does not overwrite the existing column options array.
      * Instead, it merges the provided options with the existing ones.
      *
      * @param options
@@ -369,14 +369,14 @@ class DataGrid {
      * @param render
      * Whether to re-render the data grid after updating the columns.
      *
-     * @param override
+     * @param overwrite
      * If true, the column options will be updated by replacing the existing
      * options with the new ones instead of merging them.
      */
     public async updateColumns(
         options: IndividualColumnOptions[],
         render: boolean = true,
-        override = false
+        overwrite = false
     ): Promise<void> {
         const columnOptions = this.userOptions?.columns ?? [];
 
@@ -392,7 +392,7 @@ class DataGrid {
 
             if (indexInPrevOptions === -1) {
                 columnOptions.push(options[i]);
-            } else if (override) {
+            } else if (overwrite) {
                 columnOptions[indexInPrevOptions] = options[i];
             } else {
                 columnOptions[indexInPrevOptions] = merge(
