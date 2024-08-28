@@ -1,3 +1,18 @@
+body {
+    /* dark color for testing - background-color: #18171c; */
+
+    background-color: transparent;
+    margin: 0 20px 0 0;
+    padding: 0;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+#outer-container {
+    position: relative;
+    max-height: 455px;
+    max-width: 98%;
+}
+
 #container,
 #container2,
 #container3 {
@@ -9,12 +24,6 @@
 #container2,
 #container3 {
     display: none;
-}
-
-.outer-container {
-    position: relative;
-    max-height:455px;
-    max-width: 98%;
 }
 
 [aria-live="polite"] {
@@ -35,55 +44,13 @@
     background: maroon;
 }
 
-body {
-    /* dark color for testing - background-color: #18171c; */
-
-    background-color: transparent;
-    margin: 0 20px 0 0;
-    padding: 0;
-    font-family: "IBM Plex Sans",sans-serif;
-}
-
-#chart-description {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    white-space: nowrap;
-    clip: rect(1px, 1px, 1px, 1px);
-    margin-top: -3px;
-    opacity: 0.01;
-}
-
 #demo-content {
     background-color: transparent;
     margin: 0;
 }
 
-.btn-small {
-    white-space: nowrap;
-}
-
 .highcharts-background {
     fill: transparent;
-}
-
-.highcharts-title {
-    color: #c8c7d1 !important;
-    fill: #c8c7d1 !important;
-    font-size: 14px !important;
-}
-
-.highcharts-title a,
-.highcharts-subtitle a {
-    color: #c8c7d1 !important;
-}
-
-.highcharts-subtitle {
-    color: #c8c7d1 !important;
-    fill: #c8c7d1 !important;
-    font-size: 14px;
-    font-weight: 300;
 }
 
 .highcharts-data-labels text {
@@ -117,6 +84,17 @@ body {
     stroke: #918fa3;
 }
 
+#chart-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
 #stop {
     color: #e3e3e8;
     text-decoration: underline;
@@ -127,6 +105,8 @@ body {
 #stop:hover {
     color: #fff;
 }
+
+/* Networth graph */
 
 .jellypus {
     transform-origin: center;
@@ -151,11 +131,14 @@ body {
     stroke: transparent;
 }
 
+/* Geo heatmap */
+
 #projection-buttons {
     display: none;
 }
 
 /* bar chart race controls */
+
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(1),
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(2),
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(3),
@@ -217,24 +200,19 @@ body {
     background: #5e5c70;
 }
 
-#boom {
-    display: none;
-}
-
 /* Change Chart button */
 
 .button-container {
-    color: #ACABBA;
+    color: #acabba;
     font-size: 14px;
     font-weight: 500;
     width: 100%;
-    padding: 1px 0 0 0;
-   
+    padding: 1px 0 0;
 }
 
 .button-container .stroke {
-     background: linear-gradient(90deg, #75738C, rgba(0, 0, 0, 0));
-     height: 1px;
+    background: linear-gradient(90deg, #75738c, rgba(0, 0, 0, 0));
+    height: 1px;
 }
 
 .button-container #chart-title {
@@ -242,27 +220,24 @@ body {
     font-size: 14px;
 }
 
-#chart-title span {
+.button-container #chart-title span {
     font-size: 12px;
 }
 
-
-.button-text {
+.button-container .button-text {
     display: flex;
     justify-content: center;
     gap: 8px;
 }
 
-
 .button-container .chart-button {
     border: 0;
     background-color: transparent;
-    color: #ACABBA;
+    color: #acabba;
     font-size: 12px;
     font-weight: 300;
     text-align: left;
     width: fit-content;
-
 }
 
 .button-container .chart-button:disabled {
@@ -270,7 +245,7 @@ body {
 }
 
 .button-text img {
-   opacity: 0.8;
+    opacity: 0.8;
 }
 
 .button-text:hover img {
@@ -282,10 +257,10 @@ body {
     cursor: pointer;
 }
 
-.chart-button:disabled .button-text {
+.button-container .chart-button:disabled .button-text {
     color: #75738c;
 }
 
-.chart-button:disabled .button-text img {
-   opacity: 0.5;
+.button-container .chart-button:disabled .button-text img {
+    opacity: 0.5;
 }

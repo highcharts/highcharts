@@ -75,7 +75,7 @@ function changeOpacity(elements, opacity, transition) {
 let chartNum = 0;
 let chartToMake;
 
-//CHARTS
+// CHARTS
 
 // arc
 const arc = {
@@ -5661,187 +5661,177 @@ function gantt() {
 
 // chart load order
 const charts = [
-    
+
     {
         chart: jellypus,
         title: 'Network Graph',
-        demo: 'https://www.highcharts.com/demo/highcharts/network-graph'
+        demo: 'https://www.highcharts.com/demo/highcharts/network-graph',
+        description: `<p>Network Graph</p><div>A purely decorative 
+        network graph with linked nodes where one node is larger 
+        and has more mass than the other nodes. This chart illustrates 
+        how mass affects the network graph's layout alogirthm, 
+        as the smaller, lighter 
+        nodes are simultaneously attracted and 
+        repulsed by the larger, heavier node.</div>`
     },
     {
         chart: str,
         title: 'Streamgraph Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph'
+        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph',
+        description: `<p>Streamgraph Chart</p> <div>A purely decorative 
+        streamgraph chart visualizing 
+        the number of medals earned in the Winter Olympic Games 
+        for each participating country since 1924, 
+        using a relative scale. </div>`
     },
     {
         chart: cs,
-        title: 'Dynamic Candlestick Chart&nbsp;<span id="stop">(Stop animation)</span>',
-        demo: 'https://www.highcharts.com/demo/stock/live-candlestick'
+        title: `Dynamic Candlestick Chart&nbsp;
+        <span id="stop">(Stop animation)</span>`,
+        demo: 'https://www.highcharts.com/demo/stock/live-candlestick',
+        description: `<p>Dynamic Candlestick Chart</p>
+        <div>A purely decorative candlestick chart that updates with 
+        new data every 100 milliseconds.</div>`
     },
     {
         chart: barchartRace,
         title: 'Bar Chart Race',
-        demo: 'https://www.highcharts.com/demo/highcharts/bar-race'
+        demo: 'https://www.highcharts.com/demo/highcharts/bar-race',
+        description: `<p>Bar Chart Race</p>
+        <div>A purely decorative animated bar chart showing the growth in world 
+        population by country over the
+        course of 58 years, from 1960 to 2018. </div>`
     },
     {
         chart: spb,
         title: 'Split PackedBubble Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/packed-bubble-split'
+        demo: 'https://www.highcharts.com/demo/highcharts/packed-bubble-split',
+        description: `<p>Split PackedBubble Chart</p>
+        <div> This purely decorative chart shows carbon emissions 
+        around the world from 2014.
+        In the chart, smaller bubbles that represent countries are grouped 
+        inside larger bubbles that represent geographical regions.</div>`
     },
     {
         chart: dw,
         title: 'Dependency Wheel',
-        demo: 'https://www.highcharts.com/demo/highcharts/dependency-wheel'
+        demo: 'https://www.highcharts.com/demo/highcharts/dependency-wheel',
+        description: `<p>Dependency Wheel</p>
+        <div>A purely decorative chart showing a dependency wheel, 
+        where each point consists 
+        of multiple weighted links to other points. This chart 
+        type is often used to visualize data flow, and can 
+        be a striking way to illustrate relationships in data.</div>`
     },
     {
         chart: fc,
         title: 'Funnel Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/funnel'
+        demo: 'https://www.highcharts.com/demo/highcharts/funnel',
+        description: `<p>Funnel Chart</p>
+        <div>This purely decorative chart shows a sales funnel. 
+        A funnel chart is 
+        often used to visualize data from stages of a 
+        process. Readers can quickly identify bottlenecks 
+        in the process by comparing the area size 
+        variation of each stage. </div>`
     },
-    
+
     {
         chart: geoHeatMap,
         title: 'GeoHeatMap',
-        demo: 'https://www.highcharts.com/demo/maps/geoheatmap-orthographic'
+        demo: 'https://www.highcharts.com/demo/maps/geoheatmap-orthographic',
+        description: `<p>GeoHeatMap</p>
+        <div>Map of World</div>
+        <div>This purely decorative chart shows the density of 
+        cities in the world, 
+        plotted by their latitude and longitude. It uses the 
+        orthographic projection and
+        geoheatmap series type, which creates a grid of tiles that
+        correspond to the latitude and longitude of each data point.
+        The value of the geoheatmap is represented 
+        by the color of each tile.</div>`
     },
-     {
+    {
         chart: gantt,
         title: 'Gantt Chart',
-        demo: 'https://www.highcharts.com/demo/gantt/project-management'
+        demo: 'https://www.highcharts.com/demo/gantt/project-management',
+        description: `<p>Project Management Gantt Chart</p>
+        <div>This purely decorative gantt chart visualizes project 
+        tasks and their dependencies. 
+        The breakdown of the project is described in tasks which are listed on 
+        the vertical axis where the duration of the tasks is offset 
+        against the horizontal axis.</div>`
     },
-   
+
     {
         chart: strOld,
         title: 'Streamgraph Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph'
+        demo: 'https://www.highcharts.com/demo/highcharts/streamgraph',
+        description: `<p>Streamgraph Chart</p>
+        <div>Streamgraphs are a type of stacked area charts where 
+        the areas are displaced around a central axis. This 
+        purely decorative chart is showing price indices for air freight, 
+        importing and exporting.</div>`
     },
     {
         chart: arc,
         title: 'Arc Diagram',
-        demo: 'https://www.highcharts.com/demo/highcharts/arc-diagram'
+        demo: 'https://www.highcharts.com/demo/highcharts/arc-diagram',
+        description: `<p>Arc Diagram</p>
+        <div>A purely decorative arc diagram with circles of different 
+        sizes along the X axis, and connections drawn as 
+        arcs between them. From the chart we can see 
+        that Paris is the city with the most connections 
+        to other cities.</div>`
     },
     {
         chart: rb,
         title: 'Radial Bar Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/polar-radial-bar'
+        demo: 'https://www.highcharts.com/demo/highcharts/polar-radial-bar',
+        description: `<p>Radial Bar Chart</p>
+        <div>A purely decorative radial bar chart. It is similar to a 
+        bar chart, but the y-axis is circular.</div>`
     },
     {
         chart: sk,
         title: 'Sankey Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/sankey-diagram'
+        demo: 'https://www.highcharts.com/demo/highcharts/sankey-diagram',
+        description: `<p>Sankey Chart</p>
+        <div>This purely decorative sankey chart shows 
+        the total funding for Fintech companies in the 
+        internet software &amp; services through 2022.</div>`
     },
     {
         chart: cr,
         title: 'Column Range Chart',
-        demo: 'https://www.highcharts.com/demo/highcharts/columnrange'
+        demo: 'https://www.highcharts.com/demo/highcharts/columnrange',
+        description: `<p>Column Range Chart</p>
+        <div>This purely decorative columnrange chart displays a range 
+        between a lower and higher value for each point.</div>`
     }
 ];
 
-// for a11y
-const chartDescriptions = [
-    // jellypus
-    `<p>Network Graph</p><div>A purely decorative network graph with 
-    linked nodes where one node is larger and has more mass
-    than the other nodes. This chart illustrates how mass affects
-    the network graph's layout alogirthm, as the smaller, lighter 
-    nodes are simultaneously attracted and 
-    repulsed by the larger, heavier node.</div>`,
-    // streamgraph
-    `<p>Streamgraph Chart</p>
-    <div>A purely decorative streamgraph chart visualizing 
-    the number of medals earned in the Winter Olympic Games 
-    for each participating country since 1924, using a relative scale. </div>`,
-    // candlestick
-    `<p>Dynamic Candlestick Chart</p>
-    <div>A purely decorative candlestick chart that updates with 
-    new data every 100 milliseconds.</div>`,
-    // bar chart race
-    `<p>Bar Chart Race</p>
-    <div>A purely decorative animated bar chart showing the growth in world 
-    population by country over the
-    course of 58 years, from 1960 to 2018. </div>`,
-    // split packed bubble
-    `<p>Split PackedBubble Chart</p>
-    <div> This purely decorative chart shows carbon emissions 
-    around the world from 2014.
-     In the chart, smaller bubbles that represent countries are grouped 
-    inside larger bubbles that represent geographical regions.</div>`,
-    // dependency wheel
-    `<p>Dependency Wheel</p>
-    <div>A purely decorative chart showing a dependency wheel, 
-    where each point consists 
-    of multiple weighted links to other points. This chart 
-    type is often used to visualize data flow, and can 
-    be a striking way to illustrate relationships in data.</div>`,
-    // funnel
-    `<p>Funnel Chart</p>
-    <div>This purely decorative chart shows a sales funnel. 
-    A funnel chart is 
-    often used to visualize data from stages of a 
-    process. Readers can quickly identify bottlenecks 
-    in the process by comparing the area size 
-    variation of each stage. </div>`,
-    // geo heatmap
-    `<p>GeoHeatMap</p>
-    <div>Map of World</div>
-    <div>This purely decorative chart shows the density of 
-    cities in the world, 
-    plotted by their latitude and longitude. It uses the 
-    orthographic projection and
-    geoheatmap series type, which creates a grid of tiles that
-    correspond to the latitude and longitude of each data point.
-    The value of the geoheatmap is represented 
-    by the color of each tile.</div>`,
-    // gantt
-    `<p>Project Management Gantt Chart</p>
-    <div>This purely decorative gantt chart visualizes project 
-    tasks and their dependencies. 
-    The breakdown of the project is described in tasks which are listed on 
-    the vertical axis where the duration of the tasks is offset 
-    against the horizontal axis.</div>`,
-    // streamgraph
-    `<p>Streamgraph Chart</p>
-    <div>Streamgraphs are a type of stacked area charts where 
-    the areas are displaced around a central axis. This 
-    purely decorative chart is showing price indices for air freight, 
-    importing and exporting.</div>`,
-    // arc
-    `<p>Arc Diagram</p>
-    <div>A purely decorative arc diagram with circles of different 
-    sizes along the X axis, and connections drawn as 
-    arcs between them. From the chart we can see 
-    that Paris is the city with the most connections 
-    to other cities.</div>`,
-    // radial bar
-    `<p>Radial Bar Chart</p>
-    <div>A purely decorative radial bar chart. It is similar to a 
-    bar chart, but the y-axis is circular.</div>`,
-    // sankey
-    `<p>Sankey Chart</p>
-    <div>This purely decorative sankey chart shows 
-    the total funding for Fintech companies in the 
-    internet software &amp; services through 2022.</div>`,
-    // column range
-    `<p>Column Range Chart</p>
-    <div>This purely decorative columnrange chart displays a range 
-    between a lower and higher value for each point.</div>`
-];
 
 function getChartDescription(num) {
 
-    const container = document.getElementById('container');
+    const outerContainer = document.getElementById('outer-container');
+
+    if (document.getElementById('chart-description') !== null) {
+        document.getElementById('chart-description').remove();
+    }
 
     const description = document.createElement('div');
     description.setAttribute('aria-hidden', 'false');
     description.setAttribute('id', 'chart-description');
-    description.innerHTML = chartDescriptions[num];
+    description.innerHTML = charts[num].description;
 
     // Append the new div to the container
-    container.prepend(description);
-    container.setAttribute('aria-describedby', 'chart-description');
+    outerContainer.prepend(description);
+    outerContainer.setAttribute('aria-describedby', 'chart-description');
 
     const announce = document.getElementById('announce');
     announce.textContent = '';
-    const chartName = chartDescriptions[chartNum].match(/<p>(.*?)<\/p>/)[1];
+    const chartName = charts[num].description.match(/<p>(.*?)<\/p>/)[1];
 
     const newElem = document.createElement('span');
     newElem.textContent = 'New Chart: ' + chartName;
@@ -5931,7 +5921,6 @@ function makeChart() {
         getChartDescription(chartNum);
     }
 
-    
 
     chartNum = chartNum + 1;
 }
