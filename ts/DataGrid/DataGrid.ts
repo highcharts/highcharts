@@ -34,7 +34,7 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import U from '../Core/Utilities.js';
 
-const { makeDiv, makeHTMLElement } = DataGridUtils;
+const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
 const { merge } = U;
 
@@ -204,7 +204,7 @@ class DataGrid {
      *  Methods
      *
      * */
-    
+
     /**
      * Initializes the container of the data grid.
      *
@@ -213,11 +213,12 @@ class DataGrid {
      *
      */
     private initContainers(renderTo: string|HTMLElement): void {
-        const container =
-            (typeof renderTo === 'string') ? win.document.getElementById(renderTo) : renderTo;
+        const container = (typeof renderTo === 'string') ?
+            win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {
+            // eslint-disable-next-line no-console
             console.error(`
                 Rendering div not found. It is unable to find the HTML element
                 to render the DataGrid in.
