@@ -7252,40 +7252,41 @@ Highcharts.chart('container', {
                     },
                     // eslint-disable-next-line quotes
                     text: `Musk's Twitter aquisition`,
-                    x: 300
+                    x: 90
+                }]
+        }, {
+            labels: [{
+                point: {
+                    xAxis: 0,
+                    yAxis: 0,
+                    x: Date.UTC(2019, 2, 14),
+                    y: 16
                 },
-                {
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: Date.UTC(2019, 2, 14),
-                        y: 16
-                    },
-                    x: -60,
-                    text: 'Tesla Model Y announced'
+                x: -60,
+                text: 'Tesla Model Y announced'
+            },
+            {
+                point: {
+                    xAxis: 0,
+                    yAxis: 0,
+                    x: Date.UTC(2019, 10, 21),
+                    y: 20
                 },
-                {
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: Date.UTC(2019, 10, 21),
-                        y: 20
-                    },
-                    text: 'Tesla CyberTruck announced',
-                    x: -80,
-                    y: -50
+                text: 'Tesla CyberTruck announced',
+                x: -80,
+                y: -40
+            },
+            {
+                point: {
+                    xAxis: 0,
+                    yAxis: 0,
+                    x: Date.UTC(2020, 8, 22),
+                    y: 112
                 },
-                {
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: Date.UTC(2020, 8, 22),
-                        y: 112
-                    },
-                    x: -100,
-                    text: 'Tesla Model S Plaid announced'
-                }
-            ]
+                x: 100,
+                y: 50,
+                text: 'Tesla Model S and X Plaid announced'
+            }]
         }
     ],
 
