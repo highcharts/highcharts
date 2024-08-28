@@ -1991,14 +1991,6 @@ class Axis {
             this.tickInterval === 1
         ) ? 0.5 : 0; // #3202
 
-
-        // Get minorTickInterval
-        this.minorTickInterval =
-            minorTickIntervalOption === 'auto' &&
-            this.tickInterval ?
-                this.tickInterval / options.minorTicksPerMajor :
-                (minorTickIntervalOption as any);
-
         // When there is only one point, or all points have the same value on
         // this axis, then min and max are equal and tickPositions.length is 0
         // or 1. In this case, add some padding in order to center the point,
@@ -2123,6 +2115,13 @@ class Axis {
 
         }
         this.tickPositions = tickPositions;
+
+
+        // Get minorTickInterval
+        this.minorTickInterval =
+            minorTickIntervalOption === 'auto' && this.tickInterval ?
+                this.tickInterval / options.minorTicksPerMajor :
+                (minorTickIntervalOption as any);
 
 
         // Reset min/max or remove extremes based on start/end on tick
