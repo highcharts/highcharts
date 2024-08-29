@@ -615,7 +615,7 @@ async function dashboardsComponentUpdate(mqttData) {
 
         // Render HTML
         const el = document.querySelector(
-            'div#el-info .highcharts-dashboards-component-content'
+            'div#el-info .highcharts-dashboards-component'
         );
         el.innerHTML = '<div id="info-container">' + html + '</div';
     }
@@ -777,10 +777,6 @@ async function skMessageHandler(mqttData, topic) {
 
     // Update Dashboard
     await dashboardsComponentUpdate(mqttData);
-
-    // Update information in the connection bar
-    // eslint-disable-next-line no-use-before-define
-    connectBarInst.showStatus(`<b>${mqttData.name}</b>`);
 }
 
 
@@ -922,11 +918,15 @@ class SkMqtt {
 
     // eslint-disable-next-line class-methods-use-this
     onConnectionLost(resp) {
+        const st = skMqttInst.connectStatus;
+
         skMqttInst.connected = false;
-        skMqttInst.connectStatus.setStatus(false);
+        st.setStatus(false);
 
         if (resp.errorCode !== 0) {
-            skMqttInst.connectStatus.showError(resp.errorMessage);
+            st.showError(resp.errorMessage);
+        } else {
+            st.showStatus('Disconnected');
         }
     }
 
@@ -958,7 +958,7 @@ class SkMqtt {
         const st = this.connectStatus;
         st.setStatus(true);
         st.showStatus(
-            '<b>Tilkobla</b> ' + mqttConfig.host +
+            '<b>Connected</b> ' + mqttConfig.host +
             ':' + mqttConfig.port + ' (' + mqttConfig.user + ')'
         );
 
@@ -1030,12 +1030,16 @@ class SkConnectBar {
         if (el) {
             const showLogo = (window.innerWidth > 576) && connected;
             el.style.display = showLogo ? 'inline' : 'none';
-            this.elLogoText.style.display = showLogo ? 'none' : 'block';
+            if (this.elLogoText) {
+                this.elLogoText.style.display = showLogo ? 'none' : 'block';
+            }
         }
     }
 
     showStatus(msg, arg = '') {
-        this.elConnectStatus.innerHTML = msg + ' ' + arg;
+        if (this.elConnectStatus) {
+            this.elConnectStatus.innerHTML = msg + ' ' + arg;
+        }
     }
 
     showError(msg) {
@@ -1053,8 +1057,6 @@ class SkConnectBar {
             el.innerHTML +=
                 `<a class="dropdown-select" href="#">${key}</a>`;
         }
-
-        this.showStatus('numStation', names.length.toString());
     }
 
     clickHandler(event) {
@@ -1077,6 +1079,9 @@ class SkConnectBar {
                     nGenerators = 0;
                     selectedTopic = powerStationLookup[name].topic;
                     skMqttInst.resubscribe(selectedTopic);
+
+                    // Show the power station name in the connection bar
+                    this.elDropdownButton.innerHTML = name + '&nbsp;&#9662;';
                 }
             }
 

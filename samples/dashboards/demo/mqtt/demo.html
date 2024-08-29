@@ -17,13 +17,10 @@
     <!-- Top row, control and status bar -->
     <div class="row">
         <div class="cell" id="connect-bar">
-            <!-- Left "logo": data provider -->
-            <h1>Sognekraft</h1>
-            <!-- Switch for connecting/disconnecting the MQTT server -->
-            <div id="connect-switch">
-                <input id="connect-toggle" type="checkbox"></input>
-                <label for="connect-toggle"></label>
-            </div>
+            <h1 id="logo-text">Sognekraft</h1>
+            <!--
+            <img id="logo-img-1" src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
+            -->
             <!-- Dropdown for selecting power station -->
             <div id="dropdown-container">
                 <button id="dropdown-button"></button>
@@ -33,9 +30,11 @@
 					-->
                 </div>
             </div>
-            <span id="connect-status"></span>
-            <!-- Right "logo": data visualizer -->
-            <h1>Highcharts</h1>
+            <span id="connect-status">Not connected</span>
+            <div id="connect-switch">
+                <input id="connect-toggle" type="checkbox"></input>
+                <label for="connect-toggle"></label>
+            </div>
         </div>
     </div>
     <!-- Two rows for the power plant, i.e up to 2 generators ("aggregat") each -->
@@ -67,8 +66,9 @@
         <li>Click the switch in the top bar to connect to <b>Sognekraft</b>'s MQTT server.</li>
         <li>When connecting succeeds, a selection of power plants becomes available in the <b>Power Station</b>
             dropdown.</li>
-        <li>Select any of the power stations. This subscribes to the MQTT subjected that are particular to each power
-            station. The reporting interval is determined by the server but will normally be every five minutes.
+        <li>Select any of the power stations. This subscribes to the MQTT subjected that are particular to each
+            power station. The reporting interval is determined by the server but will normally be every two
+            minutes.
         </li>
         <li>The application only displays data for one power station at a time.</li>
     </ul>

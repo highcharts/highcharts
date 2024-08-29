@@ -264,7 +264,6 @@ div#connect-bar #connect-status {
 
     & b {
         color: #15f651;
-        font-size: 1.5vw;
     }
 }
 
@@ -282,6 +281,10 @@ div#connect-bar button:hover {
 }
 
 /* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
+#connect-switch {
+    margin: 0 5%;
+}
+
 #connect-switch #connect-toggle {
     display: none;
 }
