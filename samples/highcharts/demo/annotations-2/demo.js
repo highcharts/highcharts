@@ -7143,7 +7143,7 @@ const data = {
         }
     ]
 };
-// Now create the chart
+
 Highcharts.chart('container', {
     chart: {
         type: 'area',
@@ -7180,9 +7180,7 @@ Highcharts.chart('container', {
     annotations: [
         {
             draggable: '',
-            allowOverlap: true,
             labelOptions: {
-                allowOverlap: true,
                 shape: 'connector'
             },
             labels: [
@@ -7192,7 +7190,7 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2020, 7, 20),
-                        y: 106
+                        y: 111.55
                     },
                     x: -100,
                     y: 10,
@@ -7203,7 +7201,7 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2020, 11, 21),
-                        y: 172
+                        y: 179.13
                     },
                     text: 'Inclusion to S&P 500 Index',
                     x: -70,
@@ -7235,7 +7233,7 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2022, 2, 0),
-                        y: 257
+                        y: 258.47
                     },
                     // eslint-disable-next-line quotes
                     text: `Berlin's giga factory opening`,
@@ -7248,19 +7246,20 @@ Highcharts.chart('container', {
                         xAxis: 0,
                         yAxis: 0,
                         x: Date.UTC(2022, 3, 12),
-                        y: 304
+                        y: 306.37
                     },
                     // eslint-disable-next-line quotes
                     text: `Musk's Twitter aquisition`,
                     x: 90
                 }]
         }, {
+            draggable: '',
             labels: [{
                 point: {
                     xAxis: 0,
                     yAxis: 0,
                     x: Date.UTC(2019, 2, 14),
-                    y: 16
+                    y: 17.07
                 },
                 x: -60,
                 text: 'Tesla Model Y announced'
@@ -7270,7 +7269,7 @@ Highcharts.chart('container', {
                     xAxis: 0,
                     yAxis: 0,
                     x: Date.UTC(2019, 10, 21),
-                    y: 20
+                    y: 21.57
                 },
                 text: 'Tesla CyberTruck announced',
                 x: -80,
@@ -7281,7 +7280,7 @@ Highcharts.chart('container', {
                     xAxis: 0,
                     yAxis: 0,
                     x: Date.UTC(2020, 8, 22),
-                    y: 112
+                    y: 120.02
                 },
                 x: 100,
                 y: 50,
@@ -7324,8 +7323,15 @@ Highcharts.chart('container', {
                 new Date(val.EndDate).valueOf(),
                 parseFloat(val.Value)
             ]),
-            lineColor: Highcharts.getOptions().colors[1],
-            color: Highcharts.getOptions().colors[2],
+            lineColor: '#cc0000',
+            color: '#cc0000',
+            fillColor: {
+                linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                stops: [
+                    [0, '#818181'],
+                    [1, '#fafafa']
+                ]
+            },
             fillOpacity: 0.5,
             name: 'TSLA Stock Price',
             marker: {
