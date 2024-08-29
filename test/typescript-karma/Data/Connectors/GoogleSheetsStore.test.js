@@ -155,3 +155,102 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         .then(() => done())
 });
 
+
+test('GoogleDataConnector, worksheet 1', async (assert) => {
+    const registeredEvents = [];
+
+    const connector = new GoogleSheetsConnector({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA',
+        googleSpreadsheetRange: 'Sheet1',
+        firstRowAsNames: true
+    });
+
+    const done = assert.async(2); // event + promise
+
+    // Test after load event
+    registerConnectorEvents(connector, registeredEvents, assert);
+
+    connector.on('afterLoad', (e) => {
+        assert.deepEqual(
+            registeredEvents,
+            ['load', 'afterLoad'],
+            'Events are fired in the correct order'
+        );
+
+        const columnNames = e.table.getColumnNames();
+        assert.deepEqual(
+            columnNames,
+            ['0', 'John', 'Jane', 'Joe'],
+            'Column names are correct'
+        );
+
+        const firstColumn = e.table.getColumn('0');
+        assert.deepEqual(
+            firstColumn,
+            ['Apples', 'Oranges', 'Pears', 'Bananas'],
+            'The first column has correct content'
+        );
+
+        done();
+    });
+
+    connector
+        .load()
+        .catch((error) => assert.strictEqual(
+            error,
+            null,
+            'Test should not fail.'
+        ))
+        .then(() => done())
+});
+
+
+test('GoogleDataConnector, worksheet 2', async (assert) => {
+    const registeredEvents = [];
+
+    const connector = new GoogleSheetsConnector({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA',
+        googleSpreadsheetRange: 'Sheet2',
+        firstRowAsNames: true
+    });
+
+    const done = assert.async(2); // event + promise
+
+    // Test after load event
+    registerConnectorEvents(connector, registeredEvents, assert);
+
+    connector.on('afterLoad', (e) => {
+        assert.deepEqual(
+            registeredEvents,
+            ['load', 'afterLoad'],
+            'Events are fired in the correct order'
+        );
+
+        const columnNames = e.table.getColumnNames();
+        assert.deepEqual(
+            columnNames,
+            ['0', 'John', 'Jane', 'Joe'],
+            'Column names are correct'
+        );
+
+        const firstColumn = e.table.getColumn('0');
+        assert.deepEqual(
+            firstColumn,
+            ['Apricots', 'Melons', 'Papayas', 'Kiwis'],
+            'The first column has content from sheet 2'
+        );
+
+        done();
+    });
+
+    connector
+        .load()
+        .catch((error) => assert.strictEqual(
+            error,
+            null,
+            'Test should not fail.'
+        ))
+        .then(() => done())
+});

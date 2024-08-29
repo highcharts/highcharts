@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/pyramid3d
  * @requires highcharts
- * @requires highcharts-3d
+ * @requires highcharts/highcharts-3d
  * @requires highcharts/modules/cylinder
  * @requires highcharts/modules/funnel3d
  *

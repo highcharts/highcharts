@@ -302,6 +302,10 @@
     overflow: auto;
 }
 
+.highcharts-dashboards-cell:has(.highcharts-dashboards-component-placeholder) {
+    flex: 0 0 50%;
+}
+
 /* Edit mode */
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active {
@@ -331,7 +335,7 @@
 .highcharts-dashboards-edit-enabled .highcharts-dashboards-edit-cell-highlight {
     box-shadow: 0 0 0 99998px rgba(var(--highcharts-neutral-color-80), 0.5);
     position: relative;
-    z-index: 9997;
+    z-index: 9999;
     pointer-events: auto;
     transition: all 0.5s ease;
     box-sizing: border-box;

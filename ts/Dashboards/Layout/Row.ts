@@ -19,8 +19,9 @@
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
-import type Layout from './Layout.js';
+import type Layout from './Layout';
 import type Serializable from '../Serializable';
+
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -553,6 +554,34 @@ namespace Row {
          * A unique id for the row.
          **/
         id?: string;
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
         /**
          * The id of the container element.
          **/

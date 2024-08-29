@@ -142,6 +142,7 @@ const EditGlobals: EditGlobals = {
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
+        htmlInput: 'HTML',
         id: 'Id',
         off: 'off',
         on: 'on',
@@ -152,7 +153,7 @@ const EditGlobals: EditGlobals = {
         viewFullscreen: 'View in full screen',
         sidebar: {
             HTML: 'HTML',
-            layout: 'Layout',
+            row: 'Row',
             Highcharts: 'Highcharts',
             DataGrid: 'DataGrid',
             KPI: 'KPI'
@@ -373,9 +374,9 @@ namespace EditGlobals {
          */
         HTML: string;
         /**
-         * @default 'Layout'
+         * @default 'Row'
          */
-        layout: string;
+        row: string;
         /**
          * @default 'Highcharts'
          */
