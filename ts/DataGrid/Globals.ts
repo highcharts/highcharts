@@ -76,7 +76,7 @@ namespace Globals {
         rowElement: classNamePrefix + 'row',
         rowOdd: classNamePrefix + 'row-odd',
         hoveredRow: classNamePrefix + 'hovered-row',
-        columnElement: classNamePrefix + 'mock-column',
+        columnElement: classNamePrefix + 'column',
         hoveredCell: classNamePrefix + 'hovered-cell',
         hoveredColumn: classNamePrefix + 'hovered-column',
         focusedCell: classNamePrefix + 'focused-cell',
