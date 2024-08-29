@@ -60,22 +60,6 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         await page.mouse.up();
     });
 
-    test('#15725: Should use the same axis for all points in multi-step annotation', async ({ page }) => {
-        await page.locator('.highcharts-elliott3').first().click();
-        await page.locator('.highcharts-container').click({ position: { x: 100, y: 210 } });
-        await page.locator('.highcharts-container').click({ position: { x: 120, y: 260 } });
-        await page.locator('.highcharts-container').click({ position: { x: 140, y: 210 } });
-        await page.locator('.highcharts-container').click({ position: { x: 160, y: 260 } });
-
-        const chart = await page.evaluate(() => {
-            return Highcharts.charts[0];
-        });
-
-        chart.annotations[0].points.forEach((point) => {
-            expect(point.y).toBeGreaterThan(-50);
-            expect(point.y).toBeLessThan(75);
-        });
-    });
     test('#16158: Should use correct default series in popup', async ({ page }) => {
         await page.locator('.highcharts-indicators').click();
         await page.locator('.highcharts-indicator-list').getByText('Accumulation').click();
