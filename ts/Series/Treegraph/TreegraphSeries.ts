@@ -146,7 +146,7 @@ class TreegraphSeries extends TreemapSeries {
                 // Check links for overlap
                 if (!splat(series.options.dataLabels)[0].allowOverlap) {
 
-                    for (const link of series.links) {
+                    for (const link of (series.links || [])) {
                         if (link.dataLabel) {
                             linkLabels.push(link.dataLabel);
                         }
