@@ -5,10 +5,10 @@
 //
 
 // Support for Nynorsk (nn) and English (en)
-const lang = languageSupport('nn');
+const lang = languageSupport('en');
 
 // Configuration for power generator
-const stationConfig = {
+const powerPlantConfig = {
     // Fields to display in tooltip and info table
     infoFields: ['q_turb', 'q_min', 'q_max', 'P_gen', 'P_max'],
 
@@ -60,7 +60,7 @@ const defaultZoom = 9;
 let dashboard = null;
 let dataHandler = null;
 
-// Max generators per power station
+// Max generators per power plant
 let maxPowerGenerators;
 
 
@@ -98,12 +98,12 @@ async function dashboardCreate() {
             components: []
         };
 
-        // Information on power station level
+        // Information on power plant level
         dashConfig.components.push(
             createInfoComponent()
         );
 
-        // Map on power station level
+        // Map on power plant level
         dashConfig.components.push(
             createMapComponent()
         );
@@ -151,8 +151,8 @@ async function dashboardCreate() {
         };
     }
 
-    // Custom HTML component for displaying power station, reservoir and
-    // water intake parameters. If a description of the power station
+    // Custom HTML component for displaying power plant, reservoir and
+    // water intake parameters. If a description of the power plant
     // is available, it is also described here.
     function createInfoComponent() {
         return {
@@ -166,7 +166,7 @@ async function dashboardCreate() {
         };
     }
 
-    // Highcharts map with points for power station, reservoirs and intakes.
+    // Highcharts map with points for power plant, reservoirs and intakes.
     function createMapComponent() {
         return {
             type: 'Highcharts',
@@ -375,7 +375,7 @@ const powerStationLookup = {};
 let nGenerators;
 
 
-// Maintain power station list and selection menu
+// Maintain power plant list and selection menu
 function updatePowerStationList(data, topic) {
     const stationName = data.name;
     if (stationName in powerStationLookup) {
@@ -481,7 +481,7 @@ async function dashboardsComponentUpdate(mqttData) {
         const name = lang.tr('Name');
 
         // Fields to display
-        // const fields = stationConfig.infoFields;
+        // const fields = powerPlantConfig.infoFields;
         let colHtml = getHeaderFields(fields);
         const colHtmlUnit = getUnitFields(fields);
 
@@ -546,21 +546,21 @@ async function dashboardsComponentUpdate(mqttData) {
             return;
         }
 
-        // Create tooltip content for power station
+        // Create tooltip content for power plant
         let infoItems = [];
         data.aggs.forEach(item => {
             infoItems = infoItems.concat(
-                getInfoRecord(item, stationConfig.infoFields)
+                getInfoRecord(item, powerPlantConfig.infoFields)
             );
         });
 
-        // Add power station map point
+        // Add power plant map point
         const location = data.location;
         await mapPoints.addPoint({
             name: data.name,
             lon: location.lon,
             lat: location.lat,
-            marker: stationConfig.mapMarker,
+            marker: powerPlantConfig.mapMarker,
             info: infoItems
         });
 
@@ -570,7 +570,7 @@ async function dashboardsComponentUpdate(mqttData) {
         // Add intake map points if applicable
         await addIntakeMarkers(mapPoints, data);
 
-        // Center map at the new power station location
+        // Center map at the new power plant location
         const mapView = mapComp.chart.mapView;
         await mapView.setView(
             [location.lon, location.lat],
@@ -585,7 +585,7 @@ async function dashboardsComponentUpdate(mqttData) {
             title: data.name
         });
 
-        // Description of power station (if available)
+        // Description of power plant (if available)
         let html = '';
         if (data.description !== null) {
             html = `<span class="pw-descr">
@@ -598,9 +598,9 @@ async function dashboardsComponentUpdate(mqttData) {
             html += `<h3>${loc.lon} (lon.), ${loc.lat} (lat.)</h3>`;
         }
 
-        // Power station info
+        // Power plant info
         html += createInfoTable(
-            'Power station', stationConfig.infoFields, data.aggs
+            'Power plant', powerPlantConfig.infoFields, data.aggs
         );
 
         // Intakes info
@@ -643,7 +643,7 @@ async function dashboardsComponentUpdate(mqttData) {
             }
         };
 
-        // Add generator name only if the station has multiple generators
+        // Add generator name only if the plant has multiple generators
         let aggName = mqttData.name;
         if (numGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
@@ -816,7 +816,7 @@ class SkMqtt {
         // Default connect handler, console messages only
         this.connectStatus = {
             showError: msg => console.error(msg),
-            setStatus: state => console.log('Connect status: ' + state),
+            setConnectState: state => console.log('Connect status: ' + state),
             showStatus: (msg, arg = '') => console.log(msg, arg),
             setLogoVisibility: visible =>
                 console.log('Logo visibility: ' + visible)
@@ -921,7 +921,7 @@ class SkMqtt {
         const st = skMqttInst.connectStatus;
 
         skMqttInst.connected = false;
-        st.setStatus(false);
+        st.setConnectState(false);
 
         if (resp.errorCode !== 0) {
             st.showError(resp.errorMessage);
@@ -932,7 +932,7 @@ class SkMqtt {
 
     onFailure(resp) {
         this.connected = false;
-        this.connectStatus.setStatus(false);
+        this.connectStatus.setConnectState(false);
         this.connectStatus.showError(resp.errorMessage);
     }
 
@@ -956,10 +956,10 @@ class SkMqtt {
 
         // Update status information
         const st = this.connectStatus;
-        st.setStatus(true);
+        st.setConnectState(true);
         st.showStatus(
             '<b>Connected</b> ' + mqttConfig.host +
-            ':' + mqttConfig.port + ' (' + mqttConfig.user + ')'
+            ':' + mqttConfig.port
         );
 
         // Subscribe if a topic exists
@@ -1001,17 +1001,17 @@ class SkConnectBar {
         // Connect/Disconnect button
         this.elToggle = document.getElementById('connect-toggle');
 
-        // Dropdown menu button for selecting power station
+        // Dropdown menu button for selecting power plant
         this.elDropdown = document.getElementById('dropdown-container');
         this.elDropdownButton = document.getElementById('dropdown-button');
         this.elDropdownContent = document.getElementById('dropdown-content');
 
-        this.elDropdownButton.title = lang.tr('powerStationHelp');
+        this.elDropdownButton.title = lang.tr('powerPlantHelp');
         this.elDropdownButton.innerHTML =
-            lang.tr('Power station') + '&nbsp;&#9662;';
+            lang.tr('Power plant') + '&nbsp;&#9662;';
     }
 
-    setStatus(connected) {
+    setConnectState(connected) {
         const st = this.elConnectBar.style;
         st.backgroundColor = connected ?
             this.color.onColor : this.color.offColor;
@@ -1023,12 +1023,11 @@ class SkConnectBar {
         this.elToggle.checked = connected;
     }
 
-    setLogoVisibility(connected) {
-        // Use logo image only when connected and on a wider screen,
-        // otherwise text only.
+    setLogoVisibility() {
+        // Use logo image only on a wider screen, otherwise text only.
         const el = this.elLogo;
         if (el) {
-            const showLogo = (window.innerWidth > 576) && connected;
+            const showLogo = (window.innerWidth > 576);
             el.style.display = showLogo ? 'inline' : 'none';
             if (this.elLogoText) {
                 this.elLogoText.style.display = showLogo ? 'none' : 'block';
@@ -1080,12 +1079,12 @@ class SkConnectBar {
                     selectedTopic = powerStationLookup[name].topic;
                     skMqttInst.resubscribe(selectedTopic);
 
-                    // Show the power station name in the connection bar
+                    // Show the power plant name in the connection bar
                     this.elDropdownButton.innerHTML = name + '&nbsp;&#9662;';
                 }
             }
 
-            // Hide the power station menu if the user clicks outside of it
+            // Hide the power plant dropdown if the user clicks outside of it
             const dropdowns =
                 document.getElementsByClassName('dropdown-content');
             for (let i = 0; i < dropdowns.length; i++) {
@@ -1107,9 +1106,7 @@ window.onload = () => {
 
     // Hide the logo on small devices
     window.onresize = () => {
-        connectBarInst.setLogoVisibility(
-            skMqttInst.isConnected()
-        );
+        connectBarInst.setLogoVisibility();
     };
 
     // Initialize the data transport layer (MQTT)
@@ -1119,7 +1116,7 @@ window.onload = () => {
     skMqttInst.connectStatus = connectBarInst;
 
     // Determine the maximum number of supported power generators ("aggregat")
-    // per power station. The number is determined by the definition
+    // per power plant. The number is determined by the definition
     // in the HTML file.
     maxPowerGenerators = document.getElementsByClassName('el-aggr').length;
 
@@ -1145,7 +1142,7 @@ function languageSupport(lang) {
         Name: {
             nn: 'Namn'
         },
-        'Power station': {
+        'Power plant': {
             nn: 'Kraftverk'
         },
         'Location unknown': {
@@ -1153,14 +1150,10 @@ function languageSupport(lang) {
         },
         mapTitle: {
             nn: 'Kraftverk med magasin og inntak',
-            en: 'Power station with water reservoirs and intakes'
+            en: 'Power plant with water reservoirs and intakes'
         },
-        numStation: {
-            nn: 'Tilgjengelege: ',
-            en: 'Available: '
-        },
-        powerStationHelp: {
-            en: 'Click to select a power station',
+        powerPlantHelp: {
+            en: 'Click to select a power plant',
             nn: 'Klikk for å velgja kraftstasjon'
         },
 
