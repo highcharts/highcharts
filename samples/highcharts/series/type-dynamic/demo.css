@@ -5,7 +5,7 @@
 
 #button-row {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0.5rem auto;
     text-align: right;
     font-size: 0;
 }

@@ -12,3 +12,19 @@
     font-style: italic;
     color: rgb(207, 48, 12);
 }
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+}
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+}
