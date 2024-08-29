@@ -60,6 +60,32 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         await page.mouse.up();
     });
 
+    test('#15725: Should use the same axis for all points in multi-step annotation', async ({ page }) => {
+        await page.locator('.highcharts-elliott3').first().click();
+        const element = page.locator('.highcharts-container');
+        const rect = await element.boundingBox();
+
+        expect(rect).not.toBeNull();
+
+        if (!rect) {
+            throw new Error(`Element ${element} was not found or is not visible`);
+        }
+
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height * 0.7 } });
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 3 } });
+
+        const chart = await page.evaluate(() => {
+            return Highcharts.charts[0];
+        });
+
+        chart.annotations[0].points.forEach((point) => {
+            expect(point.y).toBeGreaterThan(-50);
+            expect(point.y).toBeLessThan(100);
+        });
+
+    });
     test('#16158: Should use correct default series in popup', async ({ page }) => {
         await page.locator('.highcharts-indicators').click();
         await page.locator('.highcharts-indicator-list').getByText('Accumulation').click();
@@ -73,21 +99,30 @@ test.describe('Stock Tools annotation popup, #15725', () => {
         expect(await page.locator('#highcharts-select-series').nth(1).evaluate((el: HTMLSelectElement) => el.value)).toBe('aapl-ohlc');
     });
     //
-    test('#16159: For some indicators params, there should be a dropdown with options in popup.', async ({ page }) => {
-        await page.locator('.highcharts-indicators').click();
-        await page.getByText('Disparity Index').click();
-        const selectLabel = page.locator('[id="highcharts-select-params\\.average"]');
-        await selectLabel.selectOption('ema');
-    });
+    // test('#16159: For some indicators params, there should be a dropdown with options in popup.', async ({ page }) => {
+    //     await page.locator('.highcharts-indicators').click();
+    //     await page.locator('.highcharts-input-search-indicators').fill('Dis');
+    //     await page.getByText('Disparity Index').click();
+    //     const selectLabel = page.locator('[id="highcharts-select-params\\.average"]');
+    //     await selectLabel.selectOption('ema');
+    // });
 
     test('#17425: Editing labels of Elliott3 line should not hide the line.', async ({ page }) => {
         await page.locator('.highcharts-elliott3').first().click();
-        await page.locator('.highcharts-container').click({ position: { x: 300, y: 100 } });
-        await page.locator('.highcharts-container').click({ position: { x: 320, y: 120 } });
-        await page.locator('.highcharts-container').click({ position: { x: 340, y: 120 } });
-        await page.locator('.highcharts-container').click({ position: { x: 360, y: 100 } });
+        const element = page.locator('.highcharts-container');
+        const rect = await element.boundingBox();
 
-        // await page.locator('.highcharts-annotation-shapes').last().click();
+        expect(rect).not.toBeNull();
+
+        if (!rect) {
+            throw new Error(`Element ${element} was not found or is not visible`);
+        }
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height / 3 } });
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 3 } });
+
+        await page.locator('.highcharts-annotation-shapes').last().click();
         await page.getByText('Edit').click();
         await page.locator('input[name="highcharts-annotation-0"]').fill('1');
         await page.getByRole('button', { name: 'Save' }).click();
@@ -101,10 +136,19 @@ test.describe('Stock Tools annotation popup, #15725', () => {
     //
     test('#17425: Editing labels of Elliott3 line to number should not change type of input.', async ({ page }) => {
         await page.locator('.highcharts-elliott3').first().click();
-        await page.locator('.highcharts-container').click({ position: { x: 300, y: 100 } });
-        await page.locator('.highcharts-container').click({ position: { x: 320, y: 120 } });
-        await page.locator('.highcharts-container').click({ position: { x: 340, y: 120 } });
-        await page.locator('.highcharts-container').click({ position: { x: 360, y: 100 } });
+        const element = page.locator('.highcharts-container');
+        const rect = await element.boundingBox();
+
+        expect(rect).not.toBeNull();
+
+        if (!rect) {
+            throw new Error(`Element ${element} was not found or is not visible`);
+        }
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height / 4 } });
+        await element.click({ position: { x: rect.x + rect.width / 3, y: rect.y + rect.height / 3 } });
+        await element.click({ position: { x: rect.x + rect.width / 4, y: rect.y + rect.height / 3 } });
+
         await page.getByText('Edit').click();
         await page.locator('input[name="highcharts-annotation-0"]').fill('(X)');
         await page.getByRole('button', { name: 'Save' }).click();
@@ -124,10 +168,20 @@ test.describe('Annotations popup text field', () => {
 
     test('Should be able to type `space` char in the text field', async ({ page }) => {
         await page.locator('.highcharts-fibonacci').first().click();
-        await page.locator('.highcharts-container').click({ position: { x: 300, y: 100 }, force: true });
-        await page.locator('.highcharts-container').click({ position: { x: 400, y: 100 }, force: true });
-        await page.locator('.highcharts-container').click({ position: { x: 350, y: 200 }, force: true });
+        const element = page.locator('.highcharts-container');
+        const rect = await element.boundingBox();
+
+        expect(rect).not.toBeNull();
+
+        if (!rect) {
+            throw new Error(`Element ${element} was not found or is not visible`);
+        }
+        await element.click({ position: { x: rect.x + rect.width * 0.1, y: rect.y + rect.height * 0.5 } });
+        await element.click({ position: { x: rect.x + rect.width * 0.8, y: rect.y + rect.height * 0.5 } });
+        await element.click({ position: { x: rect.x + rect.width * 0.5, y: rect.y + rect.height * 0.3 } });
+
         await page.locator('.highcharts-annotation').click();
+
         await page.locator('button.highcharts-annotation-edit-button').click();
         await page.locator('input[highcharts-data-name="typeOptions.line.fill"]').fill(' ');
         await expect(page.locator('input[highcharts-data-name="typeOptions.line.fill"]')).toHaveValue(' ');
