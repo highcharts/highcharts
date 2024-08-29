@@ -79,23 +79,27 @@ const connConfig = {
         }
         return modifiedData;
     },
-    connectEvent: (isConnected, host, port, user) => {
+    connectEvent: event => {
+        const { isConnected, host, port, user } = event.detail;
         setConnectStatus(isConnected);
         // eslint-disable-next-line max-len
         logAppend(`Client ${isConnected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
     },
-    subscribeEvent: (isSubscribed, topic) => {
+    subscribeEvent: event => {
+        const { isSubscribed, topic } = event.detail;
         logAppend(
             `Client ${isSubscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
         );
     },
-    packetEvent: (topic, data, packetCount) => {
-        if (packetCount === 1) {
-            setPowerPlantName(topic, data.name);
+    packetEvent: event => {
+        const { topic, count } = event.detail;
+        if (count === 1) {
+            setPowerPlantName(topic, event.data.name);
         }
-        logAppend(`Packet #${packetCount} received: ${topic}`);
+        logAppend(`Packet #${count} received: ${topic}`);
     },
-    errorEvent: (code, message) => {
+    errorEvent: event => {
+        const { code, message } = event.detail;
         setConnectStatus(false);
         // eslint-disable-next-line max-len
         logAppend(`<span class="error">${message} (error code #${code})</span>`);
@@ -348,38 +352,8 @@ class MQTTConnector extends DataConnector {
         const connector = this;
         connectorTable[clientId] = connector;
 
-        // Process MQTT specific connector events
-        connector.on('connectEvent', event => {
-            const eventCallback = connector.options.connectEvent;
-            if (eventCallback) {
-                const ed = event.detail;
-                eventCallback(ed.connected, ed.host, ed.port, ed.user);
-            }
-        });
-
-        connector.on('subscribeEvent', event => {
-            const eventCallback = connector.options.subscribeEvent;
-            if (eventCallback) {
-                const ed = event.detail;
-                eventCallback(ed.subscribed, ed.topic);
-            }
-        });
-
-        connector.on('packetEvent', event => {
-            const eventCallback = connector.options.packetEvent;
-            if (eventCallback) {
-                const ed = event.detail;
-                eventCallback(ed.topic, event.data, ed.count);
-            }
-        });
-
-        connector.on('errorEvent', event => {
-            const eventCallback = connector.options.errorEvent;
-            if (eventCallback) {
-                const ed = event.detail;
-                eventCallback(ed.errorCode, ed.errorMessage);
-            }
-        });
+        // Register events
+        connector.registerEvents();
     }
 
     /* *
@@ -502,7 +476,7 @@ class MQTTConnector extends DataConnector {
         this.emit({
             type: 'connectEvent',
             detail: {
-                connected: true,
+                isConnected: true,
                 host: host,
                 port: port,
                 user: user
@@ -592,10 +566,49 @@ class MQTTConnector extends DataConnector {
         this.emit({
             type: 'errorEvent',
             detail: {
-                errorCode: response.errorCode,
-                errorMessage: response.errorMessage
+                code: response.errorCode,
+                message: response.errorMessage
             }
         });
+    }
+
+    /**
+     * Register events
+     *
+     */
+    registerEvents() {
+        const connector = this;
+        // Register general connector events (load, afterLoad, loadError)
+        // Not used, included for reference only.
+        connector.on('load', event => {
+            console.log('Connector load event:', event);
+        });
+
+        connector.on('afterLoad', event => {
+            console.log('Connector afterLoad event:', event);
+        });
+
+        connector.on('loadError', event => {
+            console.log('Connector loadError event:', event);
+        });
+
+        // Register MQTT specific connector events
+        if (connector.options.connectEvent) {
+            connector.on('connectEvent', connector.options.connectEvent);
+        }
+
+        if (connector.options.subscribeEvent) {
+            connector.on('subscribeEvent', connector.options.subscribeEvent);
+        }
+
+        if (connector.options.packetEvent) {
+            connector.on('packetEvent', connector.options.packetEvent);
+        }
+
+        if (connector.options.errorEvent) {
+            connector.on('errorEvent', connector.options.errorEvent);
+        }
+
     }
 }
 

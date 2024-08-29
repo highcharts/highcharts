@@ -201,7 +201,7 @@ The data in an MQTT packet is a JSON object, consisting of the *topic* and a app
 
 ##### Connecting
 Establish a data link to a MQTT broker typically consists of these steps:
-* Connect to the server with a given host name and port number, and optional authentication credentials (user, password).
+* Connect to the server with a given host name and port number, with optional authentication (user, password).
 * Wait for a successful connection.
 * Subscribe to one or more topics
 * Wait for confirmation of the subscription.
@@ -224,13 +224,15 @@ In addition, the `MQTTConnector` provides these custom methods:
 
 In a typical application these are not needed as the whole connect/subscribe sequence is executed by default in the `load` method.
 
-The `MQTT` connector supports the following callbacks (event handlers):
+The `MQTT` connector supports the following optional callbacks:
 
 * beforeParse - fired before an incoming packet is parsed
-* connectEvent - covers both connect/disconnect
-* subscribeEvent - covers subscribe/unsubscribe
+* connectEvent - handles both connect/disconnect
+* subscribeEvent - handles subscribe/unsubscribe
 * packetEvent - fired on an incoming packet
 * errorEvent - reports errors from the MQTT client or the connector
+
+The standard `DataConnector` events `load`, `afterLoad` and `loadError` are not used but stub callbacks are provided for reference.
 
 Although the `JSONConnector` and the `MQTTConnector` have much in common there are some important differences:
 
@@ -257,9 +259,9 @@ The client options are the following:
 
 #### The sample application
 
-The `MQTTConnector`is implemented as part of a sample application that uses data from the Norwegian electricity producer `Sognekraft`. The incoming payload is a hierarchical JSON structure with many measured values but for the purpose of this sample we use only the generated power. The connection uses SSL encryption and is password protected, receiving data on a `WebSocket` (TCP/IP).
+The `MQTTConnector`is implemented as part of a sample application that uses data from the Norwegian electricity producer `Sognekraft`, featuring two power plants. The incoming payload is a hierarchical JSON structure with many measured values but for the purpose of this example we display only the generated power. The connection uses SSL encryption and is password protected, receiving data on a `WebSocket` (TCP/IP).
 
-The data is provided as one topic for each of the two power plants, and each topic maps to a connector instance. In the demo we thus use two connectors.
+The data is provided as one topic for each of the two power plants, and each topic maps to one connector instance. In this example we thus use two connectors.
 
 Each connector provides data for a `spline`chart and a `DataGrid` component. The timestamped events and the raw data are displayed in a `HTML component` as unformatted text. The user can clear the log.
 
