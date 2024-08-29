@@ -42,33 +42,9 @@ jobs:
         cd utils
         npm i
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-
-    - name: Update Chrome
-      if: ${{ runner.os == 'Linux' }}
+    - name: Run utils
       run: |
-        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        sudo apt update
-        sudo apt --only-upgrade install google-chrome-stable
-
-    - name: Chrome info
-      run: |
-        set CHROME_BIN $(which chrome || which google-chrome || which chromium)
-        echo $CHROME_BIN
-        $CHROME_BIN --version
-    - uses: nanasess/setup-chromedriver@v2
-    - uses: browser-actions/setup-firefox@latest
-      with:
-        firefox-version: latest-esr
-    - uses: browser-actions/setup-geckodriver@latest
-
-    - name: Setup Display
-      run: |
-        chromedriver --url-base=/wd/hub &
-        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-
+        node utils/server --localOnly &
 
     - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
       uses: browserstack/github-actions/setup-env@master
@@ -87,7 +63,6 @@ jobs:
         BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_KEY }}
         BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
       run: |
-        export DISPLAY=:99
         npx browserstack-node-sdk playwright test
     - uses: actions/upload-artifact@v4
       if: always()
