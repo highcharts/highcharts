@@ -732,7 +732,10 @@ namespace SVGRenderer3D {
         const renderer = this,
             wrapper = renderer.g(),
             elementProto = renderer.Element.prototype,
-            customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
+            customAttribs = [
+                'alpha', 'beta',
+                'x', 'y', 'r', 'innerR', 'start', 'end', 'depth'
+            ];
 
         /**
          * Get custom attributes. Don't mutate the original object and return an
@@ -741,7 +744,7 @@ namespace SVGRenderer3D {
          */
         function suckOutCustom(
             params: SVGAttributes3D
-        ): (SVGAttributes3D|undefined) {
+        ): (Array<SVGAttributes3D>|false) {
             const ca = {} as SVGAttributes;
 
             let hasCA = false,
@@ -756,7 +759,7 @@ namespace SVGRenderer3D {
                     hasCA = true;
                 }
             }
-            return hasCA ? [ca, params] : (false as any);
+            return hasCA ? [ca, params] : false;
         }
 
         attribs = merge(attribs);
@@ -876,15 +879,24 @@ namespace SVGRenderer3D {
             this: SVGElement,
             params?: (string|SVGAttributes)
         ): (number|string|SVGElement) {
-            let ca, paramArr;
-
             if (typeof params === 'object') {
-                paramArr = suckOutCustom(params);
+                const paramArr = suckOutCustom(params);
                 if (paramArr) {
-                    ca = (paramArr as any)[0];
-                    arguments[0] = (paramArr as any)[1];
+                    const ca = paramArr[0];
+                    arguments[0] = paramArr[1];
+
+                    // Translate alpha and beta to rotation
+                    if (ca.alpha !== void 0) {
+                        ca.alpha *= deg2rad;
+                    }
+                    if (ca.beta !== void 0) {
+                        ca.beta *= deg2rad;
+                    }
+
                     extend(wrapper.attribs, ca);
-                    wrapper.setPaths(wrapper.attribs as any);
+                    if (wrapper.attribs) {
+                        wrapper.setPaths(wrapper.attribs);
+                    }
                 }
             }
             return elementProto.attr.apply(wrapper, arguments as any);
@@ -900,26 +912,22 @@ namespace SVGRenderer3D {
             complete?: Function
         ): SVGElement {
             const from = this.attribs,
-                randomProp = (
-                    'data-' + Math.random().toString(26).substring(2, 9)
-                );
+                randomProp = 'data-' +
+                    Math.random().toString(26).substring(2, 9);
 
-            let paramArr,
-                to: SVGAttributes;
+            let to: SVGAttributes;
 
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
             delete params.center;
             delete params.z;
-            delete params.alpha;
-            delete params.beta;
 
             const anim = animObject(
                 pick(animation, this.renderer.globalAnimation)
             );
 
             if (anim.duration) {
-                paramArr = suckOutCustom(params);
+                const paramArr = suckOutCustom(params);
                 // Params need to have a property in order for the step to run
                 // (#5765, #7097, #7437)
                 wrapper[randomProp] = 0;
@@ -927,7 +935,7 @@ namespace SVGRenderer3D {
                 wrapper[randomProp + 'Setter'] = H.noop;
 
                 if (paramArr) {
-                    to = (paramArr as any)[0]; // Custom attr
+                    to = paramArr[0]; // Custom attr
                     anim.step = function (a: unknown, fx: Fx): void {
                         const interpolate = (key: string): number => (
                             (from as any)[key] + (
