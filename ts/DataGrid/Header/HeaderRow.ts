@@ -109,8 +109,6 @@ class HeaderRow extends Row {
             const columnId = typeof column === 'string' ?
                 column : column.columnId;
             const dataColumn = vp.getColumn(columnId || '');
-            const useHTML = (typeof column !== 'string') ?
-                column.useHTML : void 0;
             const headerFormat = (typeof column !== 'string') ?
                 column.headerFormat : void 0;
             const className = (typeof column !== 'string') ?
@@ -137,10 +135,6 @@ class HeaderRow extends Row {
 
             if (headerFormat) {
                 headerCell.userOptions.headerFormat = headerFormat;
-            }
-
-            if (useHTML) {
-                headerCell.userOptions.useHTML = useHTML;
             }
 
             if (className) {

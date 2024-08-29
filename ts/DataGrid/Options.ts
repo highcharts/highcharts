@@ -227,16 +227,6 @@ export interface ColumnOptions {
     headerFormat?: string;
 
     /**
-     * Weather to use HTML to render the cell content. When enabled, other
-     * elements than text can be added to the cell ie. images.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/custom-html | Custom HTML}
-     *
-     * @default false
-     */
-    useHTML?: boolean;
-
-    /**
      * Whether to make the column cells editable `true`, or read-only `false`.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Editable columns disabled}
@@ -409,11 +399,6 @@ export interface GroupedHeaderOptions {
      * The format of the column header. Use `{id}` to display the column id.
      */
     headerFormat?: string;
-    /**
-     * Weather to use HTML to render the cell content. When enabled, other
-     * elements than text can be added to the cell ie. images.
-     */
-    useHTML?: boolean;
     /**
      * The custom CSS class name for the header.
      */

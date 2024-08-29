@@ -33,7 +33,7 @@ import ColumnSorting from './../Actions/ColumnSorting.js';
 import Utilities from '../../Core/Utilities.js';
 
 const { format } = Templating;
-const { makeHTMLElement } = DGUtils;
+const { makeHTMLElement, isHTML } = DGUtils;
 const { merge } = Utilities;
 
 
@@ -128,7 +128,7 @@ class HeaderCell extends Cell {
         }, this.htmlElement);
         this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
-        if (userOptions.useHTML) {
+        if (isHTML(this.value)) {
             this.renderHTMLCellContent(
                 this.value,
                 this.contentWrapper
