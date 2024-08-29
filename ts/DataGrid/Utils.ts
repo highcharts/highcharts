@@ -126,12 +126,10 @@ namespace DataGridUtils {
     }
 
     /**
-     * Check HTML tags in the string.
+     * Check if there's a possibility that the given string is an HTML (contains '<').
      *
      * @param str
      * Text to verify.
-     *
-     * @returns
      */
     export function isHTML(str: string): boolean {
         return str.indexOf('<') !== -1;
