@@ -10,19 +10,21 @@ test('DataGrid update methods', async function (assert) {
         return;
     }
 
-    const dataTable = new DataGrid.DataTable({
-        columns: {
-            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-            weight: [100, 40, 0.5, 200],
-            price: [1.5, 2.53, 5, 4.5]
-        }
-    })
-
     const dataGrid = await DataGrid.dataGrid(parentElement, {
-        dataTable: dataTable,
+        dataTable: {
+            columns: {
+                product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+                weight: [100, 40, 0.5, 200],
+                price: [1.5, 2.53, 5, 4.5]
+            }
+        },
         columns: [{
             id: 'product',
             headerFormat: 'Column 1',
+            cellFormat: 'before update'
+        }, {
+            id: 'weight',
+            headerFormat: 'Column 2',
             cellFormat: 'before update'
         }]
     }, true);
@@ -31,94 +33,79 @@ test('DataGrid update methods', async function (assert) {
     dataGrid.update({
         columns: [{
             id: 'weight',
-            headerFormat: 'Column 2',
-            cellFormat: 'text 1'
+            cellFormat: 'after update'
         }, {
-            id: 'product',
-            headerFormat: 'Column 1',
-            cellFormat: 'text 2'
+            id: 'price',
+            enabled: false
+        }, {
+            id: 'imaginary-column',
         }]
     }, false);
 
     assert.deepEqual(
-        dataGrid.options.columns[0],
-        {
+        dataGrid.options.columns,
+        [{
+            id: 'product',
+            headerFormat: 'Column 1',
+            cellFormat: 'before update'
+        }, {
             id: 'weight',
             headerFormat: 'Column 2',
-            cellFormat: 'text 1'
-        },
-        'Update method should rewrite the columns array.'
+            cellFormat: 'after update'
+        }, {
+            id: 'price',
+            enabled: false
+        }],
+        'Update method should merge column options by id.'
     );
 
-    dataGrid.userOptions.columns[0].cellFormat = 'text 3';
-    dataGrid.update(void 0, false);
-
-    assert.strictEqual(
-        dataGrid.options.columns[0].cellFormat,
-        'text 3',
-        'Update method without arguments should update the columns array with the userOptions.'
-    );
-
-    dataGrid.updateColumn('weight', { headerFormat: undefined }, false);
-    dataGrid.updateColumn('price', { headerFormat: 'Price Column' }, false);
+    dataGrid.update({
+        columns: [{
+            id: 'weight'
+        }, {
+            id: 'product',
+            cellFormat: 'after update'
+        }]
+    }, false, true);
 
     assert.deepEqual(
         dataGrid.options.columns,
-        [
-            {
-                id: 'weight',
-                headerFormat: undefined,
-                cellFormat: 'text 3'
-            },
-            {
-                id: 'product',
-                headerFormat: 'Column 1',
-                cellFormat: 'text 2'
-            },
-            {
-                id: 'price',
-                headerFormat: 'Price Column'
-            }
-        ],
-        'updateColumns method should update the columns array by mergin by ids'
+        [{
+            id: 'weight',
+            headerFormat: 'Column 2',
+            cellFormat: 'after update'
+        }, {
+            id: 'product',
+            headerFormat: 'Column 1',
+            cellFormat: 'after update'
+        }],
+        'One-to-one update should remove all the column options that were not' +
+        ' specified in the first argument.'
     );
 
-    dataGrid.updateColumn('weight', null);
-    dataGrid.updateColumn('price', { headerFormat: 'Column 2' }, false, true);
-    dataGrid.updateColumn('product', {}, false, true);
+    dataGrid.updateColumn('weight', {}, false, true);
+    dataGrid.updateColumn('product', { enabled: false }, false);
     dataGrid.updateColumn('imaginary-column', { headerFormat: 'New One!' }, false);
 
     assert.deepEqual(
         dataGrid.options.columns,
-        [
-            {
-                id: 'product'
-            },
-            {
-                id: 'price',
-                headerFormat: 'Column 2'
-            },
-            {
-                id: 'imaginary-column',
-                headerFormat: 'New One!'
-            }
-        ],
-        'updateColumns method with ovewriting should replace the column options according to the IDs.'
+        [{
+            id: 'product',
+            headerFormat: 'Column 1',
+            cellFormat: 'after update',
+            enabled: false
+        }, {
+            id: 'imaginary-column',
+            headerFormat: 'New One!'
+        }],
+        'Varations of updateColumn method should work correctly.'
     );
 
     assert.strictEqual(
         dataGrid.getOptionsJSON(),
-        '{"dataTable":{"columns":{"product":["Apples","Pears","Plums","Bananas"],"weight":[100,40,0.5,200],' +
-        '"price":[1.5,2.53,5,4.5]}},"columns":[{"id":"product"},{"id":"price","headerFormat":"Column 2"},{"' +
-        'id":"imaginary-column","headerFormat":"New One!"}]}',
+        '{"columns":[{"id":"product","headerFormat":"Column 1","cellFormat":"after update","enabled":false},' +
+        '{"id":"imaginary-column","headerFormat":"New One!"}],"dataTable":{"columns":{"product":["Apples","P' +
+        'ears","Plums","Bananas"],"weight":[100,40,0.5,200],"price":[1.5,2.53,5,4.5]}}}',
         'The getOptionsJSON method should return the correct JSON string.'
-    )
-
-    dataGrid.update({}, false, true);
-
-    assert.deepEqual(
-        dataGrid.userOptions,
-        {},
-        'DataGrid update with overwrite should replace the user options.'
     );
 });

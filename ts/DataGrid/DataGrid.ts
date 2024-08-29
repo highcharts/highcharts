@@ -176,7 +176,7 @@ class DataGrid {
      * The options that were declared by the user when creating the data grid
      * or when updating it.
      */
-    public userOptions?: Partial<Options>;
+    public userOptions: Partial<Options> = {};
 
     /**
      * The table (viewport) element of the data grid.
@@ -280,30 +280,35 @@ class DataGrid {
     }
 
     /**
-     * Loads the user options to all the important fields.
+     * Loads the new user options to all the important fields (`userOptions`,
+     * `options` and `columnOptionsMap`).
      *
      * @param newOptions
      * The options that were declared by the user.
      *
-     * @param overwrite
-     * Whether to overwrite or merge the new options with the existing options.
-     * Default is `false`.
+     * @param oneToOne
+     * When `false` (default), the existing column options will be merged with
+     * the ones that are currently defined in the user options. When `true`,
+     * the columns not defined in the new options will be removed.
      */
     private loadUserOptions(
         newOptions: Partial<Options>,
-        overwrite: boolean = false
+        oneToOne = false
     ): void {
-
-        if (overwrite) {
-            this.userOptions = newOptions;
-            this.options = merge(DataGrid.defaultOptions, newOptions);
-        } else {
-            this.userOptions = merge(this.userOptions ?? {}, newOptions);
-            this.options = merge(
-                this.options ?? DataGrid.defaultOptions,
-                this.userOptions
-            );
+        if (newOptions.columns) {
+            if (oneToOne) {
+                this.loadColumnOptionsOneToOne(newOptions.columns);
+            } else {
+                this.loadColumnOptions(newOptions.columns);
+            }
+            delete newOptions.columns;
         }
+
+        this.userOptions = merge(this.userOptions, newOptions);
+        this.options = merge(
+            this.options ?? DataGrid.defaultOptions,
+            this.userOptions
+        );
 
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
@@ -318,33 +323,114 @@ class DataGrid {
     }
 
     /**
-     * Updates the data grid with new options. It overwrites the existing column
-     * options array. If you want to merge the column options, use the
-     * `updateColumn` method instead.
+     * Loads the new column options to the userOptions field.
+     *
+     * @param newColumnOptions
+     * The new column options that should be loaded.
+     *
+     * @param overwrite
+     * Whether to overwrite the existing column options with the new ones.
+     * Default is `false`.
+     */
+    private loadColumnOptions(
+        newColumnOptions: IndividualColumnOptions[],
+        overwrite = false
+    ): void {
+        if (!this.userOptions.columns) {
+            this.userOptions.columns = [];
+        }
+        const columnOptions = this.userOptions.columns;
+
+        for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
+            const newOptions = newColumnOptions[i];
+            const indexInPrevOptions = columnOptions.findIndex(
+                (prev): boolean => prev.id === newOptions.id
+            );
+
+            // If the new column options contain only the id.
+            if (Object.keys(newOptions).length < 2) {
+                if (overwrite && indexInPrevOptions !== -1) {
+                    columnOptions.splice(indexInPrevOptions, 1);
+                }
+                continue;
+            }
+
+            if (indexInPrevOptions === -1) {
+                columnOptions.push(newOptions);
+            } else if (overwrite) {
+                columnOptions[indexInPrevOptions] = newOptions;
+            } else {
+                columnOptions[indexInPrevOptions] = merge(
+                    columnOptions[indexInPrevOptions],
+                    newOptions
+                );
+            }
+        }
+
+        if (columnOptions.length < 1) {
+            delete this.userOptions.columns;
+        }
+    }
+
+    /**
+     * Loads the new column options to the userOptions field in a one-to-one
+     * manner. It means that all the columns that are not defined in the new
+     * options will be removed.
+     *
+     * @param newColumnOptions
+     * The new column options that should be loaded.
+     */
+    private loadColumnOptionsOneToOne(
+        newColumnOptions: IndividualColumnOptions[]
+    ): void {
+        const prevColumnOptions = this.userOptions.columns;
+        const columnOptions = [];
+
+        let prevOptions: IndividualColumnOptions | undefined;
+        for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
+            const newOptions = newColumnOptions[i];
+            const indexInPrevOptions = prevColumnOptions?.findIndex(
+                (prev): boolean => prev.id === newOptions.id
+            );
+
+            if (indexInPrevOptions !== void 0 && indexInPrevOptions !== -1) {
+                prevOptions = prevColumnOptions?.[indexInPrevOptions];
+            }
+
+            const resultOptions = merge(prevOptions ?? {}, newOptions);
+            if (Object.keys(resultOptions).length > 1) {
+                columnOptions.push(resultOptions);
+            }
+        }
+
+        this.userOptions.columns = columnOptions;
+    }
+
+    /**
+     * Updates the data grid with new options.
      *
      * @param options
      * The options of the data grid that should be updated. If not provided,
      * the update will be proceeded based on the `this.userOptions` property.
+     * The `column` options are merged using the `id` property as a key.
      *
      * @param render
      * Whether to re-render the data grid after updating the options.
      *
-     * @param overwrite
-     * If true, the column options will be updated by replacing the existing
-     * options with the new ones instead of merging them.
+     * @param oneToOne
+     * When `false` (default), the existing column options will be merged with
+     * the ones that are currently defined in the user options. When `true`,
+     * the columns not defined in the new options will be removed.
      */
     public async update(
         options: Options = {},
-        render: boolean = true,
-        overwrite = false
+        render = true,
+        oneToOne = false
     ): Promise<void> {
-        this.loadUserOptions(options, overwrite);
+        this.loadUserOptions(options, oneToOne);
 
         let newDataTable = false;
-        if (
-            !overwrite && (!this.dataTable || options.dataTable) ||
-            overwrite && (options.dataTable?.id !== this.dataTable?.id)
-        ) {
+        if (!this.dataTable || options.dataTable) {
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
         }
@@ -358,9 +444,7 @@ class DataGrid {
     }
 
     /**
-     * Updates the column of the data grid with new options. Unlike the
-     * `update` method, it does not overwrite the existing column options array.
-     * Instead, it merges the provided options with the existing ones.
+     * Updates the column of the data grid with new options.
      *
      * @param columnId
      * The ID of the column that should be updated.
@@ -378,40 +462,16 @@ class DataGrid {
      */
     public async updateColumn(
         columnId: string,
-        options: Omit<IndividualColumnOptions, 'id'> | null,
+        options: Omit<IndividualColumnOptions, 'id'>,
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
-        const columnOptions = this.userOptions?.columns ?? [];
+        this.loadColumnOptions([{
+            id: columnId,
+            ...options
+        }], overwrite);
 
-        const indexInPrevOptions = columnOptions?.findIndex(
-            (prev): boolean => prev.id === columnId
-        );
-
-        if (options === null) {
-            if (indexInPrevOptions !== -1) {
-                columnOptions.splice(indexInPrevOptions, 1);
-            }
-        } else if (indexInPrevOptions === -1) {
-            columnOptions.push({
-                id: columnId,
-                ...options
-            });
-        } else if (overwrite) {
-            columnOptions[indexInPrevOptions] = {
-                id: columnId,
-                ...options
-            };
-        } else {
-            columnOptions[indexInPrevOptions] = merge(
-                columnOptions[indexInPrevOptions],
-                options
-            );
-        }
-
-        await this.update({
-            columns: columnOptions
-        }, render);
+        await this.update(void 0, render);
     }
 
     /**
