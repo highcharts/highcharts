@@ -110,6 +110,10 @@
     display: block;
 }
 
+.highcharts-datagrid-table thead tr {
+    height: 32px;
+}
+
 .highcharts-datagrid-table thead th {
     position: relative;
 }
@@ -261,7 +265,6 @@
 }
 
 .highcharts-datagrid-table thead tr {
-    height: 32px;
     border-top: 1px solid var(--highcharts-neutral-color-20);
 }
 
