@@ -305,6 +305,8 @@ class Axis {
     public transA!: number;
     public transB!: number;
     public translationSlope!: number;
+    public type?: AxisOptions['type'];
+    public uniqueNames?: boolean;
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
@@ -408,10 +410,13 @@ class Axis {
          */
         axis.setOptions(userOptions);
 
+        const options = axis.options,
+            labelsOptions = options.labels;
 
-        const options = this.options,
-            labelsOptions = options.labels,
-            type = options.type;
+        // Set the type and fire an event
+        axis.type ??= options.type || 'linear';
+        axis.uniqueNames ??= options.uniqueNames ?? true;
+        fireEvent(axis, 'afterSetType');
 
         /**
          * User's options for this axis without defaults.
@@ -436,7 +441,7 @@ class Axis {
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
-        axis.hasNames = type === 'category' || options.categories === true;
+        axis.hasNames = this.type === 'category' || options.categories === true;
 
         /**
          * If categories are present for the axis, names are used instead of
@@ -1429,7 +1434,7 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames && names ?
+            nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
@@ -1713,7 +1718,7 @@ class Axis {
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== linkedParent.options.type) {
+            if (this.type !== linkedParent.type) {
                 // Can't link axes of different type
                 error(11, true, chart);
             }
