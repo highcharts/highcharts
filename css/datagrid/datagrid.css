@@ -81,6 +81,8 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
+/* stylelint-disable max-line-length */
+
 /* ==== DataGrid Core ==== */
 .highcharts-datagrid-container * {
     box-sizing: border-box;
@@ -187,12 +189,10 @@
     height: 12px;
 }
 
-/* stylelint-disable-next-line max-line-length */
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-header-cell-content::after {
     content: "▲";
 }
 
-/* stylelint-disable-next-line max-line-length */
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-header-cell-content::after {
     content: "▼";
 }
@@ -224,7 +224,7 @@
     overflow: hidden;
 }
 
-.highcharts-datagrid-table tbody .highcharts-datagrid-rows-content-nowrap td {
+.highcharts-datagrid-table tbody.highcharts-datagrid-rows-content-nowrap td {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
