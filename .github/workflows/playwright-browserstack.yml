@@ -24,7 +24,7 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: |
-        npm i
+        npm ci
         npm i https://github.com/browserstack/node-js-playwright-browserstack.git
 
     - name: Build Highcharts
