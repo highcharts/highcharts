@@ -1,0 +1,14 @@
+---
+name: Line chart with custom entrance animation
+authors:
+  - Mateusz Bernacik
+requiresManualTesting: true
+js_wrap: b
+alt_text: >-
+  Highcharts basic line chart illustrating the performance trends of FANG stocks
+  in 2024.
+tags:
+  - Highcharts demo
+categories:
+  - Line charts
+...
