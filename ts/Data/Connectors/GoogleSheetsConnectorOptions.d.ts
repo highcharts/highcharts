@@ -53,8 +53,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
     firstRowAsNames?: boolean;
     /**
      * The API key for a Google Spreadsheet (user's credentials).
-     * See [general information on GS]
-     * (https://developers.google.com/sheets/api/guides/concepts).
+     * See [general information on GS](https://developers.google.com/sheets/api/quickstart/js#create_an_api_key).
      */
     googleAPIKey: string;
     /**
