@@ -1,10 +1,8 @@
 /* eslint-disable max-len */
 
 const initialOptions = {
-    defaults: {
-        columns: {
-            editable: true
-        }
+    columnDefaults: {
+        editable: true
     },
     columns: [{
         id: 'weight',

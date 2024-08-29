@@ -64,20 +64,25 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  */
 export interface Options {
     /**
+     * Default options for all the columns in the datagrid. Can be overridden
+     * by individual column options.
+     */
+    columnDefaults?: ColumnOptions;
+
+    /**
      * Options for individual columns.
      */
     columns?: Array<IndividualColumnOptions>;
 
     /**
-     * Options applied to all elements in the datagrid by default. Can be
-     * overridden by individual options.
-     */
-    defaults?: DataGridDefaults;
-
-    /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
+
+    /**
+     * Options for the table caption.
+     */
+    caption?: CaptionOptions;
 
     /**
      * Options to control the way datagrid is rendered.
@@ -94,11 +99,6 @@ export interface Options {
  * Options to control the way datagrid is rendered.
  */
 export interface DataGridSettings {
-    /**
-     * Options for the table caption.
-     */
-    caption?: CaptionOptions;
-
     /**
     * Options to control the columns behavior and rendering.
     */
@@ -178,18 +178,6 @@ export interface RowsSettings {
      * @default false
      */
     strictHeights?: boolean;
-}
-
-/**
- * Default options for the rows and columns.
- */
-export interface DataGridDefaults {
-
-    /**
-     * Default options for all the columns in the datagrid. Can be overridden
-     * by individual column options.
-     */
-    columns?: ColumnOptions;
 }
 
 /**

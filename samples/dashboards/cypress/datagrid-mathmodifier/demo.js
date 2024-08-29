@@ -86,10 +86,8 @@ Dashboards.board('container', {
                 id: 'EUR-USD'
             },
             dataGridOptions: {
-                defaults: {
-                    columns: {
-                        editable: true
-                    }
+                columnDefaults: {
+                    editable: true
                 },
                 columns: [{
                     id: 'USD',

@@ -82,10 +82,8 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 ```js
 DataGrid.dataGrid('container', {
     dataTable: { columns },
-    settings: {
-        caption: {
-            text: 'Fruit market'
-        },
+    caption: {
+        text: 'Fruit market'
     },
     columns: [{
         id: 'product',

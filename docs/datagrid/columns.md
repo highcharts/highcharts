@@ -3,14 +3,12 @@ Column options in the Datagrid
 The DataGrid provides flexible configuration options to meet your specific needs.
 
 ## Defaults
-By default, the options from the [defaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property are applied to all columns.
-For instance, you can allow editing of cells in all columns in `default.columns` instead of applying an option to each column separately.
+By default, the options from the [columnDefaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridColumnDefaults) property are applied to all columns.
+For instance, you can allow editing of cells in all columns in `columnDefaults` instead of applying an option to each column separately.
 
 ```js
-defaults: {
-  columns: {
-    editable: true
-  }
+columnDefaults: {
+  editable: true
 }
 ```
 
@@ -99,7 +97,7 @@ columns: [{
 }]
 ```
 
-You can also use the [defaults.columns.editable](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridDefaults) property to enable editing of all cells in the DataGrid. This default setting can then be overridden by one or more columns if needed.
+You can also use the [columnDefaults.editable](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridColumnDefaults) property to enable editing of all cells in the DataGrid. This default setting can then be overridden by one or more columns if needed.
 
 ## Events
 The DataGrid supports event listeners that can be added to the column [events](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events) object which will call functions when editing the cell or column.
@@ -161,14 +159,12 @@ columns: [{
 }]
 ```
 
-But you can also turn off `sortable` for all columns using the [`defaults`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridDefaults) option as described in the first point.
+But you can also turn off `sortable` for all columns using the [`columnDefaults`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.DataGridColumnDefaults) option as described in the first point.
 
 ```js
-defaults {
-  columns: {
-    sorting: {
-      sortable: false
-    }
+columnDefaults {
+  sorting: {
+    sortable: false
   }
 }
 ```

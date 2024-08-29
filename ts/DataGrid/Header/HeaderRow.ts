@@ -172,16 +172,21 @@ class HeaderRow extends Row {
 
         this.reflow();
     }
+
     /**
      * Get all headers that should be rendered in a level.
      *
      * @param scope
      * Level that we start
+     *
      * @param targetLevel
      * Max level
+     *
      * @param currentLevel
      * Current level
-     * @returns
+     *
+     * @return
+     * Array of headers that should be rendered in a level
      */
     private getColumnsAtLevel(
         scope: Array<GroupedHeaderOptions | string>,

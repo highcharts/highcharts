@@ -10,14 +10,12 @@ Defaults
 Default options for all columns.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 
-For more information on `default` options see the [API reference]().
+For more information on `columnDefaults` options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
 
 Caption
 ---------
@@ -25,14 +23,12 @@ Caption
 The caption of the datagrid grid.
 
 ```js
-settings: {
-    caption: {
-        text: 'Your title of datagrid'Heade
-    }
+caption: {
+    text: 'Title of the DataGrid'
 }
 ```
 
-For more information on `caption` options see the [API reference]().
+For more information on `caption` options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#caption).
 
 Header
 ---------
@@ -82,10 +78,8 @@ Column
 Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
 ```js
-defaults: {
-    columns: {
-        useHTML: true
-    }
+columnDefaults: {
+    useHTML: true
 },
 columns: [{
     id: 'column1',
@@ -116,10 +110,8 @@ Value editor
 Allows you to edit the main value of the cell.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 

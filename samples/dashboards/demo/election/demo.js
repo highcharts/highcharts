@@ -326,11 +326,9 @@ async function setupDashboard() {
                         ]
                     }
                 },
-                defaults: {
-                    columns: {
-                        sorting: {
-                            sortable: false
-                        }
+                columnDefaults: {
+                    sorting: {
+                        sortable: false
                     }
                 },
                 columns: [{

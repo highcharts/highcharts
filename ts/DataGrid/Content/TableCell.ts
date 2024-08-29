@@ -98,9 +98,11 @@ class TableCell extends Cell {
     /**
      * Renders the cell.
      */
-    public render(): void {
+    public override render(): void {
         super.render();
-        this.setValue(this.column.data?.[this.row.index], false);
+
+        // It may happen that `await` will be needed here in the future.
+        void this.setValue(this.column.data?.[this.row.index], false);
     }
 
     /**

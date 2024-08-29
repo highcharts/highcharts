@@ -348,7 +348,7 @@ class Table {
      * @internal
      */
     public renderCaption(): void {
-        const captionOptions = this.dataGrid.options?.settings?.caption;
+        const captionOptions = this.dataGrid.options?.caption;
         if (!captionOptions?.text) {
             return;
         }

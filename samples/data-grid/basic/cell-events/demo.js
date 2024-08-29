@@ -9,10 +9,8 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    settings: {
-        caption: {
-            text: 'Open the console to see the events being logged.'
-        }
+    caption: {
+        text: 'Open the console to see the events being logged.'
     },
     events: {
         cell: {
