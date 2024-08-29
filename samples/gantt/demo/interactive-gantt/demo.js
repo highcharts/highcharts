@@ -43,10 +43,6 @@ function updateRemoveButtonStatus() {
 // Create the chart
 const chart = Highcharts.ganttChart('container', {
 
-    chart: {
-        spacingLeft: 1
-    },
-
     title: {
         text: 'Interactive Gantt Chart'
     },

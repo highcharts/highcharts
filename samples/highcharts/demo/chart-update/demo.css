@@ -2,6 +2,10 @@
     height: 400px;
 }
 
+.highcharts-description {
+    margin: 0 10px;
+}
+
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 320px;
@@ -43,4 +47,12 @@
 
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
+}
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
 }

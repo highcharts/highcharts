@@ -11,3 +11,15 @@ button .dim {
     opacity: 50%;
     pointer-events: none;
 }
+
+.button-row {
+    margin: 0 -10px;
+}
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+}

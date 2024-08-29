@@ -13,6 +13,8 @@
     background: #efefef;
     border: 1px solid silver;
     margin-right: -1px;
+    padding: 0.5rem 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 #buttons button:first-child {

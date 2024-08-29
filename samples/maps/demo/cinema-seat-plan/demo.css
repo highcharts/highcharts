@@ -11,7 +11,7 @@
 .controls {
     text-align: left;
     margin-bottom: 1rem;
-    padding: 0 10px;
+    padding: 10px 0;
 }
 
 .loading {
@@ -20,29 +20,18 @@
     color: gray;
 }
 
-#deselect {
-    border-radius: 0.3em;
-    background: #f8f8f8;
-    transition: background 150ms;
-    border: 1px solid #999;
-    display: inline-block;
-    font-size: 12pt;
-    line-height: 16pt;
-    margin-left: -1px;
-    color: #333;
-}
-
-#deselect:hover {
-    background: #2caffe;
-    color: white;
-}
-
-#deselect[disabled] {
-    background: #efefef;
-    outline: none;
-    color: #999;
-}
-
 pre#data {
     display: none;
+}
+
+.button-row {
+    margin: 0 -10px;
+}
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
 }

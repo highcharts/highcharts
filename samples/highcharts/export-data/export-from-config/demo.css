@@ -1,7 +1,16 @@
 textarea {
     display: block;
-    width: 200px;
+    width: 100%;
+    max-width: 600px;
     height: 200px;
-    background-color: #d1d1d1;
-    margin-bottom: 20px;
+    margin: 10px;
+    color: darkgreen;
+}
+
+.highcharts-demo-button {
+    border: none;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
 }
