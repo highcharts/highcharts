@@ -130,7 +130,7 @@ function starting(text) {
 /**
  * Writes a green success message in gulp style into the console.
  *
- * @param {string} text
+ * @param {Array<string>} text
  *        Message text to write
  *
  * @return {void}
