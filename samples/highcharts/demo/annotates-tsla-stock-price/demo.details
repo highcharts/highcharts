@@ -4,7 +4,7 @@ authors:
   - Pawel Lysy
 js_wrap: b
 alt_text: >-
-  Highcharts basic line chart with annotations JavaScript example displays
+  Highcharts basic area chart with annotations JavaScript example displays
   stock data of TSLA with annotations highlighting some meaningful events that
   might've had an impact on the stock price.
 tags:
