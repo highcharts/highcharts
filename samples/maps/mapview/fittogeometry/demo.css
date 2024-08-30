@@ -17,11 +17,7 @@
 }
 
 .highcharts-description {
-    margin-top: 1rem;
-}
-
-.button-row {
-    margin: 0 -10px;
+    margin: 10px;
 }
 
 .highcharts-demo-button {
