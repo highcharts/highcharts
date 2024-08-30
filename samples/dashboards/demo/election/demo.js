@@ -326,30 +326,27 @@ async function setupDashboard() {
                         ]
                     }
                 },
-                defaults: {
-                    columns: {
-                        sorting: {
-                            sortable: false
-                        }
+                columnDefaults: {
+                    sorting: {
+                        sortable: false
                     }
                 },
-                columns: {
-                    state: {
-                        headerFormat: 'State'
-                    },
-                    demVoteSummary: {
-                        headerFormat: 'Dem. votes'
-                    },
-                    repVoteSummary: {
-                        headerFormat: 'Rep. votes'
-                    },
-                    totalVotes: {
-                        headerFormat: 'Total votes',
-                        cellFormatter: function () {
-                            return Number(this.value).toLocaleString('en-US');
-                        }
+                columns: [{
+                    id: 'state',
+                    headerFormat: 'State'
+                }, {
+                    id: 'demVoteSummary',
+                    headerFormat: 'Dem. votes'
+                }, {
+                    id: 'repVoteSummary',
+                    headerFormat: 'Rep. votes'
+                }, {
+                    id: 'totalVotes',
+                    headerFormat: 'Total votes',
+                    cellFormatter: function () {
+                        return Number(this.value).toLocaleString('en-US');
                     }
-                }
+                }]
             }
         }]
     }, true);
@@ -787,14 +784,13 @@ async function updateGridComponent(component, year) {
             id: 'votes' + year
         },
         dataGridOptions: {
-            columns: {
-                repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
-                },
-                demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
-                }
-            }
+            columns: [{
+                id: 'repColVotes',
+                headerFormat: candRep + ' (Republican)'
+            }, {
+                id: 'demColVotes',
+                headerFormat: candDem + ' (Democrat)'
+            }]
         }
     });
 }

@@ -134,11 +134,11 @@ class HeaderRow extends Row {
             );
 
             if (headerFormat) {
-                headerCell.userOptions.headerFormat = headerFormat;
+                headerCell.options.headerFormat = headerFormat;
             }
 
             if (className) {
-                headerCell.userOptions.className = className;
+                headerCell.options.className = className;
             }
 
             // Add class to disable left border on first column
@@ -166,16 +166,21 @@ class HeaderRow extends Row {
 
         this.reflow();
     }
+
     /**
      * Get all headers that should be rendered in a level.
      *
      * @param scope
      * Level that we start
+     *
      * @param targetLevel
      * Max level
+     *
      * @param currentLevel
      * Current level
-     * @returns
+     *
+     * @return
+     * Array of headers that should be rendered in a level
      */
     private getColumnsAtLevel(
         scope: Array<GroupedHeaderOptions | string>,

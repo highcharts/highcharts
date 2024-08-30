@@ -112,17 +112,16 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         dataGridOptions: {
-            columns: {
-                Agriculture: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Industry: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Services: {
-                    cellFormat: '{value:.1f}%'
-                }
-            }
+            columns: [{
+                id: 'Agriculture',
+                cellFormat: '{value:.1f}%'
+            }, {
+                id: 'Industry',
+                cellFormat: '{value:.1f}%'
+            }, {
+                id: 'Services',
+                cellFormat: '{value:.1f}%'
+            }]
         }
     }]
 });

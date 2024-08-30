@@ -10,14 +10,12 @@ Defaults
 Default options for all columns.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 
-For more information on `default` options see the [API reference]().
+For more information on `columnDefaults` options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
 
 Caption
 ---------
@@ -25,14 +23,12 @@ Caption
 The caption of the datagrid grid.
 
 ```js
-settings: {
-    caption: {
-        text: 'Your title of datagrid'Heade
-    }
+caption: {
+    text: 'Title of the DataGrid'
 }
 ```
 
-For more information on `caption` options see the [API reference]().
+For more information on `caption` options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#caption).
 
 Header
 ---------
@@ -42,7 +38,7 @@ Cells in the `header` are called `headerCell`. Their contents can be edited usin
 [`headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 
 The API allows you to group headers into sections.
-You can find more information about in our [Columns article](/dashboards/columns).
+You can find more information about in our [Columns article](/docs/dashboards/columns).
 
 Row
 ---------
@@ -82,16 +78,15 @@ Column
 Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
 ```js
-columns: {
-    column1: {
-        cellFormat: '<h3>{value}</h3>'
-    },
-    column2: {
-        cellFormatter: function () {
-            return '<a href="' + this.value + '">URL</a>';
-        }
+columns: [{
+    id: 'column1',
+    cellFormat: '<h3>{value}</h3>'
+}, {
+    id: 'column2',
+    cellFormatter: function () {
+        return '<a href="' + this.value + '">URL</a>';
     }
-}
+}]
 ```
 
 For more information on the column element see the [API reference](https://api.highcharts.com/dashboards/typedoc/classes/DataGrid_DataGridColumn.DataGridColumn-1.html).
@@ -112,10 +107,8 @@ Value editor
 Allows you to edit the main value of the cell.
 
 ```js
-defaults: {
-    columns: {
-        editable: true
-    }
+columnDefaults: {
+    editable: true
 }
 ```
 

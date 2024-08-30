@@ -21,36 +21,33 @@ DataGrid.dataGrid('container', {
             ]
         }
     },
-    defaults: {
-        columns: {
-            useHTML: true
-        }
+    columnDefaults: {
+        useHTML: true
     },
-    columns: {
-        Header: {
-            cellFormat: '<h3>{value}</h3>'
-        },
-        List: {
-            cellFormatter: function () {
-                const items = this.value.split(',');
-                let list = '';
+    columns: [{
+        id: 'Header',
+        cellFormat: '<h3>{value}</h3>'
+    }, {
+        id: 'List',
+        cellFormatter: function () {
+            const items = this.value.split(',');
+            let list = '';
 
-                items.forEach(el => {
-                    list += '<li>' + el + '</li>';
-                });
+            items.forEach(el => {
+                list += '<li>' + el + '</li>';
+            });
 
-                return '<ul>' + list + '</ul>';
-            }
-        },
-        Image: {
-            cellFormatter: function () {
-                return '<img src="' + this.value + '" />';
-            }
-        },
-        Link: {
-            cellFormatter: function () {
-                return '<a href="' + this.value + '">URL</a>';
-            }
+            return '<ul>' + list + '</ul>';
         }
-    }
+    }, {
+        id: 'Image',
+        cellFormatter: function () {
+            return '<img src="' + this.value + '" />';
+        }
+    }, {
+        id: 'Link',
+        cellFormatter: function () {
+            return '<a href="' + this.value + '">URL</a>';
+        }
+    }]
 });

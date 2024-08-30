@@ -22,7 +22,8 @@
  *
  * */
 
-import type { IndividualColumnOptions, GroupedHeaderOptions } from '../Options';
+import type { GroupedHeaderOptions } from '../Options';
+
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
@@ -67,7 +68,7 @@ class HeaderCell extends Cell {
     /**
      * Reference to options in settings header.
      */
-    public userOptions: Partial<IndividualColumnOptions> = {};
+    public options: Partial<Column.Options> = {};
 
     /**
      * Columns
@@ -115,10 +116,10 @@ class HeaderCell extends Cell {
     public override render(): void {
         const column = this.column;
         const isSingleColumn = this.row.viewport.getColumn(this.column.id);
-        const userOptions = merge(column.userOptions, this.userOptions);
+        const options = merge(column.options, this.options);
 
-        this.value = userOptions.headerFormat ? (
-            format(userOptions.headerFormat, column)
+        this.value = options.headerFormat ? (
+            format(options.headerFormat, column)
         ) : column.id;
 
         // Render content of th element
@@ -141,14 +142,14 @@ class HeaderCell extends Cell {
         this.htmlElement.setAttribute('scope', 'col');
         this.htmlElement.setAttribute('data-column-id', column.id);
 
-        if (this.userOptions.className) {
-            this.htmlElement.classList.add(this.userOptions.className);
+        if (this.options.className) {
+            this.htmlElement.classList.add(this.options.className);
         }
 
         if (isSingleColumn) {
             // Add user column classname
-            if (column.userOptions.className) {
-                this.htmlElement.classList.add(column.userOptions.className);
+            if (column.options.className) {
+                this.htmlElement.classList.add(column.options.className);
             }
 
             // Add resizing

@@ -12,26 +12,23 @@ const dataGrid = new DataGrid.DataGrid('container', {
         }
     },
     settings: {
-        caption: {
-            text: 'Title of the new Datagrid with a custom CSS class.',
-            className: 'custom-caption-class'
-        },
         rows: {
             bufferSize: 5
         }
     },
-    defaults: {
-        columns: {
-            headerFormat: 'Col-{id}',
-            cellFormat: 'V: {value}'
-        }
+    caption: {
+        text: 'Title of the new Datagrid with a custom CSS class.',
+        className: 'custom-caption-class'
     },
-    columns: {
-        d: {
-            headerFormat: 'Col D',
-            cellFormat: '{row.index}%'
-        }
-    }
+    columnDefaults: {
+        headerFormat: 'Col-{id}',
+        cellFormat: 'V: {value}'
+    },
+    columns: [{
+        id: 'd',
+        headerFormat: 'Col D',
+        cellFormat: '{row.index}%'
+    }]
 });
 
 document.getElementById('scroll').addEventListener('submit', e => {

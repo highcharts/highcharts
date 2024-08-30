@@ -11,11 +11,10 @@ describe('DataGrid events.', () => {
         cy.get('table thead tr:nth-child(3) th').should('have.length', 2);
         cy.window().then((win) => {
             win.dataGrid.update({
-                columns: {
-                    icon: {
-                        enabled: false
-                    }
-                }
+                columns: [{
+                    id: 'icon',
+                    enabled: false
+                }]
             });
 
             // Hidden column
@@ -28,11 +27,10 @@ describe('DataGrid events.', () => {
     it('All hidden columns in group, hide group header.', () => {
         cy.window().then((win) => {
             win.dataGrid.update({
-                columns: {
-                    url: {
-                        enabled: false
-                    }
-                }
+                columns: [{
+                    id: 'url',
+                    enabled: false
+                }]
             });
 
             // If all columns in group are hidden, hide the group.

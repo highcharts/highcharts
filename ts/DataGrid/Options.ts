@@ -64,20 +64,25 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  */
 export interface Options {
     /**
-     * Options for individual columns.
+     * Default options for all the columns in the datagrid. Can be overridden
+     * by individual column options.
      */
-    columns?: Record<string, IndividualColumnOptions>;
+    columnDefaults?: ColumnOptions;
 
     /**
-     * Options applied to all elements in the datagrid by default. Can be
-     * overridden by individual options.
+     * Options for individual columns.
      */
-    defaults?: DataGridDefaults;
+    columns?: Array<IndividualColumnOptions>;
 
     /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
+
+    /**
+     * Options for the table caption.
+     */
+    caption?: CaptionOptions;
 
     /**
      * Options to control the way datagrid is rendered.
@@ -94,11 +99,6 @@ export interface Options {
  * Options to control the way datagrid is rendered.
  */
 export interface DataGridSettings {
-    /**
-     * Options for the table caption.
-     */
-    caption?: CaptionOptions;
-
     /**
     * Options to control the columns behavior and rendering.
     */
@@ -178,18 +178,6 @@ export interface RowsSettings {
      * @default false
      */
     strictHeights?: boolean;
-}
-
-/**
- * Default options for the rows and columns.
- */
-export interface DataGridDefaults {
-
-    /**
-     * Default options for all the columns in the datagrid. Can be overridden
-     * by individual column options.
-     */
-    columns?: ColumnOptions;
 }
 
 /**
@@ -301,6 +289,11 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * The id of the column in the data table for which the options are applied.
+     */
+    id: string;
 
     sorting?: IndividualColumnSortingOptions;
 }

@@ -95,16 +95,13 @@ Dashboards.board('container', {
                     included: ['Food', 'Vitamin A']
                 }
             },
-            defaults: {
-                columns: {
-                    editable: true
-                }
+            columnDefaults: {
+                editable: true
             },
-            columns: {
-                'Vitamin A': {
-                    headerFormat: '{id} (IU)'
-                }
-            }
+            columns: [{
+                id: 'Vitamin A',
+                headerFormat: '{id} (IU)'
+            }]
         }
     }]
 }, true);

@@ -40,20 +40,12 @@ DataGrid.dataGrid('container', {
             }
         ]
     },
-    defaults: {
-        columns: {
-            sorting: {
-                enabled: true
-            }
-        }
-    },
-    columns: {
-        product: {
-            className: 'custom-column-product-class',
-            headerFormat: '{id} name'
-        },
-        weight: {
-            headerFormat: 'Custom weight'
-        }
-    }
+    columns: [{
+        id: 'product',
+        className: 'custom-column-product-class',
+        headerFormat: '{id} name'
+    }, {
+        id: 'weight',
+        headerFormat: 'Custom weight'
+    }]
 });

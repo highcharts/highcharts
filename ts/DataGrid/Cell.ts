@@ -101,8 +101,9 @@ abstract class Cell {
     public init(): HTMLTableCellElement {
         return document.createElement('td', {});
     }
+
     /**
-     * Renders the cell.
+     * Renders the cell by appending the HTML element to the row.
      */
     public render(): void {
         this.row.htmlElement.appendChild(this.htmlElement);

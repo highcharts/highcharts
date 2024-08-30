@@ -98,11 +98,13 @@ class TableCell extends Cell {
     * */
 
     /**
-     * Renders the cell.
+     * Renders the cell by appending it to the row and setting its value.
      */
-    public render(): void {
+    public override render(): void {
         super.render();
-        this.setValue(this.column.data?.[this.row.index], false);
+
+        // It may happen that `await` will be needed here in the future.
+        void this.setValue(this.column.data?.[this.row.index], false);
     }
 
     /**
@@ -209,7 +211,7 @@ class TableCell extends Cell {
         const {
             cellFormat,
             cellFormatter
-        } = this.column.userOptions;
+        } = this.column.options;
 
         let value = this.value;
         if (!defined(value)) {

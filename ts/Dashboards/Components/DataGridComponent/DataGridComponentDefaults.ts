@@ -62,7 +62,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                     {
                         name: 'Caption/title',
                         propertyPath:
-                            ['dataGridOptions', 'settings', 'caption', 'text'],
+                            ['dataGridOptions', 'caption', 'text'],
                         type: 'input'
                     }, {
                         name: 'Columns distribution',
@@ -84,8 +84,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'dataGridOptions',
-                                'defaults',
-                                'columns',
+                                'columnDefaults',
                                 'editable'
                             ],
                         type: 'toggle'
@@ -104,8 +103,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'dataGridOptions',
-                                'defaults',
-                                'columns',
+                                'columnDefaults',
                                 'sorting',
                                 'sortable'
                             ],

@@ -12,18 +12,17 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    columns: {
-        icon: {
-            sorting: {
-                sortable: false
-            }
-        },
-        price: {
-            sorting: {
-                order: 'asc'
-            }
+    columns: [{
+        id: 'product',
+        sorting: {
+            sortable: false
         }
-    },
+    }, {
+        id: 'price',
+        sorting: {
+            order: 'asc'
+        }
+    }],
     events: {
         column: {
             afterSorting: function () {
@@ -34,7 +33,7 @@ DataGrid.dataGrid('container', {
             }
         }
     }
-}, dg => {
+}, true).then(dg => {
     const currentSorting = dg.querying.sorting.currentSorting;
 
     dg.enabledColumns.forEach(columnId => {

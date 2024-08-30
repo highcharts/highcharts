@@ -28,11 +28,10 @@ Dashboards.board('container', {
         },
         type: 'DataGrid',
         dataGridOptions: {
-            columns: {
-                'Vitamin A': {
-                    headerFormat: '{id} [mg]'
-                }
-            }
+            columns: [{
+                id: 'Vitamin A',
+                headerFormat: '{id} [mg]'
+            }]
         }
     }]
 });

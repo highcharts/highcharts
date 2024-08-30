@@ -9,40 +9,37 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    defaults: {
-        columns: {
-            editable: true,
-            useHTML: true
-        }
+    columnDefaults: {
+        editable: true,
+        useHTML: true
     },
-    columns: {
-        date: {
-            headerFormat: 'Date of purchase',
-            cellFormatter: function () {
-                return new Date(this.value)
-                    .toISOString()
-                    .substring(0, 10);
-            }
-        },
-        product: {
-            headerFormat: '{id} name'
-        },
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormatter: function () {
-                return `${this.value} kg`;
-            }
-        },
-        price: {
-            cellFormat: '$ {value:.2f}'
-        },
-        icon: {
-            cellFormatter: function () {
-                return `<a href="#">${this.value}</a>`;
-            }
-        },
-        metaData: {
-            enabled: false
+    columns: [{
+        id: 'date',
+        headerFormat: 'Date of purchase',
+        cellFormatter: function () {
+            return new Date(this.value)
+                .toISOString()
+                .substring(0, 10);
         }
-    }
+    }, {
+        id: 'product',
+        headerFormat: '{id} name'
+    }, {
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cellFormatter: function () {
+            return `${this.value} kg`;
+        }
+    }, {
+        id: 'price',
+        cellFormat: '$ {value:.2f}'
+    }, {
+        id: 'icon',
+        cellFormatter: function () {
+            return `<a href="#">${this.value}</a>`;
+        }
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });

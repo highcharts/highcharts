@@ -8,20 +8,17 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    defaults: {
-        columns: {
-            editable: true
-        }
+    columnDefaults: {
+        editable: true
     },
-    columns: {
-        weight: {
-            className: 'custom-column-class-name',
-            cellFormatter: function () {
-                return 'V: ' + this.value;
-            }
-        },
-        metaData: {
-            enabled: false
+    columns: [{
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cellFormatter: function () {
+            return 'V: ' + this.value;
         }
-    }
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });

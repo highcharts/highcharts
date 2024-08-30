@@ -5,13 +5,12 @@ DataGrid.dataGrid('container', {
             product: ['Apples']
         }
     },
-    columns: {
-        date: {
-            cellFormatter: function () {
-                return new Date(this.value)
-                    .toISOString()
-                    .substring(0, 10);
-            }
+    columns: [{
+        id: 'date',
+        cellFormatter: function () {
+            return new Date(this.value)
+                .toISOString()
+                .substring(0, 10);
         }
-    }
+    }]
 });

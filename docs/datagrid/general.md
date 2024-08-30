@@ -82,28 +82,25 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 ```js
 DataGrid.dataGrid('container', {
     dataTable: { columns },
-    settings: {
-        caption: {
-            text: 'Fruit market'
-        },
+    caption: {
+        text: 'Fruit market'
     },
-    columns: {
-        product: {
-            cellFormat: '{value} No. 1',
-            headerFormat: '{id} name'
-        },
-        weight: {
-            cellFormat: '{value} kg',
-            headerFormat: '{id} (kg)'
-        },
-        price: {
-            cellFormat: '{value} $',
-            headerFormat: '($) {id}'
-        },
-        metaData: {
-            enabled: false
-        }
-    }
+    columns: [{
+        id: 'product',
+        cellFormat: '{value} No. 1',
+        headerFormat: '{id} name'
+    }, {
+        id: 'weight',
+        cellFormat: '{value} kg',
+        headerFormat: '{id} (kg)'
+    }, {
+        id: 'price',
+        cellFormat: '{value} $',
+        headerFormat: '($) {id}'
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });
 ```
 

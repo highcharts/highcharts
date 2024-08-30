@@ -15,31 +15,26 @@ DataGrid.dataGrid('container', {
             ]
         }
     },
-    settings: {
-        caption: {
-            text: 'Fruit market'
-        }
+    caption: {
+        text: 'Fruit market'
     },
-    defaults: {
-        columns: {
-            editable: false
-        }
+    columnDefaults: {
+        editable: true
     },
-    columns: {
-        product: {
-            cellFormat: '{value} No. 1',
-            headerFormat: '{id} name'
-        },
-        weight: {
-            cellFormat: '{value} kg',
-            headerFormat: '{id} (kg)'
-        },
-        price: {
-            cellFormat: '{value} $',
-            headerFormat: '($) {id}'
-        },
-        metaData: {
-            enabled: false
-        }
-    }
+    columns: [{
+        id: 'product',
+        cellFormat: '{value} No. 1',
+        headerFormat: '{id} name'
+    }, {
+        id: 'weight',
+        cellFormat: '{value} kg',
+        headerFormat: '{id} (kg)'
+    }, {
+        id: 'price',
+        cellFormat: '{value} $',
+        headerFormat: '($) {id}'
+    }, {
+        id: 'metaData',
+        enabled: false
+    }]
 });

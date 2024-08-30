@@ -22,8 +22,9 @@
  *
  * */
 
-import type { Options, GroupedHeaderOptions } from './Options';
+import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
+import type Column from './Column';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
@@ -65,17 +66,57 @@ class DataGrid {
      * @param options
      * The options of the data grid.
      *
-     * @return The new data grid.
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
      *
-     * @param afterLoadCallback
-     * The callback that is called after the data grid is loaded.
+     * @return
+     * The new data grid.
      */
     public static dataGrid(
         renderTo: string|HTMLElement,
         options: Options,
-        afterLoadCallback?: DataGrid.AfterLoadCallback
-    ): DataGrid {
-        return new DataGrid(renderTo, options, afterLoadCallback);
+        async?: boolean
+    ): DataGrid;
+
+    /**
+     * Creates a new data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @param options
+     * The options of the data grid.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     *
+     * @return
+     * Promise that resolves with the new data grid.
+     */
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async: true
+    ): Promise<DataGrid>;
+
+    // Implementation
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: Options,
+        async?: boolean
+    ): (DataGrid | Promise<DataGrid>) {
+
+        if (async) {
+            return new Promise<DataGrid>((resolve): void => {
+                void new DataGrid(renderTo, options, (dataGrid): void => {
+                    resolve(dataGrid);
+                });
+            });
+        }
+
+        return new DataGrid(renderTo, options);
     }
 
     /* *
@@ -90,6 +131,12 @@ class DataGrid {
      */
     public static readonly defaultOptions = DataGridDefaultOptions;
 
+
+    /**
+     * The user options declared for the columns as an object of column ID to
+     * column options.
+     */
+    public columnOptionsMap: Record<string, Column.Options> = {};
 
     /**
      * The container of the data grid.
@@ -129,7 +176,7 @@ class DataGrid {
      * The options that were declared by the user when creating the data grid
      * or when updating it.
      */
-    public userOptions?: Partial<Options>;
+    public userOptions: Partial<Options> = {};
 
     /**
      * The table (viewport) element of the data grid.
@@ -183,13 +230,12 @@ class DataGrid {
         options: Options,
         afterLoadCallback?: DataGrid.AfterLoadCallback
     ) {
-        this.userOptions = options;
-        this.options = merge(DataGrid.defaultOptions, options);
+        this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
 
         this.initContainers(renderTo);
-        this.loadDataTable(this.options.dataTable);
+        this.loadDataTable(this.options?.dataTable);
 
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
@@ -234,20 +280,154 @@ class DataGrid {
     }
 
     /**
+     * Loads the new user options to all the important fields (`userOptions`,
+     * `options` and `columnOptionsMap`).
+     *
+     * @param newOptions
+     * The options that were declared by the user.
+     *
+     * @param oneToOne
+     * When `false` (default), the existing column options will be merged with
+     * the ones that are currently defined in the user options. When `true`,
+     * the columns not defined in the new options will be removed.
+     */
+    private loadUserOptions(
+        newOptions: Partial<Options>,
+        oneToOne = false
+    ): void {
+        if (newOptions.columns) {
+            if (oneToOne) {
+                this.loadColumnOptionsOneToOne(newOptions.columns);
+            } else {
+                this.loadColumnOptions(newOptions.columns);
+            }
+            delete newOptions.columns;
+        }
+
+        this.userOptions = merge(this.userOptions, newOptions);
+        this.options = merge(
+            this.options ?? DataGrid.defaultOptions,
+            this.userOptions
+        );
+
+        const columnOptionsArray = this.options?.columns;
+        if (!columnOptionsArray) {
+            return;
+        }
+        const columnOptionsObj: Record<string, Column.Options> = {};
+        for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
+            columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
+        }
+
+        this.columnOptionsMap = columnOptionsObj;
+    }
+
+    /**
+     * Loads the new column options to the userOptions field.
+     *
+     * @param newColumnOptions
+     * The new column options that should be loaded.
+     *
+     * @param overwrite
+     * Whether to overwrite the existing column options with the new ones.
+     * Default is `false`.
+     */
+    private loadColumnOptions(
+        newColumnOptions: IndividualColumnOptions[],
+        overwrite = false
+    ): void {
+        if (!this.userOptions.columns) {
+            this.userOptions.columns = [];
+        }
+        const columnOptions = this.userOptions.columns;
+
+        for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
+            const newOptions = newColumnOptions[i];
+            const indexInPrevOptions = columnOptions.findIndex(
+                (prev): boolean => prev.id === newOptions.id
+            );
+
+            // If the new column options contain only the id.
+            if (Object.keys(newOptions).length < 2) {
+                if (overwrite && indexInPrevOptions !== -1) {
+                    columnOptions.splice(indexInPrevOptions, 1);
+                }
+                continue;
+            }
+
+            if (indexInPrevOptions === -1) {
+                columnOptions.push(newOptions);
+            } else if (overwrite) {
+                columnOptions[indexInPrevOptions] = newOptions;
+            } else {
+                columnOptions[indexInPrevOptions] = merge(
+                    columnOptions[indexInPrevOptions],
+                    newOptions
+                );
+            }
+        }
+
+        if (columnOptions.length < 1) {
+            delete this.userOptions.columns;
+        }
+    }
+
+    /**
+     * Loads the new column options to the userOptions field in a one-to-one
+     * manner. It means that all the columns that are not defined in the new
+     * options will be removed.
+     *
+     * @param newColumnOptions
+     * The new column options that should be loaded.
+     */
+    private loadColumnOptionsOneToOne(
+        newColumnOptions: IndividualColumnOptions[]
+    ): void {
+        const prevColumnOptions = this.userOptions.columns;
+        const columnOptions = [];
+
+        let prevOptions: IndividualColumnOptions | undefined;
+        for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
+            const newOptions = newColumnOptions[i];
+            const indexInPrevOptions = prevColumnOptions?.findIndex(
+                (prev): boolean => prev.id === newOptions.id
+            );
+
+            if (indexInPrevOptions !== void 0 && indexInPrevOptions !== -1) {
+                prevOptions = prevColumnOptions?.[indexInPrevOptions];
+            }
+
+            const resultOptions = merge(prevOptions ?? {}, newOptions);
+            if (Object.keys(resultOptions).length > 1) {
+                columnOptions.push(resultOptions);
+            }
+        }
+
+        this.userOptions.columns = columnOptions;
+    }
+
+    /**
      * Updates the data grid with new options.
      *
      * @param options
-     * The options of the data grid that should be updated.
+     * The options of the data grid that should be updated. If not provided,
+     * the update will be proceeded based on the `this.userOptions` property.
+     * The `column` options are merged using the `id` property as a key.
      *
      * @param render
      * Whether to re-render the data grid after updating the options.
+     *
+     * @param oneToOne
+     * When `false` (default), the existing column options will be merged with
+     * the ones that are currently defined in the user options. When `true`,
+     * the columns not defined in the new options will be removed.
      */
     public async update(
-        options: Options,
-        render: boolean = true
+        options: Options = {},
+        render = true,
+        oneToOne = false
     ): Promise<void> {
-        this.userOptions = merge(this.userOptions, options);
-        this.options = merge(DataGrid.defaultOptions, this.userOptions);
+        this.loadUserOptions(options, oneToOne);
 
         let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
@@ -256,11 +436,42 @@ class DataGrid {
         }
 
         this.querying.loadOptions();
-        await this.querying.proceed(newDataTable);
 
         if (render) {
+            await this.querying.proceed(newDataTable);
             this.renderViewport();
         }
+    }
+
+    /**
+     * Updates the column of the data grid with new options.
+     *
+     * @param columnId
+     * The ID of the column that should be updated.
+     *
+     * @param options
+     * The options of the columns that should be updated. If null,
+     * column options for this column ID will be removed.
+     *
+     * @param render
+     * Whether to re-render the data grid after updating the columns.
+     *
+     * @param overwrite
+     * If true, the column options will be updated by replacing the existing
+     * options with the new ones instead of merging them.
+     */
+    public async updateColumn(
+        columnId: string,
+        options: Omit<IndividualColumnOptions, 'id'>,
+        render: boolean = true,
+        overwrite = false
+    ): Promise<void> {
+        this.loadColumnOptions([{
+            id: columnId,
+            ...options
+        }], overwrite);
+
+        await this.update(void 0, render);
     }
 
     /**
@@ -372,11 +583,10 @@ class DataGrid {
      * grid, in the correct order.
      */
     private getEnabledColumnIDs(): string[] {
-        const columnsOptions = this.options?.columns;
+        const { columnOptionsMap } = this;
         const header = this.options?.settings?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        const columnsIncluded = this.options?.settings?.columns?.included ||
-        (
+        const columnsIncluded = this.options?.settings?.columns?.included || (
             headerColumns && headerColumns.length > 0 ?
                 headerColumns : this.dataTable?.getColumnNames()
         );
@@ -385,11 +595,15 @@ class DataGrid {
             return [];
         }
 
+        if (!columnOptionsMap) {
+            return columnsIncluded;
+        }
+
         let columnName: string;
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             columnName = columnsIncluded[i];
-            if (columnsOptions?.[columnName]?.enabled !== false) {
+            if (columnOptionsMap?.[columnName]?.enabled !== false) {
                 result.push(columnName);
             }
         }
@@ -486,6 +700,29 @@ class DataGrid {
         }
 
         return JSON.stringify(json);
+    }
+
+    /**
+     * Returns the current DataGrid options as a JSON string.
+     *
+     * @param onlyUserOptions
+     * Whether to return only the user options or all options (user options
+     * merged with the default ones). Default is `true`.
+     *
+     * @returns
+     * Options as a JSON string.
+     */
+    public getOptionsJSON(onlyUserOptions = true): string {
+        const optionsCopy =
+            onlyUserOptions ? merge(this.userOptions) : merge(this.options);
+
+        if (optionsCopy.dataTable?.id) {
+            optionsCopy.dataTable = {
+                columns: optionsCopy.dataTable.columns
+            };
+        }
+
+        return JSON.stringify(optionsCopy);
     }
 }
 

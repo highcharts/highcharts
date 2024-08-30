@@ -107,10 +107,8 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            defaults: {
-                columns: {
-                    editable: true
-                }
+            columnDefaults: {
+                editable: true
             }
         }
     }, {
@@ -126,10 +124,8 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            defaults: {
-                columns: {
-                    editable: true
-                }
+            columnDefaults: {
+                editable: true
             }
         }
     }]
