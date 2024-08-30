@@ -4,8 +4,8 @@
 // Application configuration
 //
 
-// Support for Nynorsk (nn) and English (en)
-const lang = languageSupport('en');
+// Information about the received measurement data
+const measInfo = measDataInfo();
 
 // Configuration for power generator
 const powerPlantConfig = {
@@ -152,8 +152,8 @@ async function dashboardCreate() {
     }
 
     // Custom HTML component for displaying power plant, reservoir and
-    // water intake parameters. If a description of the power plant
-    // is available, it is also described here.
+    // water intake parameters. If a briefiption of the power plant
+    // is available, it is also briefibed here.
     function createInfoComponent() {
         return {
             type: 'HTML',
@@ -172,7 +172,7 @@ async function dashboardCreate() {
             type: 'Highcharts',
             renderTo: 'el-map',
             chartConstructor: 'mapChart',
-            title: lang.tr('mapTitle'),
+            title: 'Power plant with water reservoirs and intakes',
             chartOptions: {
                 ...commonChartOptions,
                 chart: {
@@ -259,7 +259,7 @@ async function dashboardCreate() {
                 },
                 yAxis: {
                     title: {
-                        text: lang.hdr('P_gen'),
+                        text: measInfo.hdr('P_gen'),
                         y: -80
                     },
                     labels: {
@@ -274,7 +274,7 @@ async function dashboardCreate() {
                     max: 0 // Populated at update
                 },
                 series: [{
-                    name: lang.tr('P_gen'),
+                    name: measInfo.brief('P_gen'),
                     enableMouseTracking: true,
                     innerRadius: '80%',
                     radius: '120%'
@@ -295,7 +295,7 @@ async function dashboardCreate() {
             connector: {
                 id: connId,
                 columnAssignment: [{
-                    seriesId: lang.tr('P_gen'),
+                    seriesId: measInfo.brief('P_gen'),
                     data: ['time', 'power']
                 }]
             },
@@ -321,7 +321,7 @@ async function dashboardCreate() {
                     min: 0,
                     max: 0, // Populated on update
                     title: {
-                        text: lang.hdr('P_gen')
+                        text: measInfo.hdr('P_gen')
                     }
                 },
                 tooltip: {
@@ -350,7 +350,7 @@ async function dashboardCreate() {
                 editable: false,
                 columns: {
                     time: {
-                        headerFormat: lang.tr('Measure time') + ' (UTC)',
+                        headerFormat: 'Measure time (UTC)',
                         cellFormatter: function () {
                             // eslint-disable-next-line max-len
                             return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' +
@@ -358,8 +358,7 @@ async function dashboardCreate() {
                         }
                     },
                     power: {
-                        headerFormat: lang.tr('P_gen') +
-                            ' (' + lang.unit('P_gen') + ')'
+                        headerFormat: measInfo.hdr('P_gen')
                     }
                 }
             }
@@ -431,9 +430,9 @@ async function dashboardsComponentUpdate(mqttData) {
         fields.forEach(field => {
             const isKnown = item !== null && item[field] !== null;
             ret.push({
-                name: lang.tr(field),
+                name: measInfo.brief(field),
                 value: isKnown ? item[field] : '?',
-                unit: lang.unit(field)
+                unit: measInfo.unit(field)
             });
         });
         return ret;
@@ -444,7 +443,7 @@ async function dashboardsComponentUpdate(mqttData) {
         let colHtml = '';
 
         cols.forEach(col => {
-            const name = lang.tr(col.name);
+            const name = col.name;
             colHtml += `<th>${name}</th>`;
         });
 
@@ -477,16 +476,13 @@ async function dashboardsComponentUpdate(mqttData) {
         if (Object.keys(data).length === 0) {
             return '';
         }
-        const caption = lang.tr(header);
-        const name = lang.tr('Name');
 
         // Fields to display
-        // const fields = powerPlantConfig.infoFields;
         let colHtml = getHeaderFields(fields);
         const colHtmlUnit = getUnitFields(fields);
 
-        let html = `<table class="info-field"><caption>${caption}</caption>
-            <tr><th>${name}</th>${colHtml}</tr>
+        let html = `<table class="info-field"><caption>${header}</caption>
+            <tr><th>Name</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
         // Populate fields
@@ -585,11 +581,11 @@ async function dashboardsComponentUpdate(mqttData) {
             title: data.name
         });
 
-        // Description of power plant (if available)
+        // briefiption of power plant (if available)
         let html = '';
-        if (data.description !== null) {
-            html = `<span class="pw-descr">
-                ${data.description}</span>`;
+        if (data.briefiption !== null) {
+            html = `<span class="pw-brief">
+                ${data.briefiption}</span>`;
         }
 
         // Location info
@@ -605,12 +601,12 @@ async function dashboardsComponentUpdate(mqttData) {
 
         // Intakes info
         html += createInfoTable(
-            'intakes', intakeConfig.infoFields, data.intakes
+            'Water intakes', intakeConfig.infoFields, data.intakes
         );
 
         // Reservoir info
         html += createInfoTable(
-            'reservoirs', reservoirConfig.infoFields, data.reservoirs
+            'Water reservoirs', reservoirConfig.infoFields, data.reservoirs
         );
 
         // Render HTML
@@ -1006,9 +1002,8 @@ class SkConnectBar {
         this.elDropdownButton = document.getElementById('dropdown-button');
         this.elDropdownContent = document.getElementById('dropdown-content');
 
-        this.elDropdownButton.title = lang.tr('powerPlantHelp');
-        this.elDropdownButton.innerHTML =
-            lang.tr('Power plant') + '&nbsp;&#9662;';
+        this.elDropdownButton.title = 'Click to select a power plant';
+        this.elDropdownButton.innerHTML = 'Power plant &nbsp;&#9662;';
     }
 
     setConnectState(connected) {
@@ -1128,148 +1123,88 @@ window.onload = () => {
 
 
 //
-// Language support
+// briefiption and unit of received MQTT measurement data
 //
-function languageSupport(lang) {
+function measDataInfo() {
     return {
-        // Selected language
-        current: lang,
-
-        // Translations, fixed strings
-        Apply: {
-            nn: 'Bruk'
-        },
-        Name: {
-            nn: 'Namn'
-        },
-        'Power plant': {
-            nn: 'Kraftverk'
-        },
-        'Location unknown': {
-            nn: 'Ukjend plassering'
-        },
-        mapTitle: {
-            nn: 'Kraftverk med magasin og inntak',
-            en: 'Power plant with water reservoirs and intakes'
-        },
-        powerPlantHelp: {
-            en: 'Click to select a power plant',
-            nn: 'Klikk for å velgja kraftstasjon'
-        },
-
         // Power generation parameters
-        'Measure time': {
-            nn: 'Måletidspunkt',
-            unit: 'UTC'
-        },
         P_gen: {
-            nn: 'Effekt',
-            en: 'Generated power',
+            brief: 'Generated power',
             unit: 'MW'
         },
         P_max: {
-            nn: 'Effekt (maks.)',
-            en: 'Generated power (max.)',
+            brief: 'Generated power (max.)',
             unit: 'MW'
         },
         q_turb: {
-            nn: 'Vassforbruk',
-            en: 'Water usage',
-            unit: 'm3/sek'
+            brief: 'Water usage',
+            unit: 'm3/sec'
         },
         q_min: {
-            nn: 'Vassforbruk (min.)',
-            en: 'Water usage (min.)',
-            unit: 'm3/sek'
+            brief: 'Water usage (min.)',
+            unit: 'm3/sec'
         },
         q_max: {
-            nn: 'Vassforbruk (maks.)',
-            en: 'Water usage (max.)',
-            unit: 'm3/sek'
+            brief: 'Water usage (max.)',
+            unit: 'm3/sec'
         },
         h: {
-            nn: 'Høgde',
-            en: 'Elevation',
+            brief: 'Elevation',
             unit: 'moh'
         },
         location: {
-            nn: 'Plassering',
-            en: 'Location',
+            brief: 'Location',
             unit: 'lat/lon'
         },
         volume: {
-            nn: 'Volum',
-            en: 'Volume',
+            brief: 'Volume',
             unit: 'mill. m3'
         },
-        intakes: {
-            nn: 'Inntak',
-            en: 'Intakes'
-        },
-        reservoirs: {
-            nn: 'Vassmagasin',
-            en: 'Reservoirs'
-        },
         drain: {
-            nn: 'Avlaup',
-            en: 'Drain',
-            unit: 'm3/sek'
+            brief: 'Drain',
+            unit: 'm3/sec'
         },
         inflow: {
-            nn: 'Tilsig',
-            en: 'Inflow',
-            unit: 'm3/sek'
+            brief: 'Inflow',
+            unit: 'm3/sec'
         },
         level: {
-            nn: 'Nivå',
-            en: 'level',
+            brief: 'level',
             unit: 'moh'
         },
         HRV: {
-            nn: 'Høgaste regulerte vasstand',
-            en: 'Highest regulated level',
+            brief: 'Highest regulated level',
             unit: 'moh'
         },
         LRV: {
-            nn: 'Lågaste regulerte vasstand',
-            en: 'Lowest regulated level',
+            brief: 'Lowest regulated level',
             unit: 'moh'
         },
         energy: {
-            nn: 'Energi',
-            en: 'Energy',
+            brief: 'Energy',
             unit: 'MWh'
         },
         net_flow: {
-            nn: 'Netto endring',
-            en: 'Net flow',
-            unit: 'm3/sek'
+            brief: 'Net flow',
+            unit: 'm3/sec'
         },
         q_min_set: {
-            nn: 'Minstevassføring krav',
-            en: 'Required minimal flow',
-            unit: 'm3/sek'
+            brief: 'Required minimal flow',
+            unit: 'm3/sec'
         },
         q_min_act: {
-            nn: 'Minstevassføring målt',
-            en: 'Measured minimal flow',
-            unit: 'm3/sek'
+            brief: 'Measured minimal flow',
+            unit: 'm3/sec'
         },
 
-        // Translator function
-        tr: function (str) {
-            const item = str in this ? this[str] : null;
-            if (item === null) {
-                // No translation exists, return original string
-                return str;
+        // Brief description of measurement
+        brief: function (id) {
+            if (id in this) {
+                if ('brief' in this[id]) {
+                    return this[id].brief;
+                }
             }
-
-            let ret = str;
-            if (this.current in this[str]) {
-                ret = this[str][this.current];
-            }
-
-            return ret;
+            return '';
         },
 
         // Get measurement unit (if applicable)
@@ -1282,9 +1217,9 @@ function languageSupport(lang) {
             return '';
         },
 
-        // Name + unit
+        // Full description, brief + unit
         hdr: function (id) {
-            return this.tr(id) + ' (' + this.unit(id) + ')';
+            return this.brief(id) + ' (' + this.unit(id) + ')';
         }
     };
 }
