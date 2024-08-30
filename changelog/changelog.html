@@ -14297,12 +14297,17 @@
           <div class="changelog-container">
             <h3 class="release-header">
               <a id="highcharts-dashboards-v2.3.0"></a>
-              <span>Highcharts Dashboards v2.3.0 (2024-08-29)</span>
+              <span>Highcharts Dashboards v2.3.0 (2024-08-26)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v2.3.0">#</a>
               <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-2.3.0.zip" title="Download the zip archive for Highcharts Dashboards v2.3.0"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
               <li>Added the possibility of setting toolbar visibility for individual components, closes <a href="https://github.com/highcharts/highcharts/issues/20907">#20907</a>.</li>
+              <li>Removed column aliases from <code>DataTable</code>, API documentation, and affected samples. Closes <a href="https://github.com/highcharts/highcharts/issues/21485">#21485</a>.</li>
+              <li>Added methods (<a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getLocalRowIndex">getLocalRowIndex</a> &amp; <a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getOriginalRowIndex">getOriginalRowIndex</a>) for referencing between rows of original and modified data tables.</li>
+              <li>Changed the <code>layout</code> element in the Add component sidebar to a <code>row</code> and improved the look when added.</li>
+              <li>Added an <code>HTML</code> text field in the sidebar to control and edit the content of the HTML component.</li>
+              <li>Added support for the <a href="https://api.highcharts.com/dashboards/data.beforeParse">beforeParse</a> callback in the <code>GoogleSheetsConnector</code> options. Closes <a href="https://github.com/highcharts/highcharts/issues/21235">#21235</a>.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">
@@ -14316,6 +14321,12 @@
                   <div class="card-body">
                     <ul>
                       <li>Fixed some smaller issues with the HTML component.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21615">#21615</a>, when the <code>useHTML</code> was enabled, content in a cell was not rendered correctly when scrolling.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21280">#21280</a>, it was impossible to set the component active state, so added <code>isAcitve</code> flag.</li>
+                      <li>Fixed <a href="https://api.highcharts.com/dashboards/data.parseDate">parseDate</a> in <code>DataConverter</code> was private.</li>
+                      <li>Fixed, added missing <code>DataConverter</code> type in <code>DataConnector</code>.</li>
+                      <li>Added missing utility method to the <code>Dashboards</code> namespace.</li>
+                      <li>Fixed error when trying to sync with an invisible point.</li>
                     </ul>
 
                   </div>
