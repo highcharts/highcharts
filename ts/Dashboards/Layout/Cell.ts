@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,9 +22,9 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
@@ -159,18 +159,12 @@ class Cell extends GUIElement {
             )
         });
 
-        // Set cell width respecting responsive options.
-        this.reflow();
-
         // Mount component from JSON.
         if (this.options.mountedComponentJSON) {
-            this.mountComponentFromJSON(
-                this.options.mountedComponentJSON,
-                this.container
-            );
+            this.mountComponentFromJSON(this.options.mountedComponentJSON);
         }
 
-        // nested layout
+        // Nested layout
         if (this.options.layout) {
             this.setNestedLayout();
         }
@@ -205,7 +199,7 @@ class Cell extends GUIElement {
     /**
      * The type of GUI element.
      */
-    public readonly type = Globals.guiElementType.cell;
+    public readonly type? = Globals.guiElementType.cell;
 
     /**
      * Reference to the row instance.
@@ -271,16 +265,12 @@ class Cell extends GUIElement {
      * @param {Component.JSON} [json]
      * Component JSON.
      *
-     * @param {HTMLDOMElement} [cellContainer]
-     * Cell container
-     *
      * @return {boolean}
      * Returns true, if the component created from JSON is mounted,
      * otherwise false.
      */
     public mountComponentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLDOMElement|undefined) // @todo
+        json: Component.JSON
     ): boolean {
         const cell = this;
 
@@ -288,7 +278,7 @@ class Cell extends GUIElement {
             json.options.parentElement = cell.id;
         }
 
-        const component = componentFromJSON(json, cellContainer);
+        const component = componentFromJSON(json);
 
         if (component) {
             cell.mountedComponent = component;
@@ -307,12 +297,13 @@ class Cell extends GUIElement {
         const { row } = cell;
 
         // Destroy mounted component.
-        if (cell.mountedComponent) {
-            cell.mountedComponent.destroy();
-        }
+        cell.mountedComponent?.destroy();
+
+        // If layout exists in the cell - destroy it
+        cell.nestedLayout?.destroy();
 
         row.unmountCell(cell);
-        const destroyRow = row.cells.length === 0;
+        const destroyRow = row.cells?.length === 0;
 
         super.destroy();
 
@@ -403,9 +394,9 @@ class Cell extends GUIElement {
 
     // Method to get array of overlapping levels.
     public getOverlappingLevels(
-        align: string, // left, right, top, bottom
-        levelMaxGap: number, // max distance between levels
-        offset?: number // analized cell offset
+        align: 'left' | 'right' |'top' |'bottom',
+        levelMaxGap: number, // Max distance between levels
+        offset?: number // Analyzed cell offset
     ): Array<number> {
         const cell = this,
             parentCell = cell.row.layout.parentCell;
@@ -429,32 +420,6 @@ class Cell extends GUIElement {
         }
 
         return levels;
-    }
-
-    public reflow(
-        dashContainerSize?: string
-    ): void {
-        const cell = this,
-            cntSize = dashContainerSize ||
-                cell.row.layout.board.getLayoutContainerSize(),
-            respoOptions = cell.options.responsive,
-            optWidth = cell.options.width;
-
-        if (cell.container) {
-            let width = '';
-
-            if (
-                respoOptions &&
-                respoOptions[cntSize] &&
-                respoOptions[cntSize].width
-            ) {
-                width = cell.convertWidthToValue(respoOptions[cntSize].width);
-            } else if (optWidth) {
-                width = cell.convertWidthToValue(optWidth);
-            }
-
-            cell.setSize(width || 'auto');
-        }
     }
 
     /**
@@ -520,27 +485,7 @@ class Cell extends GUIElement {
         }
     }
 
-    // Updates width in responsive options.
-    public updateSize(
-        width: string, // % value or 'auto' or px
-        rwdMode?: string // small, medium, large
-    ): void {
-        const cell = this,
-            cntSize = rwdMode ||
-                cell.row.layout.board.getLayoutContainerSize();
-
-        if (!cell.options.responsive) {
-            cell.options.responsive = {};
-        }
-
-        cell.options.responsive[cntSize] = {
-            width: width
-        };
-    }
-
-    public setHighlight(
-        remove?: boolean
-    ): void {
+    public setHighlight(remove?: boolean): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
@@ -568,10 +513,13 @@ class Cell extends GUIElement {
         }
     }
 
+    /**
+     * Sets the active state of the cell and resets the state of other cells.
+     */
     public setActiveState(): void {
-        // reset other boxes
         const cell = this;
 
+        // Reset other boxes
         cell.row.layout.board.mountedComponents.forEach(
             (mountedComponent):void => {
                 if (mountedComponent.cell.container) {
@@ -579,10 +527,11 @@ class Cell extends GUIElement {
                         Globals.classNames.cellActive
                     );
                 }
+                mountedComponent.component.isActive = false;
             }
         );
 
-        // apply class
+        // Apply class
         if (cell.container) {
             cell.container.classList.add(
                 Globals.classNames.cellActive
@@ -626,10 +575,15 @@ namespace Cell {
 
     /**
      * Responsive options of the cell.
+     *
+     * @deprecated
      */
     export interface CellResponsiveOptions {
         /**
          * The width, that should the cell have in the given responsive mode.
+         *
+         * @deprecated
+         *
          */
         width: (string|number);
     }
@@ -649,46 +603,51 @@ namespace Cell {
          * Unique cell id.
          **/
         id: string;
+
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
         /**
          * Width of the cell. Can be a percentage value, pixels or a fraction.
          *
          * The fraction converts value into percents like in CSS grid is.
          * For example `1/3` means `33.333%`.
          *
-         * Examples:
-         * ```
-         * width: 300 // 300px
-         * ```
-         * ```
-         * width: '300px'
-         * ```
-         * ```
-         * width: '1/3' // 33.333%
-         * ```
-         * ```
-         * width: '33.333%'
-         * ```
+         * @deprecated
          *
-         *  Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         width?: (string|number);
         /**
          * Height of the cell.
          *
-         * Examples:
-         * ```
-         * height: 300 // 300px
-         * ```
-         * ```
-         * height: '300px'
-         * ```
+         * @deprecated
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
-         **/
+         * **/
         height?: (string|number);
         /**
          * CSS styles for cell container.
@@ -717,9 +676,7 @@ namespace Cell {
         /**
          * Options for responsive design.
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
+         * @deprecated
          **/
         responsive?: Record<string, CellResponsiveOptions>;
     }
@@ -736,7 +693,6 @@ namespace Cell {
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
     }
-
 }
 
 /* *

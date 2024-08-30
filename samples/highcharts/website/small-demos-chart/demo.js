@@ -39,7 +39,8 @@ function dependencyWheel() {
         },
         accessibility: {
             point: {
-                valueDescriptionFormat: '{index}. From {point.from} to {point.to}: {point.weight}.'
+                valueDescriptionFormat: '{index}. From {point.from} to ' +
+                    '{point.to}: {point.weight}.'
             }
         },
         series: [{
@@ -119,11 +120,14 @@ function area() {
         },
         accessibility: {
             point: {
-                valueDescriptionFormat: '{index}. {point.category}, {point.y:,.0f} millions, {point.percentage:.1f}%.'
+                valueDescriptionFormat: '{index}. {point.category}, ' +
+                    '{point.y:,.0f} millions, {point.percentage:.1f}%.'
             }
         },
         xAxis: {
-            categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
+            categories: [
+                '1750', '1800', '1850', '1900', '1950', '1999', '2050'
+            ],
             tickmarkPlacement: 'on',
             title: {
                 enabled: false
@@ -140,7 +144,9 @@ function area() {
         },
         tooltip: {
             outside: true,
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} millions)<br/>',
+            pointFormat: '<span style="color:{series.color}">' +
+                '{series.name}</span>: <b>{point.percentage:.1f}%</b> ' +
+                '({point.y:,.0f} millions)<br/>',
             split: true
         },
         plotOptions: {

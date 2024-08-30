@@ -57,14 +57,6 @@ interface ControllableAlignObject extends AlignObject {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -231,11 +223,8 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
-            const svgRendererProto = SVGRendererClass.prototype;
-
-            svgRendererProto.symbols.connector = symbolConnector;
-        }
+        const symbols = SVGRendererClass.prototype.symbols;
+        symbols.connector = symbolConnector;
 
     }
 
@@ -418,10 +407,6 @@ class ControllableLabel extends Controllable {
                 .shadow(options.shadow);
         }
 
-        if (options.className) {
-            this.graphic.addClass(options.className);
-        }
-
         this.graphic.labelrank = (options as any).labelrank;
 
         super.render();
@@ -476,6 +461,7 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
     ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
@@ -522,7 +508,8 @@ class ControllableLabel extends Controllable {
                     {
                         chart,
                         distance: pick(itemOptions.distance, 16),
-                        getPlayingField: tooltip.getPlayingField
+                        getPlayingField: tooltip.getPlayingField,
+                        pointer: tooltip.pointer
                     },
                     width,
                     height,

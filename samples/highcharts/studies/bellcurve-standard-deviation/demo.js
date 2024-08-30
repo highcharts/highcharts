@@ -8,7 +8,8 @@
     }
     H.seriesTypes.bellcurve.prototype.derivedData = function (
         mean,
-        standardDeviation) {
+        standardDeviation
+    ) {
 
         const intervals = this.options.intervals,
             pointsInInterval = this.options.pointsInInterval,
@@ -38,7 +39,8 @@
     };
 }(Highcharts));
 
-const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [
+    3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -52,7 +54,9 @@ const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
 
 Highcharts.setOptions({
     colors: [Highcharts.color(
-        Highcharts.getOptions().colors[0]).brighten(-0.15).get()]
+        Highcharts.getOptions().colors[0]
+    ).brighten(-0.15).get()
+    ]
 });
 
 Highcharts.chart('container', {
@@ -104,8 +108,10 @@ Highcharts.chart('container', {
                         if (s.stDevLabelsGroup) {
                             s.stDevLabels.forEach(function (label, i) {
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] -
-                                         (base / 2)) - (label.width / 2),
+                                    x: xAxis.toPixels(
+                                        zoneStops[i] -
+                                         (base / 2)
+                                    ) - (label.width / 2),
                                     y: chart.plotBox.y +
                                          s.yAxis.len - label.height
                                 });
@@ -113,7 +119,9 @@ Highcharts.chart('container', {
                         } else {
                             const percents = ['2.35%', '13.5%', '34.0%'];
 
-                            s.stDevLabelsGroup = renderer.g('st-dev-labels').attr({
+                            s.stDevLabelsGroup = renderer.g(
+                                'st-dev-labels'
+                            ).attr({
                                 zIndex: 5
                             }).add();
                             s.stDevLabels = [];
@@ -127,8 +135,10 @@ Highcharts.chart('container', {
                                 ).add(s.stDevLabelsGroup);
 
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] -
-                                         (base / 2)) - (label.width / 2),
+                                    x: xAxis.toPixels(
+                                        zoneStops[i] -
+                                         (base / 2)
+                                    ) - (label.width / 2),
                                     y: chart.plotBox.y +
                                          s.yAxis.len - label.height
                                 });

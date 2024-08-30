@@ -28,7 +28,9 @@
 
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         },
 
         xAxis: {

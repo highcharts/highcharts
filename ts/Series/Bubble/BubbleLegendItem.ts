@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -121,15 +121,15 @@ class BubbleLegendItem {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public legend: Legend = void 0 as any;
-    public maxLabel: BBoxObject = void 0 as any;
-    public movementX: number = void 0 as any;
-    public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
-    public selected: undefined = void 0 as any;
-    public visible: boolean = void 0 as any;
-    public symbols: Record<string, Array<SVGElement>> = void 0 as any;
-    public options: BubbleLegendItem.Options = void 0 as any;
+    public chart!: Chart;
+    public legend!: Legend;
+    public maxLabel!: BBoxObject;
+    public movementX!: number;
+    public ranges!: Array<BubbleLegendItem.RangesOptions>;
+    public selected!: undefined;
+    public visible!: boolean;
+    public symbols!: Record<string, Array<SVGElement>>;
+    public options!: BubbleLegendItem.Options;
 
     /* *
      *
@@ -176,8 +176,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const chart = this.chart,
-            itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = pick(legend.options.itemDistance, 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =
@@ -186,7 +185,7 @@ class BubbleLegendItem {
 
         let connectorSpace;
 
-        // Do not create bubbleLegend now if ranges or ranges valeus are not
+        // Do not create bubbleLegend now if ranges or ranges values are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
             (legend.options.bubbleLegend as any).autoRanges = true;
@@ -408,7 +407,7 @@ class BubbleLegendItem {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0; // do not use connector
+            connectorLength = 0; // Do not use connector
             options.connectorDistance = 0;
             (range.labelAttribs as any).align = 'center';
         }
@@ -660,7 +659,7 @@ class BubbleLegendItem {
         let calculatedSize,
             maxSize = bubbleSeries.options.maxSize;
 
-        // Calculate prediceted max size of bubble
+        // Calculate predicted max size of bubble
         if (floating || !(/%$/.test(maxSize as any))) {
             calculatedSize = maxPxSize;
 
@@ -712,7 +711,8 @@ class BubbleLegendItem {
             bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
-        if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
+        if (
+            Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
             1
         ) {
             this.updateRanges(
@@ -821,4 +821,4 @@ export default BubbleLegendItem;
  * @type {number}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

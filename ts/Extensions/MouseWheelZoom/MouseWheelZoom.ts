@@ -17,11 +17,11 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type Axis from '../../Core/Axis/Axis';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -31,6 +31,9 @@ const {
     defined,
     merge
 } = U;
+
+import NBU from '../Annotations/NavigationBindingsUtilities.js';
+const { getAssignedAxis } = NBU;
 
 /* *
  *
@@ -43,6 +46,8 @@ const composedClasses: Array<(Function|GlobalsLike)> = [],
         enabled: true,
         sensitivity: 1.1
     };
+
+let wheelTimer: number;
 
 
 /* *
@@ -58,57 +63,13 @@ const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
     if (!isObject(options)) {
-        return merge(defaultOptions,
-            { enabled: defined(options) ? options : true }
-        );
+        options = {
+            enabled: options ?? true
+        };
     }
     return merge(defaultOptions, options);
 };
 
-/**
- * @private
- */
-const fitToBox = function (
-    inner: BBoxObject,
-    outer: BBoxObject
-): BBoxObject {
-    if (inner.x + inner.width > outer.x + outer.width) {
-        if (inner.width > outer.width) {
-            inner.width = outer.width;
-            inner.x = outer.x;
-        } else {
-            inner.x = outer.x + outer.width - inner.width;
-        }
-    }
-    if (inner.width > outer.width) {
-        inner.width = outer.width;
-    }
-    if (inner.x < outer.x) {
-        inner.x = outer.x;
-    }
-
-    // y and height
-    if (inner.y + inner.height > outer.y + outer.height) {
-        if (inner.height > outer.height) {
-            inner.height = outer.height;
-            inner.y = outer.y;
-        } else {
-            inner.y = outer.y + outer.height - inner.height;
-        }
-    }
-    if (inner.height > outer.height) {
-        inner.height = outer.height;
-    }
-    if (inner.y < outer.y) {
-        inner.y = outer.y;
-    }
-
-    return inner;
-};
-
-let wheelTimer: number,
-    startOnTick: boolean|undefined,
-    endOnTick: boolean|undefined;
 
 /**
  * @private
@@ -116,191 +77,115 @@ let wheelTimer: number,
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
-    centerXArg: number,
-    centerYArg: number,
+    xAxis: Array<Axis>,
+    yAxis: Array<Axis>,
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
-): void {
-    const xAxis = chart.xAxis[0],
-        yAxis = chart.yAxis[0],
-        yOptions = yAxis.options,
-        type = pick(
-            options.type,
-            chart.options.chart.zooming.type,
-            'x'
-        ),
-        zoomX = /x/.test(type),
-        zoomY = /y/.test(type);
+): boolean {
+    const type = pick(
+        options.type,
+        chart.zooming.type,
+        ''
+    );
 
-    if (defined(xAxis.max) && defined(xAxis.min) &&
-        defined(yAxis.max) && defined(yAxis.min) &&
-        defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
-        defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
-
-        if (zoomY) {
-            // Options interfering with yAxis zoom by setExtremes() returning
-            // integers by default.
-            if (defined(wheelTimer)) {
-                clearTimeout(wheelTimer);
-            }
-
-            if (!defined(startOnTick)) {
-                startOnTick = yOptions.startOnTick;
-                endOnTick = yOptions.endOnTick;
-            }
-
-            // Temporarily disable start and end on tick, because they would
-            // prevent small increments of zooming.
-            if (startOnTick || endOnTick) {
-                yOptions.startOnTick = false;
-                yOptions.endOnTick = false;
-            }
-            wheelTimer = setTimeout((): void => {
-                if (defined(startOnTick) && defined(endOnTick)) {
-                    // Repeat merge after the wheel zoom is finished, #19178
-                    yOptions.startOnTick = startOnTick;
-                    yOptions.endOnTick = endOnTick;
-
-                    // Set the extremes to the same as they already are, but now
-                    // with the original startOnTick and endOnTick. We need
-                    // `forceRedraw` otherwise it will detect that the values
-                    // haven't changed. We do not use a simple yAxis.update()
-                    // because it will destroy the ticks and prevent animation.
-                    const { min, max } = yAxis.getExtremes();
-                    yAxis.forceRedraw = true;
-                    yAxis.setExtremes(min, max);
-                    startOnTick = endOnTick = void 0;
-                }
-            }, 400);
-        }
-
-        if (chart.inverted) {
-            const emulateRoof = yAxis.pos + yAxis.len;
-
-            // Get the correct values
-            centerXArg = xAxis.toValue(mouseY);
-            centerYArg = yAxis.toValue(mouseX);
-
-            // Swapping x and y for simplicity when chart is inverted.
-            const tmp = mouseX;
-            mouseX = mouseY;
-            mouseY = emulateRoof - tmp + yAxis.pos;
-        }
-
-        let fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5;
-        if (xAxis.reversed && !chart.inverted ||
-            chart.inverted && !xAxis.reversed) {
-            // We are taking into account that xAxis automatically gets
-            // reversed when chart.inverted
-            fixToX = 1 - fixToX;
-        }
-
-        let fixToY = 1 - (mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5);
-        if (yAxis.reversed) {
-            fixToY = 1 - fixToY;
-        }
-
-        const xRange = xAxis.max - xAxis.min,
-            centerX = pick(centerXArg, xAxis.min + xRange / 2),
-            newXRange = xRange * howMuch,
-            yRange = yAxis.max - yAxis.min,
-            centerY = pick(centerYArg, yAxis.min + yRange / 2),
-            newYRange = yRange * howMuch,
-            newXMin = centerX - newXRange * fixToX,
-            newYMin = centerY - newYRange * fixToY,
-            dataRangeX = xAxis.dataMax - xAxis.dataMin,
-            dataRangeY = yAxis.dataMax - yAxis.dataMin,
-            outerX = xAxis.dataMin - dataRangeX * xAxis.options.minPadding,
-            outerWidth = dataRangeX + dataRangeX * xAxis.options.minPadding +
-                dataRangeX * xAxis.options.maxPadding,
-            outerY = yAxis.dataMin - dataRangeY * yAxis.options.minPadding,
-            outerHeight = dataRangeY + dataRangeY * yAxis.options.minPadding +
-                dataRangeY * yAxis.options.maxPadding,
-            newExt = fitToBox({
-                x: newXMin,
-                y: newYMin,
-                width: newXRange,
-                height: newYRange
-            }, {
-                x: outerX,
-                y: outerY,
-                width: outerWidth,
-                height: outerHeight
-            }),
-            zoomOut = (
-                newExt.x <= outerX &&
-                newExt.width >=
-                outerWidth &&
-                newExt.y <= outerY &&
-                newExt.height >= outerHeight
-            );
-
-        // Zoom
-        if (defined(howMuch) && !zoomOut) {
-            if (zoomX) {
-                xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
-            }
-            if (zoomY) {
-                yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-            }
-
-            // Reset zoom
-        } else {
-            if (zoomX) {
-                xAxis.setExtremes(void 0, void 0, false);
-            }
-            if (zoomY) {
-                yAxis.setExtremes(void 0, void 0, false);
-            }
-        }
-
-        chart.redraw(false);
+    let axes: Array<Axis> = [];
+    if (type === 'x') {
+        axes = xAxis;
+    } else if (type === 'y') {
+        axes = yAxis;
+    } else if (type === 'xy') {
+        axes = chart.axes;
     }
-};
 
+    const hasZoomed = chart.transform({
+        axes,
+        // Create imaginary reference and target rectangles around the mouse
+        // point that scales up or down with `howMuch`;
+        to: {
+            x: mouseX - 5,
+            y: mouseY - 5,
+            // Must use 10 to get passed the limit for too small reference.
+            // Below this, the transform will default to a pan.
+            width: 10,
+            height: 10
+        },
+        from: {
+            x: mouseX - 5 * howMuch,
+            y: mouseY - 5 * howMuch,
+            width: 10 * howMuch,
+            height: 10 * howMuch
+        },
+        trigger: 'mousewheel'
+    });
+
+    if (hasZoomed) {
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
+
+        // Some time after the last mousewheel event, run drop. In case any of
+        // the affected axes had `startOnTick` or `endOnTick`, they will be
+        // re-adjusted now.
+        wheelTimer = setTimeout((): void => {
+            chart.pointer?.drop();
+        }, 400);
+    }
+
+    return hasZoomed;
+};
 
 /**
  * @private
  */
 function onAfterGetContainer(this: Chart): void {
-    const chart = this,
-        wheelZoomOptions =
-            optionsToObject(chart.options.chart.zooming.mouseWheel);
+    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
-
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
-            e = this.pointer.normalize(e);
-            // Firefox uses e.detail, WebKit and IE uses deltaX, deltaY, deltaZ.
-            if (chart.isInsidePlot(
-                e.chartX - chart.plotLeft,
-                e.chartY - chart.plotTop
-            )) {
-                const wheelSensitivity = pick(
-                        wheelZoomOptions.sensitivity,
-                        1.1
-                    ),
-                    delta = e.detail || ((e.deltaY || 0) / 120);
+            e = this.pointer?.normalize(e) || e;
 
-                zoomBy(
-                    chart,
+            const { pointer } = this,
+                allowZoom = pointer && !pointer.inClass(
+                    e.target as DOMElementType,
+                    'highcharts-no-mousewheel'
+                );
+
+            // Firefox uses e.detail, WebKit and IE uses deltaX, deltaY, deltaZ.
+            if (this.isInsidePlot(
+                e.chartX - this.plotLeft,
+                e.chartY - this.plotTop
+            ) && allowZoom) {
+
+                const wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
+                    delta = e.detail || ((e.deltaY || 0) / 120),
+                    xAxisCoords = getAssignedAxis(
+                        pointer.getCoordinates(e).xAxis
+                    ),
+                    yAxisCoords = getAssignedAxis(
+                        pointer.getCoordinates(e).yAxis
+                    );
+
+                const hasZoomed = zoomBy(
+                    this,
                     Math.pow(
                         wheelSensitivity,
                         delta
                     ),
-                    chart.xAxis[0].toValue(e.chartX),
-                    chart.yAxis[0].toValue(e.chartY),
+                    xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
+                    yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
                     e.chartX,
                     e.chartY,
                     wheelZoomOptions
                 );
+
+                // Prevent page scroll
+                if (hasZoomed) {
+                    e.preventDefault?.();
+                }
             }
 
-            // prevent page scroll
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
+
         });
     }
 }
@@ -339,10 +224,11 @@ export default MouseWheelZoomComposition;
  * */
 
 /**
- * The mouse wheel zoom is a feature included in Highcharts Stock, but is
- * also available for Highcharts Core as a module. Zooming with the mouse wheel
- * is enabled by default. It can be disabled by setting this option to
- * `false`.
+ * The mouse wheel zoom is a feature included in Highcharts Stock, but is also
+ * available for Highcharts Core as a module. Zooming with the mouse wheel is
+ * enabled by default in Highcharts Stock. In Highcharts Core it is enabled if
+ * [chart.zooming.type](chart.zooming.type) is set. It can be disabled by
+ * setting this option to `false`.
  *
  * @type      {boolean|object}
  * @since 11.1.0
@@ -382,9 +268,10 @@ export default MouseWheelZoomComposition;
  */
 
 /**
- * Decides in what dimensions the user can zoom scrolling the wheel.
- * Can be one of `x`, `y` or `xy`. If not specified here, it will inherit the
- * type from [chart.zooming.type](chart.zooming.type).
+ * Decides in what dimensions the user can zoom scrolling the wheel. Can be one
+ * of `x`, `y` or `xy`. In Highcharts Core, if not specified here, it will
+ * inherit the type from [chart.zooming.type](chart.zooming.type). In Highcharts
+ * Stock, it defaults to `x`.
  *
  * Note that particularly with mouse wheel in the y direction, the zoom is
  * affected by the default [yAxis.startOnTick](#yAxis.startOnTick) and
@@ -393,7 +280,8 @@ export default MouseWheelZoomComposition;
  * this, consider setting `startOnTick` and `endOnTick` to `false`.
  *
  * @type      {string}
- * @default   x
+ * @default   {highcharts} undefined
+ * @default   {highstock} x
  * @validvalue ["x", "y", "xy"]
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom

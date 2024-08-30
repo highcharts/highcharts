@@ -341,12 +341,14 @@ QUnit.test(
         assert.deepEqual(
             chart.series[0].xData,
             [5, 7, 9],
-            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+            '#15117: pointStart/pointInterval should work with turboed 2d ' +
+            'array data'
         );
         assert.deepEqual(
             chart.series[0].yData,
             [1, 2, 3],
-            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+            '#15117: pointStart/pointInterval should work with turboed 2d ' +
+            'array data'
         );
 
         const map = Highcharts.Series.types.line.prototype.pointArrayMap;
@@ -357,12 +359,14 @@ QUnit.test(
         assert.deepEqual(
             chart.series[0].xData,
             [5, 7, 9],
-            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+            '#15117: pointStart/pointInterval should work with turboed ' +
+            'pointArrayMap series'
         );
         assert.deepEqual(
             chart.series[0].yData,
             [[2], [4], [6]],
-            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+            '#15117: pointStart/pointInterval should work with turboed ' +
+            'pointArrayMap series'
         );
 
         Highcharts.Series.types.line.prototype.pointArrayMap = map;

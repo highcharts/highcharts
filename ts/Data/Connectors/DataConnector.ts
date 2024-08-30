@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -165,6 +165,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Order of columns.
      */
     public getColumnOrder(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
         const connector = this,
@@ -179,7 +180,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the columns of the the dataTable,
+     * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
      * @param {boolean} [usePresentationOrder]
@@ -286,20 +287,22 @@ abstract class DataConnector implements DataEvent.Emitter {
 
         window.clearTimeout(connector._polling);
 
-        connector._polling = window.setTimeout((): Promise<void> => connector
-            .load()['catch'](
-                (error): void => connector.emit<DataConnector.ErrorEvent>({
-                    type: 'loadError',
-                    error,
-                    table: connector.table
+        connector._polling = window.setTimeout(
+            (): Promise<void> => connector
+                .load()['catch'](
+                    (error): void => connector.emit<DataConnector.ErrorEvent>({
+                        type: 'loadError',
+                        error,
+                        table: connector.table
+                    })
+                )
+                .then((): void => {
+                    if (connector._polling) {
+                        connector.startPolling(refreshTime);
+                    }
                 })
-            )
-            .then((): void => {
-                if (connector._polling) {
-                    connector.startPolling(refreshTime);
-                }
-            })
-        , refreshTime);
+            , refreshTime
+        );
     }
 
     /**

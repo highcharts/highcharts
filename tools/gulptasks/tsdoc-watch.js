@@ -27,7 +27,7 @@ const SOURCE_GLOBS = [
  */
 function task() {
 
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     return new Promise(resolve => {
 

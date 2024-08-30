@@ -2,7 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     legend: {
@@ -21,7 +23,8 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             valueDescriptionFormat:
-          '{index}. {point.name}, valuation: ${point.x}B, revenue: ${point.y}B, LossesOrProfit: ${point.z}B.'
+          '{index}. {point.name}, valuation: ${point.x}B, revenue: ' +
+          '${point.y}B, LossesOrProfit: ${point.z}B.'
         }
     },
 

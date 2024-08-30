@@ -34,13 +34,12 @@ Dashboards.board('container', {
                     id: 'dashboard-col-1'
                 }, {
                     id: 'dashboard-col-2'
-                }
-                ]
+                }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -50,9 +49,13 @@ Dashboards.board('container', {
             chart: {
                 animation: false,
                 type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
@@ -60,45 +63,44 @@ Dashboards.board('container', {
             visibility: true
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             type: 'column',
             chart: {
                 animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
         sync: {
             visibility: true
         }
-    },
-    {
-        cell: 'dashboard-col-2',
+    }, {
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             type: 'column',
             chart: {
                 animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
         sync: {
             visibility: true
         }
-    }
-
-    ]
+    }]
 }, true);
-
-// window.addEventListener('resize', e => {
-//     board.mountedComponents.forEach(({ component }) => {
-//         component.resize();
-//     });
-// });

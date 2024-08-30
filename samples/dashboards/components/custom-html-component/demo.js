@@ -1,6 +1,6 @@
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
-    AST = Highcharts.AST;
+    AST = Dashboards.AST;
 class CustomHTML extends HTMLComponent {
     constructor(cell, options) {
         super(cell, options);
@@ -15,8 +15,6 @@ class CustomHTML extends HTMLComponent {
             const customHTML = document.getElementById(options.id).outerHTML;
 
             this.options.elements = new AST(customHTML).nodes;
-        } else if (options.html) {
-            this.options.elements = new AST(options.html).nodes;
         }
     }
 }
@@ -40,11 +38,13 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'CustomHTML',
-        cell: 'dashboard-col-0',
-        id: 'custom-html-div' // id of the element which already exists in the DOM
+        renderTo: 'dashboard-col-0',
+        id:
+            'custom-html-div' // id of the element which already exists in
+            // the DOM
     }, {
-        type: 'CustomHTML',
-        cell: 'dashboard-col-1',
+        type: 'HTML',
+        renderTo: 'dashboard-col-1',
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
@@ -52,7 +52,7 @@ Dashboards.board('container', {
             </div>`
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{

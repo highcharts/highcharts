@@ -18,7 +18,7 @@ The `tickInterval` option decides the interval of the tick marks in axis units. 
 
 On **categorized** axes, a null `tickInterval` will default to 1, one category.
 
-Note that **datetime** axes are based on milliseconds, so for example an interval of one day is expressed as 24 * 3600 * 1000. 
+Note that **datetime** axes are based on milliseconds, so for example an interval of one day is expressed as 24 \* 3600 \* 1000. 
 
 On **logarithmic** axes, the `tickInterval` is based on powers, so a `tickInterval` of 1 means one tick on each of 0.1, 1, 10, 100 etc. A `tickInterval` of 2 means a tick of 0.1, 10, 1000 etc. A `tickInterval` of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
@@ -84,10 +84,15 @@ It is possible to have multiple axes and linking them with different data series
 
     series: [{
         yAxis: 0,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+            95.6, 54.4
+        ]
     },{
         yAxis: 1,
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        data: [
+            7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6
+        ]
     }]
 
 
@@ -166,6 +171,12 @@ On a logarithmic axis the numbers along the axis increase logarithmically and th
 Note that on logarithmic axes, the [tickInterval](https://api.highcharts.com/highcharts/yAxis.tickInterval) option is based on powers, so a tickInterval of 1 means one tick on each of 0.1, 1, 10, 100 etc. A tickInterval of 2 means a tick of 0.1, 10, 1000 etc. A tickInterval of 0.2 puts a tick on 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10, 20, 40 etc.
 
 Another thing to note is that a logarithmic axis can never become negative, as each full axis unit is one tenth of the previous. As a consequence, Highcharts will remove 0 or negative points associated to the axis, and if you try to set the [axis.min](https://api.highcharts.com/highcharts/yAxis.min) option to 0 or negative, it will fail with an error.
+
+#### A trick to plot zero and negative values on a logarithmic axis in Highcharts
+
+Let's begin by delving into the core concept of logarithms. When we have an equation like 10 raised to the power of L equals Z, we say that L is the logarithm with a base of 10 for Z. If L is a negative number, this implies that Z is a positive fraction smaller than 1.0. In the case where L equals zero, Z is precisely 1.0. On the other hand, if L is greater than 0, then Z exceeds 1.0. It's essential to emphasize that no matter the value of L, it's impossible for Z to be zero or negative. Logarithms do not have defined values for such cases, they exclusively operate on positive numbers.
+
+If you would like to show zero and negative values on a logarithmic axis in Highcharts, the only viable approach is to employ a custom plugin. This plugin allows for the emulation of negative values on a logarithmic axis. It's important to bear in mind that the resulting scale is not mathematically precise since a true logarithmic axis never touches or crosses zero. The custom plugin can be [found in this demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/).
 
 ### Datetime
 

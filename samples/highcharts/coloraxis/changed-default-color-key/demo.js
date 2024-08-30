@@ -3,7 +3,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     colorAxis: [{}, {

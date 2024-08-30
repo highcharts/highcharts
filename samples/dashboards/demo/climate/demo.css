@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -130,50 +130,6 @@
     }
 }
 
-#toggle-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
-    background-color: var(--highcharts-neutral-color-5);
-    padding-top: 10px;
-    color: var(--highcharts-neutral-color-100);
-}
-
-#toggle-container label {
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-#toggle-container #mode-toggle {
-    appearance: none;
-    width: 40px;
-    height: 20px;
-    background-color: var(--highcharts-neutral-color-100);
-    border-radius: 20px;
-    position: relative;
-}
-
-#toggle-container #mode-toggle:checked {
-    background-color: var(--highcharts-neutral-color-100);
-}
-
-#toggle-container #mode-toggle::before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    background-color: var(--highcharts-neutral-color-0);
-    border-radius: 50%;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    transition: 0.2s;
-}
-
-#toggle-container #mode-toggle:checked::before {
-    left: 21px;
-}
-
 /* *
  *
  *  City Chart
@@ -223,6 +179,20 @@
     stroke: none;
 }
 
+#city-chart .highcharts-color-1 {
+    color: #adadff;
+    fill: #adadff;
+    stroke: #adadff;
+}
+
+.highcharts-legend-item > text {
+    fill: #fff;
+}
+
+.highcharts-legend-item:hover > text {
+    fill: #cc0;
+}
+
 /* *
  *
  *  KPI
@@ -232,7 +202,6 @@
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
-    cursor: pointer;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
@@ -271,22 +240,6 @@
     stroke: none;
 }
 
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component,
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover text,
-#kpi-layout .highcharts-dashboards-cell-state-active text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
-}
-
 #kpi-layout .highcharts-title {
     font-size: 1em;
 }
@@ -309,6 +262,12 @@
     vertical-align: middle;
 }
 
+#kpi-temperature .highcharts-dashboards-component-kpi-value,
+#kpi-max-temperature .highcharts-dashboards-component-kpi-value,
+#kpi-rain .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
+
 /* *
  *
  *  Selection Grid
@@ -319,7 +278,8 @@
     background-color: var(--color-background);
 }
 
-#selection-grid .highcharts-datagrid-column-header {
+#selection-grid .highcharts-datagrid-column-header,
+.highcharts-datagrid-cell {
     font-size: 12px;
 }
 
@@ -439,7 +399,7 @@
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
-    font-size: 9px;
+    font-size: 12px;
 }
 
 #world-map .highcharts-series-1 .highcharts-data-label text {
@@ -553,4 +513,65 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+#kpi-layout {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#kpi-data,
+#kpi-temperature,
+#kpi-max-temperature,
+#kpi-rain {
+    height: 204px;
+    flex: 1 1 50%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #world-map,
+    #kpi-layout,
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain {
+        flex: 1 1 50%;
+    }
 }

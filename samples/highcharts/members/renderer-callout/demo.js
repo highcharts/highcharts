@@ -12,7 +12,9 @@ const liveDot = renderer.circle(-10, -10, 3)
     })
     .add();
 
-const liveLabel = renderer.label('Callout test<br>Click buttons below', 200, 140, 'callout')
+const liveLabel = renderer.label(
+    'Callout test<br>Click buttons below', 200, 140, 'callout'
+)
     .attr({
         align: 'center',
         stroke: 'green',

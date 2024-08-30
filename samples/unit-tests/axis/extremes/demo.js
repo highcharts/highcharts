@@ -192,7 +192,9 @@ QUnit.test(
             chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'container',
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 },
 
                 series: [
@@ -261,7 +263,8 @@ QUnit.test('getSeriesExtremes', function (assert) {
                 {
                     visible: true,
                     options: {},
-                    getXExtremes: Highcharts.Series.prototype.getXExtremes
+                    getXExtremes: Highcharts.Series.prototype.getXExtremes,
+                    reserveSpace: Highcharts.Series.prototype.reserveSpace
                 }
             ]
         };
@@ -276,13 +279,13 @@ QUnit.test('getSeriesExtremes', function (assert) {
     getSeriesExtremes.call(xAxis);
     assert.strictEqual(
         xAxis.dataMin,
-        null,
-        'xAxis with xData:[] gives dataMin:null'
+        undefined,
+        'xAxis with xData:[] gives dataMin:undefined'
     );
     assert.strictEqual(
         xAxis.dataMax,
-        null,
-        'xAxis with xData:[] gives dataMax:null'
+        undefined,
+        'xAxis with xData:[] gives dataMax:undefined'
     );
     xAxis.series[0].xData = [2, 7, 4];
     getSeriesExtremes.call(xAxis);
@@ -326,105 +329,13 @@ QUnit.test('getSeriesExtremes', function (assert) {
      */
 });
 
-QUnit.test('Zoom out of container', function (assert) {
-    var fakeAxis = {
-        chart: {
-            options: {
-                chart: {}
-            }
-        },
-        dataMin: 0,
-        dataMax: 10,
-        options: {},
-        allowZoomOutside: false,
-        setExtremes: function (min, max) {
-            assert.ok(min <= max, 'Min is less than or equal to max');
-            assert.ok(min <= 10 && min >= 0, 'Min is within container');
-            assert.ok(max <= 10 && max >= 0, 'Max is within container');
-        }
-    };
-    Highcharts.Axis.prototype.zoom.call(fakeAxis, -4, -5);
-    Highcharts.Axis.prototype.zoom.call(fakeAxis, -4, 5);
-    Highcharts.Axis.prototype.zoom.call(fakeAxis, 4, 5);
-    Highcharts.Axis.prototype.zoom.call(fakeAxis, 4, 15);
-    Highcharts.Axis.prototype.zoom.call(fakeAxis, 14, 15);
-});
-
-QUnit.test('Zoom next to edge on category axis (#6731)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            zoomType: 'x'
-        },
-        xAxis: {
-            type: 'category'
-        },
-        series: [
-            {
-                data: [
-                    {
-                        name: 'Jan',
-                        y: 24.2
-                    },
-                    {
-                        name: 'Feb',
-                        y: 24.6
-                    },
-                    {
-                        name: 'Mar',
-                        y: 26.7
-                    },
-                    {
-                        name: 'Apr',
-                        y: 28.6
-                    },
-                    {
-                        name: 'May',
-                        y: 30.1
-                    },
-                    {
-                        name: 'Jun',
-                        y: 29.0
-                    },
-                    {
-                        name: 'Jul',
-                        y: 27.5
-                    },
-                    {
-                        name: 'Aug',
-                        y: 27.2
-                    },
-                    {
-                        name: 'Sep',
-                        y: 27.4
-                    },
-                    {
-                        name: 'Oct',
-                        y: 28.2
-                    },
-                    {
-                        name: 'Nov',
-                        y: 27.4
-                    },
-                    {
-                        name: 'Dec',
-                        y: 25.6
-                    }
-                ]
-            }
-        ]
-    });
-
-    chart.xAxis[0].zoom(0, 1);
-    chart.redraw();
-
-    assert.strictEqual(chart.xAxis[0].min, 0, 'Axis not zoomed passed 0');
-    assert.strictEqual(chart.xAxis[0].max, 5, 'Axis actually zoomed');
-});
 
 QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 minRange: 0.5
@@ -618,7 +529,9 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
         'highcharts/area',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             xAxis: {
@@ -702,11 +615,13 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 // Highcharts v4.0.1, Issue #3104
 // Touch panning falls back to data range, ignores axis min and max
 QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
-    var chart = Highcharts.chart(
+    const chart = Highcharts.chart(
         'container',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 min: 0,
@@ -725,16 +640,36 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
             chart.xAxis[0].setExtremes(2, 15, true, false);
         }
     );
-    var controller = new TestController(chart),
+    const controller = new TestController(chart),
         tickPositions = chart.axes[0].tickPositions,
         touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
-        touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
+        touchPointY = (chart.plotSizeY + chart.plotTop) / 2,
+        xAxis = chart.xAxis[0];
+
+    function slide(testedAxis, x, y) {
+        const extremes = testedAxis.getExtremes();
+
+        controller.slide(
+            [x + 200, y],
+            [x - 100, y]
+        );
+
+        assert.notStrictEqual(
+            extremes.min,
+            testedAxis.min,
+            'Ordinal xAxis min should change after touch sliding (#20877).'
+        );
+
+        assert.notStrictEqual(
+            extremes.max,
+            testedAxis.max,
+            'Ordinal xAxis max should change after touch sliding (#20877).'
+        );
+    }
 
     controller.slide(
         [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY],
-        undefined,
-        true
+        [touchPointX + 100, touchPointY]
     );
 
     var tickPositionsAfterSlide = chart.axes[0].tickPositions;
@@ -743,6 +678,74 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         tickPositions,
         tickPositionsAfterSlide,
         'Tick positions has changed after touch sliding'
+    );
+
+    // Reset user-extremes
+    xAxis.setExtremes();
+
+    chart.update({
+        chart: {
+            zooming: {
+                type: ''
+            },
+            panning: {
+                enabled: true,
+                type: 'x'
+            }
+        },
+        xAxis: {
+            type: 'datetime',
+            ordinal: true,
+            min: 0,
+            max: 5
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        series: [{
+            data: [
+                [0, 1],
+                [1, 4],
+                [4, 1],
+                [5, 4],
+                [6, 5],
+                [7, 5],
+                [10, 4],
+                [11, 5],
+                [12, 5],
+                [13, 4]
+            ]
+        }]
+    });
+
+    // First slide: test if panning + ordinal works
+    slide(xAxis, touchPointX, touchPointY);
+    // Second slide: test if we zoom into different range
+    slide(xAxis, touchPointX, touchPointY);
+    // Now test if pinching still works
+    xAxis.setExtremes(1, 10);
+    chart.update({
+        chart: {
+            zooming: {
+                type: 'x'
+            }
+        }
+    });
+    chart.pinching = true;
+    controller.pinch(
+        chart.plotLeft + chart.plotWidth - 20,
+        chart.plotTop + chart.plotHeight - 20,
+        -300
+    );
+
+    const extremes = xAxis.getExtremes();
+
+    // Don't test exact extremes, as they are not deterministic:
+    // depend on browser size
+    assert.notDeepEqual(
+        [extremes.min, extremes.max],
+        [1, 10],
+        'Axis should should zoom out on pinch out (#20877).'
     );
 });
 

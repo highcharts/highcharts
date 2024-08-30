@@ -35,7 +35,8 @@ Highcharts.chart('container', {
         text: 'The 240 Closest Planets to the Earth other than our solar system'
     },
     subtitle: {
-        text: 'Using bubble series in polar coordinate system along with pie series'
+        text: 'Using bubble series in polar coordinate system along with pie ' +
+            'series'
     },
     colorAxis: {
         min: 0,
@@ -273,7 +274,8 @@ function fillCenter(percentage, decade, chart, customLabel) {
     </table>`;
 
     if (!customLabel) {
-        customLabel = chart.renderer.label(labelText, 0, 0, void 0, void 0,
+        customLabel = chart.renderer.label(
+            labelText, 0, 0, void 0, void 0,
             void 0, true
         ).css({
             color: '#000',

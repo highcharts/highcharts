@@ -30,3 +30,10 @@
     background-color: #25386f;
     color: #fff;
 }
+
+@media (max-width: 530px) {
+    #sonify {
+        position: static;
+        margin: 10px;
+    }
+}

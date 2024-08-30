@@ -1,0 +1,72 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/stock/modules/stock.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/sankey.js"></script>
+<script src="https://code.highcharts.com/modules/arc-diagram.js"></script>
+<script src="https://code.highcharts.com/modules/streamgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+<script src="https://code.highcharts.com/modules/price-indicator.js"></script>
+<script src="https://code.highcharts.com/modules/dependency-wheel.js"></script>
+<script src="https://code.highcharts.com/modules/funnel.js"></script>
+<script src="https://code.highcharts.com/maps/modules/geoheatmap.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/gantt.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/pattern-fill.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div aria-live="polite" aria-atomic="true" id="announce"> </div>
+<div id="outer-container">
+    <div id="container"></div>
+    <div id="container2"></div>
+    <div id="container3"></div>
+    <div class="button-container">
+        <div class="stroke"></div>
+        <div id="chart-title">Chart Title</div>
+        <button id="change-chart" class="chart-button">
+            <div class="button-text">
+                Change Chart
+                <img src="https://cdn.rawgit.com/highcharts/highcharts/4ab451d93d259d78fce2d123511e556e36667813/samples/graphics/homepage/reload-icon.svg">
+            </div> 
+        </button>
+        |
+        <button id="demo-link" class="chart-button">
+            <div class="button-text">
+                See Full Demo
+                <img src="https://cdn.rawgit.com/highcharts/highcharts/4ab451d93d259d78fce2d123511e556e36667813/samples/graphics/homepage/link-icon.svg">
+            </div> 
+        </button>
+    </div>
+
+   <!-- for the bar chart race-->
+   <div id="play-controls">
+       <button id="play-pause-button" aria-hidden="true" title="play">
+           <div id="play-arrow" aria-hidden="true"></div>
+           <div id="pause-bars" aria-hidden="true"></div>
+       </button>
+       <input id="play-range" aria-hidden="true" type="range" value="2000" min="2000" max="2018" />
+   </div>
+</div>
+
+<!-- these are for the geoheatmap-->
+<div id="projection-buttons" class="buttons row">
+    <div class="col-md-6 mt-4 toggle-panel" id="rotation-panel">
+        <label>
+            <input class="rotation" id="rotation-lambda" type="range" min="-180" max="180" value="0">
+            Lambda → <span class="text-muted" id="rotation-lambda-output"></span>
+        </label>
+        <label>
+            <input class="rotation" id="rotation-phi" type="range" min="-180" max="180" value="0">
+            Phi ↑ <span class="text-muted" id="rotation-phi-output"></span>
+        </label>
+        <label>
+            <input class="rotation" id="rotation-gamma" type="range" min="-180" max="180" value="0">
+            Gamma ⟲ <span class="text-muted" id="rotation-gamma-output"></span>
+        </label>
+        <div class="mt-4 toggle-panel" id="rotation-preset-panel">
+            <div class="preset-rotations">
+                <a data-rotation="-15,-40" href="javascript:;">Europe</a>,
+                <a data-rotation="100,-30" href="javascript:;">North America</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -39,7 +39,7 @@ _See live code example for setting tickInterval per Axis grid_
 Vertical Axis
 -------------
 
-In a Gantt chart it is common to display a table on the left side of the chart to display task information, like task name, assignee and duration. Creating the table along the vertical axis, needs a `category` [`axis.type`](https://api.highcharts.com/gantt/yAxis.type). The tasks will be lined up and mapped to the table after setting the [`point.y`](https://api.highcharts.com/gantt/series.gantt.data.y) value for each data point (task).
+In a Gantt chart it is common to display a table on the left side of the chart to display task information, like task name, assignee and duration. The tasks will be lined up and mapped to the table after setting the [`point.y`](https://api.highcharts.com/gantt/series.gantt.data.y) value for each data point (task).
 
 _Example of defining a table along the vertical axis with Axis.grid option_
 

@@ -1,3 +1,5 @@
+// Data from nasdaq.com
+
 (async () => {
 
     const names = ['MSFT', 'AAPL', 'GOOG'];
@@ -33,7 +35,9 @@
             },
 
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                pointFormat: '<span style="color:{series.color}">' +
+                    '{series.name}</span>: <b>{point.y}</b> ' +
+                    '({point.change}%)<br/>',
                 valueDecimals: 2,
                 split: true
             },
@@ -46,7 +50,7 @@
     const promises = names.map(name => new Promise(resolve => {
         (async () => {
             const data = await fetch(
-                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/' +
+                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/' +
                 'samples/data/' + name.toLowerCase() + '-c.json'
             )
                 .then(response => response.json());

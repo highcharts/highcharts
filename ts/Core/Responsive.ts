@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,12 +24,8 @@ const {
     diffObjects,
     extend,
     find,
-    isArray,
-    isObject,
     merge,
-    objectEach,
     pick,
-    splat,
     uniqueKey
 } = U;
 
@@ -85,6 +81,7 @@ namespace Responsive {
         ): void;
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
+        updatingResponsive: boolean;
     }
 
     export interface CurrentObject {
@@ -113,14 +110,6 @@ namespace Responsive {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -131,15 +120,13 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            extend(
-                ChartClass.prototype as Composition,
-                {
-                    matchResponsiveRule,
-                    setResponsive
-                }
-            );
+        if (!chartProto.matchResponsiveRule) {
+            extend(chartProto, {
+                matchResponsiveRule,
+                setResponsive
+            });
         }
 
         return ChartClass as (T&typeof Composition);
@@ -238,7 +225,10 @@ namespace Responsive {
             // Undo previous rules. Before we apply a new set of rules, we
             // need to roll back completely to base options (#6291).
             if (currentResponsive) {
+                this.currentResponsive = void 0;
+                this.updatingResponsive = true;
                 this.update(currentResponsive.undoOptions, redraw, true);
+                this.updatingResponsive = false;
             }
 
             if (ruleIds) {
@@ -257,9 +247,9 @@ namespace Responsive {
                     mergedOptions: mergedOptions,
                     undoOptions: undoOptions
                 };
-
-                this.update(mergedOptions, redraw, true);
-
+                if (!this.updatingResponsive) {
+                    this.update(mergedOptions, redraw, true);
+                }
             } else {
                 this.currentResponsive = void 0;
             }
@@ -295,7 +285,7 @@ export default Responsive;
  * Return `true` if it applies.
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
 
 /* *
  *
@@ -345,7 +335,7 @@ export default Responsive;
  * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
  * collections, an `id` option is used to map the new option set to
  * an existing object. If an existing object of the same id is not found,
- * the item of the same indexupdated. So for example, setting `chartOptions`
+ * the item of the same index updated. So for example, setting `chartOptions`
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
  *
@@ -419,4 +409,4 @@ export default Responsive;
  * @apioption responsive.rules.condition.minWidth
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

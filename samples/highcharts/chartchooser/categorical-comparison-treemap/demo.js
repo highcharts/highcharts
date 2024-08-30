@@ -1,7 +1,7 @@
 (async () => {
 
     const dataJson = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json'
+        'https://www.highcharts.com/samples/data/denmark-export-2018.json'
     ).then(response => response.json());
 
     const colors = [
@@ -20,10 +20,17 @@
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat:
-        '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+        '<{headingTagName}>{chartTitle}</{headingTagName}><div>' +
+        '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+        '{chartLongdesc}</div>'
             },
             description:
-    'Tree map detailing exported goods from Denmark in 2018. The services category is the largest, and makes up 39% of the total export. Transport services are the most exported. Chemicals are the second most exported category with 13%, then agriculture with 12%, and machinery with 10%. The other categories are textiles, electronics, metals, minerals, vehicles, stone, and other.'
+    'Tree map detailing exported goods from Denmark in 2018. The services ' +
+    'category is the largest, and makes up 39% of the total export. ' +
+    'Transport services are the most exported. Chemicals are the second most ' +
+    'exported category with 13%, then agriculture with 12%, and machinery ' +
+    'with 10%. The other categories are textiles, electronics, metals, ' +
+    'minerals, vehicles, stone, and other.'
         },
         colors: colors,
         series: [
@@ -32,7 +39,6 @@
                 type: 'treemap',
                 layoutAlgorithm: 'squarified',
                 allowDrillToNode: true,
-                turboThreshold: Infinity,
                 dataLabels: {
                     enabled: false,
                     crop: true

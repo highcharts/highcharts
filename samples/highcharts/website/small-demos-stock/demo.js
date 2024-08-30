@@ -25,7 +25,7 @@ function indicators() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2c6e89641888ae94c988649d96552c06c4e47351/samples/data/aapl-ohlcv.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlcv.json'
         ).then(response => response.json());
 
         // split the data set into ohlc and volume
@@ -63,9 +63,13 @@ function indicators() {
                 series: {
                     descriptionFormat: '{seriesDescription}.'
                 },
-                description: 'Use the dropdown menus above to display different indicator series on the chart.',
+                description: 'Use the dropdown menus above to display ' +
+                    'different indicator series on the chart.',
                 screenReaderSection: {
-                    beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+                    beforeChartFormat: '<{headingTagName}>' +
+                        '{chartTitle}</{headingTagName}><div>' +
+                        '{typeDescription}</div><div>{chartSubtitle}</div>' +
+                        '<div>{chartLongdesc}</div>'
                 }
             },
             legend: {
@@ -282,7 +286,8 @@ function compare() {
                     gridLineColor: '#707073',
                     labels: {
                         formatter: function () {
-                            return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                            return (this.value > 0 ?
+                                ' + ' : '') + this.value + '%';
                         },
                         style: {
                             color: '#fff',
@@ -317,7 +322,9 @@ function compare() {
                     }
                 },
                 tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                    pointFormat: '<span style="color:{series.color}">' +
+                        '{series.name}</span>: <b>{point.y}</b> ' +
+                        '({point.change}%)<br/>',
                     valueDecimals: 2,
                     split: true
                 },
@@ -396,8 +403,9 @@ function compare() {
                 data: data
             };
 
-            // As we're loading the data asynchronously, we don't know what order it
-            // will arrive. So we keep a counter and create the chart when all the data is loaded.
+            // As we 're loading the data asynchronously, we don't know what
+            // order it will arrive. So we keep a counter and create the chart
+            // when all the data is loaded.
             seriesCounter += 1;
 
             if (seriesCounter === names.length) {
@@ -405,15 +413,15 @@ function compare() {
             }
         }
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json')
+        await fetch('https://www.highcharts.com/samples/data/msft-c.json')
             .then(response => response.json())
             .then(data => success('msft', data));
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json')
+        await fetch('https://www.highcharts.com/samples/data/aapl-c.json')
             .then(response => response.json())
             .then(data => success('aapl', data));
 
-        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json')
+        await fetch('https://www.highcharts.com/samples/data/goog-c.json')
             .then(response => response.json())
             .then(data => success('goog', data));
     })();
@@ -424,7 +432,7 @@ function ao() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlc-ab.json'
         ).then(response => response.json());
 
         Highcharts.stockChart('container', {
@@ -624,8 +632,10 @@ function dynamic() {
                                 price,
                                 Math.round(price * 1.2),
                                 Math.round(price * 0.8),
-                                Math.round(price + price * 0.3 *
-                                    (Math.random() - 0.5))
+                                Math.round(
+                                    price + price * 0.3 *
+                                    (Math.random() - 0.5)
+                                )
                             ]);
                             count = count + 1;
                         } else {
@@ -798,7 +808,7 @@ function ab() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+            'https://www.highcharts.com/samples/data/aapl-ohlc-ab.json'
         ).then(response => response.json());
 
         Highcharts.stockChart('container', {
@@ -953,10 +963,11 @@ function flags() {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+            'https://www.highcharts.com/samples/data/usdeur.json'
         ).then(response => response.json());
 
-        const lastDate = data[data.length - 1][0],  // Get year of last data point
+        // Get year of last data point
+        const lastDate = data[data.length - 1][0],
             days = 24 * 36e5; // Milliseconds in a day
 
         // Create the chart
@@ -1048,7 +1059,8 @@ function flags() {
                 name: 'Flags on series',
                 data: [{
                     x: lastDate - 60 * days,
-                    title: '<p style="margin-top:-14px;padding:0px 4px;text-align:center">On<br>series</p>'
+                    title: '<p style="margin-top:-14px;padding:0px ' +
+                        '4px;text-align:center">On<br>series</p>'
                 }, {
                     x: lastDate - 30 * days,
                     title: '&nbsp;On series&nbsp;'

@@ -209,9 +209,15 @@
     background-color: transparent;
 }
 
-.highcharts-bindings-wrapper li > span.highcharts-menu-item-btn {
+.highcharts-bindings-wrapper li > button.highcharts-menu-item-btn {
     display: block;
+    border: none;
     float: left;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
@@ -219,15 +225,21 @@
     background-size: 32px 32px;
 }
 
-.highcharts-submenu-wrapper li > span.highcharts-menu-item-btn {
+.highcharts-submenu-wrapper li > button.highcharts-menu-item-btn {
     width: 40px;
 }
 
-.highcharts-bindings-wrapper li > span.highcharts-submenu-item-arrow {
+.highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
     float: left;
+    background-repeat: no-repeat;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    background-color: transparent;
     width: 10px;
     height: 100%;
-    cursor: pointer;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -240,12 +252,12 @@
     pointer-events: none;
 }
 
-.highcharts-bindings-wrapper li.highcharts-separator > span.highcharts-menu-item-btn {
+.highcharts-bindings-wrapper li.highcharts-separator > button.highcharts-menu-item-btn {
     width: 100%;
 }
 
-.highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn,
-.highcharts-bindings-wrapper li > span.highcharts-menu-item-btn:hover,
+.highcharts-bindings-wrapper li.highcharts-active > button.highcharts-menu-item-btn,
+.highcharts-bindings-wrapper li > button.highcharts-menu-item-btn:hover,
 .highcharts-bindings-wrapper .highcharts-arrow-wrapper > div:hover,
 .highcharts-bindings-wrapper li.highcharts-active,
 .highcharts-toggle-toolbar:hover {

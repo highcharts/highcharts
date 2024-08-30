@@ -1,4 +1,10 @@
 Dashboards.board('container', {
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true
+        }
+    },
     gui: {
         layouts: [{
             rows: [{
@@ -18,7 +24,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-main',
+        renderTo: 'dashboard-main',
         elements: [{
             tagName: 'div',
             children: [{
@@ -37,7 +43,7 @@ Dashboards.board('container', {
         }]
     }, {
         type: 'HTML',
-        cell: 'dashboard-1',
+        renderTo: 'dashboard-1',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -46,12 +52,7 @@ Dashboards.board('container', {
         }]
     }, {
         type: 'HTML',
-        cell: 'dashboard-2',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://www.highcharts.com/samples/graphics/maps-dark.svg'
-            }
-        }]
+        renderTo: 'dashboard-2',
+        html: '<img src="https://www.highcharts.com/samples/graphics/maps-dark.svg">'
     }]
 });

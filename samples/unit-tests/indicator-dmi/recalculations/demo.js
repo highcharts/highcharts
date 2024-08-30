@@ -202,7 +202,7 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graph.element.getAttribute('stroke-width'),
-            '1',
+            '2',
             'The DX line width should be correct.'
         );
 
@@ -238,7 +238,8 @@ QUnit.test(
                 [43.927350477024, 10.91939104592899, 28.027907285157493],
                 [21.91966974528, 16.535109503389695, 25.81898774350347]
             ],
-            'After period update: the DMI (DX, +DI, -DI) values should be correct.'
+            'After period update: the DMI (DX, +DI, -DI) values should be ' +
+            'correct.'
         );
 
         chart.series[0].points[chart.series[0].points.length - 1].remove();
@@ -262,6 +263,7 @@ QUnit.test(
                 [70.364402600831, 5.887796348038017, 33.84682596265047],
                 [43.927350477024, 10.91939104592899, 28.027907285157493]
             ],
-            'After point remove: the DMI (DX, +DI, -DI) values should be correct.'
+            'After point remove: the DMI (DX, +DI, -DI) values should be ' +
+            'correct.'
         );
     });

@@ -140,7 +140,10 @@
             'Point with milestone:true is a milestone'
         );
 
-        assert.equal(typeof milestone.d, 'string', 'Milestone has a \'d\' value');
+        assert.equal(
+            typeof milestone.d,
+            'string', 'Milestone has a \'d\' value'
+        );
 
         // Remove path letters
         path = milestone.d.replace(/[a-zA-Z]/g, '');
@@ -279,14 +282,15 @@
         assert.equal(
             spaceExpanded,
             spaceCollapsed,
-            'Space between two first ticks does not change after expanding again'
+            'Space between two first ticks does not change after expanding ' +
+            'again'
         );
 
         // Check spacing after collapsing single root parent
         click(chart.yAxis[0].ticks['0'].label.element);
 
         spaceCollapsed = getSpacing(chart);
-        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
+        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
 
         assert.equal(
             axisLineLength,
@@ -335,14 +339,7 @@
     QUnit.test('Point.update', assert => {
         const today = +new Date();
         const day = 24 * 60 * 60 * 1000;
-        const {
-            series: [
-                {
-                    points,
-                    points: [point]
-                }
-            ]
-        } = Highcharts.ganttChart('container', {
+        const chart = Highcharts.ganttChart('container', {
             series: [
                 {
                     data: [
@@ -382,7 +379,12 @@
             start: today + day,
             end: today + 2 * day
         };
-
+        const {
+            series: [{
+                points,
+                points: [point]
+            }]
+        } = chart;
         // Run Point.update
         point.update(updateValues);
 
@@ -402,7 +404,8 @@
         assert.strictEqual(
             points.length,
             5,
-            'Should not change the number of points after update. #11231, #11486'
+            'Should not change the number of points after update. #11231, ' +
+            '#11486'
         );
 
         // Test that collapsed graphics are removed
@@ -411,13 +414,22 @@
             2,
             'Collapsed graphics should not be rendered (#12617)'
         );
+
+        // Changing id of a parent
+        points[1].update({ id: '_moving' });
+
+        assert.strictEqual(
+            chart.series[0].yAxis.treeGrid.tree.children.length,
+            5,
+            'Orphaned nodes should appear as direct children of root (#15196).'
+        );
     });
 
     QUnit.test('Collapsing subtasks', assert => {
         const today = new Date();
         const day = 24 * 60 * 60 * 1000;
 
-        const chart = Highcharts.ganttChart('container', {
+        let chart = Highcharts.ganttChart('container', {
             chart: {
                 height: 300
             },
@@ -428,47 +440,39 @@
                 min: today.getTime() - 2 * day,
                 max: today.getTime() + 32 * day
             },
-            series: [
-                {
-                    name: 'Project 1',
-                    data: [
-                        {
-                            name: 'Planning',
-                            id: 'planning',
-                            start: today.getTime(),
-                            end: today.getTime() + 20 * day
-                        },
-                        {
-                            name: 'Requirements',
-                            id: 'requirements',
-                            parent: 'planning',
-                            start: today.getTime(),
-                            end: today.getTime() + 5 * day
-                        },
-                        {
-                            name: 'Design',
-                            id: 'design',
-                            dependency: 'requirements',
-                            parent: 'planning',
-                            start: today.getTime() + 3 * day,
-                            end: today.getTime() + 20 * day
-                        },
-                        {
-                            name: 'Layout',
-                            id: 'layout',
-                            parent: 'design',
-                            start: today.getTime() + 3 * day,
-                            end: today.getTime() + 10 * day
-                        },
-                        {
-                            name: 'Develop',
-                            id: 'develop',
-                            start: today.getTime() + 5 * day,
-                            end: today.getTime() + 30 * day
-                        }
-                    ]
-                }
-            ]
+            series: [{
+                name: 'Project 1',
+                data: [{
+                    name: 'Planning',
+                    id: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + 20 * day
+                }, {
+                    name: 'Requirements',
+                    id: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + 5 * day
+                }, {
+                    name: 'Design',
+                    id: 'design',
+                    dependency: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime() + 3 * day,
+                    end: today.getTime() + 20 * day
+                }, {
+                    name: 'Layout',
+                    id: 'layout',
+                    parent: 'design',
+                    start: today.getTime() + 3 * day,
+                    end: today.getTime() + 10 * day
+                }, {
+                    name: 'Develop',
+                    id: 'develop',
+                    start: today.getTime() + 5 * day,
+                    end: today.getTime() + 30 * day
+                }]
+            }]
         });
         click(chart.yAxis[0].ticks['2'].label.element);
         click(chart.yAxis[0].ticks['0'].label.element);
@@ -477,7 +481,8 @@
             document.querySelectorAll('.highcharts-yaxis .highcharts-tick')
                 .length,
             chart.yAxis[0].tickPositions.length + 1,
-            'Should have the correct amount of ticks remaining after collapsing subtask before parent (#12012)'
+            'Should have the correct amount of ticks remaining after ' +
+            'collapsing subtask before parent (#12012)'
         );
 
         click(chart.yAxis[0].ticks['0'].label.element);
@@ -487,7 +492,64 @@
         assert.strictEqual(
             chart.pathfinder.connections.length,
             1,
-            '#12691: The connector should not disappear when the task is partially visible'
+            '#12691: The connector should not disappear when the task is ' +
+            'partially visible'
+        );
+
+        chart = Highcharts.ganttChart('container', {
+            series: [{
+                data: [{
+                    name: 'A',
+                    id: 'A'
+                }, {
+                    name: 'A1',
+                    id: 'A1',
+                    parent: 'A'
+                }, {
+                    name: 'A1_a',
+                    id: 'A1_a',
+                    parent: 'A1',
+                    start: today.getTime() + 5 * day,
+                    end: today.getTime() + 30 * day
+                }]
+            }, {
+                data: [{
+                    name: 'B',
+                    id: 'B'
+                }, {
+                    name: 'B1',
+                    id: 'B1',
+                    parent: 'B',
+                    start: today.getTime() + 5 * day,
+                    end: today.getTime() + 30 * day
+                }]
+            }]
+        });
+        chart.series[0].points[1].update({
+            id: '_a1'
+        });
+        click(chart.yAxis[0].ticks[2].label.element);
+        assert.ok(
+            chart.series[1].points[0].collapsed,
+            `After clicking the tick label, the proper point should be
+            collapsed.`
+        );
+
+        click(chart.yAxis[0].ticks[2].label.element);
+        assert.notOk(
+            chart.series[1].points[0].collapsed,
+            `After clicking the tick label again, the proper point should not be
+            collapsed.`
+        );
+
+        chart.yAxis[0].update({
+            visible: false
+        });
+
+        assert.ok(
+            true,
+            `There shouldn't be any error in the console after changing the
+            visibility of axis (#20180).`
         );
     });
 
@@ -502,7 +564,8 @@
     });
 
     QUnit.test(
-        'The ticks should be generated correctly during scrolling with the grid axis, #13072.',
+        'The ticks should be generated correctly during scrolling with the ' +
+        'grid axis, #13072.',
         assert => {
             const chart = Highcharts.ganttChart('container', {
                 yAxis: {
@@ -579,40 +642,42 @@
             });
 
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.axisLineExtra,
+                chart.yAxis[0].grid.axisLineExtra,
                 'The extra left line for grid should exist.'
             );
             assert.notOk(
                 chart.yAxis[0].grid.columns[0].grid.lowerBorder,
-                'The extra lower border for grid should not exist because the last tick mark exists.'
+                'The extra lower border for grid should not exist because ' +
+                'the last tick mark exists.'
             );
             assert.notOk(
                 chart.yAxis[0].grid.columns[0].grid.upperBorder,
-                'The extra upper border for grid should not exist because the first tick mark exists.'
+                'The extra upper border for grid should not exist because ' +
+                'the first tick mark exists.'
             );
 
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+                chart.yAxis[0].ticks[0].label.textStr,
                 'Task A',
                 'First tick on the left columns should be Task A.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[2].label.textStr,
+                chart.yAxis[0].ticks[2].label.textStr,
                 'Task C',
                 'Third tick on the left columns should be Task C.'
             );
             chart.yAxis[0].setExtremes(0.4, 2.4);
 
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.lowerBorder,
+                chart.yAxis[0].grid.lowerBorder,
                 'The extra lower border for grid should exist.'
             );
             assert.ok(
-                chart.yAxis[0].grid.columns[0].grid.upperBorder,
+                chart.yAxis[0].grid.upperBorder,
                 'The extra upper border for grid should exist.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[0].label.textStr,
+                chart.yAxis[0].ticks[0].label.textStr,
                 'Task A',
                 'First tick on the left columns should be Task A.'
             );
@@ -633,7 +698,7 @@
                 'First tick mark on the left columns should exist.'
             );
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+                chart.yAxis[0].ticks[3].label.textStr,
                 'Task D',
                 'Last visible tick on the left columns should be Task D.'
             );
@@ -645,7 +710,7 @@
             chart.yAxis[0].setExtremes(1, 3);
 
             assert.strictEqual(
-                chart.yAxis[0].grid.columns[0].ticks[3].label.textStr,
+                chart.yAxis[0].ticks[3].label.textStr,
                 'Task D',
                 'Last visible tick on the left columns should be Task D.'
             );
@@ -660,7 +725,8 @@
     );
 
     QUnit.test(
-        'When navigator enabled there should be no errors in the console caused by unsorted data, (#13376).',
+        'When navigator enabled there should be no errors in the console ' +
+        'caused by unsorted data, (#13376).',
         function (assert) {
             const chart = Highcharts.ganttChart('container', {
                 navigator: {
@@ -709,51 +775,97 @@
         assert.strictEqual(
             chart.series[0].processedXData[0] !== undefined,
             true,
-            'The processedXData should be applied by using the keys feature #13768'
+            'The processedXData should be applied by using the keys feature ' +
+            '#13768'
         );
         assert.strictEqual(
             chart.series[0].processedYData[0] !== undefined,
             true,
-            'The processedYData should be applied by using the keys feature #13768'
+            'The processedYData should be applied by using the keys feature ' +
+            '#13768'
         );
     });
 
-    QUnit.test('Gantt with scrollbar using uniqueNames, #14808.', function (assert) {
-        Highcharts.ganttChart('container', {
-            yAxis: {
-                min: 0,
-                max: 1,
-                uniqueNames: true,
-                scrollbar: {
-                    enabled: true
-                }
-            },
-            series: [{
-                type: 'gantt',
-                name: 's1',
-                data: [{
-                    name: 'Task 1',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
+    QUnit.test(
+        'Gantt with scrollbar using uniqueNames, #14808.', function (assert) {
+            Highcharts.ganttChart('container', {
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    uniqueNames: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                },
+                series: [{
+                    type: 'gantt',
+                    name: 's1',
+                    data: [{
+                        name: 'Task 1',
+                        start: Date.UTC(2020, 5, 1),
+                        end: Date.UTC(2020, 5, 3)
+                    }, {
+                        name: 'Task 2',
+                        start: Date.UTC(2020, 5, 1),
+                        end: Date.UTC(2020, 5, 3)
+                    }]
                 }, {
-                    name: 'Task 2',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
+                    type: 'gantt',
+                    name: 's2',
+                    data: [{
+                        name: 'Task 3',
+                        start: Date.UTC(2020, 5, 1),
+                        end: Date.UTC(2020, 5, 3)
+                    }]
                 }]
-            }, {
-                type: 'gantt',
-                name: 's2',
-                data: [{
-                    name: 'Task 3',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
-                }]
-            }]
+            });
+
+            assert.ok(
+                true,
+                'There should be no errors in the console.'
+            );
         });
 
-        assert.ok(
-            true,
-            'There should be no errors in the console.'
-        );
-    });
+    QUnit.test(
+        'Gantt rangeSelector with scrollablePlotArea is fixed, #20940',
+        function (assert) {
+
+            const chart = Highcharts.ganttChart('container', {
+                chart: {
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                rangeSelector: {
+                    enabled: true
+                },
+                series: [
+                    {
+                        data: [
+                            {
+                                name: 'Task 1',
+                                start: 2,
+                                end: 3
+                            },
+                            {
+                                name: 'Task 2',
+                                start: 3,
+                                end: 4
+                            },
+                            {
+                                name: 'Task 3',
+                                start: 1,
+                                end: 2
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            assert.ok(
+                chart.rangeSelector.buttonGroup
+                    .element.closest('.highcharts-fixed'),
+                'rangeSelector is a part of fixed elements.'
+            );
+        });
 }());

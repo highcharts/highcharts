@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -18,12 +18,12 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
-import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
 
 const {
+    fireEvent,
     merge,
     objectEach
 } = U;
@@ -54,8 +54,10 @@ class RowEditToolbar extends EditToolbar {
         options: EditMode.Options,
         iconURLPrefix: string
     ): MenuItem.Options[] {
-        const dragDropElement = options.dragDrop?.enabled ?
-            [{
+        const items: MenuItem.Options[] = [];
+
+        if (options.dragDrop?.enabled) {
+            items.push({
                 id: 'drag',
                 type: 'icon' as const,
                 icon: iconURLPrefix + 'drag.svg',
@@ -65,32 +67,23 @@ class RowEditToolbar extends EditToolbar {
                                 .parent as RowEditToolbar,
                             dragDrop = rowEditToolbar.editMode.dragDrop;
 
+                        e.preventDefault();
+
                         if (dragDrop && rowEditToolbar.row) {
                             dragDrop.onDragStart(e, rowEditToolbar.row);
                         }
                     }
                 }
-            }] :
-            [];
-        const settingsElement = {
-            id: 'settings',
-            type: 'icon' as const,
-            icon: iconURLPrefix + 'settings.svg',
-            events: {
-                click: function (this: MenuItem, e: any): void {
-                    this.menu.parent.editMode.setEditOverlay();
+            });
+        }
 
-                    (this.menu.parent as RowEditToolbar).onRowOptions(e);
-                }
-            }
-        };
-        const destroyElement = {
+        items.push({
             id: 'destroy',
             type: 'icon' as const,
             className: EditGlobals.classNames.menuDestroy,
             icon: iconURLPrefix + 'destroy.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {
+                click: function (this: MenuItem): void {
                     const parentNode = this.menu.parent as RowEditToolbar,
                         editMode = this.menu.parent.editMode,
                         popup = editMode.confirmationPopup;
@@ -111,8 +104,9 @@ class RowEditToolbar extends EditToolbar {
                     });
                 }
             }
-        };
-        return [...dragDropElement, settingsElement, destroyElement];
+        });
+
+        return items;
     }
     /* *
      *
@@ -163,10 +157,16 @@ class RowEditToolbar extends EditToolbar {
     }
 
     public showToolbar(row: Row): void {
-        const toolbar = this,
-            rowCnt = row.container;
+        const toolbar = this;
+        const rowCnt = row.container;
+        const rowToolbar = toolbar.editMode.rowToolbar;
+        let x;
+        let y;
+        let offsetX;
 
-        let x, y, offsetX;
+        if (!rowToolbar) {
+            return;
+        }
 
         if (
             rowCnt &&
@@ -179,8 +179,21 @@ class RowEditToolbar extends EditToolbar {
             );
             const rowWidth = rowOffsets.right - rowOffsets.left;
 
-            // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
+                if (!row.options?.editMode?.toolbarItems) {
+                    item.activate();
+                    return;
+                }
+                const toolbarItems = row.options.editMode.toolbarItems;
+
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
+                    item.deactivate();
+                    return;
+                }
+
                 item.activate();
             });
 
@@ -190,33 +203,27 @@ class RowEditToolbar extends EditToolbar {
             toolbar.setPosition(x, y);
             toolbar.row = row;
             toolbar.refreshOutline(-offsetX, toolbar.container.clientHeight);
+            rowToolbar.isVisible = true;
         } else if (toolbar.isVisible) {
             toolbar.hide();
+            rowToolbar.isVisible = false;
         }
     }
 
-    public onRowOptions(e: any): void {
+    public onRowOptions(): void {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            // toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
-
-            // @ToDo - mask is buggy - should be refactored or removed.
-            // if (this.row) {
-            //     super.maskNotEditedElements(
-            //         this.row,
-            //         true
-            //     );
-            //     this.editedRow = this.row;
-            // }
         }
     }
 
-    public onRowDestroy(e: any): void {
+    public onRowDestroy(): void {
         const toolbar = this;
 
         if (toolbar.row) {
+            const rowId = toolbar.row.options.id || -1;
+
             this.resetEditedRow();
 
             toolbar.row.destroy();
@@ -224,11 +231,17 @@ class RowEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+
+            fireEvent(toolbar.editMode, 'layoutChanged', {
+                type: 'rowDestroyed',
+                target: rowId,
+                board: toolbar.editMode.board
+            });
         }
     }
 
     public resetEditedRow(): void {
-        // super.resetCurrentElements(this.row as Row, true);
+        /// super.resetCurrentElements(this.row as Row, true);
         this.editedRow = void 0;
     }
 }

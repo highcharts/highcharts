@@ -106,7 +106,8 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        'Extremes are set corectly after removing first and last visible points.'
+        'Extremes are set corectly after removing first and last visible ' +
+        'points.'
     );
 
     timeline.setData([

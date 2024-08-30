@@ -1,7 +1,7 @@
 (async () => {
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/marathon.json'
+        'https://www.highcharts.com/samples/data/marathon.json'
     ).then(response => response.json());
 
 
@@ -19,7 +19,10 @@
         lang: {
             accessibility: {
                 axis: {
-                    yAxisDescriptionPlural: 'The chart has 7 Y axes across the chart displaying Training date, Miles for training run, Training time, Shoe brand, Running pace per mile, Short or long, and After 2004.'
+                    yAxisDescriptionPlural: 'The chart has 7 Y axes across ' +
+                        'the chart displaying Training date, Miles for ' +
+                        'training run, Training time, Shoe brand, Running ' +
+                        'pace per mile, Short or long, and After 2004.'
                 }
             }
         },

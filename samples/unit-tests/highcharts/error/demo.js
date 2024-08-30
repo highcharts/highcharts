@@ -1,7 +1,8 @@
 QUnit.test('Error 19', function (assert) {
     assert.expect(2);
 
-    var removeEvent = Highcharts.addEvent(Highcharts, 'displayError',
+    var removeEvent = Highcharts.addEvent(
+        Highcharts, 'displayError',
         function (e) {
             assert.strictEqual(e.code, 19, 'Error 19 should be invoked');
             removeEvent();

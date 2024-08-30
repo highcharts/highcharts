@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -180,7 +180,7 @@ class Fx {
      */
     public update(): void {
         const elem = this.elem,
-            prop = this.prop, // if destroyed, it is null
+            prop = this.prop, // If destroyed, it is null
             now: number = this.now as any,
             step = this.options.step;
 
@@ -349,17 +349,20 @@ class Fx {
     ): [SVGPath, SVGPath] {
         const startX = elem.startX,
             endX = elem.endX,
-            end = toD.slice(), // copy
+            end = toD.slice(), // Copy
             isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1;
+            positionFactor = isArea ? 2 : 1,
+            disableAnimation = fromD &&
+                toD.length > fromD.length &&
+                toD.hasStackedCliffs; // #16925
 
         let shift,
             fullLength: number,
             i: number,
             reverse,
-            start = fromD && fromD.slice(); // copy
+            start = fromD && fromD.slice(); // Copy
 
-        if (!start) {
+        if (!start || disableAnimation) {
             return [end, end];
         }
 
@@ -400,7 +403,7 @@ class Fx {
                 if (isArea) {
                     const z: any = arr.pop();
 
-                    arr.push(arr[arr.length - 1], z); // append point and the Z
+                    arr.push(arr[arr.length - 1], z); // Append point and the Z
                 }
             }
         }
@@ -409,10 +412,7 @@ class Fx {
          * Copy and append last point until the length matches the end length.
          * @private
          */
-        function append(
-            arr: SVGPath,
-            other: SVGPath
-        ): void {
+        function append(arr: SVGPath): void {
             while (arr.length < fullLength) {
 
                 // Pull out the slice that is going to be appended or inserted.
@@ -458,8 +458,10 @@ class Fx {
                     shift = i;
                     break;
                 // Moving right
-                } else if (startX[0] ===
-                        endX[endX.length - startX.length + i]) {
+                } else if (
+                    startX[0] ===
+                        endX[endX.length - startX.length + i]
+                ) {
                     shift = i;
                     reverse = true;
                     break;
@@ -485,10 +487,10 @@ class Fx {
 
             if (!reverse) {
                 prepend(end, start);
-                append(start, end);
+                append(start);
             } else {
                 prepend(start, end);
-                append(end, start);
+                append(end);
             }
         }
         return [start, end];

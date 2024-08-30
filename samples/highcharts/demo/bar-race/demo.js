@@ -1,5 +1,5 @@
 const startYear = 1960,
-    endYear = 2018,
+    endYear = 2022,
     btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     nbr = 20;
@@ -205,8 +205,8 @@ function getSubtitle() {
 })();
 
 /*
- * Pause the timeline, either when the range is ended, or when clicking the pause button.
- * Pausing stops the timer and resets the button to play mode.
+ * Pause the timeline, either when the range is ended, or when clicking the
+ * pause button. Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
     button.title = 'play';

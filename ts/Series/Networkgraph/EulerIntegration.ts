@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -53,7 +53,7 @@ declare module '../../Core/Series/PointLike' {
  * @param {Highcharts.Point} link
  *        Link that connects two nodes
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
+ *        Force calculated in `repulsiveForceFunction`
  * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  * @param {number} distanceR
@@ -84,7 +84,7 @@ function attractive(
 }
 
 /**
- * Attractive force funtion. Can be replaced by API's
+ * Attractive force function. Can be replaced by API's
  * `layoutAlgorithm.attractiveForce`
  *
  * Other forces that can be used:
@@ -141,7 +141,7 @@ function barycenter(
 }
 
 /**
- * Estiamte the best possible distance between two nodes, making graph
+ * Estimate the best possible distance between two nodes, making graph
  * readable.
  * @private
  */
@@ -190,14 +190,12 @@ function integrate(
     layout: ReingoldFruchtermanLayout,
     node: NetworkgraphPoint
 ): void {
-    let distanceR: number;
-
     (node.dispX as any) +=
         (node.dispX as any) * (layout.options.friction as any);
     (node.dispY as any) +=
         (node.dispY as any) * (layout.options.friction as any);
 
-    distanceR = node.temperature = layout.vectorLength({
+    const distanceR = node.temperature = layout.vectorLength({
         x: node.dispX as any,
         y: node.dispY as any
     });
@@ -227,7 +225,7 @@ function integrate(
  * @param {Highcharts.Point} node
  *        Node that should be translated by force.
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
+ *        Force calculated in `repulsiveForceFunction`
  * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  */
@@ -244,7 +242,7 @@ function repulsive(
 }
 
 /**
- * Repulsive force funtion. Can be replaced by API's
+ * Repulsive force function. Can be replaced by API's
  * `layoutAlgorithm.repulsiveForce`.
  *
  * Other forces that can be used:

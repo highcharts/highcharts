@@ -132,7 +132,7 @@ class ATRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            index: void 0 // Unused index, do not inherit (#15362)
         }
     } as ATROptions);
 
@@ -142,9 +142,9 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ATRPoint> = void 0 as any;
-    public points: Array<ATRPoint> = void 0 as any;
-    public options: ATROptions = void 0 as any;
+    public data!: Array<ATRPoint>;
+    public points!: Array<ATRPoint>;
+    public options!: ATROptions;
 
     /* *
      *
@@ -269,4 +269,4 @@ export default ATRIndicator;
  * @apioption series.atr
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -54,6 +54,11 @@ class EditableOptions {
 
     public getOptions(): (Array<EditableOptions.Options>) {
         const options = this.component.options.editableOptions;
+
+        if (!options) {
+            return [];
+        }
+
         for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
             if (option.name === 'connectorName') {
@@ -85,6 +90,10 @@ namespace EditableOptions {
          * Type of the editable element.
          */
         type: ElementType;
+        /**
+         * Whether render it as a standalone element without a group.
+         */
+        isStandalone?: boolean;
         /**
          * Detailed options that should be included in the accordion menu.
          * Available for `nested` type.
@@ -121,7 +130,6 @@ namespace EditableOptions {
      */
     export type ElementType =
         | 'input'
-        | 'text'
         | 'textarea'
         | 'toggle'
         | 'select'
@@ -136,7 +144,7 @@ namespace EditableOptions {
          */
         name: string;
         /**
-         * whether the option should have a toggle to be enabled or disabled.
+         * Whether the option should have a toggle to be enabled or disabled.
          */
         showToggle?: boolean;
         /**
@@ -153,7 +161,7 @@ namespace EditableOptions {
     export interface OptionsBindings {
         keyMap: Record<string, string>;
         typeMap: Record<string, string>;
-        skipRedraw: string[]; // keys of options that should not trigger redraw
+        skipRedraw: string[]; // Keys of options that should not trigger redraw
     }
 
 }

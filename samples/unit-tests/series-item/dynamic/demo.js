@@ -95,7 +95,8 @@ QUnit.test(
         assert.notEqual(
             previousCenter,
             chart.series[0].center,
-            'The chart with data label is displayed properly after changing chart size.'
+            'The chart with data label is displayed properly after changing ' +
+            'chart size.'
         );
     }
 );

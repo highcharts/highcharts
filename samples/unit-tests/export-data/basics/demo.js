@@ -634,6 +634,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', '')
             .replace(/>/g, '>\n'),
+        // eslint-disable-next-line max-len
         '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\">Category</th><th class=\"highcharts-text\" scope=\"col\">Drop 2</th><th class=\"highcharts-text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
             .replace(/>/g, '>\n'),
         'Empty data in table'
@@ -679,6 +680,7 @@ QUnit.test('Multiple X axes (#119)', function (assert) {
 
     assert.equal(
         chart.getCSV(),
+        // eslint-disable-next-line max-len
         '"Category","Series 1","Category","Series 2","Series 3"\n"Jan",3,"Apples",8,3\n"Feb",5,"Bananas",9,6\n"Mar",6,"Oranges",6,2',
         'Multiple X axes'
     );
@@ -712,6 +714,7 @@ QUnit.test('Stock chart', function (assert) {
 
     assert.equal(
         chart.getCSV(),
+        // eslint-disable-next-line max-len
         '"DateTime","Series 1"\n"2013-01-01",1\n"2013-01-02",3\n"2013-01-03",2\n"2013-01-04",4',
         'Stock chart'
     );
@@ -798,7 +801,7 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         'Auto-detect Anglo-american locale'
     );
     // Reset
-    Number.prototype.toLocaleString = toLocaleString; // eslint-disable-line no-extend-native
+    Number.prototype.toLocaleString = toLocaleString;
 
     // Explicit options
     chart.update({
@@ -957,6 +960,77 @@ QUnit.test('Gantt chart', function (assert) {
             ]
         ],
         'Gantt chart'
+    );
+});
+
+QUnit.test('X-range chart', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        title: {
+            text: 'Simple X-range Chart'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: ''
+            },
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                x: Date.UTC(2023, 10, 21),
+                x2: Date.UTC(2023, 11, 2),
+                name: 'Start prototype',
+                y: 0
+            }, {
+                x: Date.UTC(2023, 11, 2),
+                x2: Date.UTC(2023, 11, 5),
+                name: 'Develop',
+                y: 1
+            }, {
+                x: Date.UTC(2023, 11, 10),
+                x2: Date.UTC(2023, 11, 23),
+                name: 'Run acceptance tests',
+                y: 2
+            }]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            [
+                'DateTime',
+                'Project 1 (x)',
+                'Project 1 (x2)',
+                'Project 1 (y)'
+            ],
+            [
+                'Start prototype',
+                '2023-11-21 00:00:00',
+                '2023-12-02 00:00:00',
+                'Prototyping'
+            ],
+            [
+                'Develop',
+                '2023-12-02 00:00:00',
+                '2023-12-05 00:00:00',
+                'Development'
+            ],
+            [
+                'Run acceptance tests',
+                '2023-12-10 00:00:00',
+                '2023-12-23 00:00:00',
+                'Testing'
+            ]
+        ],
+        'X-range chart (#14108).'
     );
 });
 
@@ -1335,16 +1409,20 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         const series = [];
         dataRows.forEach((row, i) => {
             if (i > 0) { // ommit names of series
-                row.seriesIndices.forEach(sIdx => {
+                dataRows[1].pointers.map((el, i) => i).forEach(sIdx => {
                     if (!series[sIdx]) {
                         series[sIdx] = {
                             data: []
                         };
                     }
                     if (!isCategoryType) {
-                        series[sIdx].data.push([row[0], row[sIdx + 1]]);
+                        if (row[sIdx + 1]) {
+                            series[sIdx].data.push([row[0], row[sIdx + 1]]);
+                        }
                     } else {
-                        series[sIdx].data.push(row[sIdx + 1]);
+                        if (row[sIdx + 1]) {
+                            series[sIdx].data.push(row[sIdx + 1]);
+                        }
                     }
                 });
             }

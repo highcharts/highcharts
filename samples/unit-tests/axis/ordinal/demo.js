@@ -199,142 +199,146 @@ QUnit.test('Ordinal axis and lazy loading', function (assert) {
 });
 
 
-QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238', function (assert) {
-    const data = [
-            [1585594800000, 1137.26],
-            [1585594860000, 1139.22],
-            [1585594920000, 1140.09],
-            [1585594980000, 1139.08],
-            [1585595040000, 1139.92],
-            [1585595100000, 1139.23],
-            [1585595160000, 1139.34],
-            [1585595220000, 1137.27],
-            [1585595280000, 1138.01],
-            [1585595340000, 1139.13],
-            [1585595400000, 1140.52],
-            [1585595460000, 1141.56],
-            [1585595520000, 1142.36],
-            [1585595580000, 1141.86],
-            [1585595640000, 1142.11],
-            [1585595700000, 1140.96],
-            [1585595760000, 1141.22],
-            [1585595820000, 1139.62],
-            [1585595880000, 1139.66],
-            [1585595940000, 1141.1],
-            [1585596000000, 1141.99],
-            [1585596060000, 1142.02],
-            [1585596120000, 1141.65],
-            [1585596180000, 1140.78],
-            [1585596240000, 1138.25],
-            [1585596300000, 1136.84],
-            [1585596360000, 1139.32],
-            [1585596420000, 1135.75],
-            [1585596480000, 1137.34],
-            [1585596540000, 1137.14],
-            [1585596600000, 1138.5],
-            [1585596660000, 1138.17],
-            [1585596720000, 1138.18],
-            [1585596780000, 1138.58],
-            [1585596840000, 1140.13],
-            [1585596900000, 1140.42],
-            [1585596960000, 1143.71],
-            [1585597020000, 1143.35],
-            [1585597080000, 1146.68],
-            [1585597140000, 1147.99],
-            [1585597200000, 1147.79],
-            [1585597260000, 1146.26],
-            [1585597320000, 1145.26],
-            [1585597380000, 1143.22],
-            [1585597440000, 1145.41],
-            [1585597500000, 1146.13],
-            [1585597560000, 1143.72],
-            [1585597620000, 1144.19],
-            [1585597680000, 1144.27],
-            [1585597740000, 1141.3],
-            [1585597800000, 1142.95],
-            [1585597860000, 1142.01],
-            [1585597920000, 1142.31],
-            [1585597980000, 1139.55],
-            [1585598040000, 1148.34],
-            [1585598100000, 1148.68],
-            [1585598160000, 1149.42],
-            [1585665060000, 1166.27],
-            [1585665120000, 1166.62],
-            [1585665180000, 1164.2],
-            [1585665240000, 1162.72],
-            [1585665300000, 1164.65],
-            [1585665360000, 1167.25],
-            [1585665420000, 1167.98],
-            [1585665480000, 1170.69],
-            [1585665540000, 1170.62],
-            [1585665600000, 1172.5],
-            [1585665660000, 1171.71],
-            [1585665720000, 1168.99],
-            [1585665780000, 1169.2],
-            [1585665840000, 1168.31],
-            [1585665900000, 1167.06],
-            [1585665960000, 1167.42],
-            [1585666020000, 1169.32],
-            [1585666080000, 1168.55],
-            [1585666140000, 1168.49],
-            [1585666200000, 1170.46],
-            [1585666260000, 1171.11]
-        ],
-        chart = Highcharts.stockChart('container', {
-            chart: {
-                width: 500
-            },
-            xAxis: {
-                min: 1585595880000
-            },
-            series: [{
-                data: data
-            }]
-        }),
-        axis = chart.xAxis[0];
+QUnit.test(
+    'Panning ordinal axis on mobile devices- lin2val calculation, ' +
+    '#13238', function (assert) {
+        const data = [
+                [1585594800000, 1137.26],
+                [1585594860000, 1139.22],
+                [1585594920000, 1140.09],
+                [1585594980000, 1139.08],
+                [1585595040000, 1139.92],
+                [1585595100000, 1139.23],
+                [1585595160000, 1139.34],
+                [1585595220000, 1137.27],
+                [1585595280000, 1138.01],
+                [1585595340000, 1139.13],
+                [1585595400000, 1140.52],
+                [1585595460000, 1141.56],
+                [1585595520000, 1142.36],
+                [1585595580000, 1141.86],
+                [1585595640000, 1142.11],
+                [1585595700000, 1140.96],
+                [1585595760000, 1141.22],
+                [1585595820000, 1139.62],
+                [1585595880000, 1139.66],
+                [1585595940000, 1141.1],
+                [1585596000000, 1141.99],
+                [1585596060000, 1142.02],
+                [1585596120000, 1141.65],
+                [1585596180000, 1140.78],
+                [1585596240000, 1138.25],
+                [1585596300000, 1136.84],
+                [1585596360000, 1139.32],
+                [1585596420000, 1135.75],
+                [1585596480000, 1137.34],
+                [1585596540000, 1137.14],
+                [1585596600000, 1138.5],
+                [1585596660000, 1138.17],
+                [1585596720000, 1138.18],
+                [1585596780000, 1138.58],
+                [1585596840000, 1140.13],
+                [1585596900000, 1140.42],
+                [1585596960000, 1143.71],
+                [1585597020000, 1143.35],
+                [1585597080000, 1146.68],
+                [1585597140000, 1147.99],
+                [1585597200000, 1147.79],
+                [1585597260000, 1146.26],
+                [1585597320000, 1145.26],
+                [1585597380000, 1143.22],
+                [1585597440000, 1145.41],
+                [1585597500000, 1146.13],
+                [1585597560000, 1143.72],
+                [1585597620000, 1144.19],
+                [1585597680000, 1144.27],
+                [1585597740000, 1141.3],
+                [1585597800000, 1142.95],
+                [1585597860000, 1142.01],
+                [1585597920000, 1142.31],
+                [1585597980000, 1139.55],
+                [1585598040000, 1148.34],
+                [1585598100000, 1148.68],
+                [1585598160000, 1149.42],
+                [1585665060000, 1166.27],
+                [1585665120000, 1166.62],
+                [1585665180000, 1164.2],
+                [1585665240000, 1162.72],
+                [1585665300000, 1164.65],
+                [1585665360000, 1167.25],
+                [1585665420000, 1167.98],
+                [1585665480000, 1170.69],
+                [1585665540000, 1170.62],
+                [1585665600000, 1172.5],
+                [1585665660000, 1171.71],
+                [1585665720000, 1168.99],
+                [1585665780000, 1169.2],
+                [1585665840000, 1168.31],
+                [1585665900000, 1167.06],
+                [1585665960000, 1167.42],
+                [1585666020000, 1169.32],
+                [1585666080000, 1168.55],
+                [1585666140000, 1168.49],
+                [1585666200000, 1170.46],
+                [1585666260000, 1171.11]
+            ],
+            chart = Highcharts.stockChart('container', {
+                chart: {
+                    width: 500
+                },
+                xAxis: {
+                    min: 1585595880000
+                },
+                series: [{
+                    data: data
+                }]
+            }),
+            axis = chart.xAxis[0];
 
-    function emulatePanning() {
-        const newMin = axis.toValue(-20),
-            newMax = axis.toValue(400);
+        function emulatePanning() {
+            const newMin = axis.toValue(-20),
+                newMax = axis.toValue(400);
 
-        chart.xAxis[0].setExtremes(newMin, newMax);
-    }
+            chart.xAxis[0].setExtremes(newMin, newMax);
+        }
 
-    emulatePanning();
+        emulatePanning();
 
-    assert.ok(
-        axis.min > chart.series[0].points[0].x,
-        `After panning 20px, the axis extremes should not be reset
+        assert.ok(
+            axis.min > chart.series[0].points[0].x,
+            `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
-    );
+        );
 
-    const extendedOrdinalPositionsLength =
-        chart.xAxis[0].ordinal.index.raw.length;
-    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
-    assert.notStrictEqual(
-        extendedOrdinalPositionsLength,
-        chart.xAxis[0].ordinal.index.raw.length,
-        `After adding the point, the extendedOrdinalPositions array
+        const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.getExtendedPositions();
+        chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+
+        assert.notStrictEqual(
+            extendedOrdinalPositionsLength,
+            chart.xAxis[0].ordinal.getExtendedPositions(),
+            `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
-    );
-    // #16068
-    chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
-    const controller = new TestController(chart),
-        visiblePoints = chart.series[0].points.filter(p => p.isInside);
+        );
+        // #16068
+        chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
+        const controller = new TestController(chart),
+            visiblePoints = chart.series[0].points.filter(p => p.isInside);
 
-    controller.pan([20, 100], [chart.xAxis[0].len, 100]);
+        controller.pan([20, 100], [chart.xAxis[0].len, 100]);
 
-    assert.strictEqual(
-        visiblePoints.length,
-        chart.series[0].points.filter(p => p.isInside).length,
-        'Amount of visible points should remain the same while panning, #16068.'
-    );
-});
+        assert.strictEqual(
+            visiblePoints.length,
+            chart.series[0].points.filter(p => p.isInside).length,
+            'Amount of visible points should remain the same while ' +
+                'panning, #16068.'
+        );
+    });
 
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.findIndexOf;
+        Highcharts.OrdinalAxis.Additions.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);
@@ -353,100 +357,106 @@ QUnit.test('findIndexOf', assert => {
 });
 
 
-QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
-    const axis = {
-        transA: 0.04,
-        min: 3.24,
-        max: 7,
-        len: 500,
-        translationSlope: 0.2,
-        minPixelPadding: 0,
-        ordinal: {
-            extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
-            positions: [3, 4.2, 4.8, 5, 7],
-            slope: 500
-        },
-        series: [{
-            points: [{
-                x: 3,
-                plotX: -20
-            }, {
-                x: 4.2,
-                plotX: 80 // distance between points 100px
+QUnit.test(
+    'lin2val- unit test for values outside the plotArea.', function (assert) {
+        const axis = {
+            transA: 0.04,
+            min: 3.24,
+            max: 7,
+            len: 500,
+            translationSlope: 0.2,
+            minPixelPadding: 0,
+            ordinal: {
+                extendedOrdinalPositions: [
+                    0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9
+                ],
+                positions: [3, 4.2, 4.8, 5, 7],
+                slope: 500
+            },
+            series: [{
+                points: [{
+                    x: 3,
+                    plotX: -20
+                }, {
+                    x: 4.2,
+                    plotX: 80 // distance between points 100px
+                }]
             }]
-        }]
-    };
-    axis.ordinal.axis = axis;
+        };
+        axis.ordinal.axis = axis;
 
-    axis.ordinal.getExtendedPositions = function () {
-        return axis.ordinal.extendedOrdinalPositions;
-    };
+        axis.ordinal.getExtendedPositions = function () {
+            return axis.ordinal.extendedOrdinalPositions;
+        };
 
-    // On the chart there are 5 points equaly spaced.
-    // The distance between them equals 100px.
-    // Thare are some points that are out of the current range.
-    // The last visible point is located at 380px.
-    // EOP = extendedOrdinalPositions
+        // On the chart there are 5 points equaly spaced.
+        // The distance between them equals 100px.
+        // Thare are some points that are out of the current range.
+        // The last visible point is located at 380px.
+        // EOP = extendedOrdinalPositions
 
-    axis.ordinal.getIndexOfPoint =
+        axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
-    axis.ordinal.findIndexOf =
+        Highcharts.OrdinalAxis.Additions.prototype.getIndexOfPoint;
+        axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
-    function lin2val(val) {
-        return Highcharts.Axis.prototype.lin2val.call(axis, val);
-    }
+        Highcharts.OrdinalAxis.Additions.prototype.findIndexOf;
+        function lin2val(val) {
+            return Highcharts.Axis.prototype.lin2val.call(axis, val);
+        }
 
-    assert.strictEqual(
-        lin2val(-20 / axis.transA + axis.min),
-        3,
-        `For the pixel value equal to the first point x position,
+        assert.strictEqual(
+            lin2val(-20 / axis.transA + axis.min),
+            3,
+            `For the pixel value equal to the first point x position,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(80 / axis.transA + axis.min),
-        4.2,
-        `For the pixel value equal to the second point x position,
+        );
+        assert.strictEqual(
+            lin2val(80 / axis.transA + axis.min),
+            4.2,
+            `For the pixel value equal to the second point x position,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(30 / axis.transA + axis.min),
-        3.6,
-        `For the pixel value located between two visible points,
+        );
+        assert.strictEqual(
+            lin2val(30 / axis.transA + axis.min),
+            3.6,
+            `For the pixel value located between two visible points,
         the function should calculate the value between them.`
-    );
-    assert.strictEqual(
-        lin2val(-50 / axis.transA + axis.min),
-        2.55,
-        `For the pixel value smaller than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
-    );
-    assert.strictEqual(
-        lin2val(-520 / axis.transA + axis.min),
-        -520 / axis.transA + axis.min, // #16784
-        `For the pixel value lower than any point in EOP array, the function
+        );
+        assert.strictEqual(
+            lin2val(-50 / axis.transA + axis.min),
+            2.55,
+            'For the pixel value smaller than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
+        );
+        assert.strictEqual(
+            lin2val(-520 / axis.transA + axis.min),
+            -520 / axis.transA + axis.min, // #16784
+            `For the pixel value lower than any point in EOP array, the function
         should return requested value.`
-    );
-    assert.strictEqual(
-        lin2val(380 / axis.transA + axis.min),
-        7,
-        `For the pixel value equal to last point,
+        );
+        assert.strictEqual(
+            lin2val(380 / axis.transA + axis.min),
+            7,
+            `For the pixel value equal to last point,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(420 / axis.transA + axis.min),
-        7.4,
-        `For the pixel value higher than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
-    );
-    assert.strictEqual(
-        lin2val(1000 / axis.transA + axis.min),
-        1000 / axis.transA + axis.min, // #16784
-        `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should return requested value.`
-    );
-});
+        );
+        assert.strictEqual(
+            lin2val(420 / axis.transA + axis.min),
+            7.4,
+            'For the pixel value higher than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
+        );
+        assert.strictEqual(
+            lin2val(1000 / axis.transA + axis.min),
+            1000 / axis.transA + axis.min, // #16784
+            'For the pixel value higher than any point in ' +
+            'extendedOrdinalPositions, array, the function should return ' +
+            'requested value.'
+        );
+    });
 
 QUnit.test('val2lin- unit tests', function (assert) {
     const axis = {
@@ -667,6 +677,9 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     const chart = Highcharts.stockChart('container', {
             series: data,
+            boost: {
+                enabled: false
+            },
             legend: {
                 enabled: true
             }
@@ -675,10 +688,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (line and scatter) are visible, circular translation of
         the date should return the same value.`
     );
@@ -689,10 +700,8 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `After zooming, when the scatterer series is not visible, a circular
         translation of the date should return the same value.`
     );
@@ -703,10 +712,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     // Perform the exact same tests as above
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (scatter and line) are visible, circular translation of
         the date should return the same value.`
     );
@@ -717,11 +724,9 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
-        `After zooming, when the scatterer series is not visible, a circular
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
+        `After zooming, when the scatter series is not visible, a circular
         translation of the date should return the same value.`
     );
 });
@@ -811,7 +816,8 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
         x - 50,
         chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
         0.1,
-        'Annotation dragged on ordinal axis charts should follow mouse pointer, #18459.'
+        'Annotation dragged on ordinal axis charts should follow mouse ' +
+        'pointer, #18459.'
     );
 
     chart.xAxis[0].setExtremes(1622813400000, 1623245400000);
@@ -828,6 +834,616 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
         pixels,
         -150,
         0.0001,
-        'toValue <-> toPixels translation should return the same initial value, #16784. '
+        'toValue <-> toPixels translation should return the same initial ' +
+        'value, #16784. '
+    );
+});
+
+QUnit.test('Selection zoom with ordinal and multiple series.', assert => {
+    const dataA = [
+            [1629217713911, 2],
+            [1629395999999, 0],
+            [1629745199999, 0],
+            [1630085544305, 4],
+            [1631033631154, 5],
+            [1632261599999, 0],
+            [1632448799999, 0],
+            [1633456799999, 0],
+            [1633538040243, 3],
+            [1633640399999, 0],
+            [1633719599999, 0],
+            [1634057840935, 3],
+            [1634248799999, 0],
+            [1635265719388, 3],
+            [1635436264494, 5],
+            [1635793199999, 0],
+            [1635796179634, 4],
+            [1636129081500, 4],
+            [1636489836639, 3],
+            [1637093668072, 2],
+            [1637179046931, 1],
+            [1637611106201, 4],
+            [1637695799999, 0],
+            [1638208900320, 0],
+            [1638221559650, 2],
+            [1638304199999, 0],
+            [1638385199999, 0],
+            [1638816361148, 2],
+            [1639511914482, 5],
+            [1639684799999, 0],
+            [1641427199999, 0],
+            [1641599999999, 0],
+            [1641607199999, 0],
+            [1642710599999, 0],
+            [1643234399999, 0],
+            [1643313599999, 0],
+            [1643416199999, 0],
+            [1643677465639, 0],
+            [1643763599999, 0],
+            [1644616799999, 0],
+            [1645149599999, 0],
+            [1645225199999, 0],
+            [1646071199999, 0],
+            [1646085599999, 0],
+            [1646440232576, 0],
+            [1646875799999, 0],
+            [1647051539999, 0],
+            [1647305999999, 0],
+            [1647366579909, 3],
+            [1647382863051, 0],
+            [1647385199999, 0],
+            [1647625496314, 1],
+            [1647703799999, 0],
+            [1647890204992, 0],
+            [1647971999999, 0],
+            [1648231199999, 0],
+            [1648645199999, 0],
+            [1648648799999, 0],
+            [1648738799999, 0],
+            [1648753199999, 0],
+            [1648767599999, 0],
+            [1648839599999, 0],
+            [1649087999999, 0],
+            [1649095199999, 0],
+            [1649300399999, 0],
+            [1649338199999, 0],
+            [1649800799999, 0],
+            [1650383099999, 0],
+            [1650392999999, 0],
+            [1650661166312, 22],
+            [1651267799999, 0],
+            [1651269599999, 0],
+            [1651595399999, 0],
+            [1651701599999, 0],
+            [1651711035165, 5],
+            [1652369971503, 0],
+            [1652459230061, 2],
+            [1652824799999, 0],
+            [1653058799999, 0],
+            [1653330599999, 0],
+            [1653490799999, 0],
+            [1653839399999, 0],
+            [1653839520000, 0],
+            [1653841259999, 0],
+            [1653938519999, 0],
+            [1654520399999, 0],
+            [1654540199999, 0],
+            [1654865999999, 0],
+            [1655224199999, 0],
+            [1655314588311, 5],
+            [1655839799999, 0],
+            [1655924399999, 0],
+            [1656442799999, 0],
+            [1656457199999, 0],
+            [1656701999999, 0],
+            [1657138287579, 0],
+            [1657562189723, 0],
+            [1657902599999, 0],
+            [1659378599999, 0],
+            [1659560399999, 0],
+            [1660152347475, 5],
+            [1660159799999, 0],
+            [1660920289427, 0],
+            [1661363999999, 0],
+            [1661540399999, 0],
+            [1661959759051, 0],
+            [1661968799999, 0],
+            [1663354799999, 0],
+            [1663786799999, 0],
+            [1663948799999, 0],
+            [1664470799999, 0],
+            [1664481599999, 0],
+            [1664998730658, 0],
+            [1665595799999, 0],
+            [1665769678364, 1],
+            [1666206610847, 2],
+            [1666303199999, 0],
+            [1666814399999, 0],
+            [1667012399999, 0],
+            [1668113999999, 0],
+            [1668198599999, 0],
+            [1668624253855, 0],
+            [1669237199999, 0],
+            [1669834799999, 0],
+            [1669854599999, 0],
+            [1670005799999, 0],
+            [1670522399999, 0],
+            [1670603399999, 0],
+            [1671049799999, 0],
+            [1672766999999, 0],
+            [1672863599999, 0],
+            [1673026199999, 0],
+            [1673036999999, 0],
+            [1673470799999, 0],
+            [1674235799999, 0],
+            [1674575999999, 0],
+            [1674583199999, 0],
+            [1674667799999, 0],
+            [1674671399999, 0],
+            [1675264368554, 3],
+            [1675449147737, 0],
+            [1675459799999, 0],
+            [1675781999999, 0],
+            [1675880999999, 0],
+            [1676485799999, 0],
+            [1676611799999, 0],
+            [1676658169410, 0],
+            [1676919599999, 0],
+            [1677187799999, 0],
+            [1677527099999, 0],
+            [1677818088232, 5],
+            [1677818147318, 1],
+            [1677818869924, 1],
+            [1677859199999, 0],
+            [1677864599999, 0],
+            [1677868199999, 0],
+            [1678210199999, 0],
+            [1678229099999, 0],
+            [1678496519693, 3],
+            [1678735799999, 0],
+            [1678811399999, 0],
+            [1678897799999, 0],
+            [1678993109208, 0],
+            [1679070104316, 0],
+            [1679416199999, 0],
+            [1679421599999, 0],
+            [1679516854463, 3],
+            [1679591999999, 0],
+            [1679594511558, 0],
+            [1679603399999, 0],
+            [1679678999999, 0],
+            [1679929743760, 0],
+            [1680029999999, 0],
+            [1680036299999, 0],
+            [1680193799999, 0],
+            [1680197399999, 0],
+            [1680202799999, 0],
+            [1680283799999, 0],
+            [1680533999999, 0],
+            [1680712199999, 0],
+            [1681151399999, 0],
+            [1681324199999, 0],
+            [1681406999999, 0],
+            [1681412399999, 0],
+            [1681489441965, 0],
+            [1681493399999, 0],
+            [1681828199999, 0],
+            [1681833599999, 0],
+            [1681840799999, 0],
+            [1681932119999, 0],
+            [1682360553556, 0],
+            [1682369219999, 0],
+            [1682463599999, 0],
+            [1682525762537, 0],
+            [1682530199999, 0],
+            [1682702999999, 0],
+            [1682791272551, 0],
+            [1682967599999, 0],
+            [1683044999999, 0],
+            [1683052418691, 0],
+            [1683082799999, 0],
+            [1683136799999, 0],
+            [1683235799999, 0],
+            [1683298799999, 0],
+            [1683305999999, 0],
+            [1683557999999, 0],
+            [1683640439999, 0],
+            [1683644399999, 0],
+            [1683653324226, 2],
+            [1683741855015, 0],
+            [1683747119999, 0],
+            [1683850259999, 0],
+            [1683857339999, 0],
+            [1683865079999, 0],
+            [1683907980000, 0],
+            [1683917999999, 0],
+            [1683919799999, 0],
+            [1684180799999, 0],
+            [1684261799999, 0],
+            [1684263599999, 0],
+            [1684439579999, 0],
+            [1684519919999, 0],
+            [1684537199999, 0],
+            [1684767599999, 0],
+            [1684787208861, 0],
+            [1684853159999, 0],
+            [1684860208061, 0],
+            [1684868399999, 0],
+            [1684948688782, 0],
+            [1685122083588, 0],
+            [1685122379999, 0],
+            [1685207459999, 0],
+            [1685567939999, 0],
+            [1685629862026, 12],
+            [1685642399999, 0],
+            [1685660399999, 0],
+            [1685746799999, 0],
+            [1685989799999, 0],
+            [1686158999999, 0],
+            [1686271401043, 12],
+            [1686529259999, 0],
+            [1686604499999, 0],
+            [1686676728726, 0],
+            [1686850199999, 0],
+            [1686866997813, 0],
+            [1687368599999, 0],
+            [1687458620230, 0],
+            [1687477199999, 0],
+            [1687541215163, 0],
+            [1687793399999, 0],
+            [1687807799999, 0],
+            [1687822979999, 0],
+            [1687877816471, 2],
+            [1687967999999, 0],
+            [1688063519999, 0],
+            [1688078219999, 0],
+            [1688479199999, 0],
+            [1688578199999, 0],
+            [1688667664969, 2],
+            [1689173999999, 0],
+            [1689182550694, 12],
+            [1689281999999, 0],
+            [1689621094589, 2],
+            [1689689538390, 2],
+            [1689793761601, 4],
+            [1690306199999, 0],
+            [1690311599999, 0],
+            [1690391609361, 12],
+            [1690401599999, 0],
+            [1690469534525, 23],
+            [1690480144583, 23],
+            [1690484399999, 0],
+            [1690556399999, 0],
+            [1690996449253, 3],
+            [1691087282457, 0],
+            [1691162999999, 0],
+            [1691508599999, 0],
+            [1691519399999, 0],
+            [1691594999999, 0],
+            [1691603999999, 0],
+            [1692037799999, 0],
+            [1692108750038, 23],
+            [1692118851663, 0],
+            [1692122399999, 0],
+            [1692228599999, 0],
+            [1692372082460, 34],
+            [1692730859999, 0],
+            [1692736739999, 0],
+            [1693330199999, 0],
+            [1693512482119, 0],
+            [1693592999999, 0],
+            [1693947599999, 0],
+            [1694034179999, 0],
+            [1694449799999, 0],
+            [1694622646634, 0],
+            [1694631599999, 0],
+            [1694644199999, 0],
+            [1695230999999, 0],
+            [1695305904607, 0],
+            [1695306177724, 2],
+            [1695313091003, 2]
+        ],
+        dataB = [
+            [1678464000000, 1],
+            [1680726300000, 2],
+            [1690399800000, 3]
+        ];
+
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            enabled: true,
+            selected: 0
+        },
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: [{
+            type: 'datetime'
+        }],
+        series: [{
+            data: dataA
+        }, {
+            data: dataB
+        }],
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    enabled: false
+                }
+            }
+        }
+    });
+
+    const testController = new TestController(chart),
+        start = [chart.plotLeft, chart.plotTop + 40],
+        end = [chart.plotLeft + chart.xAxis[0].len / 10, chart.plotTop + 40];
+
+    testController.pan(start, end);
+
+    const actualMin = chart.series[0].xAxis.min;
+
+    assert.close(
+        actualMin, 1692634691003, 1,
+        'The xAxis should be zoomed correctly to selection.'
+    );
+});
+
+QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
+    const linePoints = [10, 14, 20, 25],
+        scatterPoints = [10, 14, 20, 25, 10, 10],
+        scatterPointInterval = 15,
+        chart = Highcharts.stockChart('container', {
+            boost: {
+                enabled: false
+            },
+            series: [{
+                type: 'line',
+                data: linePoints,
+                pointInverval: 10
+            }, {
+                type: 'scatter',
+                data: scatterPoints,
+                pointInterval: scatterPointInterval
+            }]
+        });
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        (scatterPoints.length - 1) * scatterPointInterval,
+        'Max extreme should be equal to the last point in scatter series.'
+    );
+
+});
+
+
+QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
+    const data = [{
+        type: 'line',
+        data: [
+            [0, 95.82],
+            [3, 95.84],
+            [6, 95.75],
+            [7, 95.48],
+            [11, 95.6],
+            [12, 95.37],
+            [13, 95.16],
+            [15, 95.15],
+            [18, 94.9],
+            [21, 95.04],
+            [22, 95.38]
+        ],
+        showInNavigator: true
+    }, {
+        type: 'scatter',
+        data: [
+            [3, 95],
+            [11, 95]
+        ],
+        showInNavigator: false
+    }];
+
+    const chart = Highcharts.stockChart('container', {
+        series: data
+    });
+
+    chart.update({ series: data.reverse() });
+
+    const length = chart.series[0].processedXData.length;
+    assert.notEqual(length, 0, 'The processedXData should be calculated.');
+});
+
+QUnit.test('Zooming on ordinal axis, #21483', assert => {
+    const data = [
+        [
+            1628515800000,
+            146.2,
+            146.7,
+            145.52,
+            146.09,
+            48908700
+        ],
+        [
+            1628602200000,
+            146.44,
+            147.71,
+            145.3,
+            145.6,
+            69023100
+        ],
+        [
+            1628688600000,
+            146.05,
+            146.72,
+            145.53,
+            145.86,
+            48493500
+        ],
+        [
+            1628775000000,
+            146.19,
+            149.05,
+            145.84,
+            148.89,
+            72282600
+        ],
+        [
+            1628861400000,
+            148.97,
+            149.44,
+            148.27,
+            149.1,
+            59375000
+        ],
+        [
+            1629120600000,
+            148.54,
+            151.19,
+            146.47,
+            151.12,
+            103296000
+        ],
+        [
+            1629207000000,
+            150.23,
+            151.68,
+            149.09,
+            150.19,
+            92229700
+        ],
+        [
+            1629293400000,
+            149.8,
+            150.72,
+            146.15,
+            146.36,
+            86326000
+        ],
+        [
+            1629379800000,
+            145.03,
+            148,
+            144.5,
+            146.7,
+            86960300
+        ],
+        [
+            1629466200000,
+            147.44,
+            148.5,
+            146.78,
+            148.19,
+            60549600
+        ],
+        [
+            1629725400000,
+            148.31,
+            150.19,
+            147.89,
+            149.71,
+            60131800
+        ],
+        [
+            1629811800000,
+            149.45,
+            150.86,
+            149.15,
+            149.62,
+            48606400
+        ],
+        [
+            1629898200000,
+            149.81,
+            150.32,
+            147.8,
+            148.36,
+            58991300
+        ],
+        [
+            1629984600000,
+            148.35,
+            149.12,
+            147.51,
+            147.54,
+            48597200
+        ],
+        [
+            1630071000000,
+            147.48,
+            148.75,
+            146.83,
+            148.6,
+            55802400
+        ],
+        [
+            1630330200000,
+            149,
+            153.49,
+            148.61,
+            153.12,
+            90956700
+        ],
+        [
+            1630416600000,
+            152.66,
+            152.8,
+            151.29,
+            151.83,
+            86453100
+        ],
+        [
+            1630503000000,
+            152.83,
+            154.98,
+            152.34,
+            152.51,
+            80313700
+        ],
+        [
+            1630589400000,
+            153.87,
+            154.72,
+            152.4,
+            153.65,
+            71115500
+        ],
+        [
+            1630675800000,
+            153.76,
+            154.63,
+            153.09,
+            154.3,
+            57808700
+        ]
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'candlestick',
+            data: data,
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1629259209625, 1629740234408);
+
+    const controller = new TestController(chart);
+
+    // Emulate scrolling with mouse wheel to gradually zoom out, instead of
+    // calling one big mousewheel zoom out event
+    for (let i = 0; i < 40; i++) {
+        controller.mouseWheel(chart.plotWidth / 2, chart.plotHeight / 2, 50);
+    }
+
+    assert.strictEqual(
+        chart.xAxis[0].dataMin,
+        chart.xAxis[0].min,
+        'Chart should be zoomed out - min value.'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].dataMax,
+        chart.xAxis[0].max,
+        'Chart should be zoomed out - max value.'
     );
 });

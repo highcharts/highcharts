@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  Dot plot series type for Highcharts
  *
@@ -30,16 +30,19 @@ import type DotPlotPoint from './DotPlotPoint';
 import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import ColumnSeries from '../Column/ColumnSeries.js';
+
+import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isNumber,
     merge,
     pick
 } = U;
-
-import '../Column/ColumnSeries.js';
 
 /* *
  *
@@ -54,59 +57,75 @@ import '../Column/ColumnSeries.js';
  *
  * @augments Highcharts.Series
  */
-
 class DotPlotSeries extends ColumnSeries {
 
     /* *
      *
-     * Static Properties
+     *  Static Properties
      *
      * */
 
-    public static defaultOptions: DotPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        itemPadding: 0.2,
-        marker: {
-            symbol: 'circle',
-            states: {
-                hover: {},
-                select: {}
-            }
-        }
-    } as DotPlotSeriesOptions);
+    public static defaultOptions: DotPlotSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        DotPlotSeriesDefaults
+    );
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
 
-    public data: Array<DotPlotPoint> = void 0 as any;
+    public data!: Array<DotPlotPoint>;
 
-    public options: DotPlotSeriesOptions = void 0 as any;
+    public options!: DotPlotSeriesOptions;
 
-    public points: Array<DotPlotPoint> = void 0 as any;
+    public points!: Array<DotPlotPoint>;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
     public drawPoints(): void {
         const series = this,
+            options = series.options,
             renderer = series.chart.renderer,
-            seriesMarkerOptions = this.options.marker,
-            itemPaddingTranslated = this.yAxis.transA *
-                (series.options.itemPadding as any),
-            borderWidth = this.borderWidth,
-            crisp = borderWidth % 2 ? 0.5 : 1;
+            seriesMarkerOptions = options.marker,
+            total = this.points.reduce(
+                (acc, point): number => acc + Math.abs(point.y || 0),
+                0
+            ),
+            totalHeight = this.points.reduce(
+                (acc, point): number => acc + (point.shapeArgs?.height || 0),
+                0
+            ),
+            itemPadding = options.itemPadding || 0,
+            columnWidth = this.points[0]?.shapeArgs?.width || 0;
 
-        this.points.forEach(function (point: DotPlotPoint): void {
-            let yPos: number,
-                attr: SVGAttributes,
-                graphics: Array<SVGElement|undefined>,
-                pointAttr,
-                pointMarkerOptions = point.marker || {},
+        let slotsPerBar = options.slotsPerBar,
+            slotWidth = columnWidth;
+
+        // Find the suitable number of slots per column
+        if (!isNumber(slotsPerBar)) {
+            slotsPerBar = 1;
+            while (slotsPerBar < total) {
+                if (
+                    total / slotsPerBar <
+                    (totalHeight / slotWidth) * 1.2
+                ) {
+                    break;
+                }
+                slotsPerBar++;
+                slotWidth = columnWidth / slotsPerBar;
+            }
+        }
+
+        const height = (totalHeight * slotsPerBar) / total;
+
+        for (const point of series.points) {
+            const pointMarkerOptions = point.marker || {},
                 symbol = (
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions as any).symbol
@@ -115,14 +134,24 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
                 ),
-                size: number,
-                yTop: number,
                 isSquare = symbol !== 'rect',
-                x: number,
-                y: number;
+                width = isSquare ? height : slotWidth,
+                shapeArgs = point.shapeArgs || {},
+                startX = (shapeArgs.x || 0) + (
+                    (shapeArgs.width || 0) -
+                    slotsPerBar * width
+                ) / 2,
+                positiveYValue = Math.abs(point.y ?? 0),
+                shapeY = (shapeArgs.y || 0),
+                shapeHeight = (shapeArgs.height || 0);
+
+            let graphics: Array<SVGElement|undefined>,
+                x = startX,
+                y = point.negative ? shapeY : shapeY + shapeHeight - height,
+                slotColumn = 0;
 
             point.graphics = graphics = point.graphics || [];
-            pointAttr = point.pointAttr ?
+            const pointAttr = point.pointAttr ?
                 (
                     (point.pointAttr as any)[
                         point.selected ? 'selected' : ''
@@ -137,70 +166,68 @@ class DotPlotSeries extends ColumnSeries {
                 delete pointAttr['stroke-width'];
             }
 
-            if (point.y !== null) {
+            if (typeof point.y === 'number') {
 
                 if (!point.graphic) {
                     point.graphic = renderer.g('point').add(series.group);
                 }
 
-                yTop = pick(point.stackY, point.y as any);
-                size = Math.min(
-                    point.pointWidth,
-                    series.yAxis.transA - itemPaddingTranslated
-                );
-                let i = Math.floor(yTop);
-                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--, i--) {
-
-                    x = point.barX + (
-                        isSquare ?
-                            point.pointWidth / 2 - size / 2 :
-                            0
-                    );
-                    y = series.yAxis.toPixels(yPos, true) +
-                        itemPaddingTranslated / 2;
-
-                    if (series.options.crisp) {
-                        x = Math.round(x) - crisp;
-                        y = Math.round(y) + crisp;
-                    }
-                    attr = {
-                        x: x,
-                        y: y,
-                        width: Math.round(isSquare ? size : point.pointWidth),
-                        height: Math.round(size),
+                for (let val = 0; val < positiveYValue; val++) {
+                    const attr = {
+                        x: x + width * itemPadding,
+                        y: y + height * itemPadding,
+                        width: width * (1 - 2 * itemPadding),
+                        height: height * (1 - 2 * itemPadding),
                         r: radius
                     };
 
-                    let graphic = graphics[i];
-
+                    let graphic = graphics[val];
                     if (graphic) {
                         graphic.animate(attr);
                     } else {
-                        graphic = renderer.symbol(symbol)
+                        graphic = renderer
+                            .symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
                     graphic.isActive = true;
-                    graphics[i] = graphic;
+                    graphics[val] = graphic;
+
+                    x += width;
+                    slotColumn++;
+                    if (slotColumn >= slotsPerBar) {
+                        slotColumn = 0;
+                        x = startX;
+                        y = point.negative ? y + height : y - height;
+                    }
                 }
             }
-            graphics.forEach((graphic, i): void => {
-                if (!graphic) {
-                    return;
-                }
 
-                if (!graphic.isActive) {
-                    graphic.destroy();
-                    graphics.splice(i, 1);
-                } else {
-                    graphic.isActive = false;
+            let i = -1;
+
+            for (const graphic of graphics) {
+                ++i;
+                if (graphic) {
+                    if (!graphic.isActive) {
+                        graphic.destroy();
+                        graphics.splice(i, 1);
+                    } else {
+                        graphic.isActive = false;
+                    }
                 }
-            });
-        });
+            }
+        }
     }
+
 }
 
-interface DotPlotSeries extends ColumnSeries {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DotPlotSeries {
     pointAttr?: SVGAttributes;
     pointClass: typeof DotPlotPoint;
 }
@@ -225,7 +252,7 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 
 /* *
  *
- * Default Export
+ *  Default Export
  *
  * */
 

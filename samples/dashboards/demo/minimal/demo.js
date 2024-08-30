@@ -19,55 +19,20 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
         layouts: [{
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '30%'
-                        }
-                    },
+                    id: 'kpi-wrapper',
                     layout: {
                         rows: [{
                             cells: [{
-                                id: 'kpi-vitamin-a',
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '100%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                height: 205
+                                id: 'kpi-vitamin-a'
                             }, {
-                                responsive: {
-                                    small: {
-                                        width: '50%'
-                                    },
-                                    medium: {
-                                        width: '100%'
-                                    },
-                                    large: {
-                                        width: '100%'
-                                    }
-                                },
-                                id: 'kpi-iron',
-                                height: 205
+                                id: 'kpi-iron'
                             }]
                         }]
                     }
@@ -78,33 +43,25 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-2',
-                    height: 323
+                    id: 'dashboard-col-2'
                 }]
             }]
         }]
     },
     components: [{
         type: 'KPI',
-        cell: 'kpi-vitamin-a',
+        renderTo: 'kpi-vitamin-a',
         value: 900,
         valueFormat: '{value}',
         title: 'Vitamin A',
         subtitle: 'daily recommended dose'
     }, {
         type: 'KPI',
-        cell: 'kpi-iron',
+        renderTo: 'kpi-iron',
         value: 8,
         title: 'Iron',
         valueFormat: '{value}',
         subtitle: 'daily recommended dose'
-    }, {
-        cell: 'title',
-        type: 'HTML',
-        elements: [{
-            tagName: 'h1',
-            textContent: 'MicroElement amount in Foods'
-        }]
     }, {
         sync: {
             visibility: true,
@@ -112,17 +69,20 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'micro-element'
+            id: 'micro-element',
+            columnAssignment: [{
+                seriesId: 'Vitamin A',
+                data: ['Food', 'Vitamin A']
+            }]
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Groceries'
+                }
             },
             yAxis: {
                 title: {
@@ -162,27 +122,48 @@ Dashboards.board('container', {
             },
             title: {
                 text: ''
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Vitamin A in food. Highcharts ' +
+                        'Interactive Chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Vitamin A amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA) of 900
+                micrograms.`,
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
-    },
-    {
-        cell: 'dashboard-col-1',
+    }, {
+        renderTo: 'dashboard-col-1',
         sync: {
             visibility: true,
             highlight: true,
             extremes: true
         },
         connector: {
-            id: 'micro-element'
+            id: 'micro-element',
+            columnAssignment: [{
+                seriesId: 'Iron',
+                data: ['Food', 'Iron']
+            }]
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            Iron: 'y'
-        },
         chartOptions: {
             xAxis: {
-                type: 'category'
+                type: 'category',
+                accessibility: {
+                    description: 'Groceries'
+                }
             },
             yAxis: {
                 title: {
@@ -222,15 +203,33 @@ Dashboards.board('container', {
                 animation: false,
                 type: 'column',
                 spacing: [30, 30, 30, 20]
+            },
+            tooltip: {
+                valueSuffix: ' mcg',
+                stickOnContact: true
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: 'Iron in food. Highcharts ' +
+                        'Interactive Chart.'
+                }
+            },
+            accessibility: {
+                description: `The chart is displaying the Iron amount in
+                micrograms for some groceries. There is a plotLine demonstrating
+                the daily Recommended Dietary Allowance (RDA) of 8
+                micrograms.`,
+                point: {
+                    valueSuffix: ' mcg'
+                }
             }
         }
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'micro-element'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true,
             visibility: true

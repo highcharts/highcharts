@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,12 +24,15 @@ import type Point from '../../Core/Series/Point';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -42,19 +45,9 @@ namespace ColumnDataLabel {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Override the basic data label alignment by adjusting for the position of
@@ -69,7 +62,7 @@ namespace ColumnDataLabel {
         alignTo: BBoxObject,
         isNew?: boolean
     ): void {
-        let inverted = this.chart.inverted,
+        const inverted = this.chart.inverted,
             series = point.series,
             xLen = (
                 series.xAxis ? series.xAxis.len : this.chart.plotSizeX
@@ -77,30 +70,33 @@ namespace ColumnDataLabel {
             yLen = (
                 series.yAxis ? series.yAxis.len : this.chart.plotSizeY
             ) || 0,
-            // data label box for alignment
+            // Data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as AreaRangePoint).below, // range series
+                (point as AreaRangePoint).below, // Range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, yLen)
             ),
-            // draw it inside the box?
-            inside = pick(options.inside, !!this.options.stacking),
-            overshoot;
+            // Draw it inside the box?
+            inside = pick(options.inside, !!this.options.stacking);
 
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
-            if (alignTo.y < 0) {
-                alignTo.height += alignTo.y;
-                alignTo.y = 0;
-            }
 
-            // If parts of the box overshoots outside the plot area, modify the
-            // box to center the label inside
-            overshoot = alignTo.y + alignTo.height - yLen;
-            if (overshoot > 0 && overshoot < alignTo.height) {
-                alignTo.height -= overshoot;
+            // Check for specific overflow and crop conditions (#13240)
+            if (!(options.overflow === 'allow' && options.crop === false)) {
+                if (alignTo.y < 0) {
+                    alignTo.height += alignTo.y;
+                    alignTo.y = 0;
+                }
+
+                // If parts of the box overshoots outside the plot area, modify
+                // the box to center the label inside
+                const overshoot = alignTo.y + alignTo.height - yLen;
+                if (overshoot > 0 && overshoot < alignTo.height - 1) {
+                    alignTo.height -= overshoot;
+                }
             }
 
             if (inverted) {
@@ -123,7 +119,6 @@ namespace ColumnDataLabel {
                 }
             }
         }
-
 
         // When alignment is undefined (typically columns and bars), display the
         // individual point below or above the point depending on the threshold
@@ -155,11 +150,13 @@ namespace ColumnDataLabel {
     }
 
     /** @private */
-    export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
+    export function compose(
+        ColumnSeriesClass: typeof ColumnSeries
+    ): void {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, ColumnSeriesClass)) {
+        if (pushUnique(composed, 'ColumnDataLabel')) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

@@ -2,5 +2,6 @@
  name: Highcharts Homepage Animations
  authors:
    - Nancy Dillon
+ requiresManualTesting: true
  js_wrap: b
 ...

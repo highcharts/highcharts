@@ -1,0 +1,25 @@
+name: Notify docs changes
+
+on:
+  push:
+    branches: [ 'master' ]
+    paths:
+      - 'docs/**/*.md'
+
+permissions:
+   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOCS_NOTIFICATION_WEBHOOK }}
+

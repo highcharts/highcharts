@@ -95,7 +95,8 @@
                     },
                     {
                         name:
-              'Imperial Palaces of the Ming and Qing Dynasties in Beijing and Shenyang',
+              'Imperial Palaces of the Ming and Qing Dynasties in Beijing ' +
+              'and Shenyang',
                         image: 'https://whc.unesco.org/uploads/sites/site_439.jpg',
                         lon: 123.4469444,
                         lat: 41.79416667
@@ -119,20 +120,23 @@
                         lat: 39.689449
                     },
                     {
-                        name: 'Mountain Resort and its Outlying Temples, Chengde',
+                        name: 'Mountain Resort and its Outlying Temples, ' +
+                            'Chengde',
                         image: 'https://whc.unesco.org/uploads/sites/site_703.jpg',
                         lon: 117.93833,
                         lat: 40.98694
                     },
                     {
                         name:
-              'Temple and Cemetery of Confucius and the Kong Family Mansion in Qufu',
+              'Temple and Cemetery of Confucius and the Kong Family Mansion ' +
+              'in Qufu',
                         image: 'https://whc.unesco.org/uploads/sites/site_704.jpg',
                         lon: 116.994561,
                         lat: 35.613215
                     },
                     {
-                        name: 'Ancient Building Complex in the Wudang Mountains',
+                        name: 'Ancient Building Complex in the Wudang ' +
+                            'Mountains',
                         image: 'https://whc.unesco.org/uploads/sites/site_705.jpg',
                         lon: 111,
                         lat: 32.46667
@@ -168,7 +172,8 @@
                         lat: 39.91055556
                     },
                     {
-                        name: 'Temple of Heaven: an Imperial Sacrificial Altar in Beijing',
+                        name: 'Temple of Heaven: an Imperial Sacrificial ' +
+                            'Altar in Beijing',
                         image: 'https://whc.unesco.org/uploads/sites/site_881.jpg',
                         lon: 116.4447222,
                         lat: 39.84555556
@@ -180,13 +185,15 @@
                         lat: 29.70111
                     },
                     {
-                        name: 'Mount Qingcheng and the Dujiangyan Irrigation System',
+                        name: 'Mount Qingcheng and the Dujiangyan Irrigation ' +
+                            'System',
                         image: 'https://whc.unesco.org/uploads/sites/site_1001.jpg',
                         lon: 103.60528,
                         lat: 31.00167
                     },
                     {
-                        name: 'Ancient Villages in Southern Anhui – Xidi and Hongcun',
+                        name: 'Ancient Villages in Southern Anhui – Xidi and ' +
+                            'Hongcun',
                         image: 'https://whc.unesco.org/uploads/sites/site_1002.jpg',
                         lon: 117.9875,
                         lat: 29.90444444
@@ -222,7 +229,8 @@
                         lat: 36.1266666666
                     },
                     {
-                        name: 'Capital Cities and Tombs of the Ancient Koguryo Kingdom',
+                        name: 'Capital Cities and Tombs of the Ancient ' +
+                            'Koguryo Kingdom',
                         image: 'https://whc.unesco.org/uploads/sites/site_1135.jpg',
                         lon: 126.1872222,
                         lat: 41.15694444
@@ -247,7 +255,8 @@
                     },
                     {
                         name:
-              'Historic Monuments of Dengfeng in “The Centre of Heaven and Earth”',
+              'Historic Monuments of Dengfeng in “The Centre of Heaven and ' +
+              'Earth”',
                         image: 'https://whc.unesco.org/uploads/sites/site_1305.jpg',
                         lon: 113.0677194444,
                         lat: 34.4587472222
@@ -307,7 +316,8 @@
                         lat: 30.3955555556
                     },
                     {
-                        name: 'Quanzhou: Emporium of the World in Song-Yuan China',
+                        name: 'Quanzhou: Emporium of the World in Song-Yuan ' +
+                            'China',
                         image: 'https://whc.unesco.org/uploads/sites/site_1561.jpg',
                         lon: 118.4441666667,
                         lat: 24.7102777778
@@ -323,7 +333,8 @@
                 },
                 data: [
                     {
-                        name: 'Jiuzhaigou Valley Scenic and Historic Interest Area',
+                        name: 'Jiuzhaigou Valley Scenic and Historic ' +
+                            'Interest Area',
                         image: 'https://whc.unesco.org/uploads/sites/site_637.jpg',
                         lon: 103.91667,
                         lat: 33.08333
@@ -342,7 +353,8 @@
                     },
                     {
                         name:
-              'Sichuan Giant Panda Sanctuaries - Wolong, Mt Siguniang and Jiajin Mountains',
+              'Sichuan Giant Panda Sanctuaries - Wolong, Mt Siguniang and ' +
+              'Jiajin Mountains',
                         image: 'https://whc.unesco.org/uploads/sites/site_1213.jpg',
                         lon: 103,
                         lat: 30.8333333333
@@ -397,7 +409,8 @@
                     },
                     {
                         name:
-              'Migratory Bird Sanctuaries along the Coast of Yellow Sea-Bohai Gulf of China (Phase I)',
+              'Migratory Bird Sanctuaries along the Coast of Yellow ' +
+              'Sea-Bohai Gulf of China (Phase I)',
                         image: 'https://whc.unesco.org/uploads/sites/site_1606.jpg',
                         lon: 121.0168138889,
                         lat: 32.9319444444
@@ -426,7 +439,8 @@
                     },
                     {
                         name:
-              'Mount Emei Scenic Area, including Leshan Giant Buddha Scenic Area',
+              'Mount Emei Scenic Area, including Leshan Giant Buddha Scenic ' +
+              'Area',
                         image: 'https://whc.unesco.org/uploads/sites/site_779.jpg',
                         lon: 103.76925,
                         lat: 29.5449

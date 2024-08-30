@@ -78,10 +78,12 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Departamental Strength of the Company'
+        text: 'Departamental Strength of the Company',
+        align: 'left'
     },
     subtitle: {
-        text: 'Custom animation of pie series'
+        text: 'Custom animation of pie series',
+        align: 'left'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -98,7 +100,8 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage}%'
+                format: '<b>{point.name}</b><br>{point.percentage}%',
+                distance: 20
             }
         }
     },

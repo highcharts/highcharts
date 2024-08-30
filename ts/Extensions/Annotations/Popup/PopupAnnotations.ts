@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -72,7 +72,7 @@ function addForm(
     const popupDiv = this.container,
         lang = this.lang;
 
-    // create title of annotations
+    // Create title of annotations
     let lhsCol = createElement('h2', {
         className: 'highcharts-popup-main-title'
     }, void 0, popupDiv);
@@ -82,7 +82,7 @@ function addForm(
         )
     );
 
-    // left column
+    // Left column
     lhsCol = createElement(
         'div',
         {
@@ -143,41 +143,41 @@ function addToolbar(
         showForm = this.showForm,
         toolbarClass = 'highcharts-annotation-toolbar';
 
-    // set small size
+    // Set small size
     if (popupDiv.className.indexOf(toolbarClass) === -1) {
-        popupDiv.className += ' ' + toolbarClass;
+        popupDiv.className += ' ' + toolbarClass + ' highcharts-no-mousewheel';
     }
 
-    // set position
+    // Set position
     if (chart) {
         popupDiv.style.top = chart.plotTop + 10 + 'px';
     }
 
-    // create label
-    createElement('span', void 0, void 0, popupDiv).appendChild(
-        doc.createTextNode(pick(
-            // Advanced annotations:
-            lang[options.langKey as any] || options.langKey,
-            // Basic shapes:
-            options.shapes && options.shapes[0].type,
-            ''
-        ))
+    // Create label
+    const label = createElement(
+        'p',
+        {
+            className: 'highcharts-annotation-label'
+        },
+        void 0,
+        popupDiv
+    );
+    label.setAttribute('aria-label', 'Annotation type');
+    label.appendChild(
+        doc.createTextNode(
+            pick(
+                // Advanced annotations:
+                lang[options.langKey as any] || options.langKey,
+                // Basic shapes:
+                options.shapes && options.shapes[0].type,
+                ''
+            )
+        )
     );
 
-    // add buttons
+    // Add buttons
+
     let button = this.addButton(
-        popupDiv,
-        lang.removeButton || 'Remove',
-        'remove',
-        popupDiv,
-        callback
-    );
-
-    button.className += ' highcharts-annotation-remove-button';
-    button.style['background-image' as any] = 'url(' +
-        this.iconsURL + 'destroy.svg)';
-
-    button = this.addButton(
         popupDiv,
         lang.editButton || 'Edit',
         'edit',
@@ -197,6 +197,17 @@ function addToolbar(
     button.style['background-image' as any] = 'url(' +
         this.iconsURL + 'edit.svg)';
 
+    button = this.addButton(
+        popupDiv,
+        lang.removeButton || 'Remove',
+        'remove',
+        popupDiv,
+        callback
+    );
+
+    button.className += ' highcharts-annotation-remove-button';
+    button.style['background-image' as any] = 'url(' +
+        this.iconsURL + 'destroy.svg)';
 }
 
 /**
@@ -237,14 +248,14 @@ function addFormFields(
 
     objectEach(options, (value, option): void => {
 
-        // create name like params.styles.fontSize
+        // Create name like params.styles.fontSize
         parentFullName = parentNode !== '' ? parentNode + '.' + option : option;
 
         if (isObject(value)) {
             if (
-                // value is object of options
+                // Value is object of options
                 !isArray(value) ||
-                // array of objects with params. i.e labels in Fibonacci
+                // Array of objects with params. i.e labels in Fibonacci
                 (isArray(value) && isObject(value[0]))
             ) {
                 titleName = lang[option] || option;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy
+ *  (c) 2010-2024 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -40,6 +40,9 @@ interface PathParams {
     parentVisible: boolean;
 }
 
+/**
+ *
+ */
 function getDefaultPath(pathParams: PathParams): SVGPath {
     const {
         x1,
@@ -72,6 +75,9 @@ function getDefaultPath(pathParams: PathParams): SVGPath {
         ) :
         path;
 }
+/**
+ *
+ */
 function getStraightPath(pathParams: PathParams): SVGPath {
     const {
         x1,
@@ -93,6 +99,9 @@ function getStraightPath(pathParams: PathParams): SVGPath {
         ['L', x1, y2]
     ];
 }
+/**
+ *
+ */
 function getCurvedPath(pathParams: PathParams): SVGPath {
     const {
         x1,
@@ -136,13 +145,13 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
         const y = path[i][2];
 
         if (typeof x === 'number' && typeof y === 'number') {
-            // moveTo
+            // MoveTo
             if (i === 0) {
                 d.push(['M', x, y]);
             } else if (i === path.length - 1) {
                 d.push(['L', x, y]);
 
-                // curveTo
+                // CurveTo
             } else if (r) {
                 const prevSeg = path[i - 1];
                 const nextSeg = path[i + 1];
@@ -179,7 +188,7 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
                     }
                 }
 
-                // lineTo
+                // LineTo
             } else {
                 d.push(['L', x, y]);
             }

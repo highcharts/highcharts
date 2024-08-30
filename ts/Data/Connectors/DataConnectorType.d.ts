@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,7 @@
  * class constructor.
  */
 export interface DataConnectorTypes {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /**

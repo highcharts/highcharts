@@ -1,5 +1,5 @@
 QUnit.test('Organization data', assert => {
-    let chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         series: [
             {
                 type: 'organization',
@@ -19,29 +19,29 @@ QUnit.test('Organization data', assert => {
     assert.strictEqual(
         chart.series[0].nodes[4].graphic.element.getAttribute('fill'),
         Highcharts.defaultOptions.colors[4],
-        'The last element should be rendered and filled accoring to colorByPoint'
+        'The last element should be rendered and filled accoring to ' +
+        'colorByPoint'
     );
 
-    chart = Highcharts.chart('container', {
+    chart.update({
         chart: {
             inverted: true
-        },
-        series: [
-            {
-                type: 'organization',
-                keys: ['from', 'to'],
-                data: [
-                    ['Skill Cluster', 'Skill 1'],
-                    ['Skill Cluster', 'Skill 2'],
-                    ['Skill Cluster', 'Skill 3'],
-                    ['Skill Cluster', 'Skill 4'],
-                    ['Skill Cluster', 'Skill 5'],
-                    ['Skill Cluster', 'Skill 6'],
-                    ['Skill 2', 'Skill 6 3rd Level'],
-                    ['Skill 6 3rd Level', 'Skill 7 4th Level'],
-                    ['Skill 7 4th Level', 'Skill 8 5th Level']
-                ]
-            }
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        data: [
+            ['Skill Cluster', 'Skill 1'],
+            ['Skill Cluster', 'Skill 2'],
+            ['Skill Cluster', 'Skill 3'],
+            ['Skill Cluster', 'Skill 4'],
+            ['Skill Cluster', 'Skill 5'],
+            ['Skill Cluster', 'Skill 6'],
+            ['Skill 2', 'Skill 6 3rd Level'],
+            ['Skill 6 3rd Level', 'Skill 7 4th Level'],
+            ['Skill 7 4th Level', 'Skill 8 5th Level']
         ]
     });
 
@@ -50,17 +50,17 @@ QUnit.test('Organization data', assert => {
         -9999,
         'Node labels should be visible when not overlap (#13100).'
     );
-});
 
-QUnit.test('Organization single data', assert => {
-    const chart = Highcharts.chart('container', {
-        series: [
-            {
-                type: 'organization',
-                keys: ['from', 'to'],
-                data: [['hey', 'hey']]
-            }
-        ]
+    chart.update({
+        chart: {
+            inverted: false
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        data: [['hey', 'hey']]
     });
 
     assert.strictEqual(
@@ -68,10 +68,51 @@ QUnit.test('Organization single data', assert => {
         1,
         'A single-node series should be possible (#11792)'
     );
+
     assert.strictEqual(
         chart.container.innerHTML.indexOf('NaN'),
         -1,
         'The SVG should not contain NaN'
+    );
+
+    chart.series[0].update({
+        type: 'organization',
+        keys: ['from', 'to'],
+        nodes: [{
+            id: 'A',
+            height: 50, // works in non inverted chart
+            width: 50 // works in inverted chart
+        }],
+        data: [
+            ['A', 'B']
+        ]
+    });
+
+    let nodeBox = chart.series[0].nodes[0].graphic.getBBox();
+
+    assert.close(
+        nodeBox.y,
+        (chart.plotHeight / 2) -
+            (nodeBox.height / 2),
+        0.00001, // Safari
+        `After specifing the node height in non inverted chart, that node
+        should be aligned to the center of the chart (#19946).`
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    nodeBox = chart.series[0].nodes[0].graphic.getBBox();
+
+    assert.strictEqual(
+        nodeBox.y,
+        (chart.plotWidth / 2) -
+            (nodeBox.width / 2),
+        `After specifing the node width in inverted chart, that node should be
+        aligned to the center of the chart (#19946).`
     );
 });
 
@@ -126,7 +167,8 @@ QUnit.test(
             assert.strictEqual(
                 chart.series[0].points[0].from,
                 'C',
-                'Drilldown should be performed and the points should be changed.'
+                'Drilldown should be performed and the points should be ' +
+                'changed.'
             );
             assert.ok(
                 chart.series[0].nodes[0].graphic.visibility !== 'hidden',
@@ -148,5 +190,91 @@ QUnit.test(
         }, 1000);
 
         TestUtilities.lolexRunAndUninstall(clock);
+    }
+);
+
+QUnit.test(
+    'Horizontal hanging lines nodes dropping/shifting.',
+    assert => {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'organization'
+                },
+                plotOptions: {
+                    series: {
+                        // Removing borders to simplify calculations.
+                        borderWidth: 0
+                    }
+                },
+                series: [
+                    {
+                        hangingIndentTranslation: 'shrink',
+                        data: [
+                            {
+                                from: 'A',
+                                to: 'B'
+                            },
+                            {
+                                from: 'B',
+                                to: 'C'
+                            }
+                        ],
+                        nodes: [
+                            {
+                                id: 'A',
+                                layout: 'hanging'
+                            },
+                            {
+                                id: 'B'
+                            },
+                            {
+                                id: 'C'
+                            }
+                        ]
+                    }
+                ]
+            }),
+            series = chart.series[0],
+            nodeA = series.nodes[0],
+            nodeB = series.nodes[1],
+            nodeC = series.nodes[2];
+
+        assert.ok(
+            nodeB.shapeArgs.height < nodeA.shapeArgs.height,
+            'Shrink: Height of Node B should be smaller than A.'
+        );
+        assert.ok(
+            nodeC.shapeArgs.height < nodeB.shapeArgs.height,
+            'Shrink: Height of Node C should be smaller than B.'
+        );
+        assert.ok(
+            nodeB.shapeArgs.y > nodeA.shapeArgs.y,
+            'Shrink: Node B should be placed lower than A (y should be higher).'
+        );
+        assert.ok(
+            nodeC.shapeArgs.y > nodeB.shapeArgs.y,
+            'Shrink: Node C should be placed lower than B (y should be higher).'
+        );
+
+        chart.series[0].update({ hangingIndentTranslation: 'cumulative' });
+
+        assert.ok(
+            nodeB.shapeArgs.height < nodeA.shapeArgs.height,
+            'Cumulative: Height of Node B should be smaller than A.'
+        );
+        assert.ok(
+            nodeC.shapeArgs.height === nodeB.shapeArgs.height,
+            'Cumulative: Height of Node C should be equal to B.'
+        );
+        assert.ok(
+            nodeB.shapeArgs.y > nodeA.shapeArgs.y,
+            'Cumulative: Node B should be placed lower than A (y should be ' +
+            'higher).'
+        );
+        assert.ok(
+            nodeC.shapeArgs.y > nodeB.shapeArgs.y,
+            'Cumulative: Node C should be placed lower than B (y should be ' +
+            'higher).'
+        );
     }
 );

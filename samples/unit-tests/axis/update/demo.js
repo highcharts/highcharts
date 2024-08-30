@@ -59,7 +59,8 @@ QUnit.test('Update to non-ordinal (#4196)', function (assert) {
         xAxis = chart.xAxis[0],
         points = chart.series[0].points;
 
-    // In an ordinal axis, the point distance is the same even though the actual time distance is
+    // In an ordinal axis, the point distance is the same even though the
+    // actual time distance is
     // different.
     assert.equal(
         Math.round(points[1].plotX - points[0].plotX),

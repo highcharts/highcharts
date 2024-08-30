@@ -19,7 +19,7 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/';
 
 function showElements(elements) {
     [].forEach.call(
@@ -225,9 +225,11 @@ const chart = {
             min: 0,
             max: 20,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         },
         // 1
         {
@@ -235,18 +237,22 @@ const chart = {
             max: 20,
             reversed: true,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         },
         // 2
         {
             min: 0,
             max: 20,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         }
     ],
     yAxis: [

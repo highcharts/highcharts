@@ -4,18 +4,23 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
             series: [
                 {
                     type: 'xrange',
                     name: 'Project 1',
                     dataLabels: [
                         {
-                            enabled: true,
                             format: 'Left label',
                             align: 'left'
                         },
                         {
-                            enabled: true,
                             format: 'Right label',
                             align: 'right'
                         }
@@ -73,6 +78,12 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         correct,
         true,
         'Appropriate tooltip appears when hovering both point\'s data labels.'
+    );
+
+    assert.ok(
+        point.dataLabels[0] && point.dataLabels[0].element &&
+            point.dataLabels[1] && point.dataLabels[1].element,
+        'Both data labels should be rendered when enabled in plotOptions.'
     );
 
     assert.strictEqual(
@@ -168,13 +179,15 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     result = checkLabelsVisibility(chart, 'hide');
     assert.ok(
         result,
-        'All data labels should be hidden when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be hidden when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     result = checkLabelsVisibility(chart, 'show');
     assert.ok(
         result,
-        'All data labels should be visible when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be visible when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     chart.yAxis[0].update({

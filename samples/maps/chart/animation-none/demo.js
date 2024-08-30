@@ -16,7 +16,8 @@
         },
 
         title: {
-            text: 'No animation on updates. Click the Plus button or use mousewheel to test.'
+            text: 'No animation on updates. Click the Plus button or use ' +
+                'mousewheel to test.'
         },
 
         mapNavigation: {

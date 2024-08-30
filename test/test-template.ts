@@ -229,10 +229,13 @@ class TestTemplate {
         );
 
         return function () {
+            let undoOption;
+
+            for (const axis of chart.axes) {
+                axis.setExtremes(void 0, void 0, false);
+            }
 
             removeEvent();
-
-            let undoOption;
 
             while (!!(undoOption = undoStack.pop())) {
                 chart.update(undoOption, false, true, false);

@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-bu-all-2019.topo.json">Buskerud (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-bu-all-2019.topo.json">Buskerud (2019)</a>'
         },
 
         mapNavigation: {

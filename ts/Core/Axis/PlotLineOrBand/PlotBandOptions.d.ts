@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,8 +32,11 @@ import type PlotLineOrBand from './PlotLineOrBand';
 
 export interface PlotBandLabelOptions {
     align?: AlignValue;
+    allowOverlap?: boolean,
+    className?: string;
     clip?: boolean;
     formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    inside?: boolean;
     rotation?: number;
     style?: CSSObject;
     text?: string;

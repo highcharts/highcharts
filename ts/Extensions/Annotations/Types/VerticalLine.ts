@@ -12,7 +12,6 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
@@ -111,7 +110,8 @@ class VerticalLine extends Annotation {
                     points: [
                         VerticalLine.connectorFirstPoint,
                         VerticalLine.connectorSecondPoint
-                    ]
+                    ],
+                    className: 'highcharts-vertical-line'
                 }),
                 0
             );

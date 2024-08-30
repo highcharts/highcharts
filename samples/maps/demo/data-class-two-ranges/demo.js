@@ -169,10 +169,12 @@
         },
 
         error: function () {
-            $('#container').html('<div class="loading">' +
+            $('#container').html(
+                '<div class="loading">' +
                 '<i class="icon-frown icon-large"></i> ' +
                 '<p>Error loading data from Google Spreadsheets</p>' +
-                '</div>');
+                '</div>'
+            );
         }
     });
 

@@ -6,11 +6,16 @@ on:
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'test/ts-node-unit-tests/benchmark*'
-      - '.github/workflows/**'
+      - 'test/ts-node-unit-tests/benchmark/Dashboards/*'
+      - '.github/workflows/dashboards-benchmark.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   dashboard_benchmark:
@@ -25,7 +30,7 @@ jobs:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -39,7 +44,7 @@ jobs:
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Dashboards/
 
       - name: Checkout current branch
         uses: actions/checkout@v3
@@ -54,7 +59,7 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Benchmark
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual
+        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Dashboards/
 
       - name: Benchmark comparison
         run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
@@ -76,7 +81,7 @@ jobs:
 
             const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
 
-            await createOrUpdateComment(github, context, 'Benchmark report', benchmarkMD || 'No table to show');
+            await createOrUpdateComment(github, context, 'Benchmark report - Dashboards', benchmarkMD || 'No table to show');
 
 
       - name: Add to summary

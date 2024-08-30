@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-use-before-define: 0 */
+/* eslint-disable consistent-return, no-use-before-define */
 
 const gulp = require('gulp');
 
@@ -35,16 +35,35 @@ function requires(globPatterns, taskNames) {
                     glob(globPattern, { allowEmpty: true }).length === 0)
             ) {
                 taskNames.forEach(taskName => require('../' + taskName));
-                gulp.series(...taskNames)(error => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve();
-                    }
-                });
+                run(...taskNames).then(resolve);
             } else {
                 resolve();
             }
+        } catch (catchedError) {
+            reject(catchedError);
+        }
+    });
+}
+
+/**
+ * Run gulp tasks asynchronously.
+ *
+ * @param {Array<string>} taskNames
+ *        Names of gulp tasks to run
+ *
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function run(...taskNames) {
+    return new Promise((resolve, reject) => {
+        try {
+            gulp.series(...taskNames)(error => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
         } catch (catchedError) {
             reject(catchedError);
         }
@@ -58,5 +77,6 @@ function requires(globPatterns, taskNames) {
  * */
 
 module.exports = {
-    requires
+    requires,
+    run
 };

@@ -23,7 +23,8 @@
             data: data,
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}. High: {point.high}, low: {point.low}, close: {point.close}.'
+                    valueDescriptionFormat: '{xDescription}. High: ' +
+                        '{point.high}, low: {point.low}, close: {point.close}.'
                 }
             }
         }]

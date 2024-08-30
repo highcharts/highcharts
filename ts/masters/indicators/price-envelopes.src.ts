@@ -6,9 +6,11 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2021 Paweł Fus
+ * (c) 2010-2024 Paweł Fus
  *
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Stock/Indicators/PriceEnvelopes/PriceEnvelopesIndicator.js';
+export default Highcharts;

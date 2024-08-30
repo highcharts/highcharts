@@ -21,7 +21,7 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
         arrayString.push(data.value);
     });
 
-    // querry send string that we need to convert into numbers
+    // query send string that we need to convert into numbers
     for (let i = 0; i < arrayString.length; i++) {
         if (arrayString[i] !== null) {
             arrayFinal.push(parseFloat(arrayString[i]));
@@ -38,7 +38,8 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
         },
         tooltip: {
             valueDecimals: 2,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}%</b><br/>'
         },
         plotOptions: {
             series: {
@@ -51,7 +52,8 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
             text: 'Source: World Bank Data'
         },
         xAxis: {
-            categories: yearList.reverse() // .reverse() to have the min year on the left
+            categories: yearList.reverse() // .reverse() to have the min
+            // year on the left
         },
         series: [{
             name: countryName,

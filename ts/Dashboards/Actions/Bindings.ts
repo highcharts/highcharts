@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -26,6 +26,7 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from '../Components/ComponentType';
+import type Board from '../Board';
 import type GUIElement from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
@@ -33,12 +34,12 @@ import type Row from '../Layout/Row';
 import type Component from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
+import CellHTML from '../Layout/CellHTML.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    error
+    fireEvent
 } = U;
 
 /* *
@@ -56,9 +57,9 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell;
+        cell: Cell|CellHTML;
         component: ComponentType;
-        options: Partial<Component.ComponentOptions>;
+        options: Partial<Component.Options>;
     }
 
     /* *
@@ -68,12 +69,26 @@ namespace Bindings {
      * */
 
     function getGUIElement(
-        idOrElement: string
-    ): (GUIElement|undefined) {
-        const container = typeof idOrElement === 'string' ?
-            document.getElementById(idOrElement) : idOrElement;
-
+        idOrElement: string,
+        parentElement?: HTMLElement
+    ): Cell|Row|Layout|undefined {
         let guiElement;
+
+        if (
+            typeof idOrElement === 'string' &&
+            document.querySelectorAll('#' + idOrElement).length > 1
+        ) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+                'font-weight: bold',
+                ''
+            );
+        }
+
+        const container = parentElement ?
+            parentElement.querySelector('#' + idOrElement) :
+            document.getElementById(idOrElement);
 
         if (container !== null) {
             fireEvent(container, 'bindedGUIElement', {}, function (
@@ -88,43 +103,79 @@ namespace Bindings {
 
     export async function addComponent(
         options: Partial<ComponentType['options']>,
+        board: Board,
         cell?: Cell
     ): Promise<(Component|void)> {
-        const optionsStates = (options as any).states;
+        const optionsStates = options.states;
         const optionsEvents = options.events;
+        const renderTo = options.renderTo || options.cell;
 
-        cell = cell || Bindings.getCell(options.cell || '');
-
-        if (!cell?.container || !options.type) {
-            error(
-                `The component is misconfigured and is unable to find the
-                HTML cell element ${options.cell} to render the content.`
+        if (!renderTo) {
+            // eslint-disable-next-line no-console
+            console.error(
+                'The%c renderTo%c option is required to render the component.',
+                'font-weight: bold',
+                ''
             );
             return;
         }
 
-        const componentContainer = cell.container;
+        if (
+            board.mountedComponents.filter(
+                (el): boolean => (
+                    (el.options.renderTo || el.options.cell) === renderTo)
+            ).length > 0
+        ) {
+            // eslint-disable-next-line no-console
+            console.error(
+                `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
+                'font-weight: bold',
+                ''
+            );
+            return;
+        }
+
+        cell = cell || Bindings.getCell(renderTo, board.container);
+
+        const componentContainer =
+            cell?.container || document.querySelector('#' + renderTo);
+
+        if (!componentContainer || !options.type) {
+            // eslint-disable-next-line no-console
+            console.error(
+                `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
+                'font-weight: bold',
+                ''
+            );
+            return;
+        }
 
         let ComponentClass =
             ComponentRegistry.types[options.type] as Class<ComponentType>;
 
         if (!ComponentClass) {
-            error(
-                `The component's type ${options.type} does not exist.`
+            // eslint-disable-next-line no-console
+            console.error(
+                `The component's type %c${options.type}%c does not exist.`,
+                'font-weight: bold',
+                ''
             );
-            ComponentClass =
-                ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
-            options.title = {
-                text: cell.row.layout.board?.editMode?.lang.errorMessage,
-                className:
-                    Globals.classNamePrefix + 'component-title-error ' +
-                    Globals.classNamePrefix + 'component-title'
-            };
+            if (cell) {
+                ComponentClass =
+                    ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
+                options.title = {
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                };
+            }
         }
 
-        const component = new ComponentClass(cell, options);
+        const component = new ComponentClass(cell, options, board);
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -133,8 +184,8 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text:
-                        cell?.row.layout.board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -142,36 +193,54 @@ namespace Bindings {
             });
         });
 
-        fireEvent(component, 'mount');
-
-        component.setCell(cell);
-        cell.mountedComponent = component;
-
-        cell.row.layout.board.mountedComponents.push({
-            options: options,
-            component: component,
-            cell: cell
-        });
-
-        // events
-        if (optionsEvents && optionsEvents.click) {
-            addEvent(componentContainer, 'click', ():void => {
-                optionsEvents.click();
-
-                if (
-                    cell &&
-                    component &&
-                    componentContainer &&
-                    optionsStates &&
-                    optionsStates.active
-                ) {
-                    cell.setActiveState();
-                }
-            });
+        if (cell) {
+            component.setCell(cell);
+            cell.mountedComponent = component;
         }
 
-        // states
-        if (optionsStates?.hover) {
+        board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell || new CellHTML({
+                id: renderTo,
+                container: componentContainer as HTMLElement,
+                mountedComponent: component
+            })
+        });
+
+        if (
+            cell &&
+            optionsStates?.active?.enabled &&
+            optionsStates?.active?.isActive
+        ) {
+            cell.setActiveState();
+            component.isActive = true;
+        }
+
+        fireEvent(component, 'mount');
+
+        // Events
+        addEvent(componentContainer, 'click', ():void => {
+            // Call the component's click callback
+            if (optionsEvents && optionsEvents.click) {
+                optionsEvents.click.call(component);
+            }
+
+            // Default behavior
+            if (
+                cell &&
+                component &&
+                componentContainer &&
+                optionsStates?.active?.enabled
+            ) {
+                cell.setActiveState();
+                component.isActive = true;
+            }
+        });
+
+
+        // States
+        if (optionsStates?.hover?.enabled) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
 
@@ -182,17 +251,17 @@ namespace Bindings {
 
     /** @internal */
     export function componentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLElement|undefined) // @todo
+        json: Component.JSON
     ): (Component|undefined) {
-        let componentClass = ComponentRegistry.types[
+        const componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry
         ];
 
         if (!componentClass) {
             return;
         }
-        const cell = Bindings.getCell(json.options.cell || '');
+
+        const cell = Bindings.getCell(json.options.renderTo || '');
         if (!cell) {
             return;
         }
@@ -206,9 +275,10 @@ namespace Bindings {
     }
 
     export function getCell(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Cell|undefined) {
-        const cell = getGUIElement(idOrElement);
+        const cell = getGUIElement(idOrElement, parentElement);
 
         if (!(cell && cell.getType() === 'cell')) {
             return;
@@ -218,9 +288,10 @@ namespace Bindings {
     }
 
     export function getRow(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Row|undefined) {
-        const row = getGUIElement(idOrElement);
+        const row = getGUIElement(idOrElement, parentElement);
 
         if (!(row && row.getType() === 'row')) {
             return;
@@ -230,9 +301,10 @@ namespace Bindings {
     }
 
     export function getLayout(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Layout|undefined) {
-        const layout = getGUIElement(idOrElement);
+        const layout = getGUIElement(idOrElement, parentElement);
 
         if (!(layout && layout.getType() === 'layout')) {
             return;

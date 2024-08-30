@@ -2,7 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'streamgraph',
         marginBottom: 30,
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         floating: true,
@@ -57,7 +59,7 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/js-frameworks-trends.csv',
+        csvURL: 'https://www.highcharts.com/samples/data/js-frameworks-trends.csv',
         endColumn: 4
     },
 

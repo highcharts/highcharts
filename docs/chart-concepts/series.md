@@ -146,7 +146,7 @@ Stacking allows series to be placed on top of each other without overlapping. Se
 
 ### Cursor
 
-Allows the cursor to change appearence to indicate that points and series are clickable.
+Allows the cursor to change appearance to indicate that points and series are clickable.
 
 ### Data labels
 

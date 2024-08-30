@@ -35,20 +35,23 @@ QUnit.test('GeoHeatMap Series', assert => {
     assert.strictEqual(
         bBox.width - colsize,
         0,
-        'GeoHeatMap point fixed width should set correctly through colsize options.'
+        'GeoHeatMap point fixed width should set correctly through colsize ' +
+        'options.'
     );
 
     assert.strictEqual(
         bBox.height - rowsize,
         0,
-        'GeoHeatMap point fixed height should set correctly through rowsize options.'
+        'GeoHeatMap point fixed height should set correctly through rowsize ' +
+        'options.'
     );
 
     series.points[0].setState('hover', false);
 
     assert.ok(
         series.points[0].graphic['stroke-width'] > 0,
-        'GeoHeatMap point border should be set to hover after changing state to hover.'
+        'GeoHeatMap point border should be set to hover after changing state ' +
+        'to hover.'
     );
 
     assert.strictEqual(
@@ -62,7 +65,8 @@ QUnit.test('GeoHeatMap Series', assert => {
     assert.strictEqual(
         series.points[0].graphic['stroke-width'],
         undefined,
-        'GeoHeatMap border should be set to initial after changing state to normal.'
+        'GeoHeatMap border should be set to initial after changing state to ' +
+        'normal.'
     );
 
     series.update({

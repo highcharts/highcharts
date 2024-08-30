@@ -10,35 +10,77 @@
 
 'use strict';
 
-import type {
-    GeoJSONGeometryMultiPoint
-} from './GeoJSON';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { GeoJSONGeometryMultiPoint } from './GeoJSON';
 import type {
     LonLatArray,
     MapBounds,
     ProjectedXYArray
 } from './MapViewOptions';
-import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
+import type {
+    default as ProjectionDefinition,
+    Projector
+} from './ProjectionDefinition';
 import type {
     ProjectionOptions,
     ProjectionRotationOption
 } from './ProjectionOptions';
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import PC from '../Core/Geometry/PolygonClip.js';
-const { clipLineString, clipPolygon } = PC;
-import registry from './Projections/ProjectionRegistry.js';
+const {
+    clipLineString,
+    clipPolygon
+} = PC;
+import ProjectionRegistry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
-const { clamp, erase } = U;
+const {
+    clamp,
+    erase
+} = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
-const deg2rad = Math.PI * 2 / 360;
-// Safe padding on either side of the antimeridian to avoid points being
-// projected to the wrong side of the plane
-const floatCorrection = 0.000001;
+interface Intersection {
+    i: number;
+    lat: number;
+    direction: (-1|1);
+    previousLonLat: LonLatArray;
+    lonLat: LonLatArray;
+}
 
-// Keep longitude within -180 and 180. This is faster than using the modulo
-// operator, and preserves the distinction between -180 and 180.
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const deg2rad = Math.PI * 2 / 360,
+    // Safe padding on either side of the antimeridian to avoid points being
+    // projected to the wrong side of the plane
+    floatCorrection = 0.000001;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Keep longitude within -180 and 180. This is faster than using the modulo
+ * operator, and preserves the distinction between -180 and 180.
+ * @private
+ */
 const wrapLon = (lon: number): number => {
     // Replacing the if's with while would increase the range, but make it prone
     // to crashes on bad data
@@ -51,53 +93,109 @@ const wrapLon = (lon: number): number => {
     return lon;
 };
 
+/**
+ * Calculate the haversine of an angle.
+ * @private
+ */
+const hav = (radians: number): number => (1 - Math.cos(radians)) / 2;
+
+/**
+* Calculate the haversine of an angle from two coordinates.
+* @private
+*/
+const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
+    const cos = Math.cos,
+        lat1 = point1[1] * deg2rad,
+        lon1 = point1[0] * deg2rad,
+        lat2 = point2[1] * deg2rad,
+        lon2 = point2[0] * deg2rad,
+        deltaLat = lat2 - lat1,
+        deltaLon = lon2 - lon1,
+        havFromCoords = hav(deltaLat) + cos(lat1) * cos(lat2) * hav(deltaLon);
+
+    return havFromCoords;
+};
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class Projection {
 
-    public bounds: MapBounds|undefined;
-    public options: ProjectionOptions;
-    // Whether the chart has points, lines or polygons given as coordinates
-    // with positive up, as opposed to paths in the SVG plane with positive
-    // down.
-    public hasCoordinates: boolean = false;
-    // Whether the chart has true projection as opposed to pre-projected geojson
-    // as in the legacy map collection.
-    public hasGeoProjection: boolean = false;
-    public rotator: Projector|undefined;
-    public def: ProjectionDefinition|undefined;
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
-    public static registry = registry;
+    public static registry = ProjectionRegistry;
 
-    // Add a projection definition to the registry, accessible by its `name`.
-    public static add(
-        name: string,
-        definition: typeof ProjectionDefinition
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Add a projection definition to the registry, accessible by its `name`.
+     * @private
+     */
+    public static add<T extends ProjectionRegistryName>(
+        name: T,
+        definition: typeof ProjectionRegistry[T]
     ): void {
         Projection.registry[name] = definition;
     }
 
-    // Calculate the great circle between two given coordinates
-    public static greatCircle(
+    /**
+     * Calculate the distance in meters between two given coordinates.
+     * @private
+     */
+    public static distance(
+        point1: LonLatArray,
+        point2: LonLatArray
+    ): number {
+        const { atan2, sqrt } = Math,
+
+            hav = havFromCoords(point1, point2),
+            angularDistance = 2 * atan2(sqrt(hav), sqrt(1 - hav)),
+            distance = angularDistance * 6371e3;
+
+        return distance;
+    }
+
+    /**
+     * Calculate the geodesic line string between two given coordinates.
+     * @private
+     */
+    public static geodesic(
         point1: LonLatArray,
         point2: LonLatArray,
-        inclusive?: boolean
+        inclusive?: boolean,
+        stepDistance: number = 500000
     ): LonLatArray[] {
-        const { atan2, cos, sin, sqrt } = Math;
-        const lat1 = point1[1] * deg2rad;
-        const lon1 = point1[0] * deg2rad;
-        const lat2 = point2[1] * deg2rad;
-        const lon2 = point2[0] * deg2rad;
+        const { atan2, cos, sin, sqrt } = Math,
+            distance = Projection.distance,
 
-        const deltaLat = lat2 - lat1;
-        const deltaLng = lon2 - lon1;
+            lat1 = point1[1] * deg2rad,
+            lon1 = point1[0] * deg2rad,
+            lat2 = point2[1] * deg2rad,
+            lon2 = point2[0] * deg2rad,
+            cosLat1CosLon1 = cos(lat1) * cos(lon1),
+            cosLat2CosLon2 = cos(lat2) * cos(lon2),
+            cosLat1SinLon1 = cos(lat1) * sin(lon1),
+            cosLat2SinLon2 = cos(lat2) * sin(lon2),
+            sinLat1 = sin(lat1),
+            sinLat2 = sin(lat2),
 
-        const calcA = sin(deltaLat / 2) * sin(deltaLat / 2) +
-            cos(lat1) * cos(lat2) * sin(deltaLng / 2) * sin(deltaLng / 2);
-        const calcB = 2 * atan2(sqrt(calcA), sqrt(1 - calcA));
+            pointDistance = distance(point1, point2),
+            angDistance = pointDistance / 6371e3,
+            sinAng = sin(angDistance),
+            jumps = Math.round(pointDistance / stepDistance),
 
-        const distance = calcB * 6371e3; // in meters
-        const jumps = Math.round(distance / 500000); // 500 km each jump
-
-        const lineString: LonLatArray[] = [];
+            lineString: LonLatArray[] = [];
 
         if (inclusive) {
             lineString.push(point1);
@@ -111,15 +209,17 @@ class Projection {
                 fraction < 0.999; // Account for float errors
                 fraction += step
             ) {
-                const A = sin((1 - fraction) * calcB) / sin(calcB);
-                const B = sin(fraction * calcB) / sin(calcB);
+                // Add intermediate point to lineString
+                const A = sin((1 - fraction) * angDistance) / sinAng,
+                    B = sin(fraction * angDistance) / sinAng,
 
-                const x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2);
-                const y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2);
-                const z = A * sin(lat1) + B * sin(lat2);
+                    x = A * cosLat1CosLon1 + B * cosLat2CosLon2,
+                    y = A * cosLat1SinLon1 + B * cosLat2SinLon2,
+                    z = A * sinLat1 + B * sinLat2,
 
-                const lat3 = atan2(z, sqrt(x * x + y * y));
-                const lon3 = atan2(y, x);
+                    lat3 = atan2(z, sqrt(x * x + y * y)),
+                    lon3 = atan2(y, x);
+
                 lineString.push([lon3 / deg2rad, lat3 / deg2rad]);
             }
 
@@ -132,7 +232,7 @@ class Projection {
         return lineString;
     }
 
-    public static insertGreatCircles(
+    public static insertGeodesics(
         poly: LonLatArray[]
     ): void {
         let i = poly.length - 1;
@@ -145,12 +245,12 @@ class Projection {
                 Math.abs(poly[i][1] - poly[i + 1][1])
             );
             if (roughDistance > 10) {
-                const greatCircle = Projection.greatCircle(
+                const geodesic = Projection.geodesic(
                     poly[i],
                     poly[i + 1]
                 );
-                if (greatCircle.length) {
-                    poly.splice(i + 1, 0, ...greatCircle);
+                if (geodesic.length) {
+                    poly.splice(i + 1, 0, ...geodesic);
                 }
             }
         }
@@ -166,6 +266,37 @@ class Projection {
 
         return [name, rotation && rotation.join(',')].join(';');
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public bounds?: MapBounds;
+
+    public def?: ProjectionDefinition;
+
+    // Whether the chart has points, lines or polygons given as coordinates
+    // with positive up, as opposed to paths in the SVG plane with positive
+    // down.
+    public hasCoordinates: boolean = false;
+
+    // Whether the chart has true projection as opposed to pre-projected geojson
+    // as in the legacy map collection.
+    public hasGeoProjection: boolean = false;
+
+    public maxLatitude = 90;
+
+    public options: ProjectionOptions;
+
+    public rotator?: Projector;
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     public constructor(options: ProjectionOptions = {}) {
         this.options = options;
@@ -203,7 +334,15 @@ class Projection {
             projectedBounds;
     }
 
-    public lineIntersectsBounds(line: ProjectedXYArray[]): ProjectedXYArray {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public lineIntersectsBounds(
+        line: ProjectedXYArray[]
+    ): ProjectedXYArray {
         const { x1, x2, y1, y2 } = this.bounds || {};
 
         const getIntersect = (
@@ -246,10 +385,14 @@ class Projection {
         return ret;
     }
 
-    /*
-     * Take the rotation options and return the appropriate projection functions
+    /**
+     * Take the rotation options and returns the appropriate projection
+     * functions.
+     * @private
      */
-    public getRotator(rotation: ProjectionRotationOption): Projector|undefined {
+    public getRotator(
+        rotation: ProjectionRotationOption
+    ): (Projector|undefined) {
         const deltaLambda = rotation[0] * deg2rad,
             deltaPhi = (rotation[1] || 0) * deg2rad,
             deltaGamma = (rotation[2] || 0) * deg2rad;
@@ -312,43 +455,49 @@ class Projection {
 
     }
 
-    // Project a lonlat coordinate position to xy. Dynamically overridden when
-    // projection is set.
-    public forward(lonLat: LonLatArray): ProjectedXYArray {
+    /**
+     * Project a lonlat coordinate position to xy. Dynamically overridden when
+     * projection is set.
+     * @private
+     */
+    public forward(
+        lonLat: LonLatArray
+    ): ProjectedXYArray {
         return lonLat;
     }
 
-    // Unproject an xy chart coordinate position to lonlat. Dynamically
-    // overridden when projection is set.
-    public inverse(xy: ProjectedXYArray): LonLatArray {
+    /**
+     * Unproject an xy chart coordinate position to lonlat. Dynamically
+     * overridden when projection is set.
+     * @private
+     */
+    public inverse(
+        xy: ProjectedXYArray
+    ): LonLatArray {
         return xy;
     }
-
-    public maxLatitude = 90;
 
     private cutOnAntimeridian(
         poly: LonLatArray[],
         isPolygon: boolean
     ): LonLatArray[][] {
-        const antimeridian = 180;
-        const intersections: {
-            i: number;
-            lat: number;
-            direction: (-1|1);
-            previousLonLat: LonLatArray;
-            lonLat: LonLatArray;
-        }[] = [];
+        const antimeridian = 180,
+            intersections: Array<Intersection> = [];
         const polygons: LonLatArray[][] = [poly];
 
-        poly.forEach((lonLat, i): void => {
+        for (let i = 0, iEnd = poly.length; i < iEnd; ++i) {
+            const lonLat = poly[i];
+
             let previousLonLat = poly[i - 1];
+
             if (!i) {
                 if (!isPolygon) {
-                    return;
+                    continue;
                 }
                 // Else, wrap to beginning
                 previousLonLat = poly[poly.length - 1];
             }
+
             const lon1 = previousLonLat[0],
                 lon2 = lonLat[0];
 
@@ -381,7 +530,7 @@ class Projection {
                     lonLat
                 });
             }
-        });
+        }
 
         let polarIntersection;
         if (intersections.length) {
@@ -393,7 +542,8 @@ class Projection {
                 // primarily to Antarctica.
                 if (intersections.length % 2 === 1) {
                     polarIntersection = intersections.slice().sort(
-                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
+                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat)
+                    )[0];
 
                     erase(intersections, polarIntersection);
                 }
@@ -416,7 +566,7 @@ class Projection {
                         index,
                         intersections[i + 1].i - index,
                         // Add interpolated points close to the cut
-                        ...Projection.greatCircle(
+                        ...Projection.geodesic(
                             [lonPlus, intersections[i].lat],
                             [lonPlus, intersections[i + 1].lat],
                             true
@@ -425,7 +575,7 @@ class Projection {
 
                     // Add interpolated points close to the cut
                     slice.push(
-                        ...Projection.greatCircle(
+                        ...Projection.geodesic(
                             [lonMinus, intersections[i + 1].lat],
                             [lonMinus, intersections[i].lat],
                             true
@@ -456,7 +606,7 @@ class Projection {
                                 direction * floatCorrection
                             );
 
-                            const polarSegment = Projection.greatCircle(
+                            const polarSegment = Projection.geodesic(
                                 [lon1, lat],
                                 [lon1, polarLatitude],
                                 true
@@ -474,7 +624,7 @@ class Projection {
                                 polarSegment.push([lon, polarLatitude]);
                             }
 
-                            polarSegment.push(...Projection.greatCircle(
+                            polarSegment.push(...Projection.geodesic(
                                 [lon2, polarLatitude],
                                 [lon2, polarIntersection.lat],
                                 true
@@ -524,8 +674,10 @@ class Projection {
         return polygons;
     }
 
-
-    // Take a GeoJSON geometry and return a translated SVGPath
+    /**
+     * Take a GeoJSON geometry and return a translated SVGPath.
+     * @private
+     */
     public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
 
         const { bounds, def, rotator } = this;
@@ -594,7 +746,7 @@ class Projection {
             if (hasGeoProjection) {
 
                 // Insert great circles into long straight lines
-                Projection.insertGreatCircles(poly);
+                Projection.insertGeodesics(poly);
 
                 if (projectingToPlane) {
                     polygons = this.cutOnAntimeridian(poly, isPolygon);
@@ -705,12 +857,13 @@ class Projection {
                                 // we may have to rewrite this to use the small
                                 // circle related to the current lon0 and lat0.
                                 if (isPolygon && hasGeoProjection) {
-                                    const greatCircle = Projection.greatCircle(
+                                    const geodesic = Projection.geodesic(
                                         lastValidLonLat,
                                         lonLat
                                     );
-                                    greatCircle.forEach((lonLat): void =>
-                                        pushToPath(postclip.forward(lonLat)));
+                                    geodesic.forEach((lonLat): void =>
+                                        pushToPath(postclip.forward(lonLat))
+                                    );
 
                                 // For lines, just jump over the gap
                                 } else {
@@ -753,6 +906,13 @@ class Projection {
         }
         return path;
     }
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Projection;

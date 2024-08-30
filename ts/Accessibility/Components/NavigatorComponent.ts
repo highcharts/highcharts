@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  Accessibility component for the navigator.
  *
@@ -58,7 +58,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  * @name Highcharts.NavigatorComponent
  */
 class NavigatorComponent extends AccessibilityComponent {
-    private announcer: Announcer = void 0 as any;
+    private announcer!: Announcer;
     private minHandleProxy?: HTMLInputElement;
     private maxHandleProxy?: HTMLInputElement;
     private updateNavigatorThrottleTimer?: number;
@@ -97,9 +97,10 @@ class NavigatorComponent extends AccessibilityComponent {
      */
     public onChartUpdate(): void {
         const chart = this.chart,
-            options = chart.options;
+            options = chart.options,
+            navigator = options.navigator;
 
-        if (options.navigator.accessibility?.enabled) {
+        if (navigator.enabled && navigator.accessibility?.enabled) {
             const verbosity = options.accessibility.landmarkVerbosity,
                 groupFormatStr = options.lang
                     .accessibility?.navigator.groupLabel;
@@ -122,8 +123,10 @@ class NavigatorComponent extends AccessibilityComponent {
                             click: handle
                         }, 'input', {
                             type: 'range',
-                            'aria-label': format(handleFormatStr,
-                                { handleIx: n, chart }, chart)
+                            'aria-label': format(
+                                handleFormatStr,
+                                { handleIx: n, chart }, chart
+                            )
                         }
                     );
 
@@ -252,9 +255,14 @@ class NavigatorComponent extends AccessibilityComponent {
     private updateNavigator(beforeAnnounce?: () => void): void {
         const performUpdate = (beforeAnnounce?: () => void): void => {
             const chart = this.chart,
-                navigator = chart.navigator;
-            if (navigator && this.minHandleProxy && this.maxHandleProxy) {
-                const chartPos = chart.pointer.getChartPosition(),
+                { navigator, pointer } = chart;
+            if (
+                navigator &&
+                pointer &&
+                this.minHandleProxy &&
+                this.maxHandleProxy
+            ) {
+                const chartPos = pointer.getChartPosition(),
                     minNewX = parseFloat(this.minHandleProxy.value) /
                         100 * navigator.size,
                     maxNewX = parseFloat(this.maxHandleProxy.value) /
@@ -306,7 +314,8 @@ class NavigatorComponent extends AccessibilityComponent {
             clearTimeout(this.updateNavigatorThrottleTimer);
         }
         this.updateNavigatorThrottleTimer = setTimeout(
-            performUpdate.bind(this, beforeAnnounce), 20);
+            performUpdate.bind(this, beforeAnnounce), 20
+        );
     }
 }
 

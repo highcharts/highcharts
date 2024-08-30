@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@ import type ColorString from '../Color/ColorString';
 
 /* *
  *
- *  Declatations
+ *  Declarations
  *
  * */
 

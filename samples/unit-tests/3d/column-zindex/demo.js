@@ -52,7 +52,8 @@ QUnit.test('Column zIndex calculation #5297', function (assert) {
 
 // Highcharts 4.1.10, Issue #4774: 3D column - disabled animation
 QUnit.test(
-    '3D column chart with disabled animation should properly set zIndexes for cuboids. (#4774)',
+    '3D column chart with disabled animation should properly set zIndexes ' +
+    'for cuboids. (#4774)',
     function (assert) {
         var chart = new Highcharts.Chart({
             chart: {

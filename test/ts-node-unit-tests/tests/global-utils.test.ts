@@ -1,9 +1,9 @@
-import { ok } from 'assert';
-import { describe } from '../test-utils';
+import { ok, strictEqual } from 'assert';
+import { describe, loadHCWithModules } from '../test-utils';
 
 export function testGlobalUtilities() {
     describe('Testing global utilities ...');
-    const Highcharts = require('../../../code/highcharts.src.js')();
+    const Highcharts = loadHCWithModules();
     const keys = [
         'addEvent',
         'arrayMax',
@@ -60,4 +60,13 @@ export function testGlobalUtilities() {
             throw new Error(`${prop} should be either a function or an object/array`);
         }
     });
+}
+
+export function testTime() {
+    const Highcharts = loadHCWithModules();
+    const time = new Highcharts.Time();
+    strictEqual(
+        time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),
+        'Sunday,  1 Jan, 00:00:00'
+    );
 }

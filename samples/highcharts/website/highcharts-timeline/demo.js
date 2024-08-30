@@ -526,7 +526,8 @@ if (Highcharts.Series.types.flags) {
             },
             {
                 x: Date.UTC(2016, 8, 29),
-                text: 'Styled mode, responsive options, accessibility, chart.update',
+                text: 'Styled mode, responsive options, accessibility, ' +
+                    'chart.update',
                 title: '5.0'
             },
             {
@@ -546,17 +547,21 @@ if (Highcharts.Series.types.flags) {
             },
             {
                 x: Date.UTC(2021, 1, 2),
-                text: 'Improved security, accessibility options, zoom by single touch',
+                text: 'Improved security, accessibility options, zoom by ' +
+                    'single touch',
                 title: '9.0'
             },
             {
                 x: Date.UTC(2022, 2, 7),
-                text: 'Bread crumbs, improved Boost pixel ratio,<br>threshold alignment in charts<br>with multiple axes',
+                text: 'Bread crumbs, improved Boost pixel ratio,<br>' +
+                    'threshold alignment in charts<br>with multiple axes',
                 title: '10.0'
             },
             {
                 x: Date.UTC(2023, 3, 27),
-                text: 'Design upgrade, Faster codebase,<br>Flow maps, Pictorial charts,<br>Treegraphs, Geographical<br>heatmaps, Audio charts',
+                text: 'Design upgrade, Faster codebase,<br>Flow maps, ' +
+                    'Pictorial charts,<br>Treegraphs, Geographical<br>' +
+                    'heatmaps, Audio charts',
                 title: '11.0'
             }
             ],
@@ -585,7 +590,8 @@ if (Highcharts.Series.types.flags) {
             shape: 'eventLabel',
             data: [{
                 x: Date.UTC(2012, 10, 1),
-                text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
+                text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
+                    'Fjordane, Norway',
                 title: '<p>Award</p>'
             },
             {
@@ -605,7 +611,8 @@ if (Highcharts.Series.types.flags) {
             },
             {
                 x: Date.UTC(2014, 4, 25),
-                text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                    'Awards',
                 title: '<p>Award</p>'
             },
             {

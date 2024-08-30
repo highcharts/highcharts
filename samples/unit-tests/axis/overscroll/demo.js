@@ -1,6 +1,7 @@
 // Test both, ordinal and non-ordinal axes:
 [true, false].forEach(ordinal => {
-    // Highcharts Stock modifies "series" property, so use separate object each time:
+    // Highcharts Stock modifies "series" property, so use separate object
+    // each time:
     function getOptions() {
         return {
             chart: {
@@ -19,11 +20,6 @@
             xAxis: {
                 overscroll: 5,
                 ordinal: ordinal
-            },
-            navigator: {
-                xAxis: {
-                    overscroll: 5
-                }
             },
             series: [
                 {
@@ -62,10 +58,11 @@
     }
 
     QUnit.test(
-        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons',
+        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons' +
+        ' + panning.',
         function (assert) {
-            var options = getOptions(),
-                xAxis;
+            const options = getOptions();
+            let xAxis;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
@@ -74,11 +71,12 @@
                 options.rangeSelector.buttons[0].count,
                 'Correct range with preselected button (1s)'
             );
-
-            options = getOptions();
             options.rangeSelector.selected = null;
 
-            xAxis = Highcharts.stockChart('container', options).xAxis[0];
+            const chart = Highcharts.stockChart('container', options),
+                controller = new TestController(chart);
+
+            xAxis = chart.xAxis[0];
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
@@ -86,6 +84,15 @@
                     1 +
                     xAxis.options.overscroll,
                 'Correct range with ALL'
+            );
+
+            xAxis.setExtremes(10, null);
+            controller.pan([100, 200], [300, 200]);
+            assert.close(
+                xAxis.min,
+                9.5,
+                0.5,
+                'Panning should work with overscroll option, #21316'
             );
         }
     );
@@ -181,7 +188,7 @@
                 xAxis;
 
             options.rangeSelector.selected = null;
-            options.xAxis.overscroll = options.navigator.xAxis.overscroll = 100;
+            options.xAxis.overscroll = 100;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
@@ -189,6 +196,101 @@
                 xAxis.tickPositions[1] - xAxis.tickPositions[0],
                 20,
                 'Correct ticks (#9160)'
+            );
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for overscroll in px (#20360)',
+        function (assert) {
+            const options = getOptions();
+
+            let overscrollPixelValue = 300;
+
+            options.rangeSelector.selected = null;
+            options.xAxis.overscroll = overscrollPixelValue + 'px';
+
+            options.series[0].data = [
+                [0, 1],
+                [10, 2],
+                [20, 3],
+                [400, 4],
+                [401, 3],
+                [402, 2],
+                [404, 1]
+            ];
+
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
+                points = xAxis.series[0].points,
+                lastPoint = points[points.length - 1];
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width - overscrollPixelValue,
+                xAxis.width / 100,
+                'Correct range with overscroll set in px'
+            );
+
+            overscrollPixelValue = 400;
+
+            xAxis.update({
+                overscroll: overscrollPixelValue + 'px'
+            });
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width - overscrollPixelValue,
+                xAxis.width / 100,
+                'Correct range with updated overscroll set in px'
+            );
+        }
+    );
+
+    QUnit.test(
+        'Ordinal: ' + ordinal + ' - Extremes for overscroll in % (#20360)',
+        function (assert) {
+            const options = getOptions();
+
+            let overscrollPercentageValue = 50;
+
+            options.rangeSelector.selected = null;
+            options.xAxis.overscroll = overscrollPercentageValue + '%';
+
+            options.series[0].data = [
+                [0, 1],
+                [10, 2],
+                [20, 3],
+                [400, 4],
+                [401, 3],
+                [402, 2],
+                [404, 1]
+            ];
+
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
+                points = xAxis.series[0].points,
+                lastPoint = points[points.length - 1];
+
+            let percent = overscrollPercentageValue / 100;
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width / (1 + percent),
+                xAxis.width / 100,
+                'Correct range with overscroll set in %'
+            );
+
+            overscrollPercentageValue = 30;
+            percent = overscrollPercentageValue / 100;
+
+            xAxis.update({
+                overscroll: overscrollPercentageValue + '%'
+            });
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width / (1 + percent),
+                xAxis.width / 100,
+                'Correct range with updated overscroll set in %'
             );
         }
     );

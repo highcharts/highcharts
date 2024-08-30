@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -26,17 +26,9 @@ import type TilemapSeries from './TilemapSeries';
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
+    series: { prototype: { pointClass: Point } },
     seriesTypes: {
-        heatmap: {
-            prototype: {
-                pointClass: HeatmapPoint
-            }
-        }
+        heatmap: { prototype: { pointClass: HeatmapPoint } }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -56,23 +48,21 @@ class TilemapPoint extends HeatmapPoint {
      *
      * */
 
-    public options: TilemapPointOptions = void 0 as any;
+    public options!: TilemapPointOptions;
 
     public pointPadding?: number;
 
-    public radius: number = void 0 as any;
+    public radius!: number;
 
-    public series: TilemapSeries = void 0 as any;
+    public series!: TilemapSeries;
 
-    public tileEdges: Record<string, number> = void 0 as any;
+    public tileEdges!: Record<string, number>;
 
     /* *
      *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -81,8 +71,6 @@ class TilemapPoint extends HeatmapPoint {
     public haloPath(): SVGPath {
         return this.series.tileShape.haloPath.apply(this, arguments);
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -95,6 +83,7 @@ class TilemapPoint extends HeatmapPoint {
 interface TilemapPoint {
     setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
+
 extend(TilemapPoint.prototype, {
     setState: Point.prototype.setState,
     setVisible: ColorAxisComposition.pointSetVisible

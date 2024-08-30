@@ -43,7 +43,8 @@ QUnit.test('General button() tests', function (assert) {
     assert.strictEqual(
         button.width > normalButtonWidth,
         true,
-        'Width of button should be updated  when fontWeight has changed (#12163)'
+        'Width of button should be updated  when fontWeight has changed ' +
+        '(#12163)'
     );
 
     assert.notStrictEqual(

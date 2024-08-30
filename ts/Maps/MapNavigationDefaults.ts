@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,17 +16,21 @@
  *
  * */
 
+import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
-import D from '../Core/Defaults.js';
+
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
-const { extend } = U;
 
 /* *
  *
  *  Constants
  *
  * */
+
+const lang: Record<string, string> = {
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out'
+};
 
 /**
  * The `mapNavigation` option handles buttons for navigation in addition to
@@ -35,7 +39,7 @@ const { extend } = U;
  * @product      highmaps
  * @optionparent mapNavigation
  */
-const MapNavigationDefaults: MapNavigationOptions = {
+const mapNavigation: MapNavigationOptions = {
 
     /**
      * General options for the map navigation buttons. Individual options
@@ -160,7 +164,7 @@ const MapNavigationDefaults: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
              */
-            onclick: function (this: Highcharts.MapNavigationChart): void {
+            onclick: function (this: MapChart): void {
                 this.mapZoom(0.5);
             },
 
@@ -195,7 +199,7 @@ const MapNavigationDefaults: MapNavigationOptions = {
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
              */
-            onclick: function (this: Highcharts.MapNavigationChart): void {
+            onclick: function (this: MapChart): void {
                 this.mapZoom(2);
             },
 
@@ -283,7 +287,7 @@ const MapNavigationDefaults: MapNavigationOptions = {
      */
     mouseWheelSensitivity: 1.1
 
-    // enabled: false,
+    // Enabled: false,
     // enableButtons: null, // inherit from enabled
     // enableTouchZoom: null, // inherit from enabled
     // enableDoubleClickZoom: null, // inherit from enabled
@@ -293,22 +297,13 @@ const MapNavigationDefaults: MapNavigationOptions = {
 
 /* *
  *
- *  Composition
- *
- * */
-
-// Add language
-extend(D.defaultOptions.lang, {
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out'
-});
-// Set the default map navigation options
-D.defaultOptions.mapNavigation = MapNavigationDefaults;
-
-/* *
- *
  *  Default Export
  *
  * */
 
-export default MapNavigationDefaults;
+const mapNavigationDefaults = {
+    lang,
+    mapNavigation
+};
+
+export default mapNavigationDefaults;

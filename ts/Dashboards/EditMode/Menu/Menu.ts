@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,6 @@
  *
  * */
 
-import type CSSJSONObject from '../../CSSJSONObject';
 import type EditMode from '../EditMode';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';

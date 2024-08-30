@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Markus Barstad
+ js_wrap: b
+...

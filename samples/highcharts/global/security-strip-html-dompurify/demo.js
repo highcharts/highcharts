@@ -31,7 +31,8 @@ const options = stripHTMLRecurse({
         }
     },
     title: {
-        text: '<a href="java\x09cript:console.log(document.domain)">Click me</a>',
+        text: '<a href="java\x09cript:console.log(document.domain)">Click ' +
+            'me</a>',
         useHTML: true
     },
     series: [{

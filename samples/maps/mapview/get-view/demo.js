@@ -47,7 +47,8 @@
 
         chart.setTitle(null, {
             text: '<b>MapView</b><br>' +
-                'center: [' + mapView.center.map(Math.round).join(', ') + ']<br>' +
+                'center: [' + mapView.center.map(Math.round).join(', ') +
+                ']<br>' +
                 'zoom: ' + mapView.zoom.toFixed(2),
             align: 'left',
             floating: true,

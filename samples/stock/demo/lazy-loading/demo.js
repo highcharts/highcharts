@@ -25,7 +25,9 @@ fetch(dataURL)
         Highcharts.stockChart('container', {
             chart: {
                 type: 'candlestick',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             navigator: {
@@ -45,7 +47,8 @@ fetch(dataURL)
             },
 
             subtitle: {
-                text: 'Displaying 1.7 million data points in Highcharts Stock by async server loading',
+                text: 'Displaying 1.7 million data points in Highcharts ' +
+                    'Stock by async server loading',
                 align: 'left'
             },
 

@@ -76,7 +76,8 @@ QUnit.test('Gantt tooltip', assert => {
 });
 
 QUnit.test(
-    'The tooltip should respect timezone/timezone offsets declared locally and globally (#10365)',
+    'The tooltip should respect timezone/timezone offsets declared locally ' +
+    'and globally (#10365)',
     function (assert) {
         var chart = Highcharts.ganttChart('container', {
                 time: {
@@ -101,8 +102,10 @@ QUnit.test(
         assert.strictEqual(
             chart.container.querySelector('.highcharts-tooltip').textContent
                 .replace(/\u200B/g, ';'),
-            'Series 1;Task 1;Start: Monday,  1 Jun, 18:00;End: Tuesday,  2 Jun, 18:00;',
-            'The tooltip should show the start and end shifted 6 hours relative to UTC.'
+            'Series 1;Task 1;Start: Monday,  1 Jun, 18:00;End: Tuesday,  2 ' +
+            'Jun, 18:00;',
+            'The tooltip should show the start and end shifted 6 hours ' +
+            'relative to UTC.'
         );
     }
 );

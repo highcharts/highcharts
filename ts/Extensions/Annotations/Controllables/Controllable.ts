@@ -76,7 +76,7 @@ abstract class Controllable implements ControlTarget {
     public annotation: Annotation;
     public chart: AnnotationChart;
     public collection: ('labels'|'shapes');
-    public graphic: SVGElement = void 0 as any;
+    public graphic!: SVGElement;
     public index: number;
     public itemType: ('label'|'shape');
     public options: ControllableOptions;
@@ -92,7 +92,10 @@ abstract class Controllable implements ControlTarget {
      * Redirect attr usage on the controllable graphic element.
      * @private
      */
-    public attr<T>(..._args: Array<T>): void {
+    public attr<T>(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ..._args: Array<T>
+    ): void {
         this.graphic.attr.apply(this.graphic, arguments);
     }
 
@@ -184,8 +187,12 @@ abstract class Controllable implements ControlTarget {
      * @private
      */
     public render(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _parentGroup?: SVGElement
     ): void {
+        if (this.options.className && this.graphic) {
+            this.graphic.addClass(this.options.className);
+        }
         this.renderControlPoints();
     }
 
@@ -322,7 +329,7 @@ abstract class Controllable implements ControlTarget {
  * */
 
 interface Controllable extends ControllableLike, ControlTarget {
-    // placeholder for additional class members
+    // Placeholder for additional class members
 }
 
 ControlTarget.compose(Controllable);
@@ -342,7 +349,7 @@ export default Controllable;
  * */
 
 /**
- * An object which denots a controllable's anchor positions - relative and
+ * An object which denotes a controllable's anchor positions - relative and
  * absolute.
  *
  * @private
@@ -377,4 +384,4 @@ export default Controllable;
  * @type {Array<Highcharts.Point>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

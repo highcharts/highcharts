@@ -6,13 +6,25 @@ ability to change the look and feel of the dashboard. Most of the elements
 have classes that you can use to style them. You can also add your own classes
 or ids to the elements.
 
+If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Please remember that each container should have an unique `id` for rendered component.
+
+```js
+    gui: {
+        enabled: false
+    }
+```
+
+[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
+[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
 
 ## Importing the CSS
 The CSS is not included in the library but you can import it like that:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
 Note that each component has its own CSS file. You can import only the CSS
@@ -146,7 +158,7 @@ See how the HTML component was configured and how the `id` and `class` were used
 ```ts
 {
     type: 'HTML',
-    cell: 'dashboard-row-1-cell-3',
+    renderTo: 'dashboard-row-1-cell-3',
     elements: [
         {
             tagName: 'div',
@@ -181,7 +193,7 @@ These custom classes and ids can be used to style the dashboard:
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/styling"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance" allow="fullscreen"></iframe>
 
 ## Edit Mode classes
 You can also change how the Edit Mode looks like. The Edit mode is based on the

@@ -83,8 +83,12 @@ const ganttChart = function () {
                     const chart = this;
 
                     const buttonGroup = document.getElementById('button-group');
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -108,8 +112,12 @@ const ganttChart = function () {
 
                 },
                 redraw: function () {
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
@@ -133,7 +141,10 @@ const ganttChart = function () {
                 enabled: true
             },
             screenReaderSection: {
-                beforeChartFormat: '<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>'
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>' +
+                    '{typeDescription}</p><p>{chartSubtitle}</p><p>' +
+                    'Interactive Gantt diagram showing tasks and milestones ' +
+                    'across three departments, Tech, Marketing, and Sales.</p>'
             },
             point: {
                 descriptionFormatter: function (point) {

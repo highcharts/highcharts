@@ -1,4 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import PluginHandler from  '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
@@ -19,6 +20,11 @@ const chartDemo = {
             type: 'pie',
             animation: false,
             height: 150
+        },
+        plotOptions: {
+            series: {
+                animation: false
+            }
         }
     }
 };
@@ -28,7 +34,8 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
-            icon: 'https://code.highcharts.com/gfx/dashboards-icons/menu.svg',
+            icon: 'https://code.highcharts.com/dashboards/gfx/' +
+                'dashboards-icons/menu.svg',
             items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
@@ -89,7 +96,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'cell-1',
+        renderTo: 'cell-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {
@@ -101,6 +108,11 @@ Dashboards.board('container', {
             tooltip: {
                 enabled: false
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
@@ -110,7 +122,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'cell-2',
+        renderTo: 'cell-2',
         ...chartDemo
     }]
 });

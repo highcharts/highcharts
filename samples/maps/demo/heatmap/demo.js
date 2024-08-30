@@ -5,7 +5,11 @@ Highcharts.chart('container', {
     },
 
     accessibility: {
-        description: 'We see how temperatures are warmer during the day, especially from around 9am to 9pm. May 8th through 11th are also overall colder days compared to the rest. Overall the temperatures range from around -1 degrees C to around 23 degrees C.'
+        description: 'We see how temperatures are usually warmer during the ' +
+            'day, especially from around 9am to 9pm. June 4th through 9th ' +
+            'are also overall colder days compared to the rest. Overall the ' +
+            'temperatures range from around 6 degrees C to around 27 ' +
+            'degrees C.'
     },
 
     data: {
@@ -18,14 +22,14 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Temperature variation by day and hour through May 2017',
+        text: 'Temperature variation by day and hour through June 2024',
         align: 'left'
     },
 
     xAxis: {
         tickPixelInterval: 50,
-        min: Date.UTC(2017, 4, 1),
-        max: Date.UTC(2017, 4, 30)
+        min: Date.UTC(2024, 5, 1),
+        max: Date.UTC(2024, 5, 30)
     },
 
     yAxis: {
@@ -54,8 +58,7 @@ Highcharts.chart('container', {
             [0, '#3060cf'],
             [0.5, '#fffbbc'],
             [0.9, '#c4463a']
-        ],
-        min: -5
+        ]
     },
 
     series: [{
@@ -63,7 +66,8 @@ Highcharts.chart('container', {
         colsize: 24 * 36e5, // one day
         tooltip: {
             headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
+                '℃</b>'
         },
         accessibility: {
             enabled: false

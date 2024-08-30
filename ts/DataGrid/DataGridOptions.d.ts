@@ -2,7 +2,7 @@
  *
  *  Data Grid options
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -77,11 +77,26 @@ export interface DataGridOptions {
     editable?: boolean;
 
     /**
+     * Events attached to the row : `click`.
+     */
+    events?: DataGridEvents
+
+    /**
      * Switch to make the column sizes editable ('true') or fixed ('false').
      *
      * @default true
      */
     resizableColumns?: boolean;
+
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cells-formatting | Cell with an URL to click}
+     *
+     * @default false
+     */
+    useHTML?: boolean;
 }
 
 /**
@@ -91,6 +106,10 @@ export interface ColumnHeaderOptions {
 
     /**
      * Switch to turn the column header on (`true`) or off (`false`).
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/options/disable-column-headers/ | Column headers disabled}
      *
      * @default true
      */
@@ -168,6 +187,27 @@ export interface CellFormatterCallback {
  */
 export interface CellValue {
     value: DataTable.CellType
+}
+
+/**
+ * Contains events for row
+ */
+export interface DataGridEvents {
+    row?: DataGridRowEvents
+}
+
+/**
+ * Declare events for row
+ */
+export interface DataGridRowEvents {
+    click?: DataGridClickCallbackFunction
+}
+
+/**
+ * Click callback function
+ */
+export interface DataGridClickCallbackFunction {
+    (this: HTMLElement, event: MouseEvent): void;
 }
 
 /* *

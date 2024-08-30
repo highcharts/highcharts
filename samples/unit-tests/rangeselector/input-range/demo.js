@@ -67,7 +67,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.xAxis[0].min,
-            Date.UTC(2000, 0, 1),
+            startDate,
             'xAxis minimum correct'
         );
 
@@ -448,7 +448,8 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
             assert.strictEqual(
                 newMin,
                 expectedDate,
-                'Min extremes should be updated, considering all relevant series.'
+                'Min extremes should be updated, considering all relevant ' +
+                'series.'
             );
         } else if (type === 'max') {
             newMax = chart.xAxis[0].max;
@@ -456,7 +457,8 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
             assert.strictEqual(
                 newMax,
                 expectedDate,
-                'Max extremes should be updated, considering all relevant series. (#18251)'
+                'Max extremes should be updated, considering all relevant ' +
+                'series. (#18251)'
             );
         }
     };

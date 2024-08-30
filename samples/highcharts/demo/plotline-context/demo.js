@@ -90,8 +90,10 @@ const chart = Highcharts.chart('container', {
             width: 3
         }],
         crosshair: true,
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
-            'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
+            'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     legend: {

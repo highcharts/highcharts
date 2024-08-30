@@ -4,7 +4,6 @@ authors:
   - Øystein Moseng
 requiresManualTesting: true
 js_wrap: b
-new_until: 2023-06-39
 use_png_thumbnail: true
 tags:
   - Highcharts Maps demo

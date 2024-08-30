@@ -23,7 +23,8 @@ QUnit.test('Redraw with dirty box', function (assert) {
     var oldPlotHeight = chart.plotHeight;
 
     assert.strictEqual(
-        chart.series[0].center[2], // The best I could find to test. Change the test if the logic is changed.
+        chart.series[0].center[2], // The best I could find to test. Change
+        // the test if the logic is changed.
         chart.plotHeight,
         'Pie fills plot'
     );
@@ -31,7 +32,8 @@ QUnit.test('Redraw with dirty box', function (assert) {
     chart.setTitle({ text: null });
     assert.ok(chart.plotHeight > oldPlotHeight, 'Plot height is increased');
     assert.strictEqual(
-        chart.series[0].center[2], // The best I could find to test. Change the test if the logic is changed.
+        chart.series[0].center[2], // The best I could find to test. Change
+        // the test if the logic is changed.
         chart.plotHeight,
         'Pie fills plot'
     );

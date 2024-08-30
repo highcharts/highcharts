@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,10 +22,9 @@
 import type PluginHandler from '../PluginHandler';
 import type { Highcharts as H } from './HighchartsTypes';
 
-import HighchartsComponent from './HighchartsComponent.js';
-import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
-import KPIComponent from '../Components/KPIComponent.js';
-import NavigatorComponent from './NavigatorComponent.js';
+import HighchartsComponent from '../Components/HighchartsComponent/HighchartsComponent.js';
+import KPIComponent from '../Components/KPIComponent/KPIComponent.js';
+import NavigatorComponent from '../Components/NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *
@@ -70,15 +69,10 @@ function connectHighcharts(
 function onRegister(
     e: PluginHandler.Event
 ): void {
-    const { Sync, ComponentRegistry } = e;
+    const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
     ComponentRegistry.registerComponent('KPI', KPIComponent);
     ComponentRegistry.registerComponent('Navigator', NavigatorComponent);
-
-    Sync.defaultHandlers = {
-        ...Sync.defaultHandlers,
-        ...HighchartsSyncHandlers
-    };
 }
 
 
@@ -88,21 +82,8 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
-function onUnregister(
-    e: PluginHandler.Event
-): void {
-    const { Sync } = e;
-
-    Object
-        .keys(HighchartsSyncHandlers)
-        .forEach((handler): void => {
-            if (
-                Sync.defaultHandlers[handler] ===
-                HighchartsSyncHandlers[handler]
-            ) {
-                delete Sync.defaultHandlers[handler];
-            }
-        });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onUnregister(e: PluginHandler.Event): void {
 
 }
 

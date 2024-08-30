@@ -10,7 +10,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-1',
+        renderTo: 'dashboard-1',
         elements: [{
             tagName: 'img',
             attributes: {

@@ -4,6 +4,8 @@ Custom Dashboards components
 ## Custom YouTube Component
 This article shows how to create custom Dashboards Component, in this example YouTube Component.
 
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" allow="fullscreen" allow="fullscreen"></iframe>
+
 Note, that to create the custom component we are using ES6, to use the `class` and `extends` keywords, which makes creating custom class much easier.
 
 We start by importing the default `Component` class and `ComponentRegistry` from `Dashboards` namespace. We can use destructuring syntax to retrieve this 2 classes. The next step is creating the class which will inherit from the imported `Component` class.
@@ -19,7 +21,7 @@ class YouTubeComponent extends Component {
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new `YouTubeComponent` class needs to be addded to the registry, using the `ComponentRegistry.registerComponent` method.
+At the end, the new `YouTubeComponent` class needs to be added to the registry, using the `ComponentRegistry.registerComponent` method.
 
 The custom code looks like below:
 
@@ -27,8 +29,24 @@ The custom code looks like below:
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
+
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
 
         return this;
     }
@@ -54,6 +72,26 @@ class YouTubeComponent extends Component {
 
         return this;
     }
+
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+
+    getOptionsOnDrop(sidebar) {
+        super.getOptionsOnDrop.call(this, sidebar);
+        return {
+            renderTo: '',
+            type: 'YouTube',
+            videoId: '115hdz9NsrY'
+        };
+    }
 }
 
 ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
@@ -73,26 +111,99 @@ Dashboards.board({
         }]
     }],
     components: [{
-        cell: 'cell-id',
+        renderTo: 'cell-id',
         type: 'YouTube',
         videoId: 'video-id-from-youtube'
     }]
 });
 ```
-[The live example can be found here](https://www.highcharts.com/samples/embed/dashboards/components/custom-component).
 
----
+### Adding custom component to the sidebar
+To add the custom component to the sidebar, you need to add the two things:
+1. Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
+2. For the `editMode` `sidebar` define the list of the components that will be available in the sidebar.
+Use the exact name which was used to register the component in the `ComponentRegistry`.
+3. To properly display the component name in the sidebar, you can to add the `lang` options to the `editMode` object. If not specified, the component name will be displayed as `[YourComponentName]Component` in this case `YouTubeComponent`.
+```js
+    editMode: {
+        enabled: true,
+        lang: {
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
+        },
+        contextMenu: {
+            enabled: true
+        },
+        toolbars: {
+            sidebar: {
+                components: ['YouTube', 'HTML', 'Highcharts']
+            }
+        }
+    },
+```
+
+### Making custom component editable
+To make the custom component editable, you need to define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
+The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
+In the example below, the `videoId`, `title` and `caption` are editable options.
+```js
+    this.options.editableOptions = [{
+        name: 'videoId',
+        propertyPath: ['videoId'],
+        type: 'input'
+    }, {
+        name: 'title',
+        propertyPath: ['title'],
+        type: 'input'
+    }, {
+        name: 'caption',
+        propertyPath: ['caption'],
+        type: 'input'
+    }];
+```
+Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
+```js
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+```
+Additionally the `lang` options for the new option can be added.
+```js
+    editMode: {
+        enabled: true,
+        lang: {
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
+        },
+        ...
+    }
+```
+
+
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow to reuse the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
 
-This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component" allow="fullscreen"></iframe>
+
+This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Dashboards.AST` class, which will be used to parse the string type HTML into the AST-like object.  In case something is missing in the AST class you can extend it the same as in Highcharts, see the documentation for [AST](https://api.highcharts.com/class-reference/Highcharts.AST).
 
 Then we can create our custom class, which extends the `HTMLComponent` class. The only thing we need to do, is to create a method to extract the HTML from the options and parse it into the AST-like object. In the example this method is called `getCustomHTML` and it assigns the element generated by the AST to the `elements` property. The only thing left is to register the new component in the `ComponentRegistry` and we are ready to use it.
 
 ```js
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
-    AST = Highcharts.AST;
+    AST = Dashboards.AST;
 
 class CustomHTML extends HTMLComponent {
     constructor(cell, options) {
@@ -108,18 +219,12 @@ class CustomHTML extends HTMLComponent {
             const customHTML = document.getElementById(options.id).outerHTML;
 
             this.options.elements = new AST(customHTML).nodes;
-        } else if (options.html) {
-            this.options.elements = new AST(options.html).nodes;
         }
     }
 }
 
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
-
-This custom component can generate HTML elements in the dashboards by:
-- referencing the HTML element by its `id` attribute
-- passing the HTML as a string to the `html` property
 
 Use of this component is shown below:
 
@@ -141,19 +246,20 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'CustomHTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         id: 'custom-html-div'
     }, {
         type: 'CustomHTML',
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
                 <span id="custom-html-div-2">Custom HTML added as string </span>
             </div>
+        `
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -163,4 +269,192 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component).
+
+
+## Custom Threshold Component
+In some cases, you may want to create a component that works as if it changes its type or/and options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
+
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
+
+Such a component can be implemented very similarly to the previously described `YoutubeComponent`, except that you need to take into account the need to replace the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component, like that:
+
+```js
+render() {
+    if (!this.component) {
+        this.parentElement.innerHTML = '';
+        this.component =
+            new CurrentComponent(this.cell, componentOptions).load();
+    } else {
+        this.component.update(componentOptions);
+    }
+}
+```
+
+An example implementation of the `ThresholdComponent` can look like this:
+
+```js
+const {
+    Component,
+    ComponentRegistry
+} = Dashboards;
+const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
+
+class ThresholdComponent extends Component {
+    constructor(cell, options) {
+        super(cell, options);
+        this.type = 'Threshold';
+        return this;
+    }
+
+    render() {
+        const options = this.options,
+            value = options.value,
+            thresholds = options.thresholds;
+
+        let CurrentComponent = ComponentRegistry.types[options.component],
+            componentOptions = merge(options.options || {}, {
+                value
+            });
+
+        // Selecting appropriate options and components based on thresholds
+        // and given value.
+        if (thresholds && isNumber(value)) {
+            for (let i = 0; i < thresholds.length; i++) {
+                const threshold = thresholds[i];
+
+                if (
+                    isNumber(threshold.min) && value < threshold.min ||
+                    isNumber(threshold.max) && value > threshold.max
+                ) {
+                    continue;
+                }
+
+                componentOptions = merge(componentOptions, threshold.options);
+                if (threshold.component) {
+                    CurrentComponent =
+                        ComponentRegistry.types[threshold.component];
+                }
+            }
+        }
+
+        // Rendering the appropriate component or updating it with new options
+        // if it already exists.
+        if (!this.component || this.component !== Component) {
+            this.parentElement.innerHTML = '';
+            this.component =
+                new CurrentComponent(this.cell, componentOptions).load();
+        } else {
+            this.component.update(componentOptions);
+        }
+
+        return this;
+    }
+}
+
+ComponentRegistry.registerComponent('Threshold', ThresholdComponent);
+```
+
+Now you can create the board containing the `ThresholdComponent` with the thresholds options, that you want, for example:
+```js
+Dashboards.board('container', {
+    gui: {
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }]
+            }]
+        }]
+    },
+    components: [{
+        type: 'Threshold',
+        renderTo: 'dashboard-col-0',
+        component: 'HTML',
+        value: 7,
+        thresholds: [{
+            min: 5,
+            component: 'KPI',
+            options: {
+                title: {
+                    text: 'Example KPI Component'
+                }
+            }
+        }, {
+            min: 10,
+            component: 'Highcharts',
+            options: {
+                title: '',
+                chartOptions: {
+                    ...
+                }
+            }
+        }]
+    }]
+});
+```
+
+
+## Custom Component with data from the DataConnector
+
+The example below shows how to develop a custom component that fetches data from the DataConnector, processes and displays it on the dashboard.
+
+The custom component is created by extending the `HTMLComponent` class and it displays the total revenue.
+
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
+
+The DataConnector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
+
+When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
+
+```js
+const { ComponentRegistry } = Dashboards,
+    HTMLComponent = ComponentRegistry.types.HTML;
+
+class TotalRevenueHTML extends HTMLComponent {
+    constructor(cell, options) {
+        super(cell, options);
+
+        this.type = 'TotalRevenueHTML';
+
+        return this;
+    }
+
+    async load() {
+        await super.load();
+        const revenue = this.getTotalRevenue();
+
+        this.elements = this.getElementsFromString(
+            `
+            <div class="revenue">
+                <p class="title">Total revenue</p>
+                <p class="value">${revenue} €</p>
+            </div>
+            `
+        );
+        this.render();
+    }
+
+    getTotalRevenue() {
+        const connector = this.getFirstConnector();
+        const table = connector.table.modified;
+
+        return table.columns.Revenue.reduce((acc, cur) => acc + cur);
+    }
+}
+
+ComponentRegistry.registerComponent('TotalRevenueHTML', TotalRevenueHTML);
+```
+
+Later on the component can be used in the dashboard by referencing the name it was registered with, in this case, `TotalRevenueHTML`.
+
+```js
+...
+components: [{
+    type: 'TotalRevenueHTML',
+    renderTo: 'cell-id-0',
+    connector: {
+        id: 'data'
+    }
+},
+...
+```

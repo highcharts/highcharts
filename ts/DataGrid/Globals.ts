@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -72,6 +72,9 @@ namespace Globals {
     };
 
     export const win = window;
+    export const userAgent = (win.navigator && win.navigator.userAgent) || '';
+    export const isChrome = win.chrome;
+    export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
 
 }
 

@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -28,19 +28,10 @@ import type VennSeries from './VennSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    scatter: { prototype: { pointClass: ScatterPoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber
-} = U;
+const { isNumber } = U;
 
 /* *
  *
@@ -56,9 +47,9 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
-    public options: VennPointOptions = void 0 as any;
+    public options!: VennPointOptions;
 
-    public series: VennSeries = void 0 as any;
+    public series!: VennSeries;
 
     public sets?: Array<string>;
 
@@ -70,8 +61,6 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     public isValid(): boolean {
         return isNumber(this.value);
     }
@@ -80,8 +69,6 @@ class VennPoint extends ScatterPoint {
         // Only draw points with single sets.
         return !!this.shapeArgs;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -92,7 +79,7 @@ class VennPoint extends ScatterPoint {
  * */
 
 interface VennPoint {
-    // nothing to add
+    // Nothing to add
 }
 
 /* *

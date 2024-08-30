@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Build a timeline from a chart.
  *
@@ -51,7 +51,6 @@ export interface PropMetrics extends ExtremesCache {
 }
 
 const isNoteDefinition = (str: string): boolean =>
-    // eslint-disable-next-line require-unicode-regexp
     (/^([a-g][#b]?)[0-8]$/i).test(str);
 
 
@@ -474,7 +473,8 @@ function getParamValWithDefault(
         extend({
             min: 0, max: 1, mapTo: 'y', mapFunction: 'linear', within: 'chart'
         } as Required<Sonification.MappingParameterOptions>,
-        (defaults || {}) as Required<Sonification.MappingParameterOptions>),
+        (defaults || {}) as Required<Sonification.MappingParameterOptions>
+        ),
         mappingParamOptions,
         contextValueProp
     ), fallback);
@@ -544,7 +544,8 @@ function getAvailableDurationForSeries(
     } else {
         // No common time prop, so use percent of total points
         const totalPoints = series.chart.series.reduce(
-            (sum, s): number => sum + s.points.length, 0);
+            (sum, s): number => sum + s.points.length, 0
+        );
         seriesDuration = Math.round(
             (series.points || []).length / totalPoints * availableDuration
         );
@@ -627,30 +628,44 @@ function addMappedInstrumentEvent(
             volume: getParam('volume', 1, { min: 0.1, max: 1 })
         };
     if (mappingOptions.frequency) {
-        eventOpts.frequency = getParam('frequency', 440,
-            { min: 50, max: 6000 });
+        eventOpts.frequency = getParam(
+            'frequency', 440,
+            { min: 50, max: 6000 }
+        );
     }
     if (mappingOptions.lowpass) {
         eventOpts.lowpassFreq = getParam(
-            'frequency', 20000, { min: 0, max: 20000 }, mappingOptions.lowpass);
+            'frequency', 20000, { min: 0, max: 20000 }, mappingOptions.lowpass
+        );
         eventOpts.lowpassResonance = getParam(
-            'resonance', 0, { min: -6, max: 12 }, mappingOptions.lowpass);
+            'resonance', 0, { min: -6, max: 12 }, mappingOptions.lowpass
+        );
     }
     if (mappingOptions.highpass) {
-        eventOpts.highpassFreq = getParam('frequency', 20000,
-            { min: 0, max: 20000 }, mappingOptions.highpass);
-        eventOpts.highpassResonance = getParam('resonance', 0,
-            { min: -6, max: 12 }, mappingOptions.highpass);
+        eventOpts.highpassFreq = getParam(
+            'frequency', 20000,
+            { min: 0, max: 20000 }, mappingOptions.highpass
+        );
+        eventOpts.highpassResonance = getParam(
+            'resonance', 0,
+            { min: -6, max: 12 }, mappingOptions.highpass
+        );
     }
     if (mappingOptions.tremolo) {
-        eventOpts.tremoloDepth = getParam('depth', 0,
-            { min: 0, max: 0.8 }, mappingOptions.tremolo);
-        eventOpts.tremoloSpeed = getParam('speed', 0,
-            { min: 0, max: 0.8 }, mappingOptions.tremolo);
+        eventOpts.tremoloDepth = getParam(
+            'depth', 0,
+            { min: 0, max: 0.8 }, mappingOptions.tremolo
+        );
+        eventOpts.tremoloSpeed = getParam(
+            'speed', 0,
+            { min: 0, max: 0.8 }, mappingOptions.tremolo
+        );
     }
 
-    const gapBetweenNotes = getParam('gapBetweenNotes', 150,
-            { min: 50, max: 1000 }),
+    const gapBetweenNotes = getParam(
+            'gapBetweenNotes', 150,
+            { min: 50, max: 1000 }
+        ),
         playDelay = getParam('playDelay', 0, { max: 200 });
 
     const addNoteEvent = (
@@ -698,8 +713,10 @@ function addMappedInstrumentEvent(
     ) {
         (mappingOptions.pitch as Array<string|number>).forEach(addNoteEvent);
     } else if (mappingOptions.pitch) {
-        addNoteEvent(mappingOptions.pitch as string|number|
-        Sonification.PitchMappingParameterOptions);
+        addNoteEvent(
+            mappingOptions.pitch as string|number|
+            Sonification.PitchMappingParameterOptions
+        );
     } else if (mappingOptions.frequency) {
         eventsAdded.push(
             channel.addEvent({
@@ -792,7 +809,8 @@ function addMappedEventForPoint(
     if (trackOptions.type === 'speech' && trackOptions.mapping) {
         const eventAdded = addMappedSpeechEvent(
             context, channel, trackOptions.mapping,
-            propMetrics);
+            propMetrics
+        );
         if (eventAdded) {
             eventsAdded = [eventAdded];
         }
@@ -1009,7 +1027,8 @@ function timelineFromChart(
                             activeWhen.prop
                         ) {
                             lastPropValue = getPointPropValue(
-                                point, activeWhen.prop);
+                                point, activeWhen.prop
+                            );
                         }
                     };
 
@@ -1034,7 +1053,8 @@ function timelineFromChart(
                         });
                     } else {
                         const points = getGroupedPoints(
-                                pointGroupOpts, pointGroup),
+                                pointGroupOpts, pointGroup
+                            ),
                             t = groupSpanTime / points.length;
                         points.forEach((p, ix): unknown => add({
                             point: p,
@@ -1158,14 +1178,18 @@ function timelineFromChart(
                         lastPropValue = value;
 
                         if (mergedOpts.type === 'speech') {
-                            addMappedSpeechEvent({ time, value },
+                            addMappedSpeechEvent(
+                                { time, value },
                                 contextChannel, mergedOpts.mapping, propMetrics,
-                                valueProp);
+                                valueProp
+                            );
                         } else {
-                            addMappedInstrumentEvent({ time, value },
+                            addMappedInstrumentEvent(
+                                { time, value },
                                 contextChannel, mergedOpts.mapping, propMetrics,
                                 pick(mergedOpts.roundToMusicalNotes, true),
-                                valueProp);
+                                valueProp
+                            );
                         }
                     };
 

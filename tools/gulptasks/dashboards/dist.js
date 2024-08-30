@@ -4,6 +4,7 @@
 
 
 const gulp = require('gulp');
+const argv = require('yargs').argv;
 
 
 /* *
@@ -37,10 +38,7 @@ Options:
 
 
 async function dist() {
-
-    const argv = require('yargs').argv;
-    const gulpLib = require('../lib/gulp');
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     if (argv.helpme) {
         // eslint-disable-next-line no-console
@@ -52,30 +50,33 @@ async function dist() {
         throw new Error('No `--release x.x.x` provided.');
     }
 
-    await gulpLib.requires([], [
-        'dashboards/scripts',
-        'dashboards/dist-minify',
-        'dashboards/dist-build',
-        'dashboards/dist-examples',
-        'dashboards/dist-zip',
-        'dashboards/dist-productsjs',
-        'dashboards/dist-release'
-        // 'dashboards/dist-upload'
-    ]);
-
     logLib.warn('Don\'t forget `npx gulp dashboards/dist-upload`.');
 
 }
 
-
 require('./dist-build.js');
 require('./dist-examples.js');
-require('./dist-minify.js');
-require('./dist-productsjs.js');
 require('./dist-release.js');
 require('./dist-upload.js');
 require('./dist-zip.js');
 require('./scripts.js');
+const scriptsCompile = require('../scripts-compile');
+const { distVerify } = require('../dist-verify.js');
+const { distProductsJS } = require('../dist-productsjs.js');
 
 
-gulp.task('dashboards/dist', dist);
+gulp.task(
+    'dashboards/dist',
+    gulp.series(
+        () => dist(),
+        'dashboards/scripts',
+        () => scriptsCompile(void 0, require('./_config.json'), 'dashboards'),
+        () => scriptsCompile(void 0, require('./_config.json'), 'datagrid'),
+        'dashboards/dist-build',
+        'dashboards/dist-examples',
+        'dashboards/dist-zip',
+        () => distProductsJS({ dashboards: true, release: argv.release }),
+        'dashboards/dist-release',
+        () => distVerify({ dashboards: true })
+    )
+);

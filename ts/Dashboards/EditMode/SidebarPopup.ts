@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -18,26 +18,24 @@
  *  Imports
  *
  * */
-import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
-import type DataGridComponent from '../Plugins/DataGridComponent';
 import type EditMode from './EditMode';
-import type HighchartsComponent from '../Plugins/HighchartsComponent';
-import type KPIComponent from '../Components/KPIComponent';
 import type Row from '../Layout/Row';
 
+import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import Bindings from '../Actions/Bindings.js';
+import Cell from '../Layout/Cell.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     createElement,
+    fireEvent,
     merge
 } = U;
 
@@ -48,168 +46,72 @@ const {
  * */
 
 /**
- * Class which creates the sidebar and handles its behaviour.
+ * Class which creates the sidebar and handles its behavior.
+ *
+ * @internal
  */
 class SidebarPopup extends BaseForm {
 
-    public static components: Array<SidebarPopup.AddComponentDetails> = [
-        {
-            text: 'HTML',
-            onDrop:
-                function (
-                    sidebar: SidebarPopup,
-                    dropContext: Cell|Row
-                ): void|Cell {
-                    if (sidebar && dropContext) {
-                        return sidebar.onDropNewComponent(dropContext, {
-                            cell: '',
-                            type: 'HTML',
-                            elements: [{
-                                tagName: 'img',
-                                attributes: {
-                                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                                }
-                            }]
-                        });
-                    }
-                }
-        }, {
-            text: 'layout',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell|void {
+    public static readonly addRow = {
+        text: EditGlobals.lang.sidebar.row,
+        onDrop: function (
+            sidebar: SidebarPopup,
+            dropContext: Cell|Row
+        ): Cell|void {
 
-                if (!dropContext) {
-                    return;
-                }
+            if (!dropContext) {
+                return;
+            }
 
-                const row = (
-                        dropContext.getType() === 'cell' ?
-                            (dropContext as Cell).row :
-                            (dropContext as Row)
-                    ),
-                    board = row.layout.board,
-                    newLayoutName = GUIElement.createElementId('layout'),
-                    cellName = GUIElement.createElementId('cell'),
-                    layout = new Layout(board, {
-                        id: newLayoutName,
-                        copyId: '',
-                        parentContainerId: board.container.id,
-                        rows: [{
-                            cells: [{
-                                id: cellName
-                            }]
-                        }],
-                        style: {}
-                    });
-
-                if (layout) {
-                    board.layouts.push(layout);
-                }
-
-                Bindings.addComponent({
-                    type: 'HTML',
-                    cell: cellName,
-                    elements: [
-                        {
-                            tagName: 'div',
-                            style: { 'text-align': 'center' },
-                            textContent: 'Placeholder text'
-                        }
-                    ]
+            const row = (
+                    dropContext.getType() === 'cell' ?
+                        (dropContext as Cell).row :
+                        (dropContext as Row)
+                ),
+                board = row.layout.board,
+                newLayoutId = GUIElement.getElementId('layout'),
+                cellId = GUIElement.getElementId('cell'),
+                layout = new Layout(board, {
+                    id: newLayoutId,
+                    copyId: '',
+                    parentContainerId: board.container.id,
+                    rows: [{
+                        cells: [{
+                            id: cellId
+                        }]
+                    }],
+                    style: {}
                 });
 
-            }
+            if (layout) {
+                board.layouts.push(layout);
 
-        }, {
-            text: 'chart',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell|Row
-            ): Cell | void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-
-                    let options: Partial<HighchartsComponent.Options> = {
-                        cell: '',
-                        type: 'Highcharts',
-                        chartOptions: {
-                            chart: {
-                                animation: false,
-                                type: 'column',
-                                zooming: {}
-                            }
-                        }
-                    };
-
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
+                fireEvent(
+                    board.editMode,
+                    'layoutChanged',
+                    {
+                        type: 'newLayout',
+                        target: layout,
+                        board
                     }
-
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
+                );
             }
-        }, {
-            text: 'datagrid',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-                    let options: Partial<DataGridComponent.ComponentOptions> = {
-                        cell: '',
-                        type: 'DataGrid'
-                    };
 
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
-                    }
+            void Bindings.addComponent({
+                type: 'HTML',
+                cell: cellId,
+                className: 'highcharts-dashboards-component-placeholder',
+                html: `
+                    <h2> Placeholder </h2>
+                    <span> This placeholder can be deleted when you add extra
+                        components to this row.
+                    </span>
+                    `
+            }, board);
 
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
-            }
-        }, {
-            text: 'KPI',
-            onDrop: function (
-                sidebar: SidebarPopup,
-                dropContext: Cell | Row
-            ): Cell|void {
-                if (sidebar && dropContext) {
-                    const connectorsIds =
-                        sidebar.editMode.board.dataPool.getConnectorIds();
-                    let options: Partial<KPIComponent.ComponentOptions> = {
-                        cell: '',
-                        type: 'KPI'
-                    };
-
-                    if (connectorsIds.length) {
-                        options = {
-                            ...options,
-                            connector: {
-                                id: connectorsIds[0]
-                            }
-                        };
-                    }
-
-                    return sidebar.onDropNewComponent(dropContext, options);
-                }
-            }
         }
-    ];
+    };
+
     /* *
      *
      *  Constructor
@@ -221,14 +123,31 @@ class SidebarPopup extends BaseForm {
      *
      * @param parentDiv
      * Element to which the sidebar will be appended.
+     *
      * @param iconsURL
      * URL to the icons.
+     *
      * @param editMode
      * Instance of EditMode.
      */
-    constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
+    constructor(
+        parentDiv: HTMLElement,
+        iconsURL: string,
+        editMode: EditMode
+    ) {
         super(parentDiv, iconsURL);
+
         this.editMode = editMode;
+
+        this.options = merge(
+            this.options,
+            editMode.options.toolbars?.sidebar || {}
+        );
+
+        this.componentsList = this.getComponentsList(
+            this.options.components || []
+        );
+
         this.accordionMenu = new AccordionMenu(
             this.iconsURL,
             this.hide.bind(this)
@@ -242,15 +161,31 @@ class SidebarPopup extends BaseForm {
      * */
 
     /**
+     * Reference to the AccordionMenu.
+     */
+    public accordionMenu: AccordionMenu;
+
+    /**
      * Instance of EditMode.
      */
     public editMode: EditMode;
+
+    /**
+     * Options used in the sidebar.
+     */
+    public options: SidebarPopup.Options = {
+        components: ['HTML', 'row', 'Highcharts', 'DataGrid', 'KPI']
+    };
+
     /**
      * Whether the sidebar is visible.
      */
     public isVisible = false;
 
-    public accordionMenu: AccordionMenu;
+    /**
+     * List of components that can be added to the board.
+     */
+    private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
 
     /* *
      *
@@ -263,13 +198,18 @@ class SidebarPopup extends BaseForm {
      *
      * @param context
      * The cell or row which is the context of the sidebar.
+     *
      * @returns
      * Whether the sidebar should be on the right side of the screen.
      */
-    private detectRightSidebar(context: Cell | Row): boolean {
-
+    private detectRightSidebar(context: Cell | CellHTML | Row): boolean {
         const editMode = this.editMode;
-        const layoutWrapper = editMode.board.layoutsWrapper;
+        const layoutWrapper = editMode.customHTMLMode ?
+            editMode.board.container : editMode.board.layoutsWrapper;
+
+        if (!layoutWrapper) {
+            return false;
+        }
 
         return GUIElement.getOffsets(
             context as Cell,
@@ -284,6 +224,7 @@ class SidebarPopup extends BaseForm {
     private removeClassNames(): void {
         const classNames = EditGlobals.classNames,
             classList = this.container.classList;
+
         classList.remove(classNames.editSidebarShow);
         classList.remove(classNames.editSidebarRightShow);
     }
@@ -322,7 +263,7 @@ class SidebarPopup extends BaseForm {
      * @param context
      * The cell or row which is the context of the sidebar.
      */
-    public show(context?: Cell | Row): void {
+    public show(context?: Cell | CellHTML | Row): void {
         const editMode = this.editMode,
             isRightSidebar = !!(context && this.detectRightSidebar(context));
 
@@ -334,8 +275,11 @@ class SidebarPopup extends BaseForm {
         }
 
         // Remove highlight from the row.
-        if (editMode.editCellContext && editMode.editCellContext.row) {
-            editMode.editCellContext.row.setHighlight(true);
+        if (
+            editMode.editCellContext instanceof Cell &&
+            editMode.editCellContext.row
+        ) {
+            editMode.editCellContext.row.setHighlight();
         }
 
         editMode.hideToolbars(['cell', 'row']);
@@ -346,7 +290,7 @@ class SidebarPopup extends BaseForm {
         this.generateContent(context);
     }
 
-    public generateContent(context?: Cell | Row): void {
+    public generateContent(context?: Cell | Row | CellHTML): void {
 
         // Title
         this.renderHeader(
@@ -361,10 +305,10 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        const type = context.getType();
+        this.type = context.getType();
 
-        if (type === 'cell') {
-            const component = (context as Cell).mountedComponent;
+        if (this.type === 'cell-html' || this.type === 'cell') {
+            const component = (context as Cell|CellHTML).mountedComponent;
             if (!component) {
                 return;
             }
@@ -374,7 +318,7 @@ class SidebarPopup extends BaseForm {
 
     public renderAddComponentsList(): void {
         const sidebar = this;
-        const components = SidebarPopup.components;
+        const components = this.componentsList;
         let gridElement;
 
         const gridWrapper = createElement('div', {
@@ -391,16 +335,36 @@ class SidebarPopup extends BaseForm {
 
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
+                e.preventDefault();
                 if (sidebar.editMode.dragDrop) {
 
-                    const onMouseLeave = (): void => {
-                        sidebar.hide();
+                    // Workaround for Firefox, where mouseleave is not triggered
+                    // correctly when dragging.
+                    const onMouseMove = (event: MouseEvent): void => {
+                        const rect = sidebar.container.getBoundingClientRect();
+                        if (
+                            event.clientX < rect.left ||
+                            event.clientX > rect.right ||
+                            event.clientY < rect.top ||
+                            event.clientY > rect.bottom
+                        ) {
+                            sidebar.hide();
+                            document.removeEventListener(
+                                'mousemove',
+                                onMouseMove
+                            );
+                        }
                     };
 
-                    sidebar.container.addEventListener(
-                        'mouseleave',
-                        onMouseLeave
-                    );
+                    // Clean up event listeners
+                    const onMouseUp = (): void => {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.removeEventListener('mouseup', onMouseUp);
+                    };
+
+                    // Add event listeners
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
 
                     sidebar.editMode.dragDrop.onDragStart(
                         e as PointerEvent,
@@ -409,10 +373,10 @@ class SidebarPopup extends BaseForm {
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
-                                    newLayoutName =
-                                        GUIElement.createElementId('layout'),
+                                    newLayoutId =
+                                        GUIElement.getElementId('layout'),
                                     layout = new Layout(board, {
-                                        id: newLayoutName,
+                                        id: newLayoutId,
                                         copyId: '',
                                         parentContainerId: board.container.id,
                                         rows: [{}],
@@ -429,20 +393,14 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
-                                const mountedComponent =
-                                    newCell.mountedComponent;
-                                // skip init connector when is not defined by
-                                // options f.e HTML component.
-                                if (mountedComponent.options?.connector?.id) {
-                                    mountedComponent.initConnector();
-                                }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
                             }
-                            sidebar.container.removeEventListener(
-                                'mouseleave',
-                                onMouseLeave
+                            // Clean up event listener after drop is complete
+                            document.removeEventListener(
+                                'mousemove',
+                                onMouseMove
                             );
                         }
                     );
@@ -467,15 +425,33 @@ class SidebarPopup extends BaseForm {
                         (dropContext as Row)
                 ),
                 newCell = row.addCell({
-                    id: GUIElement.createElementId('col')
+                    id: GUIElement.getElementId('col')
                 });
 
             dragDrop.onCellDragEnd(newCell);
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, newCell);
+
+            const componentPromise =
+                Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
+
+            void (async (): Promise<void> => {
+                const component = await componentPromise;
+                if (!component) {
+                    return;
+                }
+
+                fireEvent(
+                    this.editMode,
+                    'layoutChanged',
+                    {
+                        type: 'newComponent',
+                        target: component
+                    }
+                );
+            })();
 
             return newCell;
         }
@@ -489,20 +465,22 @@ class SidebarPopup extends BaseForm {
         const editCellContext = editMode.editCellContext;
 
         this.removeClassNames();
+        this.container.style.display = 'none';
 
         // Remove edit overlay if active.
         if (editMode.isEditOverlayActive) {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext && editCellContext.row) {
+        if (editCellContext instanceof Cell && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
-
-            // Remove cell highlight if active.
-            if (editCellContext.isHighlighted) {
-                editCellContext.setHighlight(true);
-            }
+            editCellContext.setHighlight(true);
+        } else if (
+            editCellContext instanceof CellHTML && editMode.cellToolbar
+        ) {
+            editMode.cellToolbar.showToolbar(editCellContext);
+            editCellContext.setHighlight();
         }
 
         editMode.isContextDetectionActive = true;
@@ -511,9 +489,15 @@ class SidebarPopup extends BaseForm {
 
     /**
      * Function called when the close button is pressed.
+     *
+     * @override BaseForm.closeButtonEvents
      */
     public closeButtonEvents(): void {
-        this.hide();
+        if (this.type === 'cell' || this.type === 'cell-html') {
+            this.accordionMenu.cancelChanges();
+        } else {
+            this.hide();
+        }
     }
 
     public renderHeader(title: string, iconURL: string): void {
@@ -526,6 +510,55 @@ class SidebarPopup extends BaseForm {
             icon.textContent = title;
         }
     }
+
+    /**
+     * Based on the provided components list, it returns the list of components
+     * with its names and functions that are called when the component is
+     * dropped.
+     *
+     * @param components
+     * List of components that can be added to the board.
+     */
+    private getComponentsList(
+        components: Array<string>
+    ): Array<SidebarPopup.AddComponentDetails> {
+        const sidebar = this,
+            editMode = sidebar.editMode,
+            componentTypes = editMode.board.componentTypes,
+            componentList: Array<SidebarPopup.AddComponentDetails> = [];
+
+        components.forEach((componentName: string): void => {
+            const component = componentTypes[
+                componentName as keyof typeof componentTypes
+            ];
+
+            if (component) {
+                componentList.push({
+                    text: editMode.lang?.sidebar[componentName] ||
+                        component.name,
+                    onDrop: function (
+                        sidebar: SidebarPopup,
+                        dropContext: Cell|Row
+                    ): Cell|void {
+                        const options =
+                            component.prototype.getOptionsOnDrop(sidebar);
+
+                        if (options) {
+                            return sidebar.onDropNewComponent(
+                                dropContext,
+                                options
+                            );
+                        }
+                    }
+                });
+            } else if (componentName === 'row') {
+                componentList.push(SidebarPopup.addRow);
+            }
+        });
+
+        return componentList;
+    }
+
     /**
      * Function to create and add the close button to the sidebar.
      *
@@ -536,6 +569,22 @@ class SidebarPopup extends BaseForm {
     protected addCloseButton(
         className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
+        // Close popup when click outside the popup
+        addEvent(document, 'click', (event): void => {
+            event.stopPropagation();
+            if (
+                this.container.style.display === 'block' &&
+                !this.container.contains(event.target) &&
+                this.container.classList.value.includes('show')
+            ) {
+                if (this.type === 'cell' || this.type === 'cell-html') {
+                    this.accordionMenu.cancelChanges();
+                } else {
+                    this.hide();
+                }
+            }
+        });
+
         return super.addCloseButton.call(this, className);
     }
 
@@ -563,10 +612,17 @@ class SidebarPopup extends BaseForm {
  * */
 namespace SidebarPopup {
 
+    /**
+     * Options used to configure the sidebar.
+     */
     export interface Options {
-
+        components?: Array<string>;
     }
 
+    /**
+     * Contains the name of the component and the function that is called when
+     * the component is dropped.
+     */
     export interface AddComponentDetails {
         text: string;
         onDrop: Function;

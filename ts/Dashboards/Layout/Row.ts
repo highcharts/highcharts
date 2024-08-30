@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -17,9 +17,11 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
-import type Layout from './Layout.js';
+import type Layout from './Layout';
 import type Serializable from '../Serializable';
+
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -251,8 +253,7 @@ class Row extends GUIElement {
         // Mount components.
         for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
             componentsToMount[i].cell.mountComponentFromJSON(
-                componentsToMount[i].mountedComponentJSON,
-                (cell || {}).container
+                componentsToMount[i].mountedComponentJSON
             );
         }
     }
@@ -298,11 +299,14 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
+        // Copy to avoid problem with index when shifting array of cells during
+        // the destroy.
+        const rowCells = [...row.cells];
 
         // Destroy cells.
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            if (row.cells[i]) {
-                row.cells[i].destroy();
+        for (let i = 0, iEnd = rowCells?.length; i < iEnd; ++i) {
+            if (rowCells[i]) {
+                rowCells[i].destroy();
             }
         }
 
@@ -311,7 +315,7 @@ class Row extends GUIElement {
 
             super.destroy();
 
-            if (layout.rows.length === 0) {
+            if (layout.rows?.length === 0) {
                 layout.destroy();
             }
         }
@@ -371,8 +375,6 @@ class Row extends GUIElement {
     public setSize(
         height?: number | string
     ): void {
-        const cells = this.cells;
-
         Row.setContainerHeight(
             this.container as HTMLDOMElement,
             height
@@ -383,7 +385,7 @@ class Row extends GUIElement {
     public getCellIndex(
         cell: Cell
     ): number | undefined {
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = this.cells?.length; i < iEnd; ++i) {
             if (this.cells[i].id === cell.id) {
                 return i;
             }
@@ -469,25 +471,10 @@ class Row extends GUIElement {
         this.changeVisibility(true, 'flex');
     }
 
-    public setHighlight(
-        remove?: boolean
-    ): void {
-        if (this.container) {
-            const cnt = this.container,
-                isSet = cnt.classList.contains(
-                    EditGlobals.classNames.rowContextHighlight
-                );
+    public setHighlight(): void {
+        const container = this.container;
 
-            if (!remove && !isSet) {
-                cnt.classList.add(
-                    EditGlobals.classNames.rowContextHighlight
-                );
-            } else if (remove && isSet) {
-                cnt.classList.remove(
-                    EditGlobals.classNames.rowContextHighlight
-                );
-            }
-        }
+        container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
     }
 
     // Row can have cells below each others.
@@ -568,6 +555,34 @@ namespace Row {
          **/
         id?: string;
         /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
+        /**
          * The id of the container element.
          **/
         parentContainerId?: string;
@@ -608,7 +623,7 @@ namespace Row {
      * @internal
      **/
     export interface RowLevelInfo {
-        index: number; // level position in RowLevels Array
+        index: number; // Level position in RowLevels Array
         rowLevels: Array<RowLevel>;
         rowLevel: RowLevel;
     }

@@ -27,9 +27,7 @@
     QUnit.test('diffObjects', assert => {
 
         // eslint-disable-next-line no-underscore-dangle
-        const diffObjects = Highcharts._modules[
-            'Core/Utilities.js'
-        ].diffObjects;
+        const diffObjects = Highcharts.diffObjects;
 
         let result;
 
@@ -339,7 +337,8 @@
     /**
      * Tests that destroyObjectProperties calls the destroy method on properties
      * before delete.
-     * /
+     */
+    /*
     QUnit.test('DestroyObjectProperties', function (assert) {
         var testObject = {}, // Test object with the properties to destroy
             destroyCount = 0; // Number of destroy calls made
@@ -543,7 +542,8 @@
             dateFormat(
                 '%Y-%m-%d',
                 new Date(
-                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'
+                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight ' +
+                    'Time)'
                 )
             )
         );

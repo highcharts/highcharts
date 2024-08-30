@@ -6,12 +6,16 @@ samples/highcharts/esm/async-await/demo.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 samples/highcharts/studies/data-layer/**/*.js
+samples/highcharts/common-js/browserify/demo.js
+samples/highcharts/esm/extending-members/demo.js
 test/cypress
 test/test-*.*
 test/*.ts
 test/typescript-karma
+tools/api-docs/static*/**
 tools/eslint-plugin-highcharts/node_modules/**
 tools/gulptasks/dashboards/api-docs/**/*.js
 tools/jsdoc/storage/**/*.js
+tools/move-doclets.mjs
 ts/**/*.js
 vendor/**/*

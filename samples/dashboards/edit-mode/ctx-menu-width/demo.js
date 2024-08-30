@@ -1,4 +1,4 @@
-const dash = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -19,7 +19,7 @@ const dash = Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -27,7 +27,7 @@ const dash = Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {

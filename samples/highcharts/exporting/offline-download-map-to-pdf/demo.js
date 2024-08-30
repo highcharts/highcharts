@@ -20,7 +20,8 @@
 
         accessibility: {
             series: {
-                descriptionFormat: 'Timezone {series.name} with {series.points.length} countries.'
+                descriptionFormat: 'Timezone {series.name} with ' +
+                    '{series.points.length} countries.'
             },
             point: {
                 valueDescriptionFormat: '{point.name}.'

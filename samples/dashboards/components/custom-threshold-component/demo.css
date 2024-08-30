@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#slider {
+    width: 100%;
+}
+
+.threshold-info {
+    font-weight: bold;
+}

@@ -1,0 +1,15 @@
+@import url("https://code.highcharts.com/css/stocktools/gui.css");
+@import url("https://code.highcharts.com/css/annotations/popup.css");
+
+:root {
+    --highcharts-neutral-color-3: rgba(0, 0, 0, 0);
+}
+
+#container {
+    height: 600px;
+    min-width: 310px;
+}
+
+.highcharts-menu-item-btn {
+    filter: brightness(2.1);
+}

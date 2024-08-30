@@ -104,26 +104,91 @@ QUnit.test('#10527: useHTML and textPath', function (assert) {
 });
 
 QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
-    Highcharts.chart('container', {
-        series: [
-            {
-                dataLabels: {
-                    enabled: true,
-                    rotation: 10,
-                    useHTML: true,
-                    formatter: function () {
-                        return '<span class=\'myLabel\'>205.00</span>';
-                    }
-                },
-                data: [1, 3, 2]
-            }
-        ]
+    const chart = Highcharts.chart('container', {
+            series: [
+                {
+                    dataLabels: {
+                        enabled: true,
+                        rotation: 0,
+                        useHTML: true,
+                        formatter: function () {
+                            return '<span class=\'myLabel\'>205.00</span>';
+                        }
+                    },
+                    data: [1, 3, 2]
+                }
+            ]
+        }),
+        unrotatedDLBox = chart.series[0].points[1].dataLabel.getBBox(),
+        label = document.querySelector('.myLabel');
+
+    chart.series[0].update({
+        dataLabels: {
+            rotation: 10
+        }
     });
-    const label = document.querySelector('.myLabel');
 
     assert.strictEqual(
         label.nodeName,
         'SPAN',
-        'Created dataLabel should be rendered as HTML element, not SVG (#10765).'
+        'Created dataLabel should be rendered as HTML element, not SVG ' +
+        '(#10765).'
     );
+
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.text.rotation,
+        10,
+        'Rotation should be applied to HTML text element, #20685.'
+    );
+
+    const rotatedBLBox = chart.series[0].points[1].dataLabel.getBBox();
+
+    assert.ok(
+        rotatedBLBox.width > unrotatedDLBox.width,
+        'Rotated data label box should be wider than unrotated, #20685.'
+    );
+
+    assert.ok(
+        rotatedBLBox.height > unrotatedDLBox.height,
+        'Rotated data label box should be wider than unrotated, #20685.'
+    );
+
+    assert.ok(
+        rotatedBLBox.x < unrotatedDLBox.x,
+        `Rotated data label box should be placed more to the left than
+        unrotated, #20685.`
+    );
+
+    assert.ok(
+        rotatedBLBox.y < unrotatedDLBox.y,
+        'Rotated data label box should be placed higher that unrotated, #20685.'
+    );
+
+    const htmlLabel = chart.renderer.label(
+            'Label', 0, 0, undefined,
+            undefined, undefined, true
+        ).add(),
+        standardLabel = chart.renderer.label('Label', 0, 0).add();
+
+    [-90, -60, -30, 0, 30, 60, 90].forEach(rotation => {
+        htmlLabel.attr({
+            rotation
+        });
+        standardLabel.attr({
+            rotation
+        });
+
+        const htmlBox = htmlLabel.getBBox(),
+            standardBox = standardLabel.getBBox();
+
+        ['x', 'y', 'width', 'height'].forEach(property => {
+            assert.close(
+                htmlBox[property],
+                standardBox[property],
+                3,
+                `For rotation ${rotation}, the ${property} property should be` +
+                ' similar for HTML and non-HTML label'
+            );
+        });
+    });
 });

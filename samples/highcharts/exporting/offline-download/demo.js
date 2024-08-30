@@ -11,8 +11,10 @@ function addText(text) {
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
-        options.type === 'application/pdf' && isMSBrowser) {
+    if (
+        options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
+        options.type === 'application/pdf' && isMSBrowser
+    ) {
         addText(options.type + ' fell back on purpose');
     } else {
         throw 'Should not have to fall back for this combination. ' +
@@ -51,13 +53,17 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
-            126.0, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+            126.0, 148.5, 216.4, 194.1, 95.6, 54.4
+        ]
     }]
 
 });

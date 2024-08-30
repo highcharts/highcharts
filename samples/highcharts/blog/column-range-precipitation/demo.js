@@ -110,6 +110,7 @@ Highcharts.chart('container', {
         title: {
             text: 'Precipitation'
         },
+        tickAmount: 4,
         min: 0
     }],
     credits: {

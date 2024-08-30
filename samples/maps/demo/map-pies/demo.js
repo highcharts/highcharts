@@ -4,19 +4,35 @@
     ).then(response => response.json());
 
     const data = [
-            // state, demVotes, repVotes, libVotes, grnVotes, sumVotes, winner, offset config for pies
+            // state, demVotes, repVotes, libVotes, grnVotes, sumVotes,
+            // winner, offset config for pies
             ['Alabama', 729547, 1318255, 44467, 9391, 2101660, -1],
             ['Alaska', 116454, 163387, 18725, 5735, 304301, -1],
             ['Arizona', 1161167, 1252401, 106327, 34345, 2554240, -1],
             ['Arkansas', 380494, 684782, 29829, 9473, 1104578, -1],
-            ['California', 8577206, 4390272, 467370, 271047, 13705895, 1, { lon: -1, drawConnector: false }],
+            [
+                'California', 8577206, 4390272, 467370, 271047, 13705895, 1,
+                { lon: -1, drawConnector: false }
+            ],
             ['Colorado', 1338870, 1202484, 144121, 38437, 2723912, 1],
-            ['Connecticut', 897572, 673215, 48676, 22841, 1642304, 1, { lat: -1.5, lon: 1 }],
-            ['Delaware', 235603, 185127, 14757, 6103, 441590, 1, { lat: -1.3, lon: 2 }],
-            ['District of Columbia', 282830, 12723, 4906, 4258, 304717, 1, { lat: -2, lon: 2 }],
+            [
+                'Connecticut', 897572, 673215, 48676, 22841, 1642304, 1,
+                { lat: -1.5, lon: 1 }
+            ],
+            [
+                'Delaware', 235603, 185127, 14757, 6103, 441590, 1,
+                { lat: -1.3, lon: 2 }
+            ],
+            [
+                'District of Columbia', 282830, 12723, 4906, 4258, 304717, 1,
+                { lat: -2, lon: 2 }
+            ],
             ['Florida', 4504975, 4617886, 207043, 64399, 9394303, -1],
             ['Georgia', 1877963, 2089104, 125306, 0, 4092373, -1],
-            ['Hawaii', 266891, 128847, 15954, 12737, 424429, 1, { lat: -0.5, lon: 0.5, drawConnector: false }],
+            [
+                'Hawaii', 266891, 128847, 15954, 12737, 424429, 1,
+                { lat: -0.5, lon: 0.5, drawConnector: false }
+            ],
             ['Idaho', 189765, 409055, 28331, 8496, 635647, -1],
             ['Illinois', 2977498, 2118179, 208682, 74112, 5378471, 1],
             ['Indiana', 1039126, 1557286, 133993, 7841, 2738246, -1],
@@ -25,17 +41,29 @@
             ['Kentucky', 628854, 1202971, 53752, 13913, 1899490, -1],
             ['Louisiana', 780154, 1178638, 37978, 14031, 2010801, -1],
             ['Maine', 352156, 332418, 37578, 13995, 736147, 1],
-            ['Maryland', 1502820, 878615, 78225, 33380, 2493040, 1, { lon: 0.6, drawConnector: false }],
-            ['Massachusetts', 1995196, 1090893, 138018, 47661, 3271768, 1, { lon: 3 }],
+            [
+                'Maryland', 1502820, 878615, 78225, 33380, 2493040, 1,
+                { lon: 0.6, drawConnector: false }
+            ],
+            [
+                'Massachusetts', 1995196, 1090893, 138018, 47661, 3271768, 1,
+                { lon: 3 }
+            ],
             ['Michigan', 2268839, 2279543, 172136, 51463, 4771981, -1],
-            ['Minnesota', 1367716, 1322951, 112972, 36985, 2840624, 1, { lon: -1, drawConnector: false }],
+            [
+                'Minnesota', 1367716, 1322951, 112972, 36985, 2840624, 1,
+                { lon: -1, drawConnector: false }
+            ],
             ['Mississippi', 462127, 678284, 14411, 3595, 1158417, -1],
             ['Missouri', 1054889, 1585753, 96404, 25086, 2762132, -1],
             ['Montana', 174281, 273879, 28036, 7868, 484064, -1],
             ['Nebraska', 273185, 485372, 38746, 8337, 805640, -1],
             ['Nevada', 539260, 512058, 37384, 0, 1088702, 1],
             ['New Hampshire', 348526, 345790, 30694, 6465, 731475, 1],
-            ['New Jersey', 1967444, 1509688, 72143, 37131, 3586406, 1, { lat: -1, lon: 1.2 }],
+            [
+                'New Jersey', 1967444, 1509688, 72143, 37131, 3586406, 1,
+                { lat: -1, lon: 1.2 }
+            ],
             ['New Mexico', 380923, 316134, 74544, 9797, 781398, 1],
             ['New York', 4145376, 2638135, 162273, 100110, 7045894, 1],
             ['North Carolina', 2169496, 2345235, 130021, 1038, 4645790, -1],
@@ -44,7 +72,10 @@
             ['Oklahoma', 420375, 949136, 83481, 0, 1452992, -1],
             ['Oregon', 991580, 774080, 93875, 49247, 1908782, 1],
             ['Pennsylvania', 2874136, 2945302, 144826, 49334, 6013598, -1],
-            ['Rhode Island', 227062, 166454, 14700, 6171, 414387, 1, { lat: -0.7, lon: 1.7 }],
+            [
+                'Rhode Island', 227062, 166454, 14700, 6171, 414387, 1,
+                { lat: -0.7, lon: 1.7 }
+            ],
             ['South Carolina', 855373, 1155389, 49204, 13034, 2073000, -1],
             ['South Dakota', 117442, 227701, 20845, 0, 365988, -1],
             ['Tennessee', 868853, 1519926, 70286, 15952, 2475017, -1],
@@ -74,7 +105,9 @@
         },
 
         accessibility: {
-            description: 'Complex map demo showing voting results for US states, where each state has a pie chart overlaid showing the vote distribution.'
+            description: 'Complex map demo showing voting results for US ' +
+                'states, where each state has a pie chart overlaid showing ' +
+                'the vote distribution.'
         },
 
         colorAxis: {
@@ -139,17 +172,23 @@
             accessibility: {
                 point: {
                     descriptionFormatter(point) {
-                        const party = point.value > 0 ? 'democrat' : 'republican';
-                        return point.name + ', ' + party + '. Total votes: ' + point.sumVotes +
-                            '. Democrat votes: ' + point.demVotes + '. Republican votes: ' + point.repVotes +
-                            '. Libertarian votes: ' + point.libVotes + '. Green votes: ' + point.grnVotes + '.';
+                        const party = point.value > 0 ?
+                            'democrat' : 'republican';
+                        return point.name +
+                            ', ' + party + '. Total votes: ' + point.sumVotes +
+                            '. Democrat votes: ' + point.demVotes +
+                            '. Republican votes: ' + point.repVotes +
+                            '. Libertarian votes: ' + point.libVotes +
+                            '. Green votes: ' + point.grnVotes + '.';
                     }
                 }
             },
             borderColor: '#FFF',
             joinBy: ['name', 'id'],
-            keys: ['id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
-                'sumVotes', 'value', 'pieOffset'],
+            keys: [
+                'id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
+                'sumVotes', 'value', 'pieOffset'
+            ],
             tooltip: {
                 headerFormat: '',
                 pointFormatter() {
@@ -161,8 +200,10 @@
                             ['Libertarians', this.libVotes, libColor],
                             ['Green', this.grnVotes, grnColor]
                         ]
-                            .sort((a, b) => b[1] - a[1]) // Sort tooltip by most votes
-                            .map(line => '<span style="color:' + line[2] +
+                            .sort((a, b) => b[1] - a[1]) // Sort tooltip by
+                            // most votes
+                            .map(
+                                line => '<span style="color:' + line[2] +
                                 // Colorized bullet
                                 '">\u25CF</span> ' +
                                 // Party and votes
@@ -170,9 +211,11 @@
                                 line[0] + ': ' +
                                 Highcharts.numberFormat(line[1], 0) +
                                 (line[0] === hoverVotes ? '</b>' : '') +
-                                '<br/>')
+                                '<br/>'
+                            )
                             .join('') +
-                        '<hr/>Total: ' + Highcharts.numberFormat(this.sumVotes, 0);
+                        '<hr/>Total: ' +
+                        Highcharts.numberFormat(this.sumVotes, 0);
                 }
             }
         }, {

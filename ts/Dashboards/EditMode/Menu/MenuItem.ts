@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,6 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
-import type { RendererElement, SelectFormFieldItemOptions } from '../EditRenderer.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
@@ -36,7 +35,6 @@ class MenuItem {
     * */
 
     public static defaultOptions: Partial<MenuItem.Options> = {
-        id: '',
         type: 'text'
     };
 
@@ -92,7 +90,7 @@ class MenuItem {
             { className: className || '' },
             merge(
                 this.options.style || {},
-                // to remove
+                // To remove
                 this.isActive ? { display: 'block' } : {}
             ),
             this.menu.container
@@ -115,6 +113,7 @@ class MenuItem {
                     options.text,
                 value: !!(options.getValue && options.getValue(item)),
                 lang: this.menu.editMode.lang,
+                langKey: langKey,
                 onchange: options.events?.click?.bind(item)
             });
         }
@@ -181,8 +180,11 @@ class MenuItem {
 }
 
 namespace MenuItem {
+    export type ToolbarItemId =
+        'destroy' | 'settings' | 'drag' | 'viewFullscreen';
+
     export interface ItemOptions {
-        id: string;
+        id: ToolbarItemId;
         name?: string;
         type: 'icon'|'toggle'|'text'|'button';
         className?: string;

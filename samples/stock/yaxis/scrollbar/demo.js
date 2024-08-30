@@ -7,7 +7,9 @@
 
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         title: {
             text: 'Scrollbar on Y axis'

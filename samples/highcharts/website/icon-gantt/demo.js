@@ -87,8 +87,12 @@ const ganttChart = function () {
                     const chart = this;
 
                     const buttonGroup = document.getElementById('button-group');
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -110,8 +114,12 @@ const ganttChart = function () {
 
                 },
                 redraw: function () {
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
@@ -135,7 +143,10 @@ const ganttChart = function () {
                 enabled: true
             },
             screenReaderSection: {
-                beforeChartFormat: '<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>'
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>' +
+                    '{typeDescription}</p><p>{chartSubtitle}</p><p>' +
+                    'Interactive Gantt diagram showing tasks and milestones ' +
+                    'across three departments, Tech, Marketing, and Sales.</p>'
             },
             point: {
                 descriptionFormatter: function (point) {
@@ -518,7 +529,7 @@ const ganttChart = function () {
     btnCloseAddTask.onclick = hideDialog;
 
 };
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const gantt = {
     chart: {
         // width: 500,
@@ -541,10 +552,18 @@ const gantt = {
                 const rcount = startSeries;
                 const flag = document.querySelector('.flag');
                 const flagpole = document.querySelector('.pole');
-                const particle2 = document.getElementsByClassName('particle-2')[1];
-                const particle3 = document.getElementsByClassName('particle-3')[1];
-                const particle5 = document.getElementsByClassName('particle-5')[1];
-                const particle6 = document.getElementsByClassName('particle-6')[1];
+                const particle2 = document.getElementsByClassName(
+                    'particle-2'
+                )[1];
+                const particle3 = document.getElementsByClassName(
+                    'particle-3'
+                )[1];
+                const particle5 = document.getElementsByClassName(
+                    'particle-5'
+                )[1];
+                const particle6 = document.getElementsByClassName(
+                    'particle-6'
+                )[1];
                 const cover = document.querySelector('.cover');
 
                 // /if reduced motion....

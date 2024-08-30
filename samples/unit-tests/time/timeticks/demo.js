@@ -45,7 +45,8 @@
                 '01:50',
                 '02:00'
             ],
-            'Ten minutes, UTC. There should be a continuous range from 23:00 to 02:00. ' +
+            'Ten minutes, UTC. There should be a continuous range from 23:00 ' +
+            'to 02:00. ' +
                 'Current time: ' +
                 new Date().toString() +
                 '. Timezone offset: ' +
@@ -464,7 +465,8 @@
                 '10:35',
                 '10:40'
             ],
-            'Relevant test when the timezone is India. Should start at 09:00. ' +
+            'Relevant test when the timezone is India. Should start at ' +
+            '09:00. ' +
                 'Current time: ' +
                 new Date().toString() +
                 '. Timezone offset: ' +

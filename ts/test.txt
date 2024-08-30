@@ -1,0 +1,1662 @@
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/A11yI18n.ts
+   85:5  warning  Missing JSDoc block description               jsdoc/require-description
+  107:1  warning  Missing JSDoc @param "statement" description  jsdoc/require-param-description
+  399:5  warning  Missing JSDoc block description               jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Accessibility.ts
+  168:5  warning  Missing JSDoc block description  jsdoc/require-description
+  455:5  warning  Missing JSDoc block description  jsdoc/require-description
+  485:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/ContainerComponent.ts
+   76:5  warning  Missing JSDoc block description  jsdoc/require-description
+  104:5  warning  Missing JSDoc block description  jsdoc/require-description
+  121:5  warning  Missing JSDoc block description  jsdoc/require-description
+  161:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/InfoRegionsComponent.ts
+   76:1  warning  Missing JSDoc block description                          jsdoc/require-description
+   86:1  warning  Missing JSDoc block description                          jsdoc/require-description
+  101:1  warning  Missing JSDoc block description                          jsdoc/require-description
+  113:1  warning  Missing JSDoc block description                          jsdoc/require-description
+  125:1  warning  Missing JSDoc block description                          jsdoc/require-description
+  160:1  warning  Expected @param names to be "chart, types". Got "types"  jsdoc/check-param-names
+  194:1  warning  Missing JSDoc block description                          jsdoc/require-description
+  287:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  377:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  401:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  414:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  492:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  545:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  564:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  575:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  593:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  604:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  620:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  644:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  658:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  680:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  682:1  warning  Missing JSDoc @param "e" description                     jsdoc/require-param-description
+  702:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  715:5  warning  Missing JSDoc block description                          jsdoc/require-description
+  717:1  warning  Missing JSDoc @param "sonifyButtonId" description        jsdoc/require-param-description
+  771:1  warning  Missing JSDoc @param "tableButtonId" description         jsdoc/require-param-description
+  838:5  warning  Missing JSDoc block description                          jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/LegendComponent.ts
+   89:1  warning  Missing JSDoc block description                               jsdoc/require-description
+  102:1  warning  Missing JSDoc block description                               jsdoc/require-description
+  121:1  warning  Missing JSDoc block description                               jsdoc/require-description
+  277:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  287:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  313:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  353:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  361:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  390:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  407:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  425:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  427:1  warning  Missing JSDoc @param "item" description                       jsdoc/require-param-description
+  555:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  557:1  warning  Missing JSDoc @param "keyboardNavigationHandler" description  jsdoc/require-param-description
+  575:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  693:5  warning  Missing JSDoc block description                               jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/MenuComponent.ts
+   62:1  warning  Missing JSDoc block description                               jsdoc/require-description
+  135:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  149:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  165:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  167:1  warning  Missing JSDoc @param "stateStr" description                   jsdoc/require-param-description
+  208:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  237:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  248:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  353:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  355:1  warning  Missing JSDoc @param "keyboardNavigationHandler" description  jsdoc/require-param-description
+  383:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  385:1  warning  Missing JSDoc @param "keyboardNavigationHandler" description  jsdoc/require-param-description
+  416:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  418:1  warning  Missing JSDoc @param "keyboardNavigationHandler" description  jsdoc/require-param-description
+  493:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  530:5  warning  Missing JSDoc block description                               jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/SeriesComponent/ForcedMarkers.ts
+   71:5  warning  Missing JSDoc block description  jsdoc/require-description
+  104:5  warning  Missing JSDoc block description  jsdoc/require-description
+  123:5  warning  Missing JSDoc block description  jsdoc/require-description
+  135:5  warning  Missing JSDoc block description  jsdoc/require-description
+  163:5  warning  Missing JSDoc block description  jsdoc/require-description
+  175:5  warning  Missing JSDoc block description  jsdoc/require-description
+  270:5  warning  Missing JSDoc block description  jsdoc/require-description
+  289:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/SeriesComponent/NewDataAnnouncer.ts
+   56:1  warning  Missing JSDoc block description                                jsdoc/require-description
+   64:1  warning  Missing JSDoc block description                                jsdoc/require-description
+  215:1  warning  Missing JSDoc @param "series" description                      jsdoc/require-param-description
+  425:5  warning  Missing JSDoc block description                                jsdoc/require-description
+  451:1  warning  Missing JSDoc @param "point" description                       jsdoc/require-param-description
+  479:1  warning  @param "series" does not match an existing function parameter  jsdoc/check-param-names
+  479:1  warning  Missing JSDoc @param "series" description                      jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/SeriesComponent/SeriesComponent.ts
+   63:5  warning  Missing JSDoc block description  jsdoc/require-description
+  110:5  warning  Missing JSDoc block description  jsdoc/require-description
+  134:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/SeriesComponent/SeriesDescriber.ts
+   83:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  127:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  149:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  187:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  206:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  219:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  238:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  261:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  292:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  310:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  361:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  380:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  410:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  535:1  warning  Missing JSDoc @param "point" description          jsdoc/require-param-description
+  536:1  warning  Missing JSDoc @param "pointElement" description   jsdoc/require-param-description
+  576:1  warning  Missing JSDoc @param "series" description         jsdoc/require-param-description
+  678:1  warning  Missing JSDoc @param "series" description         jsdoc/require-param-description
+  679:1  warning  Missing JSDoc @param "seriesElement" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/SeriesComponent/SeriesKeyboardNavigation.ts
+  190:1  warning  Missing JSDoc block description             jsdoc/require-description
+  386:5  warning  Missing JSDoc block description             jsdoc/require-description
+  467:5  warning  Missing JSDoc block description             jsdoc/require-description
+  469:1  warning  Missing JSDoc @param "handler" description  jsdoc/require-param-description
+  470:1  warning  Missing JSDoc @param "keyCode" description  jsdoc/require-param-description
+  511:5  warning  Missing JSDoc block description             jsdoc/require-description
+  513:1  warning  Missing JSDoc @param "handler" description  jsdoc/require-param-description
+  514:1  warning  Missing JSDoc @param "keyCode" description  jsdoc/require-param-description
+  551:5  warning  Missing JSDoc block description             jsdoc/require-description
+  607:5  warning  Missing JSDoc block description             jsdoc/require-description
+  626:5  warning  Missing JSDoc block description             jsdoc/require-description
+  888:5  warning  Missing JSDoc block description             jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Components/ZoomComponent.ts
+   52:1  warning  Missing JSDoc block description                               jsdoc/require-description
+  141:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  143:1  warning  Missing JSDoc @param "button" description                     jsdoc/require-param-description
+  144:1  warning  Missing JSDoc @param "labelFormatKey" description             jsdoc/require-param-description
+  216:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  218:1  warning  Missing JSDoc @param "buttonEl" description                   jsdoc/require-param-description
+  219:1  warning  Missing JSDoc @param "buttonProp" description                 jsdoc/require-param-description
+  220:1  warning  Missing JSDoc @param "label" description                      jsdoc/require-param-description
+  327:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  329:1  warning  Missing JSDoc @param "keyboardNavigationHandler" description  jsdoc/require-param-description
+  330:1  warning  Missing JSDoc @param "event" description                      jsdoc/require-param-description
+  382:5  warning  Missing JSDoc block description                               jsdoc/require-description
+  384:1  warning  Missing JSDoc @param "direction" description                  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/FocusBorder.ts
+  116:5  warning  Missing JSDoc block description             jsdoc/require-description
+  225:1  warning  Missing JSDoc @param "el" type              jsdoc/require-param-type
+  253:1  warning  Missing JSDoc @param "margin" description   jsdoc/require-param-description
+  255:1  warning  Missing JSDoc @param "attribs" description  jsdoc/require-param-description
+  368:1  warning  Missing JSDoc @param "el" type              jsdoc/require-param-type
+  369:1  warning  Missing JSDoc @param "updateParams" type    jsdoc/require-param-type
+  399:1  warning  Missing JSDoc @param "el" type              jsdoc/require-param-type
+  435:1  warning  Missing JSDoc @param "el" type              jsdoc/require-param-type
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/KeyboardNavigationHandler.ts
+  103:1  warning  Missing JSDoc @param "e" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Options/DeprecatedOptions.ts
+  119:1  warning  Missing JSDoc @param "root" description           jsdoc/require-param-description
+  119:1  warning  Missing JSDoc @param "root" type                  jsdoc/require-param-type
+  120:1  warning  Missing JSDoc @param "optionAsArray" description  jsdoc/require-param-description
+  121:1  warning  Missing JSDoc @param "val" description            jsdoc/require-param-description
+  149:5  warning  Missing JSDoc block description                   jsdoc/require-description
+  190:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  211:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  227:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  288:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  319:1  warning  Missing JSDoc block description                   jsdoc/require-description
+  336:1  warning  Missing JSDoc block description                   jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/ProxyElement.ts
+  155:1  warning  Missing JSDoc @param "target" type      jsdoc/require-param-type
+  156:1  warning  Missing JSDoc @param "attributes" type  jsdoc/require-param-type
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Utils/ChartUtilities.ts
+  81:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Accessibility/Utils/HTMLUtilities.ts
+   53:1  warning  Missing JSDoc block description               jsdoc/require-description
+   55:1  warning  Missing JSDoc @param "el" description         jsdoc/require-param-description
+   56:1  warning  Missing JSDoc @param "className" description  jsdoc/require-param-description
+   71:1  warning  Missing JSDoc block description               jsdoc/require-description
+   73:1  warning  Missing JSDoc @param "el" description         jsdoc/require-param-description
+   74:1  warning  Missing JSDoc @param "className" description  jsdoc/require-param-description
+  173:1  warning  Missing JSDoc block description               jsdoc/require-description
+  273:1  warning  Missing JSDoc @param "element" description    jsdoc/require-param-description
+  321:1  warning  Missing JSDoc @param "element" description    jsdoc/require-param-description
+  334:1  warning  Missing JSDoc @param "element" description    jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Axis.ts
+   630:1  warning  @param "ctx" does not match an existing function parameter                                                                          jsdoc/check-param-names
+  1629:5  warning  Missing JSDoc block description                                                                                                     jsdoc/require-description
+  2630:1  warning  Expected @param names to be "min, max, redraw, animation, eventArguments". Got "newMin, newMax, redraw, animation, eventArguments"  jsdoc/check-param-names
+  3336:1  warning  @param "i" does not match an existing function parameter                                                                            jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Axis3DComposition.ts
+  101:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  117:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  141:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  170:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  216:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  392:1   warning  Missing JSDoc block description                                       jsdoc/require-description
+  448:13  warning  Do not use wrap                                                       highcharts/no-wrap
+  449:13  warning  Do not use wrap                                                       highcharts/no-wrap
+  450:13  warning  Do not use wrap                                                       highcharts/no-wrap
+  451:13  warning  Do not use wrap                                                       highcharts/no-wrap
+  452:13  warning  Do not use wrap                                                       highcharts/no-wrap
+  463:5   warning  Missing JSDoc block description                                       jsdoc/require-description
+  486:5   warning  Missing JSDoc block description                                       jsdoc/require-description
+  488:1   warning  Expected @param names to be "pos, isTitle". Got "axis, pos, isTitle"  jsdoc/check-param-names
+  703:5   warning  Missing JSDoc block description                                       jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/BrokenAxis.ts
+  162:5  warning  Missing JSDoc block description  jsdoc/require-description
+  182:5  warning  Missing JSDoc block description  jsdoc/require-description
+  205:5  warning  Missing JSDoc block description  jsdoc/require-description
+  216:5  warning  Missing JSDoc block description  jsdoc/require-description
+  252:5  warning  Missing JSDoc block description  jsdoc/require-description
+  260:5  warning  Missing JSDoc block description  jsdoc/require-description
+  518:9  warning  Missing JSDoc block description  jsdoc/require-description
+  544:9  warning  Missing JSDoc block description  jsdoc/require-description
+  577:9  warning  Missing JSDoc block description  jsdoc/require-description
+  661:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Color/ColorAxis.ts
+  170:5  warning  Missing JSDoc block description  jsdoc/require-description
+  294:5  warning  Missing JSDoc block description  jsdoc/require-description
+  459:5  warning  Missing JSDoc block description  jsdoc/require-description
+  465:5  warning  Missing JSDoc block description  jsdoc/require-description
+  624:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Color/ColorAxisComposition.ts
+  108:5  warning  Missing JSDoc block description                   jsdoc/require-description
+  258:5  warning  Missing JSDoc block description                   jsdoc/require-description
+  325:1  warning  Expected @param names to be "vis". Got "visible"  jsdoc/check-param-names
+  325:1  warning  Missing JSDoc @param "visible" description        jsdoc/require-param-description
+  382:5  warning  Missing JSDoc block description                   jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/DateTimeAxis.ts
+  127:1  warning  @param "normalizedInterval" does not match an existing function parameter  jsdoc/check-param-names
+  142:5  warning  Missing JSDoc block description                                            jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/GridAxis.ts
+   146:1  warning  Missing JSDoc block description  jsdoc/require-description
+   153:1  warning  Missing JSDoc block description  jsdoc/require-description
+   161:1  warning  Missing JSDoc block description  jsdoc/require-description
+   210:9  warning  Do not use wrap                  highcharts/no-wrap
+   211:9  warning  Do not use wrap                  highcharts/no-wrap
+   356:1  warning  Missing JSDoc block description  jsdoc/require-description
+   415:1  warning  Missing JSDoc block description  jsdoc/require-description
+   698:1  warning  Missing JSDoc block description  jsdoc/require-description
+   955:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1016:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1028:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1197:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/LogarithmicAxis.ts
+   91:5  warning  Missing JSDoc block description  jsdoc/require-description
+  114:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/NavigatorAxisComposition.ts
+   56:1  warning  Missing JSDoc block description  jsdoc/require-description
+  149:5  warning  Missing JSDoc block description  jsdoc/require-description
+  193:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/OrdinalAxis.ts
+  134:1   warning  Missing JSDoc @param "AxisClass" type                                                                       jsdoc/require-param-type
+  137:1   warning  Expected @param names to be "AxisClass, SeriesClass, ChartClass". Got "AxisClass, ChartClass, SeriesClass"  jsdoc/check-param-names
+  137:1   warning  Missing JSDoc @param "ChartClass" type                                                                      jsdoc/require-param-type
+  140:1   warning  Missing JSDoc @param "SeriesClass" type                                                                     jsdoc/require-param-type
+  454:13  warning  'positions' is never reassigned. Use 'const' instead                                                        prefer-const
+  499:5   warning  Missing JSDoc block description                                                                             jsdoc/require-description
+  510:5   warning  Missing JSDoc block description                                                                             jsdoc/require-description
+  577:5   warning  Missing JSDoc block description                                                                             jsdoc/require-description
+  720:5   warning  Missing JSDoc block description                                                                             jsdoc/require-description
+  862:9   warning  Missing JSDoc block description                                                                             jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/PlotLineOrBand/PlotLineOrBandAxis.ts
+  196:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/RadialAxis.ts
+  393:13  warning  Do not use wrap                                       highcharts/no-wrap
+  917:1   warning  Expected @param names to be "axis". Got "radialAxis"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/ScrollbarAxis.ts
+  103:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/SolidGaugeAxis.ts
+  51:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Stacking/StackItem.ts
+  179:5  warning  Missing JSDoc block description                              jsdoc/require-description
+  351:1  warning  Missing @param "AdjustStackPositionProps.labelBox"           jsdoc/check-param-names
+  351:1  warning  Missing @param "AdjustStackPositionProps.verticalAlign"      jsdoc/check-param-names
+  351:1  warning  Missing @param "AdjustStackPositionProps.textAlign"          jsdoc/check-param-names
+  351:1  warning  Missing JSDoc @param "AdjustStackPositionProps" description  jsdoc/require-param-description
+  351:1  warning  Missing JSDoc @param "AdjustStackPositionProps" type         jsdoc/require-param-type
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Stacking/StackingAxis.ts
+  158:1  warning  Missing JSDoc block description  jsdoc/require-description
+  181:1  warning  Missing JSDoc block description  jsdoc/require-description
+  585:5  warning  Missing JSDoc block description  jsdoc/require-description
+  626:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Tick.ts
+  803:1  warning  Missing JSDoc @param "index" description    jsdoc/require-param-description
+  808:1  warning  Missing JSDoc @param "opacity" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/Tick3DComposition.ts
+  41:1  warning  Missing JSDoc block description  jsdoc/require-description
+  55:9  warning  Do not use wrap                  highcharts/no-wrap
+  60:1  warning  Missing JSDoc block description  jsdoc/require-description
+  78:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/TreeGrid/TreeGridAxis.ts
+   155:1   warning  Missing JSDoc block description                            jsdoc/require-description
+   196:1   warning  Missing JSDoc @param "numberOfSeries" description          jsdoc/require-param-description
+   385:1   warning  Missing @param "e.type"                                    jsdoc/check-param-names
+   387:1   warning  @param "e.target.axes" does not exist on e                 jsdoc/check-param-names
+   600:1   warning  Missing JSDoc block description                            jsdoc/require-description
+   878:5   warning  Missing JSDoc block description                            jsdoc/require-description
+   893:13  warning  Do not use wrap                                            highcharts/no-wrap
+   894:13  warning  Do not use wrap                                            highcharts/no-wrap
+   895:13  warning  Do not use wrap                                            highcharts/no-wrap
+   896:13  warning  Do not use wrap                                            highcharts/no-wrap
+   921:5   warning  Missing JSDoc block description                            jsdoc/require-description
+   951:1   warning  Expected @param names to be "node". Got "axis, node"       jsdoc/check-param-names
+   982:1   warning  Expected @param names to be "node". Got "axis, node, pos"  jsdoc/check-param-names
+  1012:1   warning  Expected @param names to be "node". Got "axis, node, pos"  jsdoc/check-param-names
+  1084:1   warning  Expected @param names to be "node". Got "axis, node, pos"  jsdoc/check-param-names
+  1113:1   warning  Expected @param names to be "node". Got "axis, node"       jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/TreeGrid/TreeGridTick.ts
+   77:1   warning  Missing JSDoc block description  jsdoc/require-description
+   88:1   warning  Missing JSDoc block description  jsdoc/require-description
+  101:1   warning  Missing JSDoc block description  jsdoc/require-description
+  117:1   warning  Missing JSDoc block description  jsdoc/require-description
+  176:1   warning  Missing JSDoc block description  jsdoc/require-description
+  237:1   warning  Missing JSDoc block description  jsdoc/require-description
+  376:5   warning  Missing JSDoc block description  jsdoc/require-description
+  387:13  warning  Do not use wrap                  highcharts/no-wrap
+  388:13  warning  Do not use wrap                  highcharts/no-wrap
+  419:5   warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/WaterfallAxis.ts
+   95:5  warning  Missing JSDoc block description  jsdoc/require-description
+  113:5  warning  Missing JSDoc block description  jsdoc/require-description
+  126:5  warning  Missing JSDoc block description  jsdoc/require-description
+  139:5  warning  Missing JSDoc block description  jsdoc/require-description
+  150:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Axis/ZAxis.ts
+   68:1   warning  Missing JSDoc block description                                    jsdoc/require-description
+  159:21  warning  Expected a `const` assertion instead of a literal type annotation  @typescript-eslint/prefer-as-const
+  209:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Chart/Chart.ts
+   242:1  warning  Expected @param names to be "a, b, c". Got "renderTo, options, callback"  jsdoc/check-param-names
+  1018:9  warning  Missing JSDoc block description                                           jsdoc/require-description
+  1165:1  warning  Missing JSDoc @param "name" type                                          jsdoc/require-param-type
+  1255:1  warning  Missing JSDoc @param "redraw" description                                 jsdoc/require-param-description
+  1695:5  warning  Missing JSDoc block description                                           jsdoc/require-description
+  2967:1  warning  Expected @param names to be "coll, options". Got "coll, arguments"        jsdoc/check-param-names
+  3513:9  warning  Missing JSDoc block description                                           jsdoc/require-description
+  3565:1  warning  Missing JSDoc @param "event" description                                  jsdoc/require-param-description
+  3566:1  warning  Missing JSDoc @param "panning" description                                jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Chart/Chart3D.ts
+   353:5  warning  Missing JSDoc block description  jsdoc/require-description
+   424:9  warning  Do not use wrap                  highcharts/no-wrap
+   425:9  warning  Do not use wrap                  highcharts/no-wrap
+   426:9  warning  Do not use wrap                  highcharts/no-wrap
+   447:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1338:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1388:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1398:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1407:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1417:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1449:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Chart/ChartNavigationComposition.ts
+   69:5  warning  Missing JSDoc block description  jsdoc/require-description
+  132:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Chart/MapChart.ts
+  258:1  warning  Expected @param names to be "a, b, c". Got "renderTo, options, callback"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Core/Chart/StockChart.ts
+  389:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Defaults.ts
+  1186:13  error  Comments should not begin with a lowercase character  capitalized-comments
+
+/Users/torstein/GitHub/highcharts/ts/Core/Geometry/CircleUtilities.ts
+  46:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Geometry/PolygonClip.ts
+  111:1  warning  Missing JSDoc block description  jsdoc/require-description
+  123:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/HttpUtilities.ts
+  192:1   warning  Missing JSDoc comment                                                                                                                                               jsdoc/require-jsdoc
+  213:13  warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  215:37  warning  Invalid type "any" of template literal expression                                                                                                                   @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Core/Legend/Legend.ts
+   260:5  warning  Missing JSDoc block description                 jsdoc/require-description
+   263:1  warning  Missing JSDoc @param "options" description      jsdoc/require-param-description
+   391:5  warning  Missing JSDoc block description                 jsdoc/require-description
+   794:1  warning  Missing JSDoc @param "item" description         jsdoc/require-param-description
+   938:1  warning  Missing JSDoc @param "margin" description       jsdoc/require-param-description
+   939:1  warning  Missing JSDoc @param "spacing" description      jsdoc/require-param-description
+   977:5  warning  Missing JSDoc block description                 jsdoc/require-description
+  1211:1  warning  Missing JSDoc @param "alignTo" description      jsdoc/require-param-description
+  1552:5  warning  Missing JSDoc block description                 jsdoc/require-description
+  1555:1  warning  Missing JSDoc @param "item" description         jsdoc/require-param-description
+  1556:1  warning  Missing JSDoc @param "legendLabel" description  jsdoc/require-param-description
+  1557:1  warning  Missing JSDoc @param "useHTML" description      jsdoc/require-param-description
+  1675:5  warning  Missing JSDoc block description                 jsdoc/require-description
+  1678:1  warning  Missing JSDoc @param "item" description         jsdoc/require-param-description
+  1749:5  warning  Missing JSDoc block description                 jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/MSPointer.ts
+   83:1  warning  Missing JSDoc block description  jsdoc/require-description
+  100:1  warning  Missing JSDoc block description  jsdoc/require-description
+  195:5  warning  Missing JSDoc block description  jsdoc/require-description
+  214:5  warning  Missing JSDoc block description  jsdoc/require-description
+  234:5  warning  Missing JSDoc block description  jsdoc/require-description
+  277:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Pointer.ts
+   552:9  warning  Missing JSDoc block description           jsdoc/require-description
+   609:5  warning  Missing JSDoc block description           jsdoc/require-description
+   837:5  warning  Missing JSDoc block description           jsdoc/require-description
+   852:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1003:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1053:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1167:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1175:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1187:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1233:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1500:1  warning  Missing JSDoc @param "delay" description  jsdoc/require-param-description
+  2037:5  warning  Missing JSDoc block description           jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/HTML/AST.ts
+  467:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/HTML/HTMLElement.ts
+  135:67  warning  Invalid type "string | number | null" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/SVG/SVGElement.ts
+   243:5   warning  Missing JSDoc block description                    jsdoc/require-description
+   247:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+   249:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+   251:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+   492:5   warning  Missing JSDoc block description                    jsdoc/require-description
+   495:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+   872:45  warning  Invalid type "any" of template literal expression  @typescript-eslint/restrict-template-expressions
+  1171:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1174:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  1300:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1303:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  1304:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  1305:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  1343:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1346:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  1347:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  1348:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  1362:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1365:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  1366:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  1367:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  1701:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1783:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  1786:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  1787:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  1788:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  1827:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  2070:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  2071:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  2072:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  2165:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  2168:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  2183:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  2186:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  2317:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  2321:1   warning  Missing JSDoc @param "value" description           jsdoc/require-param-description
+  2323:1   warning  Missing JSDoc @param "key" description             jsdoc/require-param-description
+  2325:1   warning  Missing JSDoc @param "element" description         jsdoc/require-param-description
+  2343:5   warning  Missing JSDoc block description                    jsdoc/require-description
+  2358:5   warning  Missing JSDoc block description                    jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/SVG/SVGRenderer.ts
+   582:35  warning  Invalid type "any" of template literal expression                                    @typescript-eslint/restrict-template-expressions
+   940:1   warning  Expected @param names to be "path". Got "attribs"                                    jsdoc/check-param-names
+   983:1   warning  Expected @param names to be "x, y, r". Got "attribs"                                 jsdoc/check-param-names
+  1057:1   warning  Expected @param names to be "x, y, r, innerR, start, end". Got "attribs"             jsdoc/check-param-names
+  1134:1   warning  Expected @param names to be "x, y, width, height, r, strokeWidth". Got "attributes"  jsdoc/check-param-names
+  1621:1   warning  Missing JSDoc @param "x" description                                                 jsdoc/require-param-description
+  1623:1   warning  Missing JSDoc @param "y" description                                                 jsdoc/require-param-description
+  1625:1   warning  Missing JSDoc @param "width" description                                             jsdoc/require-param-description
+  1627:1   warning  Missing JSDoc @param "height" description                                            jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/SVG/SVGRenderer3D.ts
+  201:5  warning  Missing JSDoc block description  jsdoc/require-description
+  230:5  warning  Missing JSDoc block description  jsdoc/require-description
+  255:5  warning  Missing JSDoc block description  jsdoc/require-description
+  727:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Renderer/SVG/Symbols.ts
+   38:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  274:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  288:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  304:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  323:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  345:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  359:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Core/Responsive.ts
+  116:5  warning  Missing JSDoc block description             jsdoc/require-description
+  139:1  warning  Missing JSDoc @param "rule" description     jsdoc/require-param-description
+  140:1  warning  Missing JSDoc @param "matches" description  jsdoc/require-param-description
+  175:1  warning  Missing JSDoc @param "redraw" description   jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Series/DataLabel.ts
+  465:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Series/DataSeriesComposition.ts
+   70:1   warning  Missing JSDoc block description  jsdoc/require-description
+  111:1   warning  Missing JSDoc block description  jsdoc/require-description
+  180:5   warning  Missing JSDoc block description  jsdoc/require-description
+  196:13  warning  Do not use wrap                  highcharts/no-wrap
+  197:13  warning  Do not use wrap                  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Core/Series/Point.ts
+   443:1  warning  Missing JSDoc @param "kinds" description  jsdoc/require-param-description
+   845:5  warning  Missing JSDoc block description           jsdoc/require-description
+  1045:9  warning  Missing JSDoc block description           jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Series/Series.ts
+   920:5   warning  Missing JSDoc block description                                   jsdoc/require-description
+  2572:37  warning  Invalid type "any" of template literal expression                 @typescript-eslint/restrict-template-expressions
+  3609:5   warning  Missing JSDoc block description                                   jsdoc/require-description
+  3645:9   warning  Missing JSDoc block description                                   jsdoc/require-description
+  3712:5   warning  Missing JSDoc block description                                   jsdoc/require-description
+  3730:5   warning  Missing JSDoc block description                                   jsdoc/require-description
+  4082:9   warning  Missing JSDoc block description                                   jsdoc/require-description
+  4681:1   warning  Expected @param names to be "vis, redraw". Got "visible, redraw"  jsdoc/check-param-names
+  4857:5   error    Comments should not begin with a lowercase character              capitalized-comments
+
+/Users/torstein/GitHub/highcharts/ts/Core/Series/SeriesRegistry.ts
+  110:1  warning  Expected @param names to be "type, parent, options, seriesProto, pointProto". Got "type, parent, options, props, pointProps"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Core/Time.ts
+  194:1  warning  Missing JSDoc @param "unit" description         jsdoc/require-param-description
+  195:1  warning  Missing JSDoc @param "date" description         jsdoc/require-param-description
+  229:1  warning  Missing JSDoc @param "unit" description         jsdoc/require-param-description
+  230:1  warning  Missing JSDoc @param "date" description         jsdoc/require-param-description
+  231:1  warning  Missing JSDoc @param "value" description        jsdoc/require-param-description
+  288:1  warning  Missing JSDoc @param "options" description      jsdoc/require-param-description
+  655:1  warning  Missing JSDoc @param "startOfWeek" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Tooltip.ts
+   251:1  warning  Missing JSDoc @param "tooltip" description  jsdoc/require-param-description
+   948:1  warning  Missing JSDoc @param "x" description        jsdoc/require-param-description
+   950:1  warning  Missing JSDoc @param "y" description        jsdoc/require-param-description
+   952:1  warning  Missing JSDoc @param "anchorX" description  jsdoc/require-param-description
+   954:1  warning  Missing JSDoc @param "anchorY" description  jsdoc/require-param-description
+  1166:1  warning  Missing JSDoc @param "labels" description   jsdoc/require-param-description
+  1168:1  warning  Missing JSDoc @param "points" description   jsdoc/require-param-description
+  1682:5  warning  Missing JSDoc block description             jsdoc/require-description
+  1781:1  warning  Missing JSDoc @param "point" description    jsdoc/require-param-description
+  1900:5  warning  Missing JSDoc block description             jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Core/Utilities.ts
+   197:1  warning  @param "a" does not match an existing function parameter          jsdoc/check-param-names
+   815:1  warning  @param "items" does not match an existing function parameter      jsdoc/check-param-names
+  1417:1  warning  Expected @param names to be "path, parent". Got "path, obj"       jsdoc/check-param-names
+  1921:5  warning  Missing JSDoc block description                                   jsdoc/require-description
+  1935:5  warning  Missing JSDoc block description                                   jsdoc/require-description
+  2191:1  warning  @param "className" does not match an existing function parameter  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Data/Converters/GoogleSheetsConverter.ts
+  153:24  warning  Invalid type "CellType" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Data/Converters/JSONConverter.ts
+  162:51  warning  Invalid type "string | number | undefined" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Data/DataCursor.ts
+  153:5  warning  Missing JSDoc block description  jsdoc/require-description
+  590:5  warning  Missing JSDoc block description  jsdoc/require-description
+  640:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Data/DataTable.ts
+  652:35  warning  Invalid type "string | null | undefined" of template literal expression  @typescript-eslint/restrict-template-expressions
+  684:20  warning  Invalid type "CellType" of template literal expression                   @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Data/Modifiers/InvertModifier.ts
+  326:44  warning  Invalid type "CellType" of template literal expression  @typescript-eslint/restrict-template-expressions
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Annotation.ts
+  107:1   warning  Missing JSDoc block description                                    jsdoc/require-description
+  207:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  346:18  warning  Expected a `const` assertion instead of a literal type annotation  @typescript-eslint/prefer-as-const
+  366:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  383:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  396:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  449:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  571:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  620:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  645:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  694:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  705:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  718:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  748:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+  766:5   warning  Missing JSDoc block description                                    jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/AnnotationChart.ts
+   76:1   warning  Expected @param names to be "userOptions, redraw". Got "options, redraw"  jsdoc/check-param-names
+   79:1   warning  Missing JSDoc @param "redraw" description                                 jsdoc/require-param-description
+  103:1   warning  Missing JSDoc block description                                           jsdoc/require-description
+  291:1   warning  Missing JSDoc block description                                           jsdoc/require-description
+  356:1   warning  Missing JSDoc block description                                           jsdoc/require-description
+  385:5   warning  Missing JSDoc block description                                           jsdoc/require-description
+  422:13  warning  Do not use wrap                                                           highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/ControlPoint.ts
+  140:1  warning  Missing JSDoc @param "animation" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Controllables/Controllable.ts
+  106:1  warning  Missing JSDoc @param "options" description  jsdoc/require-param-description
+  203:1  warning  Missing JSDoc @param "radians" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Controllables/ControllableCircle.ts
+   90:5  warning  Missing JSDoc block description  jsdoc/require-description
+  117:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Controllables/ControllableEllipse.ts
+  124:5  warning  Missing JSDoc block description        jsdoc/require-description
+  154:1  warning  Missing JSDoc @param "parent" type     jsdoc/require-param-type
+  176:1  warning  Missing JSDoc @param "point1" type     jsdoc/require-param-type
+  178:1  warning  Missing JSDoc @param "point2" type     jsdoc/require-param-type
+  180:1  warning  Missing JSDoc @param "x0" type         jsdoc/require-param-type
+  182:1  warning  Missing JSDoc @param "y0" type         jsdoc/require-param-type
+  204:1  warning  Missing JSDoc @param "position" type   jsdoc/require-param-type
+  206:1  warning  Missing JSDoc @param "position2" type  jsdoc/require-param-type
+  258:1  warning  Missing JSDoc @param "point" type      jsdoc/require-param-type
+  270:1  warning  Missing JSDoc @param "animation" type  jsdoc/require-param-type
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Controllables/ControllableLabel.ts
+  179:1  warning  Missing JSDoc @param "alignOptions" description  jsdoc/require-param-description
+  181:1  warning  Missing JSDoc @param "box" description           jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Controllables/ControllablePath.ts
+   84:1   warning  Missing JSDoc block description                      jsdoc/require-description
+   95:1   warning  Missing JSDoc block description                      jsdoc/require-description
+  116:1   warning  Missing JSDoc block description                      jsdoc/require-description
+  368:1   warning  Missing JSDoc @param "item" description              jsdoc/require-param-description
+  382:17  warning  'markerId' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/MockPoint.ts
+  110:1   warning  Missing JSDoc @param "point" description                              jsdoc/require-param-description
+  130:1   warning  Missing JSDoc @param "point" description                              jsdoc/require-param-description
+  176:1   warning  Missing JSDoc @param "point" description                              jsdoc/require-param-description
+  302:18  warning  Expected a `const` assertion instead of a literal type annotation     @typescript-eslint/prefer-as-const
+  307:1   warning  Missing JSDoc @param "options" description                            jsdoc/require-param-description
+  440:1   warning  Missing JSDoc @param "radians" description                            jsdoc/require-param-description
+  497:1   warning  Missing JSDoc @param "options" description                            jsdoc/require-param-description
+  543:1   warning  Expected @param names to be "_cx, _cy, dx, dy". Got "cx, cy, dx, dy"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/NavigationBindings.ts
+   123:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   134:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   145:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   163:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   226:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   233:1  warning  Missing JSDoc block description                                                  jsdoc/require-description
+   327:5  warning  Missing JSDoc comment                                                            jsdoc/require-jsdoc
+   332:5  warning  Missing JSDoc comment                                                            jsdoc/require-jsdoc
+   836:1  warning  Expected @param names to be "_container, moveEvent". Got "container, moveEvent"  jsdoc/check-param-names
+  1215:5  warning  Missing JSDoc block description                                                  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/NavigationBindingsDefaults.ts
+  151:13  warning  Missing JSDoc block description  jsdoc/require-description
+  188:13  warning  Missing JSDoc block description  jsdoc/require-description
+  344:13  warning  Missing JSDoc block description  jsdoc/require-description
+  389:13  warning  Missing JSDoc block description  jsdoc/require-description
+  435:13  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/NavigationBindingsUtilities.ts
+  94:1  warning  Expected @param names to be "key, value". Got "value"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Popup/Popup.ts
+  298:1  warning  Expected @param names to be "parentDiv, label, type, fieldsDiv, callback". Got "parentDiv, label, type, callback, fieldsDiv"  jsdoc/check-param-names
+  334:1  warning  Duplicate @param "-"                                                                                                          jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Popup/PopupAnnotations.ts
+  132:1  warning  Duplicate @param "-"                              jsdoc/check-param-names
+  157:9  warning  'label' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Popup/PopupComposition.ts
+  59:1  warning  Missing JSDoc block description  jsdoc/require-description
+  79:9  warning  Do not use wrap                  highcharts/no-wrap
+  88:1  warning  Missing JSDoc block description  jsdoc/require-description
+  97:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Popup/PopupIndicators.ts
+   319:1   warning  Expected @param names to be "chart, parentDiv, listType, filter". Got "chart, optionName, parentDiv, listType, filter"                                                       jsdoc/check-param-names
+   340:5   warning  Missing JSDoc comment                                                                                                                                                        jsdoc/require-jsdoc
+   454:13  warning  'btn' is never reassigned. Use 'const' instead                                                                                                                               prefer-const
+   475:15  warning  'series' is never reassigned. Use 'const' instead                                                                                                                            prefer-const
+   475:23  warning  'indicatorType' is never reassigned. Use 'const' instead                                                                                                                     prefer-const
+  1015:1   warning  Expected @param names to be "indicatorType, optionName, chart, parentDiv, currentSeries, selectedOption". Got "indicatorType, optionName, chart, parentDiv, selectedOption"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Popup/PopupTabs.ts
+  152:1  warning  Duplicate @param "-"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Types/Fibonacci.ts
+  34:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Types/Measure.ts
+   55:1  warning  Missing JSDoc block description               jsdoc/require-description
+   70:1  warning  Missing JSDoc block description               jsdoc/require-description
+  218:1  warning  Missing JSDoc block description               jsdoc/require-description
+  797:1  warning  Missing JSDoc @param "animation" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Annotations/Types/Tunnel.ts
+  34:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/ArrowSymbols.ts
+  133:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Boost/Boost.ts
+  63:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Boost/BoostChart.ts
+  71:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Boost/BoostSeries.ts
+   157:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+   197:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+   217:9   warning  Do not use wrap                                                     highcharts/no-wrap
+   218:9   warning  Do not use wrap                                                     highcharts/no-wrap
+   219:9   warning  Do not use wrap                                                     highcharts/no-wrap
+   285:17  warning  Do not use wrap                                                     highcharts/no-wrap
+   316:21  warning  Do not use wrap                                                     highcharts/no-wrap
+   708:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+   791:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+   832:1   warning  Expected @param names to be "series, boostPoint". Got "boostPoint"  jsdoc/check-param-names
+   878:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+  1011:1   warning  Missing JSDoc block description                                     jsdoc/require-description
+  1284:5   warning  Missing JSDoc block description                                     jsdoc/require-description
+  1371:5   warning  Missing JSDoc block description                                     jsdoc/require-description
+  1399:5   warning  Do not use wrap                                                     highcharts/no-wrap
+  1411:17  warning  Do not use wrap                                                     highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Boost/WGLRenderer.ts
+   190:5  warning  Missing JSDoc block description  jsdoc/require-description
+   295:5  warning  Missing JSDoc block description  jsdoc/require-description
+   302:5  warning  Missing JSDoc block description  jsdoc/require-description
+   338:5  warning  Missing JSDoc block description  jsdoc/require-description
+   552:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1751:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Boost/WGLVertexBuffer.ts
+  183:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/BoostCanvas.ts
+  161:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  180:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  202:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  215:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  272:17  warning  Do not use wrap                                   highcharts/no-wrap
+  286:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  297:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  337:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  405:21  warning  Do not use wrap                                   highcharts/no-wrap
+  461:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  927:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  955:5   warning  Missing JSDoc block description                   jsdoc/require-description
+  971:21  warning  'plotY' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/BorderRadius.ts
+  100:1  warning  Missing JSDoc block description  jsdoc/require-description
+  257:1  warning  Missing JSDoc block description  jsdoc/require-description
+  373:1  warning  Missing JSDoc block description  jsdoc/require-description
+  411:1  warning  Missing JSDoc block description  jsdoc/require-description
+  422:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Breadcrumbs/Breadcrumbs.ts
+  149:1  warning  Missing JSDoc block description                                                           jsdoc/require-description
+  281:1  warning  Expected @param names to be "list". Got "this"                                            jsdoc/check-param-names
+  298:1  warning  Expected @param names to be "list". Got "this, list"                                      jsdoc/check-param-names
+  315:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  328:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  341:1  warning  Expected @param names to be "breadcrumb". Got "this, breadcrumb"                          jsdoc/check-param-names
+  394:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  415:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  451:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  472:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  515:1  warning  Expected @param names to be "xOffset". Got "this"                                         jsdoc/check-param-names
+  565:1  warning  Expected @param names to be "breadcrumb, posX, posY". Got "this, breadcrumb, posX, posY"  jsdoc/check-param-names
+  634:1  warning  Expected @param names to be "posX, posY". Got "this, posX, posY"                          jsdoc/check-param-names
+  678:1  warning  Expected @param names to be "options". Got "this, options, redraw"                        jsdoc/check-param-names
+  699:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  719:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  743:1  warning  Expected @param names to be "force". Got "this"                                           jsdoc/check-param-names
+  776:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  791:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+  810:1  warning  @param "this" does not match an existing function parameter                               jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/CurrentDateIndication.ts
+  150:1  warning  Missing JSDoc block description  jsdoc/require-description
+  163:9  warning  Do not use wrap                  highcharts/no-wrap
+  172:1  warning  Missing JSDoc block description  jsdoc/require-description
+  197:1  warning  Missing JSDoc block description  jsdoc/require-description
+  209:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Data.ts
+   140:1   warning  Missing JSDoc block description             jsdoc/require-description
+   178:1   warning  Missing JSDoc comment                       jsdoc/require-jsdoc
+   630:13  warning  Missing JSDoc block description             jsdoc/require-description
+   639:13  warning  Missing JSDoc block description             jsdoc/require-description
+   651:13  warning  Missing JSDoc block description             jsdoc/require-description
+   985:9   warning  Missing JSDoc block description             jsdoc/require-description
+  1181:9   warning  Missing JSDoc block description             jsdoc/require-description
+  1210:17  warning  Missing JSDoc block description             jsdoc/require-description
+  1992:1   warning  Missing JSDoc @param "options" description  jsdoc/require-param-description
+  1994:1   warning  Missing JSDoc @param "redraw" description   jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DataGrouping/ApproximationDefaults.ts
+   37:1  warning  Missing JSDoc block description  jsdoc/require-description
+   74:1  warning  Missing JSDoc block description  jsdoc/require-description
+   85:1  warning  Missing JSDoc block description  jsdoc/require-description
+  119:1  warning  Missing JSDoc block description  jsdoc/require-description
+  130:1  warning  Missing JSDoc block description  jsdoc/require-description
+  154:1  warning  Missing JSDoc block description  jsdoc/require-description
+  163:1  warning  Missing JSDoc block description  jsdoc/require-description
+  181:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DataGrouping/DataGrouping.ts
+  47:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DataGrouping/DataGroupingAxisComposition.ts
+  102:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DataGrouping/DataGroupingSeriesComposition.ts
+  132:1  warning  Missing JSDoc block description  jsdoc/require-description
+  191:1  warning  Missing JSDoc block description  jsdoc/require-description
+  468:1  warning  Missing JSDoc block description  jsdoc/require-description
+  820:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Debugger/Debugger.ts
+   85:1  warning  Missing JSDoc block description  jsdoc/require-description
+  102:1  warning  Missing JSDoc block description  jsdoc/require-description
+  119:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DragPanes/AxisResizer.ts
+  292:1  warning  Missing JSDoc @param "chartY" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DragPanes/DragPanes.ts
+  67:1  warning  Missing JSDoc block description  jsdoc/require-description
+  84:9  warning  Do not use wrap                  highcharts/no-wrap
+  89:9  warning  Do not use wrap                  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/DraggablePoints/DraggablePoints.ts
+  205:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Drilldown/Drilldown.ts
+   383:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1002:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1053:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1072:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1089:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1112:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1123:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1134:5  warning  Missing JSDoc block description  jsdoc/require-description
+  1178:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Drilldown/DrilldownSeries.ts
+   99:1  warning  Missing JSDoc block description  jsdoc/require-description
+  115:1  warning  Missing JSDoc block description  jsdoc/require-description
+  327:1  warning  Missing JSDoc block description  jsdoc/require-description
+  518:1  warning  Missing JSDoc block description  jsdoc/require-description
+  533:1  warning  Missing JSDoc block description  jsdoc/require-description
+  553:1  warning  Missing JSDoc block description  jsdoc/require-description
+  573:1  warning  Missing JSDoc block description  jsdoc/require-description
+  631:1  warning  Missing JSDoc block description  jsdoc/require-description
+  712:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/ExportData/ExportData.ts
+   583:51  warning  Invalid type "any" of template literal expression  @typescript-eslint/restrict-template-expressions
+   733:41  warning  Invalid type "any" of template literal expression  @typescript-eslint/restrict-template-expressions
+  1017:1   warning  Missing JSDoc block description                    jsdoc/require-description
+  1104:1   warning  Missing JSDoc block description                    jsdoc/require-description
+  1254:1   warning  Missing JSDoc block description                    jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Exporting/Exporting.ts
+   300:1   warning  Missing JSDoc @param "options" description                                                                                                                          jsdoc/require-param-description
+   473:1   warning  @param "chart" does not match an existing function parameter                                                                                                        jsdoc/check-param-names
+   576:5   warning  Missing JSDoc block description                                                                                                                                     jsdoc/require-description
+   624:5   warning  Missing JSDoc block description                                                                                                                                     jsdoc/require-description
+   924:1   warning  Missing JSDoc @param "e" description                                                                                                                                jsdoc/require-param-description
+  1033:9   warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  1278:5   warning  Missing JSDoc block description                                                                                                                                     jsdoc/require-description
+  1579:13  warning  Missing JSDoc block description                                                                                                                                     jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Exporting/ExportingSymbols.ts
+   64:5  warning  Missing JSDoc block description  jsdoc/require-description
+   80:5  warning  Missing JSDoc block description  jsdoc/require-description
+  101:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Exporting/Fullscreen.ts
+  58:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/MarkerClusters/MarkerClusterScatter.ts
+   394:1  warning  Missing JSDoc block description  jsdoc/require-description
+   598:1  warning  Missing JSDoc block description  jsdoc/require-description
+   697:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1138:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1166:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1357:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1460:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1488:1  warning  Missing JSDoc block description  jsdoc/require-description
+  1611:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/MarkerClusters/MarkerClusterSymbols.ts
+  89:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/MarkerClusters/MarkerClusters.ts
+  251:1  warning  Missing JSDoc block description  jsdoc/require-description
+  343:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/MouseWheelZoom/MouseWheelZoom.ts
+   59:1  warning  Missing JSDoc block description  jsdoc/require-description
+   74:1  warning  Missing JSDoc block description  jsdoc/require-description
+  138:1  warning  Missing JSDoc block description  jsdoc/require-description
+  194:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/NoDataToDisplay/NoDataToDisplay.ts
+  166:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/OfflineExporting/OfflineExporting.ts
+   691:1  warning  Missing JSDoc @param "scriptLocation" description                                                                                                                   jsdoc/require-param-description
+   692:1  warning  Missing JSDoc @param "callback" description                                                                                                                         jsdoc/require-param-description
+   719:1  warning  Missing JSDoc @param "options" description                                                                                                                          jsdoc/require-param-description
+   720:1  warning  Missing JSDoc @param "chartOptions" description                                                                                                                     jsdoc/require-param-description
+   721:1  warning  Missing JSDoc @param "failCallback" description                                                                                                                     jsdoc/require-param-description
+   722:1  warning  Missing JSDoc @param "successCallback" description                                                                                                                  jsdoc/require-param-description
+   843:1  warning  Missing JSDoc @param "imageURL" description                                                                                                                         jsdoc/require-param-description
+   845:1  warning  Missing JSDoc @param "imageType" description                                                                                                                        jsdoc/require-param-description
+   850:1  warning  Missing JSDoc @param "scale" description                                                                                                                            jsdoc/require-param-description
+   995:5  warning  Missing JSDoc block description                                                                                                                                     jsdoc/require-description
+  1055:9  warning  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/OverlappingDataLabels.ts
+  175:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Pane/Pane.ts
+  122:1  warning  Missing JSDoc @param "options" description  jsdoc/require-param-description
+  124:1  warning  Missing JSDoc @param "chart" description    jsdoc/require-param-description
+  138:5  warning  Missing JSDoc block description             jsdoc/require-description
+  142:1  warning  Missing JSDoc @param "options" description  jsdoc/require-param-description
+  255:1  warning  Missing JSDoc @param "axis" description     jsdoc/require-param-description
+  289:1  warning  Missing JSDoc @param "redraw" description   jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/Pane/PaneComposition.ts
+   46:1  warning  Missing JSDoc block description  jsdoc/require-description
+   71:1  warning  Missing JSDoc block description  jsdoc/require-description
+  188:1  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  208:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/ParallelCoordinates/ParallelCoordinates.ts
+  160:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/ParallelCoordinates/ParallelSeries.ts
+   69:5   warning  Missing JSDoc block description  jsdoc/require-description
+   91:17  warning  Do not use wrap                  highcharts/no-wrap
+   99:17  warning  Do not use wrap                  highcharts/no-wrap
+  223:5   warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/PatternFill.ts
+  126:1  warning  Missing JSDoc block description  jsdoc/require-description
+  145:9  warning  Do not use wrap                  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/PriceIndication.ts
+  76:1  warning  Missing JSDoc block description  jsdoc/require-description
+  87:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/ScrollablePlotArea.ts
+   84:1  warning  Missing JSDoc block description  jsdoc/require-description
+  100:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/SeriesLabel/SeriesLabel.ts
+  358:1  warning  Missing JSDoc block description  jsdoc/require-description
+  475:9  warning  Missing JSDoc block description  jsdoc/require-description
+  499:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/SeriesLabel/SeriesLabelUtilities.ts
+  90:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Extensions/StaticScale.ts
+   58:1   warning  Missing JSDoc block description                  jsdoc/require-description
+   75:1   warning  Missing JSDoc block description                  jsdoc/require-description
+   95:1   warning  Missing JSDoc block description                  jsdoc/require-description
+  119:21  warning  'diff' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Gantt/Connection.ts
+  134:1  warning  @param "animation" does not match an existing function parameter  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Gantt/Pathfinder.ts
+  439:1  warning  Missing @param "options.algorithmMargin"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Gantt/PathfinderComposition.ts
+  161:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Gantt/Tree.ts
+   73:1  warning  @param "ids" does not match an existing function parameter  jsdoc/check-param-names
+  122:1  warning  Missing JSDoc block description                             jsdoc/require-description
+  211:1  warning  Missing JSDoc block description                             jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Maps/GeoJSONComposition.ts
+  291:5   warning  Missing JSDoc block description  jsdoc/require-description
+  304:13  warning  Do not use wrap                  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Maps/MapNavigation.ts
+  67:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Maps/MapPointer.ts
+  91:13  warning  Do not use wrap  highcharts/no-wrap
+  92:13  warning  Do not use wrap  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Maps/MapSymbols.ts
+  38:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  53:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  63:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Maps/MapUtilities.ts
+  62:9  warning  'x' is never reassigned. Use 'const' instead  prefer-const
+  63:9  warning  'y' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Maps/MapView.ts
+  1282:13  warning  'isDirtyProjection' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/ArcDiagram/ArcDiagramSeries.ts
+  278:25  warning  'plotArea' is never reassigned. Use 'const' instead     prefer-const
+  315:17  warning  'nodePadding' is never reassigned. Use 'const' instead  prefer-const
+  316:17  warning  'maxRadius' is never reassigned. Use 'const' instead    prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Area/AreaSeries.ts
+  321:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Area3D/Area3DSeries.ts
+  37:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  42:9  warning  Do not use wrap        highcharts/no-wrap
+  51:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Series/AreaRange/AreaRangePoint.ts
+  117:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Bellcurve/BellcurveSeries.ts
+   73:5  warning  Missing JSDoc block description  jsdoc/require-description
+   83:5  warning  Missing JSDoc block description  jsdoc/require-description
+  102:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Bubble/BubbleLegendComposition.ts
+  155:9  warning  Do not use wrap  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Series/Bubble/BubblePoint.ts
+  62:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Bubble/BubbleSeries.ts
+  679:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/ColorMapComposition.ts
+  118:5  warning  Missing JSDoc block description           jsdoc/require-description
+  169:1  warning  Missing JSDoc @param "point" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Column/ColumnDataLabel.ts
+  152:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Column/ColumnSeries.ts
+  341:13  warning  'yCrisp' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Column3D/Column3DComposition.ts
+  101:1   warning  Missing JSDoc block description  jsdoc/require-description
+  238:1   warning  Missing JSDoc block description  jsdoc/require-description
+  252:9   warning  Do not use wrap                  highcharts/no-wrap
+  253:9   warning  Do not use wrap                  highcharts/no-wrap
+  255:9   warning  Do not use wrap                  highcharts/no-wrap
+  266:13  warning  Do not use wrap                  highcharts/no-wrap
+  271:13  warning  Do not use wrap                  highcharts/no-wrap
+  272:13  warning  Do not use wrap                  highcharts/no-wrap
+  273:13  warning  Do not use wrap                  highcharts/no-wrap
+  278:13  warning  Do not use wrap                  highcharts/no-wrap
+  279:13  warning  Do not use wrap                  highcharts/no-wrap
+  280:13  warning  Do not use wrap                  highcharts/no-wrap
+  288:13  warning  Do not use wrap                  highcharts/no-wrap
+  293:13  warning  Do not use wrap                  highcharts/no-wrap
+  298:13  warning  Do not use wrap                  highcharts/no-wrap
+  303:13  warning  Do not use wrap                  highcharts/no-wrap
+  304:13  warning  Do not use wrap                  highcharts/no-wrap
+  314:1   warning  Missing JSDoc block description  jsdoc/require-description
+  348:1   warning  Missing JSDoc block description  jsdoc/require-description
+  404:1   warning  Missing JSDoc block description  jsdoc/require-description
+  507:1   warning  Missing JSDoc block description  jsdoc/require-description
+  576:1   warning  Missing JSDoc block description  jsdoc/require-description
+  589:1   warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/ColumnPyramid/ColumnPyramidSeries.ts
+  187:13  warning  'topPointY' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Cylinder/CylinderComposition.ts
+   94:1  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  125:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/DataModifyComposition.ts
+  145:1  warning  Missing JSDoc @param "SeriesClass" type         jsdoc/require-param-type
+  148:1  warning  Missing JSDoc @param "AxisClass" type           jsdoc/require-param-type
+  151:1  warning  Missing JSDoc @param "PointClass" type          jsdoc/require-param-type
+  226:1  warning  Missing JSDoc @param "pointFormat" description  jsdoc/require-param-description
+  532:9  warning  Missing JSDoc block description                 jsdoc/require-description
+  560:9  warning  Missing JSDoc block description                 jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/DependencyWheel/DependencyWheelPoint.ts
+  90:13  warning  Do not use wrap  highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Series/DerivedComposition.ts
+  101:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/DragNodesComposition.ts
+   92:1  warning  Missing JSDoc block description                                 jsdoc/require-description
+  192:1  warning  Expected @param names to be "point, event". Got "event, point"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/Dumbbell/DumbbellPoint.ts
+  60:1  warning  @param "this" does not match an existing function parameter  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/Flags/FlagsPoint.ts
+  76:5  warning  Missing JSDoc block description  jsdoc/require-description
+  85:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Flags/FlagsSeries.ts
+  324:13  warning  Do not use wrap                  highcharts/no-wrap
+  426:5   warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Flags/FlagsSymbols.ts
+  55:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/FlowMap/FlowMapPoint.ts
+  71:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Funnel/FunnelSeries.ts
+  152:5  warning  Missing JSDoc block description  jsdoc/require-description
+  261:5  warning  Missing JSDoc block description  jsdoc/require-description
+  695:5  warning  Missing JSDoc block description  jsdoc/require-description
+  710:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Funnel3D/Funnel3DComposition.ts
+  81:1  warning  Missing JSDoc block description  jsdoc/require-description
+  99:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Funnel3D/Funnel3DSeries.ts
+  102:5  warning  Missing JSDoc block description  jsdoc/require-description
+  188:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Gantt/GanttPoint.ts
+  45:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Gauge/GaugeSeries.ts
+  593:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/GeoHeatmap/GeoHeatmapPoint.ts
+  89:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/GraphLayoutComposition.ts
+   94:1  warning  Missing JSDoc block description  jsdoc/require-description
+  155:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/HLC/HLCSeries.ts
+   89:1  warning  Missing JSDoc @param "halfStrokeWidth" description  jsdoc/require-param-description
+  197:5  warning  Missing JSDoc block description                     jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Heatmap/HeatmapPoint.ts
+   68:5  warning  Missing JSDoc block description  jsdoc/require-description
+   86:5  warning  Missing JSDoc block description  jsdoc/require-description
+  191:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Heatmap/HeatmapSeries.ts
+  135:5  warning  Missing JSDoc block description  jsdoc/require-description
+  270:5  warning  Missing JSDoc block description  jsdoc/require-description
+  346:5  warning  Missing JSDoc block description  jsdoc/require-description
+  409:5  warning  Missing JSDoc block description  jsdoc/require-description
+  477:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/HeikinAshi/HeikinAshiSeries.ts
+  215:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/HollowCandlestick/HollowCandlestickSeries.ts
+  240:5   warning  Missing JSDoc block description                     jsdoc/require-description
+  291:13  warning  'attribs' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Item/ItemSeries.ts
+  411:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Lollipop/LollipopSeries.ts
+  162:1  warning  @param "this" does not match an existing function parameter  jsdoc/check-param-names
+  188:1  warning  @param "this" does not match an existing function parameter  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/MapBubble/MapBubbleSeries.ts
+  301:13  warning  'processedXData' is never reassigned. Use 'const' instead  prefer-const
+  302:13  warning  'xData' is never reassigned. Use 'const' instead           prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Networkgraph/EulerIntegration.ts
+   59:1  warning  Missing JSDoc @param "distanceR" description          jsdoc/require-param-description
+  200:5  warning  'distanceR' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Networkgraph/NetworkgraphPoint.ts
+  224:5   warning  Missing JSDoc block description                          jsdoc/require-description
+  236:13  warning  'path' is never reassigned. Use 'const' instead          prefer-const
+  288:13  warning  'point' is never reassigned. Use 'const' instead         prefer-const
+  289:13  warning  'series' is never reassigned. Use 'const' instead        prefer-const
+  290:13  warning  'nodesOptions' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Networkgraph/NetworkgraphSeries.ts
+  151:13  warning  'layoutOptions' is never reassigned. Use 'const' instead  prefer-const
+  154:13  warning  'chartOptions' is never reassigned. Use 'const' instead   prefer-const
+  193:5   warning  Missing JSDoc block description                           jsdoc/require-description
+  387:13  warning  'pointState' is never reassigned. Use 'const' instead     prefer-const
+  393:13  warning  'stateOptions' is never reassigned. Use 'const' instead   prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Networkgraph/VerletIntegration.ts
+   45:1  warning  Expected @param names to be "link, force, distanceXY". Got "link, force, distance"  jsdoc/check-param-names
+  103:9  warning  'gravitationalConstant' is never reassigned. Use 'const' instead                    prefer-const
+  172:9  warning  'friction' is never reassigned. Use 'const' instead                                 prefer-const
+  173:9  warning  'maxSpeed' is never reassigned. Use 'const' instead                                 prefer-const
+  174:9  warning  'prevX' is never reassigned. Use 'const' instead                                    prefer-const
+  175:9  warning  'prevY' is never reassigned. Use 'const' instead                                    prefer-const
+  185:9  warning  'abs' is never reassigned. Use 'const' instead                                      prefer-const
+  186:9  warning  'signX' is never reassigned. Use 'const' instead                                    prefer-const
+  187:9  warning  'signY' is never reassigned. Use 'const' instead                                    prefer-const
+  218:1  warning  Expected @param names to be "node, force, distanceXY". Got "node, force, distance"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/NodesComposition.ts
+  136:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/OHLC/OHLCSeries.ts
+  51:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/OnSeriesComposition.ts
+  70:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Organization/OrganizationSeriesDefaults.ts
+  201:13  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/PackedBubble/PackedBubbleIntegration.ts
+  33:1  warning  Missing JSDoc block description  jsdoc/require-description
+  67:1  warning  Missing JSDoc block description  jsdoc/require-description
+  94:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/PackedBubble/PackedBubbleLayout.ts
+  52:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/PackedBubble/PackedBubbleSeries.ts
+  697:1  warning  Expected @param names to be "dnPoint". Got "point"  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/PackedBubble/PackedBubbleSeriesDefaults.ts
+  174:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/PathUtilities.ts
+  43:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  75:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  96:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pictorial/PictorialSeries.ts
+  310:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  470:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  515:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pictorial/PictorialUtilities.ts
+   27:1  warning  Missing JSDoc comment                                jsdoc/require-jsdoc
+   81:1  warning  Missing JSDoc comment                                jsdoc/require-jsdoc
+  102:1  warning  Missing JSDoc comment                                jsdoc/require-jsdoc
+  107:9  warning  'inverted' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pie/PieDataLabel.ts
+  163:5   warning  Missing JSDoc block description                          jsdoc/require-description
+  181:5   warning  Missing JSDoc block description                          jsdoc/require-description
+  682:13  warning  'center' is never reassigned. Use 'const' instead        prefer-const
+  683:13  warning  'options' is never reassigned. Use 'const' instead       prefer-const
+  684:13  warning  'centerOption' is never reassigned. Use 'const' instead  prefer-const
+  685:13  warning  'minSize' is never reassigned. Use 'const' instead       prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pie/PiePoint.ts
+   99:5  warning  Missing JSDoc block description  jsdoc/require-description
+  109:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pie3D/Pie3DPoint.ts
+  51:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Pie3D/Pie3DSeries.ts
+   90:5  warning  Missing JSDoc block description  jsdoc/require-description
+  101:5  warning  Missing JSDoc block description  jsdoc/require-description
+  160:5  warning  Missing JSDoc block description  jsdoc/require-description
+  202:5  warning  Missing JSDoc block description  jsdoc/require-description
+  217:5  warning  Missing JSDoc block description  jsdoc/require-description
+  274:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/PolarComposition.ts
+   169:1   warning  Missing JSDoc block description                                                                            jsdoc/require-description
+   232:1   warning  Expected @param names to be "segment, index, calculateNeighbours, connectEnds". Got "calculateNeighbours"  jsdoc/check-param-names
+   333:1   warning  Missing JSDoc comment                                                                                      jsdoc/require-jsdoc
+   364:1   warning  Missing JSDoc comment                                                                                      jsdoc/require-jsdoc
+   626:1   warning  Missing JSDoc block description                                                                            jsdoc/require-description
+  1488:13  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1490:13  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1491:13  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1518:13  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1521:13  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1526:17  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1530:17  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1536:17  warning  Do not use wrap                                                                                            highcharts/no-wrap
+  1542:17  warning  Do not use wrap                                                                                            highcharts/no-wrap
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sankey/SankeyColumnComposition.ts
+  266:1  warning  @param "this" does not match an existing function parameter  jsdoc/check-param-names
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sankey/SankeyPoint.ts
+   89:5  warning  Missing JSDoc block description  jsdoc/require-description
+  105:5  warning  Missing JSDoc block description  jsdoc/require-description
+  157:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sankey/SankeySeries.ts
+  89:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sankey/SankeySeriesDefaults.ts
+  125:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Scatter/ScatterSeries.ts
+  102:25  warning  'plotProp' is never reassigned. Use 'const' instead  prefer-const
+  137:5   warning  Missing JSDoc block description                      jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/SeriesOnPointComposition.ts
+  104:1  warning  Missing JSDoc @param "SeriesClass" type  jsdoc/require-param-type
+  107:1  warning  Missing JSDoc @param "ChartClass" type   jsdoc/require-param-type
+  165:9  warning  Missing JSDoc block description          jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Spline/SplineSeries.ts
+  115:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sunburst/SunburstSeries.ts
+   84:1  warning  Missing JSDoc block description  jsdoc/require-description
+  123:1  warning  Missing JSDoc block description  jsdoc/require-description
+  299:1  warning  Missing JSDoc block description  jsdoc/require-description
+  375:1  warning  Missing JSDoc block description  jsdoc/require-description
+  399:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Sunburst/SunburstUtilities.ts
+   44:1  warning  Missing JSDoc block description  jsdoc/require-description
+  136:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/TiledWebMap/TiledWebMapSeries.ts
+   70:1  warning  Missing JSDoc block description    jsdoc/require-description
+  221:1  warning  Missing JSDoc @param "xTile" type  jsdoc/require-param-type
+  223:1  warning  Missing JSDoc @param "yTile" type  jsdoc/require-param-type
+  225:1  warning  Missing JSDoc @param "zTile" type  jsdoc/require-param-type
+
+/Users/torstein/GitHub/highcharts/ts/Series/Tilemap/TilemapPoint.ts
+  67:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Tilemap/TilemapShapes.ts
+  239:21  warning  'pointPadding' is never reassigned. Use 'const' instead     prefer-const
+  242:21  warning  'midPointPadding' is never reassigned. Use 'const' instead  prefer-const
+  244:21  warning  'xMidPadding' is never reassigned. Use 'const' instead      prefer-const
+  246:21  warning  'xPointPadding' is never reassigned. Use 'const' instead    prefer-const
+  248:21  warning  'yPointPadding' is never reassigned. Use 'const' instead    prefer-const
+  493:21  warning  'x' is never reassigned. Use 'const' instead                prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/TreeUtilities.ts
+   48:1  warning  Missing JSDoc block description                    jsdoc/require-description
+   73:5  warning  Missing JSDoc block description                    jsdoc/require-description
+  151:9  warning  'result' is never reassigned. Use 'const' instead  prefer-const
+  202:1  warning  Missing JSDoc block description                    jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Treegraph/TreegraphLayout.ts
+  279:1  warning  Missing JSDoc @param "node" description       jsdoc/require-param-description
+  360:1  warning  Missing JSDoc @param "leftNode" description   jsdoc/require-param-description
+  361:1  warning  Missing JSDoc @param "rightNode" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Treegraph/TreegraphNode.ts
+  95:1  warning  Missing JSDoc @param "leftIntNode" description      jsdoc/require-param-description
+  96:1  warning  Missing JSDoc @param "defaultAncestor" description  jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Treegraph/TreegraphPoint.ts
+  84:13  warning  'graphic' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Treemap/TreemapSeries.ts
+  102:1  warning  Missing JSDoc block description  jsdoc/require-description
+  731:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Treemap/TreemapUtilities.ts
+  39:5  warning  Missing JSDoc block description                  jsdoc/require-description
+  51:9  warning  'next' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/VariablePie/VariablePieSeries.ts
+  229:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Variwide/VariwideComposition.ts
+   66:1  warning  Missing JSDoc block description  jsdoc/require-description
+   84:9  warning  Do not use wrap                  highcharts/no-wrap
+  134:1  warning  Missing JSDoc block description  jsdoc/require-description
+  153:1  warning  Missing JSDoc block description  jsdoc/require-description
+  177:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Vector/VectorSeries.ts
+  166:5  warning  Missing JSDoc block description  jsdoc/require-description
+  241:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Venn/VennSeries.ts
+  588:17  warning  'sets' is never reassigned. Use 'const' instead             prefer-const
+  589:17  warning  'id' is never reassigned. Use 'const' instead               prefer-const
+  590:17  warning  'shape' is never reassigned. Use 'const' instead            prefer-const
+  592:17  warning  'dataLabelValues' is never reassigned. Use 'const' instead  prefer-const
+  595:17  warning  'dlOptions' is never reassigned. Use 'const' instead        prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Series/Venn/VennUtils.ts
+  186:9  warning  'fA' is never reassigned. Use 'const' instead           prefer-const
+  187:9  warning  'fB' is never reassigned. Use 'const' instead           prefer-const
+  188:9  warning  'nMax' is never reassigned. Use 'const' instead         prefer-const
+  189:9  warning  'tol' is never reassigned. Use 'const' instead          prefer-const
+  223:1  warning  Missing JSDoc block description                         jsdoc/require-description
+  267:9  warning  'maxDistance' is never reassigned. Use 'const' instead  prefer-const
+  407:1  warning  Missing JSDoc comment                                   jsdoc/require-jsdoc
+  414:1  warning  Missing JSDoc comment                                   jsdoc/require-jsdoc
+  437:1  warning  Missing JSDoc comment                                   jsdoc/require-jsdoc
+  680:5  warning  Missing JSDoc block description                         jsdoc/require-description
+  692:5  warning  Missing JSDoc block description                         jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/Wordcloud/WordcloudUtils.ts
+   96:1  warning  Missing JSDoc block description  jsdoc/require-description
+  160:1  warning  Missing JSDoc block description  jsdoc/require-description
+  414:1  warning  Missing JSDoc block description  jsdoc/require-description
+  649:1  warning  Missing JSDoc block description  jsdoc/require-description
+  842:1  warning  Missing JSDoc block description  jsdoc/require-description
+  868:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/XRange/XRangePoint.ts
+  116:5  warning  Missing JSDoc block description  jsdoc/require-description
+  150:5  warning  Missing JSDoc block description  jsdoc/require-description
+  179:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/XRange/XRangeSeries.ts
+  157:5  warning  Missing JSDoc block description  jsdoc/require-description
+  273:5  warning  Missing JSDoc block description  jsdoc/require-description
+  465:5  warning  Missing JSDoc block description  jsdoc/require-description
+  602:5  warning  Missing JSDoc block description  jsdoc/require-description
+  628:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Series/XRange/XRangeSeriesDefaults.ts
+  100:17  warning  'point' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/ABands/ABandsIndicator.ts
+  43:1  warning  Missing JSDoc block description  jsdoc/require-description
+  53:1  warning  Missing JSDoc block description  jsdoc/require-description
+  60:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/ATR/ATRIndicator.ts
+  43:1  warning  Missing JSDoc block description  jsdoc/require-description
+  58:1  warning  Missing JSDoc block description  jsdoc/require-description
+  75:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/Aroon/AroonIndicator.ts
+  46:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/BB/BBIndicator.ts
+  44:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/CCI/CCIIndicator.ts
+  41:1  warning  Missing JSDoc block description  jsdoc/require-description
+  50:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/CMF/CMFIndicator.ts
+  136:9   warning  Missing JSDoc block description  jsdoc/require-description
+  182:5   warning  Missing JSDoc block description  jsdoc/require-description
+  248:13  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/DPO/DPOIndicator.ts
+  45:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/IKH/IKHIndicator.ts
+  67:1  warning  Missing JSDoc block description  jsdoc/require-description
+  76:1  warning  Missing JSDoc block description  jsdoc/require-description
+  85:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/MFI/MFIIndicator.ts
+  48:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  55:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  59:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  63:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/Momentum/MomentumIndicator.ts
+  37:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/MultipleLinesComposition.ts
+  166:1  warning  Missing JSDoc @param "propertyName" type                                     jsdoc/require-param-type
+  182:1  warning  Expected @param names to be "indicator, excludedValue". Got "excludedValue"  jsdoc/check-param-names
+  329:1  warning  Missing JSDoc @param "points" type                                           jsdoc/require-param-type
+  363:5  warning  Missing JSDoc block description                                              jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/PSAR/PSARIndicator.ts
+   46:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+   50:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+   72:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+   94:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  106:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  110:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+  129:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/PivotPoints/PivotPointsPoint.ts
+  30:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/ROC/ROCIndicator.ts
+  45:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/RSI/RSIIndicator.ts
+  42:1  warning  Missing JSDoc comment  jsdoc/require-jsdoc
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/SMA/SMAIndicator.ts
+  193:5  warning  Missing JSDoc block description  jsdoc/require-description
+  205:5  warning  Missing JSDoc block description  jsdoc/require-description
+  231:5  warning  Missing JSDoc block description  jsdoc/require-description
+  289:5  warning  Missing JSDoc block description  jsdoc/require-description
+  384:5  warning  Missing JSDoc block description  jsdoc/require-description
+  503:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/Supertrend/SupertrendIndicator.ts
+  55:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/VBP/VBPIndicator.ts
+  76:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Indicators/WMA/WMAIndicator.ts
+  42:1  warning  Missing JSDoc block description  jsdoc/require-description
+  58:1  warning  Missing JSDoc block description  jsdoc/require-description
+  81:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Navigator/ChartNavigatorComposition.ts
+   83:1  warning  Missing JSDoc block description  jsdoc/require-description
+  260:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Navigator/Navigator.ts
+  2028:25  warning  'chart' is never reassigned. Use 'const' instead      prefer-const
+  2029:25  warning  'navigator' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Navigator/NavigatorComposition.ts
+  75:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/RangeSelector/RangeSelector.ts
+   148:5  warning  Missing JSDoc block description                            jsdoc/require-description
+   218:1  warning  Missing JSDoc @param "redraw" description                  jsdoc/require-param-description
+   403:1  warning  Missing JSDoc @param "selected" description                jsdoc/require-param-description
+   416:1  warning  Missing JSDoc @param "chart" description                   jsdoc/require-param-description
+   658:1  warning  Missing JSDoc @param "rangeOptions" description            jsdoc/require-param-description
+   789:5  warning  Missing JSDoc block description                            jsdoc/require-description
+   792:1  warning  Missing JSDoc @param "name" description                    jsdoc/require-param-description
+   838:5  warning  Missing JSDoc block description                            jsdoc/require-description
+   841:1  warning  Missing JSDoc @param "name" description                    jsdoc/require-param-description
+   855:5  warning  Missing JSDoc block description                            jsdoc/require-description
+   923:9  warning  Missing JSDoc block description                            jsdoc/require-description
+  1636:1  warning  Missing JSDoc @param "xOffsetForExportButton" description  jsdoc/require-param-description
+  1637:1  warning  Missing JSDoc @param "width" description                   jsdoc/require-param-description
+  1665:5  warning  Missing JSDoc block description                            jsdoc/require-description
+  1834:1  warning  Missing JSDoc @param "xOffsetForExportButton" description  jsdoc/require-param-description
+  2007:5  warning  Missing JSDoc block description                            jsdoc/require-description
+  2091:1  warning  Missing JSDoc @param "options" description                 jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/RangeSelector/RangeSelectorComposition.ts
+  143:1  warning  Missing JSDoc block description  jsdoc/require-description
+  195:1  warning  Missing JSDoc block description  jsdoc/require-description
+  234:1  warning  Missing JSDoc block description  jsdoc/require-description
+  323:1  warning  Missing JSDoc comment            jsdoc/require-jsdoc
+  341:1  warning  Missing JSDoc block description  jsdoc/require-description
+  363:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/Scrollbar/Scrollbar.ts
+  448:5  warning  Missing JSDoc block description              jsdoc/require-description
+  451:1  warning  Missing JSDoc @param "renderer" description  jsdoc/require-param-description
+  452:1  warning  Missing JSDoc @param "options" description   jsdoc/require-param-description
+  453:1  warning  Missing JSDoc @param "chart" description     jsdoc/require-param-description
+  900:1  warning  Missing JSDoc @param "options" description   jsdoc/require-param-description
+  916:1  warning  Missing JSDoc @param "from" description      jsdoc/require-param-description
+  917:1  warning  Missing JSDoc @param "to" description        jsdoc/require-param-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/StockTools/StockToolbar.ts
+  717:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/StockTools/StockTools.ts
+  100:1  warning  Missing JSDoc block description  jsdoc/require-description
+  165:5  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/StockTools/StockToolsBindings.ts
+    96:9  warning  Missing JSDoc block description  jsdoc/require-description
+   148:9  warning  Missing JSDoc block description  jsdoc/require-description
+   203:9  warning  Missing JSDoc block description  jsdoc/require-description
+   256:9  warning  Missing JSDoc block description  jsdoc/require-description
+   311:9  warning  Missing JSDoc block description  jsdoc/require-description
+   364:9  warning  Missing JSDoc block description  jsdoc/require-description
+   420:9  warning  Missing JSDoc block description  jsdoc/require-description
+   464:9  warning  Missing JSDoc block description  jsdoc/require-description
+   509:9  warning  Missing JSDoc block description  jsdoc/require-description
+   562:9  warning  Missing JSDoc block description  jsdoc/require-description
+   619:9  warning  Missing JSDoc block description  jsdoc/require-description
+   679:9  warning  Missing JSDoc block description  jsdoc/require-description
+   743:9  warning  Missing JSDoc block description  jsdoc/require-description
+   812:9  warning  Missing JSDoc block description  jsdoc/require-description
+   881:9  warning  Missing JSDoc block description  jsdoc/require-description
+   951:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1008:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1061:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1128:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1241:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1304:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1365:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1397:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1497:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1529:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1560:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1591:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1619:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1646:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1673:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1720:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1749:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1777:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1825:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1857:9  warning  Missing JSDoc block description  jsdoc/require-description
+  1910:9  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/StockTools/StockToolsGui.ts
+   95:1  warning  Missing JSDoc block description  jsdoc/require-description
+  183:1  warning  Missing JSDoc block description  jsdoc/require-description
+  194:1  warning  Missing JSDoc block description  jsdoc/require-description
+  215:1  warning  Missing JSDoc block description  jsdoc/require-description
+  260:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+/Users/torstein/GitHub/highcharts/ts/Stock/StockTools/StockToolsUtilities.ts
+  258:1  warning  Missing JSDoc block description  jsdoc/require-description
+  348:1  warning  Missing JSDoc block description  jsdoc/require-description
+
+✖ 1140 problems (2 errors, 1138 warnings)
+  2 errors and 57 warnings potentially fixable with the `--fix` option.
+

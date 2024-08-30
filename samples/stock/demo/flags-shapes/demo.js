@@ -2,10 +2,11 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    const year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
+    const year = new Date(data[data.length - 1][0]).getFullYear(); // Get
+    // year of last data point
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -53,6 +54,7 @@
             }],
             onSeries: 'dataseries',
             shape: 'squarepin',
+            borderRadius: 3,
             width: 16
         }, {
             type: 'flags',

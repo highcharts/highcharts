@@ -65,6 +65,7 @@ async function transformExampleDir(examplesDir) {
 
         let newContent = contents
             .replaceAll('https://code.highcharts.com/dashboards/', '../../code/')
+            .replaceAll('https://code.highcharts.com/datagrid/', '../../code/')
             .replaceAll(/(?<!\.src)\.js(?!on)/gmu, '.src.js');
 
         if (fileName === 'demo.html') {
@@ -107,7 +108,7 @@ async function transformExampleDir(examplesDir) {
  * Promise to keep.
  */
 async function dashboardsDistExamples() {
-    const fsLib = require('../lib/fs');
+    const fsLib = require('../../libs/fs');
 
     const {
         helpme

@@ -13,7 +13,7 @@
 
         /* Language and Environment */
         // "target": "es2016",                               /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-        "target": "ES2016",
+        "target": "ES2020",
         // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
         "lib": [
             "DOM",
@@ -124,7 +124,8 @@
 
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-        // "skipLibCheck": true                              /* Skip type checking all .d.ts files. */
+        "skipDefaultLibCheck": true,
+        // "skipLibCheck": true,                             /* Skip type checking all .d.ts files. */
 
         /* Deprecated */
         // "ignoreDeprecations": "5.0",                      /* Silence deprecation errors of specified TypeScript version. */
@@ -134,7 +135,9 @@
     },
     "exclude": [
         "./Dashboards/**/*.ts",
+        "./DataGrid/**/*.ts",
         "./masters-dashboards/**/*.ts",
+        "./masters-datagrid/**/*.ts",
         "./masters-es5/**/*.ts"
     ],
     "include": [

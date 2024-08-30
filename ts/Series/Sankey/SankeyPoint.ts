@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,10 +25,8 @@ import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: ColumnSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { defined } = U;
 
@@ -39,45 +37,46 @@ const { defined } = U;
  * */
 
 class SankeyPoint extends ColumnSeries.prototype.pointClass {
+
     /* *
      *
      *  Properties
      *
      * */
 
-    public className: string = void 0 as any;
+    public className!: string;
 
     public column?: number;
 
-    public fromNode: SankeyPoint = void 0 as any;
+    public fromNode!: SankeyPoint;
 
     public hangsFrom?: SankeyPoint;
 
-    public level: number = void 0 as any;
+    public level!: number;
 
-    public linkBase: Array<number> = void 0 as any;
+    public linkBase!: Array<number>;
 
-    public linkColorMode: ('from'|'gradient'|'to') = void 0 as any;
+    public linkColorMode!: ('from'|'gradient'|'to');
 
-    public linksFrom: Array<SankeyPoint> = void 0 as any;
+    public linksFrom!: Array<SankeyPoint>;
 
-    public linksTo: Array<SankeyPoint> = void 0 as any;
+    public linksTo!: Array<SankeyPoint>;
 
-    public mass: number = void 0 as any;
+    public mass!: number;
 
-    public nodeX: number = void 0 as any;
+    public nodeX!: number;
 
-    public nodeY: number = void 0 as any;
+    public nodeY!: number;
 
-    public options: SankeyPointOptions = void 0 as any;
+    public options!: SankeyPointOptions;
 
     public outgoing?: boolean;
 
-    public series: SankeySeries = void 0 as any;
+    public series!: SankeySeries;
 
     public sum?: number;
 
-    public toNode: SankeyPoint = void 0 as any;
+    public toNode!: SankeyPoint;
 
     public weight?: number;
 
@@ -86,8 +85,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -164,8 +161,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         return this.isNode || typeof this.weight === 'number';
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -175,7 +170,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 interface SankeyPoint extends NodesComposition.PointComposition {
-    init(series: SankeySeries, options: SankeyPointOptions): SankeyPoint;
 }
 
 /* *

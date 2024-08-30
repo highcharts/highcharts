@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -63,7 +63,7 @@ declare module '../Series/SeriesOptions' {
 
 declare module './TimeTicksInfoObject' {
     interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -91,14 +91,6 @@ namespace DateTimeAxis{
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -111,14 +103,14 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('dateTime')) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
 
-            addEvent(AxisClass, 'init', onInit);
+            addEvent(AxisClass, 'afterSetType', onAfterSetType);
         }
 
         return AxisClass as (typeof Composition&T);
@@ -133,7 +125,7 @@ namespace DateTimeAxis{
      * @private
      * @function Highcharts.Axis#getTimeTicks
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and thecount.
+     * The interval in axis values (ms) and the count.
      * @param {number} min
      * The minimum in axis values.
      * @param {number} max
@@ -150,20 +142,16 @@ namespace DateTimeAxis{
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['userOptions'] }
+    function onAfterSetType(
+        this: Axis
     ): void {
-        const axis = this;
-        const options = e.userOptions;
-
-        if (options.type !== 'datetime') {
-            axis.dateTime = void 0;
+        if (this.type !== 'datetime') {
+            this.dateTime = void 0;
             return;
         }
 
-        if (!axis.dateTime) {
-            axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
+        if (!this.dateTime) {
+            this.dateTime = new Additions(this as DateTimeAxis.Composition);
         }
     }
 
@@ -215,9 +203,9 @@ namespace DateTimeAxis{
         ): Time.TimeNormalizedObject {
             const units = (
                 unitsOption || [[
-                    // unit name
+                    // Unit name
                     'millisecond',
-                    // allowed multiples
+                    // Allowed multiples
                     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
@@ -243,12 +231,12 @@ namespace DateTimeAxis{
                 ]] as Required<AxisOptions>['units']
             );
 
-            let unit = units[units.length - 1], // default unit is years
+            let unit = units[units.length - 1], // Default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
                 i;
 
-            // loop through the units to find the one that best fits the
+            // Loop through the units to find the one that best fits the
             // tickInterval
             for (i = 0; i < units.length; i++) {
                 unit = units[i];
@@ -257,7 +245,7 @@ namespace DateTimeAxis{
 
 
                 if (units[i + 1]) {
-                    // lessThan is in the middle between the highest multiple
+                    // `lessThan` is in the middle between the highest multiple
                     // and the next unit.
                     const lessThan = (
                         interval *
@@ -265,19 +253,19 @@ namespace DateTimeAxis{
                         timeUnits[units[i + 1][0]]
                     ) / 2;
 
-                    // break and keep the current unit
+                    // Break and keep the current unit
                     if (tickInterval <= lessThan) {
                         break;
                     }
                 }
             }
 
-            // prevent 2.5 years intervals, though 25, 250 etc. are allowed
+            // Prevent 2.5 years intervals, though 25, 250 etc. are allowed
             if (interval === timeUnits.year && tickInterval < 5 * interval) {
                 multiples = [1, 2, 5];
             }
 
-            // get the count
+            // Get the count
             const count = normalizeTickInterval(
                 tickInterval / interval,
                 multiples as any,

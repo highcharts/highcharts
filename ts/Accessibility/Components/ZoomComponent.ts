@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for chart zoom.
  *
@@ -25,6 +25,7 @@ import type {
     DOMElementType,
     SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type MapChart from '../../Core/Chart/MapChart';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
@@ -52,7 +53,7 @@ const {
  * @private
  */
 function chartHasMapZoom(
-    chart: Highcharts.MapNavigationChart
+    chart: MapChart
 ): boolean {
     return !!(
         (chart.mapView) &&
@@ -239,7 +240,7 @@ class ZoomComponent extends AccessibilityComponent {
      */
     public getMapZoomNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
-            chart = this.chart as Highcharts.MapNavigationChart,
+            chart = this.chart as MapChart,
             component = this;
 
         return new (KeyboardNavigationHandler as any)(chart, {
@@ -333,9 +334,7 @@ class ZoomComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler,
         event: KeyboardEvent
     ): number {
-        const chart: Highcharts.MapNavigationChart = (
-            this.chart as Highcharts.MapNavigationChart
-        );
+        const chart = this.chart as MapChart;
         const response = keyboardNavigationHandler.response;
         const isBackwards = event.shiftKey;
         const isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||
@@ -387,7 +386,7 @@ class ZoomComponent extends AccessibilityComponent {
     public onMapNavInit(
         direction: number
     ): void {
-        const chart: Highcharts.MapNavigationChart = this.chart as any,
+        const chart = this.chart as MapChart,
             zoomIn = chart.mapNavigation.navButtons[0],
             zoomOut = chart.mapNavigation.navButtons[1],
             initialButton = direction > 0 ? zoomIn : zoomOut;

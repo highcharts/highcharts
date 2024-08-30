@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -36,6 +36,7 @@ export interface LangStockToolsOptions {
 }
 
 export interface StockToolsGuiDefinitionsButtonOptions {
+    elementType?: 'span'|'button';
     symbol?: string;
 }
 

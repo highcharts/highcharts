@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,8 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
+
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -108,7 +110,7 @@ class DataConverter implements DataEvent.Emitter {
      */
     public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/,
+            regex: /^(\d{4})([\-\.\/])(\d{1,2})\2(\d{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -118,7 +120,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -126,10 +128,10 @@ class DataConverter implements DataEvent.Emitter {
                         NaN
                 );
             },
-            alternative: 'mm/dd/YYYY' // different format with the same regex
+            alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -139,7 +141,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 const d = new Date();
 
@@ -157,10 +159,10 @@ class DataConverter implements DataEvent.Emitter {
 
                 return Date.UTC(year, (match[3] as any) - 1, +match[1]);
             },
-            alternative: 'mm/dd/YY' // different format with the same regex
+            alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -344,7 +346,7 @@ class DataConverter implements DataEvent.Emitter {
             guessedFormat: Array<string> = [],
             i = 0,
             madeDeduction = false,
-            // candidates = {},
+            /// candidates = {},
             elem,
             j;
 
@@ -359,7 +361,7 @@ class DataConverter implements DataEvent.Emitter {
             ) {
                 thing = data[i]
                     .trim()
-                    .replace(/[-\.\/]/g, ' ')
+                    .replace(/[\-\.\/]/g, ' ')
                     .split(' ');
 
                 guessedFormat = [
@@ -390,7 +392,7 @@ class DataConverter implements DataEvent.Emitter {
                                 } else {
                                     guessedFormat[j] = 'YYYY';
                                 }
-                                // madeDeduction = true;
+                                /// madeDeduction = true;
                             } else if (
                                 elem > 12 &&
                                 elem <= 31
@@ -425,9 +427,11 @@ class DataConverter implements DataEvent.Emitter {
 
             // If the middle one is dd, and the last one is dd,
             // the last should likely be year.
-            if (guessedFormat.length === 3 &&
+            if (
+                guessedFormat.length === 3 &&
                 guessedFormat[1] === 'dd' &&
-                guessedFormat[2] === 'dd') {
+                guessedFormat[2] === 'dd'
+            ) {
                 guessedFormat[2] = 'YY';
             }
 
@@ -465,8 +469,10 @@ class DataConverter implements DataEvent.Emitter {
      * Options for the export.
      */
     public export(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         connector: DataConnector,
         options?: DataConverter.Options
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): string {
         this.emit<DataConverter.Event>({
             type: 'exportError',
@@ -519,10 +525,10 @@ class DataConverter implements DataEvent.Emitter {
             const floatValue = parseFloat(innerTrimedValue);
 
             if (+innerTrimedValue === floatValue) {
-                // string is numeric
+                // String is numeric
                 value = floatValue;
             } else {
-                // determine if a date string
+                // Determine if a date string
                 const dateValue = converter.parseDate(value);
 
                 result = isNumber(dateValue) ? 'Date' : 'string';
@@ -530,7 +536,7 @@ class DataConverter implements DataEvent.Emitter {
         }
 
         if (typeof value === 'number') {
-            // greater than milliseconds in a year assumed timestamp
+            // Greater than milliseconds in a year assumed timestamp
             result = value > 365 * 24 * 3600 * 1000 ? 'Date' : 'number';
         }
 
@@ -562,7 +568,10 @@ class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.UserOptions} options
      * Options of the DataConverter.
      */
-    public parse(options: DataConverter.UserOptions): void {
+    public parse(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        options: DataConverter.UserOptions
+    ): void {
         this.emit<DataConverter.Event>({
             type: 'parseError',
             columns: [],
@@ -574,8 +583,6 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Parse a date and return it as a number.
      *
-     * @function Highcharts.Data#parseDate
-     *
      * @param {string} value
      * Value to parse.
      *
@@ -583,7 +590,7 @@ class DataConverter implements DataEvent.Emitter {
      * Which of the predefined date formats
      * to use to parse date values.
      */
-    private parseDate(value: string, dateFormatProp?: string): number {
+    public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this,
             options = converter.options;
 
@@ -602,9 +609,9 @@ class DataConverter implements DataEvent.Emitter {
                     format = converter.dateFormats[key];
                     match = value.match(format.regex);
                     if (match) {
-                        // converter.options.dateFormat = dateFormat = key;
+                        // `converter.options.dateFormat` = dateFormat = key;
                         dateFormat = key;
-                        // converter.options.alternativeFormat =
+                        // `converter.options.alternativeFormat` =
                         // format.alternative || '';
                         result = format.parser(match);
                         break;
@@ -646,7 +653,7 @@ class DataConverter implements DataEvent.Emitter {
                     result = match - (
                         new Date(match)
                     ).getTimezoneOffset() * 60000;
-                    if (// reset dates without year in Chrome
+                    if (// Reset dates without year in Chrome
                         value.indexOf('2001') === -1 &&
                         (new Date(result)).getFullYear() === 2001
                     ) {
@@ -679,7 +686,7 @@ class DataConverter implements DataEvent.Emitter {
             str = str.replace(/^\s+|\s+$/g, '');
 
             // Clear white space insdie the string, like thousands separators
-            if (inside && /^[0-9\s]+$/.test(str)) {
+            if (inside && /^[\d\s]+$/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
         }
@@ -717,7 +724,7 @@ namespace DataConverter {
         );
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
-        readonly headers: string[];
+        readonly headers: string[]|ColumnNamesOptions;
     }
 
     export interface DateFormatCallbackFunction {

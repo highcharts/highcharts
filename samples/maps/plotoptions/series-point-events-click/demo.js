@@ -26,8 +26,11 @@
                 point: {
                     events: {
                         click: function () {
-                            const text = '<b>Clicked point</b><br>Series: ' + this.series.name +
-                                        '<br>Point: ' + this.name + ' (' + this.value + '/km²)',
+                            const text =
+                                '<b>Clicked point</b><br>Series: ' +
+                                this.series.name +
+                                '<br>Point: ' + this.name + ' (' + this.value +
+                                '/km²)',
                                 chart = this.series.chart;
                             if (!chart.clickLabel) {
                                 chart.clickLabel = chart.renderer

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -25,7 +25,7 @@ import type MapPointOptions from '../Map/MapPointOptions';
  * */
 
 export interface GeoHeatmapPointOptions extends MapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

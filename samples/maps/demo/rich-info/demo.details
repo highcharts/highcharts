@@ -6,6 +6,7 @@ requiresManualTesting: true
 js_wrap: b
 tags:
   - Highcharts Maps demo
+  - Dashboard
 categories:
   - Dynamic
 use_png_thumbnail: true

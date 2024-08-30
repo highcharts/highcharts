@@ -43,23 +43,6 @@ table.id === 'gremlins_movies';
 table.autoId === false;
 ```
 
-
-
-### Column Aliases
-
-Tables provide an alias system that allows access to columns under multiple
-names. That way also row objects can have different key-value pairs, but
-identical data.
-
-```TypeScript
-table.setColumnAlias('movie_title', 'title');
-table.getColumn('movie_title')[0] === table.getColumn('title')[0];
-table.deleteColumnAlias('movie_title');
-table.getColumn('movie_title') === undefined;
-```
-
-
-
 ### Column References
 
 For maximum performance you can retrieve columns from the table as a reference.
@@ -141,21 +124,6 @@ const chart = new Highcharts.chart('container', {
     }]
 });
 ```
-
-In case of a series that only accepts data points as objects, you might need to
-set up column aliases to retrieve the expected structure.
-
-```TypeScript
-table.setColumnAlias('name', 'year');
-table.setColumnAlias('label', 'title');
-const chart = new Highcharts.chart('container', {
-    series: [{
-        type: 'timeline',
-        data: table.getRowObjects(0, void 0, ['name', 'label']);
-    }]
-});
-```
-
 
 
 ### DataTable in DataGrid

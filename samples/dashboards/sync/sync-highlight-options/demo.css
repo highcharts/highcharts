@@ -1,0 +1,19 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#csv {
+    display: none;
+}
+
+.inputs {
+    text-align: right;
+    padding: 8px 16px;
+    background-color: var(--highcharts-neutral-color-5);
+    user-select: none;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.inputs label {
+    color: var(--highcharts-neutral-color-100);
+}

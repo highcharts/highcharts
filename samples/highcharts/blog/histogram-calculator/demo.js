@@ -286,7 +286,8 @@ const getMad = data => {
 
 const rawData = randomData(10000); // generate random normal data points
 const binnedData = binData(rawData); // bin the data
-const mad = getMad(rawData); // return the median, and the median absolute deviation
+const mad = getMad(rawData); // return the median, and the median absolute
+// deviation
 
 const chart = Highcharts.chart('container', {
     chart: {

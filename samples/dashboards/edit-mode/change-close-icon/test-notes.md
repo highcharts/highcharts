@@ -1,0 +1,1 @@
+1. Enable the edit mode and try to remove the component from the dashboard. The close button should be changed.

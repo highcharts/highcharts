@@ -214,7 +214,10 @@ const chart = Highcharts.chart('container', {
             useHTML: true,
             animate: true,
             format: '{chart.options.countries.(value).ucCode}<br>' +
-                '<span class="f32"><span class="flag {value}"></span></span>',
+                '<span class="f32">' +
+                '<span style="display:inline-block;height:32px;' +
+                'vertical-align:text-top;" class="flag {value}">' +
+                '</span></span>',
             style: {
                 textAlign: 'center'
             }
@@ -293,8 +296,11 @@ locations.forEach(location => {
             },
             subtitle: {
                 text: 'Comparing to results from Summer Olympics ' +
-                    (location.year - 4) + ' - Source: <a href="https://olympics.com/en/olympic-games/' +
-                    (location.city.toLowerCase()) + '-' + (location.year) + '/medals" target="_blank">Olympics</a>'
+                    (location.year - 4) +
+                    ' - Source: <a href="https://olympics.com/en/olympic-games/' +
+                    (location.city.toLowerCase()) +
+                    '-' + (location.year) +
+                    '/medals" target="_blank">Olympics</a>'
             },
             series: [{
                 name: location.year - 4,

@@ -6,15 +6,15 @@
 /**
  * Constructor for a test chart
  */
-declare type TestChartConstructor = (container: (string | Highcharts.HTMLDOMElement), options: Highcharts.Options) => Highcharts.Chart;
+type TestChartConstructor = (container: (string | Highcharts.HTMLDOMElement), options: Highcharts.Options) => Highcharts.Chart;
 /**
  * Callback for one test
  */
-declare type TestTemplateCallback = (testTemplate: TestTemplate) => void;
+type TestTemplateCallback = (testTemplate: TestTemplate) => void;
 /**
  * Initializer for each test
  */
-declare type TestTemplateInitializer = (this: Highcharts.Chart, chartOptions: Highcharts.Options) => void;
+type TestTemplateInitializer = (this: Highcharts.Chart, chartOptions: Highcharts.Options) => void;
 interface TestChart extends Highcharts.Chart {
     template?: string;
 }

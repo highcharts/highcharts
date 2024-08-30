@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -133,8 +133,6 @@ class ProxyElement {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Fake a click event on the target.
@@ -263,7 +261,7 @@ class ProxyElement {
 
                     e.stopPropagation();
 
-                    // #9682, #15318: Touch scrolling didnt work when touching
+                    // #9682, #15318: Touch scrolling didn't work when touching
                     // proxy
                     if (!isTouchEvent) {
                         e.preventDefault();
@@ -307,11 +305,12 @@ class ProxyElement {
             (clickTarget as SVGElement).element :
             clickTarget as SVGDOMElement;
         const posElement = this.target.visual || clickTargetElement;
-        const chartDiv: HTMLDOMElement = this.chart.renderTo;
+        const chartDiv: HTMLDOMElement = this.chart.renderTo,
+            pointer = this.chart.pointer;
 
-        if (chartDiv && posElement && posElement.getBoundingClientRect) {
+        if (chartDiv && posElement?.getBoundingClientRect && pointer) {
             const rectEl = posElement.getBoundingClientRect(),
-                chartPos = this.chart.pointer.getChartPosition();
+                chartPos = pointer.getChartPosition();
 
             return {
                 x: (rectEl.left - chartPos.left) / chartPos.scaleX,

@@ -71,6 +71,7 @@ QUnit.test('Column pyramid series - 0 dataLabel #12514', function (assert) {
     assert.strictEqual(
         testedLabel.translateY !== -9999,
         true,
-        'Label should be translated and had different position translate attributes than starting values #12514'
+        'Label should be translated and had different position translate ' +
+        'attributes than starting values #12514'
     );
 });

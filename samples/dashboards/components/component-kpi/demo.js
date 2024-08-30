@@ -4,36 +4,39 @@ function random(max, min = 0) {
 
 const board = Dashboards.board('container', {
     components: [{
-        cell: 'kpi-00',
+        renderTo: 'kpi-00',
         type: 'KPI',
         value: 888
     }, {
-        cell: 'kpi-01',
+        renderTo: 'kpi-01',
         type: 'KPI',
         value: 900
     },  {
-        cell: 'kpi-02',
+        renderTo: 'kpi-02',
         type: 'KPI',
         title: 'Cakes',
         value: 7,
         subtitle: 'Consumed daily',
+        linkedValueTo: {
+            enabled: false
+        },
         chartOptions: {
             series: [{
                 data: [734, 244, 685, 250, 920, 320, 200, 150]
             }]
         }
     }, {
-        cell: 'kpi-03',
+        renderTo: 'kpi-03',
         type: 'KPI',
         title: 'Active users'
     }, {
-        cell: 'kpi-10',
+        renderTo: 'kpi-10',
         type: 'KPI',
         title: 'Change',
         value: 222,
         valueFormatter: v => `${(v / 10).toFixed(1)}%`
     }, {
-        cell: 'kpi-11',
+        renderTo: 'kpi-11',
         type: 'KPI',
         title: 'Cash',
         value: 88,
@@ -42,9 +45,10 @@ const board = Dashboards.board('container', {
             type: 'diffpercent'
         }
     }, {
-        cell: 'kpi-12',
+        renderTo: 'kpi-12',
         type: 'KPI',
         title: 'Progress',
+        value: 70,
         chartOptions: {
             chart: {
                 type: 'solidgauge'
@@ -68,16 +72,18 @@ const board = Dashboards.board('container', {
                 },
                 rounded: true,
                 data: [{
-                    y: 70,
                     innerRadius: '60%',
                     outerRadius: '100%'
                 }]
             }]
         }
     }, {
-        cell: 'kpi-13',
+        renderTo: 'kpi-13',
         type: 'KPI',
         title: 'Visits last 24 hours',
+        linkedValueTo: {
+            enabled: false
+        },
         chartOptions: {
             yAxis: {
                 min: 0,
@@ -133,9 +139,8 @@ function setValues() {
                 true,
                 true
             );
-        } else if (chart) {
-            chart.series[0].setData([randomValue]);
         }
+
         element.component.update({
             value: randomValue
         });

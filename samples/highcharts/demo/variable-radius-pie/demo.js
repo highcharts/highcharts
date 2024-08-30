@@ -4,12 +4,13 @@ Highcharts.chart('container', {
         type: 'variablepie'
     },
     title: {
-        text: 'Countries compared by population density and total area, 2022.',
+        text: 'Countries compared by population density and total area, 2024.',
         align: 'left'
     },
     tooltip: {
         headerFormat: '',
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> ' +
+            '{point.name}</b><br/>' +
             'Area (square km): <b>{point.y}</b><br/>' +
             'Population density (people per square km): <b>{point.z}</b><br/>'
     },
@@ -22,15 +23,15 @@ Highcharts.chart('container', {
         data: [{
             name: 'Spain',
             y: 505992,
-            z: 92
+            z: 95
         }, {
             name: 'France',
             y: 551695,
-            z: 119
+            z: 118
         }, {
             name: 'Poland',
             y: 312679,
-            z: 121
+            z: 131
         }, {
             name: 'Czech Republic',
             y: 78865,
@@ -38,15 +39,15 @@ Highcharts.chart('container', {
         }, {
             name: 'Italy',
             y: 301336,
-            z: 200
+            z: 198
         }, {
             name: 'Switzerland',
             y: 41284,
-            z: 213
+            z: 224
         }, {
             name: 'Germany',
             y: 357114,
-            z: 235
+            z: 238
         }],
         colors: [
             '#4caefe',

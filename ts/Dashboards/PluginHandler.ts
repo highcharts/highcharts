@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -113,7 +113,7 @@ namespace PluginHandler {
         } = plugin;
 
         if (registry[key]) {
-            // only throw error with custom key
+            // Only throw error with custom key
             if (key !== plugin.name) {
                 throw new Error(`Plugin '${key}' already registered.`);
             }

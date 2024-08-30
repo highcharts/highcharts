@@ -4,6 +4,7 @@ authors:
   - Mustapha Mekhatria
 js_wrap: b
 requiresManualTesting: true
+use_png_thumbnail: true
 tags:
   - Highcharts Maps demo
 categories:

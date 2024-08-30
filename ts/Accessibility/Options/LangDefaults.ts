@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -216,7 +216,7 @@ const langOptions: DeepPartial<LangOptions> = {
         /**
          * Navigator language options for accessibility.
          *
-         * @since next
+         * @since 11.2.0
          */
         navigator: {
             /**
@@ -451,7 +451,7 @@ const langOptions: DeepPartial<LangOptions> = {
             description: '{description}',
 
             /**
-             * xAxis description for series if there are multiple xAxes in
+             * X-axis description for series if there are multiple xAxes in
              * the chart.
              *
              * @since 6.0.6
@@ -459,7 +459,7 @@ const langOptions: DeepPartial<LangOptions> = {
             xAxisDescription: 'X axis, {name}',
 
             /**
-             * yAxis description for series if there are multiple yAxes in
+             * Y-axis description for series if there are multiple yAxes in
              * the chart.
              *
              * @since 6.0.6

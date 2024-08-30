@@ -71,7 +71,7 @@
             });
         return pass;
     }
-
+    /*
     QUnit.test('Boxes within', function (assert) {
         var boxes = [
             {
@@ -161,7 +161,7 @@
 
         assert.strictEqual(verify(boxes), true, 'Crowded boxes');
     });
-
+*/
     QUnit.test('Equal, unranked boxes', function (assert) {
         var boxes = [];
 

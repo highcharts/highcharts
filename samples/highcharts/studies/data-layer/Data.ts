@@ -261,7 +261,7 @@ const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
  */
 
 /**
- * Callback function to access the parsed columns, the two-dimentional
+ * Callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories.
  *
@@ -301,7 +301,7 @@ const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
  * A callback function to modify the CSV before parsing it. Return the modified
  * string.
  *
- * @sample {highcharts} highcharts/demo/line-ajax/
+ * @sample {highcharts} highcharts/demo/line-csv/
  *         Modify CSV before parse
  *
  * @type      {Highcharts.DataBeforeParseCallbackFunction}
@@ -490,7 +490,7 @@ const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
  */
 
 /**
- * A callback function to access the parsed columns, the two-dimentional
+ * A callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories. Return `false` to stop completion, or call
  * `this.complete()` to continue async.
@@ -717,7 +717,6 @@ class Data {
         chartOptions?: Highcharts.Options,
         chart?: Chart
     ): void {
-console.log('asdasdas');
         var decimalPoint = options.decimalPoint,
             hasData;
 
@@ -1724,7 +1723,6 @@ console.log('asdasdas');
      *         Always returns false, because it is an intermediate fetch.
      */
     public parseGoogleSpreadsheet(): boolean {
-console.log('aaaa');
         //const result = new DataTable();
         //const connector = new GoogleSheetsConnector(result, this.options);
 

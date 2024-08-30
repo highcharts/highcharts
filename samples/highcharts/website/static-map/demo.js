@@ -24,7 +24,7 @@ const finalMap = function () {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+            'https://www.highcharts.com/samples/data/world-population-density.json'
         ).then(response => response.json());
 
         // Assign id's
@@ -42,9 +42,15 @@ const finalMap = function () {
                 },
                 events: {
                     load: function () {
-                        const mapSeries = document.querySelector('.highcharts-map-series');
-                        const title = document.querySelector('.highcharts-title');
-                        const subtitle = document.querySelector('.highcharts-subtitle');
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
+                        const title = document.querySelector(
+                            '.highcharts-title'
+                        );
+                        const subtitle = document.querySelector(
+                            '.highcharts-subtitle'
+                        );
                         mapSeries.style.opacity = 0;
                         setTimeout(function () {
                             mapSeries.style.opacity = 0;
@@ -57,7 +63,9 @@ const finalMap = function () {
                         }, 500);
                     },
                     redraw: function () {
-                        const mapSeries = document.querySelector('.highcharts-map-series');
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
                         mapSeries.classList.add('show');
 
                     }
@@ -131,7 +139,9 @@ const finalMap = function () {
             },
             accessibility: {
                 screenReaderSection: {
-                    beforeChartFormat: '<h1>Population density</h1><p>Interactive map showing population density of the world\'s countries.</p>'
+                    beforeChartFormat: '<h1>Population density</h1><p>' +
+                        'Interactive map showing population density of the ' +
+                        'world\'s countries.</p>'
                 }
             },
             series: [{

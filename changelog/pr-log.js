@@ -50,29 +50,48 @@ const parseUpgradeNotes = p => {
 
 const loadPulls = async (
     since,
-    branches = 'master'
+    branches = 'master',
+    isDashboards = false
 ) => {
     let page = 1;
     let pulls = [];
+    let lastTagSha;
 
     const tags = await octokit.repos.listTags({
         owner: 'highcharts',
         repo: 'highcharts'
     }).catch(error);
 
-    const commit = await octokit.repos.getCommit({
-        owner: 'highcharts',
-        repo: 'highcharts',
-        ref: since || tags.data[0].commit.sha
-    }).catch(error);
+    lastTagSha = tags.data[0].commit.sha;
+
+    if (isDashboards) {
+        const dashboardsTags = await octokit.request(
+            'GET /repos/highcharts/highcharts/git/matching-refs/tags/dash',
+            {
+                owner: 'highcharts',
+                repo: 'highcharts'
+            }
+        );
+
+        lastTagSha =
+            dashboardsTags.data[dashboardsTags.data.length - 1].object.sha;
+    }
+
+    const ref = since || lastTagSha,
+        commit = await octokit.repos.getCommit({
+            owner: 'highcharts',
+            repo: 'highcharts',
+            ref
+        }).catch(error);
 
     console.log(
-        'Generating log after latest tag'.green,
+        `Generating log since tag: ${ref}`.green,
         commit.headers['last-modified']
     );
     const after = Date.parse(commit.headers['last-modified']);
 
     const branchesArr = branches.split(',');
+    let emptyPageCount = 0;
     while (page < 20) {
         const pageData = [];
         for (const base of branchesArr) {
@@ -102,7 +121,12 @@ const loadPulls = async (
 
         console.log(`Loaded pulls page ${page} (${pageData.length} items)`.green);
 
+        // After 3 consecutive empty pages, it's safe to assume that we have
+        // loaded all relevant PRs.
         if (pageData.length === 0) {
+            emptyPageCount++;
+        }
+        if (emptyPageCount >= 3) {
             break;
         }
 
@@ -112,7 +136,7 @@ const loadPulls = async (
     return pulls;
 };
 
-module.exports = async (since, fromCache, branches) => {
+module.exports = async (since, fromCache, branches, isDashboards) => {
 
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
@@ -122,7 +146,7 @@ module.exports = async (since, fromCache, branches) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since, branches);
+        pulls = await loadPulls(since, branches, isDashboards);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 

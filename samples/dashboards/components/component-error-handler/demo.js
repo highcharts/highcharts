@@ -18,7 +18,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highchartss', // wrong type of the component
         chartOptions: {
             series: [{
@@ -27,7 +27,7 @@ Dashboards.board('container', {
         }
     }, {
         type: 'HTML',
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         elements: [{
             // tagName: 'img', // missing tagName param
             attributes: {
@@ -35,7 +35,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -44,7 +44,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-11', // missing cell id
+        renderTo: 'dashboard-col-11', // missing cell id
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -55,7 +55,15 @@ Dashboards.board('container', {
         connector: {
             id: 'wrong-id'
         },
-        cell: 'dashboard-col-3',
+        renderTo: 'dashboard-col-3',
+        type: 'Highcharts',
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }
+    }, {
+        // renderTo is missing
         type: 'Highcharts',
         chartOptions: {
             series: [{

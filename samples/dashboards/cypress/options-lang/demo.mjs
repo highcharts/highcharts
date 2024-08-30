@@ -1,5 +1,6 @@
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
@@ -29,10 +30,7 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp',
-    small: 'sm',
-    medium: 'md',
-    large: 'lg'
+    dataLabels: 'Data merkelapp'
 };
 
 Dashboards.board('container', {
@@ -57,17 +55,33 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
+            chart: {
+                animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 data: [1, 2, 3]
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
+            chart: {
+                animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 data: [1, 2, 3]
             }]

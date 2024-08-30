@@ -193,7 +193,7 @@ QUnit.test('Marker size and position', function (assert) {
     series.points[1].setState('hover');
 
     assert.strictEqual(
-        Math.floor(series.points[1].plotX),
+        Math.round(series.points[1].plotX),
         series.stateMarkerGraphic.attr('x'),
         'Correct image x-position (#7273)'
     );
@@ -303,6 +303,7 @@ QUnit.test('visibility', assert => {
     assert.strictEqual(
         series2.stateMarkerGraphic.visibility,
         'hidden',
-        'Should have stateMarkerGraphic on Series 2 with visibility "hidden" when point is outside extremes. #11493'
+        'Should have stateMarkerGraphic on Series 2 with visibility "hidden" ' +
+        'when point is outside extremes. #11493'
     );
 });

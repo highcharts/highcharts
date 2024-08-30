@@ -1,6 +1,7 @@
 /// <reference lib="dom" />
 import type { BenchResults } from './benchmark.d.ts';
 import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
+import type { Dir } from 'fs';
 import { join, resolve } from 'node:path';
 
 const TMP_FILE_PATH = '../../tmp/benchmarks';
@@ -77,12 +78,9 @@ async function compare (base: BenchResults, actual: BenchResults){
     const filtered: Record<'base'|'actual', BenchResults> = actual.reduce((carry,entry) =>{
         const baseEntry = base.find(b => b.sampleSize === entry.sampleSize);
 
-        if (baseEntry){
+        if (baseEntry) {
             // Compare
             const diff = baseEntry.avg - entry.avg;
-            const percentage = (diff / baseEntry.avg) * 100;
-
-
             const baseOutliers = getOutliers(baseEntry.results, baseEntry.Q1, baseEntry.Q3);
             const actualOutliers = getOutliers(entry.results, entry.Q1, entry.Q3);
 
@@ -179,11 +177,13 @@ async function compare (base: BenchResults, actual: BenchResults){
 
     // test, averages, diff
     const markdownTableRows = actual.map((entry, i) =>{
-      return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(entry.avg - base[i].avg)} |`;
+        const diff = base[i].avg - entry.avg;
+
+        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / entry.avg) * 100}%`;
     });
 
-    const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff |
-| --- | --- | --- | --- |`;
+    const markdownTableHeader = `| Sample size | This PR avg (ms) | master avg (ms) | Diff | Percent diff |
+| --- | --- | --- | --- | --- |`;
 
     await appendFile(
         join(TMP_FILE_PATH, 'table.md'),
@@ -213,43 +213,74 @@ ${markdownTableRows.join('\n')}
     );
 }
 
-async function compareBenchmarks (){
-    const data = await opendir(join(TMP_FILE_PATH, 'actual')).catch(()=>{
+async function compareFile(actualFilePath: string, baseFilePath: string, comparisonsMade: number) {
+
+    const baseFileContent = await readFile(
+        actualFilePath,
+        'utf-8'
+    ).catch((e)=> console.log(e, 'couldnt read actual file'));
+
+    if (!baseFileContent) {
+        return comparisonsMade;
+    }
+        // Do a compare
+        const actual = await readFile(
+        baseFilePath,
+            'utf-8'
+        ).catch(() => {throw new Error('File vanished');});
+
+        const base = JSON.parse(baseFileContent);
+        const act = JSON.parse(actual);
+
+        // They should be arrays of objects
+    if (!(Array.isArray(base) && Array.isArray(act))) {
+        return comparisonsMade;
+    }
+    await compare(base, act);
+    return comparisonsMade+1;
+
+}
+
+async function compareDirectories(
+    comparisonsMade: number,
+    baseDirPath: string,
+    actualDirPath: string
+) {
+
+    let directory = await opendir(actualDirPath).catch(()=>{
         throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist. Try running \`npm run benchmark\``);
     });
+    for await (const dirEntry of directory) {
 
+        const isFile = dirEntry.isFile() && dirEntry.name.endsWith('.json');
+        const isDir = dirEntry.isDirectory();
+        if (isFile){
+            comparisonsMade = await compareFile(
+                join(actualDirPath, dirEntry.name),
+                join(baseDirPath, dirEntry.name),
+                comparisonsMade
+            );
+        } else if(isDir) {
+            comparisonsMade = await compareDirectories(
+                comparisonsMade,
+                join(baseDirPath, dirEntry.name),
+                join(actualDirPath, dirEntry.name)
+            );
+        }
+    }
+    return comparisonsMade;
+}
+async function compareBenchmarks (){
 
     await writeFile(join(TMP_FILE_PATH, 'table.md'), '');
     await writeFile(join(TMP_FILE_PATH, 'report.html'), `
         <script src="https://code.highcharts.com/highcharts.js"></script>`);
 
-    let comparisonsMade = 0;
-
-    for await (const dirent of data){
-        if (dirent.isFile() && dirent.name.endsWith('.json')){
-            const baseFileContent = await readFile(
-                join(TMP_FILE_PATH, 'base', dirent.name),
-                'utf-8'
-            ).catch(()=> undefined);
-
-            if (baseFileContent) {
-                // Do a compare
-                const actual = await readFile(
-                    join(TMP_FILE_PATH, 'actual', dirent.name),
-                    'utf-8'
-                ).catch(() => {throw new Error('File vanished');});
-
-                const base = JSON.parse(baseFileContent);
-                const act = JSON.parse(actual);
-
-                // They should be arrays of objects
-                if (Array.isArray(base) && Array.isArray(act)){
-                    await compare(base, act);
-                    comparisonsMade++;
-                }
-            }
-        }
-    }
+    let comparisonsMade = await compareDirectories(
+        0,
+        join(TMP_FILE_PATH, 'base'),
+        join(TMP_FILE_PATH, 'actual')
+    );
 
     if (comparisonsMade > 0){
         console.log('Report saved at', resolve(__dirname,TMP_FILE_PATH, 'report.html'));

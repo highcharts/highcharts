@@ -4,10 +4,15 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
+
+const highchartsCSS = fs.readFileSync(
+    path.join(__dirname, '../code/css/highcharts.css'),
+    'utf8'
+);
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -23,10 +28,10 @@ function getProperties() {
 
     try {
         // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER || process.env.BROWSERSTACK_USERNAME;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY || process.env.BROWSERSTACK_ACCESS_KEY;
 
-        if (!process.env.BROWSERSTACK_USER) {
+        if (!properties['browserstack.username']) {
             // fallback to good old property file
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
@@ -59,7 +64,7 @@ function getHTML(path) {
         // load async, so sometimes they're loaded prior to screenshot,
         // sometimes not
         .replace(
-            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
         );
 
@@ -74,7 +79,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 
@@ -86,9 +91,9 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
-            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-\.]+$)/
         ) || src.match(
-            /^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
         if (innerMatch) {
@@ -107,7 +112,7 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to the map collection
         innerMatch = src.match(
-            /^(https:\/\/code.highcharts.com\/mapdata\/([a-z\/\.\-]+))$/
+            /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
         if (innerMatch) {
             filename = innerMatch[2];
@@ -123,7 +128,6 @@ function resolveJSON(js) {
         }
 
         if (data) {
-
             if (/json$/.test(filename)) {
                 codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
             }
@@ -132,7 +136,33 @@ function resolveJSON(js) {
             }
         }
     }
+
     codeblocks.push(js);
+
+    // Add some files that are referenced by variables in the demos, so we're
+    // not able to parse the static file name.
+    if (js.indexOf('fetch') !== -1) {
+        [
+            'aapl-c.json',
+            'goog-c.json',
+            'msft-c.json'
+        ].forEach(filename => {
+                const data = fs.readFileSync(
+                    path.join(
+                        __dirname,
+                        '..',
+                        'samples/data',
+                        filename
+                    ),
+                    'utf8'
+                );
+                codeblocks.push(`window.JSONSources[
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/${filename}'
+                ] = ${data};`);
+            }
+        );
+    }
+
     return codeblocks.join('\n');
 }
 
@@ -164,8 +194,8 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-module.exports = function (config) {
 
+module.exports = function (config) {
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
 
@@ -223,7 +253,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = (
+    let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -232,6 +262,10 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
+
+    if (argv.reverse) {
+        tests = require('glob').sync(tests[0]).reverse();
+    }
 
     // Get the files
     let files = require('./karma-files.json');
@@ -243,7 +277,6 @@ module.exports = function (config) {
             // Essentials
             'test/call-analyzer.js',
             'test/test-controller.js',
-            'test/test-touch.js',
             'test/test-utilities.js',
             'test/json-sources.js',
 
@@ -295,7 +328,8 @@ module.exports = function (config) {
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
             'samples/highcharts/blog/gdp-growth-annual/demo.js',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/website/xmas-2021/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -304,7 +338,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/combo-meteogram/demo.js',
 
             // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-ajax/demo.js',
+            'samples/highcharts/demo/line-csv/demo.js',
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
@@ -346,6 +380,10 @@ module.exports = function (config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
+        browserConsoleLogOptions: {
+            path: `${process.cwd()}/test/console.log`,
+            terminal: false
+        },
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
@@ -375,8 +413,8 @@ module.exports = function (config) {
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);
@@ -452,9 +490,35 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
+
 
                     // unit tests
-                    if (path.indexOf('unit-tests') !== -1) {
+                    if (path.includes('unit-tests')) {
+                        // Inject css for
+                        if (/styledMode:\s+true/.test(js)) {
+                            js =`window.highchartsCSS = \`${highchartsCSS}\`;`
+                            + `
+                            QUnit.testStart(()=>{
+                                Highcharts.setOptions({
+                                    chart: {
+                                        events: {
+                                            load: function () {
+                                                window.setHCStyles(this);
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+
+                            QUnit.testDone(()=>{
+                                document.querySelector("#test-hc-styles")?.remove();
+                            });
+                            `
+                                + js;
+                        }
+
                         done(js);
                         return;
                     }
@@ -558,8 +622,11 @@ module.exports = function (config) {
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
             build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
-            name: `circle-ci-karma-highcharts-${randomString}`,
-            localIdentifier: randomString, // to avoid instances interfering with each other.
+            name: `karma-highcharts-${randomString}`,
+            startTunnel: false,
+            tunnelIdentifier: 'karma-highcharts',
+            localIdentifier: 'karma-highcharts', // to avoid instances interfering with each other.
+            forcelocal: true,
             video: false,
             retryLimit: 1,
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
@@ -614,9 +681,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
-
+function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
@@ -690,10 +755,6 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
     // Include highcharts.css, to be inserted into the SVG in
     // karma-setup.js:getSVG
     if (scriptBody.indexOf('styledMode: true') !== -1) {
-        const highchartsCSS = fs.readFileSync(
-            path.join(__dirname, '../code/css/highcharts.css'),
-            'utf8'
-        );
         html += `<style id="highcharts.css">${highchartsCSS}</style>`;
 
         let demoCSS = fs.readFileSync(

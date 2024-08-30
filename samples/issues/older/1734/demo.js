@@ -6,7 +6,8 @@ $(function () {
         },
 
         title: {
-            text: 'Highcharts <= 3.0.9: Zooming outside the data range had unexpected effects.'
+            text: 'Highcharts <= 3.0.9: Zooming outside the data range had ' +
+                'unexpected effects.'
         },
 
         xAxis: {

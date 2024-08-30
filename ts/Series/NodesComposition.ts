@@ -129,14 +129,6 @@ namespace NodesComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -148,21 +140,15 @@ namespace NodesComposition {
         PointClass: typeof Point,
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
+        const pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
+        pointProto.setNodeState = setNodeState;
+        pointProto.setState = setNodeState;
+        pointProto.update = updateNode;
 
-            pointProto.setNodeState = setNodeState;
-            pointProto.setState = setNodeState;
-            pointProto.update = updateNode;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
-            seriesProto.destroy = destroy;
-            seriesProto.setData = setData;
-        }
+        seriesProto.destroy = destroy;
+        seriesProto.setData = setData;
 
         return SeriesClass as (T&typeof SeriesComposition);
     }
@@ -191,7 +177,7 @@ namespace NodesComposition {
 
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
-            const newNode = (new PointClass()).init(
+            const newNode = new PointClass(
                 this,
                 extend({
                     className: 'highcharts-node',
@@ -258,7 +244,7 @@ namespace NodesComposition {
         }
 
         node.formatPrefix = 'node';
-        // for use in formats
+        // For use in formats
         node.name = node.name || node.options.id || '';
         // Mass is used in networkgraph:
         node.mass = pick(
@@ -274,7 +260,7 @@ namespace NodesComposition {
     }
 
     /**
-     * Destroy alll nodes and links.
+     * Destroy all nodes and links.
      * @private
      */
     export function destroy(
@@ -341,7 +327,7 @@ namespace NodesComposition {
                 point.toNode = nodeLookup[point.to];
             }
 
-            point.name = point.name || point.id; // for use in formats
+            point.name = point.name || point.id; // For use in formats
         }, this);
 
         // Store lookup table for later use
@@ -428,7 +414,7 @@ namespace NodesComposition {
         );
 
         if (this.isNode) {
-            // this.index refers to `series.nodes`, not `options.nodes` array
+            // `this.index` refers to `series.nodes`, not `options.nodes` array
             const nodeIndex = (nodes || [])
                     .reduce( // Array.findIndex needs a polyfill
                         (prevIndex, n, index): number =>

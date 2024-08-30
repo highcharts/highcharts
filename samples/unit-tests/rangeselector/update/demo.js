@@ -25,6 +25,7 @@ QUnit.test('RangeSelector update', function (assert) {
 
     assert.ok(chart.rangeSelector, 'chart.rangeSelector should be set');
 
+
     assert.strictEqual(
         chart.spacing[2],
         100,
@@ -57,5 +58,24 @@ QUnit.test('RangeSelector update', function (assert) {
         eventCount(chart),
         before,
         '#14856: It should not leak chart event listeners on update'
+    );
+});
+
+QUnit.test('RangeSelector update hover', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            pointInterval: 24 * 36e5,
+            pointStart: Date.UTC(2013, 0, 1),
+            data: Array.from({ length: 100 }, (_, x) => Math.sin(x / 10) * 10)
+        }]
+    });
+    const controller = new TestController(chart);
+    controller.mouseEnter([100, 15], [100, 25], {});
+    chart.redraw();
+
+    assert.strictEqual(
+        chart.rangeSelector.buttons[1].fill,
+        '#e6e6e6',
+        'Color of the button should be correct'
     );
 });

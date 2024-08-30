@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,8 @@ import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -59,14 +61,6 @@ declare module '../Options' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -94,7 +88,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
     this.zAxis = [];
 
-    zAxisOptions.forEach((axisOptions, i): void => {
+    zAxisOptions.forEach((axisOptions): void => {
         this.addZAxis(axisOptions).setScale();
     });
 }
@@ -107,6 +101,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
+ * @private
  */
 class ZAxis extends Axis implements AxisLike {
 
@@ -119,15 +114,20 @@ class ZAxis extends Axis implements AxisLike {
     public static compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
+        if (!chartProto.addZAxis) {
 
-            const chartProto = ChartClass.prototype;
+            defaultOptions.zAxis = merge(defaultOptions.xAxis, {
+                offset: 0,
+                lineWidth: 0
+            });
 
             chartProto.addZAxis = chartAddZAxis;
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
+
+            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
         }
 
     }
@@ -166,8 +166,6 @@ class ZAxis extends Axis implements AxisLike {
      * */
 
     public getSeriesExtremes(): void {
-        const chart = this.chart;
-
         this.hasVisibleSeries = false;
 
         // Reset properties in case we're redrawing (#3353)
@@ -179,13 +177,10 @@ class ZAxis extends Axis implements AxisLike {
             this.stacking.buildStacks();
         }
 
-        // loop through this axis' series
+        // Loop through this axis' series
         this.series.forEach((series): void => {
 
-            if (
-                series.visible ||
-                !chart.options.chart.ignoreHiddenSeries
-            ) {
+            if (series.reserveSpace()) {
 
                 let threshold = series.options.threshold;
 
@@ -225,20 +220,6 @@ class ZAxis extends Axis implements AxisLike {
             chart.options.chart.options3d.depth
         ) || 0;
         this.right = chart.chartWidth - this.width - this.left;
-    }
-
-    /**
-     * @private
-     */
-    public setOptions(userOptions: DeepPartial<AxisOptions>): void {
-
-        userOptions = merge<DeepPartial<AxisOptions>>({
-            offset: 0,
-            lineWidth: 0
-        }, userOptions);
-
-
-        super.setOptions(userOptions);
     }
 
 }

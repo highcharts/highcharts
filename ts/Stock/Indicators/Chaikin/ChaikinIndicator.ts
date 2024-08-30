@@ -77,13 +77,13 @@ class ChaikinIndicator extends EMAIndicator {
      */
     public static defaultOptions: ChaikinOptions = merge(EMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Chaikin Oscillator
+         * Parameters used in calculation of Chaikin Oscillator
          * series points.
          *
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -112,9 +112,9 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
-    public data: Array<ChaikinPoint> = void 0 as any;
-    public options: ChaikinOptions = void 0 as any;
-    public points: Array<ChaikinPoint> = void 0 as any;
+    public data!: Array<ChaikinPoint>;
+    public options!: ChaikinOptions;
+    public points!: Array<ChaikinPoint>;
 
     /* *
      *
@@ -250,4 +250,4 @@ export default ChaikinIndicator;
  * @apioption series.chaikin
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

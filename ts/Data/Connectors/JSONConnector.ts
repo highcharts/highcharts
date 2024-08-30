@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -99,6 +99,7 @@ class JSONConnector extends DataConnector {
      * The attached parser that converts the data format to the table.
      */
     public readonly converter: JSONConverter;
+
     /* *
      *
      *  Functions
@@ -127,26 +128,24 @@ class JSONConnector extends DataConnector {
             table
         });
 
-        // If already loaded, clear the current rows
-        table.deleteRows();
 
-        return Promise.resolve(
-            dataUrl ?
-                fetch(dataUrl).then(
-                    (json): Promise<any> => json.json()
-                ) :
-                data ?
-                    data :
-                    []
-        )
+        return Promise
+            .resolve(
+                dataUrl ?
+                    fetch(dataUrl).then(
+                        (json): Promise<any> => json.json()
+                    ) :
+                    data || []
+            )
             .then((data): Promise<Array<Array<number|string>>> => {
                 if (data) {
+                    // If already loaded, clear the current rows
+                    table.deleteColumns();
                     converter.parse({ data });
+
                     table.setColumns(converter.getTable().getColumns());
                 }
-                return connector
-                    .setModifierOptions(dataModifier)
-                    .then((): Array<Array<number|string>> => data);
+                return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })
             .then((data): this => {
                 connector.emit<JSONConnector.Event>({
@@ -190,13 +189,6 @@ namespace JSONConnector {
      * Event objects fired from JSONConnector events.
      */
     export type Event = (ErrorEvent|LoadEvent);
-
-    /**
-     * Parse the data before passing it to the JSON parser.
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (data: JSONConverter.Data): JSONConverter.Data;
-    }
 
     /**
      * The event object that is provided on errors within JSONConnector.

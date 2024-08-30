@@ -1,6 +1,9 @@
 const transforms = {
-    default: Highcharts.maps['countries/gb/gb-all']['hc-transform']['default'], // eslint-disable-line dot-notation
-    custom: Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland']
+    default: Highcharts.maps[
+        'countries/gb/gb-all'
+    ]['hc-transform']['default'], // eslint-disable-line dot-notation
+    custom: Highcharts.maps[
+        'countries/gb/gb-all']['hc-transform']['gb-all-shetland']
 };
 
 // Initialize the chart

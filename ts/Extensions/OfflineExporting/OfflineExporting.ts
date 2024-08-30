@@ -10,8 +10,6 @@
  *
  * */
 
-/* global MSBlobBuilder */
-
 'use strict';
 
 /* *
@@ -37,13 +35,11 @@ const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    doc,
+    win
 } = H;
 import HU from '../../Core/HttpUtilities.js';
-const {
-    ajax
-} = HU;
+const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -53,14 +49,17 @@ const {
     fireEvent,
     merge
 } = U;
+import RegexLimits from '../RegexLimits.js';
 
 AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
+    'filter',
     'rx',
     'ry',
     'stroke-dasharray',
     'stroke-linejoin',
+    'stroke-opacity',
     'text-anchor',
     'transform',
     'version',
@@ -96,14 +95,6 @@ declare module '../../Core/Chart/ChartLike' {
         ): void;
     }
 }
-
-/* *
- *
- * Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -164,10 +155,9 @@ namespace OfflineExporting {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (typeof Composition&T) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as Composition;
-
+        if (!chartProto.exportChartLocal) {
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
             chartProto.exportChartLocal = exportChartLocal;
 
@@ -178,7 +168,6 @@ namespace OfflineExporting {
         return ChartClass as (typeof Composition&T);
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Get data URL to an image of an SVG and call download on it options
      * object:
@@ -398,9 +387,13 @@ namespace OfflineExporting {
                 outlineElements =
                     el.getElementsByClassName('highcharts-text-outline');
                 while (outlineElements.length > 0) {
-                    el.removeChild(outlineElements[0]);
+                    const outline = outlineElements[0];
+                    if (outline.parentNode) {
+                        outline.parentNode.removeChild(outline);
+                    }
                 }
             });
+
 
             const svgNode = dummySVGContainer.querySelector('svg');
             if (svgNode) {
@@ -408,6 +401,7 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
+                        scale,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -484,51 +478,58 @@ namespace OfflineExporting {
                         failCallback(e);
                     }
                 }, function (): void {
+                    if (svg.length > RegexLimits.svgLimit) {
+                        throw new Error('Input too long');
+                    }
                     // Failed due to tainted canvas
                     // Create new and untainted canvas
                     const canvas = doc.createElement('canvas'),
-                        ctx: CanvasRenderingContext2D =
-                            canvas.getContext('2d') as any,
-                        imageWidth = (svg.match(
-                            /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
-                        ) as any)[1] * scale,
-                        imageHeight = (svg.match(
-                            /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
-                        ) as any)[1] * scale,
-                        downloadWithCanVG = function (): void {
-                            const v = win.canvg.Canvg.fromString(ctx, svg);
-                            v.start();
-                            try {
-                                downloadURL(
-                                    win.navigator.msSaveOrOpenBlob as any ?
-                                        canvas.msToBlob() :
-                                        canvas.toDataURL(imageType),
-                                    filename
-                                );
-                                if (successCallback) {
-                                    successCallback();
-                                }
-                            } catch (e) {
-                                failCallback(e);
-                            } finally {
-                                finallyHandler();
-                            }
-                        };
+                        ctx = canvas.getContext('2d'),
+                        matchedImageWidth = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        ),
+                        matchedImageHeight = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        );
 
-                    canvas.width = imageWidth;
-                    canvas.height = imageHeight;
-                    if (win.canvg) {
-                        // Use preloaded canvg
-                        downloadWithCanVG();
-                    } else {
-                        // Must load canVG first. // Don't destroy the object
-                        // URL yet since we are doing things asynchronously. A
-                        // cleaner solution would be nice, but this will do for
-                        // now.
-                        objectURLRevoke = true;
-                        getScript(libURL + 'canvg.js', function (): void {
+                    if (ctx && matchedImageWidth && matchedImageHeight) {
+                        const imageWidth = +matchedImageWidth[1] * scale,
+                            imageHeight = +matchedImageHeight[1] * scale,
+                            downloadWithCanVG = (): void => {
+                                const v = win.canvg.Canvg.fromString(ctx, svg);
+                                v.start();
+                                try {
+                                    downloadURL(
+                                        win.navigator.msSaveOrOpenBlob ?
+                                            canvas.msToBlob() :
+                                            canvas.toDataURL(imageType),
+                                        filename
+                                    );
+                                    if (successCallback) {
+                                        successCallback();
+                                    }
+                                } catch (e) {
+                                    failCallback(e);
+                                } finally {
+                                    finallyHandler();
+                                }
+                            };
+
+                        canvas.width = imageWidth;
+                        canvas.height = imageHeight;
+                        if (win.canvg) {
+                            // Use preloaded canvg
                             downloadWithCanVG();
-                        });
+                        } else {
+                            // Must load canVG first.
+                            // Don't destroy the object URL yet since we are
+                            // doing things asynchronously. A cleaner solution
+                            // would be nice, but this will do for now.
+                            objectURLRevoke = true;
+                            getScript(libURL + 'canvg.js', downloadWithCanVG);
+                        }
                     }
                 },
                 // No canvas support
@@ -989,7 +990,7 @@ namespace OfflineExporting {
 
         try {
             // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. ForeignObjects also dont work well in Blobs in Chrome
+            // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
             // (#14780).
             if (!webKit && svg.indexOf('<foreignObject') === -1) {
                 return domurl.createObjectURL(new win.Blob([svg], {
@@ -1009,10 +1010,13 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
+        scale: number,
         callback: Function
     ): void {
-        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
-            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+        const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
+            scale,
+            height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
+                scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',

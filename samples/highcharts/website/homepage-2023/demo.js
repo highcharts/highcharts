@@ -73,6 +73,7 @@ function randomNumber(min, max) {
     return Math.random() * (max - min) + min;
 }
 // arc
+/*
 const arc = {
     chart: {
         backgroundColor: 'transparent',
@@ -103,7 +104,10 @@ const arc = {
 
     accessibility: {
         description:
-            'Arc diagram chart with circles of different sizes along the X axis, and connections drawn as arcs between them. From the chart we can see that Paris is the city with the most connections to other cities.',
+            'Arc diagram chart with circles of different sizes along the X ' +
+            'axis, and connections drawn as arcs between them. From the ' +
+            'chart we can see that Paris is the city with the most ' +
+            'connections to other cities.',
         point: {
             valueDescriptionFormat:
                 'Connection from {point.from} to {point.to}.'
@@ -262,6 +266,7 @@ const arc = {
         ]
     }
 };
+*/
 
 // column range
 const cr = {
@@ -395,7 +400,8 @@ const cr = {
 const sk = {
     accessibility: {
         description:
-            'Sankey chart that shows the total funding for Fintech companies in the internet software & services through 2022.',
+            'Sankey chart that shows the total funding for Fintech companies ' +
+            'in the internet software & services through 2022.',
         point: {
             descriptionFormatter: function (point) {
                 const nodeFrom = point.fromNode.name,
@@ -462,9 +468,13 @@ const sk = {
         valueDecimals: 2,
         backgroundColor: '#fff',
         pointFormat:
-            '<b>{point.fromNode.name}</b> ({point.toNode.name})<br>${point.weight} Total Funding Millions USD</span>',
+            '<b>{point.fromNode.name}</b> ({point.toNode.name})<br>' +
+            '${point.weight} Total Funding Millions USD</span>',
         nodeFormat:
-            '<p style="margin:6px 0;padding: 0;font-size: 14px;line-height:24px"><span style="font-weight: bold;color:{point.color}">{point.name}:</span> ${point.sum} million USD</p>'
+            '<p style="margin:6px 0;padding: 0;font-size: ' +
+            '14px;line-height:24px"><span style="font-weight: ' +
+            'bold;color:{point.color}">{point.name}:</span> ${point.sum} ' +
+            'million USD</p>'
     },
     plotOptions: {
         series: {
@@ -655,7 +665,9 @@ const str = {
         type: 'streamgraph',
         marginBottom: 30,
         height: 430,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         backgroundColor: 'transparent',
         animation: {
             duration: 2000,
@@ -684,7 +696,9 @@ const str = {
     },
     accessibility: {
         description:
-            'Streamgraphs are a type of stacked area charts where the areas are displaced around a central axis. This chart is showing price indices for air freight, importing and exporting.'
+            'Streamgraphs are a type of stacked area charts where the areas ' +
+            'are displaced around a central axis. This chart is showing ' +
+            'price indices for air freight, importing and exporting.'
     },
     responsive: {
         rules: [

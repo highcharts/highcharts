@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -148,14 +148,32 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * An object containing additional key value data for the POST form that
-     * sends the SVG to the export server. For example, a `target` can be set to
-     * make sure the generated image is received in another frame, or a custom
-     * `enctype` or `encoding` can be set.
+     * Highcharts v11.2.0 and older. An object containing additional key value
+     * data for the POST form that sends the SVG to the export server. For
+     * example, a `target` can be set to make sure the generated image is
+     * received in another frame, or a custom `enctype` or `encoding` can be
+     * set.
      *
+     * With Highcharts v11.3.0, the `fetch` API replaced the old HTML form. To
+     * modify the request, now use [fetchOptions](#exporting.fetchOptions)
+     * instead.
+     *
+     * @deprecated
      * @type      {Highcharts.HTMLAttributes}
      * @since     3.0.8
      * @apioption exporting.formAttributes
+     */
+
+    /**
+     * Options for the fetch request used when sending the SVG to the export
+     * server.
+     *
+     * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
+     * for more information
+     *
+     * @type {Object}
+     * @since 11.3.0
+     * @apioption exporting.fetchOptions
      */
 
     /**
@@ -837,22 +855,25 @@ const navigation: NavigationOptions = {
              * The default fill exists only to capture hover events.
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   ${palette.backgroundColor}
-             * @apioption navigation.buttonOptions.theme.fill
              */
+            fill: Palette.backgroundColor,
+
+            /**
+             * Padding for the button.
+             */
+            padding: 5,
 
             /**
              * Default stroke for the buttons.
              *
              * @type      {Highcharts.ColorString}
-             * @default   none
-             * @apioption navigation.buttonOptions.theme.stroke
              */
+            stroke: 'none',
 
             /**
-             * Padding for the button.
+             * Default stroke linecap for the buttons.
              */
-            padding: 5
+            'stroke-linecap': 'round'
 
         }
 

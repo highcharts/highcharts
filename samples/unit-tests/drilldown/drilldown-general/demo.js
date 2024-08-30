@@ -2633,7 +2633,7 @@ QUnit.test('Named categories (#6704)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].tickPositions.length,
+        chart.xAxis[0].names.length,
         20,
         'Initial category length'
     );

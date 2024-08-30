@@ -2,7 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     legend: {
@@ -21,7 +23,8 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             valueDescriptionFormat:
-          '{index}. {point.name}, valuation: ${point.x}B, revenue: ${point.y}B, LossesOrProfit: ${point.z}B.'
+          '{index}. {point.name}, valuation: ${point.x}B, revenue: ' +
+          '${point.y}B, LossesOrProfit: ${point.z}B.'
         }
     },
 
@@ -81,7 +84,14 @@ Highcharts.chart('container', {
             color: '#FF3232',
             data: [
                 { x: 15.1, y: 0.756, z: 0.063, name: 'Pinterest' },
-                { x: 18.6, y: 0.331, z: 0.0075, name: 'Zoom', color: '#32ff32' },
+                {
+                    x: 18.6,
+                    y: 0.331,
+                    z: 0.0075,
+                    name:
+                    'Zoom',
+                    color: '#32ff32'
+                },
                 { x: 14.4, y: 2.16, z: 0.911, name: 'Lyft' },
                 { x: 7, y: 0.602, z: 0.155, name: 'Fartech' },
                 { x: 6.3, y: 0.16, z: 0.0053, name: 'Elastic' },

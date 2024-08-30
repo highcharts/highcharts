@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -88,7 +88,7 @@ export type SeriesFindNearestPointByValue = ('x'|'xy');
 
 export type SeriesLinecapValue = ('butt'|'round'|'square');
 
-export type LegendSymbolType = ('lineMarker' | 'rectangle');
+export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /**
  * Helper interface for series types to add options to all series options.
@@ -147,7 +147,7 @@ export interface SeriesOptions {
     xAxis?: (number|string);
     yAxis?: (number|string);
     zIndex?: number;
-    zoneAxis?: string;
+    zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
 }
@@ -176,15 +176,15 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
 }
 
 export interface SeriesStateInactiveOptions extends StateInactiveOptions {
-    // nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStateNormalOptions extends StateNormalOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {

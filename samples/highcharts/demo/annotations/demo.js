@@ -1886,7 +1886,9 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'area',
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift',
         scrollablePlotArea: {
@@ -1895,7 +1897,9 @@ Highcharts.chart('container', {
     },
 
     caption: {
-        text: 'This chart uses the Highcharts Annotations feature to place labels at various points of interest. The labels are responsive and will be hidden to avoid overlap on small screens.'
+        text: 'This chart uses the Highcharts Annotations feature to place ' +
+            'labels at various points of interest. The labels are responsive ' +
+            'and will be hidden to avoid overlap on small screens.'
     },
 
     title: {
@@ -1904,7 +1908,22 @@ Highcharts.chart('container', {
     },
 
     accessibility: {
-        description: 'This line chart uses the Highcharts Annotations feature to place labels at various points of interest. The labels are responsive and will be hidden to avoid overlap on small screens. Image description: An annotated line chart illustrates the 8th stage of the 2017 Tour de France cycling race from the start point in Dole to the finish line at Station des Rousses. Altitude is plotted on the Y-axis, and distance is plotted on the X-axis. The line graph is interactive, and the user can trace the altitude level along the stage. The graph is shaded below the data line to visualize the mountainous altitudes encountered on the 187.5-kilometre stage. The three largest climbs are highlighted at Col de la Joux, Côte de Viry and the final 11.7-kilometer, 6.4% gradient climb to Montée de la Combe de Laisia Les Molunes which peaks at 1200 meters above sea level. The stage passes through the villages of Arbois, Montrond, Bonlieu, Chassal and Saint-Claude along the route.',
+        description: 'This line chart uses the Highcharts Annotations ' +
+            'feature to place labels at various points of interest. The ' +
+            'labels are responsive and will be hidden to avoid overlap on ' +
+            'small screens. Image description: An annotated line chart ' +
+            'illustrates the 8th stage of the 2017 Tour de France cycling ' +
+            'race from the start point in Dole to the finish line at Station ' +
+            'des Rousses. Altitude is plotted on the Y-axis, and distance is ' +
+            'plotted on the X-axis. The line graph is interactive, and the ' +
+            'user can trace the altitude level along the stage. The graph is ' +
+            'shaded below the data line to visualize the mountainous ' +
+            'altitudes encountered on the 187.5-kilometre stage. The three ' +
+            'largest climbs are highlighted at Col de la Joux, Côte de Viry ' +
+            'and the final 11.7-kilometer, 6.4% gradient climb to Montée de ' +
+            'la Combe de Laisia Les Molunes which peaks at 1200 meters above ' +
+            'sea level. The stage passes through the villages of Arbois, ' +
+            'Montrond, Bonlieu, Chassal and Saint-Claude along the route.',
         landmarkVerbosity: 'one'
     },
 
@@ -1912,7 +1931,9 @@ Highcharts.chart('container', {
         accessibility: {
             screenReaderSection: {
                 annotations: {
-                    descriptionNoPoints: '{annotationText}, at distance {annotation.options.point.x}km, elevation {annotation.options.point.y} meters.'
+                    descriptionNoPoints: '{annotationText}, at distance ' +
+                        '{annotation.options.point.x}km, elevation ' +
+                        '{annotation.options.point.y} meters.'
                 }
             }
         }

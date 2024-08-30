@@ -49,7 +49,8 @@ module.exports = {
             'stock/range-selector',
             'stock/axis-resizer',
             'stock/technical-indicator-series',
-            'stock/custom-technical-indicators'
+            'stock/custom-technical-indicators',
+            'stock/standalone-navigator'
         ],
         'Maps': [
             'maps/getting-started',
@@ -95,11 +96,17 @@ module.exports = {
             'dashboards/synchronize-components',
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
+            'dashboards/data-pool-and-connectors',
+            'dashboards/data-table',
             'dashboards/data-modifiers',
+            'dashboards/mathmodifier-module',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
-            'dashboards/synchronize-components',
+            'dashboards/get-options',
             'dashboards/frequently-asked-questions',
+        ],
+        'DataGrid': [
+            'datagrid/general',
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -156,6 +163,7 @@ module.exports = {
 
         ],
         'Advanced chart features': [
+            'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
             'advanced-chart-features/boost-module',

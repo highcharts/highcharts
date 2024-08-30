@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Hubert Kozik
+ *  (c) 2010-2024 Hubert Kozik
  *
  *  License: www.highcharts.com/license
  *

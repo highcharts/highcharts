@@ -39,7 +39,8 @@ Highcharts.chart('container', {
         gapSize: 5,
         // Define the data points. All series have a year
         // of 1970/71 in order to be compared on the same x axis. Note
-        // that in JavaScript, months start at 0 for January, 1 for February etc.
+        // that in JavaScript, months start at 0 for January, 1 for February
+        // etc.
         data: [
             [Date.UTC(1970, 9, 27), 0],
             [Date.UTC(1970, 10, 10), 0.6],

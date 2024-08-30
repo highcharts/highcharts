@@ -68,7 +68,8 @@ QUnit.test(
             chart.series[1].points.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After addPoint number of Percentage Price Oscillator points is correct'
+            'After addPoint number of Percentage Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[0].setData(
@@ -97,7 +98,8 @@ QUnit.test(
             chart.series[1].data.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After setData number of Percentage Price Oscillator points is correct'
+            'After setData number of Percentage Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[1].update({

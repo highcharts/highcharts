@@ -222,7 +222,10 @@ QUnit.test('Scrollbar events', assert => {
 
     // #18922, scrollbar track did not catch click events
     controller.click(bar.translateX + 5, bar.translateY + 5);
-    assert.ok(axis.min === min, 'Extremes should change on track click (#18922');
+    assert.ok(
+        axis.min === min, 'Extremes should change on track click ' +
+        '(#18922'
+    );
 
     // #17977, scrollbar should not animate if global animation is disabled
     const scrollbar = axis.scrollbar;

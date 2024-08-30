@@ -371,7 +371,8 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
     assert.strictEqual(
         patterns.length,
         3,
-        'Number of pattern defs should be 3 unique (defaults patterns not added unless used)'
+        'Number of pattern defs should be 3 unique (defaults patterns not ' +
+        'added unless used)'
     );
 
     for (const pattern of patterns) {
@@ -613,7 +614,8 @@ QUnit.test('Image animation opacity', function (assert) {
                                                 columnPattern.firstChild
                                                     .getAttribute('opacity'),
                                                 '0.5',
-                                                'Pattern should end at 0.5 opacity'
+                                                'Pattern should end at 0.5 ' +
+                                                'opacity'
                                             );
                                             done();
                                         }
@@ -708,4 +710,147 @@ QUnit.test('Destroy and recreate chart', function (assert) {
 
 QUnit.test('#14765: Global patterns', assert => {
     assert.ok(Highcharts.patterns, 'Global patterns should be defined');
+});
+
+function testPatternfillForChart(assert, chart) {
+    const points = chart.series[0].points,
+        customPattern = doc.getElementById(
+            getPointFillId(points[1])
+        ),
+        defaultPattern = doc.getElementById(
+            getPointFillId(points[0])
+        );
+
+    assert.ok(
+        customPattern.hasAttribute('patternTransform'),
+        'Custom pattern element should have patternTransform attribute'
+    );
+    assert.ok(
+        customPattern.getAttribute('patternTransform').includes('scale'),
+        'Custom pattern\'s patternTransform attribute should contain a scale ' +
+        'transform'
+    );
+    assert.ok(
+        defaultPattern.hasAttribute('patternTransform'),
+        'Default pattern element should have patternTransform attribute'
+    );
+    assert.ok(
+        defaultPattern.getAttribute('patternTransform').includes('scale'),
+        'Default pattern\'s patternTransform attribute should contain a ' +
+        'scale transform'
+    );
+}
+
+QUnit.test('#19980/pattern-fill/geojson', function (assert) {
+    var done = assert.async();
+    fetch(
+        'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
+    )
+        .then(response => response.json())
+        .then(geoJSON => {
+            var chart = Highcharts.mapChart('container', {
+                chart: {
+                    map: geoJSON
+                },
+                series: [
+                    {
+                        data: [
+                            {
+                                'hc-key': 'eu',
+                                color: {
+                                    patternIndex: 8
+                                }
+                            },
+                            {
+                                'hc-key': 'af',
+                                color: {
+                                    pattern: {
+                                        path: {
+                                            d: 'M 3 3 L 8 3 L 8 8 Z'
+                                        },
+                                        width: 12,
+                                        height: 12,
+                                        color: '#ff0000',
+                                        opacity: 0.5,
+                                        backgroundColor: '#000000'
+                                    }
+                                }
+                            },
+                            {
+                                'hc-key': 'as',
+                                color: {
+                                    pattern: {
+                                        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Flag_of_Queensland.svg/1920px-Flag_of_Queensland.svg.png',
+                                        aspectRatio: 2
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+            testPatternfillForChart(assert, chart);
+
+            done();
+        })
+        .catch(error => {
+            assert.ok(false, 'Error downloading or processing data: ' + error);
+            done();
+        });
+});
+
+QUnit.test('#19980/pattern-fill/topojson', function (assert) {
+    var done = assert.async();
+    fetch('https://code.highcharts.com/mapdata/custom/world-continents.topo.json')
+        .then(response => response.json())
+        .then(geoJSON => {
+            var chart = Highcharts.mapChart('container', {
+                chart: {
+                    map: geoJSON
+                },
+                series: [
+                    {
+                        data: [
+                            {
+                                'hc-key': 'eu',
+                                color: {
+                                    patternIndex: 8
+                                }
+                            },
+                            {
+                                'hc-key': 'af',
+                                color: {
+                                    pattern: {
+                                        path: {
+                                            d: 'M 3 3 L 8 3 L 8 8 Z'
+                                        },
+                                        width: 12,
+                                        height: 12,
+                                        color: '#ff0000',
+                                        opacity: 0.5,
+                                        backgroundColor: '#000000'
+                                    }
+                                }
+                            },
+                            {
+                                'hc-key': 'as',
+                                color: {
+                                    pattern: {
+                                        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Flag_of_Queensland.svg/1920px-Flag_of_Queensland.svg.png',
+                                        aspectRatio: 2
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+            testPatternfillForChart(assert, chart);
+
+            done();
+        })
+        .catch(error => {
+            assert.ok(false, 'Error downloading or processing data: ' + error);
+            done();
+        });
 });

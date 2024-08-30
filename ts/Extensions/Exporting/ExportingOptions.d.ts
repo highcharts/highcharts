@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,6 @@ import type {
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type Exporting from '../../Extensions/Exporting/Exporting';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type Options from '../../Core/Options';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
@@ -30,6 +29,13 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *  Declarations
  *
  * */
+
+interface PdfFontOptions {
+    bold?: string;
+    bolditalic?: string;
+    italic?: string;
+    normal?: string;
+}
 
 export interface ExportingOptions {
     allowHTML?: boolean;
@@ -40,15 +46,10 @@ export interface ExportingOptions {
     error?: Exporting.ErrorCallbackFunction;
     fallbackToExportServer?: boolean;
     filename?: string;
-    formAttributes?: HTMLAttributes;
+    fetchOptions?: RequestInit;
     libURL?: string;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
-    pdfFont?: {
-        bold?: string;
-        bolditalic?: string;
-        italic?: string;
-        normal?: string;
-    };
+    pdfFont?: PdfFontOptions;
     printMaxWidth?: number;
     scale?: number;
     sourceHeight?: number;

@@ -12,7 +12,9 @@ Most places where text is handled in Highcharts, it is also followed by an optio
 *   It will always be laid out on top of all other SVG content. Specifically the tooltip may be rendered below the _useHTML_ label, unless [tooltip.outside](https://api.highcharts.com/highcharts/tooltip.outside) is set to true.
 *   It is not rendered the same way in exported charts, unless you use the experimental [exporting.allowHTML](https://api.highcharts.com/highcharts/exporting.allowHTML) option.
 
-Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization.](https://highcharts.com/docs/advanced-chart-features/internationalization)
+Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization](https://highcharts.com/docs/advanced-chart-features/internationalization).
+
+See a [live demo of `useHTML`](https://highcharts.com/samples/highcharts/members/renderer-usehtml) in some common elements.
 
 ### Filtering
 For security reasons, Highcharts since version 9 filters out unknown tags and attributes. See [the security page](https://highcharts.com/docs/chart-concepts/security) for details.

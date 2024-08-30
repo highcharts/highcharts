@@ -104,7 +104,8 @@ QUnit.test('Tracks', function (assert) {
             '1,instrument,4100',
             '1,speech,4100'
         ].join('#'),
-        'Tracks are correctly timed, assigned to correct series, and of correct type'
+        'Tracks are correctly timed, assigned to correct series, and of ' +
+        'correct type'
     );
 
     function getChannelEventInfo(channelIx, optionProp) {
@@ -162,7 +163,9 @@ QUnit.test('Tracks', function (assert) {
     });
 
     assert.strictEqual(
-        chart.sonification.timeline.channels.map(c => c.events[0].time).join(','),
+        chart.sonification.timeline.channels.map(c => c.events[0].time).join(
+            ','
+        ),
         '0,0,0,0,0,0,0',
         'All channels start immediately when order is simultaneous'
     );

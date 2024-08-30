@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -26,22 +26,18 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
+    series: { prototype: { pointClass: Point } },
     seriesTypes: {
-        treemap: {
-            prototype: {
-                pointClass: TreemapPoint
-            }
-        }
+        treemap: { prototype: { pointClass: TreemapPoint } }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode';
-const { correctFloat, extend, pInt } = U;
+import U from '../../Core/Utilities.js';
+const {
+    correctFloat,
+    extend,
+    pInt
+} = U;
 
 
 /* *
@@ -64,35 +60,39 @@ class SunburstPoint extends TreemapPoint {
 
     public outerArcLength?: number;
 
-    public node: SunburstNode = void 0 as any;
+    public node!: SunburstNode;
 
-    public options: SunburstPointOptions = void 0 as any;
+    public options!: SunburstPointOptions;
 
-    public series: SunburstSeries = void 0 as any;
+    public series!: SunburstSeries;
 
-    public shapeExisting: SunburstNode.NodeValuesObject = void 0 as any;
+    public shapeExisting!: SunburstNode.NodeValuesObject;
 
     public sliced?: boolean;
 
-    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = void 0 as any;
+    public shapeType!: ('arc'|'circle'|'path'|'rect'|'text');
+
     /* *
      *
      *  Functions
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-    public getDataLabelPath(label: SVGElement): SVGElement {
-        let renderer = this.series.chart.renderer,
+    public getDataLabelPath(
+        label: SVGElement
+    ): SVGElement {
+        const renderer = this.series.chart.renderer,
             shapeArgs = this.shapeExisting,
-            start = shapeArgs.start,
-            end = shapeArgs.end,
-            angle = start + (end - start) / 2, // arc middle value
-            upperHalf = angle < 0 &&
+            r = shapeArgs.r + pInt(label.options?.distance || 0);
+
+        let start = shapeArgs.start,
+            end = shapeArgs.end;
+
+        const angle = start + (end - start) / 2; // Arc middle value
+
+        let upperHalf = angle < 0 &&
                 angle > -Math.PI ||
                 angle > Math.PI,
-            r = shapeArgs.r + pInt(label.options?.distance || 0),
             moreThanHalf;
 
         // Check if point is a full circle
@@ -145,8 +145,6 @@ class SunburstPoint extends TreemapPoint {
         return true;
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -168,7 +166,7 @@ extend(SunburstPoint.prototype, {
 
 /* *
  *
- *  Defaul Export
+ *  Default Export
  *
  * */
 

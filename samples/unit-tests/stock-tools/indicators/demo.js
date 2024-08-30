@@ -67,28 +67,32 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         // 100 / 1.2 scalles all of them back to 100%
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Main Axis should have correct height after adding 1 indicator. Main axis -> 100% height'
+        'Main Axis should have correct height after adding 1 indicator. Main ' +
+        'axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main Axis should have correct top after adding 1 indicator. Main axis -> 100% height'
+        'Main Axis should have correct top after adding 1 indicator. Main ' +
+        'axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 1 indicator. Main axis -> 100% height'
+        'Indicator axis should have correct height after adding 1 indicator. ' +
+        'Main axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 1 indicator. Main axis -> 100% height'
+        'Indicator axis should have correct top after adding 1 indicator. ' +
+        'Main axis -> 100% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -108,38 +112,44 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         100 / 1.4,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after adding 2 indicators. Main axis originally 100% height'
+        'Main axis should have correct height after adding 2 indicators. ' +
+        'Main axis originally 100% height'
     );
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct top after adding 2 indicators. Main axis originally 100% height'
+        'Main axis should have correct top after adding 2 indicators. Main ' +
+        'axis originally 100% height'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         20 / 1.4,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 2 indicators. Main axis originally 100% height'
+        'Indicator axis should have correct height after adding 2 ' +
+        'indicators. Main axis originally 100% height'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         100 / 1.4,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Main axis originally 100% height'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Main axis originally 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[2].options.height),
         20 / 1.4,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 2 indicators. Main axis originally 100% height'
+        'Indicator axis should have correct height after adding 2 ' +
+        'indicators. Main axis originally 100% height'
     );
     assert.close(
         parseFloat(chart.yAxis[2].options.top),
         120 / 1.4,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Main axis originally 100% height'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Main axis originally 100% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -156,28 +166,32 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after deleting 1 indicator. Main axis -> 100% height'
+        'Main axis should have correct height after deleting 1 indicator. ' +
+        'Main axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct top after deleting 1 indicator. Main axis -> 100% height'
+        'Main axis should have correct top after deleting 1 indicator. Main ' +
+        'axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after deleting 1 indicator. Main axis -> 100% height'
+        'Indicator axis should have correct height after deleting 1 ' +
+        'indicator. Main axis -> 100% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after deleting 1 indicator. Main axis -> 100% height'
+        'Indicator axis should have correct top after deleting 1 indicator. ' +
+        'Main axis -> 100% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -194,7 +208,8 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         100,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after deleting all indicators. Main axis -> 100% height'
+        'Main axis should have correct height after deleting all indicators. ' +
+        'Main axis -> 100% height'
     );
 
     chart.update({
@@ -223,20 +238,23 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Main Axis should have correct height after adding 1 indicator. Main axis originally 60% height'
+        'Main Axis should have correct height after adding 1 indicator. Main ' +
+        'axis originally 60% height'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         20,
         0.0001, // up to 0.0001% is fine
-        'Indicator Axis should have correct height after axis after adding 1 indicator. Main axis originally 60% height'
+        'Indicator Axis should have correct height after axis after adding 1 ' +
+        'indicator. Main axis originally 60% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         60,
         0.0001, // up to 0.0001% is fine
-        'Indicator Axis should have correct top after adding 1 indicators. Main axis originally 100% height'
+        'Indicator Axis should have correct top after adding 1 indicators. ' +
+        'Main axis originally 100% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -256,33 +274,38 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after adding 1 indicator. Main axis originally 60% height'
+        'Main axis should have correct height after adding 1 indicator. Main ' +
+        'axis originally 60% height'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         20,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 1 indicator. Main axis originally 60% height'
+        'Indicator axis should have correct height after adding 1 indicator. ' +
+        'Main axis originally 60% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         60,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Main axis originally 60% height'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Main axis originally 60% height'
     );
     assert.close(
         parseFloat(chart.yAxis[2].options.height),
         20,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 2 indicators. Main axis originally 60% height'
+        'Indicator axis should have correct height after adding 2 ' +
+        'indicators. Main axis originally 60% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[2].options.top),
         80,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Main axis originally 60% height'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Main axis originally 60% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -299,20 +322,23 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         75,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after deleting 1 indicator. Main axis originally 60% height'
+        'Main axis should have correct height after deleting 1 indicator. ' +
+        'Main axis originally 60% height'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         25,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after deleting 1 indicator. Main axis originally 60% height'
+        'Indicator axis should have correct height after deleting 1 ' +
+        'indicator. Main axis originally 60% height'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         75,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after deleting 1 indicator. Main axis originally 60% height'
+        'Indicator axis should have correct top after deleting 1 indicator. ' +
+        'Main axis originally 60% height'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -359,40 +385,46 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after adding 1 indicator. Mixed axis heights'
+        'Main axis should have correct height after adding 1 indicator. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct top after adding 1 indicators. Mixed axis heights'
+        'Main axis should have correct top after adding 1 indicators. Mixed ' +
+        'axis heights'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height 1xis after adding 1 indicator. Mixed axis heights'
+        'Indicator axis should have correct height 1xis after adding 1 ' +
+        'indicator. Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         20,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height top after adding 1 indicators. Mixed axis heights'
+        'Indicator axis should have correct height top after adding 1 ' +
+        'indicators. Mixed axis heights'
     );
     assert.close(
         parseFloat(chart.yAxis[2].options.height),
         20,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height axis after adding 1 indicator. Mixed axis heights'
+        'Indicator axis should have correct height axis after adding 1 ' +
+        'indicator. Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[2].options.top),
         80,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top 1xis after adding 1 indicator. Mixed axis heights'
+        'Indicator axis should have correct top 1xis after adding 1 ' +
+        'indicator. Mixed axis heights'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -412,69 +444,80 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         60 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after adding 2 indicator. Mixed axis heights'
+        'Main axis should have correct height after adding 2 indicator. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct top after adding 2 indicators. Mixed axis heights'
+        'Main axis should have correct top after adding 2 indicators. Mixed ' +
+        'axis heights'
     );
 
-    // if we are adding after initial creation of the chart, the yAxis with index 1 is navigator axis
+    // if we are adding after initial creation of the chart, the yAxis with
+    // index 1 is navigator axis
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         60 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 2 indicator. Mixed axis heights'
+        'Indicator axis should have correct height after adding 2 indicator. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[1].options.top),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Mixed axis heights'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Mixed axis heights'
     );
     assert.close(
         parseFloat(chart.yAxis[2].options.height),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height axis after adding 2 indicators. Mixed axis heights'
+        'Indicator axis should have correct height axis after adding 2 ' +
+        'indicators. Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[2].options.top),
         80 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top 1xis after adding 2 indicators. Mixed axis heights'
+        'Indicator axis should have correct top 1xis after adding 2 ' +
+        'indicators. Mixed axis heights'
     );
     assert.close(
         parseFloat(chart.yAxis[2].options.height),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height axis after adding 2 indicator. Mixed axis heights'
+        'Indicator axis should have correct height axis after adding 2 ' +
+        'indicator. Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[2].options.top),
         80 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top after adding 2 indicators. Mixed axis heights'
+        'Indicator axis should have correct top after adding 2 indicators. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[3].options.height),
         20 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct height after adding 2 indicator. Mixed axis heights'
+        'Indicator axis should have correct height after adding 2 indicator. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[3].options.top),
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct top axis after adding 2 indicators. Mixed axis heights'
+        'Indicator axis should have correct top axis after adding 2 ' +
+        'indicators. Mixed axis heights'
     );
 
     chart.navigationBindings.utils.manageIndicators.call(
@@ -491,20 +534,23 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         parseFloat(chart.yAxis[0].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct height after deleting 1 indicator. Mixed axis heights'
+        'Main axis should have correct height after deleting 1 indicator. ' +
+        'Mixed axis heights'
     );
 
     assert.close(
         parseFloat(chart.yAxis[0].options.top),
         0,
         0.0001, // up to 0.0001% is fine
-        'Main axis should have correct top after adding 1 indicator. Mixed axis heights'
+        'Main axis should have correct top after adding 1 indicator. Mixed ' +
+        'axis heights'
     );
     assert.close(
         parseFloat(chart.yAxis[1].options.height),
         60,
         0.0001, // up to 0.0001% is fine
-        'Indicator axis should have correct Height after adding 1 indicator. Mixed axis heights'
+        'Indicator axis should have correct Height after adding 1 indicator. ' +
+        'Mixed axis heights'
     );
 
     chart.update({
@@ -578,6 +624,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.series[2].getDGApproximation(),
         chart.series[chart.series.length - 1].options
             .dataGrouping.approximation,
-        'Indicator on column series should use the same DG approximation (#13950).'
+        'Indicator on column series should use the same DG approximation ' +
+        '(#13950).'
     );
 });

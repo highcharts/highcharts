@@ -10,7 +10,9 @@ for (let x = 0; x <= 60; x++) {
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {

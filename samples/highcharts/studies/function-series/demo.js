@@ -45,7 +45,7 @@
                 const series = this,
                     xAxis = this.xAxis;
 
-                xAxis.setExtremes = function ()  {
+                xAxis.setExtremes = function () {
                     Highcharts.Axis.prototype.setExtremes
                         .apply(this, arguments);
                     series.setData([]);
@@ -76,7 +76,9 @@ for (let i = 0; i < 100; i += 0.1) {
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Measured vs Expected Data'

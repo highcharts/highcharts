@@ -1,0 +1,8 @@
+.highcharts-figure {
+    min-width: 310px;
+    margin: 0 auto;
+}
+
+.highcharts-figure p {
+    margin: 10px;
+}

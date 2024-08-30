@@ -50,7 +50,7 @@
 				$.each(lines, function(lineNo, line) {
 					var items = line.split(',');
 					
-					// header line containes categories
+					// header line contains categories
 					if (lineNo == 0) {
 						$.each(items, function(itemNo, item) {
 							if (itemNo > 0) options.xAxis.categories.push(item);

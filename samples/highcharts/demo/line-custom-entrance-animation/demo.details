@@ -2,6 +2,7 @@
 name: Line chart with custom entrance animation
 authors:
   - Hubert Kozik
+requiresManualTesting: true
 js_wrap: b
 alt_text: >-
   Highcharts basic line chart presents a custom entrance animation with United

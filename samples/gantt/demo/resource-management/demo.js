@@ -120,7 +120,8 @@ Highcharts.ganttChart('container', {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    fontWeight: 'normal'
+                    fontWeight: 'normal',
+                    textOverflow: 'ellipsis'
                 }
             }
         }
@@ -129,13 +130,17 @@ Highcharts.ganttChart('container', {
         text: 'Car Rental Schedule'
     },
     tooltip: {
-        pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
+        pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>' +
+            'From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. ' +
+            '%b}</span>'
     },
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                yAxisDescriptionSingular: 'The chart has a tabular Y axis showing a data table row for each point.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.',
+                yAxisDescriptionSingular: 'The chart has a tabular Y axis ' +
+                    'showing a data table row for each point.'
             }
         }
     },
@@ -146,14 +151,20 @@ Highcharts.ganttChart('container', {
             }
         },
         point: {
-            valueDescriptionFormat: 'Rented to {point.rentedTo} from {point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
+            valueDescriptionFormat: 'Rented to {point.rentedTo} from ' +
+                '{point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
         },
         series: {
-            descriptionFormat: '{series.name}, car {add series.index 1} of {series.chart.series.length}.'
+            descriptionFormat: '{series.name}, car {add series.index 1} of ' +
+                '{series.chart.series.length}.'
         }
     },
     xAxis: {
-        currentDateIndicator: true
+        currentDateIndicator: {
+            label: {
+                allowOverlap: true
+            }
+        }
     },
     yAxis: {
         type: 'category',

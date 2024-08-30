@@ -41,7 +41,10 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
             };
         };
 
-    assert.deepEqual(actual(), expected, 'The attributes should be as expected for label with useHTML: false');
+    assert.deepEqual(
+        actual(), expected, 'The attributes should be as ' +
+        'expected for label with useHTML: false'
+    );
 
     annotation.update({
         labelOptions: {
@@ -49,5 +52,8 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
         }
     });
 
-    assert.deepEqual(actual(), expected, 'The attributes should be as expected for label with useHTML: true (#19200)');
+    assert.deepEqual(
+        actual(), expected, 'The attributes should be as ' +
+        'expected for label with useHTML: true (#19200)'
+    );
 });

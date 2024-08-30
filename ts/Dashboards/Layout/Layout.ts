@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -143,7 +143,7 @@ class Layout extends GUIElement {
             render: board.guiEnabled,
             parentContainer: parentContainer,
             attribs: {
-                id: options.id + (this.copyId ? '_' + this.copyId : ''),
+                id: (options.id || '') + (this.copyId ? '_' + this.copyId : ''),
                 className: Globals.classNames.layout + ' ' +
                     layoutClassName
             },
@@ -290,6 +290,10 @@ class Layout extends GUIElement {
             if (layout.board.layouts[i] === layout) {
                 layout.board.layouts.splice(i, 1);
             }
+        }
+
+        if (layout.parentCell) {
+            delete layout.parentCell.nestedLayout;
         }
 
         // Destroy rows.

@@ -43,6 +43,12 @@ npm install
 gulp
 ```
 
+### Node setup for Apple Mx CPU
+
+When running Node natively on ARM64 MacOS, some Node packages like [node-canvas](https://github.com/Automattic/node-canvas#compiling) with integrated compiling might fail. Install additional tools to resolve the problem:
+
+- [Homebrew](https://brew.sh/) and run `brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman`
+
 ## Generate API docs
 Run in this `highcharts` repository the doc generator with
 `npx gulp jsdoc-watch`, which also starts a new server with the generated API

@@ -42,13 +42,15 @@ QUnit.test('Animation', function (assert) {
             assert.notEqual(
                 currentColor,
                 initialColor,
-                'Time 500 - color SHOULD NOT be the same as initial one (#11239)'
+                'Time 500 - color SHOULD NOT be the same as initial one ' +
+                '(#11239)'
             );
 
             assert.notEqual(
                 currentColor,
                 maxColor,
-                'Time 500 - color SHOULD NOT be the same as MAXCOLOR color (#11239)'
+                'Time 500 - color SHOULD NOT be the same as MAXCOLOR color ' +
+                '(#11239)'
             );
         }, 500);
 

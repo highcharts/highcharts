@@ -27,7 +27,6 @@ Highcharts.chart('container', {
         data: [{
             y: 100,
             dataLabels: {
-                align: 'right',
                 rotation: 45,
                 shape: null
             }

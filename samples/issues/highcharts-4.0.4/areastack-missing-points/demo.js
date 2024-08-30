@@ -6,7 +6,8 @@ $(function () {
         },
 
         title: {
-            text: 'Lower series is missing a data point. Upper series should fall down.'
+            text: 'Lower series is missing a data point. Upper series should ' +
+                'fall down.'
         },
 
         plotOptions: {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -74,6 +74,7 @@ export interface AccessibilityOptions {
     customComponents?: AnyRecord;
     description?: string;
     enabled: boolean;
+    highContrastMode: boolean | 'auto';
     highContrastTheme: AnyRecord;
     keyboardNavigation: AccessibilityKeyboardNavigationOptions;
     landmarkVerbosity: string;

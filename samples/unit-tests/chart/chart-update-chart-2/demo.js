@@ -108,7 +108,8 @@ QUnit.test('Option chart.ignoreHiddenSeries update', function (assert) {
     assert.strictEqual(typeof chart.yAxis[0].max, 'number', 'Valid axis');
     assert.ok(chart.yAxis[0].max < 10, 'Small axis');
 
-    // Now series[0] should not be ignored, causing the y axis to make room for the 100 point
+    // Now series[0] should not be ignored, causing the y axis to make room
+    // for the 100 point
     chart.update({
         chart: {
             ignoreHiddenSeries: false

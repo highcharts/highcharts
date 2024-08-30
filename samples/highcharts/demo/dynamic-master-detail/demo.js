@@ -2,7 +2,7 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     let detailChart;
@@ -51,8 +51,8 @@
                 maxZoom: 0.1
             },
             tooltip: {
-                format: '<b>{series.name}</b><br/>{x:%A %B %e %Y}:<br/>' +
-                        '1 USD = {y:.2f} EUR',
+                format: '<b>{series.name}</b><br/>{x:%a, %b %e, %Y}:<br/>' +
+                    '1 USD = {y:.2f} EUR',
                 shared: true
             },
             legend: {
@@ -95,7 +95,9 @@
                 backgroundColor: null,
                 marginLeft: 50,
                 marginRight: 20,
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 events: {
 
                     // listen to the selection event on the master chart to
@@ -216,10 +218,12 @@
         }); // return chart instance
     }
 
-    // make the container smaller and add a second container for the master chart
+    // make the container smaller and add a second container for the master
+    // chart
     const container = document.getElementById('container');
     container.style.position = 'relative';
-    container.innerHTML += '<div id="detail-container"></div><div id="master-container"></div>';
+    container.innerHTML += '<div id="detail-container"></div><div ' +
+        'id="master-container"></div>';
 
     // create master and in its callback, create the detail chart
     createMaster();

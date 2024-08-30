@@ -43,8 +43,10 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<span style="font-size: 1.2em"><b>{point.name}</b></span><br>' +
-                    '<span style="opacity: 0.6">{point.percentage:.1f} %</span>',
+                format: '<span style="font-size: 1.2em"><b>{point.name}</b>' +
+                    '</span><br>' +
+                    '<span style="opacity: 0.6">{point.percentage:.1f} ' +
+                    '%</span>',
                 connectorColor: 'rgba(128,128,128,0.5)'
             }
         }

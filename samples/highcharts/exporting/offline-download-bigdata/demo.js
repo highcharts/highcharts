@@ -11,8 +11,10 @@ function addText(text) {
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
-        options.type === 'application/pdf' && isMSBrowser) {
+    if (
+        options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
+        options.type === 'application/pdf' && isMSBrowser
+    ) {
         addText(options.type + ' fell back on purpose');
     } else {
         throw 'Should not have to fall back for this combination. ' +

@@ -38,7 +38,7 @@ series: [{
 ```
 ## Breadcrumbs standalone
 
-Breadcrumbs might also be used as a standalone element. To do so, a list of levels and their options need to be created. Then the `Breadcrumbs` class is instanciated. Chart and breadcrumbs options should be passed as arguments. To calculate the list use the `updateProperties` method, then breadcrumbs are ready to be rendered. [See jsFiddle for a live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/breadcrumbs/standalone).
+Breadcrumbs might also be used as a standalone element. To do so, a list of levels and their options need to be created. Then the `Breadcrumbs` class is instantiated. Chart and breadcrumbs options should be passed as arguments. To calculate the list use the `updateProperties` method, then breadcrumbs are ready to be rendered. [See jsFiddle for a live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/breadcrumbs/standalone).
 
 
 ## API

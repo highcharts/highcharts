@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -57,7 +57,7 @@ class EditContextMenu extends Menu {
             langKey: 'editMode',
             events: {
                 click: function (this: MenuItem): void {
-                    (this.menu as EditContextMenu).editMode.onEditModeToggle();
+                    (this.menu as EditContextMenu).editMode.toggleEditMode();
                 }
             }
         }
@@ -71,8 +71,7 @@ class EditContextMenu extends Menu {
     constructor(
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
-        editMode: EditMode,
-        parent?: HTMLElement
+        editMode: EditMode
     ) {
         super(
             editMode.board.container,
@@ -82,6 +81,12 @@ class EditContextMenu extends Menu {
 
         this.editMode = editMode;
         this.options = merge(EditContextMenu.defaultOptions, options || {});
+
+        // Move it in the DOM after the edit tools so it is better accessible.
+        this.editMode.board.layoutsWrapper?.parentNode.insertBefore(
+            this.container,
+            this.editMode.board.layoutsWrapper
+        );
 
         // Set the context menu container width.
         this.container.style.width = this.options.width + 'px';
@@ -139,17 +144,27 @@ class EditContextMenu extends Menu {
     }
 
     public setVisible(visible: boolean): void {
-        const contextMenu = this;
+        const contextMenu = this,
+            contextButtonElement =
+                contextMenu.editMode.tools.contextButtonElement;
 
-        if (
-            contextMenu.container
-        ) {
+        if (contextMenu.container && contextButtonElement) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
                 contextMenu.isVisible = true;
+
+                contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'true'
+                );
             } else {
                 contextMenu.container.style.display = 'none';
                 contextMenu.isVisible = false;
+
+                contextButtonElement.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
             }
         }
     }
@@ -188,6 +203,16 @@ namespace EditContextMenu {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/ | Change icon}
          */
         icon?: string;
+        /**
+         * The text added next to the icon.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/|Add text next to icon}
+         *
+         * @default undefined
+         */
+        text?: string;
         /**
          * Width of the context menu.
          *

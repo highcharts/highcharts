@@ -7,7 +7,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} to {x2:%A %e %B %Y}.'
+            descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} ' +
+                'to {x2:%A %e %B %Y}.'
         }
     },
     xAxis: {

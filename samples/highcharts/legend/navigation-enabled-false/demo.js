@@ -7,7 +7,8 @@ Highcharts.setOptions({ // Apply the exporting height to print as well
                     this.resetParams = [
                         this.chartWidth,
                         this.chartHeight,
-                        false];
+                        false
+                    ];
                     this.setSize(this.chartWidth, height, false);
                 }
             },
@@ -56,8 +57,10 @@ Highcharts.chart('container', {
 
     series: [{
         data: (function () {
-            const names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
-                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
+            const names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,' +
+                'Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
+                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,' +
+                'Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
                 arr = [];
 
             names.split(',').forEach(function (name) {

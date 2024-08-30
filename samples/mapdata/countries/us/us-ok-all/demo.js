@@ -47,7 +47,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ok-all.topo.json">Oklahoma</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ok-all.topo.json">Oklahoma</a>'
         },
 
         mapNavigation: {

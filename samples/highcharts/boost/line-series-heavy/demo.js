@@ -35,8 +35,7 @@ function getSeries(n, s) {
         r.push({
             data: getData(n),
             lineWidth: 2,
-            boostThreshold: 1,
-            turboThreshold: 1
+            boostThreshold: 1
         });
     }
 
@@ -52,11 +51,14 @@ console.time('line');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     legend: {

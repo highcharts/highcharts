@@ -28,7 +28,7 @@ export interface CMOOptions extends SMAOptions {
 }
 
 export interface CMOParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 export default CMOOptions;

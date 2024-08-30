@@ -1,0 +1,6 @@
+---
+ name: Lollipop series with disabled grouping
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -23,23 +23,17 @@
 import type Axis from '../../Core/Axis/Axis';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 import type { AxisResizeOptions } from './AxisResizerOptions';
+import type PointerEvent from '../../Core/PointerEvent';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AxisResizerDefaults from './AxisResizerDefaults.js';
-import H from '../../Core/Globals.js';
-const {
-    hasTouch
-} = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
     isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    wrap
+    relativeLength
 } = U;
 
 /* *
@@ -85,16 +79,16 @@ class AxisResizer {
      *
      * */
 
-    public axis: Axis = void 0 as any;
-    public controlLine: SVGElement = void 0 as any;
+    public axis!: Axis;
+    public controlLine!: SVGElement;
     public eventsToUnbind?: Array<Function>;
     public grabbed?: boolean;
     public hasDragged?: boolean;
-    public lastPos: number = void 0 as any;
+    public lastPos!: number;
     public mouseDownHandler?: Function;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public options: AxisResizeOptions = void 0 as any;
+    public options!: AxisResizeOptions;
 
     /* *
      *
@@ -115,7 +109,7 @@ class AxisResizer {
         update?: boolean
     ): void {
         this.axis = axis;
-        this.options = axis.options.resize as any;
+        this.options = axis.options.resize || {};
         this.render();
 
         if (!update) {
@@ -199,38 +193,32 @@ class AxisResizer {
         // Create mouse events' handlers.
         // Make them as separate functions to enable wrapping them:
 
-        resizer.mouseMoveHandler = mouseMoveHandler = function (
+        resizer.mouseMoveHandler = mouseMoveHandler = (
             e: PointerEvent
-        ): void {
-            resizer.onMouseMove(e);
-        };
-        resizer.mouseUpHandler = mouseUpHandler = function (
+        ): void => (
+            resizer.onMouseMove(e)
+        );
+        resizer.mouseUpHandler = mouseUpHandler = (
             e: PointerEvent
-        ): void {
-            resizer.onMouseUp(e);
-        };
-        resizer.mouseDownHandler = mouseDownHandler = function (
-            e: PointerEvent
-        ): void {
-            resizer.onMouseDown(e);
-        };
-
-        // Add mouse move and mouseup events. These are bind to doc/container,
-        // because resizer.grabbed flag is stored in mousedown events.
-        eventsToUnbind.push(
-            addEvent(container, 'mousemove', mouseMoveHandler),
-            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
-            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler)
+        ): void => (
+            resizer.onMouseUp(e)
+        );
+        resizer.mouseDownHandler = mouseDownHandler = (
+        ): void => (
+            resizer.onMouseDown()
         );
 
-        // Touch events.
-        if (hasTouch) {
-            eventsToUnbind.push(
-                addEvent(container, 'touchmove', mouseMoveHandler),
-                addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
-                addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
-            );
-        }
+        eventsToUnbind.push(
+            // Add mouse move and mouseup events. These are bind to doc/div,
+            // because resizer.grabbed flag is stored in mousedown events.
+            addEvent(container, 'mousemove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
+            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler),
+            // Touch events.
+            addEvent(container, 'touchmove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
+            addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
+        );
 
         resizer.eventsToUnbind = eventsToUnbind;
     }
@@ -249,13 +237,13 @@ class AxisResizer {
          * the finger down in the center of the scrollbar. This should
          * be ignored. Borrowed from Navigator.
          */
-        if (!(e as any).touches || (e as any).touches[0].pageX !== 0) {
+        if (!e.touches || e.touches[0].pageX !== 0) {
+            const pointer = this.axis.chart.pointer;
             // Drag the control line
-            if (this.grabbed) {
+            if (this.grabbed && pointer) {
                 this.hasDragged = true;
                 this.updateAxes(
-                    this.axis.chart.pointer.normalize(e).chartY -
-                    (this.options.y as any)
+                    pointer.normalize(e).chartY - (this.options.y || 0)
                 );
             }
         }
@@ -271,16 +259,15 @@ class AxisResizer {
      */
     public onMouseUp(e: PointerEvent): void {
 
-        if (this.hasDragged) {
+        const pointer = this.axis.chart.pointer;
+        if (this.hasDragged && pointer) {
             this.updateAxes(
-                this.axis.chart.pointer.normalize(e).chartY -
-                (this.options.y as any)
+                pointer.normalize(e).chartY - (this.options.y || 0)
             );
         }
 
         // Restore runPointActions.
-        this.grabbed = this.hasDragged = this.axis.chart.activeResizer =
-            null as any;
+        this.grabbed = this.hasDragged = this.axis.chart.activeResizer = void 0;
     }
 
     /**
@@ -289,9 +276,9 @@ class AxisResizer {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    public onMouseDown(e: PointerEvent): void {
+    public onMouseDown(): void {
         // Clear all hover effects.
-        this.axis.chart.pointer.reset(false, 0);
+        this.axis.chart.pointer?.reset(false, 0);
 
         // Disable runPointActions.
         this.grabbed = this.axis.chart.activeResizer = true;
@@ -313,21 +300,21 @@ class AxisResizer {
             // Main axis is included in the prev array by default
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
-            // prev and next configs
+            // Prev and next configs
             axesConfigs: Array<AnyRecord> = [],
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
             plotBottom = plotTop + plotHeight,
-            calculatePercent = function (value: number): string {
-                return value * 100 / plotHeight + '%';
-            },
-            normalize = function (
+            calculatePercent = (value: number): string => (
+                value * 100 / plotHeight + '%'
+            ),
+            normalize = (
                 val: number,
                 min: number,
                 max: number
-            ): number {
-                return Math.round(clamp(val, min, max));
-            };
+            ): number => (
+                Math.round(clamp(val, min, max))
+            );
 
         // Normalize chartY to plot area limits
         chartY = clamp(chartY, plotTop, plotBottom);
@@ -340,25 +327,21 @@ class AxisResizer {
             return;
         }
 
+        let isFirst = true;
+
         // First gather info how axes should behave
-        [prevAxes, nextAxes].forEach((
-            axesGroup: Array<(number|string)>,
-            isNext: number
-        ): void => {
-            axesGroup.forEach((
-                axisInfo: (number|string),
-                i: number
-            ): void => {
+        for (const axesGroup of [prevAxes, nextAxes]) {
+            for (const axisInfo of axesGroup) {
                 // Axes given as array index, axis object or axis id
                 const axis: Axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (
                             // If it's first elem. in first group
-                            (!isNext && !i) ?
-                                // then it's an Axis object
+                            isFirst ?
+                                // Then it's an Axis object
                                 axisInfo as any :
-                                // else it should be an id
+                                // Else it should be an id
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
@@ -369,24 +352,24 @@ class AxisResizer {
                 // Skip if axis is not found
                 // or it is navigator's yAxis (#7732)
                 if (
-                    !axisOptions ||
-                    axisOptions.id === 'navigator-y-axis'
+                    !axisOptions || axisOptions.isInternal
                 ) {
-                    return;
+                    isFirst = false;
+                    continue;
                 }
 
                 top = axis.top;
 
                 const minLength = Math.round(relativeLength(
-                        axisOptions.minLength as any,
+                        axisOptions.minLength || NaN,
                         plotHeight
                     )),
                     maxLength = Math.round(relativeLength(
-                        axisOptions.maxLength as any,
+                        axisOptions.maxLength || NaN,
                         plotHeight
                     ));
 
-                if (isNext) {
+                if (!isFirst) {
                     // Try to change height first. yDelta could had changed
                     yDelta = chartY - resizer.lastPos;
 
@@ -442,18 +425,17 @@ class AxisResizer {
                     });
                 }
 
+                isFirst = false;
                 optionsToUpdate.height = height;
-            });
-        });
+            }
+        }
 
         // If we hit the min/maxLength with dragging, don't do anything:
         if (!stopDrag) {
             // Now update axes:
-            axesConfigs.forEach(function (
-                config: AnyRecord
-            ): void {
+            for (const config of axesConfigs) {
                 config.axis.update(config.options, false);
-            });
+            }
 
             chart.redraw(false);
         }
@@ -474,18 +456,16 @@ class AxisResizer {
 
         // Clear control line events
         if (this.eventsToUnbind) {
-            this.eventsToUnbind.forEach(function (unbind: Function): void {
-                unbind();
-            });
+            this.eventsToUnbind.forEach((unbind): void => unbind());
         }
 
         // Destroy AxisResizer elements
         resizer.controlLine.destroy();
 
         // Nullify properties
-        objectEach(resizer, function (val: unknown, key: string): void {
-            (resizer as any)[key] = null;
-        });
+        for (const key of Object.keys(resizer)) {
+            (resizer as AnyRecord)[key] = null;
+        }
     }
 
 }

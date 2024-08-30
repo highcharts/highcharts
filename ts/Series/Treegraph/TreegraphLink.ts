@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import type ColorString from '../../Core/Color/ColorString';
 import type PointOptions from '../../Core/Series/PointOptions.js';
 import type TreegraphSeries from './TreegraphSeries';
 import type { OrganizationLinkOptions } from '../Organization/OrganizationSeriesOptions.js';
@@ -46,7 +47,49 @@ const {
  *
  * */
 
-export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
+export interface TreegraphLinkOptions extends OrganizationLinkOptions {
+
+
+    /**
+     * Radius for the rounded corners of the links between nodes. Works for
+     * `default` link type.
+     */
+    radius?: number;
+
+    /**
+     * The color of the links between nodes.
+     */
+    color?: ColorString;
+
+    /**
+     * Modifier of the shape of the curved link. Works best for values between 0
+     * and 1, where 0 is a straight line, and 1 is a shape close to the default
+     * one.
+     *
+     * @default 0.5
+     *
+     * @product highcharts
+     *
+     * @since 10.3.0
+     */
+    curveFactor?: number;
+
+    /**
+     * The line width of the links connecting nodes, in pixels.
+     */
+    lineWidth?: number;
+
+    /**
+     * Type of the link shape.
+     *
+     * @sample highcharts/series-treegraph/link-types
+     *         Different link types
+     *
+     * @product highcharts
+     */
+    type?: ('curved'|'default'|'straight');
+
+}
 
 export interface LinkPointOptions extends TreegraphPointOptions {
     link?: TreegraphLinkOptions;
@@ -57,6 +100,7 @@ export interface LinkPointOptions extends TreegraphPointOptions {
  *  Class
  *
  * */
+
 /**
  * @private
  * @class
@@ -64,39 +108,48 @@ export interface LinkPointOptions extends TreegraphPointOptions {
 class LinkPoint extends ColumnPoint {
 
     /* *
-    *
-    *  Class properties
-    *
-    * */
-    isLink = true;
-    node = {};
-    formatPrefix = 'link';
-    dataLabelOnNull = true;
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        series: TreegraphSeries,
+        options: string | number | PointOptions | (string | number | null)[],
+        x?: number,
+        point?: TreegraphPoint
+    ) {
+        super(series, options, x);
+        this.formatPrefix = 'link';
+        this.dataLabelOnNull = true;
+
+        if (point) {
+            this.fromNode = point.node.parentNode.point;
+            this.visible = point.visible;
+            this.toNode = point;
+            this.id = this.toNode.id + '-' + this.fromNode.id;
+        }
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public dataLabelOnNull = true;
+
+    public formatPrefix = 'link';
+
+    public isLink = true;
+
+    public node = {};
 
     /* *
      *
      *  Functions
      *
      * */
-
-    public init(
-        series: TreegraphSeries,
-        options: string | number | PointOptions | (string | number | null)[],
-        x?: number,
-        point?: TreegraphPoint
-    ): LinkPoint {
-        const link = super.init.apply(this, arguments) as LinkPoint;
-        this.formatPrefix = 'link';
-        this.dataLabelOnNull = true;
-
-        if (point) {
-            link.fromNode = point.node.parentNode.point;
-            link.visible = point.visible;
-            link.toNode = point;
-            this.id = link.toNode.id + '-' + link.fromNode.id;
-        }
-        return link;
-    }
 
     public update(
         options: TreegraphPointOptions | LinkPointOptions,

@@ -275,7 +275,8 @@ QUnit.test(
                 chart.series[1].options.params.period -
                 1,
             30,
-            'Indicator cropThreshold equal main series cropThreshold reduced by period.'
+            'Indicator cropThreshold equal main series cropThreshold reduced ' +
+            'by period.'
         );
     }
 );

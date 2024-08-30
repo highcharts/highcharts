@@ -9,8 +9,10 @@
                         providerSelect = document.getElementById('provider'),
                         themeSelect = document.getElementById('theme'),
                         apikeyInput = document.getElementById('apikey'),
-                        submitAPIkeyBtn = document.getElementById('submitAPIkey'),
-                        { TilesProvidersRegistry } = Highcharts;
+                        submitAPIkeyBtn = document.getElementById(
+                            'submitAPIkey'
+                        ),
+                        { TilesProviderRegistry } = Highcharts;
 
                     function updateTWM() {
                         chart.series[0].update({
@@ -25,7 +27,7 @@
                     function loadThemes(key) {
                         const {
                             themes
-                        } = new TilesProvidersRegistry[key]();
+                        } = new TilesProviderRegistry[key]();
                         Object.keys(themes).forEach(themeKey => {
                             const themeOpt = document.createElement('option');
                             themeOpt.value = themeKey;
@@ -34,7 +36,7 @@
                         });
                     }
 
-                    Object.keys(TilesProvidersRegistry).forEach(key => {
+                    Object.keys(TilesProviderRegistry).forEach(key => {
                         const providerOpt = document.createElement('option');
                         providerOpt.value = key;
                         providerOpt.innerHTML = key;

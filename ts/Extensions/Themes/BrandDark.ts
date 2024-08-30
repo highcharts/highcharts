@@ -1,6 +1,6 @@
 /* *
  *
- *   (c) 2010-2021 Highsoft AS
+ *   (c) 2010-2024 Highsoft AS
  *
  *  Author: Nancy Dillon
  *
@@ -20,7 +20,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
 import D from '../../Core/Defaults.js';
@@ -42,9 +42,11 @@ namespace BrandDarkTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
-        colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+        ],
 
         chart: {
             backgroundColor: {
@@ -126,9 +128,8 @@ namespace BrandDarkTheme {
                 lowColor: '#f0f0f0'
             },
             map: {
-                borderColor: 'rgba(200, 200, 200, 1)',
+                borderColor: '#909090',
                 nullColor: '#78758C'
-
             }
         } as SeriesTypePlotOptions,
         drilldown: {
@@ -180,6 +181,18 @@ namespace BrandDarkTheme {
                 }
             }
         },
+        colorAxis: {
+            gridLineColor: '#45445d',
+            labels: {
+                style: {
+                    color: '#fff',
+                    fontSize: '12px'
+                }
+            },
+            minColor: '#342f95',
+            maxColor: '#2caffe',
+            tickColor: '#45445d'
+        },
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -213,7 +226,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#46465C',
@@ -289,7 +302,7 @@ namespace BrandDarkTheme {
     export function apply(): void {
         // Load the fonts
         createElement('link', {
-            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:200,300,400,600,700',
+            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700',
             rel: 'stylesheet',
             type: 'text/css'
         }, null as any, document.getElementsByTagName('head')[0]);

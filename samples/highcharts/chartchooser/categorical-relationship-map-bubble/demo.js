@@ -88,7 +88,8 @@ const dirDist50 = '#E8544E',
                 dataLabels: {
                     format: '{point.id}'
                 },
-                // Use id instead of name to allow for referencing points later using
+                // Use id instead of name to allow for referencing points
+                // later using
                 // chart.get
                 data: [
                     {

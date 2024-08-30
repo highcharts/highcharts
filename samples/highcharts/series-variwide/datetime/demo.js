@@ -35,7 +35,8 @@ Highcharts.chart('container', {
             z: 4 * 60000
         }],
         tooltip: {
-            pointFormat: 'Pace: {point.y:%M:%S} min/km<br>Lap time: {point.z:%M:%S} min'
+            pointFormat: 'Pace: {point.y:%M:%S} min/km<br>Lap time: ' +
+                '{point.z:%M:%S} min'
         },
         borderColor: 'black',
         color: 'rgba(0, 0, 255, 0.2)',

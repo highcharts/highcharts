@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,10 @@
  * */
 
 export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
-    // nothing here yet
+    isFlat?: boolean;
+    xBounds?: Array<number>;
+    yBounds?: Array<number>;
+    xMap?: Array<number|null>;
 }
 
 /* *

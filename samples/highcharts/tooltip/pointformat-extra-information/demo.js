@@ -1,11 +1,15 @@
 Highcharts.chart('container', {
 
     tooltip: {
-        pointFormat: 'The value for <b>{point.x}</b> is <b>{point.y}</b><br>{point.custom.extraInformation}'
+        pointFormat: 'The value for <b>{point.x}</b> is <b>{point.y}</b><br>' +
+            '{point.custom.extraInformation}'
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{

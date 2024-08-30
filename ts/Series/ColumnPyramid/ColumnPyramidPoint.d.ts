@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColumnPoint from '../Column/ColumnPoint';
 import type ColumnPyramidPointOptions from './ColumnPyramidPointOptions';
 import type ColumnPyramidSeries from './ColumnPyramidSeries';
@@ -22,6 +23,7 @@ import type ColumnPyramidSeries from './ColumnPyramidSeries';
  *  Class
  *
  * */
+
 declare class ColumnPyramidPoint extends ColumnPoint {
     public options: ColumnPyramidPointOptions;
     public series: ColumnPyramidSeries;
@@ -29,7 +31,8 @@ declare class ColumnPyramidPoint extends ColumnPoint {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default ColumnPyramidPoint;

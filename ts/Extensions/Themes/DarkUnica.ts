@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
 import D from '../../Core/Defaults.js';
@@ -40,7 +40,7 @@ namespace DarkUnicaTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: [
             '#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
             '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
@@ -174,7 +174,7 @@ namespace DarkUnicaTheme {
             }
         },
 
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#505053',

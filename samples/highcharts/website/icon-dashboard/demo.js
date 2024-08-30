@@ -1,4 +1,4 @@
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
 Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
@@ -19,10 +19,13 @@ Math.easeOutQuint = function (pos) {
 //                 const chart = this;
 //                 const particles = chart.series[12].data;
 
-//                 const squares = document.querySelectorAll('.squares .highcharts-point');
+//                 const squares = document.querySelectorAll(
+//                      '.squares .highcharts-point'
+//                 );
 
 //                 setTimeout(function () {
-//                     document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+//                     document.querySelector('.highcharts-markers.particles')
+//                         .style.opacity = 1;
 //                     particles[0].update({
 //                         x: 17,
 //                         y: 13
@@ -573,7 +576,9 @@ Highcharts.chart('container', {
 
                     chart.redraw();
 
-                    document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-markers.particles'
+                    ).style.opacity = 1;
 
                 }, 100);
 

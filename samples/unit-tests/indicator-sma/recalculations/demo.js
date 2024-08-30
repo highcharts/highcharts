@@ -97,7 +97,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[1].points[chart.series[1].points.length - 1].x,
         chart.series[0].points[chart.series[0].points.length - 1].x,
-        'Correct last point position after addPoint() with shift parameter (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        '(#8572)'
     );
 
     secondSeries = chart.addSeries({
@@ -300,7 +301,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             216.27200000000002,
             216.19800000000004
         ],
-        'Correct points after update with cropped data - simulated draggable points (#9822)'
+        'Correct points after update with cropped data - simulated draggable ' +
+        'points (#9822)'
     );
 
     secondChart.series[0].addPoint(212.92, true, true);
@@ -308,7 +310,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         secondChart.series[1].points[0].x,
         secondChart.series[1].processedXData[0],
-        'Correct first point position after addPoint() with shift parameter and cropped data (#8572)'
+        'Correct first point position after addPoint() with shift parameter ' +
+        'and cropped data (#8572)'
     );
 
     assert.strictEqual(
@@ -316,7 +319,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         secondChart.series[1].processedXData[
             secondChart.series[1].processedXData.length - 1
         ],
-        'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        'and cropped data (#8572)'
     );
 
     const lineSeriesPoints = secondChart.series[2].points;

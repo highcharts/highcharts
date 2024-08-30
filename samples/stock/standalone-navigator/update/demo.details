@@ -1,0 +1,6 @@
+---
+ name: Standalone Navigator Demo
+ authors:
+   - Mateusz Bernacik
+ js_wrap: b
+...

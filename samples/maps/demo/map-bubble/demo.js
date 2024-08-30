@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json'
+        'https://www.highcharts.com/samples/data/world-population.json'
     ).then(response => response.json());
 
     Highcharts.mapChart('container', {
@@ -22,7 +22,8 @@
         },
 
         accessibility: {
-            description: 'We see how China and India by far are the countries with the largest population.'
+            description: 'We see how China and India by far are the ' +
+                'countries with the largest population.'
         },
 
         legend: {

@@ -27,7 +27,8 @@
                         series.trackball = chart.renderer.circle(
                             pointX,
                             pointY,
-                            5).attr({
+                            5
+                        ).attr({
                             fill: series.color,
                             stroke: 'white',
                             'stroke-width': 1,

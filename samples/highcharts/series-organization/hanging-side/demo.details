@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Kent Wincent Holt
+ js_wrap: b
+...

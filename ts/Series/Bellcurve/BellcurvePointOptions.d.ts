@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -25,7 +25,13 @@ import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
  * */
 
 export interface BellcurvePointOptions extends AreaSplinePointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default BellcurvePointOptions;

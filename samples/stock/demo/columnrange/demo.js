@@ -2,7 +2,7 @@
 
     // Notice that the dataset has missing data
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d2270f7c/samples/data/temp-range.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {

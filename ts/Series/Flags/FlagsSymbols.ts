@@ -140,7 +140,7 @@ namespace FlagsSymbols {
                 w = h;
             }
 
-            path = (symbols[shape])(x, y, w, h);
+            path = (symbols[shape])(x, y, w, h, options);
 
             if (anchorX && anchorY) {
                 /**

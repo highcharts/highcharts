@@ -59,7 +59,7 @@ Since Highcharts 2.3 radial gradients have been supported. They have a similar s
 
 The color is given as an object literal containing two properties:
 
-*   **radialGradient** holds another object literal, with three properies. The **cx** and **cy** properties are the horizontal and vertical centers of the radial gradient respectively, relative to the shape where 0 and 1 are the edges and 0.5 is the center of the shape. The r property defines the radius relative to the shape's diameter. When all values are 0.5, the gradient starts in the middle of the circle and ends along the perimeter.
+*   **radialGradient** holds another object literal, with three properties. The **cx** and **cy** properties are the horizontal and vertical centers of the radial gradient respectively, relative to the shape where 0 and 1 are the edges and 0.5 is the center of the shape. The r property defines the radius relative to the shape's diameter. When all values are 0.5, the gradient starts in the middle of the circle and ends along the perimeter.
 *   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format.
 
 When a radial gradient is used as the color of a pie slice or the background color of a gauge or polar chart, the gradient is drawn relative to the full circle, not only the specific shape.

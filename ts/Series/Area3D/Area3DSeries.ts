@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -14,26 +14,19 @@ import type AreaSeries from '../Area/AreaSeries';
 import type AreaPoint from '../Area/AreaPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: {
-            prototype: lineProto
-        }
-    }
-} = SeriesRegistry;
+    line: { prototype: lineProto }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-const { wrap } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
+const {
+    pushUnique,
+    wrap
+} = U;
 
 /* *
  *
@@ -41,11 +34,14 @@ const composedMembers: Array<unknown> = [];
  *
  * */
 
+/**
+ *
+ */
 function compose(
     AreaSeriesClass: typeof AreaSeries
 ): void {
 
-    if (U.pushUnique(composedMembers, AreaSeriesClass)) {
+    if (pushUnique(composed, 'Area3DSeries')) {
         wrap(
             AreaSeriesClass.prototype,
             'getGraphPath',
@@ -55,6 +51,9 @@ function compose(
 
 }
 
+/**
+ *
+ */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
     proceed: Function
@@ -130,6 +129,7 @@ function wrapAreaSeriesGetGraphPath(
         series.areaPath = areaPath;
     }
 
+    series.graphPath = svgPath;
     return svgPath;
 }
 

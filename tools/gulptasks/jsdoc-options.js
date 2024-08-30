@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
+const path = require('node:path');
 
 /* *
  *
@@ -50,7 +50,7 @@ function createApiDocumentation() {
         ).ApiDocs,
         argv = require('yargs').argv,
         fs = require('fs'),
-        log = require('./lib/log');
+        log = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 
@@ -78,10 +78,11 @@ function createApiDocumentation() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function createTreeJson() {
-
+function createTreeJson(
+    globs = SOURCE_GLOBS
+) {
     const jsdoc = require('gulp-jsdoc3');
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 
@@ -98,7 +99,7 @@ function createTreeJson() {
         log.success('Generating', TREE_FILE + '...');
 
         gulp
-            .src(SOURCE_GLOBS, { read: false })
+            .src(globs, { read: false })
             .pipe(jsdoc(
                 jsDocConfig,
                 error => {
@@ -122,7 +123,7 @@ function createTreeJson() {
  */
 function testTreeJson() {
 
-    const fs = require('fs');
+    const fs = require('node:fs');
 
     return new Promise(resolve => {
 
@@ -154,18 +155,22 @@ function testTreeJson() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function jsDocOptions() {
+async function jsDocOptions() {
 
-    return new Promise((resolve, reject) => {
+    const argv = require('yargs').argv;
 
-        Promise
-            .resolve()
-            .then(createTreeJson)
-            .then(testTreeJson)
-            .then(createApiDocumentation)
-            .then(() => resolve())
-            .catch(reject);
-    });
+    if (argv.custom) {
+        await createTreeJson([
+            SOURCE_DIRECTORY + '/Core/**/*',
+            SOURCE_DIRECTORY + '/Stock/Scrollbar/*',
+            SOURCE_DIRECTORY + '../custom.src.js'
+        ]);
+    } else {
+        await createTreeJson();
+        await testTreeJson();
+        await createApiDocumentation();
+    }
+
 }
 
 gulp.task('jsdoc-options', jsDocOptions);

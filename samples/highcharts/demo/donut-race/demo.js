@@ -25,12 +25,13 @@ function getSubtitle() {
 
 (async () => {
     dataset = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@88f2067/samples/data/nuclear-energy-production.json'
+        'https://www.highcharts.com/samples/data/nuclear-energy-production.json'
     ).then(response => response.json());
 
     chart = Highcharts.chart('container', {
         title: {
-            text: 'Nuclear energy production from 1965 to 2021 in US, UK, France, Germany, and Japan',
+            text: 'Nuclear energy production from 1965 to 2021 in US, UK, ' +
+                'France, Germany, and Japan',
             align: 'center'
         },
         subtitle: {
@@ -81,8 +82,8 @@ function getSubtitle() {
 })();
 
 /*
- * Pause the timeline, either when the range is ended, or when clicking the pause button.
- * Pausing stops the timer and resets the button to play mode.
+ * Pause the timeline, either when the range is ended, or when clicking the
+ * pause button. Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
     button.title = 'play';

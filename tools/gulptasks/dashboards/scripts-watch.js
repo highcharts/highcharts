@@ -26,17 +26,16 @@ const WATCH_GLOBS = [
  * */
 
 /**
- * Continuesly watching sources to restart the `scripts-js` task.
+ * Continuously watching sources to restart the `scripts-js` task.
  *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function task() {
-
+async function watch() {
     const argv = require('yargs').argv;
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     if (processLib.isRunning('dashboards/scripts-watch')) {
         logLib.warn('Running watch process detected.');
@@ -91,4 +90,11 @@ async function task() {
 require('./scripts.js');
 require('../scripts-css.js');
 
-gulp.task('dashboards/scripts-watch', gulp.series('dashboards/scripts', 'scripts-css', task));
+gulp.task(
+    'dashboards/scripts-watch',
+    gulp.series(
+        'dashboards/scripts',
+        'scripts-css',
+        watch
+    )
+);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  3D pie series
  *
@@ -19,23 +19,24 @@
  * */
 
 import type ColorString from '../../Core/Color/ColorString';
-import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Series from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import H from '../../Core/Globals.js';
 const {
+    composed,
     deg2rad
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        pie: PieSeries
-    }
-} = SeriesRegistry;
+    pie: PieSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -66,11 +67,25 @@ class Pie3DSeries extends PieSeries {
 
     /* *
      *
-     *  Functions
+     *  Static Functions
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
+    public static compose(
+        SeriesClass: typeof Series
+    ): void {
+
+        if (pushUnique(composed, 'Pie3D')) {
+            SeriesClass.types.pie = Pie3DSeries;
+        }
+
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * @private
@@ -78,7 +93,7 @@ class Pie3DSeries extends PieSeries {
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
-            // destroy (and rebuild) everything!!!
+            // Destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
         }
     }
@@ -90,11 +105,12 @@ class Pie3DSeries extends PieSeries {
         if (!this.chart.is3d()) {
             super.animate.apply(this, arguments);
         } else {
-            let animation = this.options.animation,
-                attribs: SVGAttributes,
-                center = this.center,
+            const center = this.center,
                 group = this.group,
                 markerGroup = this.markerGroup;
+
+            let animation = this.options.animation,
+                attribs: SVGAttributes;
 
             if (animation === true) {
                 animation = {};
@@ -105,10 +121,12 @@ class Pie3DSeries extends PieSeries {
                 // Scale down the group and place it in the center
                 (group as any).oldtranslateX = pick(
                     (group as any).oldtranslateX,
-                    (group as any).translateX);
+                    (group as any).translateX
+                );
                 (group as any).oldtranslateY = pick(
                     (group as any).oldtranslateY,
-                    (group as any).translateY);
+                    (group as any).translateY
+                );
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -168,14 +186,17 @@ class Pie3DSeries extends PieSeries {
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
             // Apply perspective on label positions
-            [
-                labelPosition?.natural,
-                connectorPosition.breakAt,
-                connectorPosition.touchingSliceAt
-            ].forEach(function (coordinates: PositionObject): void {
+            for (
+                const coordinates of
+                [
+                    labelPosition?.natural,
+                    connectorPosition.breakAt,
+                    connectorPosition.touchingSliceAt
+                ]
+            ) {
                 coordinates.x += xOffset;
                 coordinates.y += yOffset;
-            });
+            }
         }
         return labelPosition;
     }
@@ -206,15 +227,16 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        let series = this,
+        const series = this,
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
             options3d = series.chart.options.chart.options3d as any,
             alpha = options3d.alpha,
-            beta = options3d.beta,
-            z: number = seriesOptions.stacking ?
-                ((seriesOptions.stack as any) || 0) * depth :
-                series._i * depth;
+            beta = options3d.beta;
+
+        let z: number = seriesOptions.stacking ?
+            ((seriesOptions.stack as any) || 0) * depth :
+            series._i * depth;
 
         z += depth / 2;
 
@@ -222,10 +244,8 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        series.data.forEach(function (point): void {
-
-            let shapeArgs = point.shapeArgs,
-                angle: number;
+        for (const point of series.points) {
+            const shapeArgs = point.shapeArgs;
 
             point.shapeType = 'arc3d';
 
@@ -235,7 +255,8 @@ class Pie3DSeries extends PieSeries {
             (shapeArgs as any).beta = beta;
             (shapeArgs as any).center = series.center;
 
-            angle = ((shapeArgs as any).end + (shapeArgs as any).start) / 2;
+            const angle =
+                ((shapeArgs as any).end + (shapeArgs as any).start) / 2;
 
             point.slicedTranslation = {
                 translateX: Math.round(
@@ -249,7 +270,7 @@ class Pie3DSeries extends PieSeries {
                     Math.cos(alpha * deg2rad)
                 )
             };
-        });
+        }
     }
 
     /**
@@ -263,17 +284,16 @@ class Pie3DSeries extends PieSeries {
             return;
         }
 
-        this.points.forEach(function (point): void {
+        for (const point of this.points) {
             if (point.graphic) {
-                ['out', 'inn', 'side1', 'side2'].forEach((face): void => {
+                for (const face of ['out', 'inn', 'side1', 'side2']) {
                     if (point.graphic) {
                         point.graphic[face].element.point = point;
                     }
-                });
+                }
             }
-        });
+        }
     }
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -286,6 +306,7 @@ class Pie3DSeries extends PieSeries {
 interface Pie3DSeries {
     pointClass: typeof Pie3DPoint;
 }
+
 extend(Pie3DSeries.prototype, {
     pointClass: Pie3DPoint
 });
@@ -315,4 +336,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpilation
+''; // Keeps doclets above after transpiledion

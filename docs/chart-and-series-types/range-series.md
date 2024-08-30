@@ -20,6 +20,7 @@ Options related to Range series
 |Option|Description|
 |------|-----------|
 |[dataLabels](https://api.highcharts.com/highcharts/plotOptions.arearange.dataLabels)|Since both the low values and high values for a series need a separate data label, we added a new set of options, "xLow", "xHigh", "yLow" and "yHigh". With these options, the relative position can be altered.|
+|[lowMarker](https://api.highcharts.com/highcharts/plotOptions.arearange.lowMarker)|The "lowMarker" option helps to visualize better the low and high values by customizing their symbols separately.
 
 Range series examples
 ---------------------

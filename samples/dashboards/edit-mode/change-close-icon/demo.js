@@ -3,7 +3,7 @@ Dashboards.board('container', {
         enabled: true,
         confirmationPopup: {
             close: {
-                icon: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd81b2100b6f4851a05cdbcd38658b662c18/gfx/dashboard-icons/series-types/icon-gauge.svg'
+                icon: 'https://code.highcharts.com/dashboards/gfx/dashboards-icons/series-types/icon-gauge.svg'
             }
         },
         contextMenu: {
@@ -23,7 +23,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -31,7 +31,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {

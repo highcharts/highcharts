@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -132,8 +132,6 @@ class HTMLTableConnector extends DataConnector {
             tableElement: connector.tableElement
         });
 
-        // If already loaded, clear the current rows
-        table.deleteColumns();
 
         let tableElement: (HTMLElement|null);
 
@@ -166,6 +164,8 @@ class HTMLTableConnector extends DataConnector {
             eventDetail
         );
 
+        // If already loaded, clear the current rows
+        table.deleteColumns();
         table.setColumns(converter.getTable().getColumns());
 
         return connector

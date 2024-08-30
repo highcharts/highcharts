@@ -83,10 +83,10 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
-    public EMApercent: number = void 0 as any;
-    public data: Array<DEMAPoint> = void 0 as any;
-    public options: DEMAOptions = void 0 as any;
-    public points: Array<DEMAPoint> = void 0 as any;
+    public EMApercent!: number;
+    public data!: Array<DEMAPoint>;
+    public options!: DEMAOptions;
+    public points!: Array<DEMAPoint>;
 
     /* *
      *
@@ -160,7 +160,7 @@ class DEMAIndicator extends EMAIndicator {
                 yVal
             );
 
-        // first point
+        // First point
         SMA = accumulatePeriodPoints / period;
         accumulatePeriodPoints = 0;
 
@@ -264,4 +264,4 @@ export default DEMAIndicator;
  * @apioption series.dema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

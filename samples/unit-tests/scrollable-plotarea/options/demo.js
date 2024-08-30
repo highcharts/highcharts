@@ -69,7 +69,7 @@ QUnit.test('fixedRenderer options', function (assert) {
         ]
     });
     assert.equal(
-        chart.fixedRenderer.style.fontFamily,
+        chart.scrollablePlotArea.fixedRenderer.style.fontFamily,
         chart.options.chart.style.fontFamily,
         'fixedRenderer should inherit style from options'
     );

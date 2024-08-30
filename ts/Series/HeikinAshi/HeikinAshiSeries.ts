@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,8 @@ import type Axis from '../../Core/Axis/Axis';
 import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
 import type Series from '../../Core/Series/Series';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import HeikinAshiSeriesDefaults from './HeikinAshiSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -29,16 +31,9 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -78,7 +73,7 @@ function onHeikinAshiSeriesAfterTranslate(
         heikiashiData = series.heikiashiData,
         cropStart = series.cropStart || 0;
 
-    // Reset the proccesed data.
+    // Reset the processed data.
     series.processedYData.length = 0;
 
     // Modify points.
@@ -144,16 +139,13 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public static compose(
         SeriesClass: typeof Series,
-        AxisClass: typeof Axis,
-        ..._args: Array<never>
+        AxisClass: typeof Axis
     ): void {
         CandlestickSeries.compose(SeriesClass);
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, 'HeikinAshi')) {
             addEvent(AxisClass, 'postProcessData', onAxisPostProcessData);
-        }
 
-        if (U.pushUnique(composedMembers, HeikinAshiSeries)) {
             addEvent(
                 HeikinAshiSeries,
                 'afterTranslate',
@@ -174,17 +166,17 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
-    public data: Array<HeikinAshiPoint> = void 0 as any;
+    public data!: Array<HeikinAshiPoint>;
 
     public heikiashiData: Array<Array<number>> = [];
 
-    public options: HeikinAshiSeriesOptions = void 0 as any;
+    public options!: HeikinAshiSeriesOptions;
 
-    public points: Array<HeikinAshiPoint> = void 0 as any;
+    public points!: Array<HeikinAshiPoint>;
 
-    public yData: Array<Array<number>> = void 0 as any;
+    public yData!: Array<Array<number>>;
 
-    public processedYData: Array<Array<(number|null)>> = void 0 as any;
+    public processedYData!: Array<Array<(number|null)>>;
 
     /* *
      *

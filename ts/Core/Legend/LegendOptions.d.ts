@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,10 +19,13 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type E from '../EventCallback';
 import type F from '../Templating';
 import type Legend from './Legend';
+import type PointerEvent from '../PointerEvent';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 /* *
@@ -37,6 +40,16 @@ declare module '../Options' {
     }
 }
 
+declare module '../Series/SeriesOptions' {
+    interface SeriesEventsOptions {
+        legendItemClick?: LegendItemClickCallback;
+    }
+}
+
+export interface LegendEventsOptions {
+    itemClick?: EventCallback<Legend, Event>
+}
+
 export interface LegendOptions {
     align: AlignValue;
     alignColumns: boolean;
@@ -46,6 +59,7 @@ export interface LegendOptions {
     borderWidth?: number;
     className: string;
     enabled: boolean;
+    events?: LegendEventsOptions;
     floating?: boolean;
     itemCheckboxStyle: CSSObject;
     itemDistance?: number;
@@ -83,6 +97,8 @@ export interface LegendOptions {
     x: number;
     y: number;
 }
+
+export type LegendItemClickCallback = E<PointerEvent>;
 
 export interface LegendNavigationOptions {
     activeColor: ColorType;

@@ -91,6 +91,7 @@ QUnit.test('Huge numbers (#3793)', function (assert) {
         series: [
             {
                 data: [
+                    /* eslint-disable no-loss-of-precision */
                     1.7976931348623157e300,
                     1.7976931348623157e301,
                     1.7976931348623157e306

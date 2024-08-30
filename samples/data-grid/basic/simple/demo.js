@@ -1,5 +1,3 @@
-const { DataTable } = Dashboards;
-
 const headers = ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Potatoes'];
 
 const columns = (() => {
@@ -19,6 +17,7 @@ const columns = (() => {
     return cols;
 })();
 
+// eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataTable({ columns })
+    dataTable: new DataGrid.DataTable({ columns })
 });

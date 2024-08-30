@@ -14,43 +14,29 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
-        layouts: [
-            {
-                id: 'layout-1',
-                rowClassName: 'custom-row',
-                cellClassName: 'custom-cell',
-                rows: [
-                    {
-                        cells: [
-                            {
-                                id: 'dashboard-col-0',
-                                width: '50%'
-                            },
-                            {
-                                id: 'dashboard-col-1'
-                            },
-                            {
-                                id: 'dashboard-col-12'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'dashboard-row-1',
-                        cells: [
-                            {
-                                id: 'dashboard-col-2',
-                                width: '1'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+        layouts: [{
+            id: 'layout-1',
+            rowClassName: 'custom-row',
+            cellClassName: 'custom-cell',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }, {
+                    id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-12'
+                }]
+            }, {
+                id: 'dashboard-row-1',
+                cells: [{
+                    id: 'dashboard-col-2'
+                }]
+            }]
+        }]
     },
     components: [{
         sync: {
@@ -61,20 +47,15 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             chart: {
                 type: 'pie'
             }
         }
-    },
-    {
-        cell: 'dashboard-col-1',
+    }, {
+        renderTo: 'dashboard-col-1',
         sync: {
             visibility: true,
             highlight: true,
@@ -84,10 +65,6 @@ Dashboards.board('container', {
             id: 'Vitamin'
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -97,9 +74,8 @@ Dashboards.board('container', {
                 type: 'column'
             }
         }
-    },
-    {
-        cell: 'dashboard-col-12',
+    }, {
+        renderTo: 'dashboard-col-12',
         connector: {
             id: 'Vitamin'
         },
@@ -109,10 +85,6 @@ Dashboards.board('container', {
             extremes: true
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -139,9 +111,8 @@ Dashboards.board('container', {
                 console.log('update');
             }
         }
-    },
-    {
-        cell: 'dashboard-col-2',
+    }, {
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'Vitamin'
         },
@@ -153,5 +124,11 @@ Dashboards.board('container', {
 }, true);
 
 setTimeout(() => {
+    Dashboards.boards[0].mountedComponents[0].component.update({
+        title: 'Updated title'
+    });
+}, 1000);
+
+setTimeout(() => {
     Dashboards.boards[0].mountedComponents[1].cell.destroy();
-}, 3000);
+}, 2000);

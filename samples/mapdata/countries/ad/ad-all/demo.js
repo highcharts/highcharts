@@ -8,8 +8,8 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['ad-3689', 10], ['ad-6404', 11], ['ad-6405', 12], ['ad-6406', 13],
-        ['ad-6407', 14], ['ad-6408', 15], ['ad-6409', 16]
+        ['ad-07', 10], ['ad-02', 11], ['ad-03', 12], ['ad-08', 13],
+        ['ad-04', 14], ['ad-05', 15], ['ad-06', 16]
     ];
 
     // Create the chart
@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ad/ad-all.topo.json">Andorra</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ad/ad-all.topo.json">Andorra</a>'
         },
 
         mapNavigation: {

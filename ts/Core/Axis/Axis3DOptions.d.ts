@@ -1,8 +1,8 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *

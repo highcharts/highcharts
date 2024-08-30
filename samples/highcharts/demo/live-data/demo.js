@@ -18,7 +18,8 @@ function createChart() {
                 announcementFormatter: function (
                     allSeries,
                     newSeries,
-                    newPoint) {
+                    newPoint
+                ) {
                     if (newPoint) {
                         return 'New point added. Value: ' + newPoint.y;
                     }

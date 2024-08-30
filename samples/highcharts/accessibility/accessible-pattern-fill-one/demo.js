@@ -27,25 +27,10 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
-    },
-
-    plotOptions: {
-        area: {
-            fillColor: {
-                pattern: {
-                    path: {
-                        d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-                        strokeWidth: 3
-                    },
-                    width: 10,
-                    height: 10,
-                    opacity: 0.4
-                }
-            }
-        }
     },
 
     legend: {
@@ -57,16 +42,32 @@ Highcharts.chart('container-area', {
         color: '#88e',
         fillColor: {
             pattern: {
-                color: '#11d'
+                color: '#11d',
+                path: {
+                    d: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 11 9 L 9 11',
+                    strokeWidth: 3
+                },
+                width: 10,
+                height: 10,
+                opacity: 0.4
             }
         }
     }, {
-        data: [null, null, null, null, null,
-            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [
+            null, null, null, null, null,
+            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4
+        ],
         color: '#e88',
         fillColor: {
             pattern: {
-                color: '#d11'
+                color: '#d11',
+                path: {
+                    d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+                    strokeWidth: 3
+                },
+                width: 10,
+                height: 10,
+                opacity: 0.4
             }
         }
     }]

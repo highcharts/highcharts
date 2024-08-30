@@ -9,7 +9,10 @@ Highcharts.chart('container', {
         text: 'Browser<br>shares<br>January<br>2022',
         align: 'center',
         verticalAlign: 'middle',
-        y: 60
+        y: 60,
+        style: {
+            fontSize: '1.1em'
+        }
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

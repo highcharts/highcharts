@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -43,10 +43,10 @@ const {
 
 /**
  * Function to create a context button.
- * @intenal
+ * @internal
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param editMode
  * EditMode instance.
@@ -58,27 +58,60 @@ function renderContextButton(
     parentNode: HTMLElement,
     editMode: EditMode
 ): HTMLElement|undefined {
+    const contextMenuOptions = editMode.options.contextMenu;
+    let contextButton : HTMLElement|undefined;
 
-    let ctxBtnElement;
-
-    if (editMode.options.contextMenu) {
-        ctxBtnElement = createElement(
-            'button', {
+    if (contextMenuOptions) {
+        contextButton = createElement(
+            'button',
+            {
                 className: EditGlobals.classNames.contextMenuBtn,
-                onclick: function (): void {
+                onclick: function (event: Event): void {
+                    event.stopPropagation();
                     editMode.onContextBtnClick();
                 }
             },
-            {
-                'background-image': 'url(' +
-                    editMode.options.contextMenu.icon +
-                ')'
-            } as any,
+            {},
             parentNode
+        );
+
+        // Add the icon if defined.
+        if (contextMenuOptions.icon) {
+            createElement(
+                'img',
+                {
+                    src: contextMenuOptions.icon,
+                    className: EditGlobals.classNames.icon
+                },
+                {},
+                contextButton
+            );
+        }
+
+        // Add text next to the icon if defined.
+        if (contextMenuOptions.text) {
+            createElement(
+                'span',
+                {
+                    className: EditGlobals.classNames.contextMenuBtnText,
+                    textContent: contextMenuOptions.text
+                },
+                {},
+                contextButton
+            );
+        }
+
+        contextButton.setAttribute(
+            'aria-label',
+            editMode.lang.accessibility.contextMenu.button
+        );
+        contextButton.setAttribute(
+            'aria-expanded',
+            'false'
         );
     }
 
-    return ctxBtnElement;
+    return contextButton;
 }
 
 /**
@@ -104,7 +137,7 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
-        iconsURLPrefix,
+        isStandalone,
         lang
     } = options;
 
@@ -128,12 +161,15 @@ function renderCollapseHeader(
         accordion
     );
 
-    const headerBtn = createElement(
-        'button',
-        { className: EditGlobals.classNames.accordionHeaderBtn },
-        {},
-        header
-    );
+    let headerBtn;
+    if (!isStandalone) {
+        headerBtn = createElement(
+            'button',
+            { className: EditGlobals.classNames.accordionHeaderBtn },
+            {},
+            header
+        );
+    }
 
     createElement(
         'span',
@@ -171,13 +207,16 @@ function renderCollapseHeader(
         {
             className:
                 EditGlobals.classNames.accordionContent + ' ' +
-                EditGlobals.classNames.hiddenElement
+                (isStandalone ?
+                    EditGlobals.classNames.standaloneElement :
+                    EditGlobals.classNames.hiddenElement
+                )
         },
         {},
         accordion
     );
 
-    headerBtn.addEventListener('click', function (): void {
+    headerBtn?.addEventListener('click', function (): void {
         content.classList.toggle(EditGlobals.classNames.hiddenElement);
         headerIcon.classList.toggle(EditGlobals.classNames.collapsedElement);
     });
@@ -189,7 +228,7 @@ function renderCollapseHeader(
  * Function to create select element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Select form field options.
@@ -335,10 +374,8 @@ function renderSelectElement(
         selectOption
     );
 
-    let icon: HTMLElement|undefined;
-
     if (option.iconURL) {
-        icon = createElement(
+        createElement(
             'img',
             {
                 src: iconURL
@@ -375,13 +412,13 @@ function renderSelectElement(
  * Function to create toggle element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
- * Form field options
+ * Form field options.
  *
  * @returns
- * Toggle element
+ * Toggle element.
  */
 function renderToggle(
     parentElement: HTMLElement,
@@ -392,23 +429,39 @@ function renderToggle(
         return;
     }
 
-    const { value, lang } = options;
-    const title = options.title || options.name;
+    const lang = options.lang,
+        value = options.value,
+        title = options.title || options.name,
+        langKey = options.langKey as keyof EditGlobals.LangAccessibilityOptions;
+
     const toggleContainer = createElement(
-        'div',
-        { className: EditGlobals.classNames.toggleContainer },
+        'button',
+        {
+            className: EditGlobals.classNames.toggleContainer,
+            type: 'button',
+            role: 'switch',
+            ariaChecked: false,
+            ariaLabel: langKey ? lang.accessibility[langKey][options.name] : ''
+        } as any,
         {},
         parentElement
     );
+
     if (title) {
-        renderText(toggleContainer, { title });
+        renderText(
+            toggleContainer,
+            { title }
+        );
     }
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(toggleContainer, {
-            title: lang.off,
-            className: EditGlobals.classNames.toggleLabels
-        });
+        renderText(
+            toggleContainer,
+            {
+                title: lang.off,
+                className: EditGlobals.classNames.toggleLabels
+            }
+        );
     }
 
     const toggle = createElement(
@@ -421,15 +474,17 @@ function renderToggle(
         toggleContainer
     );
 
-    const input = renderCheckbox(toggle, value) as HTMLInputElement;
-    const callbackFn = options.onchange;
+    const input = renderCheckbox(toggle, value) as HTMLInputElement,
+        callbackFn = options.onchange;
 
-    if (input && callbackFn) {
-        toggleContainer.addEventListener('click', (e: any): void => {
-            callbackFn(!input.checked);
-            input.checked = !input.checked;
-        });
-    }
+    callbackFn && toggleContainer.addEventListener('click', (e: any): void => {
+        callbackFn(!input.checked);
+        input.checked = !input.checked;
+
+        toggleContainer.setAttribute('aria-checked', input.checked);
+
+        e.stopPropagation();
+    });
 
     const slider = createElement(
         'span',
@@ -445,10 +500,13 @@ function renderToggle(
     });
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(toggleContainer, {
-            title: lang.on,
-            className: EditGlobals.classNames.toggleLabels
-        });
+        renderText(
+            toggleContainer,
+            {
+                title: lang.on,
+                className: EditGlobals.classNames.toggleLabels
+            }
+        );
     }
 
 
@@ -459,7 +517,7 @@ function renderToggle(
  * Function to create text element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param text
  * Text to be displayed
@@ -498,7 +556,7 @@ function renderText(
  * Function to create Icon element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param icon
  * Icon URL
@@ -549,7 +607,7 @@ function renderIcon(
  * Function to create input element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -601,7 +659,7 @@ function renderInput(
  * Function to create textarea element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -681,7 +739,7 @@ function renderCheckbox(
  * Function to create button element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Button field options
@@ -693,21 +751,21 @@ function renderButton(
     parentElement: HTMLElement,
     options: ButtonOptions
 ): HTMLElement|undefined {
-    let button;
-
     if (!parentElement) {
         return;
     }
 
-    button = createElement(
-        'button', {
+    const button = createElement(
+        'button',
+        {
             className: (
                 EditGlobals.classNames.button + ' ' +
                 (options.className || '')
             ),
             onclick: options.callback,
             textContent: options.text
-        }, options.style || {},
+        },
+        options.style || {},
         parentElement
     );
 
@@ -818,11 +876,13 @@ export interface ToggleFormFieldOptions {
     id: string;
     name: string;
     lang: EditGlobals.LangOptions;
+    langKey?: string;
 }
 
 export interface NestedHeaderFormFieldOptions {
     name: string;
     showToggle?: boolean;
+    isStandalone?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;

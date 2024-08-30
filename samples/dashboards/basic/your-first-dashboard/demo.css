@@ -1,7 +1,7 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#dashboard-col-0 h1 {
-    height: 400px;
+#dashboard-col-0 {
     text-align: center;
 }

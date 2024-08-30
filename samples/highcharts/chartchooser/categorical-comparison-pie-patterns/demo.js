@@ -9,7 +9,8 @@ const colors = [{
         color: '#71BF45'
     }
 },
-'#FFA500'];
+'#FFA500'
+];
 Highcharts.chart('container', {
     chart: {
         type: 'pie'

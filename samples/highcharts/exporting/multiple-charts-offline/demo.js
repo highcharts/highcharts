@@ -1,5 +1,6 @@
 /**
- * Create a global getSVG method that takes an array of charts as an argument. The SVG is returned as an argument in the callback.
+ * Create a global getSVG method that takes an array of charts as an argument.
+ * The SVG is returned as an argument in the callback.
  */
 Highcharts.getSVG = function (charts, options, callback) {
     let top = 0,
@@ -16,7 +17,10 @@ Highcharts.getSVG = function (charts, options, callback) {
                 )[1];
 
             // Offset the position of this chart in the final SVG
-            let svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+            let svg = svgres.replace(
+                '<svg',
+                `<g transform="translate(0,${top})" `
+            );
             svg = svg.replace('</svg>', '</g>');
             top += svgHeight;
             width = Math.max(width, svgWidth);
@@ -24,22 +28,28 @@ Highcharts.getSVG = function (charts, options, callback) {
         },
         exportChart = function (i) {
             if (i === charts.length) {
-                return callback('<svg height="' + top + '" width="' + width +
-                  '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
+                return callback(
+                    `<svg version="1.1" width="${width}" height="${top}"
+                            viewBox="0 0 ${width} ${top}"
+                            xmlns="http://www.w3.org/2000/svg">
+                        ${svgArr.join('')}
+                    </svg>`
+                );
             }
             charts[i].getSVGForLocalExport(options, {}, function () {
                 console.log('Failed to get SVG');
             }, function (svg) {
                 addSVG(svg);
-                return exportChart(i + 1); // Export next only when this SVG is received
+                // Export next only when this SVG is received
+                return exportChart(i + 1);
             });
         };
     exportChart(0);
 };
 
 /**
- * Create a global exportCharts method that takes an array of charts as an argument,
- * and exporting options as the second argument
+ * Create a global exportCharts method that takes an array of charts as an
+ * argument, and exporting options as the second argument
  */
 Highcharts.exportCharts = function (charts, options) {
     options = Highcharts.merge(Highcharts.getOptions().exporting, options);
@@ -55,7 +65,8 @@ Highcharts.exportCharts = function (charts, options) {
 // Set global default options for all charts
 Highcharts.setOptions({
     exporting: {
-        fallbackToExportServer: false // Ensure the export happens on the client side or not at all
+        // Ensure the export happens on the client side or not at all
+        fallbackToExportServer: false
     }
 });
 
@@ -100,13 +111,17 @@ const chart2 = Highcharts.chart('container2', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{
-        data: [176.0, 135.6, 148.5, 216.4, 194.1, 95.6,
-            54.4, 29.9, 71.5, 106.4, 129.2, 144.0],
+        data: [
+            176.0, 135.6, 148.5, 216.4, 194.1, 95.6,
+            54.4, 29.9, 71.5, 106.4, 129.2, 144.0
+        ],
         colorByPoint: true,
         showInLegend: false
     }],

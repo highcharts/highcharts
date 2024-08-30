@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -71,10 +71,10 @@ import { Palette } from '../../Color/Palettes.js';
  *
  * @extends      xAxis
  * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
- *               categories, crosshair, dateTimeLabelFormats, height, left,
+ *               categories, crosshair, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, title, top, width,
+ *               reversedStacks, scrollbar, showEmpty, title, top,
  *               zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
@@ -463,9 +463,45 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * Fires when the legend item belonging to the colorAxis is clicked.
      * One parameter, `event`, is passed to the function.
      *
-     * @type      {Function}
+     * **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
+     *
+     * @deprecated 11.4.4
+     * @type       {Function}
+     * @product    highcharts highstock highmaps
+     * @apioption  colorAxis.events.legendItemClick
+     */
+
+    /**
+     * The width of the color axis. If it's a number, it is interpreted as
+     * pixels.
+     *
+     * If it's a percentage string, it is interpreted as percentages of the
+     * total plot width.
+     *
+     * @sample    highcharts/coloraxis/width-and-height
+     *            Percentage width and pixel height for color axis
+     *
+     * @type      {number|string}
+     * @since     11.3.0
      * @product   highcharts highstock highmaps
-     * @apioption colorAxis.events.legendItemClick
+     * @apioption colorAxis.width
+     */
+
+    /**
+     * The height of the color axis. If it's a number, it is interpreted as
+     * pixels.
+     *
+     * If it's a percentage string, it is interpreted as percentages of the
+     * total plot height.
+     *
+     * @sample    highcharts/coloraxis/width-and-height
+     *            Percentage width and pixel height for color axis
+     *
+     * @type      {number|string}
+     * @since     11.3.0
+     * @product   highcharts highstock highmaps
+     * @apioption colorAxis.height
      */
 
     /**

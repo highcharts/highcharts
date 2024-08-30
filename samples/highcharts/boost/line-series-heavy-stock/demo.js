@@ -43,7 +43,6 @@ function getSeries(n, s) {
             },
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true
         });
     }
@@ -58,11 +57,14 @@ console.time('line');
 Highcharts.stockChart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     navigator: {

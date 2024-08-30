@@ -1,7 +1,7 @@
 /* eslint func-style: 0, no-console: 0 */
 const { randomUUID } = require('crypto');
-const processLib = require('../lib/process');
-const logLib = require('../lib/log');
+const processLib = require('../../libs/process');
+const logLib = require('../../libs/log');
 
 const gulp = require('gulp');
 /**
@@ -31,14 +31,13 @@ const filesize = async () => {
     } = require('../../build.js');
     const colors = require('colors');
     const {
-        compile
-    } = require('../../compile.js');
-    const {
         getFile
     } = require('@highcharts/highcharts-assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');
+    const scriptsCompile = require('../../../tools/gulptasks/scripts-compile');
+
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled and rename the param to
     // 'mode'
@@ -75,8 +74,25 @@ const filesize = async () => {
     };
 
     const runFileSize = async (obj, key) => {
-        await getBuildScripts({ files }).fnFirstBuild();
-        await compile(files, sourceFolder);
+        const fsLib = require('../../libs/fs');
+        try {
+            // deleting invalid masters DTS
+            fsLib
+                .getFilePaths('js/masters/', true)
+                .forEach(path => path.endsWith('.d.ts') && fsLib.deleteFile(path));
+
+            // copy valid native DTS
+            fsLib.copyAllFiles(
+                'js/',
+                'code/es-modules/',
+                true
+            );
+
+            await processLib.exec('npx webpack -c tools/webpacks/highcharts.webpack.mjs');
+        } finally {
+            processLib.isRunning('scripts-js', false);
+        }
+        await scriptsCompile(files.map(path => `${sourceFolder}${path}`));
         files.reduce(
             (o, n) => {
                 const filename = n.replace('.src.js', '.js');
@@ -120,7 +136,7 @@ const filesize = async () => {
     const list = await commandLine(`git stash list | grep -m1 ${stashName}`);
 
     if (list.length) {
-        const stashRegex = new RegExp(`^stash\@\{(.*)\}:.+?${stashName}`);
+        const stashRegex = new RegExp(`^stash\\@\\{(.*)\\}:.+?${stashName}`);
         const match = list.match(stashRegex);
         if (!match.length) {
             throw new Error('could not find filesize stash, aborting');

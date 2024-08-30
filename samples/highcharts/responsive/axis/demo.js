@@ -9,8 +9,10 @@ const chart = Highcharts.chart('container', {
         text: 'Resize the frame to see the axes change'
     },
     xAxis: {
-        categories: ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December']
+        categories: [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ]
     },
     yAxis: {
         labels: {

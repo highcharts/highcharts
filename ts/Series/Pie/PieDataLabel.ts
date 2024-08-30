@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,10 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -36,8 +39,8 @@ const {
     clamp,
     defined,
     pick,
-    relativeLength,
-    splat
+    pushUnique,
+    relativeLength
 } = U;
 
 /* *
@@ -66,8 +69,6 @@ namespace ColumnDataLabel {
      *  Constants
      *
      * */
-
-    const composedMembers: Array<unknown> = [];
 
     const dataLabelPositioners = {
 
@@ -141,7 +142,7 @@ namespace ColumnDataLabel {
             let maxDataLabelWidth = 0,
                 dataLabelWidth;
 
-            // find widest data label
+            // Find widest data label
             points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
@@ -159,14 +160,12 @@ namespace ColumnDataLabel {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /** @private */
     export function compose(PieSeriesClass: typeof PieSeries): void {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, PieSeriesClass)) {
+        if (pushUnique(composed, 'PieDataLabel')) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;
@@ -345,7 +344,7 @@ namespace ColumnDataLabel {
                 );
                 points.forEach((point): void => {
                     // Check if specific points' label is outside the pie
-                    (point.dataLabels || []).forEach((dataLabel, i): void => {
+                    (point.dataLabels || []).forEach((dataLabel): void => {
                         const labelPosition = dataLabel.dataLabelPosition;
                         if (
                             labelPosition &&
@@ -364,6 +363,9 @@ namespace ColumnDataLabel {
                             );
                             size = dataLabel.getBBox().height || 21;
 
+                            dataLabel.lineHeight = chart.renderer.fontMetrics(
+                                dataLabel.text || dataLabel
+                            ).h + 2 * dataLabel.padding;
                             point.distributeBox = {
                                 target: (
                                     (
@@ -371,12 +373,11 @@ namespace ColumnDataLabel {
                                             ?.natural.y || 0
                                     ) -
                                     labelPosition.top +
-                                    size / 2
+                                    dataLabel.lineHeight / 2
                                 ),
                                 size,
                                 rank: point.y
                             };
-
                             positions.push(point.distributeBox);
                         }
                     });
@@ -400,7 +401,11 @@ namespace ColumnDataLabel {
                         labelPosition = dataLabel.dataLabelPosition,
                         naturalY = labelPosition?.natural.y || 0,
                         connectorPadding = dataLabelOptions
-                            .connectorPadding || 0;
+                            .connectorPadding || 0,
+                        lineHeight = dataLabel.lineHeight || 21,
+                        bBox = dataLabel.getBBox(),
+                        topOffset = (lineHeight - bBox.height) / 2;
+
 
                     let x = 0,
                         y = naturalY,
@@ -461,7 +466,7 @@ namespace ColumnDataLabel {
                                     ).radialDistributionX(
                                         series,
                                         point,
-                                        y,
+                                        y - topOffset,
                                         naturalY,
                                         dataLabel
                                     );
@@ -485,11 +490,11 @@ namespace ColumnDataLabel {
                             y: y +
                                 (dataLabelOptions.y || 0) - // (#12985)
                                 // Vertically center
-                                dataLabel.getBBox().height / 2
+                                lineHeight / 2
                         };
 
                         labelPosition.computed.x = x;
-                        labelPosition.computed.y = y;
+                        labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
                         if (pick(dataLabelOptions.crop, true)) {
@@ -553,7 +558,8 @@ namespace ColumnDataLabel {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (arrayMax(overflow) === 0 ||
+        if (
+            arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
 
@@ -680,11 +686,12 @@ namespace ColumnDataLabel {
         overflow: Array<number>
     ): boolean {
 
-        let center = this.center,
+        const center = this.center,
             options = this.options,
             centerOption = options.center,
-            minSize = options.minSize || 80,
-            newSize = minSize,
+            minSize = options.minSize || 80;
+
+        let newSize = minSize,
             // If a size is set, return true and don't try to shrink the pie
             // to fit the labels.
             ret = options.size !== null;
@@ -692,16 +699,18 @@ namespace ColumnDataLabel {
         if (!ret) {
             // Handle horizontal size and center
             if ((centerOption as any)[0] !== null) { // Fixed center
-                newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize as any);
+                newSize = Math.max(
+                    center[2] -
+                    Math.max(overflow[1], overflow[3]), minSize as any
+                );
 
             } else { // Auto center
                 newSize = Math.max(
-                    // horizontal overflow
+                    // Horizontal overflow
                     center[2] - overflow[1] - overflow[3],
                     minSize as any
                 );
-                // horizontal center
+                // Horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
             }
 
@@ -716,10 +725,10 @@ namespace ColumnDataLabel {
                 newSize = clamp(
                     newSize,
                     minSize as any,
-                    // vertical overflow
+                    // Vertical overflow
                     center[2] - overflow[0] - overflow[2]
                 );
-                // vertical center
+                // Vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;
             }
 

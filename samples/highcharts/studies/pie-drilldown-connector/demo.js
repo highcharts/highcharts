@@ -29,29 +29,31 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
                 ];
 
                 if (!p.drilldownConnectorGraphicUnbind) {
-                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(s, 'afterAnimate', function () {
-                        if (!p.drilldownConnectorGraphic) {
-                            p.drilldownConnectorGraphic = chart.renderer
-                                .path([
-                                    'M',
-                                    path[1], path[2],
-                                    'L',
-                                    path[1], path[2],
-                                    'M',
-                                    path[7], path[8],
-                                    'L',
-                                    path[7], path[8]
-                                ])
-                                .attr({
-                                    stroke: 'gray',
-                                    'stroke-width': 1
-                                })
-                                .animate({
-                                    d: path
-                                })
-                                .add();
-                        }
-                    });
+                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(
+                        s,
+                        'afterAnimate', function () {
+                            if (!p.drilldownConnectorGraphic) {
+                                p.drilldownConnectorGraphic = chart.renderer
+                                    .path([
+                                        'M',
+                                        path[1], path[2],
+                                        'L',
+                                        path[1], path[2],
+                                        'M',
+                                        path[7], path[8],
+                                        'L',
+                                        path[7], path[8]
+                                    ])
+                                    .attr({
+                                        stroke: 'gray',
+                                        'stroke-width': 1
+                                    })
+                                    .animate({
+                                        d: path
+                                    })
+                                    .add();
+                            }
+                        });
                 }
 
                 if (p.drilldownConnectorGraphic) {
@@ -97,11 +99,14 @@ Highcharts.chart('container', {
         colors: [
             Highcharts.getOptions().colors[1],
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.1).get(),
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.1).get(),
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.2).get(),
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.2).get(),
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.3).get()
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.3).get()
         ],
         type: 'pie',
         center: ['75%', '50%'],

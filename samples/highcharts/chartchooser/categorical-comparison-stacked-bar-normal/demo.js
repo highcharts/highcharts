@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Swedish top 10 professions dominated by women (16-64 years) in 2017'
+        text: 'Swedish top 10 professions dominated by women (16-64 years) ' +
+            'in 2017'
     },
     subtitle: {
         text:
@@ -41,7 +42,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat:
-        '<span style="color:{series.options.contrastColor}">{series.name}</span>: <b>{point.y}</b><br/>',
+        '<span style="color:{series.options.contrastColor}">' +
+        '{series.name}</span>: <b>{point.y}</b><br/>',
         shared: true
     },
     plotOptions: {

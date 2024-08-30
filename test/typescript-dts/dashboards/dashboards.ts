@@ -35,7 +35,7 @@ function test_board() {
         },
         components: [{
             type: 'HTML',
-            cell: 'cell1',
+            renderTo: 'cell1',
             title: {
                 className: 'custom-title',
                 text: 'My title',
@@ -45,4 +45,11 @@ function test_board() {
             }
         }]
     });
+}
+
+/**
+ * Tests HighchartsPlugin.
+ */
+function test_HighchartsPlugin() {
+    Dashboards.HighchartsPlugin.custom.connectHighcharts((Dashboards.win as any).Highcharts);
 }

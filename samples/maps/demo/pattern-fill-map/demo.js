@@ -12,7 +12,8 @@
     // specify a smaller border width for the smaller states. For some states we
     // also specify an explicit x/y offset for the images, where the default is
     // not satisfactory. Aspect ratio is provided in series definition, and the
-    // width height for each image is calculated automatically based on that and the
+    // width height for each image is calculated automatically based on that
+    // and the
     // bounding box of each state.
     const data = [
         ['Alabama', 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_Alabama.svg'],
@@ -82,7 +83,8 @@
         },
 
         accessibility: {
-            description: 'Map of US states, where each state is filled with an illustration of its state flag.'
+            description: 'Map of US states, where each state is filled with ' +
+                'an illustration of its state flag.'
         },
 
         // Add zoom/pan
@@ -109,7 +111,8 @@
             useHTML: true,
             borderColor: '#aaa',
             headerFormat: '<b>{point.point.name}</b><br>',
-            pointFormat: '<img style="width: 150px; height: 100px;" src=\'{point.options.color.pattern.image}\'>'
+            pointFormat: '<img style="width: 150px; height: 100px;" ' +
+                'src=\'{point.options.color.pattern.image}\'>'
         },
 
         // Define the series
@@ -119,17 +122,22 @@
                 exposeAsGroupOnly: true
             },
             keys: [
-                'name', 'color.pattern.image', 'borderWidth', 'color.pattern.x', 'color.pattern.y', 'borderColor'
+                'name', 'color.pattern.image', 'borderWidth', 'color.pattern.x',
+                'color.pattern.y', 'borderColor'
             ],
             joinBy: 'name',
             data: data,
             borderColor: '#fff',
             color: {
                 pattern: {
-                    // This is inherited by the individual pattern definitions for
-                    // each point. As long as a width/height for the pattern is not
-                    // defined, Highcharts will automatically fill the bounding box
-                    // while preserving the aspect ratio defined here. Without an
+                    // This is inherited by the individual pattern
+                    // definitions for
+                    // each point. As long as a width/height for the pattern
+                    // is not
+                    // defined, Highcharts will automatically fill the
+                    // bounding box
+                    // while preserving the aspect ratio defined here.
+                    // Without an
                     // aspect ratio defined, Highcharts will simply fill the
                     // bounding box with the image, stretching it to fit.
                     aspectRatio: 3 / 2

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,7 +30,6 @@ const {
     isArray,
     isNumber,
     isObject,
-    isString,
     pick,
     pInt
 } = U;
@@ -167,14 +166,14 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= #\(\)]+)\}/g,
+    const regex = /\{([\w\:\.\,;\-\/<>%@"'’= #\(\)]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= ]+)\)/g,
+        subRegex = /\(([\w\:\.\,;\-\/<>%@"'= ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
-        decRegex = /\.([0-9])/,
+        decRegex = /\.(\d)/,
         lang = defaultOptions.lang,
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
@@ -312,7 +311,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx);
+                replacement = format(replacement ? body : elseBody, ctx, chart);
             }
 
 
@@ -327,7 +326,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
                 const segment = valueAndFormat.join(':');
 
-                if (floatRegex.test(segment)) { // float
+                if (floatRegex.test(segment)) { // Float
                     const decimals = parseInt(
                         (segment.match(decRegex) || ['', '-1'])[1],
                         10
@@ -402,20 +401,20 @@ function numberFormat(
         // Expose decimals from exponential notation (#7042)
         fractionDigits = decimals + +exponent[1];
         if (fractionDigits >= 0) {
-            // remove too small part of the number while keeping the notation
+            // Remove too small part of the number while keeping the notation
             exponent[0] = (+exponent[0]).toExponential(fractionDigits)
                 .split('e')[0];
             decimals = fractionDigits;
         } else {
-            // fractionDigits < 0
+            // `fractionDigits < 0`
             exponent[0] = exponent[0].split('.')[0] || 0 as any;
 
             if (decimals < 20) {
-                // use number instead of exponential notation (#7405)
+                // Use number instead of exponential notation (#7405)
                 number = (exponent[0] as any * Math.pow(10, exponent[1] as any))
                     .toFixed(decimals) as any;
             } else {
-                // or zero
+                // Or zero
                 number = 0;
             }
             exponent[1] = 0 as any;
@@ -459,6 +458,8 @@ function numberFormat(
     if (decimals) {
         // Get the decimal component
         ret += decimalPoint + roundedNumber.slice(-decimals);
+    } else if (+ret === 0) { // Remove signed minus #20564
+        ret = '0';
     }
 
     if (exponent[1] && +ret !== 0) {

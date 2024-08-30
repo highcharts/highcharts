@@ -14,8 +14,7 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
@@ -25,7 +24,7 @@ Dashboards.board('container', {
             cellClassName: 'custom-cell',
             rows: [{
                 cells: [
-                    { id: 'dashboard-col-0',  width: '50%' },
+                    { id: 'dashboard-col-0' },
                     { id: 'dashboard-col-1' },
                     { id: 'dashboard-col-2' }
                 ]
@@ -39,24 +38,18 @@ Dashboards.board('container', {
         title: {
             text: 'visibility: true'
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
             id: 'Vitamin'
-        },
-        connectorName: 'Vitamin',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
         },
         chartOptions: {
             chart: {
                 type: 'pie'
             }
         }
-    },
-    {
-        cell: 'dashboard-col-1',
+    }, {
+        renderTo: 'dashboard-col-1',
         sync: {
             visibility: false
         },
@@ -67,10 +60,6 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -79,9 +68,8 @@ Dashboards.board('container', {
                 type: 'column'
             }
         }
-    },
-    {
-        cell: 'dashboard-col-2',
+    }, {
+        renderTo: 'dashboard-col-2',
         sync: {
             visibility: true
         },
@@ -91,10 +79,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         connector: {
             id: 'Vitamin'
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         chartOptions: {
             xAxis: {

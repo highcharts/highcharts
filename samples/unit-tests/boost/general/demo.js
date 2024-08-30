@@ -60,6 +60,7 @@ QUnit.test(
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Dynamically removing and adding series (#7499)',
     function (assert) {
+
         var chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
@@ -114,6 +115,40 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[0].boost.target,
             'No individual boost.target after the second series is added'
         );
+
+        function getData(n) {
+            const arr = new Array(n);
+
+            let i = 0;
+            let x = Date.UTC(new Date().getUTCFullYear(), 0, 1) - n * 36e5;
+
+            for (; i < n; i = i + 1, x = x + 36e5) {
+                arr[i] = [x, 2 * Math.sin(i / 100)];
+            }
+
+            return arr;
+        }
+
+        const done = assert.async();
+        // wait for ~1 second
+        setTimeout(() => {
+            // Failure will be a global TypeError,
+            // which QUnit catches by itself
+            assert.ok(
+                true,
+                'Removing a series before it is fully rendered should not ' +
+                'cause error'
+            );
+            done();
+        }, 1000);
+
+        // Add a series that takes enough time to process
+        // that it will not be fully rendered before calling remove
+        chart.addSeries({
+            data: getData(5000)
+        });
+
+        chart.series[chart.series.length - 1].remove();
     }
 );
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
@@ -168,6 +203,29 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[3].points.length,
             2,
             'Null points should not be added to the series\' kd-tree (#19341)'
+        );
+
+        chart.update({
+            xAxis: {
+                min: 0,
+                max: 10
+            },
+
+            yAxis: {
+                min: 0,
+                max: 10
+            }
+        });
+
+        chart.addSeries({
+            data: [1, 2, 3, 4, null, 6, 7],
+            boostThreshold: 5
+        });
+
+        assert.ok(
+            true,
+            `There shouldn't be any error in the console, after chart render
+            (#17014).`
         );
     }
 );
@@ -229,7 +287,10 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 Highcharts,
                 'displayError',
                 function (e) {
-                    assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
+                    assert.strictEqual(
+                        e.code, 12, 'Error 12 should be ' +
+                        'invoked'
+                    );
                     remove();
                     done();
                 }
@@ -256,7 +317,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'The boost clip-path should have the same size as the chart area, #14444.',
+    'The boost clip-path should have appropriate size, #14444, #17820.',
     function (assert) {
         function generataSeries() {
             const series = Array.from(Array(100)).map(function () {
@@ -329,6 +390,70 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             `After setting the axis position manually, the boost clip-path
             shouldn\'t be bigger than the axis size.`
         );
+
+        // #17820
+        chart.update({
+            chart: {
+                inverted: false
+            },
+            navigator: {
+                enabled: true,
+                height: 80,
+                series: {
+                    boostThreshold: 1,
+                    color: 'red',
+                    type: 'line',
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.navigator.top + chart.navigator.height - chart.plotTop,
+            'Clip rect should take into account navigator boosted series, ' +
+            '#17820.'
+        );
+
+        chart.update({
+            chart: {
+                inverted: true
+            },
+            navigator: {
+                height: 40
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.plotHeight,
+            `Clip rect height should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('width'),
+            chart.plotWidth + chart.navigator.top + chart.navigator.height,
+            `Clip rect width should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.navigator.left,
+            `Clip rect 'x' should take into account navigator boosted
+            series on inverted charts, #20936.`
+        );
+
+        chart.update({
+            navigator: {
+                opposite: true
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.plotLeft,
+            `Clip rect 'x' should take into account opposite navigator boosted
+            series on inverted charts, #20936.`
+        );
     }
 );
 
@@ -380,6 +505,122 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             '2',
             'The chart-level boost target should take the z-index of the ' +
             'series (#9819)'
+        );
+    }
+);
+
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Dynamic y-axis scale (#21068)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.update({
+            yAxis: {
+                id: true
+            },
+            boost: {
+                enabled: false,
+                useGPUTranslations: true,
+                usePreallocated: true
+            },
+            series: [{
+                type: 'scatter',
+                data: [
+                    [0, 17844.9970195],
+                    [3, 0],
+                    [3, 0],
+                    [15, 0],
+                    [20, 3.251707695608],
+                    [25, 0],
+                    [48, 0],
+                    [83, 4.613364613784801],
+                    [101, 107.9853419401976],
+                    [172, 40.15339203180021],
+                    [207, 0],
+                    [358, 0],
+                    [882, 493.2697085333866],
+                    [1083, 137.5775549],
+                    [1174, 0],
+                    [1338, 1169.8349916205545],
+                    [1749, 515.4426648740781],
+                    [2932, 2222.5919712993655],
+                    [4616, 7394.206545882728],
+                    [8680, 2851.592296281099],
+                    [20078, 4845.327601560356],
+                    [20770, 88484.33223818678],
+                    [33848, 19836.59438924057],
+                    [66751, -123728.19741115364],
+                    [255763, 27663.11820818996],
+                    [332189, 205914.7489098137],
+                    [365274, 170649.91926368963]
+                ]
+            }]
+        }, true, true);
+
+        assert.notEqual(
+            chart.yAxis[0].tickPositions.length,
+            2,
+            'The y-axis should have more than two ticks'
+        );
+
+        chart.update({
+            chart: {
+                animation: true
+            },
+            boost: {
+                enabled: true,
+                useGPUTranslations: false,
+                usePreallocated: false
+            },
+            yAxis: [{
+                id: 'a'
+            }, {
+                id: 'b',
+                height: '10%',
+                top: '90%'
+            }],
+            plotOptions: {
+                series: {
+                    animation: true,
+                    states: {
+                        hover: {
+                            halo: {
+                                size: 50
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'line',
+                yAxis: 'a',
+                data: [8, 6, 4],
+                boostThreshold: 1,
+                stickyTracking: false
+            }, {
+                data: [4, 5, 7],
+                yAxis: 'b',
+                boostThreshold: 1,
+                stickyTracking: false
+            }]
+        }, true, true);
+
+        const controller = new TestController(chart);
+        controller.moveTo(
+            chart.plotLeft + chart.series[1].points[1].plotX,
+            chart.plotTop + chart.plotHeight - chart.series[1].points[1].plotY
+        );
+        controller.moveTo(
+            chart.plotLeft + chart.series[0].points[1].plotX,
+            chart.plotTop + chart.plotHeight - chart.series[0].points[1].plotY
+        );
+
+        assert.strictEqual(
+            chart.series[1].halo.visibility,
+            'hidden',
+            `Halo shouldn't be rendered in wrong position between hovering
+            points from multiple series on multiple y-axes, #21176.`
         );
     }
 );

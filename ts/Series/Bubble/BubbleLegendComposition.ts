@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -28,20 +28,15 @@ import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     objectEach,
+    pushUnique,
     wrap
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -81,7 +76,7 @@ function chartDrawChartBox(
             legend.allItems.forEach((item): void => {
                 legendItem = item.legendItem || {};
                 if (legendItem.group) {
-                    legendItem.group.translateY = null;
+                    legendItem.group.translateY = void 0;
                 }
             });
         }
@@ -89,27 +84,30 @@ function chartDrawChartBox(
         // Create legend with bubbleLegend
         legend.render();
 
-        chart.getMargins();
+        // Calculate margins after first rendering the bubble legend
+        if (!bubbleLegendOptions.placed) {
+            chart.getMargins();
 
-        chart.axes.forEach(function (axis): void {
-            if (axis.visible) { // #11448
-                axis.render();
-            }
+            chart.axes.forEach(function (axis): void {
+                if (axis.visible) { // #11448
+                    axis.render();
+                }
 
-            if (!bubbleLegendOptions.placed) {
-                axis.setScale();
-                axis.updateNames();
-                // Disable axis animation on init
-                objectEach(axis.ticks, function (tick): void {
-                    tick.isNew = true;
-                    tick.isNewLabel = true;
-                });
-            }
-        });
+                if (!bubbleLegendOptions.placed) {
+                    axis.setScale();
+                    axis.updateNames();
+                    // Disable axis animation on init
+                    objectEach(axis.ticks, function (tick): void {
+                        tick.isNew = true;
+                        tick.isNewLabel = true;
+                    });
+                }
+            });
+
+            chart.getMargins();
+        }
+
         bubbleLegendOptions.placed = true;
-
-        // After recalculate axes, calculate margins again.
-        chart.getMargins();
 
         // Call default 'drawChartBox' method.
         proceed.call(chart, options, callback);
@@ -139,17 +137,13 @@ function chartDrawChartBox(
  *
  * @param {Highcharts.Legend} LegendClass
  * Core legend class to use with Bubble series.
- *
- * @param {Highcharts.Series} SeriesClass
- * Core series class to use with Bubble series.
  */
 function compose(
     ChartClass: typeof Chart,
-    LegendClass: typeof Legend,
-    SeriesClass: typeof Series
+    LegendClass: typeof Legend
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, 'Series.BubbleLegend')) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -158,14 +152,10 @@ function compose(
         });
 
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
-    }
 
-    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-    }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
-        addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
+        addEvent(LegendClass, 'itemClick', onLegendItemClick);
     }
 
 }
@@ -227,7 +217,7 @@ function getLinesHeights(
         legendItem = items[i].legendItem || {};
         legendItem2 = (items[i + 1] || {}).legendItem || {};
         if (legendItem.labelHeight) {
-            // for bubbleLegend
+            // For bubbleLegend
             (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
@@ -272,7 +262,8 @@ function onLegendAfterGetAllItems(
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
+    if (
+        bubbleSeriesIndex >= 0 &&
             legendOptions.enabled &&
             (options as any).enabled
     ) {
@@ -285,16 +276,16 @@ function onLegendAfterGetAllItems(
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
-function onSeriesLegendItemClick(this: Series, e: any): void | boolean {
+function onLegendItemClick(this: Legend, e: any): void | boolean {
     // #14080 don't fire this code if click function is prevented
     if (e.defaultPrevented) {
         return false;
     }
 
-    const series = this,
-        chart = series.chart,
-        visible = series.visible,
-        legend = series.chart.legend;
+    const legend = this,
+        series = e.legendItem,
+        chart = legend.chart,
+        visible = series.visible;
     let status;
 
     if (legend && legend.bubbleLegend) {

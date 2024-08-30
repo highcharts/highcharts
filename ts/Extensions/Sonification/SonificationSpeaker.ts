@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Class representing a speech synthesis voice.
  *
@@ -66,7 +66,7 @@ class SonificationSpeaker {
      * @function Highcharts.SonificationSpeaker#say
      * @param {string} message The message to speak.
      * @param {SonificationSpeakerOptionsObject} [options]
-     * Optionally override spaker configuration.
+     * Optionally override speaker configuration.
      */
     say(message: string, options?: SonificationSpeaker.SpeakerOptions): void {
         if (this.synthesis) {
@@ -79,8 +79,10 @@ class SonificationSpeaker {
             utterance.rate = options && options.rate || this.options.rate || 1;
             utterance.pitch = options && options.pitch ||
                 this.options.pitch || 1;
-            utterance.volume = pick(options && options.volume,
-                this.options.volume, 1) * this.masterVolume;
+            utterance.volume = pick(
+                options && options.volume,
+                this.options.volume, 1
+            ) * this.masterVolume;
 
             this.synthesis.speak(utterance);
         }
@@ -95,7 +97,7 @@ class SonificationSpeaker {
      * @param {string} message
      * The message to speak.
      * @param {SonificationSpeakerOptionsObject} [options]
-     * Optionally override spaker configuration.
+     * Optionally override speaker configuration.
      */
     sayAtTime(
         time: number,

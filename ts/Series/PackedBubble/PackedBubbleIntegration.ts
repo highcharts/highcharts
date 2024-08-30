@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -37,7 +37,7 @@ function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
         gravitationalConstant = layout.options.gravitationalConstant,
         box = layout.box,
-        nodes = layout.nodes;
+        nodes = layout.nodes as Array<PackedBubblePoint>;
 
     let centerX: number,
         centerY: number;

@@ -2,10 +2,13 @@ Installation with ES6 modules
 =============================
 
 Our product packages are available as ES6-compatible modules since
-Highcharts v6.1. Some core files can also be loaded directly as ES6 modules
-since Highcharts v9.2. The latter allows you to make use of tree shaking to only
+Highcharts v6.1. Core files can also be loaded directly as ES modules since
+Highcharts v11.3. The latter allows you to make use of tree shaking to only
 load or bundle what is needed and reduce download and package sizes.
 
+**Note:** If you code with TypeScript, please take a look at our
+[TypeScript article](../advanced-chart-features/highcharts-typescript-declarations)
+for details about ESM bundling and type adjustments.
 
 
 ## Including a product package (ES6 module)
@@ -25,6 +28,7 @@ production.
         new Chart('container', { series: [{ data: [1, 2, 3]}] });
     </script>
 ```
+
 
 ## Creating a custom bundle (ES6 module)
 
@@ -148,9 +152,6 @@ If your project fails because of missing Highcharts code, a compose call
 might be necessary after loading one of the module files. Consult the source
 code of our product packages in `highcharts/es-modules/masters` for details.
 
-*Note:* Highcharts extensions and more advanced series might not be ready yet
-for ES6 module loading. In this case you have to use one of the product
-packages.
 
 
 ## Dynamic imports from CDN
@@ -182,10 +183,13 @@ const loadHighchartsAndCreateChart = async () => {
 View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/);
 
 
+
 ## Load Highcharts as a transpiled ES6/UMD module
 
 Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
 *The following examples assume you have used npm to install Highcharts; see [installation with npm](https://highcharts.com/docs/getting-started/install-from-npm) for more details.*
+
+
 ### Babel
 ```js
 import Highcharts from 'highcharts';
@@ -202,7 +206,10 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
+
+
 ### TypeScript + UMD
+
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
@@ -211,13 +218,16 @@ import Highcharts from 'highcharts';
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
 // Initialize exporting module. (CommonJS only)
-Exporting(Highcharts);
+if(typeof Exporting === 'function') {
+    Exporting(Highcharts);
+}
 
 // Generate the chart
 Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
+
 ```json
 {
   "compilerOptions": {
@@ -227,6 +237,8 @@ Highcharts.chart('container', {
   }
 }
 ```
+
+
 ### TypeScript + ESM from CDN
 ```js
 // Load modules the ES6 way

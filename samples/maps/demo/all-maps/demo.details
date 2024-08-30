@@ -8,6 +8,6 @@ tags:
   - Highcharts Maps demo
 categories:
   - General:
-      priority: 1
+      priority: 2
 use_png_thumbnail: true
 ...

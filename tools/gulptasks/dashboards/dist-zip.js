@@ -18,15 +18,14 @@ const zlib = require('zlib');
 
 
 /**
- * Creates zip files.
+ * Creates zip files for dashboards.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
-async function distZip() {
-
+async function distZipDashboards() {
     const argv = require('yargs').argv;
     const config = require('./_config.json');
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
     const zip = require('gulp-zip');
 
     const release = argv.release;
@@ -56,22 +55,19 @@ async function distZip() {
 
 }
 
-
 /**
- * Creates gzipped versions in ./js-gzip.
+ * Creates gzipped versions in ./js-gzip for dashboards.
  *
  * @return {Promise<void>}
  * Promise to keep.
  */
-async function distJSGZip() {
-
+async function distJSGZipDashboards() {
     const argv = require('yargs').argv;
-    const config = require('./_config.json');
     const glob = require('glob');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const { buildFolder } = require('./_config.json');
 
-    const buildFolder = config.buildFolder;
     const zipCacheFolder = path.join(buildFolder, 'js-gzip');
 
     fsLib.deleteDirectory(zipCacheFolder, true);
@@ -103,8 +99,60 @@ async function distJSGZip() {
     await streamChain;
 
     logLib.success('Created GZIP cache');
+}
 
+/**
+ * Creates gzipped versions in ./js-gzip for datagrid.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function distJSGZipDataGrid() {
+    const argv = require('yargs').argv;
+    const glob = require('glob');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const { buildFolderDataGrid } = require('./_config.json');
+
+    const zipCacheFolder = path.join(buildFolderDataGrid, 'js-gzip');
+
+    fsLib.deleteDirectory(zipCacheFolder, true);
+    logLib.success(`Deleted ${zipCacheFolder}`);
+
+    const sourceFolder = `${buildFolderDataGrid}/code`;
+    const files = glob.sync(`${sourceFolder}/**/*+(.css|.js|.map|.svg)`);
+
+    let streamChain = Promise.resolve();
+
+    for (const fileSource of files) {
+
+        if (argv.verbose) {
+            logLib.message('Processing file: ', fileSource);
+        }
+
+        const fileContents = fs.createReadStream(fileSource);
+        const fileTarget = fileSource.replace('/code/', '/js-gzip/');
+
+        fs.mkdirSync(path.dirname(fileTarget), { recursive: true });
+
+        streamChain = streamChain.then(() => stream.promises.pipeline(
+            fileContents,
+            zlib.createGzip(),
+            fs.createWriteStream(fileTarget)
+        ));
+    }
+
+    await streamChain;
+
+    logLib.success('Created GZIP cache');
 }
 
 
-gulp.task('dashboards/dist-zip', gulp.series(distJSGZip, distZip));
+gulp.task(
+    'dashboards/dist-zip',
+    gulp.series(
+        distJSGZipDashboards,
+        distJSGZipDataGrid,
+        distZipDashboards
+    )
+);

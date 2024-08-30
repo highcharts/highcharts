@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -263,7 +263,7 @@ function basicOperation(
             return NaN;
     }
 
-    // limit decimal to 9 digits
+    // Limit decimal to 9 digits
     return (
         result % 1 ?
             Math.round(result * 1000000000) / 1000000000 :
@@ -487,7 +487,7 @@ function processFormula(
         // Next item is a function call and needs to get processed first
         } else if (isFunction(item)) {
             result = processFunction(item, table);
-            y = (isValue(result) ? result : NaN); // arrays are not allowed here
+            y = (isValue(result) ? result : NaN); // Arrays are not allowed here
 
         // Next item is a reference and needs to get resolved
         } else if (isReference(item)) {
@@ -539,7 +539,7 @@ function processFormula(
 
 
 /**
- * Process a function  on the give table. If the arguments do not contain
+ * Process a function on the given table. If the arguments do not contain
  * references or ranges, then no table has to be provided.
  *
  * @private
@@ -559,6 +559,7 @@ function processFormula(
 function processFunction(
     formulaFunction: Function,
     table?: DataTable,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reference?: Reference // @todo
 ): (Value|Array<Value>) {
     const processor = processorFunctions[formulaFunction.name];

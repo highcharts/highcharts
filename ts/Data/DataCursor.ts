@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -13,19 +13,23 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
 
+
 import type DataTable from './DataTable';
+
 
 /* *
  *
  *  Class
  *
  * */
+
 
 /**
  * This class manages state cursors pointing on {@link Data.DataTable}. It
@@ -37,11 +41,27 @@ import type DataTable from './DataTable';
  */
 class DataCursor {
 
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+
+    /**
+     * Semantic version string of the DataCursor class.
+     * @internal
+     */
+    public static readonly version: string = '1.0.0';
+
+
     /* *
      *
      *  Constructor
      *
      * */
+
 
     public constructor(
         stateMap: DataCursor.StateMap = {}
@@ -51,32 +71,38 @@ class DataCursor {
         this.stateMap = stateMap;
     }
 
+
     /* *
      *
      *  Properties
      *
      * */
 
+
     /**
      * Contains arguments currently in use of an emitting loop.
      */
     private readonly emittingRegister: Array<string>;
+
 
     /**
      * Contains listeners of states on tables.
      */
     public readonly listenerMap: DataCursor.ListenerMap;
 
+
     /**
      * Contains lasting states that are kept over multiple changes.
      */
     public readonly stateMap: DataCursor.StateMap;
+
 
     /* *
      *
      *  Functions
      *
      * */
+
 
     /**
      * This function registers a listener for a specific state and table.
@@ -123,6 +149,7 @@ class DataCursor {
         return this;
     }
 
+
     /**
      * @private
      */
@@ -149,12 +176,13 @@ class DataCursor {
         ).join('\0');
     }
 
+
     /**
      * This function emits a state cursor related to a table. It will provide
      * lasting state cursors of the table to listeners.
      *
      * @example
-     * ```TypeScript
+     * ```ts
      * dataCursor.emit(myTable, {
      *     type: 'position',
      *     column: 'city',
@@ -184,72 +212,17 @@ class DataCursor {
         cursor: DataCursor.Type,
         event?: Event,
         lasting?: boolean
-    ): this;
-
-    /**
-     * @param {Data.DataTable} table
-     * The related table of the cursor.
-     *
-     * @param {string} group
-     * The related group on the table.
-     *
-     * @param {Data.DataCursor.Type} cursor
-     * The state cursor to emit.
-     *
-     * @param {Event} [event]
-     * Optional event information from a related source.
-     *
-     * @param {boolean} [lasting]
-     * Whether this state cursor should be kept until it is cleared with
-     * {@link DataCursor#remitCursor}.
-     *
-     * @return {Data.DataCursor}
-     * Returns the DataCursor instance for a call chain.
-     */
-    public emitCursor(
-        table: DataTable,
-        group: string,
-        cursor: DataCursor.Type,
-        event?: Event,
-        lasting?: boolean
-    ): this;
-
-    // Implementation
-    public emitCursor(
-        table: DataTable,
-        groupOrCursor: (string|DataCursor.Type),
-        cursorOrEvent?: (DataCursor.Type|Event),
-        eventOrLasting?: (Event|boolean),
-        lasting?: boolean
     ): this {
-        const cursor = (
-                typeof groupOrCursor === 'object' ?
-                    groupOrCursor :
-                    cursorOrEvent as DataCursor.Type
-            ),
-            event = (
-                typeof eventOrLasting === 'object' ?
-                    eventOrLasting :
-                    cursorOrEvent as Event
-            ),
-            group = (
-                typeof groupOrCursor === 'string' ?
-                    groupOrCursor :
-                    void 0
-            ),
-            tableId = table.id,
+        const tableId = table.id,
             state = cursor.state,
             listeners = (
                 this.listenerMap[tableId] &&
                 this.listenerMap[tableId][state]
             );
 
-        lasting = (lasting || eventOrLasting === true);
-
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
-                this.stateMap[tableId] ||
-                {}
+                this.stateMap[tableId] ?? {}
             );
 
             const cursors = stateMap[cursor.state] || [];
@@ -275,15 +248,11 @@ class DataCursor {
                 e.event = event;
             }
 
-            if (group) {
-                e.group = group;
-            }
-
             const emittingRegister = this.emittingRegister,
                 emittingTag = this.buildEmittingTag(e);
 
             if (emittingRegister.indexOf(emittingTag) >= 0) {
-                // break call stack loops
+                // Break call stack loops
                 return this;
             }
 
@@ -304,6 +273,7 @@ class DataCursor {
 
         return this;
     }
+
 
     /**
      * Removes a lasting state cursor.
@@ -339,6 +309,7 @@ class DataCursor {
         return this;
     }
 
+
     /**
      * This function removes a listener.
      *
@@ -369,7 +340,7 @@ class DataCursor {
         if (listeners) {
             const index = listeners.indexOf(listener);
 
-            if (index) {
+            if (index >= 0) {
                 listeners.splice(index, 1);
             }
         }
@@ -377,7 +348,9 @@ class DataCursor {
         return this;
     }
 
+
 }
+
 
 /* *
  *
@@ -385,16 +358,19 @@ class DataCursor {
  *
  * */
 
+
 /**
  * @class Data.DataCursor
  */
 namespace DataCursor {
+
 
     /* *
      *
      *  Declarations
      *
      * */
+
 
     export type Type = (
         | Position
@@ -420,7 +396,6 @@ namespace DataCursor {
         cursor: Type;
         cursors: Array<Type>;
         event?: globalThis.Event;
-        group?: string;
         table: DataTable;
     }
 
@@ -436,11 +411,13 @@ namespace DataCursor {
 
     export type TableMap = Record<TableId, DataTable>;
 
+
     /* *
      *
      *  Functions
      *
      * */
+
 
     /**
      * Finds the index of an cursor in an array.
@@ -513,6 +490,7 @@ namespace DataCursor {
         return false;
     }
 
+
     /**
      * Checks whether a cursor is in a range.
      * @private
@@ -545,6 +523,7 @@ namespace DataCursor {
             )
         );
     }
+
 
     /**
      * @private
@@ -595,6 +574,7 @@ namespace DataCursor {
         return positions;
     }
 
+
     /**
      * @private
      */
@@ -629,7 +609,9 @@ namespace DataCursor {
         return range;
     }
 
+
 }
+
 
 /* *
  *
@@ -637,71 +619,5 @@ namespace DataCursor {
  *
  * */
 
+
 export default DataCursor;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * @typedef {
- *     Data.DataCursor.Position|
- *     Data.DataCursor.Range
- * } Data.DataCursor.Type
- */
-
-/**
- * @interface Data.DataCursor.Position
- */
-/**
- * @name Data.DataCursor.Position#type
- * @type {'position'}
- */
-/**
- * @name Data.DataCursor.Position#column
- * @type {string|undefined}
- */
-/**
- * @name Data.DataCursor.Position#row
- * @type {number|undefined}
- */
-/**
- * @name Data.DataCursor.Position#state
- * @type {string}
- */
-/**
- * @name Data.DataCursor.Position#tableScope
- * @type {'original'|'modified'}
- */
-
-/**
- * @interface Data.DataCursor.Range
- */
-/**
- * @name Data.DataCursor.Range#type
- * @type {'range'}
- */
-/**
- * @name Data.DataCursor.Range#columns
- * @type {Array<string>|undefined}
- */
-/**
- * @name Data.DataCursor.Range#firstRow
- * @type {number}
- */
-/**
- * @name Data.DataCursor.Range#lastRow
- * @type {number}
- */
-/**
- * @name Data.DataCursor.Range#state
- * @type {string}
- */
-/**
- * @name Data.DataCursor.Range#tableScope
- * @type {'original'|'modified'}
- */
-
-'';

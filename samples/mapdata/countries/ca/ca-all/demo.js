@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-all.topo.json">Canada</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-all.topo.json">Canada</a>'
         },
 
         mapNavigation: {

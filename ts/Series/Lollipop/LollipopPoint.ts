@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -61,9 +61,10 @@ class LollipopPoint extends Point {
      * */
 
     public connector?: SVGElement;
-    public options: LollipopPointOptions = void 0 as any;
-    public series: LollipopSeries = void 0 as any;
-    public plotX: number = void 0 as any;
+    public options!: LollipopPointOptions;
+    public series!: LollipopSeries;
+    public plotX!: number;
+    public pointWidth!: number;
 }
 
 /* *
