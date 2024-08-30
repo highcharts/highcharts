@@ -6,6 +6,9 @@
     /* Dimensions */
     --chart-height: 200px;
     --log-height: 250px;
+
+    /* Colors */
+    --custom-background: var(--highcharts-neutral-color-3);
 }
 
 /* *
@@ -33,19 +36,17 @@
 
 /* *
  *
- *  Demo specific
+ *  Dashboards/Datagrid specific
  *
  * */
 .highcharts-dashboards-wrapper {
     background-color: var(--highcharts-neutral-color-10);
-    border-radius: var(--component-rounded-corners);
     padding: 10px;
     overflow: hidden;
 }
 
 .highcharts-dashboards-component {
-    background-color: var(--component-background);
-    border-radius: var(--component-rounded-corners);
+    background-color: var(--custom-background);
     max-height: var(--chart-height);
 }
 
@@ -53,52 +54,85 @@
     font-size: 12px;
 }
 
+/* *
+ *
+ *  Message log
+ *
+ * */
 #html-log {
     background-color: var(--highcharts-neutral-color-10);
-    border-radius: var(--component-rounded-corners);
-    padding: 10px;
+    padding: 0;
+    margin: 0;
     max-height: var(--log-height);
-    overflow: scroll;
+    overflow: none;
 }
 
 #html-log .highcharts-dashboards-component-title {
     text-align: center;
     font-size: 18px;
+    padding: 0;
+    margin: 10px 0;
+    background-color: var(--custom-background);
+    border-bottom: 1px dotted var(--highcharts-neutral-color-20);
 }
 
 #log-content {
-    max-height: var(--log-height);
-    padding: 10px;
+    height: 90%;
+    margin: 0;
+    padding: 0 10px;
     font: "Courier New", Courier, monospace;
     font-size: 12px;
+    overflow: auto;
 }
 
 #log-content span.error {
     color: red;
 }
 
+/* *
+ *
+ *  App control - Connect status and clearing log
+ *
+ * */
 #app-control {
-    padding: 10px;
+    padding: 0;
     font-size: 12px;
+    width: 100%;
 }
 
-#app-control .highcharts-dashboards-component {
-    margin-bottom: 10px;
+#app-control .highcharts-dashboards-component-html-content {
     background-color: var(--highcharts-neutral-color-10);
-    border: 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#app-control #connect-status,
+#app-control #clear-log {
+    margin: 15px 20%;
 }
 
 #app-control #connect-status {
-    border: 0;
-    padding: 5px;
-    float: right;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 #app-control #connect-status::before {
     content: "MQTT ";
 }
 
-#div.description {
-    padding: 10px;
-    font-size: 12px;
+#app-control #clear-log {
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+/* *
+ *
+ *  Dashboards container and description
+ *
+ * */
+
+div.description {
+    padding: 0 20px;
+    max-width: 100%;
+    text-align: justify;
 }

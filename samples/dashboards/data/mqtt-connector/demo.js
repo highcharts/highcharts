@@ -80,15 +80,15 @@ const connConfig = {
         return modifiedData;
     },
     connectEvent: event => {
-        const { isConnected, host, port, user } = event.detail;
-        setConnectStatus(isConnected);
+        const { connected, host, port, user } = event.detail;
+        setConnectStatus(connected);
         // eslint-disable-next-line max-len
-        logAppend(`Client ${isConnected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
+        logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
     },
     subscribeEvent: event => {
-        const { isSubscribed, topic } = event.detail;
+        const { subscribed, topic } = event.detail;
         logAppend(
-            `Client ${isSubscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
+            `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
         );
     },
     packetEvent: event => {
@@ -264,9 +264,9 @@ function logClear() {
     logContent.innerHTML = '';
 }
 
-function setConnectStatus(isConnected) {
-    connectStatus.innerHTML = isConnected ? 'connected' : 'disconnected';
-    connectStatus.style.color = isConnected ? 'green' : 'red';
+function setConnectStatus(connected) {
+    connectStatus.innerHTML = connected ? 'connected' : 'disconnected';
+    connectStatus.style.color = connected ? 'green' : 'red';
 }
 
 function setPowerPlantName(topic, name) {
@@ -292,7 +292,7 @@ function setPowerPlantName(topic, name) {
 /* *
  *
  * MQTT connector class - a custom DataConnector,
- * interfacing with the Paho MQTT library
+ * interfacing with the Paho MQTT client library.
  *
  *
  * Paho MQTT client documentation
@@ -476,7 +476,7 @@ class MQTTConnector extends DataConnector {
         this.emit({
             type: 'connectEvent',
             detail: {
-                isConnected: true,
+                connected: true,
                 host: host,
                 port: port,
                 user: user
