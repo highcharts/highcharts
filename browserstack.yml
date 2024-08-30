@@ -1,0 +1,13 @@
+projectName: Highcharts
+buildName: highcharts build
+buildIdentifier: '#${BUILD_NUMBER}'
+platforms:
+  - deviceName: Samsung Galaxy S22 Ultra
+    browserName: chrome
+    osVersion: 12.0
+parallelsPerPlatform: 1
+debug: true
+browserstackLocal: true
+networkLogs: false
+consoleLogs: errors
+testObservability: true
