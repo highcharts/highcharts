@@ -98,7 +98,7 @@ class TableCell extends Cell {
     * */
 
     /**
-     * Renders the cell.
+     * Renders the cell by appending it to the row and setting its value.
      */
     public override render(): void {
         super.render();
