@@ -18,3 +18,7 @@
 .highcharts-button-symbol {
     stroke: #c5c7c9;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

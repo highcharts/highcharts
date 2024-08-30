@@ -7,6 +7,11 @@
     margin: 0 auto;
 }
 
+#dropdown,
+#width {
+    margin: 0 10px;
+}
+
 button .dim {
     opacity: 50%;
     pointer-events: none;
@@ -22,4 +27,8 @@ button .dim {
     display: inline-block;
     padding: 0.5rem 1.5rem;
     margin: 0.5rem -5px 0.5rem 10px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

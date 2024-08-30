@@ -22,3 +22,7 @@ button.active {
     padding: 0.5rem 1.5rem;
     margin: 0.5rem -5px 0.5rem 10px;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

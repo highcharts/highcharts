@@ -1,4 +1,12 @@
+.highcharts-figure {
+    margin: 0;
+}
+
 #container {
     height: 400px;
     min-width: 310px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

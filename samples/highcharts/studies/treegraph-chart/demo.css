@@ -6,3 +6,7 @@ figure {
     min-height: 800px;
     min-width: 360px;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
