@@ -375,10 +375,6 @@ div#connect-bar button:hover {
  *
  * */
 
-.el-kpi .highcharts-dashboards-component-title {
-    white-space: nowrap;
-}
-
 .el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
     margin: 0.5em 0;
 }
@@ -427,6 +423,8 @@ div#connect-bar button:hover {
 #el-info div#info-container {
     padding: 5px;
     margin: 0;
+    overflow: auto;
+    max-height: 100%;
 
     & h3 {
         padding: 3px;

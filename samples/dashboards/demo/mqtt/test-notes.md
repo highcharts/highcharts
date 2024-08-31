@@ -1,4 +1,0 @@
-
-# Manual tests
-
-TBD
