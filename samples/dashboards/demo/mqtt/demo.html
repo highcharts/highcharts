@@ -7,10 +7,12 @@
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
-
-<link rel="shortcut icon"
-    href="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">
+<!-- MQTT client library -->
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+    integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP"
+    crossorigin="anonymous"
+></script>
 
 <!-- Dashboards container -->
 <div id="container">
@@ -21,7 +23,7 @@
             <!--
             <img id="logo-img-1" src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
             -->
-            <!-- Dropdown for selecting power station -->
+            <!-- Dropdown for selecting power plant -->
             <div id="dropdown-container">
                 <button id="dropdown-button"></button>
                 <div id="dropdown-content" class="dropdown-content">
@@ -37,7 +39,7 @@
             </div>
         </div>
     </div>
-    <!-- Two rows for the power plant, i.e up to 2 generators ("aggregat") each -->
+    <!-- Two rows for the power plant, max 2 generators ("aggregat") -->
     <div class="row el-aggr">
         <div class="cell el-kpi" id="kpi-agg-1"></div>
         <div class="cell el-chart" id="chart-agg-1"></div>
@@ -58,18 +60,18 @@
 <div class="highcharts-description">
     <p>
         This application displays key data from a selection of power generation plants in the county of Vestland,
-        Norway. The data set contains information about the power station, and also of water intakes and
+        Norway. The data set contains information about the power plant, and also of water intakes and
         water reservoirs (providing these exist). The data are provided by <b>Sognekraft</b>.
     </p>
     <p>How to use</p>
     <ul>
         <li>Click the switch in the top bar to connect to <b>Sognekraft</b>'s MQTT server.</li>
-        <li>When connecting succeeds, a selection of power plants becomes available in the <b>Power Station</b>
+        <li>When connecting succeeds, a selection of power plants becomes available in the <b>Power Plant</b>
             dropdown.</li>
-        <li>Select any of the power stations. This subscribes to the MQTT subjected that are particular to each
-            power station. The reporting interval is determined by the server but will normally be every two
+        <li>Select any of the power plants. This subscribes to the MQTT subjected that are particular to each
+            power plant. The reporting interval is determined by the server but will normally be every two
             minutes.
         </li>
-        <li>The application only displays data for one power station at a time.</li>
+        <li>The application only displays data for one power plant at a time.</li>
     </ul>
 </div>

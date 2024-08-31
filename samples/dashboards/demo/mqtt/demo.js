@@ -158,6 +158,7 @@ async function dashboardCreate() {
         return {
             type: 'HTML',
             renderTo: 'el-info',
+            title: 'Power plant information',
             chartOptions: {
                 chart: {
                     styledMode: false
@@ -259,7 +260,7 @@ async function dashboardCreate() {
                 },
                 yAxis: {
                     title: {
-                        text: measInfo.hdr('P_gen'),
+                        text: measInfo.descr('P_gen'),
                         y: -80
                     },
                     labels: {
@@ -271,7 +272,7 @@ async function dashboardCreate() {
                     tickAmount: 1,
                     visible: true,
                     min: 0,
-                    max: 0 // Populated at update
+                    max: 0 // Populated on update
                 },
                 series: [{
                     name: measInfo.brief('P_gen'),
@@ -321,7 +322,7 @@ async function dashboardCreate() {
                     min: 0,
                     max: 0, // Populated on update
                     title: {
-                        text: measInfo.hdr('P_gen')
+                        text: measInfo.descr('P_gen')
                     }
                 },
                 tooltip: {
@@ -358,7 +359,7 @@ async function dashboardCreate() {
                         }
                     },
                     power: {
-                        headerFormat: measInfo.hdr('P_gen')
+                        headerFormat: measInfo.descr('P_gen')
                     }
                 }
             }
@@ -577,15 +578,16 @@ async function dashboardsComponentUpdate(mqttData) {
     async function updateInfoHtml(data) {
         // HTML component title
         const infoComp = getComponent(dashboard, 'el-info');
+
         await infoComp.update({
             title: data.name
         });
 
-        // briefiption of power plant (if available)
+        // Description of power plant (if available)
         let html = '';
-        if (data.briefiption !== null) {
-            html = `<span class="pw-brief">
-                ${data.briefiption}</span>`;
+        if (data.description !== null) {
+            html = `<span class="pw-descr">
+                ${data.description}</span>`;
         }
 
         // Location info
@@ -611,7 +613,7 @@ async function dashboardsComponentUpdate(mqttData) {
 
         // Render HTML
         const el = document.querySelector(
-            'div#el-info .highcharts-dashboards-component'
+            'div#el-info .highcharts-dashboards-component-html-content'
         );
         el.innerHTML = '<div id="info-container">' + html + '</div';
     }
@@ -826,7 +828,7 @@ class SkMqtt {
         // Start MQTT client
         const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
-        this.mqtt = new Paho.MQTT.Client(
+        this.mqtt = new Paho.Client(
             mqttConfig.host,
             mqttConfig.port,
             cname
@@ -1218,7 +1220,7 @@ function measDataInfo() {
         },
 
         // Full description, brief + unit
-        hdr: function (id) {
+        descr: function (id) {
             return this.brief(id) + ' (' + this.unit(id) + ')';
         }
     };
