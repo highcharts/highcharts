@@ -8,11 +8,9 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- MQTT client library -->
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
     integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP"
-    crossorigin="anonymous"
-></script>
+    crossorigin="anonymous"></script>
 
 <!-- Dashboards container -->
 <div id="container">
@@ -34,10 +32,11 @@
             </div>
             <span id="connect-status">Not connected</span>
             <div id="connect-switch">
+                <span>Connect MQTT</span>
                 <input id="connect-toggle" type="checkbox"></input>
-                <label for="connect-toggle"></label>
+                <label id="button" for="connect-toggle" title="Connect/disconnect MQTT"></label>
             </div>
-        </div>
+    </div>
     </div>
     <!-- Two rows for the power plant, max 2 generators ("aggregat") -->
     <div class="row el-aggr">
@@ -50,7 +49,7 @@
         <div class="cell el-chart" id="chart-agg-2"></div>
         <div class="cell data-grid" id="data-grid-2"></div>
     </div>
-    <!-- Bottom row: information (custom HTML) and Highcharts map -->
+    <!-- Bottom row: information (HTML) and Highcharts map -->
     <div class="row el-info">
         <div class="cell" id="el-info"></div>
         <div class="cell" id="el-map"></div>
