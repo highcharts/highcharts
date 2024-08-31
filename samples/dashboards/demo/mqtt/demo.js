@@ -52,7 +52,7 @@ const intakeConfig = {
     }
 };
 
-const defaultZoom = 9;
+const defaultZoom = 11;
 
 // The Dashboard and DataHandler instances are created when the first
 // MQTT packet is received. The instances are then used to update the
@@ -158,7 +158,6 @@ async function dashboardCreate() {
         return {
             type: 'HTML',
             renderTo: 'el-info',
-            title: 'Power plant information',
             chartOptions: {
                 chart: {
                     styledMode: false
@@ -421,11 +420,6 @@ function uiSetComponentVisibility(visible, nGenerators = 0) {
 
 // Update all Dashboards components
 async function dashboardsComponentUpdate(mqttData) {
-    function getComponent(dashboard, id) {
-        return dashboard.mountedComponents.map(c => c.component)
-            .find(c => c.options.renderTo === id);
-    }
-
     function getInfoRecord(item, fields) {
         const ret = [];
         fields.forEach(field => {
@@ -530,7 +524,7 @@ async function dashboardsComponentUpdate(mqttData) {
 
     async function updateMap(data) {
         // Map
-        const mapComp = getComponent(dashboard, 'el-map');
+        const mapComp = dashboard.getComponentByCellId('el-map');
         const mapPoints = mapComp.chart.series[1];
 
         // Erase existing map points
@@ -577,7 +571,7 @@ async function dashboardsComponentUpdate(mqttData) {
 
     async function updateInfoHtml(data) {
         // HTML component title
-        const infoComp = getComponent(dashboard, 'el-info');
+        const infoComp = dashboard.getComponentByCellId('el-info');
 
         await infoComp.update({
             title: data.name
@@ -648,7 +642,7 @@ async function dashboardsComponentUpdate(mqttData) {
         }
 
         // KPI
-        const kpiComp = getComponent(dashboard, 'kpi-agg-' + pgIdx);
+        const kpiComp = dashboard.getComponentByCellId('kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
                 dataTable.getCellAsNumber('power', rowCount - 1) : 0,
@@ -657,7 +651,7 @@ async function dashboardsComponentUpdate(mqttData) {
         });
 
         // Spline chart
-        const chartComp = getComponent(dashboard, 'chart-agg-' + pgIdx);
+        const chartComp = dashboard.getComponentByCellId('chart-agg-' + pgIdx);
         await chartComp.update({
             connector: {
                 id: connId
@@ -667,7 +661,7 @@ async function dashboardsComponentUpdate(mqttData) {
         });
 
         // Datagrid
-        const gridComp = getComponent(dashboard, 'data-grid-' + pgIdx);
+        const gridComp = dashboard.getComponentByCellId('data-grid-' + pgIdx);
         await gridComp.update({
             connector: {
                 id: connId

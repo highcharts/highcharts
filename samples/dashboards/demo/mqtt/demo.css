@@ -260,19 +260,12 @@ div#connect-bar img {
 
 div#connect-bar #connect-status {
     color: #dadae2;
-    font-size: 1vw;
+    font-size: 12px;
+    margin-left: 20px;
 
     & b {
         color: #15f651;
     }
-}
-
-div#connect-bar label span {
-    margin-right: 5px;
-    color: white;
-    padding: 16px;
-    font-size: 14px;
-    border: none;
 }
 
 div#connect-bar button:hover {
@@ -282,24 +275,34 @@ div#connect-bar button:hover {
 
 /* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
 #connect-switch {
-    margin: 0 5%;
+    padding: 10px;
+    margin: 0 20px;
 }
 
 #connect-switch #connect-toggle {
     display: none;
 }
 
-#connect-switch label {
+#connect-switch span {
+    position: relative;
+    top: -20px;
+    left: 60px;
+    text-align: center;
+    font-size: 12px;
+}
+
+#connect-switch label#button {
     display: inline-block;
     width: 40px;
     height: 20px;
+    top: 10px;
     background-color: #ccc;
     border-radius: 10px;
     position: relative;
     cursor: pointer;
 }
 
-#connect-switch label::before {
+#connect-switch label#button::before {
     content: "";
     position: absolute;
     top: 2px;
@@ -311,11 +314,11 @@ div#connect-bar button:hover {
     transition: transform 0.3s;
 }
 
-#connect-switch #connect-toggle:checked + label {
+#connect-switch #connect-toggle:checked + label#button {
     background-color: #2196f3;
 }
 
-#connect-switch #connect-toggle:checked + label::before {
+#connect-switch #connect-toggle:checked + label#button::before {
     transform: translateX(20px);
 }
 
@@ -411,7 +414,7 @@ div#connect-bar button:hover {
 
 /* *
  *
- *  Information panel (Custom HTML)
+ *  Information panel (HTML)
  *
  * */
 
