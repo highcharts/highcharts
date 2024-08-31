@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 @media (max-width: 575px) {
     img {
         display: none;

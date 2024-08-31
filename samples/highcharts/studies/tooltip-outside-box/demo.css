@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #outer {
     max-width: 420px;
     margin: 1em auto;

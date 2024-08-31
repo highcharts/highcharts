@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .chart-outer {
     max-width: 800px;
     margin: 2em auto;

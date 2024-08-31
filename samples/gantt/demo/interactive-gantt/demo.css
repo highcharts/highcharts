@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container,
 #buttonGroup {
     max-width: 1200px;
