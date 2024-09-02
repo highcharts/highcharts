@@ -892,7 +892,12 @@ namespace DataLabel {
 
         // Off bottom
         off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
-        if (off > chart.plotHeight) {
+        // Extend plot area's bottom to navigator when enabled. #21285
+        const isNavigatorEnabled = chart.navigator?.navigatorEnabled;
+        const threshold = isNavigatorEnabled ?
+            chart.yAxis[1].top + chart.yAxis[1].height : chart.plotHeight;
+
+        if (off > threshold) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
                 options.inside = true;
