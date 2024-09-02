@@ -707,9 +707,9 @@ Highcharts.chart('container', {
     xAxis: {
         type: 'datetime',
         plotBands: [{
-            from: new Date('2024-07-22').valueOf(),
-            to: new Date('2024-08-16').valueOf(),
-            color: 'rgba(68, 170, 213, .2)'
+            from: new Date('2024-04-18').valueOf(),
+            to: new Date('2024-05-8').valueOf(),
+            color: 'rgba(68, 170, 213, .4)'
         }]
     },
     yAxis: {
