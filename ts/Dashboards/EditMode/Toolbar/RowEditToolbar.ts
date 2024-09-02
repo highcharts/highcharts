@@ -179,8 +179,21 @@ class RowEditToolbar extends EditToolbar {
             );
             const rowWidth = rowOffsets.right - rowOffsets.left;
 
-            // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
+                if (!row.options?.editMode?.toolbarItems) {
+                    item.activate();
+                    return;
+                }
+                const toolbarItems = row.options.editMode.toolbarItems;
+
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
+                    item.deactivate();
+                    return;
+                }
+
                 item.activate();
             });
 
@@ -202,16 +215,6 @@ class RowEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            /// toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
-
-            // @ToDo - mask is buggy - should be refactored or removed.
-            // if (this.row) {
-            //     super.maskNotEditedElements(
-            //         this.row,
-            //         true
-            //     );
-            //     this.editedRow = this.row;
-            // }
         }
     }
 

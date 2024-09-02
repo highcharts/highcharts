@@ -209,6 +209,10 @@ abstract class Component {
      */
     public titleElement?: HTMLElement;
     /**
+     * Whether the component state is active.
+     */
+    public isActive?: boolean;
+    /**
      * The HTML element where the caption is.
      */
     public captionElement?: HTMLElement;
@@ -603,7 +607,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: ConnectorHandler.ConnectorOptions[] = (
+        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -1066,7 +1070,7 @@ namespace Component {
         /**
          * Connector options
          */
-        connector?: ConnectorOptions | ConnectorOptions[];
+        connector?: (ConnectorOptions|Array<ConnectorOptions>);
         /**
          * Sets an ID for the component's container.
          */
@@ -1087,6 +1091,48 @@ namespace Component {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
+
+        /**
+         * States for the component.
+         */
+        states?: StatesOptions;
+    }
+
+    /**
+     * States options for the component.
+     */
+    export interface StatesOptions {
+        active?: {
+            /**
+             * Whether the component is active. Only used when `enabled` is
+             * `true`.
+             * If `true`, the `highcharts-dashboards-cell-state-active` class
+             * will be added to the component's container.
+             *
+             * Only one component can be active at a time.
+             *
+             * Try it:
+             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+             *
+             * @default false
+             */
+            isActive?: boolean;
+
+            /**
+             * Whether to enable the active state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
+        hover?: {
+            /**
+             * Whether to enable the hover state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
     }
 
     /**

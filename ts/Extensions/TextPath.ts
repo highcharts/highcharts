@@ -46,9 +46,12 @@ interface TextPathObject {
 /**
  * @private
  */
-declare module '../Core/Renderer/SVG/SVGElement' {
-    interface SVGElement {
-        setTextPath(): SVGElement,
+declare module '../Core/Renderer/SVG/SVGElementLike' {
+    interface SVGElementLike {
+        setTextPath(
+            path: SVGElement|undefined,
+            textPathOptions: AnyRecord
+        ): SVGElement,
         textPath: TextPathObject
     }
 }
@@ -161,7 +164,7 @@ function setTextPath(
 
     } else {
         textWrapper.attr({ dx: 0, dy: 0 });
-        delete textWrapper.textPath;
+        delete (textWrapper as Partial<SVGElement>).textPath;
     }
 
     if (this.added) {

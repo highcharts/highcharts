@@ -180,6 +180,10 @@ class HTMLComponent extends Component {
      * The options for the component.
      */
     constructor(cell: Cell, options: Partial<Options>) {
+        if (options.className) {
+            options.className = `${HTMLComponent.defaultOptions.className} ${options.className}`;
+        }
+
         options = merge(
             HTMLComponent.defaultOptions,
             options
@@ -227,6 +231,7 @@ class HTMLComponent extends Component {
                 });
         } else if (options.html) {
             this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
         }
 
         this.constructTree();
@@ -268,6 +273,7 @@ class HTMLComponent extends Component {
     public async update(options: Partial<Options>, shouldRerender: boolean = true): Promise<void> {
         if (options.html) {
             this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
 
             this.constructTree();
         }
@@ -282,10 +288,8 @@ class HTMLComponent extends Component {
             cell: '',
             type: 'HTML',
             elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                }
+                tagName: 'span',
+                textContent: '[Your custom HTML here- edit the component]'
             }]
         };
     }
@@ -299,7 +303,7 @@ class HTMLComponent extends Component {
             this.contentElement.firstChild.remove();
         }
 
-        const parser = new AST(this.elements);
+        const parser = new AST(this.options.elements || []);
         parser.addToDOM(this.contentElement);
     }
 
@@ -360,12 +364,18 @@ class HTMLComponent extends Component {
      */
     public getEditableOptions(): Options {
         const component = this;
-        return merge(
-            component.options,
-            {
-                elements: this.elements
-            }
-        );
+
+        // When adding a new component, the elements are not yet set.
+        if (this.elements.length) {
+            return merge(
+                component.options,
+                {
+                    elements: this.elements
+                }
+            );
+        }
+
+        return component.options;
     }
 
     /**
@@ -392,7 +402,7 @@ class HTMLComponent extends Component {
             return result[propertyPath[0]];
         }
 
-        super.getEditableOptionValue(propertyPath);
+        return super.getEditableOptionValue(propertyPath);
     }
 
     /**
