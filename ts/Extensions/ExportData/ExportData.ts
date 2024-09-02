@@ -602,7 +602,10 @@ function chartGetDataRows(
 
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // `y`, `z` etc
-                    val = (mockPoint as any)[prop];
+                    val = series.pointClass.prototype.getNestedProperty.apply(
+                        mockPoint as any,
+                        [prop]
+                    ) as number; // Allow values from nested properties (#20470)
                     rows[key][i + j] = pick(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
