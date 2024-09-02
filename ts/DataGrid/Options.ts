@@ -22,8 +22,8 @@
 
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type Cell from './Cell';
-import Column from './Column';
+import type Cell from './Table/Cell';
+import Column from './Table/Column';
 
 
 /* *
@@ -73,6 +73,11 @@ export interface Options {
      * Options for individual columns.
      */
     columns?: Array<IndividualColumnOptions>;
+
+    /**
+     * Options for the credits label.
+     */
+    credits?: CreditsOptions;
 
     /**
      * Events options triggered by the datagrid elements.
@@ -411,6 +416,41 @@ export interface GroupedHeaderOptions {
      */
     columns?: GroupedHeaderOptions[];
 }
+
+/**
+ * Options for the credits label.
+ */
+export interface CreditsOptions {
+    /**
+     * Whether to show the credits.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * The URL that will be opened when the credits label is clicked.
+     *
+     * @default 'https://www.highcharts.com?credits'
+     */
+    href?: string;
+
+    /**
+     * The text for the credits label.
+     *
+     * @default 'Highcharts.com'
+     */
+    text?: string;
+
+    /**
+     * The position of the credits label.
+     *
+     * @default 'bottom'
+     */
+    position?: 'bottom' | 'top';
+}
+
+
 /* *
  *
  *  Default Export

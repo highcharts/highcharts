@@ -24,11 +24,11 @@
 
 import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type Column from './Column';
+import type Column from './Table/Column';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
-import Table from './Table.js';
+import Table from './Table/Table.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import QueryingController from './Querying/QueryingController.js';

@@ -22,9 +22,9 @@
  *
  * */
 
-import type DataTable from '../Data/DataTable';
+import type DataTable from '../../Data/DataTable';
 
-import AST from '../Core/Renderer/HTML/AST.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
 

@@ -43,6 +43,12 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
             strictHeights: false
         }
     },
+    credits: {
+        enabled: true,
+        text: 'Highcharts.com',
+        href: 'https://www.highcharts.com?credits',
+        position: 'bottom'
+    },
     columnDefaults: {
         sorting: {
             sortable: true

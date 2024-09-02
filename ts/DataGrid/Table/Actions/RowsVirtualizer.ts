@@ -23,8 +23,8 @@
  * */
 
 import Table from '../Table.js';
-import DGUtils from '../Utils.js';
-import Globals from '../Globals.js';
+import DGUtils from '../../Utils.js';
+import Globals from '../../Globals.js';
 import TableRow from '../Content/TableRow.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;

@@ -21,13 +21,13 @@
  *  Imports
  *
  * */
-import type { GroupedHeaderOptions } from '../Options';
+import type { GroupedHeaderOptions } from '../../Options';
 import Table from '../Table.js';
 import Row from '../Row.js';
-import Globals from '../Globals.js';
+import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
-import DGUtils from '../Utils.js';
+import DGUtils from '../../Utils.js';
 
 const { sanitizeText } = DGUtils;
 
