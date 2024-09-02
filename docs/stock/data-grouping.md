@@ -29,3 +29,11 @@ Grouped points can be positioned inside the group using [anchor](https://api.hig
 Additionally [firstAnchor](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.firstAnchor) and [lastAnchor](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.lastAnchor) properties can be used to position the first and the last point in the data set (not in the current zoom). In addition to the values described above, they might have values:
 * `firstPoint` the first point in the group  (e.g. points at 00:13, 00:35, 00:59 -> 00:13)
 * `lastPoint` the last point in the group (e.g. points at 00:13, 00:35, 00:59 -> 00:59)
+
+
+### Performance comparison of data grouping
+
+ When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readibility of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100_000.
+
+ <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" allow="fullscreen"></iframe>
+
