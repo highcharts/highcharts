@@ -50,7 +50,7 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
  *               nodePadding, centerInCategory, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart,
  *               relativeXValue, softThreshold, stack, stacking, step,
- *               xAxis, yAxis
+ *               xAxis, yAxis, legendColor
  * @optionparent plotOptions.arcdiagram
  */
 const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {

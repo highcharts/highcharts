@@ -46,7 +46,7 @@ const { isNumber } = U;
  *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
  *               linecap, lineWidth, pointInterval, pointIntervalUnit,
  *               pointRange, pointStart, shadow, softThreshold, stacking,
- *               step, threshold, cluster, dragDrop
+ *               step, threshold, cluster, dragDrop, legendColor
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */

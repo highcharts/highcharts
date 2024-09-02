@@ -34,7 +34,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @extends series,plotOptions.pyramid
  *
  * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
- *            boostThreshold, boostBlending
+ *            boostThreshold, boostBlending, legendColor
  *
  * @product highcharts
  *

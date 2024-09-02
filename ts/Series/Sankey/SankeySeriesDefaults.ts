@@ -50,7 +50,7 @@ import type SankeySeries from './SankeySeries';
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting, boostBlending
+ *               zones, minPointLength, dataSorting, boostBlending, legendColor
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  *

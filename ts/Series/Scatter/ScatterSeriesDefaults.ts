@@ -33,7 +33,8 @@ import type ScatterSeries from './ScatterSeries';
  *         Scatter plot
  *
  * @extends      plotOptions.line
- * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
+ * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData,
+ *               legendColor
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */

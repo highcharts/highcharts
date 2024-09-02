@@ -2549,6 +2549,33 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Defines the color of the legend symbol for this series.
+     *
+     * @sample {highcharts|highstock} highcharts/series/legend-color/
+     *         Change the legend symbol color
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   undefined
+     * @since     11.4.8
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.legendColor
+     */
+
+    /**
+     * A name for the dash style to use for the graph.
+     *
+     * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
+     *
+     * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
+     *         Dashed line indicates prognosis
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @since     4.1.0
+     * @product   highcharts highstock
+     * @apioption plotOptions.series.zones.dashStyle
+     */
+
+    /**
      * Determines whether the series should look for the nearest point
      * in both dimensions or just the x-dimension when hovering the series.
      * Defaults to `'xy'` for scatter series and `'x'` for most other

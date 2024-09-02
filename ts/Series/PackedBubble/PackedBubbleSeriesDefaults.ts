@@ -36,7 +36,7 @@ const { isNumber } = U;
  * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
  *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
  *               yAxis, zMax, zMin, dataSorting, boostThreshold,
- *               boostBlending
+ *               boostBlending, legendColor
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more
