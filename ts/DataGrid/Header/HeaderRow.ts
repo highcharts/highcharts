@@ -27,6 +27,9 @@ import Row from '../Row.js';
 import Globals from '../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
+import DGUtils from '../Utils.js';
+
+const { sanitizeText } = DGUtils;
 
 /* *
  *
@@ -128,7 +131,8 @@ class HeaderRow extends Row {
                 vp.getColumn(columnId || '') ||
                 new Column(
                     vp,
-                    headerFormat?.replace(/<[^>]*>/g, '') || '', // Remove HTML tags and empty spaces.
+                    // Remove HTML tags and empty spaces.
+                    sanitizeText(headerFormat || '').trim() || '',
                     i
                 )
             );
