@@ -99,6 +99,10 @@
     background-color: var(--highcharts-neutral-color-0);
 }
 
+.highcharts-datagrid-container {
+    background-color: transparent;
+}
+
 #dashboard-row-3-cell-3 .highcharts-datagrid-table th {
     background-color: var(--highcharts-neutral-color-0);
 }
