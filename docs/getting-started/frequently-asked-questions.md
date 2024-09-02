@@ -71,6 +71,9 @@ When working with series with a high number of data points, there are a few thin
 1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
+4.  If you have Stock Licence, consider using the [Data Grouping module](https://www.highcharts.com/docs/stock/data-grouping). This module packs multiple consecutive values into the same point, which could effect in rendering even 100x less points, which greatly reduces the initial loading time. Here is the chart, which compares the same chart with and without datagrouping enabled:
+
+<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison/" frameborder="0"></iframe>
 
 * * *
 
