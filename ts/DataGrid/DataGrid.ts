@@ -27,6 +27,7 @@ import type DataTableOptions from '../Data/DataTableOptions';
 import type Column from './Table/Column';
 
 import AST from '../Core/Renderer/HTML/AST.js';
+import Credits from './Credits.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
 import Table from './Table/Table.js';
 import DataGridUtils from './Utils.js';
@@ -147,6 +148,11 @@ class DataGrid {
      * The content container of the data grid.
      */
     public contentWrapper?: HTMLElement;
+
+    /**
+     * The credits of the data grid.
+     */
+    public credits?: Credits;
 
     /**
      * The data source of the data grid. It contains the original data table
@@ -406,6 +412,18 @@ class DataGrid {
         this.userOptions.columns = columnOptions;
     }
 
+    public update(
+        options?: Options,
+        render?: boolean,
+        oneToOne?: boolean
+    ): Promise<void>;
+
+    public update(
+        options: Options,
+        render: false,
+        oneToOne?: boolean
+    ): void;
+
     /**
      * Updates the data grid with new options.
      *
@@ -442,6 +460,20 @@ class DataGrid {
             this.renderViewport();
         }
     }
+
+    public updateColumn(
+        columnId: string,
+        options: Omit<IndividualColumnOptions, 'id'>,
+        render?: boolean,
+        overwrite?: boolean
+    ): void;
+
+    public updateColumn(
+        columnId: string,
+        options: Omit<IndividualColumnOptions, 'id'>,
+        render: true,
+        overwrite?: boolean
+    ): Promise<void>;
 
     /**
      * Updates the column of the data grid with new options.
@@ -535,7 +567,10 @@ class DataGrid {
         const viewportMeta = vp?.getStateMeta();
 
         this.enabledColumns = this.getEnabledColumnIDs();
+
+        this.credits?.destroy();
         vp?.destroy();
+
         if (this.contentWrapper) {
             this.contentWrapper.innerHTML = AST.emptyHTML;
         }
@@ -549,6 +584,12 @@ class DataGrid {
         } else {
             this.renderNoData();
         }
+
+        if (this.options?.credits?.enabled) {
+            this.credits = new Credits(this);
+        }
+
+        this.viewport?.reflow();
     }
 
     /**

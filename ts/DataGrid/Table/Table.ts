@@ -215,9 +215,6 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
-
-        // Refresh element dimensions after initial rendering
-        this.reflow();
     }
 
     /**
@@ -264,7 +261,8 @@ class Table {
             (this.dataGrid.container?.clientHeight || 0) -
             this.theadElement.offsetHeight -
             (this.captionElement?.offsetHeight || 0) -
-            borderWidth
+            borderWidth -
+            (this.dataGrid.credits?.getHeight() || 0)
         }px`;
 
         // Get the width of the rows.

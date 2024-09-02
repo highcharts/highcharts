@@ -14,6 +14,7 @@
     --highcharts-neutral-color-100: #000000;
     --highcharts-neutral-color-80: #333333;
     --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-40: #999999;
     --highcharts-neutral-color-20: #cccccc;
     --highcharts-neutral-color-10: #e6e6e6;
     --highcharts-neutral-color-5: #f2f2f2;
@@ -86,6 +87,7 @@
 /* ==== DataGrid Core ==== */
 .highcharts-datagrid-container * {
     box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .highcharts-datagrid-container {
@@ -201,6 +203,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 /* Table body */
@@ -293,7 +296,6 @@
 /* Table body */
 .highcharts-datagrid-table tbody tr {
     background: var(--highcharts-background-color);
-    border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-odd {
@@ -318,6 +320,25 @@
 .highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input:focus {
     border: 1px solid #0000ed;
     background-color: #b7d4ff;
+}
+
+/* Credits */
+.highcharts-datagrid-credits {
+    color: var(--highcharts-neutral-color-40);
+    font-size: 0.6em;
+    transition: color 250ms, font-size 250ms;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+.highcharts-datagrid-credits:hover {
+    color: var(--highcharts-neutral-color-100);
+    font-size: 0.7em;
+}
+
+.highcharts-datagrid-credits-container {
+    text-align: right;
+    padding-bottom: 2px;
 }
 
 /* End Default Theme */
