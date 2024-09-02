@@ -705,7 +705,12 @@ Highcharts.chart('container', {
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        plotBands: [{
+            from: new Date('2024-07-22').valueOf(),
+            to: new Date('2024-08-16').valueOf(),
+            color: 'rgba(68, 170, 213, .2)'
+        }]
     },
     yAxis: {
         title: {
