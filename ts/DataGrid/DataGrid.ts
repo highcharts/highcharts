@@ -671,6 +671,8 @@ class DataGrid {
      * Destroys the data grid.
      */
     public destroy(): void {
+        const dgIndex = DataGrid.dataGrids.findIndex(dg => dg === this);
+
         this.viewport?.destroy();
 
         if (this.container) {
@@ -682,6 +684,8 @@ class DataGrid {
         Object.keys(this).forEach((key): void => {
             delete this[key as keyof this];
         });
+
+        DataGrid.dataGrids.splice(dgIndex, 1);
     }
 
     /**
