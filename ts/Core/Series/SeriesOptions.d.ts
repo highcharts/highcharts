@@ -150,6 +150,7 @@ export interface SeriesOptions {
     zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
+    legendColor?: ColorType;
 }
 
 export interface SeriesPointOptions {

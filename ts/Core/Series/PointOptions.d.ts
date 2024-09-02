@@ -99,6 +99,7 @@ export interface PointOptions {
     visible?: boolean;
     x?: number;
     y?: (null|number);
+    legendColor?: ColorType;
 }
 
 export interface PointSelectEvent extends Event {
