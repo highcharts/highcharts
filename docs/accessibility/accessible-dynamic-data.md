@@ -7,9 +7,9 @@ Since Highcharts version 7.1, the Accessibility module supports dynamic data. Th
 
 Announce new data
 -----------------
-To enable announcing new data and drilldown for your charts, set the [`accessibility.announceNewData.enabled`](https://api.highcharts.com/highcharts/accessibility.announceNewData.enabled) option.
+To enable announcements of new data and drilldown events for your charts, set the [`accessibility.announceNewData.enabled`](https://api.highcharts.com/highcharts/accessibility.announceNewData.enabled) option.
 
-Note that this will only work for users of screen readers and similar assistive technology. The announcements are made accessible to screen readers, and the screen reader will let its user know that there is new data. By default, the screen reader user will be notified every time there is new data, a maximum of once every 5 seconds.
+Note that this will only work for users of screen readers and similar assistive technology. The announcements are made accessible to screen readers, and it will let its user know that there is new data. By default, the user will be notified every time there is new data, a maximum of once every 5 seconds.
 
 ```js
 Highcharts.chart('container', {
@@ -32,7 +32,7 @@ To configure the announcements, see [`accessibility.announceNewData`](https://a
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dynamic)
 
-By defining the [`accessibility.announceNewData.announcementFormatter`](https://api.highcharts.com/highcharts/accessibility.announceNewData.announcementFormatter) it is possible to add logic for which updates to make an announcement for. This enables you to for example only announce new data that is critical, or for a certain data series.
+By defining the [`accessibility.announceNewData.announcementFormatter`](https://api.highcharts.com/highcharts/accessibility.announceNewData.announcementFormatter) it is possible to add logic that can choose which updates to announce. This enables you to for example only announce new data that is critical, or for a certain data series.
 
 ```js
 function onAnnounce(updatedSeries, newSeries, newPoint) {

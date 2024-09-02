@@ -7,7 +7,7 @@ Keyboard navigation
 --------------
 An essential part of the Accessibility module is the added keyboard navigation support. This is obviously a critical feature for users with mobility impairments, but also benefits all users. While using a computer mouse can be faster, keyboard navigation allows all users access to precise navigation of the chart.
 
-By including the Accessibility module with your charts, users are able to navigate and interact with the data points, chart menu, and other chart controls using the keyboard only. 
+By including the Accessibility module allows users to navigate and interact with the data points, chart menu, and other chart controls using solely their keyboard. 
 
 
 Keyboard navigation can be tested in the demo below. Use the tab-key to navigate the chart elements, arrow-keys to navigate within the chart element and space-bar to click.
@@ -20,7 +20,7 @@ Screen Readers
 --------------
 One of the most well known assistive technologies in use by people with disabilities, a screen reader is a program that attempts to convey the information on the screen by using non-visual methods, such as text-to-speech. If your charts are using the Accessibility module, screen reader users can navigate and explore your charts. It will also help your SEO, as web crawlers can read the information provided for screen readers.
 
-The first thing a screen reader user will encounter when exploring a chart is an information region. This region contains basic information about the chart, such as title, the type of chart, axis information, and the text description of the chart if provided (see [Accessibility Module - Basic configuration](https://www.highcharts.com/docs/accessibility/accessibility-module#basic-configuration)). The purpose of this region is to give the screen reader user sufficient information to let them make a decision on whether or not to invest more time exploring the chart.
+The first thing a screen reader user will encounter when exploring a chart is an information region. This region contains basic information about the chart, such as title, the type of chart, axis information, and the text description of the chart if provided (see [Accessibility Module - Basic configuration](https://www.highcharts.com/docs/accessibility/accessibility-module#basic-configuration)). The purpose of this region is to give the screen reader user sufficient information to let them make a decision on whether or not to takeß more time exploring the chart.
 
 If the screen reader user decides to explore the chart in more detail, they have the option of viewing the chart as a data table. Many users will however prefer navigating the chart elements themselves. Using the Accessibility module, the data points can be navigated, and the values will be accessible to the screen reader. By default, the data series are marked up as regions/landmarks, which aids navigation between series. The screen reader user is able to navigate the chart using their native screen reader commands, and does not have to learn a custom set of shortcuts and navigation keys.
 
@@ -35,7 +35,7 @@ The Accessibility module is compatible with most screen readers in modern browse
 
 Low vision features
 -------------------
-With the Accessibility module, Highcharts comes with built in support for Windows High Contrast Mode. Charts can also be viewed in full screen for additional separation of elements. [Pattern fills](https://www.highcharts.com/docs/accessibility/patterns-and-contrast) are supported, as well as [premade themes](https://www.highcharts.com/docs/chart-design-and-style/themes) with higher contrast. Series markers also have different shapes to help distinguish between data points without use of color. Due to the responsive nature of Highcharts, screen zooming tools are well supported.
+With the Accessibility module, Highcharts comes with built in support for Windows High Contrast Mode. Charts can also be viewed in full-screen for additional separation of elements. [Pattern fills](https://www.highcharts.com/docs/accessibility/patterns-and-contrast) are supported, as well as [premade themes](https://www.highcharts.com/docs/chart-design-and-style/themes) with higher contrast. Series markers also have different shapes to help distinguish between data points without use of color. Due to the responsive nature of Highcharts, screen zooming tools are well supported.
 
 Demo with higher contrast themes: 
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-switch-theme' allow="fullscreen"></iframe>
@@ -72,7 +72,7 @@ With Highcharts you can play back the chart as sound. This can be highly effecti
 
 Cognitive accessibility
 -----------------------
-A lot of Highcharts features are developed with the goal of making charts easier to use and understand. This translates to better cognitive accessibility, as well as an improved user experience for all users. Relevant features include tooltips, chart legends, dimming surrounding content on hover, series labels, viewing charts in full screen, and data table support.
+A lot of Highcharts features are developed with the goal of making charts easier to use and understand. This translates to better cognitive accessibility, as well as an improved user experience for all users. Relevant features include tooltips, chart legends, dimming surrounding content on hover, series labels, viewing charts in full-screen, and data table support.
 
 Features can be interacted with in this chart:
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-line' allow="fullscreen"></iframe>
