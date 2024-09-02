@@ -42,6 +42,17 @@ QUnit.test(
             (#6553).`
         );
 
+        if (chart.series[0].visible) {
+            // Failed, so try to get more info
+            console.log('Failed, so try to get more info ', x, y);
+
+            assert.strictEqual(
+                [x, y],
+                ['x', 'y'],
+                `Logging x & y`
+            );
+        }
+
         chart.legend.update({
             events: {
                 itemClick: function () {
