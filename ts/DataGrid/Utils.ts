@@ -126,13 +126,32 @@ namespace DataGridUtils {
     }
 
     /**
-     * Check if there's a possibility that the given string is an HTML (contains '<').
+     * Check if there's a possibility that the given string is an HTML
+     * (contains '<').
      *
      * @param str
      * Text to verify.
      */
     export function isHTML(str: string): boolean {
         return str.indexOf('<') !== -1;
+    }
+
+    /**
+     * Returns a string containing plain text format by removing HTML tags
+     *
+     * @param text
+     * String to be sanitized
+     *
+     * @returns
+     * Sanitized plain text string
+    */
+    export function sanitizeText(text: string): string {
+        try {
+            return new DOMParser().parseFromString(text, 'text/html')
+                .body.textContent || '';
+        } catch (error) {
+            return '';
+        }
     }
 }
 
