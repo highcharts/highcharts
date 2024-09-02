@@ -295,6 +295,8 @@ class DataGrid {
         newOptions: Partial<Options>,
         oneToOne = false
     ): void {
+        newOptions = merge(newOptions);
+
         if (newOptions.columns) {
             if (oneToOne) {
                 this.loadColumnOptionsOneToOne(newOptions.columns);
