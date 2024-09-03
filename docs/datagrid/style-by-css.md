@@ -29,7 +29,7 @@ The CSS is not included in the library by default, but you can import it like be
 ```
 
 ## Row height
-The height of each row is dynamic and based on the tallest cell. This allows for dynamic row height changes when adjusting column width. However, this can impact performance. You can disable this feature by setting the [settings.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`.
+The height of each row is dynamic and based on the highest cell. It allows adjust row height when changing the column width. However, this can impact performance. You can disable this feature by setting the [settings.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`.
 
 ```js
 settings: {
