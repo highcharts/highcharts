@@ -174,7 +174,7 @@ class Credits {
     }
 
     /**
-     * Get the width of the credits container.
+     * Get the height of the credits container.
      */
     public getHeight(): number {
         return this.containerElement.offsetHeight;
