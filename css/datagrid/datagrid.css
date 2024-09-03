@@ -86,11 +86,13 @@
 /* ==== DataGrid Core ==== */
 .highcharts-datagrid-container * {
     box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .highcharts-datagrid-container {
     display: block;
     min-height: 200px;
+    font-family: 1em;
     overflow: hidden;
 }
 
@@ -235,10 +237,12 @@
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
-    border-radius: 0;
+    border-width: 0px;
     width: 100%;
     height: 100%;
     outline: none;
+    float: left;
+    font-size: 1em;
 }
 
 /* ==== Default Theme ==== */
@@ -314,9 +318,10 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input,
-.highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input:focus {
-    border: 1px solid #0000ed;
+.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
+    box-shadow: inset 0 0 0 1px #0000ed;
+    padding: 0px 4px;
     background-color: #b7d4ff;
 }
 
