@@ -49,7 +49,7 @@ QUnit.test(
             assert.strictEqual(
                 [x, y],
                 ['x', 'y'],
-                `Logging x & y`
+                'Logging x & y'
             );
         }
 
