@@ -397,20 +397,24 @@ export interface GroupedHeaderOptions {
      * The format of the column header. Use `{id}` to display the column id.
      */
     headerFormat?: string;
+
     /**
      * The custom CSS class name for the header.
      */
     className?: string;
+
     /**
      * The id of column with data.
      */
     columnId?: string;
+
     /**
      * Current level of header in the whole header tree.
      * @internal
      * @private
      */
     level?: number;
+
     /**
      * Columns that are displayed below the header.
      */

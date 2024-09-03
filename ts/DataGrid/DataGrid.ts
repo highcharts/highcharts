@@ -449,6 +449,13 @@ class DataGrid {
 
         let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
+            this.userOptions.dataTable = options.dataTable;
+            if (this.options) {
+                this.options.dataTable = options.dataTable;
+            } else {
+                this.options = { dataTable: options.dataTable };
+            }
+
             this.loadDataTable(this.options?.dataTable);
             newDataTable = true;
         }
