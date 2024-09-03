@@ -29,8 +29,7 @@ The CSS is not included in the library by default, but you can import it like be
 ```
 
 ## Row/Cell height
-For performance reasons the height of every row, and hence cell, is static and long texts are truncated with an ellipsis.
-However, you can disable this by setting the [settings.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`
+The height of each row is dynamic and based on the tallest cell. This allows for dynamic row height changes when adjusting column width. However, this can impact performance. You can disable this feature by setting the [settings.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`.
 
 ```js
 settings: {
@@ -39,6 +38,15 @@ settings: {
     }
 }
 ```
+
+The default row height for the DataGrid with strict row heights turned on is then determined by the height value set for `.highcharts-datagrid-table tbody tr`, which is `36px` by default. If you need to change it, use CSS to override it:
+
+```css
+.highcharts-datagrid-table tbody tr {
+    height: 50px;
+}
+```
+
 
 ## General classes
 Each of the class name contains a prefix `highcharts-datagrid` and a suffix that
