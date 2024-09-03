@@ -732,7 +732,7 @@ namespace SVGRenderer3D {
         const renderer = this,
             wrapper = renderer.g(),
             elementProto = renderer.Element.prototype,
-            customAttribs = [
+            customAttribs: Array<keyof SVGAttributes3D> = [
                 'alpha', 'beta',
                 'x', 'y', 'r', 'innerR', 'start', 'end', 'depth'
             ];
@@ -742,24 +742,21 @@ namespace SVGRenderer3D {
          * object with only custom attr.
          * @private
          */
-        function suckOutCustom(
+        function extractCustom(
             params: SVGAttributes3D
-        ): (Array<SVGAttributes3D>|false) {
-            const ca = {} as SVGAttributes;
-
-            let hasCA = false,
-                key: string;
+        ): ([SVGAttributes3D, SVGAttributes]|false) {
+            const ca: Record<string, any> = {};
 
             params = merge(params); // Don't mutate the original object
 
+            let key: keyof SVGAttributes3D;
             for (key in params) {
                 if (customAttribs.indexOf(key) !== -1) {
-                    (ca as any)[key] = (params as any)[key];
-                    delete (params as any)[key];
-                    hasCA = true;
+                    ca[key] = params[key];
+                    delete params[key];
                 }
             }
-            return hasCA ? [ca, params] : false;
+            return Object.keys(ca).length ? [ca, params] : false;
         }
 
         attribs = merge(attribs);
@@ -880,7 +877,7 @@ namespace SVGRenderer3D {
             params?: (string|SVGAttributes)
         ): (number|string|SVGElement) {
             if (typeof params === 'object') {
-                const paramArr = suckOutCustom(params);
+                const paramArr = extractCustom(params);
                 if (paramArr) {
                     const ca = paramArr[0];
                     arguments[0] = paramArr[1];
@@ -899,7 +896,7 @@ namespace SVGRenderer3D {
                     }
                 }
             }
-            return elementProto.attr.apply(wrapper, arguments as any);
+            return elementProto.attr.apply(wrapper, arguments);
         } as any;
 
         // Override the animate function by sucking out custom parameters
@@ -915,8 +912,6 @@ namespace SVGRenderer3D {
                 randomProp = 'data-' +
                     Math.random().toString(26).substring(2, 9);
 
-            let to: SVGAttributes;
-
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
             delete params.center;
@@ -927,7 +922,7 @@ namespace SVGRenderer3D {
             );
 
             if (anim.duration) {
-                const paramArr = suckOutCustom(params);
+                const paramArr = extractCustom(params);
                 // Params need to have a property in order for the step to run
                 // (#5765, #7097, #7437)
                 wrapper[randomProp] = 0;
@@ -935,24 +930,27 @@ namespace SVGRenderer3D {
                 wrapper[randomProp + 'Setter'] = H.noop;
 
                 if (paramArr) {
-                    to = paramArr[0]; // Custom attr
-                    anim.step = function (a: unknown, fx: Fx): void {
-                        const interpolate = (key: string): number => (
+                    const to = paramArr[0], // Custom attr
+                        interpolate = (
+                            key: keyof SVGAttributes,
+                            pos: number
+                        ): number => (
                             (from as any)[key] + (
-                                pick((to as any)[key], (from as any)[key]) -
+                                pick(to[key], (from as any)[key]) -
                                 (from as any)[key]
-                            ) * fx.pos
+                            ) * pos
                         );
 
+                    anim.step = function (a: unknown, fx: Fx): void {
                         if (fx.prop === randomProp) {
-                            (fx.elem as any).setPaths(merge(from, {
-                                x: interpolate('x'),
-                                y: interpolate('y'),
-                                r: interpolate('r'),
-                                innerR: interpolate('innerR'),
-                                start: interpolate('start'),
-                                end: interpolate('end'),
-                                depth: interpolate('depth')
+                            fx.elem.setPaths(merge(from, {
+                                x: interpolate('x', fx.pos),
+                                y: interpolate('y', fx.pos),
+                                r: interpolate('r', fx.pos),
+                                innerR: interpolate('innerR', fx.pos),
+                                start: interpolate('start', fx.pos),
+                                end: interpolate('end', fx.pos),
+                                depth: interpolate('depth', fx.pos)
                             }));
                         }
                     };
