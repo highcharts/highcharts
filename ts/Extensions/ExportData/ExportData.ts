@@ -603,7 +603,7 @@ function chartGetDataRows(
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // `y`, `z` etc
                     val = series.pointClass.prototype.getNestedProperty.apply(
-                        mockPoint as any,
+                        mockPoint,
                         [prop]
                     ) as number; // Allow values from nested properties (#20470)
                     rows[key][i + j] = pick(
