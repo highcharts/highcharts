@@ -132,6 +132,10 @@ class DataGrid {
      */
     public static readonly defaultOptions = DataGridDefaultOptions;
 
+    /**
+     * An array containing the current DataGrid objects in the page.
+     */
+    public static readonly dataGrids: Array<(DataGrid|undefined)> = [];
 
     /**
      * The user options declared for the columns as an object of column ID to
@@ -212,7 +216,6 @@ class DataGrid {
      */
     public querying: QueryingController;
 
-
     /* *
     *
     *  Constructor
@@ -248,6 +251,7 @@ class DataGrid {
             this.renderViewport();
             afterLoadCallback?.(this);
         });
+        DataGrid.dataGrids.push(this);
     }
 
 
@@ -715,6 +719,8 @@ class DataGrid {
      * Destroys the data grid.
      */
     public destroy(): void {
+        const dgIndex = DataGrid.dataGrids.findIndex(dg => dg === this);
+
         this.viewport?.destroy();
 
         if (this.container) {
@@ -726,6 +732,8 @@ class DataGrid {
         Object.keys(this).forEach((key): void => {
             delete this[key as keyof this];
         });
+
+        DataGrid.dataGrids.splice(dgIndex, 1);
     }
 
     /**
