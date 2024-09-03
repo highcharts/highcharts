@@ -671,7 +671,9 @@ class DataGrid {
      * Destroys the data grid.
      */
     public destroy(): void {
-        const dgIndex = DataGrid.dataGrids.findIndex(dg => dg === this);
+        const dgIndex = DataGrid.dataGrids.findIndex(
+            (dg): boolean => dg === this
+        );
 
         this.viewport?.destroy();
 
