@@ -6,7 +6,10 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'comparison of chart performance with and without data grouping'
+        text: 'chart initial rendering time (lower is better)'
+    },
+    subtitle: {
+        text: 'Run on MacBook Pro M1 2021 16GM RAM'
     },
     series: [
         {
