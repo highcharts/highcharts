@@ -28,7 +28,14 @@ Highcharts.chart('container', {
         categories: [10, 1000, 5000, 10000, 50000, 100000]
     },
     tooltip: {
-        shared: true
+        shared: true,
+        headerFormat: `<span style="font-size:11px">
+                        chart loading time for {point.x} points: 
+                        </span><br/>`,
+        pointFormat: `<span style="color:{series.color}">
+                        {series.name}: 
+                    </span>
+                    <b>{point.y} ms</b><br/>`
     },
     yAxis: {
         title: {
