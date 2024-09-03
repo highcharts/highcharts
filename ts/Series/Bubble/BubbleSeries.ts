@@ -175,6 +175,11 @@ function onAxisFoundExtremes(
 
 }
 
+/**
+ * If a user has defined categories, it is necessary to retroactively hide any
+ * ticks added by the 'onAxisFoundExtremes' function above. Otherwise these
+ * ticks can show up on the axis, alongside user-defined categories.
+ */
 function onAxisAfterRender(this: Axis): void {
     const {
             ticks,
