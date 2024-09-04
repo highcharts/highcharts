@@ -35,7 +35,7 @@ QUnit.test(
 
         test.click(x, y, void 0, true);
 
-        const chartOffset = Highcharts.offset(this.chart.container)
+        const chartOffset = Highcharts.offset(chart.container);
         const elem = document.elementFromPoint(x + chartOffset.left, y);
         const htmlContent = document.documentElement.outerHTML;
 
@@ -57,6 +57,11 @@ QUnit.test(
                 htmlContent,
                 'htmlContent',
                 'Logging htmlContent'
+            );
+            assert.strictEqual(
+                elem,
+                'elementFromPoint',
+                'Logging elementFromPoint'
             );
         }
 
