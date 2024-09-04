@@ -3,7 +3,24 @@ QUnit.test(
         let legendItemClickFlag = false;
         const chart = Highcharts.chart('container', {
                 chart: {
-                    type: 'area'
+                    type: 'area',
+                    events: {
+                        load: function () {
+                            const renderer = this.renderer;
+                            const size = 10;
+            
+                            for (let row = 0; row < size; row++) {
+                                for (let col = 0; col < size; col++) {
+                                    renderer.rect(col, row, 1, 1)
+                                        .attr({
+                                            class: `grid-point col-${col} row-${row}`,
+                                            fill: '#000' // black color for the grid points
+                                        })
+                                        .add();
+                                }
+                            }
+                        }
+                    }
                 },
                 legend: {
                     useHTML: true
@@ -36,11 +53,11 @@ QUnit.test(
         test.click(x, y, void 0, true);
 
         const chartOffset = Highcharts.offset(chart.container);
-        const elem = document.elementFromPoint(
+        let elem = document.elementFromPoint(
             x + chartOffset.left,
             y + chartOffset.top
         );
-        const htmlContent = document.documentElement.outerHTML;
+        // const htmlContent = document.documentElement.outerHTML;
 
         assert.strictEqual(
             chart.series[0].visible,
@@ -52,18 +69,40 @@ QUnit.test(
         // Try to get more info
         assert.strictEqual(
             chartOffset,
-            'chartOffset',
-            'Logging chartOffset'
+            [x, chartOffset.left,
+            y, chartOffset.top],
+            'Logging chartOffset vs elementFromPoint [x,x_offset, y,y_offset]'
+        );
+        // assert.strictEqual(
+        //     htmlContent,
+        //     'htmlContent',
+        //     'Logging htmlContent'
+        // );
+        const hcEvents = series.legendItem.symbol.element.hcEvents;
+        assert.strictEqual(
+            hcEvents,
+            'hcEvents',
+            'Logging hcEvents'
         );
         assert.strictEqual(
-            htmlContent,
-            'htmlContent',
-            'Logging htmlContent'
+            hcEvents?.click?.[0].fn.toString(),
+            'hcEvents click',
+            'Logging hcEvents click'
         );
+
         assert.strictEqual(
             elem,
             'elementFromPoint',
             'Logging elementFromPoint'
+        );
+        elem = document.elementFromPoint(
+            chartOffset.left + 3.1,
+            chartOffset.top + 3
+        );
+        assert.strictEqual(
+            elem,
+            'elementFromPoint',
+            'Logging grid target (3,3) elementFromPoint'
         );
 
         chart.legend.update({
