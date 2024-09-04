@@ -2,9 +2,14 @@
     font-family: Helvetica, Arial, sans-serif;
 }
 
-#container,
-#chart-container {
+#container {
     max-width: 800px;
     height: 400px;
     margin: 1em auto;
+}
+
+.controls {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
 }
