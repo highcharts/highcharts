@@ -87,9 +87,10 @@ class Credits {
             className: Globals.classNames.creditsContainer
         });
 
-        this.textElement = makeHTMLElement('a', {
+        this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
             className: Globals.classNames.creditsText
         }, this.containerElement);
+        this.textElement.setAttribute('target', '_top');
 
         this.render();
     }
