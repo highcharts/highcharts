@@ -180,14 +180,40 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
         x = legend.group.translateX + legend.padding + 5,
         y = legend.group.translateY + legend.padding + 5;
 
-    controller.moveTo(x, y);
-    controller.click(x, y);
+    controller.moveTo(x, y, void 0, true);
+    controller.click(x, y, void 0, true);
 
     assert.strictEqual(
         s1.points[0].visible,
         false,
         'Click on data class should hide the right points.'
     );
+
+    const chartOffset = Highcharts.offset(chart.container);
+    // Try to get more info
+    assert.strictEqual(
+        chartOffset,
+        'chartOffset',
+        'Logging chartOffset'
+    );
+
+    let elem = document.elementFromPoint(
+        x + chartOffset.left,
+        y + chartOffset.top
+    );
+
+    assert.strictEqual(
+        elem,
+        [x, y],
+        'Logging elementFromPoint vs [x,y]'
+    );
+
+    assert.strictEqual(
+        document.body.innerHTML,
+        'document.body.innerHTML',
+        'Logging document.body.innerHTML'
+    );
+
 });
 
 QUnit.test('Multiple color axis - dynamics', function (assert) {

@@ -7,12 +7,12 @@ QUnit.test(
                     events: {
                         load: function () {
                             const renderer = this.renderer;
-                            let col = 0;
+                            let row = 0;
             
-                            // grid rows to avoid crash
-                            for (let row = 0; row < 400; row++) {
-                                //for (let col = 0; col < 600; col++) {
-                                    renderer.rect(col, row, 600, 1)
+                            // grid cols to avoid crash
+                            //for (let row = 0; row < 400; row++) {
+                                for (let col = 0; col < 600; col++) {
+                                    renderer.rect(col, row, 1, 400)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
                                             zIndex: 99,
@@ -22,8 +22,8 @@ QUnit.test(
                                                 ((row + col) % 16).toString(16)
                                         })
                                         .add();
-                                //}
-                            }
+                                }
+                            //}
                         }
                     }
                 },
