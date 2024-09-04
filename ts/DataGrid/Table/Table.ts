@@ -171,7 +171,7 @@ class Table {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions?.settings?.columns?.distribution as ColumnDistribution;
+            dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
 
         this.renderCaption();
 
@@ -179,7 +179,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        if (dgOptions?.settings?.columns?.resizable) {
+        if (dgOptions?.columnDefaults?.resizable) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 

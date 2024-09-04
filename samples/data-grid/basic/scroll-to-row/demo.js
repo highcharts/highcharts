@@ -11,7 +11,7 @@ const dataGrid = new DataGrid.DataGrid('container', {
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     },
-    settings: {
+    rendering: {
         rows: {
             bufferSize: 5
         }

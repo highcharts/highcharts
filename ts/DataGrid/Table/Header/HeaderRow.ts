@@ -88,7 +88,7 @@ class HeaderRow extends Row {
      * The current level in the header tree
      */
     public renderMultipleLevel(level: number): void {
-        const header = this.viewport.dataGrid.options?.settings?.header;
+        const header = this.viewport.dataGrid.options?.header;
         const vp = this.viewport;
         const enabledColumns = vp.dataGrid.enabledColumns;
 

@@ -87,9 +87,9 @@ class TableHeader {
         this.viewport = viewport;
         this.columns = viewport.columns;
 
-        if (viewport.dataGrid.options?.settings?.header) {
+        if (viewport.dataGrid.options?.header) {
             this.levels = this.getRowLevels(
-                viewport.dataGrid.options?.settings?.header
+                viewport.dataGrid.options?.header
             );
         }
 

@@ -9,37 +9,35 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    settings: {
-        header: [
-            'id',
-            {
-                headerFormat: 'Product',
+    header: [
+        'id',
+        {
+            headerFormat: 'Product',
+            columns: [{
+                headerFormat: 'Product name',
+                columnId: 'product'
+            }, {
+                headerFormat: 'Units',
                 columns: [{
-                    headerFormat: 'Product name',
-                    columnId: 'product'
+                    columnId: 'weight'
                 }, {
-                    headerFormat: 'Units',
-                    columns: [{
-                        columnId: 'weight'
-                    }, {
-                        headerFormat: 'Custom Price',
-                        columnId: 'price'
-                    }]
+                    headerFormat: 'Custom Price',
+                    columnId: 'price'
                 }]
-            },
-            {
-                headerFormat: 'Product info',
+            }]
+        },
+        {
+            headerFormat: 'Product info',
+            columns: [{
+                headerFormat: 'Meta',
                 columns: [{
-                    headerFormat: 'Meta',
-                    columns: [{
-                        columnId: 'url'
-                    }, {
-                        columnId: 'icon'
-                    }]
+                    columnId: 'url'
+                }, {
+                    columnId: 'icon'
                 }]
-            }
-        ]
-    },
+            }]
+        }
+    ],
     columns: [{
         id: 'product',
         className: 'custom-column-product-class',

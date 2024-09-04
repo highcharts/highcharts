@@ -64,6 +64,11 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  */
 export interface Options {
     /**
+     * Options for the table caption.
+     */
+    caption?: CaptionOptions;
+
+    /**
      * Default options for all the columns in the datagrid. Can be overridden
      * by individual column options.
      */
@@ -80,47 +85,42 @@ export interface Options {
     credits?: CreditsOptions;
 
     /**
+     * Data table with the data to display in the grid structure.
+     */
+    dataTable?: DataTable | DataTableOptions;
+
+    /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
 
     /**
-     * Options for the table caption.
+     * Defines the structure of levels in header. Used for grouping columns
+     * headers.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
      */
-    caption?: CaptionOptions;
+    header?: Array<GroupedHeaderOptions|string>;
 
     /**
      * Options to control the way datagrid is rendered.
      */
-    settings?: DataGridSettings;
-
-    /**
-     * Data table with the data to display in the grid structure.
-     */
-    dataTable?: DataTable | DataTableOptions;
+    rendering?: RenderingSettings;
 }
 
 /**
  * Options to control the way datagrid is rendered.
  */
-export interface DataGridSettings {
+export interface RenderingSettings {
     /**
-    * Options to control the columns behavior and rendering.
-    */
+     * Options to control the columns rendering.
+     */
     columns?: ColumnsSettings;
 
     /**
-    * Options to control the rows behavior and rendering.
-    */
+     * Options to control the rows rendering.
+     */
     rows?: RowsSettings;
-
-    /**
-    * Defines the structure of levels in header. Used for grouping columns
-    * headers.
-    *
-    * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
-    */
-    header?: Array<GroupedHeaderOptions|string>;
 }
 
 export interface ColumnsSettings {
@@ -146,15 +146,6 @@ export interface ColumnsSettings {
      * @private
      */
     included?: Array<string>;
-
-    /**
-     * Whether the columns should be resizable.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/column-resizing-disabled | Column resize disabled}
-     *
-     * @default true
-     */
-    resizable?: boolean;
 }
 
 export interface RowsSettings {
@@ -234,6 +225,16 @@ export interface ColumnOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
+
+    /**
+     * Whether the columns should be resizable. It does not affect individual
+     * column settings.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/column-resizing-disabled | Column resize disabled}
+     *
+     * @default true
+     */
+    resizable?: boolean;
 }
 
 /**
@@ -301,6 +302,12 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
+
+    /**
+     * @internal
+     * @private
+     */
+    resizable?: boolean;
 }
 
 export interface CaptionOptions {
