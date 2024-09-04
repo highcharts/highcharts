@@ -1,18 +1,29 @@
+body {
+    /* dark color for testing - background-color: #18171c; */
+
+    background-color: transparent;
+    margin: 0 20px 0 0;
+    padding: 0;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+#outer-container {
+    position: relative;
+    max-height: 455px;
+    max-width: 98%;
+}
+
 #container,
 #container2,
 #container3 {
-    width: 100%;
-    height: 480px;
+    height: 390px !important;
     display: block;
+    border-radius: 8px;
 }
 
 #container2,
 #container3 {
     display: none;
-}
-
-.outer-container {
-    position: relative;
 }
 
 [aria-live="polite"] {
@@ -33,52 +44,13 @@
     background: maroon;
 }
 
-body {
-    /* dark color for testing - background-color: #18171c; */
-
-    background-color: transparent;
-}
-
-#chart-description {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    white-space: nowrap;
-    clip: rect(1px, 1px, 1px, 1px);
-    margin-top: -3px;
-    opacity: 0.01;
-}
-
 #demo-content {
     background-color: transparent;
     margin: 0;
 }
 
-.btn-small {
-    white-space: nowrap;
-}
-
 .highcharts-background {
     fill: transparent;
-}
-
-.highcharts-title {
-    color: #c8c7d1 !important;
-    fill: #c8c7d1 !important;
-    font-size: 14px !important;
-}
-
-.highcharts-title a,
-.highcharts-subtitle a {
-    color: #c8c7d1 !important;
-}
-
-.highcharts-subtitle {
-    color: #c8c7d1 !important;
-    fill: #c8c7d1 !important;
-    font-size: 14px;
-    font-weight: 300;
 }
 
 .highcharts-data-labels text {
@@ -112,6 +84,17 @@ body {
     stroke: #918fa3;
 }
 
+#chart-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
 #stop {
     color: #e3e3e8;
     text-decoration: underline;
@@ -122,6 +105,8 @@ body {
 #stop:hover {
     color: #fff;
 }
+
+/* Networth graph */
 
 .jellypus {
     transform-origin: center;
@@ -146,11 +131,14 @@ body {
     stroke: transparent;
 }
 
+/* Geo heatmap */
+
 #projection-buttons {
     display: none;
 }
 
 /* bar chart race controls */
+
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(1),
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(2),
 .highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(3),
@@ -163,8 +151,8 @@ body {
 #play-controls {
     max-width: 700px;
     position: absolute;
-    left: 110px;
-    top: 403px;
+    left: 10px;
+    top: 330px;
     visibility: hidden;
 }
 
@@ -212,59 +200,67 @@ body {
     background: #5e5c70;
 }
 
-#boom {
-    display: none;
-}
-
 /* Change Chart button */
 
 .button-container {
-    position: absolute;
-    left: 12px;
-    bottom: 2px;
+    color: #acabba;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
+    padding: 1px 0 0;
+}
+
+.button-container .stroke {
+    background: linear-gradient(90deg, #75738c, rgba(0, 0, 0, 0));
+    height: 1px;
+}
+
+.button-container #chart-title {
+    padding: 4px 0 4px 4px;
+    font-size: 14px;
+}
+
+.button-container #chart-title span {
+    font-size: 12px;
+}
+
+.button-container .button-text {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
 }
 
 .button-container .chart-button {
     border: 0;
-    border-radius: 5px;
     background-color: transparent;
-    color: #e3e3e8;
-    font-size: 14px;
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-    width: 120px;
-    height: 32px;
-    transition: all 0.1s ease;
+    color: #acabba;
+    font-size: 12px;
+    font-weight: 300;
+    text-align: left;
+    width: fit-content;
 }
 
 .button-container .chart-button:disabled {
     color: #75738c;
 }
 
-.button-container .button-text {
-    border: 1px solid #918fa3;
-    padding-top: 5px;
-    font-weight: 700;
-    font-size: 12px;
-    color: inherit;
-    background-color: transparent;
-    border-radius: 5px;
-    position: absolute;
-    z-index: 20;
-    top: 0;
-    left: 0;
-    width: 116px;
-    height: 22px;
+.button-text img {
+    opacity: 0.8;
+}
+
+.button-text:hover img {
+    opacity: 1;
 }
 
 .button-text:hover {
-    border: 1px solid #8791ff;
-    color: #e1e3ff;
-    background-color: rgba(0, 0, 0, 0.7);
+    color: #f0f0f0;
+    cursor: pointer;
 }
 
-.chart-button:disabled .button-text {
-    border: 1px solid #5e5c70;
+.button-container .chart-button:disabled .button-text {
     color: #75738c;
+}
+
+.button-container .chart-button:disabled .button-text img {
+    opacity: 0.5;
 }
