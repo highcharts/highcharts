@@ -13,3 +13,11 @@
     color: #f00;
     width: 40%;
 }
+
+.underline {
+    text-decoration: underline;
+}
+
+.header-cell-custom-class-price {
+    color: #f0f;
+}

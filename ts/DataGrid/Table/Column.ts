@@ -32,6 +32,7 @@ import Globals from '../Globals.js';
 import Utils from '../../Core/Utilities.js';
 import DGUtils from '../Utils.js';
 import ColumnSorting from './Actions/ColumnSorting';
+import Templating from '../../Core/Templating.js';
 
 const { merge } = Utils;
 const { makeHTMLElement } = DGUtils;
@@ -294,6 +295,19 @@ class Column {
         }
 
         return result;
+    }
+
+    /**
+     * Returns the formatted string where the templating context is the column.
+     *
+     * @param template
+     * The template string.
+     *
+     * @return
+     * The formatted string.
+     */
+    public format(template: string): string {
+        return Templating.format(template, this);
     }
 }
 

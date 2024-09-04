@@ -29,11 +29,9 @@ import Column from '../Column';
 import Row from '../Row';
 import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
-import Templating from '../../../Core/Templating.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
-const { format } = Templating;
 const { makeHTMLElement, isHTML } = DGUtils;
 const { merge } = Utilities;
 
@@ -119,7 +117,7 @@ class HeaderCell extends Cell {
         const options = merge(column.options, this.options);
 
         this.value = options.headerFormat ? (
-            format(options.headerFormat, column)
+            column.format(options.headerFormat)
         ) : column.id;
 
         // Render content of th element
@@ -164,6 +162,8 @@ class HeaderCell extends Cell {
             // Add sorting
             this.initColumnSorting();
         }
+
+        this.setCustomClassName(options.headerCellClassName);
     }
 
     /**

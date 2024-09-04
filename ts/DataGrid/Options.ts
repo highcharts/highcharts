@@ -274,14 +274,37 @@ export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
  */
 export interface IndividualColumnOptions extends ColumnOptions {
     /**
-     * The custom CSS class name for the column. Applied only to cell that are
-     * in the table not the column header.
+     * The custom CSS class name for the column. Applied also to cells that are
+     * in the table and also to the column header cells.
+     *
+     * It does not use templating.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/demo/datagrid-custom-class | Custom class}
      *
      * @default undefined
      */
     className?: string;
+
+    /**
+     * Allows to define an additional class name to all table cells in the
+     * column. Applied only to cell that are in the table not the column header.
+     * It is updated with every cell's value change.
+     *
+     * It uses templating, where context is the table cell instance.
+     *
+     * @default undefined
+     */
+    cellClassName?: string;
+
+    /**
+     * Allows to define an additional class name only to the column header
+     * cells.
+     *
+     * It uses templating, where context is the header cell instance.
+     *
+     * @default undefined
+     */
+    headerCellClassName?: string;
 
     /**
      * Whether the column is enabled and should be displayed. If `false`, the
@@ -375,7 +398,9 @@ export interface CellEvents {
     afterEdit?: CellEventCallback;
 }
 
-
+/**
+ * Event callbacks option group related to the column.
+ */
 export interface ColumnEvents {
     /**
      * Callback function to be called when the column is sorted for instance,

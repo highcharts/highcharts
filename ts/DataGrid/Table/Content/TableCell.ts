@@ -27,11 +27,9 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../../Core/Utilities.js';
-import F from '../../../Core/Templating.js';
 import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
-const { format } = F;
 const { isHTML } = DGUtils;
 
 
@@ -177,6 +175,8 @@ class TableCell extends Cell {
             element.innerText = cellContent;
         }
 
+        this.setCustomClassName(this.column.options.cellClassName);
+
         if (!updateTable) {
             return;
         }
@@ -224,7 +224,7 @@ class TableCell extends Cell {
             cellContent = cellFormatter.call(this);
         } else {
             cellContent = (
-                cellFormat ? format(cellFormat, this) : value + ''
+                cellFormat ? this.format(cellFormat) : value + ''
             );
         }
 
