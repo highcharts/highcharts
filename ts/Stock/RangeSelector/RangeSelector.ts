@@ -242,7 +242,7 @@ class RangeSelector {
                     baseAxis.max as any, pick(dataMax, baseAxis.max as any)
                 )
             ), // #1568
-            baseXAxisOptions: AxisOptions,
+            baseXAxisOptions: DeepPartial<AxisOptions>,
             range = rangeOptions._range,
             rangeMin: (number|undefined),
             ctx: Axis,
@@ -368,7 +368,7 @@ class RangeSelector {
             // Axis not yet instantiated. Temporarily set min and range
             // options and axes once defined and remove them on
             // chart load (#4317 & #20529).
-            baseXAxisOptions = splat(chart.options.xAxis)[0];
+            baseXAxisOptions = splat(chart.options.xAxis || {})[0];
             const axisRangeUpdateEvent = addEvent(
                 chart,
                 'afterGetAxes',
