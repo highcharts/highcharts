@@ -33,7 +33,11 @@ QUnit.test(
                 bbox.y +
                 bbox.height / 2;
 
-        test.click(x, y);
+        test.click(x, y, void 0, true);
+
+        const chartOffset = Highcharts.offset(this.chart.container)
+        const elem = document.elementFromPoint(x + chartOffset.left, y);
+        const htmlContent = document.documentElement.outerHTML;
 
         assert.strictEqual(
             chart.series[0].visible,
@@ -44,12 +48,15 @@ QUnit.test(
 
         if (chart.series[0].visible) {
             // Failed, so try to get more info
-            console.log('Failed, so try to get more info ', x, y);
-
             assert.strictEqual(
-                [x, y],
-                ['x', 'y'],
-                'Logging x & y'
+                chartOffset,
+                'chartOffset',
+                'Logging chartOffset'
+            );
+            assert.strictEqual(
+                htmlContent,
+                'htmlContent',
+                'Logging htmlContent'
             );
         }
 
