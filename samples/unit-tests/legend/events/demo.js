@@ -36,7 +36,10 @@ QUnit.test(
         test.click(x, y, void 0, true);
 
         const chartOffset = Highcharts.offset(chart.container);
-        const elem = document.elementFromPoint(x + chartOffset.left, y);
+        const elem = document.elementFromPoint(
+            x + chartOffset.left,
+            y + chartOffset.top
+        );
         const htmlContent = document.documentElement.outerHTML;
 
         assert.strictEqual(
@@ -46,24 +49,22 @@ QUnit.test(
             (#6553).`
         );
 
-        if (chart.series[0].visible) {
-            // Failed, so try to get more info
-            assert.strictEqual(
-                chartOffset,
-                'chartOffset',
-                'Logging chartOffset'
-            );
-            assert.strictEqual(
-                htmlContent,
-                'htmlContent',
-                'Logging htmlContent'
-            );
-            assert.strictEqual(
-                elem,
-                'elementFromPoint',
-                'Logging elementFromPoint'
-            );
-        }
+        // Try to get more info
+        assert.strictEqual(
+            chartOffset,
+            'chartOffset',
+            'Logging chartOffset'
+        );
+        assert.strictEqual(
+            htmlContent,
+            'htmlContent',
+            'Logging htmlContent'
+        );
+        assert.strictEqual(
+            elem,
+            'elementFromPoint',
+            'Logging elementFromPoint'
+        );
 
         chart.legend.update({
             events: {
