@@ -2549,30 +2549,18 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * Defines the color of the legend symbol for this series.
+     * Defines the color of the legend symbol for this series. Defaults to
+     * undefined, in which case the series color is used. Does not work with
+     * styled mode.
      *
-     * @sample {highcharts|highstock} highcharts/series/legend-color/
+     * @sample {highcharts|highstock} highcharts/series/legend-symbol-color/
      *         Change the legend symbol color
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   undefined
-     * @since     11.4.8
+     * @since     next
      * @product   highcharts highstock highmaps
-     * @apioption plotOptions.series.legendColor
-     */
-
-    /**
-     * A name for the dash style to use for the graph.
-     *
-     * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
-     *
-     * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
-     *         Dashed line indicates prognosis
-     *
-     * @type      {Highcharts.DashStyleValue}
-     * @since     4.1.0
-     * @product   highcharts highstock
-     * @apioption plotOptions.series.zones.dashStyle
+     * @apioption plotOptions.series.legendSymbolColor
      */
 
     /**

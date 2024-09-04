@@ -33,10 +33,10 @@ const { isNumber } = U;
  *         Split packed bubble chart
  *
  * @extends      plotOptions.bubble
- * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
- *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
- *               yAxis, zMax, zMin, dataSorting, boostThreshold,
- *               boostBlending, legendColor
+ * @excluding    boostThreshold, boostBlending,connectEnds, connectNulls,
+ *               cropThreshold, dataSorting, dragDrop, jitter,
+ *               legendSymbolColor, keys, pointPlacement, sizeByAbsoluteValue,
+ *               step, xAxis, yAxis, zMax, zMin
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more

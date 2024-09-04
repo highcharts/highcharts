@@ -80,7 +80,7 @@ QUnit.test(
         }, false);
 
         chart.series[0].update({
-            legendColor: newColor
+            legendSymbolColor: newColor
         });
 
         assert.strictEqual(
@@ -90,7 +90,7 @@ QUnit.test(
         );
 
         chart.series[0].update({
-            legendColor: undefined
+            legendSymbolColor: undefined
         });
 
         assert.strictEqual(
@@ -106,7 +106,7 @@ QUnit.test(
                 {
                     name: 'Point 1',
                     y: 20,
-                    legendColor: newColor
+                    legendSymbolColor: newColor
                 }
             ],
             center: ['10%', '20%'],
@@ -125,7 +125,7 @@ QUnit.test(
         );
 
         chart.series[2].data[0].update({
-            legendColor: undefined
+            legendSymbolColor: undefined
         });
 
         assert.strictEqual(

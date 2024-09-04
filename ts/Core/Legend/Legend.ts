@@ -361,7 +361,7 @@ class Legend {
             { area, group, label, line, symbol } = item.legendItem || {};
 
         if (item instanceof Series || item instanceof Point) {
-            item.color = item.options?.legendColor || originalColor;
+            item.color = item.options?.legendSymbolColor || originalColor;
         }
         group?.[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'

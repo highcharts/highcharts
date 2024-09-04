@@ -43,7 +43,7 @@ import type {
  *
  * @excluding dataParser, dataURL
  *
- * @excluding borderColor, borderWidth, legendColor
+ * @excluding borderColor, borderWidth, legendSymbolColor
  *
  * @type {number}
  */

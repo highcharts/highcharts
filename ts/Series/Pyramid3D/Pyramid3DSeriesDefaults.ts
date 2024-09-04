@@ -36,7 +36,7 @@ import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
  *         Pyramid3d
  *
  * @extends      plotOptions.funnel3d
- * @excluding    neckHeight, neckWidth, dataSorting, legendColor
+ * @excluding    dataSorting, legendSymbolColor, neckHeight, neckWidth,
  * @product      highcharts
  * @since        7.1.0
  * @requires     highcharts-3d
