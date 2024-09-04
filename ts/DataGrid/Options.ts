@@ -185,7 +185,7 @@ export interface ColumnOptions {
      * The format of the cell content within the given column of the datagrid.
      * Applied only to cell that are in the table not the column header.
      *
-     * When not set, the default format `'{id}'` is used.
+     * When not set, the default format `'{value}'` is used.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
      *
