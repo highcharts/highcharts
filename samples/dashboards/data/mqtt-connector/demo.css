@@ -81,7 +81,7 @@
     height: 100%;
     margin: 0;
     padding: 0 10px;
-    font: "Courier New", Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 12px;
     overflow: auto;
 }
