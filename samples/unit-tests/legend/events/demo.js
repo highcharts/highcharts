@@ -110,6 +110,12 @@ QUnit.test(
             'grid target as (50,50)',
             'Logging grid target elementFromPoint'
         );
+        
+        assert.strictEqual(
+            Highcharts.doc === document,
+            'is Highcharts.doc === document',
+            'Logging Highcharts.doc === document'
+        );
 
         chart.legend.update({
             events: {

@@ -119,7 +119,29 @@ QUnit.test('Multiple color axis - colorKey', function (assert) {
 QUnit.test('Multiple color axis - dataClasses', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                polar: true
+                polar: true,
+                events: {
+                    load: function () {
+                        const renderer = this.renderer;
+                        let row = 0;
+        
+                        // grid cols to avoid crash
+                        //for (let row = 0; row < 400; row++) {
+                            for (let col = 0; col < 600; col++) {
+                                renderer.rect(col, row, 1, 400)
+                                    .attr({
+                                        class: `grid-point col-${col} row-${row}`,
+                                        zIndex: 99,
+                                        fill: '#' +
+                                            (col % 16).toString(16) +
+                                            (row % 16).toString(16) +
+                                            ((row + col) % 16).toString(16)
+                                    })
+                                    .add();
+                            }
+                        //}
+                    }
+                }
             },
             yAxis: [{}, {}],
             colorAxis: [
@@ -197,7 +219,7 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
         'Logging chartOffset'
     );
 
-    let elem = document.elementFromPoint(
+    let elem = document.elementsFromPoint(
         x + chartOffset.left,
         y + chartOffset.top
     );
@@ -205,15 +227,25 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
     assert.strictEqual(
         elem,
         [x, y],
-        'Logging elementFromPoint vs [x,y]'
+        'Logging elementsFromPoint vs [x,y]'
     );
 
+    // assert.strictEqual(
+    //     document.body.innerHTML,
+    //     'document.body.innerHTML',
+    //     'Logging document.body.innerHTML'
+    // );
+
+    // Offset by the a11y proxy-container-after
+    elem = document.elementFromPoint(
+        chartOffset.left + 50,
+        chartOffset.top + 50
+    );
     assert.strictEqual(
-        document.body.innerHTML,
-        'document.body.innerHTML',
-        'Logging document.body.innerHTML'
+        elem,
+        'grid target as (50,50)',
+        'Logging grid target elementFromPoint'
     );
-
 });
 
 QUnit.test('Multiple color axis - dynamics', function (assert) {
