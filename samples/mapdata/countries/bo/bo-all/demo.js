@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bo/bo-all.topo.json">Bolivia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bo/bo-all.topo.json">Bolivia</a>'
         },
 
         mapNavigation: {

@@ -180,6 +180,13 @@ QUnit.module('Format', () => {
             'Prototypes should not be accessible through format strings'
         );
 
+        assert.strictEqual(
+            format('{value:%b \u2019%y}', { value: 1706745600000 }),
+            'Feb ’24',
+            `Right single quotation mark shouldn't disable the format method,
+            #21124.`
+        );
+
         // Reset
         Highcharts.setOptions({
             lang: {
@@ -313,6 +320,11 @@ QUnit.module('Format', () => {
             ),
             '',
             'Division by zero'
+        );
+        assert.strictEqual(
+            Highcharts.numberFormat(-0.4999999, 0, '.', ''),
+            '0',
+            'numberFormat should return zero without singed minus, #20564.'
         );
     });
 

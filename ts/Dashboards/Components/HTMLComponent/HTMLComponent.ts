@@ -180,6 +180,10 @@ class HTMLComponent extends Component {
      * The options for the component.
      */
     constructor(cell: Cell, options: Partial<Options>) {
+        if (options.className) {
+            options.className = `${HTMLComponent.defaultOptions.className} ${options.className}`;
+        }
+
         options = merge(
             HTMLComponent.defaultOptions,
             options
@@ -227,6 +231,7 @@ class HTMLComponent extends Component {
                 });
         } else if (options.html) {
             this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
         }
 
         this.constructTree();
@@ -235,8 +240,7 @@ class HTMLComponent extends Component {
 
         if (isError) {
             throw new Error(
-                'Missing tagName param in component: ' +
-                options.cell
+                `Missing tagName param in component: ${options.renderTo}`
             );
         }
 
@@ -262,11 +266,20 @@ class HTMLComponent extends Component {
 
     /**
      * Handles updating via options.
+     *
      * @param options
      * The options to apply.
      */
-    public async update(options: Partial<Options>): Promise<void> {
-        await super.update(options);
+    public async update(options: Partial<Options>, shouldRerender: boolean = true): Promise<void> {
+        if (options.html) {
+            this.elements = this.getElementsFromString(options.html);
+            this.options.elements = this.elements;
+
+            this.constructTree();
+        }
+
+        await super.update(options, shouldRerender);
+
         this.emit({ type: 'afterUpdate' });
     }
 
@@ -275,10 +288,8 @@ class HTMLComponent extends Component {
             cell: '',
             type: 'HTML',
             elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-                }
+                tagName: 'span',
+                textContent: '[Your custom HTML here- edit the component]'
             }]
         };
     }
@@ -292,7 +303,7 @@ class HTMLComponent extends Component {
             this.contentElement.firstChild.remove();
         }
 
-        const parser = new AST(this.elements);
+        const parser = new AST(this.options.elements || []);
         parser.addToDOM(this.contentElement);
     }
 
@@ -346,6 +357,106 @@ class HTMLComponent extends Component {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
             type: 'HTML'
         };
+    }
+
+    /**
+     * Retrieves editable options for the HTML component.
+     */
+    public getEditableOptions(): Options {
+        const component = this;
+
+        // When adding a new component, the elements are not yet set.
+        if (this.elements.length) {
+            return merge(
+                component.options,
+                {
+                    elements: this.elements
+                }
+            );
+        }
+
+        return component.options;
+    }
+
+    /**
+     * Get the value of the editable option by property path. Parse the elements
+     * if the HTML options is not set.
+     *
+     * @param propertyPath
+     * The property path of the option.
+     */
+    public getEditableOptionValue(
+        propertyPath?: string[]
+    ): number | boolean | undefined | string {
+        if (!propertyPath) {
+            return;
+        }
+
+        if (propertyPath[0] === 'html') {
+            const result = this.getEditableOptions();
+
+            if (!result.html && result.elements) {
+                return this.getStringFromElements(result.elements);
+            }
+
+            return result[propertyPath[0]];
+        }
+
+        return super.getEditableOptionValue(propertyPath);
+    }
+
+    /**
+     * Returns the HTML string from the given elements.
+     *
+     * @param elements
+     * The array of elements to serialize.
+     */
+    private getStringFromElements(elements: AST.Node[]): string {
+        let html = '';
+
+        for (const element of elements) {
+            html += this.serializeNode(element);
+        }
+
+        return html;
+    }
+
+    /**
+     * Serializes the HTML node to string.
+     *
+     * @param node
+     * The HTML node to serialize.
+     */
+    private serializeNode(node: AST.Node): string {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+
+        const attributes = node.attributes;
+        let html = `<${node.tagName}`;
+
+        if (attributes) {
+            for (const key in attributes) {
+                if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+                    const value = attributes[key as keyof typeof attributes];
+                    if (value !== void 0) {
+                        html += ` ${key}="${value}"`;
+                    }
+                }
+            }
+        }
+
+        html += '>';
+
+        html += node.textContent || '';
+
+        (node.children || []).forEach((child): void => {
+            html += this.serializeNode(child);
+        });
+
+        html += `</${node.tagName}>`;
+        return html;
     }
 
     /**

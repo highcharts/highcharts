@@ -16,8 +16,8 @@ const path = require('path');
 
 
 async function buildCSS() {
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     let { release } = require('yargs').argv;
 
     if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
@@ -78,8 +78,8 @@ async function buildCSS() {
  * Promise to keep.
  */
 async function distBuildDashboards() {
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     let { release } = require('yargs').argv;
 
     if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
@@ -125,8 +125,8 @@ async function distBuildDashboards() {
  * Promise to keep.
  */
 async function distBuildDataGrid() {
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     let { release } = require('yargs').argv;
 
     if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {

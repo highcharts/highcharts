@@ -272,7 +272,7 @@ namespace SeriesOnPointComposition {
                     d: SVGRenderer.prototype.crispLine([
                         ['M', xFrom, yFrom],
                         ['L', xTo, yTo]
-                    ], width, 'ceil'),
+                    ], width),
                     'stroke-width': width
                 };
 
@@ -366,7 +366,7 @@ namespace SeriesOnPointComposition {
             const allSeries = this.chart.series;
 
             // When toggling a series visibility, loop through all points
-            this.points.forEach((point): void => {
+            this.points?.forEach((point): void => {
                 // Find all series that are on toggled points
                 const series = find(allSeries, (series): boolean => {
                     const id = ((series.onPoint || {}).options || {}).id;

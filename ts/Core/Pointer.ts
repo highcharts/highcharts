@@ -107,7 +107,7 @@ class Pointer {
 
     public static hoverChartIndex: (number|undefined);
 
-    public static unbindDocumentMouseUp: (Function|undefined);
+    public static unbindDocumentMouseUp: (Array<Function>|undefined);
 
     public static unbindDocumentTouchEnd: (Function|undefined);
 
@@ -237,7 +237,7 @@ class Pointer {
 
         if (!H.chartCount) {
             if (Pointer.unbindDocumentMouseUp) {
-                Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
+                Pointer.unbindDocumentMouseUp.forEach((e): void => e());
             }
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
@@ -1107,7 +1107,6 @@ class Pointer {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             pointer &&
-            e.relatedTarget &&
             !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
         ) {
             pointer.reset();
@@ -1232,8 +1231,10 @@ class Pointer {
             !(
                 tooltip &&
                 tooltip.shouldStickOnContact(pEvt)
-            ) &&
-            !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            ) && (
+                pEvt.target === chart.container.ownerDocument ||
+                !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            )
         ) {
             this.reset();
         }
@@ -1300,6 +1301,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
+            chart.mouseDownX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {
@@ -1806,12 +1808,16 @@ class Pointer {
             )
         );
         if (!Pointer.unbindDocumentMouseUp) {
-            Pointer.unbindDocumentMouseUp = addEvent(
+            Pointer.unbindDocumentMouseUp = [];
+        }
+
+        Pointer.unbindDocumentMouseUp.push(
+            addEvent(
                 ownerDoc,
                 'mouseup',
                 this.onDocumentMouseUp.bind(this)
-            );
-        }
+            )
+        );
 
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements
@@ -1951,8 +1957,14 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
+            const relatedTargetObj = { relatedTarget: chart.container };
+
+            if (e && !e?.relatedTarget) {
+                e = { ...relatedTargetObj, ...e };
+            }
+
             hoverChart.pointer?.onContainerMouseLeave(
-                e || { relatedTarget: chart.container } as any
+                e || relatedTargetObj as any
             );
         }
 
@@ -1977,9 +1989,9 @@ class Pointer {
 
         this.setHoverChartIndex();
 
-        if ((e as any).touches.length === 1) {
+        e = this.normalize(e);
 
-            e = this.normalize(e);
+        if ((e as any).touches.length === 1) {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,

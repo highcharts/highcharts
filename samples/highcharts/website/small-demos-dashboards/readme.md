@@ -7,5 +7,3 @@ This demo contains 4 small dashboard demos for the Highcharts Dashboards product
 -[Minimal Dashboard](http://localhost:3030/samples/view?path=highcharts/website/small-demos-dashboards&charts=minimal)    
 -[Data Cursor Sync](http://localhost:3030/samples/view?path=highcharts/website/small-demos-dashboards&charts=datacursor)   
 -[Sync Extremes](http://localhost:3030/samples/view?path=highcharts/website/small-demos-dashboards&charts=extremes)  
-
-To see a demo of all the dashboards together, [click here](https://www.goodwiththat.com/ag/demos)

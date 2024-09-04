@@ -19,10 +19,10 @@
 
 
 import FS from 'node:fs';
-import FSLib from './gulptasks/lib/fs.js';
+import FSLib from './libs/fs.js';
 import Path from 'node:path';
 import TS from 'typescript';
-import TSLib from './lib/ts.js';
+import TSLib from './libs/ts.js';
 import Yargs from 'yargs';
 
 
@@ -63,10 +63,13 @@ const MAP_PROPERTY_TYPES = {
 };
 
 const MAP_TYPE_IMPORTS = {
+    'ColorString': 'ts/Core/Color/ColorString',
     'ColorType': 'ts/Core/Color/ColorType',
     'DashStyleValue': 'ts/Core/Renderer/DashStyleValue',
     'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
+    'GradientColorObject': 'ts/Core/Color/GradientColor',
     'LegendSymbolType': 'ts/Core/Series/SeriesOptions',
+    'PatternObject': 'ts/Extensions/PatternFill',
     'PointEventsOptions': 'ts/Core/Series/PointOptions',
     'PointMarkerOptions': 'ts/Core/Series/PointOptions',
     'PointOptions': 'ts/Core/Series/PointOptions',
@@ -233,19 +236,20 @@ function decorateDoclet(
 /**
  * @param {Record<string,*>} branch
  * @param {TS.Node} node
- * @param {string} parentName
+ * @param {string} [parentName]
  */
 function decorateName(
     branch,
     node,
     parentName
 ) {
+    /** @type {string} */
     let optionName;
 
     if (branch.doclet) {
         optionName = (
-            TSLib.getTagText(branch.doclet, 'apioption') ||
-            TSLib.getTagText(branch.doclet, 'optionparent')
+            TSLib.extractTagText(branch.doclet, 'apioption') ||
+            TSLib.extractTagText(branch.doclet, 'optionparent')
         );
         if (optionName) {
             branch.name = optionName.split('.').pop();
@@ -266,6 +270,7 @@ function decorateName(
                     `${parentName}.${optionName}` :
                     optionName
             ).replace(/^plotOptions\./u, 'series.');
+            return;
         }
     }
 
@@ -332,7 +337,7 @@ function decorateType(
         !optionType &&
         branch.doclet
     ) {
-        optionType = TSLib.getTagText(branch.doclet, 'type');
+        optionType = TSLib.extractTagText(branch.doclet, 'type');
         if (optionType) {
             optionType = optionType.replace(/^{(.*)}/g, '$1')
         }
@@ -345,9 +350,6 @@ function decorateType(
         optionType = reflectInMap(branch.fullName);
         if (optionType) {
             branch.isMappedType = true;
-            if (MAP_TYPE_IMPORTS[optionType]) {
-                addImport(branch, MAP_TYPE_IMPORTS[optionType], optionType);
-            }
         }
     }
 
@@ -358,9 +360,6 @@ function decorateType(
         optionType = reflectInOptions(branch.name);
         if (optionType) {
             branch.isMappedType = true;
-            if (!TSLib.isNativeType(optionType)) {
-                addImport(branch, 'ts/Core/Series/SeriesOptions', optionType);
-            }
         }
     }
 
@@ -377,8 +376,8 @@ function decorateType(
             }
 
             optionType = (
-                TSLib.toTypeof(child) ||
-                TSLib.toTypeof(TSLib.getNodesFirstChild(node))
+                getTypeOf(child) ||
+                getTypeOf(TSLib.getNodesFirstChild(node))
             );
 
         }
@@ -392,7 +391,7 @@ function decorateType(
         if (node.type) {
             optionType = node.type.getText();
         } else {
-            optionType = TSLib.toTypeof(node.getLastToken());
+            optionType = getTypeOf(node.getLastToken());
         }
     }
 
@@ -709,8 +708,8 @@ function getInterfaceName(
 
     if (doclet) {
         const fullName = (
-            TSLib.getTagText(doclet, 'apioption') ||
-            TSLib.getTagText(doclet, 'optionparent')
+            TSLib.extractTagText(doclet, 'apioption') ||
+            TSLib.extractTagText(doclet, 'optionparent')
         );
 
         if (fullName) {
@@ -733,7 +732,7 @@ function getMemberType(
     let interfaceName = getInterfaceName(branch);
     let memberType = (
             branch.type ||
-            (doclet && TSLib.getTagText(doclet, 'type')) ||
+            (doclet && TSLib.extractTagText(doclet, 'type')) ||
             '*'
         )
         .replace(/[{}]/gu, '')
@@ -765,6 +764,40 @@ function getPropertyName(
         branch.fullName?.split('.').pop() ||
         ''
     );
+}
+
+
+/**
+ * @param {TS.Node} node
+ * @return {InfoType|undefined}
+ */
+function getTypeOf(
+    node
+) {
+    const _type = {
+        // [TS.SyntaxKind.BigIntKeyword]: 'bigint', // JSON issue
+        // [TS.SyntaxKind.BigIntLiteral]: 'bigint', // JSON issue
+        [TS.SyntaxKind.FalseKeyword]: 'boolean',
+        [TS.SyntaxKind.TrueKeyword]: 'boolean',
+        [TS.SyntaxKind.ArrowFunction]: 'function',
+        [TS.SyntaxKind.FunctionDeclaration]: 'function',
+        [TS.SyntaxKind.FunctionExpression]: 'function',
+        [TS.SyntaxKind.FunctionKeyword]: 'function',
+        [TS.SyntaxKind.NumberKeyword]: 'number',
+        [TS.SyntaxKind.NumericLiteral]: 'number',
+        [TS.SyntaxKind.ObjectKeyword]: '*',
+        [TS.SyntaxKind.ObjectLiteralExpression]: '*',
+        [TS.SyntaxKind.StringKeyword]: 'string',
+        [TS.SyntaxKind.StringLiteral]: 'string'
+    }[node.kind];
+
+    if (!_type) {
+        return void 0;
+    }
+
+    return [{
+        type: _type
+    }];
 }
 
 
@@ -839,13 +872,13 @@ function mergeImports(
      * @param {Record<string,*>} branch
      */
     const connectImports = (branch) => {
+        /** @type {Record<string,Array<string>>} */
+        let allTypes;
 
         if (branch.imports) {
             const branchImports = branch.imports;
             /** @type {Array<string>} */
             let branchTypes;
-            /** @type {Record<string,Array<string>>} */
-            let allTypes;
 
             for (const path of Object.keys(branchImports)) {
 
@@ -860,15 +893,33 @@ function mergeImports(
                         if (!mappedTypes.includes(branchType)) {
                             mappedTypes.push(branchType);
                         }
-                        continue;
-                    }
-                    if (!allTypes.includes(branchType)) {
+                    } else if (!allTypes.includes(branchType)) {
                         allTypes.push(branchType);
                     }
                 }
 
             }
 
+        }
+
+        if (branch.type) {
+            /** @type {string} */
+            let path;
+
+            for (const branchType of TSLib.extractTypes(branch.type)) {
+                if (branchType === 'Highcharts') {
+                    continue;
+                }
+                if (MAP_TYPE_IMPORTS[branchType]) {
+                    path = MAP_TYPE_IMPORTS[branchType];
+                } else {
+                    path = 'ts/Core/Series/SeriesOptions';
+                }
+                allTypes = imports[path] = imports[path] || [];
+                if (!allTypes.includes(branchType)) {
+                    allTypes.push(branchType);
+                }
+            }
         }
 
         if (branch.children) {
@@ -1016,6 +1067,8 @@ async function moveSeriesDoclets(
     let sourcePath;
     /** @type {TS.SourceFile} */
     let target;
+    /** @type {string} */
+    let targetCode;
     /** @type {Record<string,*>} */
     let tree;
 
@@ -1028,6 +1081,12 @@ async function moveSeriesDoclets(
         sourcePath = findPairedSource(file);
 
         if (!sourcePath) {
+            continue;
+        }
+
+        targetCode = await FS.promises.readFile(file, 'utf8');
+
+        if (targetCode.includes('/**')) {
             continue;
         }
 
@@ -1056,7 +1115,7 @@ async function moveSeriesDoclets(
 
         target = TS.createSourceFile(
             file,
-            await FS.promises.readFile(file, 'utf8'),
+            targetCode,
             TS.ScriptTarget.Latest,
             true
         );
@@ -1194,6 +1253,14 @@ function writeDocletsTree(
             }
 
             if (!isRegistered(branch)) {
+                if (
+                    branch.doclet &&
+                    !branch.doclet.tags.apioption &&
+                    !branch.doclet.tags.optionparent
+                ) {
+                    TSLib.addTag(branch.doclet, 'apioption', branch.fullName);
+                }
+
                 changes.push([
                     target.getEnd(),
                     TS.SyntaxKind.InterfaceDeclaration,
@@ -1268,7 +1335,7 @@ function writeDocletsTree(
             }
         }
 
-        target = TSLib.changeSourceFile(target, replacements);
+        target = TSLib.changeSourceNode(target, replacements);
 
         let targetCode = mergeImports(target, tree);
 

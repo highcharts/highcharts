@@ -382,6 +382,40 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         'Data labels should not be enabled.'
     );
 
+    const color = '#ff0000';
+
+    chart.series[0].update({
+        point: {
+            events: {
+                mouseOver: function () {
+                    this.update({
+                        color: color
+                    });
+                },
+                mouseOut: function () {
+                    this.update({
+                        color: void 0
+                    });
+                }
+            }
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+    assert.strictEqual(
+        chart.series[0].points[0].options.color,
+        color,
+        `Color should be set on mouse over - updated callback should work
+        correctly (#20435).`
+    );
+    assert.notEqual(
+        chart.series[0].points[0].options.dataLabels &&
+            chart.series[0].points[0].options.dataLabels.enabled,
+        true,
+        `Data labels should not be enabled - callback before update shouldn't
+        work (#20435).`
+    );
+
     chart.series[0].update({
         point: {
             events: {
@@ -757,6 +791,13 @@ QUnit.test(
             chart.series[1].group.attr('visibility') !== 'hidden',
             'Series should be visible'
         );
+
+        chart.addSeries({
+            data: [20, 30, 40],
+            visible: false
+        });
+        chart.series[2].show();
+        assert.ok(true, 'No errors should occur on showing a series (#20967)');
     }
 );
 

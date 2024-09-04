@@ -396,7 +396,7 @@ class HighchartsComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
+            this.chartContainer.classList.value = this.options.chartClassName;
         }
 
         if (this.options.chartID) {
@@ -672,10 +672,9 @@ class HighchartsComponent extends Component {
                     );
                 }
                 return new Factory(this.chartContainer, this.chartOptions);
-            } catch {
+            } catch (e) {
                 throw new Error(
-                    'The Highcharts component is misconfigured: `' +
-                    this.cell.id + '`'
+                    `The Highcharts component in cell '${this.cell.id}' is misconfigured. \n____________\n${e}`
                 );
             }
         }
@@ -826,25 +825,35 @@ class HighchartsComponent extends Component {
         };
     }
 
+    /**
+     * Retrieves editable options for the chart.
+     *
+     * @returns
+     * The editable options for the chart and its values.
+     */
     public getEditableOptions(): Options {
         const component = this;
         const componentOptions = component.options;
         const chart = component.chart;
         const chartOptions = chart && chart.options;
-        const chartType = chartOptions && chartOptions.chart?.type || 'line';
+        const chartType = chartOptions?.chart?.type || 'line';
 
-        return merge(componentOptions, {
-            chartOptions
-        }, {
-            chartOptions: {
-                yAxis: splat(chart && chart.yAxis[0].options),
-                xAxis: splat(chart && chart.xAxis[0].options),
-                plotOptions: {
-                    series: ((chartOptions && chartOptions.plotOptions) ||
-                        {})[chartType]
+        return merge(
+            {
+                chartOptions
+            },
+            {
+                chartOptions: {
+                    yAxis: splat(chart && chart.yAxis[0].options),
+                    xAxis: splat(chart && chart.xAxis[0].options),
+                    plotOptions: {
+                        series: ((chartOptions && chartOptions.plotOptions) ||
+                            {})[chartType]
+                    }
                 }
-            }
-        });
+            },
+            componentOptions
+        );
     }
 
 

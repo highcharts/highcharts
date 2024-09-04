@@ -37,7 +37,7 @@ function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
         gravitationalConstant = layout.options.gravitationalConstant,
         box = layout.box,
-        nodes = layout.nodes;
+        nodes = layout.nodes as Array<PackedBubblePoint>;
 
     let centerX: number,
         centerY: number;

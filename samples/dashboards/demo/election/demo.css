@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -10,7 +10,7 @@
 :root {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
-    --highcharts-color-0-light: rgb(215, 227, 243);
+    --highcharts-color-0-light: #d7e3f3;
 
     /* Republican */
     --highcharts-color-1: #be2f24;
@@ -662,11 +662,6 @@ text.highcharts-data-label {
 #election-grid .highcharts-datagrid-row.hovered .highcharts-datagrid-cell {
     background-color: #e6e6e6;
     color: #000;
-}
-
-/* Capitalize state names (first column) */
-#election-grid .highcharts-datagrid-cell:nth-child(1) {
-    text-transform: capitalize;
 }
 
 /* Candidate votes columns */

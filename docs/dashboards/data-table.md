@@ -5,6 +5,8 @@ It offers methods for adding, removing, and manipulating columns and rows, as we
 Think of a Data Table as a grid where each row represents a record or entry, and each column represents a specific attribute or piece of information.
 
 
+`DataTable` is an integral part of the `Dashboards` and the `DataGrid` bundle, which means it can be accessed from these two places. There is no need to load any additional modules.
+
 ## Creating a DataTable
 There are a few ways to create a DataTable:
 
@@ -62,7 +64,7 @@ There are a few ways to create a DataTable:
    You can create a DataTable manually by providing the columns and rows.
 
    ```javascript
-    const dataTable = new DataTable({
+    const dataTable = new Dashboards.DataTable({
         columns: {
             x: [1, 2, 3, 4, 5, 6],
             y: ['a', 'a', 'b', 'b', 'c', 'c']
@@ -79,7 +81,7 @@ There are a few ways to create a DataTable:
         orderByColumn: 'City'
     });
 
-    const table = new Highcharts.DataTable({
+    const table = new Dashboards.DataTable({
         columns: {
             Rank: [1, 2, 3, 4, 5, 6],
             City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],

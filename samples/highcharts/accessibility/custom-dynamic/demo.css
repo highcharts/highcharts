@@ -33,3 +33,29 @@ th {
     font-weight: 600;
     padding: 10px;
 }
+
+#toggle-announce {
+    background: #00766f;
+    display: inline-block;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    text-decoration: none;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    font-size: 1rem;
+    line-height: 140%;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 8px 16px;
+}
+
+#toggle-announce:hover {
+    background: #00766f;
+    opacity: 0.8;
+    text-decoration: underline;
+    cursor: pointer;
+}

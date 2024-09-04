@@ -33,7 +33,6 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
 import BoostChart from './BoostChart.js';
@@ -203,7 +202,6 @@ function compose<T extends typeof Series>(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-
     if (pushUnique(composed, 'Boost.Series')) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
             seriesProto = SeriesClass.prototype as BoostSeriesComposition;
@@ -349,12 +347,17 @@ function createAndAttachRenderer(
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: BoostTargetObject = chart,
-        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined';
+        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined',
+        hasClickHandler = false;
 
     if (isChartSeriesBoosting(chart)) {
         target = chart;
     } else {
         target = series;
+        hasClickHandler = Boolean(
+            series.options.events?.click ||
+            series.options.point?.events?.click
+        );
     }
 
     const boost: Required<BoostTargetAdditions> = target.boost =
@@ -438,13 +441,14 @@ function createAndAttachRenderer(
                     height
                 })
                 .css({
-                    pointerEvents: 'none',
+                    pointerEvents: hasClickHandler ? void 0 : 'none',
                     mixedBlendMode: 'normal',
                     opacity: alpha
-                } as any);
+                })
+                .addClass(hasClickHandler ? 'highcharts-tracker' : '');
 
             if (target instanceof ChartClass) {
-                (target.boost as any).markerGroup.translate(
+                target.boost?.markerGroup?.translate(
                     chart.plotLeft,
                     chart.plotTop
                 );
@@ -685,7 +689,25 @@ function enterBoost(
 function exitBoost(
     series: Series
 ): void {
-    const boost = series.boost;
+    const boost = series.boost,
+        chart = series.chart,
+        chartBoost = chart.boost;
+
+    if (chartBoost?.markerGroup) {
+        chartBoost.markerGroup.destroy();
+        chartBoost.markerGroup = void 0;
+
+        for (const s of chart.series) {
+            s.markerGroup = void 0;
+            s.markerGroup = s.plotGroup(
+                'markerGroup',
+                'markers',
+                'visible',
+                1,
+                chart.seriesGroup
+            ).addClass('highcharts-tracker');
+        }
+    }
 
     // Reset instance properties and/or delete instance properties and go back
     // to prototype
@@ -704,6 +726,9 @@ function exitBoost(
             boost.clear();
         }
     }
+
+    // #21106, clean up boost clipping on the series groups.
+    (chart.seriesGroup || series.group)?.clip();
 }
 
 /**
@@ -1016,6 +1041,8 @@ function scatterProcessData(
 function seriesRenderCanvas(this: Series): void {
     const options = this.options || {},
         chart = this.chart,
+        chartBoost = chart.boost,
+        seriesBoost = this.boost,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         xData = options.xData || this.processedXData,
@@ -1044,7 +1071,8 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.processedXData ||
             false
-        );
+        ),
+        lineWidth = pick(options.lineWidth, 1);
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1082,36 +1110,35 @@ function seriesRenderCanvas(this: Series): void {
     if (!isChartSeriesBoosting(chart)) {
         // If all series were boosting, but are not anymore
         // restore private markerGroup
-        if (
-            chart.boost &&
-            this.markerGroup === chart.boost.markerGroup
-        ) {
+        if (this.markerGroup === chartBoost?.markerGroup) {
             this.markerGroup = void 0;
         }
 
         this.markerGroup = this.plotGroup(
             'markerGroup',
             'markers',
-            true as any,
+            'visible',
             1,
             chart.seriesGroup
-        );
+        ).addClass('highcharts-tracker');
     } else {
         // If series has a private markerGroup, remove that
         // and use common markerGroup
         if (
             this.markerGroup &&
-            this.markerGroup !== chart.boost.markerGroup
+            this.markerGroup !== chartBoost?.markerGroup
         ) {
             this.markerGroup.destroy();
         }
         // Use a single group for the markers
-        this.markerGroup = chart.boost.markerGroup;
+        this.markerGroup = chartBoost?.markerGroup;
 
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
-        if (this.boost && this.boost.target) {
-            this.renderTarget = this.boost.target = this.boost.target.destroy();
+        if (seriesBoost && seriesBoost.target) {
+            this.renderTarget =
+            seriesBoost.target =
+            seriesBoost.target.destroy();
         }
     }
 
@@ -1168,6 +1195,32 @@ function seriesRenderCanvas(this: Series): void {
     this.buildKDTree = noop;
 
     fireEvent(this, 'renderCanvas');
+
+    if (
+        this.is('line') &&
+        lineWidth > 1 &&
+        seriesBoost?.target &&
+        chartBoost &&
+        !chartBoost.lineWidthFilter
+    ) {
+        chartBoost.lineWidthFilter = chart.renderer.definition({
+            tagName: 'filter',
+            children: [
+                {
+                    tagName: 'feMorphology',
+                    attributes: {
+                        operator: 'dilate',
+                        radius: 0.25 * lineWidth
+                    }
+                }
+            ],
+            attributes: { id: 'linewidth' }
+        });
+
+        seriesBoost.target.attr({
+            filter: 'url(#linewidth)'
+        });
+    }
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
@@ -1453,8 +1506,9 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
-            isScatter = series.is('scatter') && !series.is('bubble');
-
+            isScatter = series.is('scatter') &&
+                !series.is('bubble') &&
+                !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
         // do default behaviour.

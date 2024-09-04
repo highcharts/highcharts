@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/au/au-all.topo.json">Australia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.topo.json">Australia</a>'
         },
 
         mapNavigation: {

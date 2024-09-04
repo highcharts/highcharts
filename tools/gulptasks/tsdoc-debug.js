@@ -27,7 +27,7 @@ function task() {
     const generator = require(
         '@highcharts/highcharts-documentation-generators'
     ).TypeScript;
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
 
     return Promise
         .resolve()

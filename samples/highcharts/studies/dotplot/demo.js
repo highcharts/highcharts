@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts item chart'
+        text: 'Highcharts dotplot chart'
     },
 
     xAxis: {
@@ -21,6 +21,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
+            slotsPerBar: 1,
             stacking: 'normal'
         }
     },

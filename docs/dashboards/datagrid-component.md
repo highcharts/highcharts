@@ -169,6 +169,26 @@ See demos of `sync` types below:
 * [Visibility Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
 
 
+### Highlight sync options
+
+Highlight sync for the DataGrid Component can have additional options:
+
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        autoScroll: true
+    }
+}
+```
+
+If you want to scroll the DataGrid automatically to a highlighted row, turn on
+the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.DataGridHighlightSyncOptions) option.
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/datagrid-highlight-sync-autoscroll" allow="fullscreen"></iframe>
+
+
 ## Custom styling
 
 In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.

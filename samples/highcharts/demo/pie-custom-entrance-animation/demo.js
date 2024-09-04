@@ -86,7 +86,10 @@ Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        headerFormat: '',
+        pointFormat: 
+            '<span style="color:{point.color}">\u25cf</span> ' +
+            '{point.name}: <b>{point.percentage:.1f}%</b>'
     },
     accessibility: {
         point: {

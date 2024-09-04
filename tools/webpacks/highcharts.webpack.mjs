@@ -7,7 +7,7 @@
 // eslint-disable-next-line node/no-unpublished-import
 // import BundleDeclarationsWebpackPlugin from 'bundle-declarations-webpack-plugin';
 import * as Path from 'node:path';
-import FSLib from '../../tools/gulptasks/lib/fs.js';
+import FSLib from '../libs/fs.js';
 
 /* *
  *

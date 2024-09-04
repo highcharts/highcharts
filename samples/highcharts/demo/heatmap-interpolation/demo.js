@@ -28,8 +28,7 @@ Highcharts.chart('container', {
     legend: {
         title: {
             text: 'User interactions per region'
-        },
-        symbolWidth: 175
+        }
     },
     colorAxis: {
         stops: [

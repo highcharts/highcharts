@@ -8,7 +8,7 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['sz-lu', 10], ['sz-hh', 11], ['sz-ma', 12], ['sz-sh', 13]
+        ['sz-ma', 10], ['sz-lu', 11], ['sz-sh', 12], ['sz-hh', 13]
     ];
 
     // Create the chart
@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json">Swaziland</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sz/sz-all.topo.json">Eswatini</a>'
         },
 
         mapNavigation: {

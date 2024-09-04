@@ -1,0 +1,20 @@
+#container {
+    min-width: 310px;
+    max-width: 1000px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.highcharts-figure {
+    margin: 0 auto;
+    min-width: 310px;
+    max-width: 1000px;
+}
+
+.highcharts-description {
+    margin: 10px;
+}
+
+#animation-toggle {
+    margin: 10px 0 0 10px;
+}
