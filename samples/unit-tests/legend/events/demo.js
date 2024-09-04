@@ -13,7 +13,7 @@ QUnit.test(
                             for (let row = 0; row < 400; row++) {
                                 // Col is fine...
                                 //for (let col = 0; col < 600; col++) {
-                                    renderer.rect(col, row, 1, 400)
+                                    renderer.rect(col, row, 600, 1)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
                                             zIndex: 99,
