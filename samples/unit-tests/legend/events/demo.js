@@ -7,31 +7,22 @@ QUnit.test(
                     events: {
                         load: function () {
                             const renderer = this.renderer;
-                            const size = 10;
+                            let col = 0;
             
-                            for (let row = 0; row < size; row++) {
-                                for (let col = 0; col < size; col++) {
-                                    renderer.rect(col + 41, row + 17, 1, 1)
+                            // grid rows to avoid crash
+                            for (let row = 0; row < 400; row++) {
+                                //for (let col = 0; col < 600; col++) {
+                                    renderer.rect(col, row, 600, 1)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
                                             zIndex: 99,
-                                            fill: '#000' // black color for the grid points
+                                            fill: '#' +
+                                                (col % 16).toString(16) +
+                                                (row % 16).toString(16) +
+                                                ((row + col) % 16).toString(16)
                                         })
                                         .add();
-                                }
-                            }
-
-                            // 2nd grid around the real target
-                            for (let row = 0; row < size; row++) {
-                                for (let col = 0; col < size; col++) {
-                                    renderer.rect(col + 149 - 5, row + 370 - 5, 1, 1)
-                                        .attr({
-                                            class: `grid-2-point col-${col} row-${row}`,
-                                            zIndex: 99,
-                                            fill: '#f00' // red color for the grid points
-                                        })
-                                        .add();
-                                }
+                                //}
                             }
                         }
                     }
@@ -106,18 +97,18 @@ QUnit.test(
 
         assert.strictEqual(
             elem,
-            'legend item cover (~5,5)',
+            'about 149, 370',
             'Logging elementFromPoint'
         );
         // Offset by the a11y proxy-container-after
         elem = document.elementFromPoint(
-            chartOffset.left + 3.1 + 41,
-            chartOffset.top + 3 + 17
+            chartOffset.left + 50,
+            chartOffset.top + 50
         );
         assert.strictEqual(
             elem,
-            'top grid target (3,3)',
-            'Logging top grid target (3,3) elementFromPoint'
+            'grid target as (50,50)',
+            'Logging grid target elementFromPoint'
         );
 
         chart.legend.update({
