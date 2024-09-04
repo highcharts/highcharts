@@ -115,6 +115,7 @@ class Point {
     public category!: (number|string);
     public color?: ColorType;
     public colorIndex?: number;
+    public cumulativeSum?: number;
     public dataLabels?: Array<SVGElement|SVGLabel>;
     public destroyed?: boolean;
     public formatPrefix: string = 'point';
