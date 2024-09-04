@@ -66,7 +66,7 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
             sortable: false
         }
     }
-    settings: {
+    rendering: {
         columns: {
             distribution: 'full'
         },

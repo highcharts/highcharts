@@ -24,12 +24,10 @@ columns: [{
 
 ### Customize headers
 By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
-This can be modified using the [settings.header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSetting#header) option to define columns (or order) that you would like ot display.
+This can be modified using the [header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSetting#header) option to define columns (or order) that you would like ot display.
 
 ```js
-settings: {
-  header: ['a', 'price', 'weight']
-}
+header: ['a', 'price', 'weight']
 ```
 
 Columns headers can be grouped into sections, so you can create your own multiple level header.
@@ -40,34 +38,32 @@ Columns headers can be grouped into sections, so you can create your own multipl
 <iframe src="https://www.highcharts.com/samples/embed/data-grid/basic/grouped-headers" allow="fullscreen"></iframe>
 
 ```js
-settings: {
-  header: [{
-    columnId: 'id'
+header: [{
+  columnId: 'id'
+}, {
+  headerFormat: 'Product',
+  columns: [{
+    headerFormat: 'Product name',
+    columnId: 'product'
   }, {
-    headerFormat: 'Product',
+    headerFormat: 'Units',
     columns: [{
-      headerFormat: 'Product name',
-      columnId: 'product'
+      columnId: 'weight'
     }, {
-      headerFormat: 'Units',
-      columns: [{
-        columnId: 'weight'
-      }, {
-        columnId: 'price'
-      }]
-    }]
-  }, {
-    headerFormat: 'Product info',
-    columns: [{
-      headerFormat: 'Meta',
-      columns: [{
-        columnId: 'url'
-      }, {
-        columnId: 'icon'
-      }]
+      columnId: 'price'
     }]
   }]
-}
+}, {
+  headerFormat: 'Product info',
+  columns: [{
+    headerFormat: 'Meta',
+    columns: [{
+      columnId: 'url'
+    }, {
+      columnId: 'icon'
+    }]
+  }]
+}]
 
 ```
 

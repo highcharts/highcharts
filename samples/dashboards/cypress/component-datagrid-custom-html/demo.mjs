@@ -73,11 +73,7 @@ Dashboards.board('container', {
                 extremes: true
             },
             dataGridOptions: {
-                settings: {
-                    columns: {
-                        included: ['Food', 'Vitamin A']
-                    }
-                },
+                header: ['Food', 'Vitamin A'],
                 columnDefaults: {
                     editable: true
                 },

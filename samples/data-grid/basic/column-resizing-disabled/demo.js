@@ -8,9 +8,7 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    settings: {
-        columns: {
-            resizable: false
-        }
+    columnDefaults: {
+        resizable: false
     }
 });

@@ -9,31 +9,29 @@ window.dataGrid = DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    settings: {
-        header: [
-            'id',
-            {
-                headerFormat: 'Product',
-                columns: [{
-                    headerFormat: 'Product name',
-                    columnId: 'product'
-                }, {
-                    headerFormat: 'Units',
-                    columns: [{
-                        columnId: 'weight'
-                    }]
-                }]
+    header: [
+        'id',
+        {
+            headerFormat: 'Product',
+            columns: [{
+                headerFormat: 'Product name',
+                columnId: 'product'
             }, {
-                headerFormat: 'Product info',
+                headerFormat: 'Units',
                 columns: [{
-                    headerFormat: 'Meta',
-                    columns: [{
-                        columnId: 'icon'
-                    }]
+                    columnId: 'weight'
                 }]
-            }
-        ]
-    },
+            }]
+        }, {
+            headerFormat: 'Product info',
+            columns: [{
+                headerFormat: 'Meta',
+                columns: [{
+                    columnId: 'icon'
+                }]
+            }]
+        }
+    ],
     columns: [{
         id: 'product',
         headerFormat: '{id} test'

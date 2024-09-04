@@ -21,8 +21,10 @@ DataGrid.dataGrid('container', {
             ]
         }
     },
-    columnDefaults: {
-        useHTML: true
+    rendering: {
+        rows: {
+            strictHeights: true
+        }
     },
     columns: [{
         id: 'Header',

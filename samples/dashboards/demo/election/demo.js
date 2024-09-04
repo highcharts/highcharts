@@ -318,7 +318,7 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                settings: {
+                rendering: {
                     columns: {
                         included: [
                             'state', 'demColVotes', 'repColVotes',

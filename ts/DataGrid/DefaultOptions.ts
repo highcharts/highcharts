@@ -33,10 +33,9 @@ import Globals from './Globals.js';
  * */
 
 const DefaultOptions: Globals.DeepPartial<Options> = {
-    settings: {
+    rendering: {
         columns: {
-            distribution: 'full',
-            resizable: true
+            distribution: 'full'
         },
         rows: {
             bufferSize: 10,
@@ -52,7 +51,8 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
     columnDefaults: {
         sorting: {
             sortable: true
-        }
+        },
+        resizable: true
     }
 };
 
