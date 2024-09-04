@@ -7,11 +7,12 @@ QUnit.test(
                     events: {
                         load: function () {
                             const renderer = this.renderer;
-                            let row = 0;
+                            let col = 0;
             
-                            // grid cols to avoid crash
-                            //for (let row = 0; row < 400; row++) {
-                                for (let col = 0; col < 600; col++) {
+                            // grid rows to avoid crash
+                            for (let row = 0; row < 400; row++) {
+                                // Col is fine...
+                                //for (let col = 0; col < 600; col++) {
                                     renderer.rect(col, row, 1, 400)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
@@ -22,8 +23,8 @@ QUnit.test(
                                                 ((row + col) % 16).toString(16)
                                         })
                                         .add();
-                                }
-                            //}
+                                //}
+                            }
                         }
                     }
                 },
@@ -109,12 +110,6 @@ QUnit.test(
             elem,
             'grid target as (50,50)',
             'Logging grid target elementFromPoint'
-        );
-        
-        assert.strictEqual(
-            Highcharts.doc === document,
-            'is Highcharts.doc === document',
-            'Logging Highcharts.doc === document'
         );
 
         chart.legend.update({

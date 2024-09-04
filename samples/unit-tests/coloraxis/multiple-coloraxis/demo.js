@@ -123,11 +123,12 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
                 events: {
                     load: function () {
                         const renderer = this.renderer;
-                        let row = 0;
+                        let col = 0;
         
-                        // grid cols to avoid crash
-                        //for (let row = 0; row < 400; row++) {
-                            for (let col = 0; col < 600; col++) {
+                        // grid rows to avoid crash
+                        for (let row = 0; row < 400; row++) {
+                            // Col is fine...
+                            //for (let col = 0; col < 600; col++) {
                                 renderer.rect(col, row, 1, 400)
                                     .attr({
                                         class: `grid-point col-${col} row-${row}`,
@@ -138,8 +139,8 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
                                             ((row + col) % 16).toString(16)
                                     })
                                     .add();
-                            }
-                        //}
+                            //}
+                        }
                     }
                 }
             },
