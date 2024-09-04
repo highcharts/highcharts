@@ -70,8 +70,9 @@
 #html-log .highcharts-dashboards-component-title {
     text-align: center;
     font-size: 18px;
-    padding: 0;
-    margin: 10px 0;
+    padding: 5px 0;
+    margin: 0;
+    height: 22px;
     background-color: var(--custom-background);
     border-bottom: 1px dotted var(--highcharts-neutral-color-20);
 }
