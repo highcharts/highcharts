@@ -2,7 +2,6 @@
 name: MQTT
 authors:
   - Jomar Hønsi
-requiresManualTesting: true
 js_wrap: b
 tags:
 - Highcharts Dashboards demo
