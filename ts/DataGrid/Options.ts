@@ -182,6 +182,27 @@ export interface RowsSettings {
  */
 export interface ColumnOptions {
     /**
+     * Allows to define an additional class name to all table cells in the
+     * column. Applied only to cell that are in the table not the column header.
+     * It is updated with every cell's value change.
+     *
+     * It uses templating, where context is the table cell instance.
+     *
+     * @default undefined
+     */
+    cellClassName?: string;
+
+    /**
+     * Allows to define an additional class name only to the column header
+     * cells.
+     *
+     * It uses templating, where context is the header cell instance.
+     *
+     * @default undefined
+     */
+    headerCellClassName?: string;
+
+    /**
      * The format of the cell content within the given column of the datagrid.
      * Applied only to cell that are in the table not the column header.
      *
@@ -284,27 +305,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default undefined
      */
     className?: string;
-
-    /**
-     * Allows to define an additional class name to all table cells in the
-     * column. Applied only to cell that are in the table not the column header.
-     * It is updated with every cell's value change.
-     *
-     * It uses templating, where context is the table cell instance.
-     *
-     * @default undefined
-     */
-    cellClassName?: string;
-
-    /**
-     * Allows to define an additional class name only to the column header
-     * cells.
-     *
-     * It uses templating, where context is the header cell instance.
-     *
-     * @default undefined
-     */
-    headerCellClassName?: string;
 
     /**
      * Whether the column is enabled and should be displayed. If `false`, the
