@@ -11,10 +11,24 @@ QUnit.test(
             
                             for (let row = 0; row < size; row++) {
                                 for (let col = 0; col < size; col++) {
-                                    renderer.rect(col, row, 1, 1)
+                                    renderer.rect(col + 41, row + 17, 1, 1)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
+                                            zIndex: 99,
                                             fill: '#000' // black color for the grid points
+                                        })
+                                        .add();
+                                }
+                            }
+
+                            // 2nd grid around the real target
+                            for (let row = 0; row < size; row++) {
+                                for (let col = 0; col < size; col++) {
+                                    renderer.rect(col + 149 - 5, row + 370 - 5, 1, 1)
+                                        .attr({
+                                            class: `grid-2-point col-${col} row-${row}`,
+                                            zIndex: 99,
+                                            fill: '#f00' // red color for the grid points
                                         })
                                         .add();
                                 }
@@ -78,31 +92,32 @@ QUnit.test(
         //     'htmlContent',
         //     'Logging htmlContent'
         // );
-        const hcEvents = series.legendItem.symbol.element.hcEvents;
-        assert.strictEqual(
-            hcEvents,
-            'hcEvents',
-            'Logging hcEvents'
-        );
-        assert.strictEqual(
-            hcEvents?.click?.[0].fn.toString(),
-            'hcEvents click',
-            'Logging hcEvents click'
-        );
+        // const hcEvents = series.legendItem.symbol.element.hcEvents;
+        // assert.strictEqual(
+        //     hcEvents,
+        //     'hcEvents',
+        //     'Logging hcEvents'
+        // );
+        // assert.strictEqual(
+        //     hcEvents?.click?.[0].fn.toString(),
+        //     'hcEvents click',
+        //     'Logging hcEvents click'
+        // );
 
         assert.strictEqual(
             elem,
-            'elementFromPoint',
+            'legend item cover (~5,5)',
             'Logging elementFromPoint'
         );
+        // Offset by the a11y proxy-container-after
         elem = document.elementFromPoint(
-            chartOffset.left + 3.1,
-            chartOffset.top + 3
+            chartOffset.left + 3.1 + 41,
+            chartOffset.top + 3 + 17
         );
         assert.strictEqual(
             elem,
-            'elementFromPoint',
-            'Logging grid target (3,3) elementFromPoint'
+            'top grid target (3,3)',
+            'Logging top grid target (3,3) elementFromPoint'
         );
 
         chart.legend.update({
