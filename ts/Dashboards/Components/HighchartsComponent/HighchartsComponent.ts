@@ -396,7 +396,9 @@ class HighchartsComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
-            this.chartContainer.classList.value = this.options.chartClassName;
+            this.chartContainer.classList.value =
+                HighchartsComponentDefaults.className + ' ' +
+                this.options.chartClassName;
         }
 
         if (this.options.chartID) {
