@@ -9,6 +9,6 @@ DataGrid.dataGrid('container', {
         }
     },
     columnDefaults: {
-        resizable: false
+        resizing: false
     }
 });

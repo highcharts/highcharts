@@ -52,7 +52,7 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
         sorting: {
             sortable: true
         },
-        resizable: true
+        resizing: true
     }
 };
 

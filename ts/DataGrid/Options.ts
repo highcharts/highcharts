@@ -234,7 +234,7 @@ export interface ColumnOptions {
      *
      * @default true
      */
-    resizable?: boolean;
+    resizing?: boolean;
 }
 
 /**
@@ -307,7 +307,7 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @internal
      * @private
      */
-    resizable?: boolean;
+    resizing?: boolean;
 }
 
 export interface CaptionOptions {
