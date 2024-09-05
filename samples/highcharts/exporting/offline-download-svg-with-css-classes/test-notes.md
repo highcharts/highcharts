@@ -1,1 +1,1 @@
-Download and verify that the circle is green, proving that CSS-classes were applied while exporting the SVG.
+Download and verify that the column is red, proving that CSS was applied during export.

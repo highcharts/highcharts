@@ -66,6 +66,20 @@ const exporting: ExportingOptions = {
     allowTableSorting: true,
 
     /**
+     * Allow exporting a chart retaining any user-applied CSS.
+     *
+     * Note that this is is default behavior in [styledMode](#chart.styledMode).
+     *
+     * @see [styledMode](#chart.styledMode)
+     *
+     * @sample {highcharts} highcharts/exporting/apply-stylesheets/
+     *
+     * @type      {boolean}
+     * @default   false
+     * @apioption exporting.applyStyleSheets
+     */
+
+    /**
      * Additional chart options to be merged into the chart before exporting to
      * an image format. This does not apply to printing the chart via the export
      * menu.

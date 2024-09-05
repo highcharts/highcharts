@@ -1,3 +1,9 @@
-.fill-green {
-    fill: green !important;
+#container {
+    max-width: 800px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.highcharts-point {
+    fill: red !important;
 }
