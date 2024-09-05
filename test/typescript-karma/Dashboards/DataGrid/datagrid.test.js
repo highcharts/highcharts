@@ -30,7 +30,7 @@ test('DataGrid update methods', async function (assert) {
     }, true);
     dataGrid.viewport?.resizeObserver?.disconnect();
 
-    dataGrid.update({
+    const newOptionsObject = {
         columns: [{
             id: 'weight',
             cellFormat: 'after update'
@@ -40,7 +40,14 @@ test('DataGrid update methods', async function (assert) {
         }, {
             id: 'imaginary-column',
         }]
-    }, false);
+    }
+
+    dataGrid.update(newOptionsObject, false);
+
+    assert.ok(
+        newOptionsObject.columns,
+        'The update method should not mutate the options object passed as an argument.'
+    );
 
     assert.deepEqual(
         dataGrid.options.columns,
