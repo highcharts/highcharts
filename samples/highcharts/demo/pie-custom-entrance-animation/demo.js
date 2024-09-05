@@ -87,7 +87,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         headerFormat: '',
-        pointFormat: 
+        pointFormat:
             '<span style="color:{point.color}">\u25cf</span> ' +
             '{point.name}: <b>{point.percentage:.1f}%</b>'
     },
