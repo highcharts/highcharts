@@ -112,6 +112,9 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'Agriculture',
                 cellFormat: '{value:.1f}%'

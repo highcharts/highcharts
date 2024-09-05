@@ -216,6 +216,11 @@ Dashboards.board('container', {
             id: 'transactions'
         },
         title: 'Transactions',
-        type: 'DataGrid'
+        type: 'DataGrid',
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
+        }
     }]
 }, true);

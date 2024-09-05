@@ -22,18 +22,18 @@
  *
  * */
 
-import type { ColumnDistribution } from './Options';
+import type { ColumnDistribution } from '../Options';
 import type TableCell from './Content/TableCell';
 
-import DGUtils from './Utils.js';
-import DataTable from '../Data/DataTable.js';
+import DGUtils from '../Utils.js';
+import DataTable from '../../Data/DataTable.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
-import DataGrid from './DataGrid.js';
+import DataGrid from '../DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
-import Globals from './Globals.js';
-import Utils from '../Core/Utilities.js';
+import Globals from '../Globals.js';
+import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 import TableRow from './Content/TableRow';
 
@@ -171,7 +171,7 @@ class Table {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions?.settings?.columns?.distribution as ColumnDistribution;
+            dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
 
         this.renderCaption();
 
@@ -179,7 +179,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        if (dgOptions?.settings?.columns?.resizable) {
+        if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -215,9 +215,6 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
-
-        // Refresh element dimensions after initial rendering
-        this.reflow();
     }
 
     /**
@@ -264,7 +261,8 @@ class Table {
             (this.dataGrid.container?.clientHeight || 0) -
             this.theadElement.offsetHeight -
             (this.captionElement?.offsetHeight || 0) -
-            borderWidth
+            borderWidth -
+            (this.dataGrid.credits?.getHeight() || 0)
         }px`;
 
         // Get the width of the rows.

@@ -24,8 +24,8 @@
  * */
 
 import TableCell from '../Content/TableCell.js';
-import Globals from '../Globals.js';
-import DGUtils from '../Utils.js';
+import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
 
 const { makeHTMLElement } = DGUtils;
 

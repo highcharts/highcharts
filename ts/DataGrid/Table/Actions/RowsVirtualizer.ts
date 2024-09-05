@@ -23,8 +23,8 @@
  * */
 
 import Table from '../Table.js';
-import DGUtils from '../Utils.js';
-import Globals from '../Globals.js';
+import DGUtils from '../../Utils.js';
+import Globals from '../../Globals.js';
 import TableRow from '../Content/TableRow.js';
 
 const { makeHTMLElement, getTranslateY } = DGUtils;
@@ -94,7 +94,7 @@ class RowsVirtualizer {
      * The viewport of the data grid to render rows in.
      */
     constructor(viewport: Table) {
-        const rowSettings = viewport.dataGrid.options?.settings?.rows;
+        const rowSettings = viewport.dataGrid.options?.rendering?.rows;
 
         this.viewport = viewport;
         this.strictRowHeights = rowSettings?.strictHeights as boolean;

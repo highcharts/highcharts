@@ -22,15 +22,15 @@
  *
  * */
 
-import type { IndividualColumnOptions } from './Options';
+import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
 import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
-import DataTable from '../Data/DataTable.js';
-import Globals from './Globals.js';
-import Utils from '../Core/Utilities.js';
-import DGUtils from './Utils.js';
+import DataTable from '../../Data/DataTable.js';
+import Globals from '../Globals.js';
+import Utils from '../../Core/Utilities.js';
+import DGUtils from '../Utils.js';
 import ColumnSorting from './Actions/ColumnSorting';
 
 const { merge } = Utils;

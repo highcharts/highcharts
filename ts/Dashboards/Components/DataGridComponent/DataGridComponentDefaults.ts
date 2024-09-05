@@ -95,7 +95,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                                 'dataGridOptions',
                                 'settings',
                                 'columns',
-                                'resizable'
+                                'resizing'
                             ],
                         type: 'toggle'
                     }, {

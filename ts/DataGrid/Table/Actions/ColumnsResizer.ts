@@ -25,8 +25,8 @@
 
 import Table from '../Table.js';
 import Column from '../Column.js';
-import Globals from '../Globals.js';
-import DGUtils from '../Utils.js';
+import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
 import Cell from '../Cell.js';
 const { makeHTMLElement } = DGUtils;
 

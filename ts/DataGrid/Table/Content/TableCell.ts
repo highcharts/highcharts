@@ -22,13 +22,13 @@
  *
  * */
 
-import type DataTable from '../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable';
 import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
-import Utils from '../../Core/Utilities.js';
-import F from '../../Core/Templating.js';
-import DGUtils from '../Utils.js';
+import Utils from '../../../Core/Utilities.js';
+import F from '../../../Core/Templating.js';
+import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
 const { format } = F;

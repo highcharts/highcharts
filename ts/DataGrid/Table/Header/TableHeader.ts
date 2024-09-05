@@ -21,12 +21,12 @@
  *  Imports
  *
  * */
-import type { GroupedHeaderOptions } from '../Options';
+import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
 import HeaderCell from './HeaderCell';
-import Utils from '../../Core/Utilities.js';
+import Utils from '../../../Core/Utilities.js';
 const { getStyle } = Utils;
 
 /* *
@@ -87,9 +87,9 @@ class TableHeader {
         this.viewport = viewport;
         this.columns = viewport.columns;
 
-        if (viewport.dataGrid.options?.settings?.header) {
+        if (viewport.dataGrid.options?.header) {
             this.levels = this.getRowLevels(
-                viewport.dataGrid.options?.settings?.header
+                viewport.dataGrid.options?.header
             );
         }
 

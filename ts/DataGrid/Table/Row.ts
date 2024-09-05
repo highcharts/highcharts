@@ -26,7 +26,7 @@ import type Cell from './Cell';
 import type Column from './Column';
 
 import Table from './Table.js';
-import DGUtils from './Utils.js';
+import DGUtils from '../Utils.js';
 
 const { makeHTMLElement } = DGUtils;
 

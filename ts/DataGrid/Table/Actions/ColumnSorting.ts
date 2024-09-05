@@ -22,10 +22,10 @@
  *
  * */
 
-import type { ColumnSortingOrder } from '../Options.js';
+import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
-import Globals from '../Globals.js';
+import Globals from '../../Globals.js';
 
 /* *
  *

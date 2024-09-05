@@ -28,7 +28,7 @@ import type Column from '../Column';
 import Row from '../Row.js';
 import Table from '../Table.js';
 import TableCell from './TableCell.js';
-import Globals from '../Globals.js';
+import Globals from '../../Globals.js';
 
 /* *
  *

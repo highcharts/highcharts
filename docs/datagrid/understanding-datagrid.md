@@ -46,7 +46,7 @@ Row
 Represents a [row](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridRow.DataGridRow-1) in the data grid.
 
 ```js
-settings: {
+rendering: {
     rows: {
         bufferSize: 5,
         strictHeights: true
@@ -54,19 +54,17 @@ settings: {
 }
 ```
 
-For more information on row settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.RowsSettings).
+For more information on row rendering settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.RowsSettings).
 
 Column resizer
 ---------
 
 Allows you to resize the entire [column](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridColumn.DataGridColumn-1). The functionality is enabled by default,
-but you can disable it in the [settings option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings).
+but you can disable it in the [`columnDefaults.resizing` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings).
 
 ```js
-settings: {
-    columns: {
-        resizable: false
-    }
+columnDefaults: {
+    resizing: false
 }
 ```
 

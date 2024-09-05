@@ -22,16 +22,16 @@
  *
  * */
 
-import type { GroupedHeaderOptions } from '../Options';
+import type { GroupedHeaderOptions } from '../../Options';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
-import DGUtils from '../Utils.js';
-import Globals from '../Globals.js';
-import Templating from '../../Core/Templating.js';
-import ColumnSorting from './../Actions/ColumnSorting.js';
-import Utilities from '../../Core/Utilities.js';
+import DGUtils from '../../Utils.js';
+import Globals from '../../Globals.js';
+import Templating from '../../../Core/Templating.js';
+import ColumnSorting from '../Actions/ColumnSorting.js';
+import Utilities from '../../../Core/Utilities.js';
 
 const { format } = Templating;
 const { makeHTMLElement, isHTML } = DGUtils;

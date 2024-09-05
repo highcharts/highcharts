@@ -28,6 +28,9 @@ Dashboards.board('container', {
         },
         type: 'DataGrid',
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'Vitamin A',
                 headerFormat: '{id} [mg]'

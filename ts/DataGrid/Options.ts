@@ -22,8 +22,8 @@
 
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
-import type Cell from './Cell';
-import Column from './Column';
+import type Cell from './Table/Cell';
+import Column from './Table/Column';
 
 
 /* *
@@ -64,6 +64,11 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  */
 export interface Options {
     /**
+     * Options for the table caption.
+     */
+    caption?: CaptionOptions;
+
+    /**
      * Default options for all the columns in the datagrid. Can be overridden
      * by individual column options.
      */
@@ -75,47 +80,47 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
-     * Events options triggered by the datagrid elements.
+     * Options for the credits label.
      */
-    events?: DataGridEvents;
-
-    /**
-     * Options for the table caption.
-     */
-    caption?: CaptionOptions;
-
-    /**
-     * Options to control the way datagrid is rendered.
-     */
-    settings?: DataGridSettings;
+    credits?: CreditsOptions;
 
     /**
      * Data table with the data to display in the grid structure.
      */
     dataTable?: DataTable | DataTableOptions;
+
+    /**
+     * Events options triggered by the datagrid elements.
+     */
+    events?: DataGridEvents;
+
+    /**
+     * Defines the structure of levels in header. Used for grouping columns
+     * headers.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
+     */
+    header?: Array<GroupedHeaderOptions|string>;
+
+    /**
+     * Options to control the way datagrid is rendered.
+     */
+    rendering?: RenderingSettings;
 }
 
 /**
  * Options to control the way datagrid is rendered.
  */
-export interface DataGridSettings {
+export interface RenderingSettings {
     /**
-    * Options to control the columns behavior and rendering.
-    */
+     * Options to control the columns rendering.
+     */
     columns?: ColumnsSettings;
 
     /**
-    * Options to control the rows behavior and rendering.
-    */
+     * Options to control the rows rendering.
+     */
     rows?: RowsSettings;
-
-    /**
-    * Defines the structure of levels in header. Used for grouping columns
-    * headers.
-    *
-    * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
-    */
-    header?: Array<GroupedHeaderOptions|string>;
 }
 
 export interface ColumnsSettings {
@@ -141,15 +146,6 @@ export interface ColumnsSettings {
      * @private
      */
     included?: Array<string>;
-
-    /**
-     * Whether the columns should be resizable.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/column-resizing-disabled | Column resize disabled}
-     *
-     * @default true
-     */
-    resizable?: boolean;
 }
 
 export interface RowsSettings {
@@ -189,7 +185,7 @@ export interface ColumnOptions {
      * The format of the cell content within the given column of the datagrid.
      * Applied only to cell that are in the table not the column header.
      *
-     * When not set, the default format `'{id}'` is used.
+     * When not set, the default format `'{value}'` is used.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
      *
@@ -229,6 +225,16 @@ export interface ColumnOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
      */
     sorting?: ColumnSortingOptions;
+
+    /**
+     * Whether the columns should be resizable. It does not affect individual
+     * column settings.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/column-resizing-disabled | Column resize disabled}
+     *
+     * @default true
+     */
+    resizing?: boolean;
 }
 
 /**
@@ -296,6 +302,12 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
+
+    /**
+     * @internal
+     * @private
+     */
+    resizing?: boolean;
 }
 
 export interface CaptionOptions {
@@ -392,25 +404,64 @@ export interface GroupedHeaderOptions {
      * The format of the column header. Use `{id}` to display the column id.
      */
     headerFormat?: string;
+
     /**
      * The custom CSS class name for the header.
      */
     className?: string;
+
     /**
      * The id of column with data.
      */
     columnId?: string;
+
     /**
      * Current level of header in the whole header tree.
      * @internal
      * @private
      */
     level?: number;
+
     /**
      * Columns that are displayed below the header.
      */
     columns?: GroupedHeaderOptions[];
 }
+
+/**
+ * Options for the credits label.
+ */
+export interface CreditsOptions {
+    /**
+     * Whether to show the credits.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * The URL that will be opened when the credits label is clicked.
+     *
+     * @default 'https://www.highcharts.com?credits'
+     */
+    href?: string;
+
+    /**
+     * The text for the credits label.
+     *
+     * @default 'Highcharts.com'
+     */
+    text?: string;
+
+    /**
+     * The position of the credits label.
+     *
+     * @default 'bottom'
+     */
+    position?: 'bottom' | 'top';
+}
+
+
 /* *
  *
  *  Default Export

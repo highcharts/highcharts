@@ -637,17 +637,18 @@ const setupDashboard = instanceId => {
             type: 'DataGrid',
             title: 'Instances',
             dataGridOptions: {
-                settings: {
+                credits: {
+                    enabled: false
+                },
+                rendering: {
                     rows: {
                         strictHeights: true
-                    },
-                    columns: {
-                        included: [
-                            'InstanceId', 'InstanceType', 'PublicIpAddress',
-                            'State', 'HealthIndicator'
-                        ]
                     }
                 },
+                header: [
+                    'InstanceId', 'InstanceType', 'PublicIpAddress',
+                    'State', 'HealthIndicator'
+                ],
                 columns: [{
                     id: 'InstanceId',
                     headerFormat: 'ID'

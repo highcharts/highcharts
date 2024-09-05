@@ -318,7 +318,7 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                settings: {
+                rendering: {
                     columns: {
                         included: [
                             'state', 'demColVotes', 'repColVotes',
@@ -784,6 +784,9 @@ async function updateGridComponent(component, year) {
             id: 'votes' + year
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'repColVotes',
                 headerFormat: candRep + ' (Republican)'

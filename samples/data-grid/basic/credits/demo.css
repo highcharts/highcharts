@@ -1,10 +1,9 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
-#container {
-    height: 250px;
+#demo {
     margin: 8px;
 }
 
-.highcharts-datagrid-container tbody tr {
-    height: 68px;
+#container {
+    height: 250px;
 }

@@ -33,20 +33,26 @@ import Globals from './Globals.js';
  * */
 
 const DefaultOptions: Globals.DeepPartial<Options> = {
-    settings: {
+    rendering: {
         columns: {
-            distribution: 'full',
-            resizable: true
+            distribution: 'full'
         },
         rows: {
             bufferSize: 10,
             strictHeights: false
         }
     },
+    credits: {
+        enabled: true,
+        text: 'Highcharts.com',
+        href: 'https://www.highcharts.com?credits',
+        position: 'bottom'
+    },
     columnDefaults: {
         sorting: {
             sortable: true
-        }
+        },
+        resizing: true
     }
 };
 
