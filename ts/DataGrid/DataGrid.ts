@@ -295,6 +295,7 @@ class DataGrid {
         newOptions: Partial<Options>,
         oneToOne = false
     ): void {
+        // Operate on a copy of the options argument
         newOptions = merge(newOptions);
 
         if (newOptions.columns) {
