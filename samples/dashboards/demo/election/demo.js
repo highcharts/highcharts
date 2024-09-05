@@ -784,6 +784,9 @@ async function updateGridComponent(component, year) {
             id: 'votes' + year
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'repColVotes',
                 headerFormat: candRep + ' (Republican)'

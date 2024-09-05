@@ -464,6 +464,9 @@ async function setupBoard() {
                 highlight: true
             },
             dataGridOptions: {
+                credits: {
+                    enabled: false
+                },
                 columns: [{
                     id: 'time',
                     enabled: false
