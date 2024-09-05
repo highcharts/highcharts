@@ -5,4 +5,9 @@
 .highcharts-figure {
     max-width: 800px;
     margin: 0 auto;
+    padding: 10px;
+}
+
+#container {
+    margin: 0 -10px;
 }

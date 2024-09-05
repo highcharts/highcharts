@@ -8,6 +8,10 @@
     margin: 2em auto;
 }
 
+.controls {
+    margin: 0 10px;
+}
+
 pre {
     border: 1px solid silver;
     border-radius: 0.5em;

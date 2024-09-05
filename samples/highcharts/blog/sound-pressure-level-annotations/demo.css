@@ -8,6 +8,10 @@
     margin: 0 auto;
 }
 
+select {
+    margin-left: 10px;
+}
+
 .g1 {
     stroke-dasharray: 12;
     stroke-dashoffset: 100;

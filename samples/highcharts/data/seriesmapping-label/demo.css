@@ -8,3 +8,14 @@
     max-width: 800px;
     margin: 0 auto;
 }
+
+.data-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+pre {
+    color: green;
+    font-family: "Courier New", Courier, monospace;
+}

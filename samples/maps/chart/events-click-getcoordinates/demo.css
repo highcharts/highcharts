@@ -32,6 +32,7 @@
 .form {
     border: 1px solid silver;
     padding: 0 1em;
+    margin: 10px;
 }
 
 pre {

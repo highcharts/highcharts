@@ -2,6 +2,17 @@
     font-family: Helvetica, Arial, sans-serif;
 }
 
+textarea {
+    font-family: monospace;
+    margin: 10px;
+    width: calc(100% - 22px);
+    height: 100px;
+}
+
+.highcharts-description {
+    margin: 10px;
+}
+
 .highcharts-demo-button {
     background: #f2f2f2;
     border: none;

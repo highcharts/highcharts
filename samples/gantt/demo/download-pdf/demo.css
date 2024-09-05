@@ -8,6 +8,10 @@
     margin: 1em auto;
 }
 
+#button-container {
+    padding: 0 10px;
+}
+
 #pdf {
     border: 1px solid silver;
     border-radius: 3px;

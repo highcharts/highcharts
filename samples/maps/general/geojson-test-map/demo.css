@@ -4,7 +4,8 @@
 
 #geojson {
     height: 100px;
-    width: 100%;
+    width: calc(100% - 22px);
+    margin: 10px;
 }
 
 .highcharts-demo-button {

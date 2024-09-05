@@ -8,6 +8,10 @@ figure,
     margin: auto;
 }
 
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
 .highcharts-demo-button {
     background: #f2f2f2;
     border: none;

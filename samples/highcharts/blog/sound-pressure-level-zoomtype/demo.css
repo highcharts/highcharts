@@ -11,6 +11,10 @@
     padding: 0.4em 0.2em 0.3em;
 }
 
+select {
+    margin-left: 10px;
+}
+
 .highcharts-demo-button {
     background: #f2f2f2;
     border: none;
