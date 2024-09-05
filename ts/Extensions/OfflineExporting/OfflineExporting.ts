@@ -177,9 +177,9 @@ namespace OfflineExporting {
      * - **type:** File type of resulting download. Default is `image/png`.
      *
      * - **scale:** Scaling factor of downloaded image compared to source.
-     *
-     * - **libURL:** URL pointing to location of dependency scripts to download
      * Default is `1`.
+     * - **libURL:** URL pointing to location of dependency scripts to download
+     *
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
@@ -214,9 +214,8 @@ namespace OfflineExporting {
                         'svg' : imageType.split('/')[1]
                 )
             ),
-            scale = options.scale || 1,
-            sheets = H.doc.styleSheets,
-            sheetCount = sheets.length;
+            scale = options.scale || 1;
+
         let svgurl: string,
             blob,
             finallyHandler: Function,
@@ -224,41 +223,7 @@ namespace OfflineExporting {
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
             objectURLRevoke = true,
-            pdfFont = options.pdfFont,
-            inlineCss = '';
-
-        for (let i = 0; i < sheetCount; i++) {
-            const sheetRules = sheets.item(i)?.cssRules;
-
-            if (sheetRules) {
-                const ruleListLength = sheetRules.length;
-
-                for (let j = 0; j < ruleListLength; j++) {
-                    const cssRule = sheetRules.item(j),
-                        selectorText = (
-                            cssRule as CSSStyleRule
-                        )?.selectorText || '';
-
-                    if (
-                        cssRule &&
-                        selectorText.startsWith('.') &&
-                        svg.includes(selectorText.split('.')[1])
-                    ) {
-                        inlineCss += cssRule.cssText;
-                    }
-                }
-            }
-        }
-
-        svg = svg.replace(
-            /(<[^>]*?>)/,
-            `$1
-            <style type="text/css">
-                <![CDATA[
-                    ${inlineCss}
-                ]]>
-            </style>`
-        );
+            pdfFont = options.pdfFont;
 
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;

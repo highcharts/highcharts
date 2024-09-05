@@ -188,7 +188,7 @@ namespace Exporting {
             chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
-        getChartHTML(): string;
+        getChartHTML(applyStyleSheets?: boolean): string;
         /** @requires modules/exporting */
         getFilename(): string;
         /** @requires modules/exporting */
@@ -1048,9 +1048,10 @@ namespace Exporting {
      * @requires modules/exporting
      */
     function getChartHTML(
-        this: ChartComposition
+        this: ChartComposition,
+        applyStyleSheets?: boolean
     ): string {
-        if (this.styledMode) {
+        if (applyStyleSheets) {
             this.inlineStyles();
         }
 
@@ -1255,7 +1256,11 @@ namespace Exporting {
         });
 
         // Get the SVG from the container's innerHTML
-        svg = chartCopy.getChartHTML();
+        svg = chartCopy.getChartHTML(
+            chart.styledMode ||
+            options.exporting?.applyStyleSheets
+        );
+
         fireEvent(this, 'getSVG', { chartCopy: chartCopy });
 
         svg = chart.sanitizeSVG(svg, options);
