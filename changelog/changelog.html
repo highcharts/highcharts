@@ -32,6 +32,9 @@
                 <div id="bug-fixes-11-4-8" class="collapse" aria-labelledby="heading-11-4-8-bug-fixes" data-parent=".accordion">
                   <div class="card-body">
                     <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21165">#21165</a>, series didn&#39;t render properly when the chart height was very large.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21106">#21106</a>, series clipped on boost disabled and increased the chart size.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21734">#21734</a>, minor ticks were wrongly distributed with multiple axes or when <a href="https://api.highcharts.com/highcharts/xAxis.tickAmount">tickAmount</a> was set.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21521">#21521</a>, plot band labels and plot line labels would overlap if positioned too close. Added <code>inside</code> and <code>allowOverlap</code> options to the <a href="https://api.highcharts.com/highcharts/xAxis.plotBands.label">Axis.plotBands.label</a> options.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/20499">#20499</a>, data labels failed to apply width in styled mode.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21205">#21205</a>, offline PDF exporting was broken by attempted erroneous child node removal when the chart contained text paths.</li>
@@ -14335,10 +14338,45 @@
             </div>
             <h3 class="release-header">
               <a id="highcharts-dashboards-v2.2.0"></a>
-              <span>Highcharts Dashboards v2.2.0 (2024-07-08)</span>
+              <span>Highcharts Dashboards v2.2.0 (2024-07-02)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v2.2.0">#</a>
               <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-2.2.0.zip" title="Download the zip archive for Highcharts Dashboards v2.2.0"><i class="fas fa-download"></i></a></span>
             </h3>
+            <ul>
+              <li>Added the <code>EditMode</code> for dashboards declared with custom HTML, allowing users to modify the components inside.</li>
+              <li>Added the methods <code>getComponentById </code>and <code>getComponentByCellId</code> to the <code>Board</code> class. Addressing feature request <a href="https://github.com/highcharts/highcharts/issues/21378">#21378</a>.</li>
+              <li>Renamed <code>onEditModeToggle</code> to <code>toggleEditMode</code>.</li>
+              <li>Removed the setting icon from the row toolbar.</li>
+              <li>Added <a href="https://www.highcharts.com/docs/dashboards/edit-mode#edit-mode-events">edit mode events</a>. Changed the way components are updated in edit mode. See <a href="https://github.com/highcharts/highcharts/issues/20756">#20756</a>.</li>
+              <li>Added <code>isStandalone</code> option to add non-nested options in the edit mode sidebar, <a href="https://github.com/highcharts/highcharts/issues/20793">#20793</a>.</li>
+              <li>Improved error messages when options were misconfigured, see <a href="https://github.com/highcharts/highcharts/issues/21091">#21091</a>.</li>
+              <li>Added option to use valid HTML inside the DataGrid cell, along with that the <code>useHTML</code> option was added, see <a href="https://github.com/highcharts/highcharts/issues/20634">#20634</a>.</li>
+              <li>Added <code>autoScroll</code> option to the Datagrid&#39;s highlight sync.</li>
+              <li>Added the <a href="https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group"><code>group</code></a> option which allows synchronization to be grouped within components sharing the same connector.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-2-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v2.2.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v2.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-2-2-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-2-2-0" class="collapse" aria-labelledby="hd-heading-2-2-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21310">#21310</a>, updating values in the DataGrid did not update connected components.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21189">#21189</a>, dragging and dropping elements from the sidebar and inside the dashboard was impossible in Firefox.</li>
+                      <li>Removed connector name from the HTML component sidebar.</li>
+                      <li>Fixed typo in <code>Fullscreen</code> es-module import which caused an error when importing the <code>layout</code> module.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21079">#21079</a>, <code>false</code> was displayed in the input inside the sidebar when the option was disabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/20944">#20944</a>, wrong values were displayed in the sidebar when the Highcharts component was initialized with programmatically set options.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-dashboards-v2.1.0"></a>
               <span>Highcharts Dashboards v2.1.0 (2024-05-22)</span>

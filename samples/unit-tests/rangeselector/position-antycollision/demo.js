@@ -489,7 +489,7 @@ QUnit.test('#14292: Right-aligned button position after animating', assert => {
 
     const width = chart.rangeSelector.buttonGroup.getBBox().width;
 
-    chart.rangeSelector.update();
+    chart.rangeSelector.update({});
 
     assert.ok(
         chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,

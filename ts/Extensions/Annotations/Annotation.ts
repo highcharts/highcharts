@@ -116,23 +116,19 @@ function getLabelsAndShapesOptions(
     (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach((
         name
     ): void => {
-        const someBaseOptions = baseOptions[name];
+        const someBaseOptions = baseOptions[name],
+            newOptionsValue = newOptions[name];
+
+        type ControllableOptions = (
+            ControllableLabelOptions|
+            ControllableShapeOptions
+        );
 
         if (someBaseOptions) {
-            if (newOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (
-                            ControllableLabelOptions|
-                            ControllableShapeOptions
-                        ),
-                        i: number
-                    ): (
-                        ControllableLabelOptions|
-                        ControllableShapeOptions
-                        ) {
-                        return merge(someBaseOptions[i], basicOptions);
-                    }
+            if (newOptionsValue) {
+                mergedOptions[name] = splat(newOptionsValue).map(
+                    (basicOptions, i): ControllableOptions =>
+                        merge(someBaseOptions[i], basicOptions)
                 ) as any;
             } else {
                 mergedOptions[name] = baseOptions[name] as any;
