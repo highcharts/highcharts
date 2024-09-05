@@ -108,7 +108,7 @@ class Pointer {
     public static hoverChartIndex: (number|undefined);
 
     public static unbindDocumentMouseUp:
-    (Array<{doc: Document, unbind: Function}>|undefined);
+    Array<{ doc: Document, unbind: Function }> = [];
 
     public static unbindDocumentTouchEnd: (Function|undefined);
 
@@ -241,7 +241,7 @@ class Pointer {
                 Pointer.unbindDocumentMouseUp.forEach(
                     (el): void => el.unbind()
                 );
-                delete Pointer.unbindDocumentMouseUp;
+                Pointer.unbindDocumentMouseUp.length = 0;
             }
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
@@ -1810,10 +1810,6 @@ class Pointer {
                 this.onContainerMouseLeave.bind(this)
             )
         );
-
-        if (!Pointer.unbindDocumentMouseUp) {
-            Pointer.unbindDocumentMouseUp = [];
-        }
 
         if (!Pointer.unbindDocumentMouseUp.some(
             (el): boolean => el.doc === ownerDoc
