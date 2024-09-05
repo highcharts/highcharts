@@ -187,26 +187,27 @@ function onAxisAfterRender(this: Axis): void {
             tickPositions,
             dataMin = 0,
             dataMax = 0,
-            categories,
-            options,
-            series
+            categories
         } = this,
-        type = options.type;
+        type = this.options.type;
 
-    if (series.find((s): boolean => s.bubblePadding === true)) {
-        if ((categories && categories.length) || type === 'category') {
-            let tickCount = tickPositions.length;
+    if (
+        ((categories && categories.length) || type === 'category') &&
+        this.series.find((s): boolean => s.bubblePadding === true)
+    ) {
 
-            while (tickCount--) {
-                const tick = ticks[tickPositions[tickCount]],
-                    pos = tick.pos || 0;
+        let tickCount = tickPositions.length;
+
+        while (tickCount--) {
+            const tick = ticks[tickPositions[tickCount]],
+                pos = tick.pos || 0;
 
 
-                if (tick.label && (pos > dataMax || pos < dataMin)) {
-                    tick.label.hide();
-                }
+            if (pos > dataMax || pos < dataMin) {
+                tick.label?.hide();
             }
         }
+
     }
 }
 
