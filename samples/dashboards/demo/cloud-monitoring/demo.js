@@ -637,6 +637,9 @@ const setupDashboard = instanceId => {
             type: 'DataGrid',
             title: 'Instances',
             dataGridOptions: {
+                credits: {
+                    enabled: false
+                },
                 rendering: {
                     rows: {
                         strictHeights: true
