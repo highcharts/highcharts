@@ -51,15 +51,6 @@ QUnit.test(
                     y: point2.plotY + chart2.plotTop + 1
                 };
 
-            // Workaround for failing test on Linux.
-            // Try removing in Chrome v129+.
-            const correction2 = (
-                    controller2.elementsFromPoint(
-                        point2Position.x,
-                        point2Position.y
-                    ).indexOf(point2.graphic.element) < 0
-                ) ? 100 : 0;
-
             assert.strictEqual(
                 chart1.tooltip.isHidden,
                 true,
@@ -96,16 +87,28 @@ QUnit.test(
                 chart1.plotHeight + point2Position.y
             );
             controller2.moveTo(
-                point2Position.x + correction2,
-                point2Position.y + correction2
-                , void 0, true);
-
-            // controller2.relatedTarget
-            assert.strictEqual(
-                controller2.relatedTarget,
-                true,
-                'Log: c2.relatedTarget - should highcharts-point-hover.'
+                point2Position.x,
+                point2Position.y
             );
+            
+            // Workaround for failing test on Linux.
+            // Try removing in Chrome v129+.
+            if (!controller2.relatedTarget) {
+                point2Position.x += 35;
+                point2Position.y += 80;
+
+                controller2.moveTo(
+                    point2Position.x,
+                    point2Position.y,
+                    void 0,
+                    true
+                );
+                assert.strictEqual(
+                    controller2.relatedTarget,
+                    true,
+                    'Log: c2.relatedTarget - should highcharts-point-hover.'
+                );
+            }
 
             controller2.mouseDown(
                 point2Position.x,
@@ -113,8 +116,8 @@ QUnit.test(
                 {
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
-                }
-                , true);
+                }, true
+            );
 
             controller2.mouseUp(
                 point2Position.x,
@@ -122,7 +125,7 @@ QUnit.test(
                 {
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
-                }
+                }, true
             );
 
             assert.strictEqual(
