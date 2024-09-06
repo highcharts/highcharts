@@ -17,6 +17,7 @@ QUnit.test(
             container1.parentNode.appendChild(container2);
         }
 
+        let second = false;
         const chartOptions = {
                 chart: {
                     width: 400,
@@ -35,13 +36,14 @@ QUnit.test(
                                             class: `grid-point col-${col} row-${row}`,
                                             zIndex: 99,
                                             fill: '#' +
-                                                (col % 16).toString(16) +
+                                                (second ? '00' : 'ff') +
                                                 (row % 16).toString(16) +
                                                 ((row + col) % 16).toString(16)
                                         })
                                         .add();
                                 //}
                             }
+                            second = true;
                         }
                     }
                 },
@@ -142,11 +144,11 @@ QUnit.test(
             controller1.moveTo(
                 point1Position.x,
                 chart1.plotHeight + point2Position.y + correction1
-            );
+            , void 0, true);
             controller2.moveTo(
                 point2Position.x,
                 point2Position.y + correction2
-            );
+                , void 0, true);
             controller2.mouseDown(
                 point2Position.x,
                 point2Position.y + correction2,
@@ -154,7 +156,7 @@ QUnit.test(
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
                 }
-            );
+                , true);
             controller2.mouseUp(
                 point2Position.x,
                 point2Position.y + correction2,
@@ -162,7 +164,7 @@ QUnit.test(
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
                 }
-            );
+                , true);
 
             assert.strictEqual(
                 chart1.tooltip.isHidden,
@@ -175,6 +177,14 @@ QUnit.test(
                 true,
                 'Tooltip of second chart should not be hidden.'
             );
+
+            assert.strictEqual(
+                // get full html content of the page
+                document.documentElement.outerHTML,
+                true,
+                'Log: preview.'
+            );
+            
         } finally {
             chart2.destroy();
             document.body.removeChild(container2);
