@@ -6,7 +6,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'chart initial rendering time (lower is better)'
+        text: 'Chart initial rendering time (lower is better)'
     },
     subtitle: {
         text: 'Run on MacBook Pro M1 2021 16GM RAM'
