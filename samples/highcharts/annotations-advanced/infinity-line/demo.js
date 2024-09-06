@@ -1,17 +1,10 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
 
     annotations: [{
         type: 'infinityLine',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             // type: 'ray' || 'line',
             type: 'ray',
@@ -27,12 +20,6 @@ const chart = Highcharts.chart('container', {
             line: {
                 // markerEnd: 'arrow',
                 // markerStart: 'reverse-arrow'
-            }
-        },
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
             }
         }
     }],

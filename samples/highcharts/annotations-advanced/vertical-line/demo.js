@@ -2,15 +2,6 @@ const chart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
-        },
-        // inverted: true,
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
@@ -44,7 +35,6 @@ applyColors.onclick = function () {
             style: {
                 color: 'rgb(255, 69, 69)',
                 fontSize: '1.3em'
-
             }
         },
         typeOptions: {

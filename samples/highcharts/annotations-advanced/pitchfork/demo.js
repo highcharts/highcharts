@@ -1,17 +1,10 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
 
     annotations: [{
         type: 'pitchfork',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 4,

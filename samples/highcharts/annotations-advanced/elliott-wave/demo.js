@@ -1,21 +1,15 @@
 const chart = Highcharts.chart('container', {
     chart: {
-        // inverted: true,
         zooming: {
             type: 'xy'
-        },
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
     annotations: [{
         type: 'elliottWave',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             xAxis: 0,
             yAxis: 0,
@@ -46,12 +40,6 @@ const chart = Highcharts.chart('container', {
             }],
             line: {
                 stroke: 'red'
-            }
-        },
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
             }
         }
     }],

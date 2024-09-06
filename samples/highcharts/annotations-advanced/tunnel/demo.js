@@ -1,22 +1,23 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
 
     annotations: [{
         type: 'tunnel',
+        controlPointOptions: {
+            style: {
+                fill: 'rgb(255, 69, 221)'
+            },
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 4,
                 y: 4,
-                controlPoint: { /* control point options */ }
+                controlPoint: {
+                    /* control point options */
+                    style: {
+                        fill: '#d5ff4c'
+                    }
+                }
             }, {
                 x: 10,
                 y: 5
@@ -27,7 +28,7 @@ const chart = Highcharts.chart('container', {
             heightControlPoint: {
                 /* control point options */
                 style: {
-                    fill: 'blue'
+                    fill: '#1d10de'
                 }
             }
             // yAxis: 0,
@@ -47,11 +48,6 @@ const applyColors = document.getElementById('applyColors');
 
 applyColors.onclick = function () {
     chart.annotations[0].update({
-        controlPointOptions: {
-            style: {
-                color: 'rgb(255, 69, 221)'
-            }
-        },
         typeOptions: {
             line: {
                 stroke: 'rgb(255, 69, 221)',

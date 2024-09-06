@@ -2,19 +2,14 @@ const chart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
-        },
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
         }
     },
 
     annotations: [{
         type: 'fibonacci',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 2,
@@ -25,13 +20,6 @@ const chart = Highcharts.chart('container', {
             }],
             xAxis: 0,
             yAxis: 0
-        },
-
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
-            }
         }
     }],
 

@@ -1,18 +1,11 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
 
     annotations: [{
         id: '1',
         type: 'crookedLine',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 1,
@@ -37,13 +30,6 @@ const chart = Highcharts.chart('container', {
             }],
             line: {
                 // markerEnd: 'arrow'
-            }
-        },
-
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
             }
         }
     }],

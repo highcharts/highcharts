@@ -1,17 +1,10 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
 
     annotations: [{
         type: 'timeCycles',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             xAxis: 0,
             yAxis: 0,
@@ -30,9 +23,8 @@ applyColors.onclick = function () {
     chart.annotations[0].update({
         controlPointOptions: {
             style: {
-                color: 'rgb(81, 54, 128)'
-            },
-            visible: true
+                fill: 'rgb(81, 54, 128)'
+            }
         },
         typeOptions: {
             line: {
