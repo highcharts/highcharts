@@ -1,1 +1,0 @@
-Download and verify that the column is red, proving that CSS was applied during export.
