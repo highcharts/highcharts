@@ -254,12 +254,18 @@ QUnit.test(
                 ]
             }),
             legend = chart.legend,
-            controller = new TestController(chart);
+            controller = new TestController(chart),
+            x = chart.series[0].nodes[0].plotX + chart.plotLeft,
+            // Workaround for failing test on Linux.
+            // Try removing in Chrome v129+.
+            baseY = chart.series[0].nodes[0].plotY + chart.plotTop,
+            correction = (
+                    controller.elementsFromPoint(x, baseY)
+                        .indexOf(chart.series[0].nodes[0].graphic.element) < 0
+                ) ? -8 : 0,
+            y = baseY + correction;
 
-        controller.mouseOver(
-            chart.series[0].nodes[0].plotX + chart.plotLeft,
-            chart.series[0].nodes[0].plotY + chart.plotTop
-        );
+        controller.mouseOver(x, y);
 
         assert.strictEqual(
             Highcharts.attr(
@@ -290,7 +296,8 @@ QUnit.test(
 
         controller.mouseOver(
             chart.series[1].points[0].shapeArgs.x + chart.plotLeft + 15,
-            chart.series[1].points[0].shapeArgs.y + chart.plotTop - 15
+            chart.series[1].points[0].shapeArgs.y + chart.plotTop - 15 +
+                correction
         );
 
         assert.strictEqual(
@@ -313,7 +320,7 @@ QUnit.test(
 
         controller.mouseOver(
             legend.group.translateX + legend.maxItemWidth * 1.5,
-            legend.group.translateY + legend.itemHeight
+            legend.group.translateY + legend.itemHeight + correction
         );
 
         assert.strictEqual(
