@@ -81,7 +81,7 @@ QUnit.test(
                 controller1.elementsFromPoint(
                     point1Position.x,
                     point1Position.y
-                )[0],
+                ).slice(0, 3),
                 point1Position.y,
                 'Logging: controller1 offset.'
             );
@@ -90,11 +90,18 @@ QUnit.test(
                 controller2.elementsFromPoint(
                     point2Position.x,
                     point2Position.y
-                )[0],
+                ).slice(0, 3),
                 point2Position.y,
                 'Logging: controller2 offset.'
             );
 
+            
+
+            assert.strictEqual(
+                Highcharts.offset(chart2.container),
+                'maybe 8s ? maybe else...',
+                'Logging: chart2 offset.'
+            );
 
             const correction1 = (
                     controller1.elementsFromPoint(
@@ -107,7 +114,7 @@ QUnit.test(
                         point2Position.x,
                         point2Position.y
                     ).indexOf(point2.graphic.element) < 0
-                ) ? -8 : 0;
+                ) ? -400 : 0;
 
             assert.strictEqual(
                 chart1.tooltip.isHidden,
