@@ -178,9 +178,11 @@ QUnit.test(
                 'Tooltip of second chart should not be hidden.'
             );
 
+            const charts = chart1.container.innerHTML +
+                ' ' + chart2.container.innerHTML;
             assert.strictEqual(
                 // get full html content of the page
-                document.documentElement.outerHTML,
+                charts,
                 true,
                 'Log: preview.'
             );
