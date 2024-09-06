@@ -1,4 +1,8 @@
 Highcharts.chart('container', {
+    colors: [
+        '#544fc5',
+        '#fe6a35'
+    ],
     chart: {
         type: 'spline',
         zooming: {
@@ -6,10 +10,18 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Chart initial rendering time (lower is better)'
+        text: 'Chart initial rendering time (lower is better)',
+        align: 'left'
     },
     subtitle: {
-        text: 'Run on MacBook Pro M1 2021 16GM RAM'
+        text: 'Run on MacBook Pro M1 2021 16GM RAM',
+        align: 'left'
+    },
+    accessibility: {
+        point: {
+            valueDescriptionFormat:
+                '{index}. {xDescription} points, {value} milliseconds.'
+        }
     },
     series: [
         {
