@@ -1,24 +1,93 @@
 Data grouping
 ===========
 
-Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used. The [groupPixelWidth](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.groupPixelWidth) option defines how large the groups should be.
+The `dataGrouping` feature in Highcharts Stock is a reliable tool for dealing with large sets of data in a more efficient way. By grouping data points into larger chunks, it streamlines the loading and rendering process for your charts.
+Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used.
+In Highstock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
 
-![data-grouping.png](data-grouping.png)
+```js
+Highcharts.stockChart('container', {
+  series: [{
+    dataGrouping: {
+      groupPixelWidth: 5
+    },
+    data: [...]
+  }]
+});
+```
 
-By default, the grouping [approximation](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.approximation) depends on the type of series:
 
+Data grouping in Highcharts Stock can be turned on or off using the enabled option. By default, it's set to true.
+
+```js
+Highcharts.stockChart('container', {
+  series: [{
+    dataGrouping: {
+      enabled: false
+    },
+    data: [...]
+  }]
+});
+```
+
+Here is an example of a difference between two series with the same data, but one of them is grouped:
+
+<iframe width="600" height="450" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-enabled" allowfullscreen></iframe>
+
+#### Overview of the most important data grouping options
+
+##### [Approximation](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.approximation)
+With the `approximation` option, you can decide how the final value for each group should be calculated. By default it depends on the series type: 
 *   Line type series use an _average_ approximation.
 *   Column type series compute the _sum_.
 *   Range type series compute the union's _range_.
 *   OHLC type series compute the union's open, high, low and close (OHLC) values.
 
-Grouping is activated when there are many data points in the chart. As well as increasing performance it makes it easier to spot trends in a chart.
 
-Data grouping is a Highcharts Stock feature and is enabled by default. To see dataGrouping options see the [API reference](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping).
+but you can use the custom function to calculate the final value for each group. Here is an example of custom approximation function:
+
+<iframe width="600" height="600" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-approximation" allowfullscreen></iframe>
+
+ ##### [Units](https://api.highcharts.com/highstock/series.line.dataGrouping.units)
+The available data grouping units can be set using `units`. By default, it's an array of time units (millisecond, second, minute, hour, day, week, month, year) with their allowed multiples.
+
+```js
+Highcharts.stockChart('container', {
+  series: [{
+    dataGrouping:{
+      units: [['day',[1, 2, 3]]]
+    },
+    data: [...]
+  }]
+});
+```
+
+##### [groupAll](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.groupAll)
+
+Default behavior only groups the points within the visible range of the chart, but sometimes it's useful to group all the points. This can be achieved by setting `groupAll` to `true`.
+
+```js
+Highcharts.stockChart('container', {
+  series: [{
+    dataGrouping:{
+      groupAll: true
+    },
+    data: [...]
+  }]
+});
+```
+
+The points that would be outside of the visible range might have an impact on the values of the visible groups.
+Here is an example of a chart where you can see the difference between the two options:
+
+<iframe width="600" height="450" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-groupall" allowfullscreen></iframe>
+
+
+
 
 ### The x-value for a grouped point
 
- <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
+ <iframe width="500" height="800" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
 
 Grouped points can be positioned inside the group using [anchor](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.anchor) property which might take values: 
 
