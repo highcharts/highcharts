@@ -78,25 +78,6 @@ QUnit.test(
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-
-            assert.strictEqual(
-                controller1.elementsFromPoint(
-                    point1Position.x,
-                    point1Position.y - 8
-                ).slice(0, 3),
-                point1Position.y,
-                'Logging: controller1 offset.'
-            );
-
-            assert.strictEqual(
-                controller2.elementsFromPoint(
-                    point2Position.x,
-                    point2Position.y - 408
-                ).slice(0, 3),
-                point2Position.y,
-                'Logging: controller2 offset.'
-            );
-
             const correction1 = (
                     controller1.elementsFromPoint(
                         point1Position.x,
@@ -124,7 +105,7 @@ QUnit.test(
 
             controller1.moveTo(
                 point1Position.x,
-                point1Position.y + correction1
+                point1Position.y
             );
 
             assert.strictEqual(
@@ -143,11 +124,11 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y + correction1
+                chart1.plotHeight + point2Position.y
             , void 0, true);
             controller2.moveTo(
                 point2Position.x,
-                point2Position.y + correction2
+                point2Position.y
                 , void 0, true);
             controller2.mouseDown(
                 point2Position.x,
@@ -181,7 +162,6 @@ QUnit.test(
             const charts = chart1.container.innerHTML +
                 ' ' + chart2.container.innerHTML;
             assert.strictEqual(
-                // get full html content of the page
                 charts,
                 true,
                 'Log: preview.'
