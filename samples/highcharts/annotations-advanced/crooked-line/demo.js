@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         events: {
             load: function () {
@@ -55,3 +55,16 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            line: {
+                stroke: '#ff5f00',
+                strokeWidth: 4
+            }
+        }
+    });
+};

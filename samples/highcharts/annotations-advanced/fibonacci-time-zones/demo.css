@@ -2,3 +2,14 @@
     height: 400px;
     min-width: 310px;
 }
+
+.buttonCenter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+button {
+    cursor: pointer;
+}

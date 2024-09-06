@@ -2,3 +2,14 @@
     max-width: 800px;
     margin: 0 auto;
 }
+
+.buttonCenter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+button {
+    cursor: pointer;
+}

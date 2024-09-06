@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         events: {
             load: function () {
@@ -42,3 +42,24 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        controlPointOptions: {
+            style: {
+                color: 'rgb(255, 69, 221)'
+            }
+        },
+        typeOptions: {
+            line: {
+                stroke: 'rgb(255, 69, 221)',
+                strokeWidth: 4
+            },
+            background: {
+                fill: 'rgba(255, 69, 221, 0.4)'
+            }
+        }
+    });
+};

@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         // inverted: true,
         zooming: {
@@ -63,3 +63,16 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            line: {
+                stroke: '#af8f6f',
+                strokeWidth: 4
+            }
+        }
+    });
+};

@@ -40,4 +40,35 @@ function getOptions() {
     return options;
 }
 
-Highcharts.chart('container1', getOptions());
+const chart = Highcharts.chart('container1', getOptions());
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            background: {
+                fill: 'rgba(255, 222, 77, 0.4)',
+                stroke: 'rgba(255, 76, 76, 0.4)',
+                strokeWidth: 4
+            },
+            crosshairX: {
+                stroke: '#ff4c4c',
+                strokeWidth: 2,
+                fill: '#ff4c4c',
+                dashStyle: 'ShortDash'
+            },
+            crosshairY: {
+                stroke: '#ff4c4c',
+                strokeWidth: 2,
+                fill: '#ff4c4c',
+                dashStyle: 'ShortDash'
+            },
+            label: {
+                style: {
+                    fontSize: '1.3em'
+                }
+            }
+        }
+    });
+};

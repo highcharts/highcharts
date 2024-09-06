@@ -10,7 +10,7 @@
     let cpVisibility = true;
 
     // Create the chart
-    Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
 
         chart: {
             events: {
@@ -64,4 +64,18 @@
         }]
 
     });
+
+    const applyColors = document.getElementById('applyColors');
+
+    applyColors.onclick = function () {
+        chart.annotations[0].update({
+            typeOptions: {
+                line: {
+                    fill: '#06d001',
+                    stroke: '#06d001',
+                    strokeWidth: 2
+                }
+            }
+        });
+    };
 })();

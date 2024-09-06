@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         zooming: {
             type: 'xy'
@@ -42,3 +42,26 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        labelOptions: {
+            style: {
+                color: '#071952'
+            }
+        },
+        typeOptions: {
+            backgroundColors: [
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)',
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)',
+                'rgb(7, 25, 82,   0.4)',
+                'rgb(8, 131, 149, 0.4)'
+            ],
+            lineColor: 'rgba(0, 0, 0, 0.8)'
+        }
+    });
+};
