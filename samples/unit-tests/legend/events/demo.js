@@ -51,19 +51,19 @@ QUnit.test(
                 legendGroup.translateX +
                 bbox.x +
                 bbox.width / 2,
-            y = seriesLegendGroup.translateY +
+            baseY = seriesLegendGroup.translateY +
                 legendGroup.translateY +
                 bbox.y +
-                bbox.height / 2;
+                bbox.height / 2,
+            // Workaround for failing test on Linux.
+            // Try removing in Chrome v129+.
+            correction = (
+                    test.elementsFromPoint(x, baseY)
+                        .indexOf(series.legendItem.symbol.element) < 0
+                ) ? -8 : 0,
+            y = baseY + correction;
 
-        test.click(x, y, void 0, true);
-
-        const chartOffset = Highcharts.offset(chart.container);
-        let elem = document.elementFromPoint(
-            x + chartOffset.left,
-            y + chartOffset.top
-        );
-        // const htmlContent = document.documentElement.outerHTML;
+        test.click(x, y);
 
         assert.strictEqual(
             chart.series[0].visible,
@@ -95,12 +95,6 @@ QUnit.test(
         //     'hcEvents click',
         //     'Logging hcEvents click'
         // );
-
-        assert.strictEqual(
-            elem,
-            'about 149, 370',
-            'Logging elementFromPoint'
-        );
         // Offset by the a11y proxy-container-after
         elem = document.elementFromPoint(
             chartOffset.left + 50,
@@ -109,6 +103,17 @@ QUnit.test(
         assert.strictEqual(
             elem,
             'grid target as (50,50)',
+            'Logging grid target elementFromPoint'
+        );
+
+        
+        elem = document.elementFromPoint(
+            chartOffset.left + 50,
+            chartOffset.top + 50 + correction
+        );
+        assert.strictEqual(
+            elem,
+            'grid target as (50,50) with the correction',
             'Logging grid target elementFromPoint'
         );
 
