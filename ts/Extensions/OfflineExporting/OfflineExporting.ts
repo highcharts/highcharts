@@ -214,7 +214,6 @@ namespace OfflineExporting {
                 )
             ),
             scale = options.scale || 1;
-
         let svgurl: string,
             blob,
             finallyHandler: Function,
@@ -893,7 +892,6 @@ namespace OfflineExporting {
         failedLoadCallback: Function,
         finallyCallback?: Function
     ): void {
-
         let img = new win.Image(),
             taintedHandler: Function;
         const loadHandler = (): void => {
