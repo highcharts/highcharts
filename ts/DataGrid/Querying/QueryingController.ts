@@ -99,6 +99,16 @@ class QueryingController {
     }
 
     /**
+     * Check if the data table does not need to be modified.
+     */
+    public willNotModify(): boolean {
+        return (
+            !this.sorting.modifier
+            // && !this.filtering.modifier
+        );
+    }
+
+    /**
      * Apply all modifiers to the data table.
      */
     private async modifyData(): Promise<void> {

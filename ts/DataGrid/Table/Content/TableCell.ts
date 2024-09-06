@@ -200,6 +200,14 @@ class TableCell extends Cell {
             this.value
         );
 
+        if (vp.dataGrid.querying.willNotModify()) {
+            // If the data table does not need to be modified, skip the
+            // data modification and don't update the whole table. It checks
+            // if the modifiers are globally set. Can be changed in the future
+            // to check if the modifiers are set for the specific columns.
+            return;
+        }
+
         await vp.dataGrid.querying.proceed(true);
         vp.loadPresentationData();
     }
