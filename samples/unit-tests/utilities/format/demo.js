@@ -392,6 +392,51 @@ QUnit.module('Format', () => {
             'equal',
             'Shorthand relational'
         );
+
+        assert.strictEqual(
+            format(
+                '{#eq foo "bar"}equal{else}not equal{/eq}',
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, double quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                // eslint-disable-next-line quotes
+                "{#eq foo 'bar'}equal{else}not equal{/eq}",
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, single quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                '{#eq musketeer "D\'Artagnan"}equal{else}not equal{/eq}',
+                {
+                    musketeer: 'D\'Artagnan'
+                }
+            ),
+            'equal',
+            'String comparison, mixed quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                '{#if (eq foo "bar")}equal{else}not equal{/if}',
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, sub expression'
+        );
     });
 
     QUnit.test('Subexpressions', assert => {

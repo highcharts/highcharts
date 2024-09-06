@@ -198,7 +198,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         if ((n = Number(key)).toString() === key) {
             return n;
         }
-        if (/^".+"$/.test(key)) {
+        if (/^["'].+["']$/.test(key)) {
             return key.slice(1, -1);
         }
 
@@ -308,15 +308,21 @@ function format(str = '', ctx: any, chart?: Chart): string {
                 len = expression.length;
 
             let start = 0,
-                insideString = false;
+                startChar;
             for (i = 0; i <= len; i++) {
                 const char = expression.charAt(i);
-                if (char === '"') {
-                    insideString = !insideString;
+
+                // Start of string
+                if (!startChar && (char === '"' || char === '\'')) {
+                    startChar = char;
+
+                // End of string
+                } else if (startChar === char) {
+                    startChar = '';
                 }
 
                 if (
-                    !insideString &&
+                    !startChar &&
                     (char === ' ' || i === len)
                 ) {
                     parts.push(expression.substr(start, i - start));

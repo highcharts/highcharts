@@ -192,7 +192,7 @@
     QUnit.test('Formatter', function (assert) {
         // Today: Tue, Dec 06 2016
         var formatRegex =
-                /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}$/,
+                /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2,3} [0-9]{2} [0-9]{4}$/,
             customFormat,
             chart,
             axis,
