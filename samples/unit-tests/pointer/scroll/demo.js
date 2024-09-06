@@ -53,12 +53,18 @@ QUnit.test(
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-            const correction = (
-                controller1.elementsFromPoint(
-                    point1Position.x,
-                    point1Position.y
-                ).indexOf(point1.graphic.element) < 0
-            ) ? -8 : 0;
+            const correction1 = (
+                    controller1.elementsFromPoint(
+                        point1Position.x,
+                        point1Position.y
+                    ).indexOf(point1.graphic.element) < 0
+                ) ? -8 : 0,
+                correction2 = (
+                    controller2.elementsFromPoint(
+                        point1Position.x,
+                        point1Position.y
+                    ).indexOf(point2.graphic.element) < 0
+                ) ? -8 : 0;
 
             assert.strictEqual(
                 chart1.tooltip.isHidden,
@@ -72,7 +78,10 @@ QUnit.test(
                 'Tooltip of second chart should be hidden.'
             );
 
-            controller1.moveTo(point1Position.x, point1Position.y + correction);
+            controller1.moveTo(
+                point1Position.x,
+                point1Position.y + correction1
+            );
 
             assert.strictEqual(
                 !chart1.tooltip.isHidden,
@@ -90,12 +99,15 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y + correction
+                chart1.plotHeight + point2Position.y + correction1
             );
-            controller2.moveTo(point2Position.x, point2Position.y + correction);
+            controller2.moveTo(
+                point2Position.x,
+                point2Position.y + correction2
+            );
             controller2.mouseDown(
                 point2Position.x,
-                point2Position.y + correction,
+                point2Position.y + correction2,
                 {
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
@@ -103,7 +115,7 @@ QUnit.test(
             );
             controller2.mouseUp(
                 point2Position.x,
-                point2Position.y + correction,
+                point2Position.y + correction2,
                 {
                     button: TestController.MouseButtons.middle,
                     target: controller2.relatedTarget
