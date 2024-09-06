@@ -119,6 +119,9 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'Day',
                 cells: {

@@ -58,6 +58,9 @@ Dashboards.board('container', {
             }
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'Date',
                 cells: {

@@ -28,9 +28,8 @@ The CSS is not included in the library by default, but you can import it like be
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-## Row/Cell height
-For performance reasons the height of every row, and hence cell, is static and long texts are truncated with an ellipsis.
-However, you can disable this by setting the [rendering.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`
+## Row height
+The height of each row is dynamic and based on the highest cell. It allows adjust row height when changing the column width. However, this can impact performance. You can disable this feature by setting the [rendering.rows.strictHeights](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings#strictHeights) option to `true`.
 
 ```js
 rendering: {
@@ -39,6 +38,17 @@ rendering: {
     }
 }
 ```
+
+The default row height for the DataGrid with strict row heights enabled is determined by the `height` parameter set for `.highcharts-datagrid-table tbody tr`, which is `36px` by default. If you need to change it, you can override it using CSS:
+
+```css
+.highcharts-datagrid-table tbody tr {
+    height: 50px;
+}
+```
+
+The text in the cell will not wrap then, and anything that exceeds the width will be truncated and replaced with an ellipsis. If you use content that causes the cell height to exceed the declared row height, the row will not automatically expand. This will only happen if the `row.strictHeights` option is disabled.
+
 
 ## General classes
 Each of the class name contains a prefix `highcharts-datagrid` and a suffix that

@@ -305,6 +305,9 @@ class DataGrid {
         newOptions: Partial<Options>,
         oneToOne = false
     ): void {
+        // Operate on a copy of the options argument
+        newOptions = merge(newOptions);
+
         if (newOptions.columns) {
             if (oneToOne) {
                 this.loadColumnOptionsOneToOne(newOptions.columns);
@@ -715,7 +718,9 @@ class DataGrid {
      * Destroys the data grid.
      */
     public destroy(): void {
-        const dgIndex = DataGrid.dataGrids.findIndex(dg => dg === this);
+        const dgIndex = DataGrid.dataGrids.findIndex(
+            (dg): boolean => dg === this
+        );
 
         this.viewport?.destroy();
 

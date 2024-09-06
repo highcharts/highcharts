@@ -60,11 +60,11 @@ Column resizer
 ---------
 
 Allows you to resize the entire [column](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridColumn.DataGridColumn-1). The functionality is enabled by default,
-but you can disable it in the [`columnDefaults.resizable` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings).
+but you can disable it in the [`columnDefaults.resizing` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings).
 
 ```js
 columnDefaults: {
-    resizable: false
+    resizing: false
 }
 ```
 

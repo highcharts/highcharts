@@ -43,6 +43,9 @@ Dashboards.board('container', {
             id: 'data'
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: [{
                 id: 'Revenue',
                 header: {
