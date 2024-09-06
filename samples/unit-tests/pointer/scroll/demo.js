@@ -84,7 +84,7 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y
+                chart1.plotHeight + point2Position.y, void 0, true
             );
             controller2.moveTo(
                 point2Position.x,
@@ -95,7 +95,7 @@ QUnit.test(
             // Try removing in Chrome v129+.
             if (!controller2.relatedTarget) {
                 point2Position.x += 35;
-                point2Position.y += 80;
+                point2Position.y += (80 - 408);
 
                 controller2.moveTo(
                     point2Position.x,
