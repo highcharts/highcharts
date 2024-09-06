@@ -49,27 +49,6 @@ QUnit.test(
             (#6553).`
         );
 
-        // Offset by the a11y proxy-container-after
-        let elem = document.elementFromPoint(
-            chartOffset.left + 50,
-            chartOffset.top + 50
-        );
-        assert.strictEqual(
-            elem,
-            'grid target as (50,50)',
-            'Logging grid target elementFromPoint'
-        );
-
-        elem = document.elementFromPoint(
-            chartOffset.left + 50,
-            chartOffset.top + 50 + correction
-        );
-        assert.strictEqual(
-            elem,
-            'grid target as (50,50) with the correction',
-            'Logging grid target elementFromPoint'
-        );
-
         chart.legend.update({
             events: {
                 itemClick: function () {
