@@ -179,7 +179,6 @@ namespace OfflineExporting {
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
      * - **libURL:** URL pointing to location of dependency scripts to download
-     *
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
      *
