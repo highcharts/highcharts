@@ -20,12 +20,20 @@ test('DataGrid update methods', async function (assert) {
         },
         columns: [{
             id: 'product',
-            headerFormat: 'Column 1',
-            cellFormat: 'before update'
+            header: {
+                format: 'Column 1'
+            },
+            cells: {
+                format: 'before update'
+            }
         }, {
             id: 'weight',
-            headerFormat: 'Column 2',
-            cellFormat: 'before update'
+            header: {
+                format: 'Column 2'
+            },
+            cells: {
+                format: 'before update'
+            }
         }]
     }, true);
     dataGrid.viewport?.resizeObserver?.disconnect();
@@ -33,7 +41,9 @@ test('DataGrid update methods', async function (assert) {
     dataGrid.update({
         columns: [{
             id: 'weight',
-            cellFormat: 'after update'
+            cells: {
+                format: 'after update'
+            }
         }, {
             id: 'price',
             enabled: false
@@ -46,12 +56,20 @@ test('DataGrid update methods', async function (assert) {
         dataGrid.options.columns,
         [{
             id: 'product',
-            headerFormat: 'Column 1',
-            cellFormat: 'before update'
+            header: {
+                format: 'Column 1'
+            },
+            cells: {
+                format: 'before update'
+            }
         }, {
             id: 'weight',
-            headerFormat: 'Column 2',
-            cellFormat: 'after update'
+            header: {
+                format: 'Column 2'
+            },
+            cells: {
+                format: 'after update'
+            }
         }, {
             id: 'price',
             enabled: false
@@ -64,7 +82,9 @@ test('DataGrid update methods', async function (assert) {
             id: 'weight'
         }, {
             id: 'product',
-            cellFormat: 'after update'
+            cells: {
+                format: 'after update'
+            }
         }]
     }, false, true);
 
@@ -72,12 +92,20 @@ test('DataGrid update methods', async function (assert) {
         dataGrid.options.columns,
         [{
             id: 'weight',
-            headerFormat: 'Column 2',
-            cellFormat: 'after update'
+            header: {
+                format: 'Column 2'
+            },
+            cells: {
+                format: 'after update'
+            }
         }, {
             id: 'product',
-            headerFormat: 'Column 1',
-            cellFormat: 'after update'
+            header: {
+                format: 'Column 1'
+            },
+            cells: {
+                format: 'after update'
+            }
         }],
         'One-to-one update should remove all the column options that were not' +
         ' specified in the first argument.'
@@ -85,26 +113,36 @@ test('DataGrid update methods', async function (assert) {
 
     dataGrid.updateColumn('weight', {}, false, true);
     dataGrid.updateColumn('product', { enabled: false }, false);
-    dataGrid.updateColumn('imaginary-column', { headerFormat: 'New One!' }, false);
+    dataGrid.updateColumn('imaginary-column', { 
+        header: {
+            format: 'New One!'
+        }
+    }, false);
 
     assert.deepEqual(
         dataGrid.options.columns,
         [{
             id: 'product',
-            headerFormat: 'Column 1',
-            cellFormat: 'after update',
+            header: {
+                format: 'Column 1'
+            },
+            cells: {
+                format: 'after update'
+            },
             enabled: false
         }, {
             id: 'imaginary-column',
-            headerFormat: 'New One!'
+            header: {
+                format: 'New One!'
+            }
         }],
         'Varations of updateColumn method should work correctly.'
     );
 
     assert.strictEqual(
         dataGrid.getOptionsJSON(),
-        '{"columns":[{"id":"product","headerFormat":"Column 1","cellFormat":"after update","enabled":false},' +
-        '{"id":"imaginary-column","headerFormat":"New One!"}],"dataTable":{"columns":{"product":["Apples","P' +
+        '{"columns":[{"id":"product","header":{"format":"Column 1"},"cells":{"format":"after update"},"enabled":false},' +
+        '{"id":"imaginary-column","header":{"format":"New One!"}}],"dataTable":{"columns":{"product":["Apples","P' +
         'ears","Plums","Bananas"],"weight":[100,40,0.5,200],"price":[1.5,2.53,5,4.5]}}}',
         'The getOptionsJSON method should return the correct JSON string.'
     );

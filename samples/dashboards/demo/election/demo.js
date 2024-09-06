@@ -333,18 +333,28 @@ async function setupDashboard() {
                 },
                 columns: [{
                     id: 'state',
-                    headerFormat: 'State'
+                    header: {
+                        format: 'State'
+                    }
                 }, {
                     id: 'demVoteSummary',
-                    headerFormat: 'Dem. votes'
+                    header: {
+                        format: 'Dem. votes'
+                    }
                 }, {
                     id: 'repVoteSummary',
-                    headerFormat: 'Rep. votes'
+                    header: {
+                        format: 'Rep. votes'
+                    }
                 }, {
                     id: 'totalVotes',
-                    headerFormat: 'Total votes',
-                    cellFormatter: function () {
-                        return Number(this.value).toLocaleString('en-US');
+                    header: {
+                        format: 'Total votes'
+                    },
+                    cells: {
+                        formatter: function () {
+                            return Number(this.value).toLocaleString('en-US');
+                        }
                     }
                 }]
             }
@@ -786,10 +796,14 @@ async function updateGridComponent(component, year) {
         dataGridOptions: {
             columns: [{
                 id: 'repColVotes',
-                headerFormat: candRep + ' (Republican)'
+                header: {
+                    format: candRep + ' (Republican)'
+                }
             }, {
                 id: 'demColVotes',
-                headerFormat: candDem + ' (Democrat)'
+                header: {
+                    format: candDem + ' (Democrat)'
+                }
             }]
         }
     });

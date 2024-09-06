@@ -537,33 +537,45 @@ async function setupDashboard() {
                     columns: [{
                         id: 'time',
                         headerFormat: 'Local Time',
-                        cellFormatter: function () {
-                            return Highcharts.dateFormat(
-                                '%I:%M %p', this.value
-                            );
+                        cells: {
+                            formatter: function () {
+                                return Highcharts.dateFormat(
+                                    '%I:%M %p', this.value
+                                );
+                            }
                         }
                     }, {
                         id: 'temperature',
-                        headerFormat: paramConfig.getColumnHeader(
-                            'temperature'
-                        ),
-                        cellFormat: '{value:.1f}'
+                        header: {
+                            format: paramConfig.getColumnHeader('temperature')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
                     }, {
                         id: 'wind',
-                        headerFormat: paramConfig.getColumnHeader('wind'),
-                        cellFormat: '{value:.1f}'
+                        header: {
+                            format: paramConfig.getColumnHeader('wind')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
                     }, {
                         id: 'windDir',
-                        headerFormat: paramConfig.getColumnHeader(
-                            'windDir'
-                        ),
-                        cellFormat: '{value:.0f} {log}'
+                        header: {
+                            format: paramConfig.getColumnHeader('windDir')
+                        },
+                        cells: {
+                            format: '{value:.0f} {log}'
+                        }
                     }, {
                         id: 'precipitation',
-                        headerFormat: paramConfig.getColumnHeader(
-                            'precipitation'
-                        ),
-                        cellFormat: '{value:.1f}'
+                        header: {
+                            format: paramConfig.getColumnHeader('precipitation')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
                     }]
                 }
             }, {

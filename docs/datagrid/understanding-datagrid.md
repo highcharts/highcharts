@@ -35,7 +35,7 @@ Header
 
 The [table header](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHeader) is a special row, always on the top, containing the column IDs.
 Cells in the `header` are called `headerCell`. Their contents can be edited using the
-[`headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
+[`header.format` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 
 The API allows you to group headers into sections.
 You can find more information about in our [Columns article](/docs/dashboards/columns).
@@ -78,11 +78,15 @@ Represents a column in the data grid. Options for a column often apply to all of
 ```js
 columns: [{
     id: 'column1',
-    cellFormat: '<h3>{value}</h3>'
+    cells: {
+        format: '<h3>{value}</h3>'
+    }
 }, {
     id: 'column2',
-    cellFormatter: function () {
-        return '<a href="' + this.value + '">URL</a>';
+    cells: {
+        formatter: function () {
+            return '<a href="' + this.value + '">URL</a>';
+        }
     }
 }]
 ```
@@ -93,7 +97,7 @@ For more information on the column element see the [API reference](https://api.h
 Cell
 ---------
 
-The basic element in the DataGrid can be formatted by [`cellFormat`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [`cellFormatter`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter).
+The basic element in the DataGrid can be formatted by [`cells.format`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [`cells.formatter`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter).
 You can also set the custom HTML in formatters.
 
 For more information on the cell element see the [API reference](https://api.highcharts.com/dashboards/typedoc/classes/DataGrid_DataGridCell.DataGridCell-1.html).
@@ -112,7 +116,7 @@ columnDefaults: {
 
 Click on a cell and change the value.
 
-If you declared `cellFormatter` or `cellFormat` props, it will be applied to the
+If you declared `celss.formatter` or `cells.format` props, it will be applied to the
 new value.
 
 For more information on cell options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable).

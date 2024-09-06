@@ -116,7 +116,9 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: [{
                 id: 'Revenue',
-                headerFormat: '{id} (€)'
+                header: {
+                    format: '{id} (€)'
+                }
             }, {
                 id: 'Category',
                 enabled: false

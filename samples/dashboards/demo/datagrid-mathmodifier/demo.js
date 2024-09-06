@@ -121,10 +121,12 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: [{
                 id: 'Day',
-                cellFormatter: function () {
-                    return new Date(this.value)
-                        .toISOString()
-                        .substring(0, 10);
+                cells: {
+                    formatter: function () {
+                        return new Date(this.value)
+                            .toISOString()
+                            .substring(0, 10);
+                    }
                 }
             }]
         }

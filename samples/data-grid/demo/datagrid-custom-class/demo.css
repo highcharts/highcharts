@@ -14,8 +14,9 @@
     width: 40%;
 }
 
-.underline {
+.greater-than-100 {
     text-decoration: underline;
+    color: #0f0;
 }
 
 .header-cell-custom-class-price {

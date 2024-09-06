@@ -60,10 +60,12 @@ Dashboards.board('container', {
         dataGridOptions: {
             columns: [{
                 id: 'Date',
-                cellFormatter: function () {
-                    return new Date(this.value)
-                        .toISOString()
-                        .substring(0, 10);
+                cells: {
+                    formatter: function () {
+                        return new Date(this.value)
+                            .toISOString()
+                            .substring(0, 10);
+                    }
                 }
             }]
         }

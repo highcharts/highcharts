@@ -469,13 +469,19 @@ async function setupBoard() {
                     enabled: false
                 }, {
                     id: 'FD',
-                    headerFormat: 'Days with frost'
+                    header: {
+                        format: 'Days with frost'
+                    }
                 }, {
                     id: 'ID',
-                    headerFormat: 'Days with ice'
+                    header: {
+                        format: 'Days with ice'
+                    }
                 }, {
                     id: 'RR1',
-                    headerFormat: 'Days with rain'
+                    header: {
+                        format: 'Days with rain'
+                    }
                 }, {
                     id: 'TN',
                     enabled: false
@@ -484,21 +490,37 @@ async function setupBoard() {
                     enabled: false
                 }, {
                     id: 'TNC',
-                    headerFormat: 'Average temperature °C',
-                    cellFormat: '{value:.1f}'
+                    header: {
+                        format: 'Average temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
                 }, {
                     id: 'TNF',
-                    headerFormat: 'Average temperature °F',
-                    cellFormat: '{value:.1f}',
+                    header: {
+                        format: 'Average temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
                     enabled: false
                 }, {
                     id: 'TXC',
-                    headerFormat: 'Maximum temperature °C',
-                    cellFormat: '{value:.1f}'
+                    header: {
+                        format: 'Maximum temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
                 }, {
                     id: 'TXF',
-                    headerFormat: 'Maximum temperature °F',
-                    cellFormat: '{value:.1f}',
+                    header: {
+                        format: 'Maximum temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
                     enabled: false
                 }]
             },

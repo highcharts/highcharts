@@ -41,9 +41,13 @@ DataGrid.dataGrid('container', {
     columns: [{
         id: 'product',
         className: 'custom-column-product-class',
-        headerFormat: '{id} name'
+        header: {
+            format: '{id} name'
+        }
     }, {
         id: 'weight',
-        headerFormat: 'Custom weight'
+        header: {
+            format: 'Custom weight'
+        }
     }]
 });

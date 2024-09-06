@@ -8,8 +8,12 @@ DataGrid.dataGrid('container', {
     },
     columnDefaults: {
         editable: true,
-        cellClassName: '{#if (gt value 100)}underline{/if}',
-        headerCellClassName: 'header-cell-custom-class-{column.id}'
+        cells: {
+            className: '{#if (gt value 100)}greater-than-100{/if}'
+        },
+        header: {
+            className: 'header-cell-custom-class-{column.id}'
+        }
     },
     columns: [{
         id: 'weight',

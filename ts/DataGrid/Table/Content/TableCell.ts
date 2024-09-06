@@ -175,7 +175,7 @@ class TableCell extends Cell {
             element.innerText = cellContent;
         }
 
-        this.setCustomClassName(this.column.options.cellClassName);
+        this.setCustomClassName(this.column.options.cells?.className);
 
         if (!updateTable) {
             return;
@@ -216,10 +216,8 @@ class TableCell extends Cell {
      * Handle the formatting content of the cell.
      */
     private formatCell(): string {
-        const {
-            cellFormat,
-            cellFormatter
-        } = this.column.options;
+        const options = this.column.options.cells || {};
+        const { format, formatter } = options;
 
         let value = this.value;
         if (!defined(value)) {
@@ -228,11 +226,11 @@ class TableCell extends Cell {
 
         let cellContent = '';
 
-        if (cellFormatter) {
-            cellContent = cellFormatter.call(this);
+        if (formatter) {
+            cellContent = formatter.call(this);
         } else {
             cellContent = (
-                cellFormat ? this.format(cellFormat) : value + ''
+                format ? this.format(format) : value + ''
             );
         }
 

@@ -78,8 +78,10 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
     columns: [{
         id: 'weight',
         className: 'custom-column-class-name',
-        cellFormatter: function () {
-            return 'V: ' + this.value;
+        cells: {
+            formatter: function () {
+                return 'V: ' + this.value;
+            }
         }
     }, {
         id: 'metaData',

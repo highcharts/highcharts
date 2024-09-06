@@ -115,10 +115,15 @@ class HeaderCell extends Cell {
         const column = this.column;
         const isSingleColumn = this.row.viewport.getColumn(this.column.id);
         const options = merge(column.options, this.options);
+        const headerCellOptions = options.header || {};
 
-        this.value = options.headerFormat ? (
-            column.format(options.headerFormat)
-        ) : column.id;
+        if (headerCellOptions.formatter) {
+            this.value = headerCellOptions.formatter.call(this);
+        } else if (headerCellOptions.format) {
+            this.value = column.format(headerCellOptions.format);
+        } else {
+            this.value = column.id;
+        }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
@@ -163,7 +168,7 @@ class HeaderCell extends Cell {
             this.initColumnSorting();
         }
 
-        this.setCustomClassName(options.headerCellClassName);
+        this.setCustomClassName(options.header?.className);
     }
 
     /**

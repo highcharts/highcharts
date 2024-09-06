@@ -23,16 +23,28 @@ DataGrid.dataGrid('container', {
     },
     columns: [{
         id: 'product',
-        cellFormat: '{value} No. 1',
-        headerFormat: '{id} name'
+        cells: {
+            format: '{value} No. 1'
+        },
+        header: {
+            format: '{id} name'
+        }
     }, {
         id: 'weight',
-        cellFormat: '{value} kg',
-        headerFormat: '{id} (kg)'
+        cells: {
+            format: '{value} kg'
+        },
+        header: {
+            format: '{id} (kg)'
+        }
     }, {
         id: 'price',
-        cellFormat: '{value} $',
-        headerFormat: '($) {id}'
+        cells: {
+            format: '{value} $'
+        },
+        header: {
+            format: '($) {id}'
+        }
     }, {
         id: 'metaData',
         enabled: false

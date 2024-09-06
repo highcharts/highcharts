@@ -181,55 +181,16 @@ export interface RowsSettings {
  * column individually.
  */
 export interface ColumnOptions {
-    /**
-     * Allows to define an additional class name to all table cells in the
-     * column. Applied only to cell that are in the table not the column header.
-     * It is updated with every cell's value change.
-     *
-     * It uses templating, where context is the table cell instance.
-     *
-     * @default undefined
-     */
-    cellClassName?: string;
 
     /**
-     * Allows to define an additional class name only to the column header
-     * cells.
-     *
-     * It uses templating, where context is the header cell instance.
-     *
-     * @default undefined
+     * Options for all cells in the column.
      */
-    headerCellClassName?: string;
+    cells?: ColumnCellOptions;
 
     /**
-     * The format of the cell content within the given column of the datagrid.
-     * Applied only to cell that are in the table not the column header.
-     *
-     * When not set, the default format `'{id}'` is used.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
-     *
-     * @default undefined
+     * Options for all the header cells in the column.
      */
-    cellFormat?: string;
-
-    /**
-     * Callback function for formatting cells within the given column of the
-     * datagrid. Applied only to cell that are in the table not the column
-     * header.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
-     *
-     * @return
-     * A string to be concatenated in to the common cell's text.
-     */
-    cellFormatter?: CellFormatterCallback;
-
-    /**
-     * The format of the column header. Use `{id}` to display the column id.
-     */
-    headerFormat?: string;
+    header?: ColumnHeaderOptions;
 
     /**
      * Whether to make the column cells editable `true`, or read-only `false`.
@@ -256,6 +217,74 @@ export interface ColumnOptions {
      * @default true
      */
     resizable?: boolean;
+}
+
+/**
+ * Options for all cells in the column.
+ */
+export interface ColumnCellOptions {
+    /**
+     * Allows to define an additional class name to all table cells in the
+     * column. Applied only to cell that are in the table not the column header.
+     * It is updated with every cell's value change.
+     *
+     * It uses templating, where context is the table cell instance.
+     *
+     * @default undefined
+     */
+    className?: string;
+
+    /**
+     * The format of the cell content within the given column of the datagrid.
+     * Applied only to cell that are in the table not the column header.
+     *
+     * When not set, the default format `'{id}'` is used.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
+     *
+     * @default undefined
+     */
+    format?: string;
+
+    /**
+     * Callback function for formatting cells within the given column of the
+     * datagrid. Applied only to cell that are in the table not the column
+     * header.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
+     *
+     * @return
+     * A string to be set as a table cell's content.
+     */
+    formatter?: CellFormatterCallback;
+}
+
+/**
+ * Options for all the header cells in the column.
+ */
+export interface ColumnHeaderOptions {
+    /**
+     * Allows to define an additional class name only to the column header.
+     *
+     * It uses templating, where context is the header cell instance.
+     *
+     * @default undefined
+     */
+    className?: string;
+
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    format?: string;
+
+    /**
+     * Callback function for formatting the column header. It is called for each
+     * column header cell.
+     *
+     * @return
+     * A string to be set as a header cell's content.
+     */
+    formatter?: CellFormatterCallback;
 }
 
 /**
