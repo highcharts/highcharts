@@ -242,6 +242,24 @@ QUnit.module('Format', () => {
             'Nested conditions'
         );
 
+        const f = `
+        {#if (lt value 3)}
+            Green
+        {else}
+            {#if (lt value 7)}
+                Yellow
+            {else}
+                Red
+            {/if}
+        {/if}
+        `;
+
+        assert.deepEqual(
+            [2, 5, 8].map(value => format(f, { value }).trim()),
+            ['Green', 'Yellow', 'Red'],
+            'Nested conditions with sub expression'
+        );
+
     });
 
     QUnit.test('each helper', assert => {
@@ -329,6 +347,7 @@ QUnit.module('Format', () => {
     });
 
     QUnit.test('Relational helpers', assert => {
+
         assert.strictEqual(
             format(
                 '{#if (lt one 2)}true{/if}',
