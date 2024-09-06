@@ -425,6 +425,12 @@ export interface CellEvents {
      * Callback function to be called after editing of cell value.
      */
     afterEdit?: CellEventCallback;
+
+    /**
+     * Callback function to be called after the cell value is set (on init or
+     * after editing).
+     */
+    afterSetValue?: CellEventCallback;
 }
 
 /**

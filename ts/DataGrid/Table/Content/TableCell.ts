@@ -163,6 +163,7 @@ class TableCell extends Cell {
     ): Promise<void> {
         this.value = value;
 
+        const vp = this.column.viewport;
         const element = this.htmlElement;
         const cellContent = this.formatCell();
 
@@ -176,12 +177,12 @@ class TableCell extends Cell {
         }
 
         this.setCustomClassName(this.column.options.cells?.className);
+        vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
 
         if (!updateTable) {
             return;
         }
 
-        const vp = this.column.viewport;
         const { dataTable: originalDataTable } = vp.dataGrid;
 
         // Taken the local row index of the original datagrid data table, but
