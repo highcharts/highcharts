@@ -4,3 +4,7 @@
     height: 300px;
     margin: 1em auto;
 }
+
+.highcharts-point {
+    fill: red !important;
+}
