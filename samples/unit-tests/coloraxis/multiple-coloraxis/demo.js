@@ -119,30 +119,7 @@ QUnit.test('Multiple color axis - colorKey', function (assert) {
 QUnit.test('Multiple color axis - dataClasses', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                polar: true,
-                events: {
-                    load: function () {
-                        const renderer = this.renderer;
-                        let col = 0;
-        
-                        // grid rows to avoid crash
-                        for (let row = 0; row < 400; row++) {
-                            // Col is fine...
-                            //for (let col = 0; col < 600; col++) {
-                                renderer.rect(col, row, 600, 1)
-                                    .attr({
-                                        class: `grid-point col-${col} row-${row}`,
-                                        zIndex: 99,
-                                        fill: '#' +
-                                            (col % 16).toString(16) +
-                                            (row % 16).toString(16) +
-                                            ((row + col) % 16).toString(16)
-                                    })
-                                    .add();
-                            //}
-                        }
-                    }
-                }
+                polar: true
             },
             yAxis: [{}, {}],
             colorAxis: [
@@ -203,49 +180,12 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
         x = legend.group.translateX + legend.padding + 5,
         y = legend.group.translateY + legend.padding + 5;
 
-    controller.moveTo(x, y, void 0, true);
-    controller.click(x, y, void 0, true);
+    controller.click(x, y);
 
     assert.strictEqual(
         s1.points[0].visible,
         false,
         'Click on data class should hide the right points.'
-    );
-
-    const chartOffset = Highcharts.offset(chart.container);
-    // Try to get more info
-    assert.strictEqual(
-        chartOffset,
-        'chartOffset',
-        'Logging chartOffset'
-    );
-
-    let elem = document.elementsFromPoint(
-        x + chartOffset.left,
-        y + chartOffset.top
-    );
-
-    assert.strictEqual(
-        elem,
-        [x, y],
-        'Logging elementsFromPoint vs [x,y]'
-    );
-
-    // assert.strictEqual(
-    //     document.body.innerHTML,
-    //     'document.body.innerHTML',
-    //     'Logging document.body.innerHTML'
-    // );
-
-    // Offset by the a11y proxy-container-after
-    elem = document.elementFromPoint(
-        chartOffset.left + 50,
-        chartOffset.top + 50
-    );
-    assert.strictEqual(
-        elem,
-        'grid target as (50,50)',
-        'Logging grid target elementFromPoint'
     );
 });
 

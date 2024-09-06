@@ -3,30 +3,7 @@ QUnit.test(
         let legendItemClickFlag = false;
         const chart = Highcharts.chart('container', {
                 chart: {
-                    type: 'area',
-                    events: {
-                        load: function () {
-                            const renderer = this.renderer;
-                            let col = 0;
-            
-                            // grid rows to avoid crash
-                            for (let row = 0; row < 400; row++) {
-                                // Col is fine...
-                                //for (let col = 0; col < 600; col++) {
-                                    renderer.rect(col, row, 600, 1)
-                                        .attr({
-                                            class: `grid-point col-${col} row-${row}`,
-                                            zIndex: 99,
-                                            fill: '#' +
-                                                (col % 16).toString(16) +
-                                                (row % 16).toString(16) +
-                                                ((row + col) % 16).toString(16)
-                                        })
-                                        .add();
-                                //}
-                            }
-                        }
-                    }
+                    type: 'area'
                 },
                 legend: {
                     useHTML: true
@@ -72,31 +49,8 @@ QUnit.test(
             (#6553).`
         );
 
-        // Try to get more info
-        assert.strictEqual(
-            chartOffset,
-            [x, chartOffset.left,
-            y, chartOffset.top],
-            'Logging chartOffset vs elementFromPoint [x,x_offset, y,y_offset]'
-        );
-        // assert.strictEqual(
-        //     htmlContent,
-        //     'htmlContent',
-        //     'Logging htmlContent'
-        // );
-        // const hcEvents = series.legendItem.symbol.element.hcEvents;
-        // assert.strictEqual(
-        //     hcEvents,
-        //     'hcEvents',
-        //     'Logging hcEvents'
-        // );
-        // assert.strictEqual(
-        //     hcEvents?.click?.[0].fn.toString(),
-        //     'hcEvents click',
-        //     'Logging hcEvents click'
-        // );
         // Offset by the a11y proxy-container-after
-        elem = document.elementFromPoint(
+        let elem = document.elementFromPoint(
             chartOffset.left + 50,
             chartOffset.top + 50
         );
@@ -106,7 +60,6 @@ QUnit.test(
             'Logging grid target elementFromPoint'
         );
 
-        
         elem = document.elementFromPoint(
             chartOffset.left + 50,
             chartOffset.top + 50 + correction
