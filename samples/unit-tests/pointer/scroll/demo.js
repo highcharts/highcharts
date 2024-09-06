@@ -20,7 +20,30 @@ QUnit.test(
         const chartOptions = {
                 chart: {
                     width: 400,
-                    height: 400
+                    height: 400,
+                    events: {
+                        load: function () {
+                            const renderer = this.renderer;
+                            let col = 0;
+            
+                            // grid rows to avoid crash
+                            for (let row = 0; row < 400; row++) {
+                                // Col is fine...
+                                //for (let col = 0; col < 600; col++) {
+                                    renderer.rect(col, row, 1, 400)
+                                        .attr({
+                                            class: `grid-point col-${col} row-${row}`,
+                                            zIndex: 99,
+                                            fill: '#' +
+                                                (col % 16).toString(16) +
+                                                (row % 16).toString(16) +
+                                                ((row + col) % 16).toString(16)
+                                        })
+                                        .add();
+                                //}
+                            }
+                        }
+                    }
                 },
                 tooltip: {
                     animation: false,
@@ -53,6 +76,27 @@ QUnit.test(
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
+
+
+            assert.strictEqual(
+                controller1.elementsFromPoint(
+                    point1Position.x,
+                    point1Position.y
+                )[0],
+                true,
+                'Logging: controller1 offset.'
+            );
+
+            assert.strictEqual(
+                controller2.elementsFromPoint(
+                    point2Position.x,
+                    point2Position.y
+                )[0],
+                true,
+                'Logging: controller2 offset.'
+            );
+
+
             const correction1 = (
                     controller1.elementsFromPoint(
                         point1Position.x,
@@ -61,8 +105,8 @@ QUnit.test(
                 ) ? -8 : 0,
                 correction2 = (
                     controller2.elementsFromPoint(
-                        point1Position.x,
-                        point1Position.y
+                        point2Position.x,
+                        point2Position.y
                     ).indexOf(point2.graphic.element) < 0
                 ) ? -8 : 0;
 
