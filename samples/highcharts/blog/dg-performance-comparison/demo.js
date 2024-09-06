@@ -33,7 +33,7 @@ Highcharts.chart('container', {
     tooltip: {
         shared: true,
         headerFormat: `<span style="font-size:11px">
-                        chart loading time for {point.x} points: 
+                        Chart loading time for {point.x} points: 
                         </span><br/>`,
         pointFormat: `<span style="color:{series.color}">
                         {series.name}: 
