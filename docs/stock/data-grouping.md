@@ -21,12 +21,12 @@ Data grouping in Highcharts Stock can be turned on or off using the enabled opti
 
 ```js
 Highcharts.stockChart('container', {
-  series: [{
-    dataGrouping: {
-      enabled: false
-    },
-    data: [...]
-  }]
+    series: [{
+        dataGrouping: {
+            enabled: false
+        },
+        data: [...]
+    }]
 });
 ```
 
@@ -53,12 +53,12 @@ The available data grouping units can be set using `units`. By default, it's an 
 
 ```js
 Highcharts.stockChart('container', {
-  series: [{
-    dataGrouping:{
-      units: [['day',[1, 2, 3]]]
-    },
-    data: [...]
-  }]
+    series: [{
+        dataGrouping:{
+            units: [['day',[1, 2, 3]]]
+        },
+        data: [...]
+    }]
 });
 ```
 
