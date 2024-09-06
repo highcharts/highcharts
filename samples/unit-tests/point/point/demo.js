@@ -260,9 +260,9 @@ QUnit.test(
             // Try removing in Chrome v129+.
             baseY = chart.series[0].nodes[0].plotY + chart.plotTop,
             correction = (
-                    controller.elementsFromPoint(x, baseY)
-                        .indexOf(chart.series[0].nodes[0].graphic.element) < 0
-                ) ? -8 : 0,
+                controller.elementsFromPoint(x, baseY)
+                    .indexOf(chart.series[0].nodes[0].graphic.element) < 0
+            ) ? -8 : 0,
             y = baseY + correction;
 
         controller.mouseOver(x, y);

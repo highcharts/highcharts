@@ -35,9 +35,9 @@ QUnit.test(
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
             correction = (
-                    test.elementsFromPoint(x, baseY)
-                        .indexOf(series.legendItem.symbol.element) < 0
-                ) ? -8 : 0,
+                test.elementsFromPoint(x, baseY)
+                    .indexOf(series.legendItem.symbol.element) < 0
+            ) ? -8 : 0,
             y = baseY + correction;
 
         test.click(x, y);
