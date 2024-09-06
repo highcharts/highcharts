@@ -17,35 +17,10 @@ QUnit.test(
             container1.parentNode.appendChild(container2);
         }
 
-        let second = false;
         const chartOptions = {
                 chart: {
                     width: 400,
-                    height: 400,
-                    events: {
-                        load: function () {
-                            const renderer = this.renderer;
-                            let col = 0;
-            
-                            // grid rows to avoid crash
-                            for (let row = 0; row < 400; row++) {
-                                // Col is fine...
-                                //for (let col = 0; col < 600; col++) {
-                                    renderer.rect(col, row, 600, 1)
-                                        .attr({
-                                            class: `grid-point col-${col} row-${row}`,
-                                            zIndex: 99,
-                                            fill: '#' +
-                                                (second ? '00' : 'ff') +
-                                                (row % 16).toString(16) +
-                                                ((row + col) % 16).toString(16)
-                                        })
-                                        .add();
-                                //}
-                            }
-                            second = true;
-                        }
-                    }
+                    height: 400
                 },
                 tooltip: {
                     animation: false,
@@ -130,6 +105,14 @@ QUnit.test(
                 point2Position.x,
                 point2Position.y
                 , void 0, true);
+
+            // controller2.relatedTarget
+            assert.strictEqual(
+                controller2.relatedTarget,
+                true,
+                'Log: c2.relatedTarget - should highcharts-point-hover.'
+            );
+
             controller2.mouseDown(
                 point2Position.x,
                 point2Position.y + correction2,
@@ -138,6 +121,7 @@ QUnit.test(
                     target: controller2.relatedTarget
                 }
                 , true);
+
             controller2.mouseUp(
                 point2Position.x,
                 point2Position.y + correction2,
@@ -166,7 +150,6 @@ QUnit.test(
                 true,
                 'Log: preview.'
             );
-            
         } finally {
             chart2.destroy();
             document.body.removeChild(container2);
