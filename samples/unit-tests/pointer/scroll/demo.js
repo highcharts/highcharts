@@ -1,7 +1,7 @@
 QUnit.test(
     'Wheel scroll with middle click should hide tooltip (#11635)',
     function (assert) {
-        var container1 = document.getElementById('container'),
+        const container1 = document.getElementById('container'),
             container2 = document.createElement('div');
 
         container1.style.display = container2.style.display = 'block';
@@ -17,7 +17,7 @@ QUnit.test(
             container1.parentNode.appendChild(container2);
         }
 
-        var chartOptions = {
+        const chartOptions = {
                 chart: {
                     width: 400,
                     height: 400
@@ -38,7 +38,7 @@ QUnit.test(
             chart2 = Highcharts.chart('container2', chartOptions);
 
         try {
-            var controller1 = new TestController(chart1),
+            const controller1 = new TestController(chart1),
                 controller2 = new TestController(chart2),
                 point1 = chart1.series[0].points[0],
                 point2 = chart2.series[0].points[0],
@@ -50,6 +50,15 @@ QUnit.test(
                     x: point2.plotX + chart2.plotLeft + 1,
                     y: point2.plotY + chart2.plotTop + 1
                 };
+
+            // Workaround for failing test on Linux.
+            // Try removing in Chrome v129+.
+            const correction = (
+                controller1.elementsFromPoint(
+                    point1Position.x,
+                    point1Position.y
+                ).indexOf(point1.graphic.element) < 0
+            ) ? -8 : 0;
 
             assert.strictEqual(
                 chart1.tooltip.isHidden,
@@ -63,7 +72,7 @@ QUnit.test(
                 'Tooltip of second chart should be hidden.'
             );
 
-            controller1.moveTo(point1Position.x, point1Position.y);
+            controller1.moveTo(point1Position.x, point1Position.y + correction);
 
             assert.strictEqual(
                 !chart1.tooltip.isHidden,
@@ -81,17 +90,25 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y
+                chart1.plotHeight + point2Position.y + correction
             );
-            controller2.moveTo(point2Position.x, point2Position.y);
-            controller2.mouseDown(point2Position.x, point2Position.y, {
-                button: TestController.MouseButtons.middle,
-                target: controller2.relatedTarget
-            });
-            controller2.mouseUp(point2Position.x, point2Position.y, {
-                button: TestController.MouseButtons.middle,
-                target: controller2.relatedTarget
-            });
+            controller2.moveTo(point2Position.x, point2Position.y + correction);
+            controller2.mouseDown(
+                point2Position.x,
+                point2Position.y + correction,
+                {
+                    button: TestController.MouseButtons.middle,
+                    target: controller2.relatedTarget
+                }
+            );
+            controller2.mouseUp(
+                point2Position.x,
+                point2Position.y + correction,
+                {
+                    button: TestController.MouseButtons.middle,
+                    target: controller2.relatedTarget
+                }
+            );
 
             assert.strictEqual(
                 chart1.tooltip.isHidden,
