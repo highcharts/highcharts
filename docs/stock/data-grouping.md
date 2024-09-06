@@ -87,7 +87,7 @@ Here is an example of a chart where you can see the difference between the two o
 
 ### The x-value for a grouped point
 
- <iframe width="500" height="800" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
+ <iframe width="500" height="860" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
 
 Grouped points can be positioned inside the group using [anchor](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.anchor) property which might take values: 
 
@@ -104,5 +104,5 @@ Additionally [firstAnchor](https://api.highcharts.com/highstock/plotOptions.seri
 
  When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readibility of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100_000.
 
- <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" allow="fullscreen"></iframe>
+ <iframe width="800" height="400" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" allow="fullscreen"></iframe>
 
