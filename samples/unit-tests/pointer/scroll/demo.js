@@ -30,7 +30,7 @@ QUnit.test(
                             for (let row = 0; row < 400; row++) {
                                 // Col is fine...
                                 //for (let col = 0; col < 600; col++) {
-                                    renderer.rect(col, row, 1, 400)
+                                    renderer.rect(col, row, 600, 1)
                                         .attr({
                                             class: `grid-point col-${col} row-${row}`,
                                             zIndex: 99,
@@ -77,13 +77,12 @@ QUnit.test(
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
 
-
             assert.strictEqual(
                 controller1.elementsFromPoint(
                     point1Position.x,
                     point1Position.y
                 )[0],
-                true,
+                point1Position.y,
                 'Logging: controller1 offset.'
             );
 
@@ -92,7 +91,7 @@ QUnit.test(
                     point2Position.x,
                     point2Position.y
                 )[0],
-                true,
+                point2Position.y,
                 'Logging: controller2 offset.'
             );
 
