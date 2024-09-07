@@ -32,7 +32,7 @@ import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
 const { format } = F;
-const { isHTML } = DGUtils;
+const { isHTML, makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -57,11 +57,11 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
-    /**
-     * The input element of a cell after mouse focus.
-     * @internal
-     */
-    public cellInputEl?: HTMLInputElement;
+    // /**
+    //  * The input element of a cell after mouse focus.
+    //  * @internal
+    //  */
+    // public cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -102,9 +102,22 @@ class TableCell extends Cell {
      */
     public override render(): void {
         super.render();
+        const vp = this.column.viewport;
+        const cell = this;
 
         // It may happen that `await` will be needed here in the future.
         void this.setValue(this.column.data?.[this.row.index], false);
+
+        if (this.column.options.editable) {
+            this.htmlElement.setAttribute('contenteditable', true);
+            this.htmlElement.addEventListener('input', function() {
+                // set value
+                cell.value = this.innerText;
+
+                // adjust height
+                vp.reflow();
+            }, false);
+        }
     }
 
     /**
@@ -140,9 +153,9 @@ class TableCell extends Cell {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
-        if (this.column.options.editable) {
-            vp.cellEditing.startEditing(this);
-        }
+        // if (this.column.options.editable) {
+        //     vp.cellEditing.startEditing(this);
+        // }
 
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {

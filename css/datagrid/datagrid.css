@@ -232,17 +232,17 @@
     text-overflow: ellipsis;
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell {
+/* .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell {
     padding: 0 0 1px;
-}
+} */
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
+/* .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
     border-radius: 0;
     width: 100%;
     height: 100%;
     outline: none;
-}
+} */
 
 /* ==== Default Theme ==== */
 .highcharts-datagrid-container {
@@ -316,10 +316,15 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
-.highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input,
+/* .highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input,
 .highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input:focus {
     border: 1px solid #0000ed;
     background-color: #b7d4ff;
+} */
+
+.highcharts-datagrid-table tbody td:focus-visible {
+    box-shadow: inset 0 0 0 1px #0000ed;
+    outline: none;
 }
 
 /* Credits */
