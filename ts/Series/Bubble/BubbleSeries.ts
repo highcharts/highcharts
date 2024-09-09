@@ -192,8 +192,8 @@ function onAxisAfterRender(this: Axis): void {
         type = this.options.type;
 
     if (
-        ((categories && categories.length) || type === 'category') &&
-        this.series.find((s): boolean => s.bubblePadding === true)
+        (categories?.length || type === 'category') &&
+        this.series.find((s): boolean | undefined => s.bubblePadding)
     ) {
 
         let tickCount = tickPositions.length;
