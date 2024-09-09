@@ -263,7 +263,7 @@ async function putS3Object(
     options = {},
     session = defaultSession
 ) {
-    if (session.dryrun) {
+    if (session && session.dryrun) {
         const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);
@@ -662,6 +662,10 @@ async function uploadFiles(params) {
     const log = require('../../libs/log');
     const { files, name, bucket, s3Params, region } = params;
 
+    const stagingBuckets = [
+        'staging-code.highcharts.com'
+    ];
+
     params = Object.assign(
         {
             batchSize: 1500,
@@ -672,8 +676,9 @@ async function uploadFiles(params) {
             callback: (from, to) => {
                 log.message(`Uploaded ${from} --> ${to}`);
             },
-            region: region ||
-                bucket.startsWith('staging') ? 'eu-central-1' : 'eu-west-1'
+            region: region || stagingBuckets.includes(bucket) ?
+                'eu-central-1' :
+                'eu-west-1'
         },
         params
     );

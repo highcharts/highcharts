@@ -67,24 +67,11 @@ class RowEditToolbar extends EditToolbar {
                                 .parent as RowEditToolbar,
                             dragDrop = rowEditToolbar.editMode.dragDrop;
 
+                        e.preventDefault();
+
                         if (dragDrop && rowEditToolbar.row) {
                             dragDrop.onDragStart(e, rowEditToolbar.row);
                         }
-                    }
-                }
-            });
-        }
-
-        if (options.settings?.enabled) {
-            items.push({
-                id: 'settings',
-                type: 'icon' as const,
-                icon: iconURLPrefix + 'settings.svg',
-                events: {
-                    click: function (this: MenuItem): void {
-                        this.menu.parent.editMode.setEditOverlay();
-
-                        (this.menu.parent as RowEditToolbar).onRowOptions();
                     }
                 }
             });
@@ -170,10 +157,16 @@ class RowEditToolbar extends EditToolbar {
     }
 
     public showToolbar(row: Row): void {
-        const toolbar = this,
-            rowCnt = row.container;
+        const toolbar = this;
+        const rowCnt = row.container;
+        const rowToolbar = toolbar.editMode.rowToolbar;
+        let x;
+        let y;
+        let offsetX;
 
-        let x, y, offsetX;
+        if (!rowToolbar) {
+            return;
+        }
 
         if (
             rowCnt &&
@@ -186,8 +179,21 @@ class RowEditToolbar extends EditToolbar {
             );
             const rowWidth = rowOffsets.right - rowOffsets.left;
 
-            // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
+                if (!row.options?.editMode?.toolbarItems) {
+                    item.activate();
+                    return;
+                }
+                const toolbarItems = row.options.editMode.toolbarItems;
+
+                if (
+                    toolbarItems[item.options.id as keyof typeof toolbarItems]
+                        ?.enabled === false
+                ) {
+                    item.deactivate();
+                    return;
+                }
+
                 item.activate();
             });
 
@@ -197,8 +203,10 @@ class RowEditToolbar extends EditToolbar {
             toolbar.setPosition(x, y);
             toolbar.row = row;
             toolbar.refreshOutline(-offsetX, toolbar.container.clientHeight);
+            rowToolbar.isVisible = true;
         } else if (toolbar.isVisible) {
             toolbar.hide();
+            rowToolbar.isVisible = false;
         }
     }
 
@@ -207,16 +215,6 @@ class RowEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            /// toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
-
-            // @ToDo - mask is buggy - should be refactored or removed.
-            // if (this.row) {
-            //     super.maskNotEditedElements(
-            //         this.row,
-            //         true
-            //     );
-            //     this.editedRow = this.row;
-            // }
         }
     }
 

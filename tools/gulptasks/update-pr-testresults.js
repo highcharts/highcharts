@@ -144,7 +144,7 @@ function createMarkdownLink(link, message = 'link') {
 function createTemplateForChangedSamples() {
     let gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
+    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
@@ -200,7 +200,24 @@ async function fetchExistingReview(pr) {
     } catch (err) {
         logLib.message('No existing review found or error occured: ' + err);
     }
+
     return existingReview;
+}
+
+async function fetchReviewFile(pr) {
+    try {
+        const response = await fetch(
+            `https://vrevs.highsoft.com/api/assets/visualtests/diffs/pullrequests/${pr}/review-pr-${pr}.json`
+        );
+
+        if (response && response.ok) {
+            return await response.json();
+        }
+    } catch (error) {
+        logLib.message(error);
+    }
+
+    return null;
 }
 
 async function fetchAllReviewsForVersion(version) {
@@ -228,8 +245,8 @@ async function fetchAllReviewsForVersion(version) {
  * and then the pr changes so that the sample no longer is diffing we
  * need to remove the approval.
  *
- * @param diffingSampleEntries
- * @param pr
+ * @param {*} diffingSampleEntries Diffing samples
+ * @param {number} pr PR number
  * @return {Promise<void>}
  */
 async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
@@ -265,8 +282,8 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
  * the visual review tool application. It will check for an existing
  * review for the given pr an merge any already approved samples given
  * that the diffing value is the same.
- * @param testResults
- * @param pr
+ * @param {*} testResults test results JSON
+ * @param {number} pr PR number
  */
 async function createPRReviewFile(testResults, pr) {
     const samplesWithDiffs = Object.entries(testResults).filter(
@@ -316,57 +333,60 @@ async function createPRReviewFile(testResults, pr) {
  * @param {boolean} includeReview file
  * @return {object|undefined} result of upload or undefined
  */
-async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
+async function uploadVisualTestFiles(
+    diffingSamples,
+    pr,
+    includeReview = true
+) {
     let result;
-    if (diffingSamples.length > 0) {
-        const files = diffingSamples.reduce((resultingFiles, sample) => {
-            resultingFiles.push({
-                from: `samples/${sample[0]}/reference.svg`,
-                to: buildImgS3Path('reference.svg', sample[0], pr)
-            });
-            resultingFiles.push({
-                from: `samples/${sample[0]}/candidate.svg`,
-                to: buildImgS3Path('candidate.svg', sample[0], pr)
-            });
-            resultingFiles.push({
-                from: `samples/${sample[0]}/diff.gif`,
-                to: buildImgS3Path('diff.gif', sample[0], pr)
-            });
-            return resultingFiles;
-        }, []);
+    const files = diffingSamples.reduce((resultingFiles, sample) => {
+        resultingFiles.push({
+            from: `samples/${sample[0]}/reference.svg`,
+            to: buildImgS3Path('reference.svg', sample[0], pr)
+        });
+        resultingFiles.push({
+            from: `samples/${sample[0]}/candidate.svg`,
+            to: buildImgS3Path('candidate.svg', sample[0], pr)
+        });
+        resultingFiles.push({
+            from: `samples/${sample[0]}/diff.gif`,
+            to: buildImgS3Path('diff.gif', sample[0], pr)
+        });
+        return resultingFiles;
+    }, []);
 
+    files.push({
+        from: 'test/visual-test-results.json',
+        to: `${S3_PULLREQUEST_PATH}/${pr}/visual-test-results.json`
+    });
+
+    if (includeReview) {
+        const reviewFilename = `review-pr-${pr}.json`;
         files.push({
-            from: 'test/visual-test-results.json',
-            to: `${S3_PULLREQUEST_PATH}/${pr}/visual-test-results.json`
+            from: `test/${reviewFilename}`,
+            to: `${S3_PULLREQUEST_PATH}/${pr}/${reviewFilename}`
         });
 
-        if (includeReview) {
-            const reviewFilename = `review-pr-${pr}.json`;
-            files.push({
-                from: `test/${reviewFilename}`,
-                to: `${S3_PULLREQUEST_PATH}/${pr}/${reviewFilename}`
+    }
+
+    if (!argv.dryrun) {
+        try {
+            result = await uploadFiles({
+                files,
+                bucket: VISUAL_TESTS_BUCKET,
+                profile: argv.profile,
+                name: `image diff on PR #${pr}`,
+                s3Params: {
+                    ACL: void 0 // use bucket permissions
+                }
             });
+        } catch (err) {
+            logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +
+                'Original error: ' + err.message);
         }
 
-        if (!argv.dryrun) {
-            try {
-                result = await uploadFiles({
-                    files,
-                    bucket: VISUAL_TESTS_BUCKET,
-                    profile: argv.profile,
-                    name: `image diff on PR #${pr}`,
-                    s3Params: {
-                        ACL: void 0 // use bucket permissions
-                    }
-                });
-            } catch (err) {
-                logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +
-                    'Original error: ' + err.message);
-            }
-
-        } else {
-            logLib.message('Dry run - Skipping upload of files.');
-        }
+    } else {
+        logLib.message('Dry run - Skipping upload of files.');
     }
     return result;
 }
@@ -407,7 +427,19 @@ async function commentOnPR() {
     });
 
     const newReview = await createPRReviewFile(testResults, prNumber);
-    await uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
+
+    let shouldSaveReview = newReview.samples.length > 0;
+    if (!shouldSaveReview) {
+        const existingReview = await fetchReviewFile(prNumber);
+        shouldSaveReview = !!(existingReview && existingReview.samples?.length);
+    }
+
+    await uploadVisualTestFiles(
+        diffingSamples,
+        prNumber,
+        shouldSaveReview
+    );
+
     await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
     await postGitCommitStatusUpdate(pr, newReview);
 

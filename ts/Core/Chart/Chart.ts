@@ -653,10 +653,10 @@ class Chart {
 
             // Item options should be reflected in chart.options.series,
             // chart.options.yAxis etc
-            optionsArray = this.options[coll] = splat(this.options[coll])
+            optionsArray = this.options[coll] = splat(this.options[coll] as any)
                 .slice(),
             userOptionsArray = this.userOptions[coll] = this.userOptions[coll] ?
-                splat(this.userOptions[coll]).slice() :
+                splat(this.userOptions[coll] as any).slice() :
                 [];
 
         if (this.hasRendered) {
@@ -1054,7 +1054,7 @@ class Chart {
         fireEvent(this, 'getAxes');
 
         for (const coll of ['xAxis', 'yAxis'] as Array<'xAxis'|'yAxis'>) {
-            const arr: Array<AxisOptions> = options[coll] = splat(
+            const arr = options[coll] = splat(
                 options[coll] || {}
             );
             for (const axisOptions of arr) {
@@ -1351,10 +1351,30 @@ class Chart {
      * @function Highcharts.Chart#getContainerBox
      */
     public getContainerBox(): { width: number, height: number } {
-        return {
-            width: getStyle(this.renderTo, 'width', true) || 0,
-            height: getStyle(this.renderTo, 'height', true) || 0
-        };
+        // Temporarily hide support divs from a11y and others, #21888
+        const nonContainers = [].map.call(
+                this.renderTo.children,
+                (child: HTMLDOMElement): [HTMLElement, string] | undefined => {
+                    if (child !== this.container) {
+                        const display = child.style.display;
+                        child.style.display = 'none';
+                        return [child, display];
+                    }
+                }
+            ) as Array<[HTMLElement, string]>,
+            box = {
+                width: getStyle(this.renderTo, 'width', true) || 0,
+                height: (getStyle(this.renderTo, 'height', true) || 0)
+            };
+
+        // Restore the non-containers
+        nonContainers.filter(Boolean).forEach(
+            ([div, display]): void => {
+                div.style.display = display;
+            }
+        );
+
+        return box;
     }
 
     /**
@@ -1370,7 +1390,12 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            containerBox = chart.getContainerBox();
+            containerBox = chart.getContainerBox(),
+            enableDefaultHeight = containerBox.height > 1 &&
+                !( // #21510, prevent infinite reflow
+                    !chart.renderTo.parentElement?.style.height &&
+                        chart.renderTo.style.height === '100%'
+                );
 
         /**
          * The current pixel width of the chart.
@@ -1394,7 +1419,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (containerBox.height > 1 ? containerBox.height : 400)
+            (enableDefaultHeight ? containerBox.height : 400)
         );
 
         chart.containerBox = containerBox;
@@ -1555,11 +1580,7 @@ class Chart {
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
-        css(renderTo, {
-            overflow: 'hidden',
-            // #21144, retest and remove in future version of Chrome
-            pointerEvents: H.isChrome ? 'fill' : 'auto'
-        });
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -1576,7 +1597,8 @@ class Chart {
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none', // #13503
                 'touch-action': 'manipulation',
-                outline: 'none'
+                outline: 'none',
+                padding: '0px'
             }, optionsChart.style || {});
         }
 
@@ -1785,7 +1807,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout as any);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
@@ -3641,7 +3663,8 @@ class Chart {
             { inverted } = this;
 
         let hasZoomed = false,
-            displayButton: boolean|undefined;
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -3681,13 +3704,17 @@ class Chart {
 
             let newMin = axis.toValue(minPx, true) +
                 // Don't apply offset for selection (#20784)
-                    (selection ? 0 : minPointOffset * pointRangeDirection),
+                    (
+                        selection || axis.isOrdinal ?
+                            0 : minPointOffset * pointRangeDirection
+                    ),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        selection ? // Don't apply offset for selection (#20784)
+                        // Don't apply offset for selection (#20784)
+                        selection || axis.isOrdinal ?
                             0 :
                             (
                                 (minPointOffset * pointRangeDirection) ||
@@ -3782,7 +3809,12 @@ class Chart {
             // It is not necessary to calculate extremes on ordinal axis,
             // because they are already calculated, so we don't want to override
             // them.
-            if (!axis.isOrdinal || scale !== 1 || reset) {
+            if (
+                !axis.isOrdinal ||
+                axis.options.overscroll || // #21316
+                scale !== 1 ||
+                reset
+            ) {
                 // If the new range spills over, either to the min or max,
                 // adjust it.
                 if (newMin < floor) {
@@ -3821,6 +3853,10 @@ class Chart {
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
+
+                        if (axis.isPanning) {
+                            isAnyAxisPanning = true; // #21319
+                        }
 
                         axis.setExtremes(
                             reset ? void 0 : newMin,
@@ -3865,8 +3901,12 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button
-                if (displayButton && !this.resetZoomButton) {
+                // Show or hide the Reset zoom button, but not while panning
+                if (
+                    displayButton &&
+                    !isAnyAxisPanning &&
+                    !this.resetZoomButton
+                ) {
                     this.showResetZoom();
                 } else if (!displayButton && this.resetZoomButton) {
                     this.resetZoomButton = this.resetZoomButton.destroy();

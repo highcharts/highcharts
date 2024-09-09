@@ -20,7 +20,7 @@ const chart = Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['2019', '2020', '2021'],
+        categories: ['2021', '2022', '2023'],
         labels: {
             x: -10
         }
@@ -35,13 +35,13 @@ const chart = Highcharts.chart('container', {
 
     series: [{
         name: 'Ava',
-        data: [38, 51, 34]
+        data: [34, 39, 53]
     }, {
         name: 'Dina',
-        data: [31, 26, 27]
+        data: [27, 21, 22]
     }, {
         name: 'Malin',
-        data: [38, 42, 41]
+        data: [41, 34, 32]
     }],
 
     responsive: {

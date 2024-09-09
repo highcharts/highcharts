@@ -1260,7 +1260,13 @@ const stockTools: StockToolsOptions = {
                  */
                 symbol: 'save-chart.svg'
             }
-        }
+        },
+        /**
+         * Whether the stock tools toolbar is visible.
+         *
+         * @since 11.4.4
+         */
+        visible: true
     }
 };
 

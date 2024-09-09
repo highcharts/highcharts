@@ -11,6 +11,7 @@ const gulp = require('gulp');
  */
 async function checkDocsConsistency() {
     const FS = require('fs');
+    const FSLib = require('../libs/fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
 
@@ -23,6 +24,7 @@ async function checkDocsConsistency() {
         );
     }
     tsFiles.forEach(file => {
+        file = FSLib.path(file, true);
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             requiresPattern = /@requires[ ]*([a-z0-9\-\/\.:]+)/gu,
@@ -40,7 +42,22 @@ async function checkDocsConsistency() {
         }
 
         while ((match = requiresPattern.exec(md))) {
-            const requires = match[1].replace(/^(stock|maps|gantt)\//u, '');
+            let requires = match[1]
+                .replace(/^(stock|maps|gantt)\//u, '');
+
+            // The @require tags in the master files are relative to the npm
+            // package root (#21470)
+            if (
+                file.startsWith('ts/masters/') &&
+                requires !== 'highcharts'
+            ) {
+                if (requires.startsWith('highcharts/')) {
+                    requires = requires.replace('highcharts/', '');
+                } else {
+                    error404s.push({ file, requires });
+                }
+            }
+
             try {
                 FS.statSync(`ts/masters/${requires}.src.ts`);
             } catch (e1) {

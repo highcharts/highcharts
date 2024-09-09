@@ -259,3 +259,63 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Plotbands in stock', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: Array.from({ length: 50 }, () => 1),
+            showInNavigator: false
+        }],
+        xAxis: {
+            min: 10,
+            max: 30
+        },
+        navigator: {
+            xAxis: {
+                min: 0,
+                max: 50,
+                plotBands: [{
+                    from: 10,
+                    to: 14,
+                    color: 'red'
+                }]
+            }
+        }
+    });
+    const xAxis = chart.xAxis[1];
+    assert.strictEqual(
+        xAxis.plotLinesAndBands[0].svgElem.pathArray[0][2],
+        xAxis.top,
+        'The plotBand on navigator should be positioned on corresponding yAxis'
+    );
+});
+
+QUnit.test('PlotBand on main axis when navigator yAxis has id', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            plotBands: [{
+                from: 5,
+                to: 10,
+                color: 'yellow'
+            }]
+        },
+        navigator: {
+            yAxis: {
+                id: 'nav-ABC'
+            }
+        },
+
+        series: [{
+            data: Array.from({ length: 15 }, () => 1)
+        }]
+    });
+    const xAxis = chart.xAxis[0];
+
+    assert.strictEqual(
+        xAxis.plotLinesAndBands[0].svgElem.pathArray.length,
+        5,
+        'The plotband should only have 1 box'
+    );
+});

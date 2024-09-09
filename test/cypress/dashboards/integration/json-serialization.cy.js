@@ -242,7 +242,7 @@ describe('JSON serialization - gui enabled', () => {
 
     it('Should save state after add new component.', () => {
         cy.toggleEditMode();
-        grabComponent('layout');
+        grabComponent('Row');
         dropComponent('#cell-2');
 
         cy.board().then((board) => {
