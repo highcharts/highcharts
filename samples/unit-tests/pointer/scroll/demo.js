@@ -32,7 +32,10 @@ QUnit.test(
                         type: 'line',
                         data: [3, 2, 1]
                     }
-                ]
+                ],
+                title: {
+                    text: ''
+                }
             },
             chart1 = Highcharts.chart('container', chartOptions),
             chart2 = Highcharts.chart('container2', chartOptions);
@@ -84,68 +87,31 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y
+                chart1.plotHeight + point1Position.y
             );
             controller2.moveTo(
-                point2Position.x + 200,
-                point2Position.y - 20, void 0, true
+                point2Position.x,
+                point2Position.y
             );
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-            //if (!controller2.relatedTarget) {
-            controller2.moveTo(
-                point2Position.x - 10,
-                point2Position.y - 20,
-                void 0,
-                true
-            );
-
-            // draw an circle
-            chart2.renderer.circle(
-                point2Position.x - 10,
-                point2Position.y - 20,
-                3
-            ).attr({
-                fill: 'black',
-                stroke: 'orange',
-                'stroke-width': 1,
-                zIndex: 101
-            }).css({
-                'pointer-events': 'none'
-            }).add();
-
-            controller2.moveTo(
-                point2Position.x + 20,
-                point2Position.y + 10,
-                void 0,
-                true
-            );
-
-            // draw an circle
-            chart2.renderer.circle(
-                point2Position.x + 20,
-                point2Position.y + 10,
-                3
-            ).attr({
-                fill: 'orange',
-                stroke: 'black',
-                'stroke-width': 1,
-                zIndex: 101
-            }).css({
-                'pointer-events': 'none'
-            }).add();
-
-            point2Position.x += 20;
-            point2Position.y += 10;
-            //}
+            if (!controller2.relatedTarget) {
+                point2Position.x += 200;
+            
+                controller2.moveTo(
+                    point2Position.x,
+                    point2Position.y
+                );
+            }
 
             controller2.mouseDown(
                 point2Position.x,
                 point2Position.y,
                 {
                     button: TestController.MouseButtons.middle,
-                    target: controller2.relatedTarget
+                    target: controller2.relatedTarget ||
+                        chart2.series[0].points[0].graphic.element
                 }, true
             );
 
@@ -154,7 +120,8 @@ QUnit.test(
                 point2Position.y,
                 {
                     button: TestController.MouseButtons.middle,
-                    target: controller2.relatedTarget
+                    target: controller2.relatedTarget ||
+                        chart2.series[0].points[0].graphic.element
                 }, true
             );
 
