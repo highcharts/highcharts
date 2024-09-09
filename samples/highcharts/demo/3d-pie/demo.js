@@ -5,11 +5,10 @@ Highcharts.chart('container', {
             enabled: true,
             alpha: 45,
             beta: 0
-        },
-        height: 150
+        }
     },
     title: {
-        text: 'Global smartphone               shipments market share, Q1 2022',
+        text: 'Global smartphone shipments market share, Q1 2022',
         align: 'left'
     },
     subtitle: {
