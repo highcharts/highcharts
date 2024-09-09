@@ -9,6 +9,8 @@ on:
       - 'css/**'
       - '.github/workflows/visual-compare.yml'
 
+  workflow_dispatch:
+
 permissions:
   contents: read # to fetch code (actions/checkout)
 
@@ -170,8 +172,8 @@ jobs:
         if: ${{ always() }}
         with:
           name: visual-test-results
-          path:
-            - tmp/visual-test-results
-            - test/review-pr-*.json
-            - tmp/pr-visual-test-comment.json
+          path: |
+            tmp/visual-test-results
+            test/review-pr-*.json
+            tmp/pr-visual-test-comment.json
 
