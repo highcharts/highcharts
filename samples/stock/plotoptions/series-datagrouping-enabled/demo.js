@@ -1,6 +1,7 @@
-const data = Array.from({ length: 800 }, (_, i) =>
+const data = Array.from({ length: 800 }, (_, i) => [
+    i * 1000,
     Math.round((2 * Math.sin(i / 50) + Math.random() - 0.5) * 100)
-);
+]);
 
 Highcharts.stockChart('container', {
     legend: {
@@ -8,7 +9,7 @@ Highcharts.stockChart('container', {
     },
     series: [
         {
-            data: data,
+            data,
             name: 'Data Grouping enabled',
             dataGrouping: {
                 enabled: false
@@ -16,7 +17,11 @@ Highcharts.stockChart('container', {
         },
         {
             name: 'Data Grouping disabled',
-            data
+            data,
+            dataGrouping: {
+                forced: true,
+                units: [['second', [10]]]
+            }
         }
     ]
 });
