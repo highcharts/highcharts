@@ -9,7 +9,7 @@ const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('../libs/git');
 const { uploadFiles, putS3Object } = require('./lib/uploadS3');
-const { doRequest, createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
+const { doRequest } = require('./lib/github');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
 const S3_REVIEWS_PATH = 'visualtests/reviews';
@@ -142,13 +142,18 @@ function createMarkdownLink(link, message = 'link') {
  * @return {string} markdown template with the changed files.
  */
 function createTemplateForChangedSamples() {
-    let gitChangedFiles = getFilesChanged();
+    const gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line));
+
+    const changedPaths = new Set(
+        gitChangedFiles.split('\n')
+            .filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line))
+    );
+
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
-            gitChangedFiles.map(line => {
+            Array.from(changedPaths).map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
             }).join('\n');
