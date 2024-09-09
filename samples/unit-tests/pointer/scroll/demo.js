@@ -106,6 +106,7 @@ QUnit.test(
                     void 0,
                     true
                 );
+
                 controller2.moveTo(
                     point2Position.x + 8,
                     point2Position.y + 191,
@@ -116,10 +117,15 @@ QUnit.test(
                 point2Position.x += 8;
                 point2Position.y += 191;
 
+                const points = TestController.getPointsBetween(
+                    [point2Position.x, point2Position.y],
+                    [point2Position.x + 8, point2Position.y + 80]
+                ) || [];
+
                 assert.strictEqual(
-                    controller2.relatedTarget,
-                    true,
-                    'Log: c2.relatedTarget - should highcharts-point-hover.'
+                    [points.length, points[0], points[points.length - 1]],
+                    ['len', 'first', 'last'],
+                    'Log: distance and points'
                 );
             }
 
