@@ -97,8 +97,8 @@ QUnit.test(
 
                 // point2Position.x += -10;
                 // point2Position.y += 81;
-                point2Position.x += 21;
-                point2Position.y += -408;
+                point2Position.x += -21;
+                point2Position.y += -408/2;
 
                 controller2.moveTo(
                     point2Position.x,
