@@ -84,42 +84,35 @@ QUnit.test(
             // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
-                chart1.plotHeight + point2Position.y, void 0, true
+                chart1.plotHeight + point2Position.y
             );
             controller2.moveTo(
                 point2Position.x,
-                point2Position.y
+                point2Position.y, void 0, true
             );
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
             if (!controller2.relatedTarget) {
                 controller2.moveTo(
-                    point2Position.x - 21,
-                    point2Position.y - 204,
+                    point2Position.x - 10,
+                    point2Position.y - 20,
                     void 0,
                     true
                 );
                 controller2.moveTo(
-                    point2Position.x + 50,
-                    point2Position.y + 81,
+                    point2Position.x + 20,
+                    point2Position.y + 10,
                     void 0,
                     true
                 );
 
-                controller2.moveTo(
-                    point2Position.x + 8,
-                    point2Position.y + 191,
-                    void 0,
-                    true
-                );
-
-                point2Position.x += 8;
-                point2Position.y += 191;
+                point2Position.x += 20;
+                point2Position.y += 10;
 
                 const points = TestController.getPointsBetween(
                     [point2Position.x, point2Position.y],
-                    [point2Position.x + 8, point2Position.y + 80]
+                    [point2Position.x + 20, point2Position.y + 10]
                 ) || [];
 
                 assert.strictEqual(
