@@ -170,5 +170,8 @@ jobs:
         if: ${{ always() }}
         with:
           name: visual-test-results
-          path: tmp/visual-test-results
+          path:
+            - tmp/visual-test-results
+            - test/review-pr-*.json
+            - tmp/pr-visual-test-comment.json
 
