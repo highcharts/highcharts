@@ -101,13 +101,13 @@ QUnit.test(
                     true
                 );
                 controller2.moveTo(
-                    point2Position.x + 5,
+                    point2Position.x + 50,
                     point2Position.y + 81,
                     void 0,
                     true
                 );
 
-                point2Position.x += 5;
+                point2Position.x += 50;
                 point2Position.y += 81;
 
                 assert.strictEqual(
