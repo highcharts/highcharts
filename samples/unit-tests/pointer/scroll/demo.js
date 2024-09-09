@@ -93,13 +93,28 @@ QUnit.test(
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-            if (!controller2.relatedTarget) {
+            if (true || !controller2.relatedTarget) {
                 controller2.moveTo(
                     point2Position.x - 10,
                     point2Position.y - 20,
                     void 0,
                     true
                 );
+
+                // draw an circle
+                chart2.renderer.circle(
+                    point2Position.x - 10,
+                    point2Position.y - 20,
+                    3
+                ).attr({
+                    fill: 'black',
+                    stroke: 'orange',
+                    'stroke-width': 1,
+                    zIndex: 101
+                }).css({
+                    'pointer-events': 'none'
+                }).add();
+
                 controller2.moveTo(
                     point2Position.x + 20,
                     point2Position.y + 10,
@@ -107,19 +122,23 @@ QUnit.test(
                     true
                 );
 
+                
+                // draw an circle
+                chart2.renderer.circle(
+                    point2Position.x + 20,
+                    point2Position.y + 10,
+                    3
+                ).attr({
+                    fill: 'orange',
+                    stroke: 'black',
+                    'stroke-width': 1,
+                    zIndex: 101
+                }).css({
+                    'pointer-events': 'none'
+                }).add();
+
                 point2Position.x += 20;
                 point2Position.y += 10;
-
-                const points = TestController.getPointsBetween(
-                    [point2Position.x, point2Position.y],
-                    [point2Position.x + 20, point2Position.y + 10]
-                ) || [];
-
-                assert.strictEqual(
-                    [points.length, points[0], points[points.length - 1]],
-                    ['len', 'first', 'last'],
-                    'Log: distance and points'
-                );
             }
 
             controller2.mouseDown(
