@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'line',
+        type: 'pie',
         options3d: {
             enabled: true,
             alpha: 45,
