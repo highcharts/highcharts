@@ -237,12 +237,10 @@ class Pointer {
         this.eventsToUnbind = [];
 
         if (!H.chartCount) {
-            if (Pointer.unbindDocumentMouseUp) {
-                Pointer.unbindDocumentMouseUp.forEach(
-                    (el): void => el.unbind()
-                );
-                Pointer.unbindDocumentMouseUp.length = 0;
-            }
+            Pointer.unbindDocumentMouseUp.forEach(
+                (el): void => el.unbind()
+            );
+            Pointer.unbindDocumentMouseUp.length = 0;
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
                     Pointer.unbindDocumentTouchEnd()
