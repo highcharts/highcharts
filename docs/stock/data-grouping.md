@@ -48,9 +48,11 @@ but you can use the custom function to calculate the final value for each group.
 
 <iframe width="600" height="600" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-approximation" allowfullscreen></iframe>
 
- ##### [Units](https://api.highcharts.com/highstock/series.line.dataGrouping.units)
+##### [Units](https://api.highcharts.com/highstock/series.line.dataGrouping.units)
 The available data grouping units can be set using `units`. By default, it's an array of time units (millisecond, second, minute, hour, day, week, month, year) with their allowed multiples.
 
+
+In the example below, the data grouping is set to only group data points into one, two or three days.
 ```js
 Highcharts.stockChart('container', {
     series: [{
@@ -83,6 +85,22 @@ Here is an example of a chart where you can see the difference between the two o
 <iframe width="600" height="450" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-groupall" allowfullscreen></iframe>
 
 
+##### [forced](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.forced)
+
+Sometimes it's useful to force the data grouping to kick in, event if all of the data points can be easily fitted into the visible range. This can be achieved by setting `forced` to `true`, while also deterimining the `units` option. This way, the series will choose the lowest available option to group the points. This can be used to smoothen the series, similar to what indicators like SMA do.
+
+The example below shows how to force the data to be grouped into one second intervals. (the result can be seen in the first example of the page)
+```js
+Highcharts.stockChart('container', {
+  series: [{
+    dataGrouping:{
+      forced: true,
+      units: [['second',[1]]]
+    },
+    data: [...]
+  }]
+});
+```
 
 
 ### The x-value for a grouped point
@@ -102,7 +120,7 @@ Additionally [firstAnchor](https://api.highcharts.com/highstock/plotOptions.seri
 
 ### Performance comparison of data grouping
 
- When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readibility of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100_000.
+ When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readibility of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100 000.
 
  <iframe width="800" height="400" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" allow="fullscreen"></iframe>
 
