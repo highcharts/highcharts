@@ -136,7 +136,7 @@ This behavior can be configured with the [`accessibility.linkedDescription`](htt
 ```
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-avg-temp allow="fullscreen"></iframe>
 
-[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/tree/master/samples/highcharts/accessibility/accessible-avg-tmp)
+[View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-avg-temp)
 
 ### Caption:
 
