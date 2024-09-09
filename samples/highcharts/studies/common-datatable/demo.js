@@ -52,18 +52,18 @@ const previewTable = () => {
             // to handle aliases, and doesn't come with a memory cost if we copy
             // the columns by reference.
             // @todo Copy the columns by reference.
-            this.table = new DataTableCore({
+            this.dataTable = new DataTableCore({
                 columns: getTableSpecificColumns()
             });
 
-            addEvent(this.table, 'afterSetColumns', () => {
+            addEvent(this.dataTable, 'afterSetColumns', () => {
                 this.isDirtyData = true;
                 clearTimeout(chartRedrawTimer);
                 setTimeout(() => chart.redraw(), 0);
             });
 
             addEvent(dataTable, 'afterSetRows', () => {
-                this.table.setColumns(getTableSpecificColumns());
+                this.dataTable.setColumns(getTableSpecificColumns());
                 previewTable();
             });
         }

@@ -7,10 +7,10 @@ Series.prototype.setData = function (
     animation,
     updatePoints
 ) {
-    const table = this.options.table;
-    if (table) {
-        this.table = table instanceof DataTableCore ?
-            table : new DataTableCore(table);
+    const dataTable = this.options.dataTable;
+    if (dataTable) {
+        this.dataTable = dataTable instanceof DataTableCore ?
+            dataTable : new DataTableCore(dataTable);
         this.isDirty = this.chart.isDirtyBox = true;
         this.isDirtyData = true;
 
@@ -32,7 +32,7 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Options + array',
-        table: {
+        dataTable: {
             columns: {
                 x: [0, 1, 3, 4],
                 y: [4, 2, 5, 1],
@@ -41,7 +41,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + array',
-        table: new DataTableCore({
+        dataTable: new DataTableCore({
             columns: {
                 x: [0, 1, 3, 4],
                 y: [3, 6, 5, 7]
@@ -49,7 +49,7 @@ Highcharts.chart('container', {
         })
     }, {
         name: 'Options + typed array',
-        table: {
+        dataTable: {
             columns: {
                 x: new Uint8Array([0, 1, 3, 4]),
                 y: new Uint8Array([6, 4, 7, 3])
@@ -57,7 +57,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + typed array',
-        table: new DataTableCore({
+        dataTable: new DataTableCore({
             columns: {
                 x: new Uint8Array([0, 1, 3, 4]),
                 y: new Uint8Array([9, 5, 9, 4])
