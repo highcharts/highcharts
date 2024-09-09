@@ -391,6 +391,25 @@ async function uploadVisualTestFiles(
     return result;
 }
 
+
+async function writeCommentFile(content) {
+    const { writeFile, mkdir } = require('node:fs/promises');
+    const { join } = require('node:path');
+
+    await mkdir('tmp', { recursive: true });
+
+    const JSONFilePath = join('tmp', 'pr-visual-test-comment.json');
+
+    const [title, ...body] = content.split('\n');
+
+    await writeFile(JSONFilePath, JSON.stringify({
+        title,
+        body: body.join('\n')
+    }));
+
+    logLib.message('Wrote file to', JSONFilePath);
+}
+
 /**
  * Task for adding a visual test result as a comment to a PR.
  * It also updates the status for the commit with github.
@@ -400,18 +419,10 @@ async function uploadVisualTestFiles(
 async function commentOnPR() {
     const {
         pr,
-        user,
-        alwaysAdd = false,
-        resultsPath = 'test/visual-test-results.json',
-        token
+        resultsPath = 'test/visual-test-results.json'
     } = argv;
-
-    if (!token && !process.env.GITHUB_TOKEN) {
-        return completeTask('No --token or GITHUB_TOKEN env var specified for github access.');
-    }
-
-    if (!pr || !user) {
-        return completeTask('No --pr (pull request number) specified, or missing --user (github username)');
+    if (!pr) {
+        return completeTask('No --pr (pull request number) specified');
     }
     const prNumber = parseInt(pr, 10);
     const testResults = readTestResultsFile(resultsPath);
@@ -443,17 +454,9 @@ async function commentOnPR() {
     await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
     await postGitCommitStatusUpdate(pr, newReview);
 
-    const commentTemplate = createPRCommentBody(newReview, prNumber);
-    const { containsText = DEFAULT_COMMENT_TITLE } = argv;
-    const existingComments = await fetchPRComments(pr, user, containsText);
-
     try {
-        if (!alwaysAdd && existingComments.length > 0) {
-            logLib.message(`Updating existing comment for #${pr}`);
-            return await updatePRComment(existingComments[0].id, commentTemplate);
-        }
-        logLib.message(`Creating new comment for #${pr}`);
-        return await createPRComment(pr, commentTemplate);
+        const commentTemplate = createPRCommentBody(newReview, prNumber);
+        return writeCommentFile(commentTemplate);
     } catch (err) {
         return completeTask(err || err.message);
     }
@@ -477,5 +480,6 @@ gulp.task('update-pr-testresults', commentOnPR);
 module.exports = {
     default: commentOnPR,
     fetchExistingReview,
-    fetchAllReviewsForVersion
+    fetchAllReviewsForVersion,
+    writeCommentFile
 };

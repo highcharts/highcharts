@@ -7,6 +7,7 @@ const logLib = require('../libs/log');
 const argv = require('yargs').argv;
 const { uploadFiles } = require('./lib/uploadS3');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
+const { writeCommentFile } = require('./update-pr-testresults.js');
 const glob = require('glob');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
@@ -78,34 +79,19 @@ async function uploadVisualTestFiles(pr) {
  */
 async function commentOnPR() {
     const {
-        pr,
-        user,
-        alwaysAdd = false,
-        token
+        pr
     } = argv;
 
-    // if (!token && !process.env.GITHUB_TOKEN) {
-    //     return completeTask('No --token or GITHUB_TOKEN env var specified for github access.');
-    // }
-    //
-    if (!pr || !user) {
+    if (!pr) {
         return completeTask('No --pr (pull request number) specified, or missing --user (github username)');
     }
     const prNumber = parseInt(pr, 10);
     const uploaded = await uploadVisualTestFiles(prNumber);
 
     const commentTemplate = createPRCommentBody(uploaded);
-    const { containsText = DEFAULT_COMMENT_TITLE } = argv;
-
-    const existingComments = await fetchPRComments(pr, user, containsText);
 
     try {
-        if (!alwaysAdd && existingComments.length > 0) {
-            logLib.message(`Updating existing comment for #${pr}`);
-            return await updatePRComment(existingComments[0].id, commentTemplate);
-        }
-        logLib.message(`Creating new comment for #${pr}`);
-        return await createPRComment(pr, commentTemplate);
+        return await writeCommentFile(commentTemplate);
     } catch (err) {
         return completeTask(err || err.message);
     }
