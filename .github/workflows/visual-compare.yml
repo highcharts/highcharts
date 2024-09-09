@@ -144,7 +144,6 @@ jobs:
         run: |
           npx gulp update-pr-testresults \
           --fail-silently \
-          --user highsoft-bot \
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:
@@ -173,7 +172,7 @@ jobs:
         with:
           name: visual-test-results
           path: |
-            tmp/visual-test-results
+            test/visual-test-results.json
             test/review-pr-*.json
             tmp/pr-visual-test-comment.json
 
