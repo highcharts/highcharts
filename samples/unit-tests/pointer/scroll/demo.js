@@ -106,9 +106,15 @@ QUnit.test(
                     void 0,
                     true
                 );
+                controller2.moveTo(
+                    point2Position.x + 8,
+                    point2Position.y + 191,
+                    void 0,
+                    true
+                );
 
-                point2Position.x += 50;
-                point2Position.y += 81;
+                point2Position.x += 8;
+                point2Position.y += 191;
 
                 assert.strictEqual(
                     controller2.relatedTarget,
