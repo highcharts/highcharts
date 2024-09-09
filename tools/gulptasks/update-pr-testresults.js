@@ -13,7 +13,7 @@ const { doRequest, createPRComment, updatePRComment, fetchPRComments } = require
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
 const S3_REVIEWS_PATH = 'visualtests/reviews';
-const DEFAULT_COMMENT_TITLE = '## Visual test results';
+const DEFAULT_COMMENT_TITLE = 'Visual test results';
 const DEFAULT_OPTIONS = {
     method: 'GET',
     json: true,
