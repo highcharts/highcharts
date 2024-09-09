@@ -116,7 +116,7 @@ columnDefaults: {
 
 Click on a cell and change the value.
 
-If you declared `celss.formatter` or `cells.format` props, it will be applied to the
+If you declared `cells.formatter` or `cells.format` props, it will be applied to the
 new value.
 
 For more information on cell options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable).

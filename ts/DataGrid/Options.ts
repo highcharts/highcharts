@@ -225,8 +225,8 @@ export interface ColumnOptions {
 export interface ColumnCellOptions {
     /**
      * Allows to define an additional class name to all table cells in the
-     * column. Applied only to cell that are in the table not the column header.
-     * It is updated with every cell's value change.
+     * column. Applied only to cell that are in the table, not in the column
+     * header. It is updated with every cell's value change.
      *
      * It uses templating, where context is the table cell instance.
      *
@@ -236,7 +236,7 @@ export interface ColumnCellOptions {
 
     /**
      * The format of the cell content within the given column of the datagrid.
-     * Applied only to cell that are in the table not the column header.
+     * Applied only to cell that are in the table, not in the column header.
      *
      * When not set, the default format `'{value}'` is used.
      *
@@ -260,11 +260,11 @@ export interface ColumnCellOptions {
 }
 
 /**
- * Options for all the header cells in the column.
+ * Options for the header cells in the columns.
  */
 export interface ColumnHeaderOptions {
     /**
-     * Allows to define an additional class name only to the column header.
+     * Allows user to define an additional class name only to the column header.
      *
      * It uses templating, where context is the header cell instance.
      *
