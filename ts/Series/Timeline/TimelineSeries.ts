@@ -451,7 +451,7 @@ class TimelineSeries extends LineSeries {
 
         series.visiblePointsCount = visiblePoints;
 
-        this.table.setColumn('y', new Array(xData.length).fill(1));
+        this.dataTable.setColumn('y', new Array(xData.length).fill(1));
 
         super.processData.call(this, arguments as any);
 

@@ -278,7 +278,7 @@ class PieSeries extends Series {
      * @private
      */
     public hasData(): boolean {
-        return !!this.table.rowCount;
+        return !!this.dataTable.rowCount;
     }
 
     /**

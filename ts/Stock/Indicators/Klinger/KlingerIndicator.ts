@@ -192,7 +192,7 @@ class KlingerIndicator extends SMAIndicator {
 
         const isLengthValid = [series, volumeSeries].every(
             function (series): boolean|undefined {
-                return series && series.table.rowCount >=
+                return series && series.dataTable.rowCount >=
                     (options.params as any).slowAvgPeriod;
             });
 

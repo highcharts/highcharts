@@ -33,7 +33,7 @@ QUnit.test(
         });
 
         function toFastSTWithRound(series) {
-            return series.table.columns.y.map(
+            return series.dataTable.columns.y.map(
                 n => parseFloat(n.toFixed(4))
             );
         }

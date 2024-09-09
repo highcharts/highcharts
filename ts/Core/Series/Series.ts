@@ -354,7 +354,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table!: DataTableCore;
+    public dataTable!: DataTableCore;
 
     public tooltipOptions!: TooltipOptions;
 
@@ -390,7 +390,7 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table ??= new DataTableCore();
+        this.dataTable ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -619,7 +619,7 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            this.table.rowCount > 0 // #9758
+            this.dataTable.rowCount > 0 // #9758
         ));
     }
 
@@ -973,7 +973,7 @@ class Series {
     }
 
     /**
-     * Shorthand to get one of the series' data columns from `Series.table`.
+     * Shorthand to get one of the series' data columns from `Series.dataTable`.
      *
      * @private
      * @function Highcharts.Series#getColumn
@@ -983,13 +983,13 @@ class Series {
         modified?: boolean
     ): Array<number> {
         return (
-            (modified ? this.table.modified : this.table)
+            (modified ? this.dataTable.modified : this.dataTable)
                 .getColumn(columnName, true) as Array<number>
         ) || [];
     }
 
     /**
-     * Shorthand to get the series' data columns from `Series.table`.
+     * Shorthand to get the series' data columns from `Series.dataTable`.
      *
      * @private
      * @function Highcharts.Series#getColumns
@@ -1312,7 +1312,7 @@ class Series {
             dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
-            table = this.table,
+            table = this.dataTable,
             dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
             pointValKey = series.pointValKey || 'y',
             pointArrayMap = series.pointArrayMap || [],
@@ -1617,7 +1617,7 @@ class Series {
         forceExtremesFromAll?: boolean
     ): Series.ProcessedDataObject {
         const series = this,
-            { table, isCartesian, options, xAxis } = series,
+            { dataTable: table, isCartesian, options, xAxis } = series,
             cropThreshold = options.cropThreshold,
             logarithmic = xAxis?.logarithmic,
             dataLength = table.rowCount;
@@ -1715,7 +1715,7 @@ class Series {
     public processData(force?: boolean): (boolean|undefined) {
         const series = this,
             xAxis = series.xAxis,
-            table = series.table;
+            table = series.dataTable;
 
         // If the series data or axes haven't changed, don't go through
         // this. Return false to pass the message on to override methods
@@ -1806,7 +1806,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.table.modified || series.table,
+            table = series.dataTable.modified || series.dataTable,
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -1998,8 +1998,8 @@ class Series {
                 this.getExtremesFromAll ||
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
-                this.table :
-                this.table.modified,
+                this.dataTable :
+                this.dataTable.modified,
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?
@@ -3938,7 +3938,7 @@ class Series {
     ): void {
         const series = this,
             seriesOptions = series.options,
-            { chart, data, table, xAxis } = series,
+            { chart, data, dataTable: table, xAxis } = series,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
             xData = series.getColumn('x'),
@@ -4059,7 +4059,7 @@ class Series {
     ): void {
 
         const series = this,
-            { chart, data, points, table } = series,
+            { chart, data, points, dataTable: table } = series,
             point = data[i],
             remove = function (): void {
                 // Splice out the point's data from all parallel arrays
@@ -4258,7 +4258,7 @@ class Series {
                 // GeoHeatMap interpolation
                 'isDirtyCanvas',
                 'points',
-                'table',
+                'dataTable',
 
                 'processedData', // #17057
 
@@ -4302,7 +4302,7 @@ class Series {
                 this.setData(options.data as any, false);
             }
         } else {
-            this.table.modified = this.table;
+            this.dataTable.modified = this.dataTable;
         }
 
         // Do the merge, with some forced options

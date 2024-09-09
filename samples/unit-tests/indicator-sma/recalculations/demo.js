@@ -77,7 +77,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData || chart.series[1].table.columns.y,
+        chart.series[1].yData || chart.series[1].dataTable.columns.y,
         [13, 14, 15],
         'Correct values'
     );
@@ -91,7 +91,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[6].remove();
 
     assert.deepEqual(
-        chart.series[1].yData || chart.series[1].table.columns.y,
+        chart.series[1].yData || chart.series[1].dataTable.columns.y,
         [13, 14],
         'Correct values after point.remove()'
     );

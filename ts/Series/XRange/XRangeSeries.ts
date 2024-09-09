@@ -79,8 +79,8 @@ function onAxisAfterGetSeriesExtremes(
         dataMax = pick(this.dataMax, -Number.MAX_VALUE);
         for (const series of this.series as Array<XRangeSeries>) {
             const column = (
-                series.table.getColumn('x2', true) ||
-                series.table.getColumn('end', true)
+                series.dataTable.getColumn('x2', true) ||
+                series.dataTable.getColumn('end', true)
             );
 
             if (column) {

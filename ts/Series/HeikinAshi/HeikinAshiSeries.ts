@@ -184,7 +184,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      */
     public getHeikinashiData(): void {
         const series = this,
-            table = series.allGroupedTable || series.table,
+            table = series.allGroupedTable || series.dataTable,
             dataLength = table.rowCount,
             heikiashiData = series.heikiashiData;
 

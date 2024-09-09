@@ -54,12 +54,12 @@ QUnit.test('Test Slow Stochastic calculations on data updates.', assert => {
     );
 
     assert.deepEqual(
-        series[1].table.columns.y,
+        series[1].dataTable.columns.y,
         [87.5, 87.5, 87.5],
         'Calculated y values for Slow Stochastic'
     );
     assert.deepEqual(
-        series[1].table.columns.smoothed,
+        series[1].dataTable.columns.smoothed,
         [null, null, 87.5],
         'Calculated smoothed values for Slow Stochastic'
     );

@@ -172,7 +172,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            table = series.allGroupedTable || series.table,
+            table = series.allGroupedTable || series.dataTable,
             dataLength = table.rowCount,
             hollowCandlestickData = this.hollowCandlestickData;
 

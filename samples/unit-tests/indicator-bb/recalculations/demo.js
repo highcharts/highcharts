@@ -99,10 +99,10 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     });
 
     const getValues = series => (
-        series.table.columns.x.map((x, i) => [
-            series.table.columns.top[i],
-            series.table.columns.middle[i],
-            series.table.columns.bottom[i]
+        series.dataTable.columns.x.map((x, i) => [
+            series.dataTable.columns.top[i],
+            series.dataTable.columns.middle[i],
+            series.dataTable.columns.bottom[i]
         ])
     );
 

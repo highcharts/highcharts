@@ -577,7 +577,7 @@ test('Data columnAssignment', async function (assert) {
 
     assert.ok(
         // @ts-ignore
-        mountedComponents[3].component.chart.series[2].table.modified.rowCount > 0,
+        mountedComponents[3].component.chart.series[2].dataTable.modified.rowCount > 0,
         'OHLC point is an array of open/low/high/close'
     );
 
@@ -856,12 +856,12 @@ test('Crossfilter with string values', async function (assert) {
     const dataGrid = dashboard.mountedComponents[2].component;
 
     assert.ok(
-        numbersNavigator.chart.series[0].table.rowCount === 7,
+        numbersNavigator.chart.series[0].dataTable.rowCount === 7,
         'Numbers navigator should have 7 points.'
     );
 
     assert.ok(
-        stringsNavigator.chart.series[0].table.rowCount === 3,
+        stringsNavigator.chart.series[0].dataTable.rowCount === 3,
         'Strings navigator should have 3 points.'
     );
 

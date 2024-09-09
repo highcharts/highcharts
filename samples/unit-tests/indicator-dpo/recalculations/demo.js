@@ -48,7 +48,7 @@ QUnit.test(
             range = period + Math.floor(period / 2 + 1);
 
         function toFastDPOWithRound(series) {
-            return series.table.columns.y.map(
+            return series.dataTable.columns.y.map(
                 y => parseFloat(y.toFixed(4))
             );
         }

@@ -384,7 +384,7 @@ namespace DataModifyComposition {
             series.dataModify
         ) {
             const processedXData = series.getColumn('x', true),
-                length = series.table.rowCount,
+                length = series.dataTable.rowCount,
                 compareStart = series.options.compareStart === true ? 0 : 1;
 
             // Find the first value for comparison

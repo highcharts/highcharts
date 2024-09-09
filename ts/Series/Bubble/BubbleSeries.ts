@@ -669,7 +669,7 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.table.rowCount;
+        return !!this.dataTable.rowCount;
     }
 
     /**

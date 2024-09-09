@@ -1280,7 +1280,7 @@ namespace OrdinalAxis {
                             ordinal.getOverscrollPositions() :
                             []
                     );
-                    fakeSeries.table = new DataTableCore({
+                    fakeSeries.dataTable = new DataTableCore({
                         columns: {
                             x: xData
                         }

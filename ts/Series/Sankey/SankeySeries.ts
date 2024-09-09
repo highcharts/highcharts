@@ -249,7 +249,7 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
-        return !!this.table.rowCount;
+        return !!this.dataTable.rowCount;
     }
 
     /**

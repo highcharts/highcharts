@@ -61,10 +61,10 @@ QUnit.test(
         );
 
         const getValues = indicator => (
-            indicator.table.columns.x.map((x, i) => [
-                indicator.table.columns.y[i],
-                indicator.table.columns.plusDI[i],
-                indicator.table.columns.minusDI[i]
+            indicator.dataTable.columns.x.map((x, i) => [
+                indicator.dataTable.columns.y[i],
+                indicator.dataTable.columns.plusDI[i],
+                indicator.dataTable.columns.minusDI[i]
             ])
         );
 

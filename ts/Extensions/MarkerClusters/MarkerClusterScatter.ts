@@ -1076,7 +1076,7 @@ function seriesGeneratePoints(
 
         if (clusteredData) {
 
-            series.table.modified = new DataTableCore({
+            series.dataTable.modified = new DataTableCore({
                 columns: {
                     x: clusteredData.groupedXData,
                     y: clusteredData.groupedYData

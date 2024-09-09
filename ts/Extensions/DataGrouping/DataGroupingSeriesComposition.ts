@@ -328,8 +328,8 @@ function applyGrouping(
     series.destroyGroupedData();
 
     const table = dataGroupingOptions.groupAll ?
-            series.table :
-            series.table.modified || series.table,
+            series.dataTable :
+            series.dataTable.modified || series.dataTable,
         processedXData = series.getColumn('x', !dataGroupingOptions.groupAll),
         xData = processedXData,
         plotSizeX = chart.plotSizeX,
@@ -460,7 +460,7 @@ function applyGrouping(
             series.cropStart = croppedData.start; // #15005
         }
         // Set the modified table
-        series.table.modified = modified;
+        series.dataTable.modified = modified;
     } else {
         series.groupMap = void 0;
         series.currentDataGrouping = void 0;

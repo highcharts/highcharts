@@ -71,7 +71,7 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 ): Array<number|null|Array<number|null>> => {
     const yData = [],
         pointArrayMap = series.pointArrayMap,
-        table = processed && series.table.modified || series.table;
+        table = processed && series.dataTable.modified || series.dataTable;
 
     if (!pointArrayMap) {
         return series.getColumn('y', processed);
@@ -423,9 +423,9 @@ class SMAIndicator extends LineSeries {
     public recalculateValues(): void {
         const croppedDataValues = [],
             indicator = this,
-            table = this.table,
+            table = this.dataTable,
             oldData = indicator.points || [],
-            oldDataLength = indicator.table.rowCount,
+            oldDataLength = indicator.dataTable.rowCount,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
@@ -462,7 +462,7 @@ class SMAIndicator extends LineSeries {
             typeof LineSeries.prototype
         > = indicator.linkedParent.options &&
             // #18176, #18177 indicators should work with empty dataset
-            indicator.linkedParent.table.rowCount ?
+            indicator.linkedParent.dataTable.rowCount ?
             (
                 indicator.getValues(
                     indicator.linkedParent,

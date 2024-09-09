@@ -542,7 +542,7 @@ class VennSeries extends ScatterSeries {
 
         const chart = this.chart;
 
-        this.table.modified = this.table;
+        this.dataTable.modified = this.dataTable;
         this.generatePoints();
 
         // Process the data before passing it into the layout function.

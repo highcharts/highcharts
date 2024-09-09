@@ -140,7 +140,7 @@ class CMFIndicator extends SMAIndicator {
         function isLengthValid(
             serie: LineSeries
         ): (boolean|undefined) {
-            return serie.table.rowCount >=
+            return serie.dataTable.rowCount >=
                 (options.params as any).period;
         }
 

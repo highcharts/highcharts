@@ -720,7 +720,7 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        dataLength = series.table.modified.rowCount,
+        dataLength = series.dataTable.modified.rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
@@ -932,7 +932,7 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
-        series.table.modified.setColumns({
+        series.dataTable.modified.setColumns({
             x: xData,
             y: yData
         });
@@ -940,7 +940,7 @@ function scatterProcessData(
     }
 
     // Without thresholds just assign data
-    const dataLength = series.table.rowCount;
+    const dataLength = series.dataTable.rowCount;
     if (
         !boostThreshold ||
         dataLength < boostThreshold ||
@@ -952,7 +952,7 @@ function scatterProcessData(
             dataLength < cropThreshold
         )
     ) {
-        series.table.modified.setColumns({
+        series.dataTable.modified.setColumns({
             x: xData,
             y: yData
         });
@@ -1011,7 +1011,7 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
-    series.table.modified.setColumns({
+    series.dataTable.modified.setColumns({
         x: processedXData,
         y: processedYData
     });

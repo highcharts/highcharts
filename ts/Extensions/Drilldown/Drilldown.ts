@@ -730,7 +730,7 @@ class ChartAdditions {
                 }
 
                 // Overcome problems with minRange (#2898)
-                oldSeries.table.setColumn('x', []);
+                oldSeries.dataTable.setColumn('x', []);
 
                 // Reset the names to start new series from the beginning.
                 // Do it once to preserve names when multiple

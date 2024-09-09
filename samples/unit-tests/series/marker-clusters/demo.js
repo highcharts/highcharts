@@ -583,7 +583,7 @@ QUnit.test('Grid algorithm tests.', function (assert) {
             series.markerClusterInfo.noise.length,
             clusteredPointsLen
         ],
-        [4, 4, series.table.rowCount],
+        [4, 4, series.dataTable.rowCount],
         'Cluster and noise amount should be correct.'
     );
 

@@ -1491,8 +1491,7 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (
-                            axis.max as any), series.table.rowCount - 1
+                        axis.max as any, series.dataTable.rowCount - 1
                     );
 
                     series.processData();
@@ -1516,7 +1515,7 @@ class Axis {
                         }
                     }
                 });
-                series.table.setColumn('x', xData);
+                series.dataTable.setColumn('x', xData);
             });
         }
     }

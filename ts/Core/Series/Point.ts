@@ -1083,7 +1083,7 @@ class Point {
             for (const key of dataColumnKeys) {
                 row[key] = (point as any)[key];
             }
-            series.table.setRow(row, i);
+            series.dataTable.setRow(row, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
