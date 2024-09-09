@@ -48,7 +48,9 @@ Dashboards.board('container', {
             },
             columns: [{
                 id: 'Revenue',
-                headerFormat: '{id} (€)'
+                header: {
+                    format: '{id} (€)'
+                }
             }, {
                 id: 'Category',
                 enabled: false

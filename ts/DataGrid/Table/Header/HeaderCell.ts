@@ -29,11 +29,9 @@ import Column from '../Column';
 import Row from '../Row';
 import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
-import Templating from '../../../Core/Templating.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
-const { format } = Templating;
 const { makeHTMLElement, isHTML } = DGUtils;
 const { merge } = Utilities;
 
@@ -117,10 +115,15 @@ class HeaderCell extends Cell {
         const column = this.column;
         const isSingleColumn = this.row.viewport.getColumn(this.column.id);
         const options = merge(column.options, this.options);
+        const headerCellOptions = options.header || {};
 
-        this.value = options.headerFormat ? (
-            format(options.headerFormat, column)
-        ) : column.id;
+        if (headerCellOptions.formatter) {
+            this.value = headerCellOptions.formatter.call(this);
+        } else if (headerCellOptions.format) {
+            this.value = column.format(headerCellOptions.format);
+        } else {
+            this.value = column.id;
+        }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
@@ -164,6 +167,8 @@ class HeaderCell extends Cell {
             // Add sorting
             this.initColumnSorting();
         }
+
+        this.setCustomClassName(options.header?.className);
     }
 
     /**

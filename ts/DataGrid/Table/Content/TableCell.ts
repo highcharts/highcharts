@@ -27,11 +27,9 @@ import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../../Core/Utilities.js';
-import F from '../../../Core/Templating.js';
 import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
-const { format } = F;
 const { isHTML } = DGUtils;
 
 
@@ -165,6 +163,7 @@ class TableCell extends Cell {
     ): Promise<void> {
         this.value = value;
 
+        const vp = this.column.viewport;
         const element = this.htmlElement;
         const cellContent = this.formatCell();
 
@@ -177,11 +176,13 @@ class TableCell extends Cell {
             element.innerText = cellContent;
         }
 
+        this.setCustomClassName(this.column.options.cells?.className);
+        vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
+
         if (!updateTable) {
             return;
         }
 
-        const vp = this.column.viewport;
         const { dataTable: originalDataTable } = vp.dataGrid;
 
         // Taken the local row index of the original datagrid data table, but
@@ -200,6 +201,14 @@ class TableCell extends Cell {
             this.value
         );
 
+        if (vp.dataGrid.querying.willNotModify()) {
+            // If the data table does not need to be modified, skip the
+            // data modification and don't update the whole table. It checks
+            // if the modifiers are globally set. Can be changed in the future
+            // to check if the modifiers are set for the specific columns.
+            return;
+        }
+
         await vp.dataGrid.querying.proceed(true);
         vp.loadPresentationData();
     }
@@ -208,10 +217,8 @@ class TableCell extends Cell {
      * Handle the formatting content of the cell.
      */
     private formatCell(): string {
-        const {
-            cellFormat,
-            cellFormatter
-        } = this.column.options;
+        const options = this.column.options.cells || {};
+        const { format, formatter } = options;
 
         let value = this.value;
         if (!defined(value)) {
@@ -220,11 +227,11 @@ class TableCell extends Cell {
 
         let cellContent = '';
 
-        if (cellFormatter) {
-            cellContent = cellFormatter.call(this);
+        if (formatter) {
+            cellContent = formatter.call(this);
         } else {
             cellContent = (
-                cellFormat ? format(cellFormat, this) : value + ''
+                format ? this.format(format) : value + ''
             );
         }
 

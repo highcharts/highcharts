@@ -138,7 +138,10 @@ class HeaderRow extends Row {
             );
 
             if (headerFormat) {
-                headerCell.options.headerFormat = headerFormat;
+                if (!headerCell.options.header) {
+                    headerCell.options.header = {};
+                }
+                headerCell.options.header.format = headerFormat;
             }
 
             if (className) {

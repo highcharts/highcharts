@@ -27,6 +27,7 @@ import type DataTable from '../../Data/DataTable';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
+import Templating from '../../Core/Templating.js';
 
 
 /* *
@@ -61,6 +62,11 @@ abstract class Cell {
      * The raw value of the cell.
      */
     public value: DataTable.CellType;
+
+    /**
+     * An additional, custom class name that can be changed dynamically.
+     */
+    private customClassName?: string;
 
 
     /* *
@@ -117,6 +123,47 @@ abstract class Cell {
         const elementStyle = this.htmlElement.style;
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
+    }
+
+    /**
+     * Returns the formatted string where the templating context is the cell.
+     *
+     * @param template
+     * The template string.
+     *
+     * @return
+     * The formatted string.
+     */
+    public format(template: string): string {
+        return Templating.format(template, this);
+    }
+
+    /**
+     * Sets the custom class name of the cell based on the template.
+     *
+     * @param template
+     * The template string.
+     */
+    protected setCustomClassName(template?: string): void {
+        const element = this.htmlElement;
+
+        if (this.customClassName) {
+            element.classList.remove(this.customClassName);
+        }
+
+        if (!template) {
+            delete this.customClassName;
+            return;
+        }
+
+        const newClassName = this.format(template).replace(/\s+/g, '-');
+        if (!newClassName) {
+            delete this.customClassName;
+            return;
+        }
+
+        element.classList.add(newClassName);
+        this.customClassName = newClassName;
     }
 
     /**

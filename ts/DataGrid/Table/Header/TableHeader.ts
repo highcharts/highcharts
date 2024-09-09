@@ -92,7 +92,6 @@ class TableHeader {
                 viewport.dataGrid.options?.header
             );
         }
-
     }
 
     /* *

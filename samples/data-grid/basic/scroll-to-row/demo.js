@@ -21,13 +21,21 @@ const dataGrid = new DataGrid.DataGrid('container', {
         className: 'custom-caption-class'
     },
     columnDefaults: {
-        headerFormat: 'Col-{id}',
-        cellFormat: 'V: {value}'
+        header: {
+            format: 'Col-{id}'
+        },
+        cells: {
+            format: 'V: {value}'
+        }
     },
     columns: [{
         id: 'd',
-        headerFormat: 'Col D',
-        cellFormat: '{row.index}%'
+        header: {
+            format: 'Col D'
+        },
+        cells: {
+            format: '{row.index}%'
+        }
     }]
 });
 

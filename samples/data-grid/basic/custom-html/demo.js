@@ -28,28 +28,36 @@ DataGrid.dataGrid('container', {
     },
     columns: [{
         id: 'Header',
-        cellFormat: '<h3>{value}</h3>'
+        cells: {
+            format: '<h3>{value}</h3>'
+        }
     }, {
         id: 'List',
-        cellFormatter: function () {
-            const items = this.value.split(',');
-            let list = '';
+        cells: {
+            formatter: function () {
+                const items = this.value.split(',');
+                let list = '';
 
-            items.forEach(el => {
-                list += '<li>' + el + '</li>';
-            });
+                items.forEach(el => {
+                    list += '<li>' + el + '</li>';
+                });
 
-            return '<ul>' + list + '</ul>';
+                return '<ul>' + list + '</ul>';
+            }
         }
     }, {
         id: 'Image',
-        cellFormatter: function () {
-            return '<img src="' + this.value + '" />';
+        cells: {
+            formatter: function () {
+                return '<img src="' + this.value + '" />';
+            }
         }
     }, {
         id: 'Link',
-        cellFormatter: function () {
-            return '<a href="' + this.value + '">URL</a>';
+        cells: {
+            formatter: function () {
+                return '<a href="' + this.value + '">URL</a>';
+            }
         }
     }]
 });

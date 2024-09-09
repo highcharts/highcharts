@@ -651,24 +651,34 @@ const setupDashboard = instanceId => {
                 ],
                 columns: [{
                     id: 'InstanceId',
-                    headerFormat: 'ID'
+                    header: {
+                        format: 'ID'
+                    }
                 }, {
                     id: 'InstanceType',
-                    headerFormat: 'Type'
+                    header: {
+                        format: 'Type'
+                    }
                 }, {
                     id: 'PublicIpAddress',
-                    headerFormat: 'Public IP'
+                    header: {
+                        format: 'Public IP'
+                    }
                 }, {
                     id: 'HealthIndicator',
-                    headerFormat: 'Health',
+                    header: {
+                        format: 'Health'
+                    },
                     useHTML: true,
-                    cellFormatter: function () {
-                        const val = this.value;
-                        return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
-                            val.toLowerCase()
-                        }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
-                            val
-                        }"/>`;
+                    cells: {
+                        formatter: function () {
+                            const val = this.value;
+                            return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
+                                val.toLowerCase()
+                            }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
+                                val
+                            }"/>`;
+                        }
                     }
                 }],
                 events: {

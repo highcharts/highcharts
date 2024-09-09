@@ -27,6 +27,14 @@ describe('DataGrid events.', () => {
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
 
+    it('AfterSetValue event.', () => {
+        cy.get('#cellAfterSetValue').should('have.value', '1');
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="weight"]')
+            .click({force: true})
+            .type('1{enter}');
+        cy.get('#cellAfterSetValue').should('have.value', '2');
+    });
+
     it('AfterSorting column event.', () => {
         cy.get('th[data-column-id="product"]').click();
         cy.get('#columnSorting').should('have.value', 'afterSorting');

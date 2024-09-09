@@ -181,34 +181,16 @@ export interface RowsSettings {
  * column individually.
  */
 export interface ColumnOptions {
-    /**
-     * The format of the cell content within the given column of the datagrid.
-     * Applied only to cell that are in the table not the column header.
-     *
-     * When not set, the default format `'{value}'` is used.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
-     *
-     * @default undefined
-     */
-    cellFormat?: string;
 
     /**
-     * Callback function for formatting cells within the given column of the
-     * datagrid. Applied only to cell that are in the table not the column
-     * header.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
-     *
-     * @return
-     * A string to be concatenated in to the common cell's text.
+     * Options for all cells in the column.
      */
-    cellFormatter?: CellFormatterCallback;
+    cells?: ColumnCellOptions;
 
     /**
-     * The format of the column header. Use `{id}` to display the column id.
+     * Options for all the header cells in the column.
      */
-    headerFormat?: string;
+    header?: ColumnHeaderOptions;
 
     /**
      * Whether to make the column cells editable `true`, or read-only `false`.
@@ -235,6 +217,74 @@ export interface ColumnOptions {
      * @default true
      */
     resizing?: boolean;
+}
+
+/**
+ * Options for all cells in the column.
+ */
+export interface ColumnCellOptions {
+    /**
+     * Allows to define an additional class name to all table cells in the
+     * column. Applied only to cell that are in the table, not in the column
+     * header. It is updated with every cell's value change.
+     *
+     * It uses templating, where context is the table cell instance.
+     *
+     * @default undefined
+     */
+    className?: string;
+
+    /**
+     * The format of the cell content within the given column of the datagrid.
+     * Applied only to cell that are in the table, not in the column header.
+     *
+     * When not set, the default format `'{value}'` is used.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
+     *
+     * @default undefined
+     */
+    format?: string;
+
+    /**
+     * Callback function for formatting cells within the given column of the
+     * datagrid. Applied only to cell that are in the table not the column
+     * header.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cell-formatting/ | Cell formatting}
+     *
+     * @return
+     * A string to be set as a table cell's content.
+     */
+    formatter?: CellFormatterCallback;
+}
+
+/**
+ * Options for the header cells in the columns.
+ */
+export interface ColumnHeaderOptions {
+    /**
+     * Allows user to define an additional class name only to the column header.
+     *
+     * It uses templating, where context is the header cell instance.
+     *
+     * @default undefined
+     */
+    className?: string;
+
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    format?: string;
+
+    /**
+     * Callback function for formatting the column header. It is called for each
+     * column header cell.
+     *
+     * @return
+     * A string to be set as a header cell's content.
+     */
+    formatter?: CellFormatterCallback;
 }
 
 /**
@@ -274,8 +324,10 @@ export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
  */
 export interface IndividualColumnOptions extends ColumnOptions {
     /**
-     * The custom CSS class name for the column. Applied only to cell that are
-     * in the table not the column header.
+     * The custom CSS class name for the column. Applied also to cells that are
+     * in the table and also to the column header cells.
+     *
+     * It does not use templating.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/demo/datagrid-custom-class | Custom class}
      *
@@ -373,9 +425,17 @@ export interface CellEvents {
      * Callback function to be called after editing of cell value.
      */
     afterEdit?: CellEventCallback;
+
+    /**
+     * Callback function to be called after the cell value is set (on init or
+     * after editing).
+     */
+    afterSetValue?: CellEventCallback;
 }
 
-
+/**
+ * Event callbacks option group related to the column.
+ */
 export interface ColumnEvents {
     /**
      * Callback function to be called when the column is sorted for instance,
