@@ -23,7 +23,8 @@ const {
 const H: AnyRecord = G;
 const loaded = new Set<string>();
 
-let root = 'https://code.highcharts.com';
+let root = 'https://code.highcharts.com',
+    extension = 'js';
 
 const addStyleSheets = (
     options: Partial<Options>,
@@ -98,20 +99,45 @@ const getModules = (options: Partial<Options>): Array<string> => {
     return Array.from(modules);
 };
 
-const setRoot = (): void => {
+const setRootFromURL = (url: string): string|undefined => {
+    const regex = /\/highcharts-autoload\.(src.js|js)$/,
+        match = url.match(regex);
+
+    if (match) {
+        root = url.replace(regex, '');
+        extension = match[1];
+        return root;
+    }
+};
+
+const guessRoot = (): void => {
+
     const scripts = document.getElementsByTagName('script');
     for (let i = 0; i < scripts.length; i++) {
-        if (scripts[i].src.indexOf('highcharts-autoload.js') !== -1) {
-            root = scripts[i].src.replace(/\/highcharts-autoload\.js$/, '');
+        if (setRootFromURL(scripts[i].src)) {
             return;
         }
     }
 };
 
+const setRoot = (userRoot: string, userExtension = 'js'): void => {
+    root = userRoot;
+    extension = userExtension;
+};
+
+
 const loadScript = async (module: string): Promise<undefined> => {
     if (loaded.has(module)) {
         return;
     }
+
+    // ES modules
+    if (root.indexOf('/es-modules/') !== -1) {
+        await import(`${root}/${module}.${extension}`);
+        loaded.add(module);
+        return;
+    }
+
     return new Promise((resolve, reject): void => {
         const onload = (): void => {
             loaded.add(module);
@@ -127,7 +153,7 @@ const loadScript = async (module: string): Promise<undefined> => {
             document.head.appendChild(link);
         } else {
             const script = document.createElement('script');
-            script.src = `${root}/${module}.js`;
+            script.src = `${root}/${module}.${extension}`;
             script.onload = onload;
             script.onerror = reject;
             document.head.appendChild(script);
@@ -145,7 +171,7 @@ const loadScript = async (module: string): Promise<undefined> => {
         options: Partial<Options>
     ): Promise<Chart> {
 
-        setRoot();
+        guessRoot();
 
         // Load the required modules
         const modules = getModules(options);
@@ -173,7 +199,8 @@ const loadScript = async (module: string): Promise<undefined> => {
 });
 
 const Loader = {
-
+    setRoot,
+    setRootFromURL
 };
 
 export default Loader;
