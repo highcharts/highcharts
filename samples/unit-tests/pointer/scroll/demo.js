@@ -94,15 +94,22 @@ QUnit.test(
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
             if (!controller2.relatedTarget) {
-                point2Position.x += 5;
-                point2Position.y += 81;
-
                 controller2.moveTo(
-                    point2Position.x,
-                    point2Position.y,
+                    point2Position.x - 21,
+                    point2Position.y - 204,
                     void 0,
                     true
                 );
+                controller2.moveTo(
+                    point2Position.x + 5,
+                    point2Position.y + 81,
+                    void 0,
+                    true
+                );
+
+                point2Position.x += 5;
+                point2Position.y += 81;
+
                 assert.strictEqual(
                     controller2.relatedTarget,
                     true,
