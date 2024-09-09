@@ -275,9 +275,7 @@ class Table {
         }
 
         // Reflow the head
-        if (this.header) {
-            this.header.reflow();
-        }
+        this.header?.reflow();
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();

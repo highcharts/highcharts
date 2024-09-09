@@ -69,7 +69,8 @@ class HeaderCell extends Cell {
     public options: Partial<Column.Options> = {};
 
     /**
-     * Columns
+     * Columns that are grouped in the header cell. In most cases is contains
+     * only one column, but can be more if the header cell is grouped.
      */
     public columns?: GroupedHeaderOptions[];
 
@@ -169,6 +170,30 @@ class HeaderCell extends Cell {
         }
 
         this.setCustomClassName(options.header?.className);
+    }
+
+    public override reflow(): void {
+        const cell = this;
+        const th = cell.htmlElement;
+        const vp = cell.column.viewport;
+
+        if (!th) {
+            return;
+        }
+
+        let width = 0;
+
+        if (cell.columns) {
+            for (const col of cell.columns) {
+                width += (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
+            }
+        } else {
+            width = cell.column.getWidth();
+        }
+
+        // Set the width of the column. Max width is needed for the
+        // overflow: hidden to work.
+        th.style.width = th.style.maxWidth = width + 'px';
     }
 
     /**
