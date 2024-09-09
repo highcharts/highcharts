@@ -87,58 +87,58 @@ QUnit.test(
                 chart1.plotHeight + point2Position.y
             );
             controller2.moveTo(
-                point2Position.x + 100,
-                point2Position.y, void 0, true
+                point2Position.x + 200,
+                point2Position.y - 20, void 0, true
             );
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-            if (!controller2.relatedTarget) {
-                controller2.moveTo(
-                    point2Position.x - 10,
-                    point2Position.y - 20,
-                    void 0,
-                    true
-                );
+            //if (!controller2.relatedTarget) {
+            controller2.moveTo(
+                point2Position.x - 10,
+                point2Position.y - 20,
+                void 0,
+                true
+            );
 
-                // draw an circle
-                chart2.renderer.circle(
-                    point2Position.x - 10,
-                    point2Position.y - 20,
-                    3
-                ).attr({
-                    fill: 'black',
-                    stroke: 'orange',
-                    'stroke-width': 1,
-                    zIndex: 101
-                }).css({
-                    'pointer-events': 'none'
-                }).add();
+            // draw an circle
+            chart2.renderer.circle(
+                point2Position.x - 10,
+                point2Position.y - 20,
+                3
+            ).attr({
+                fill: 'black',
+                stroke: 'orange',
+                'stroke-width': 1,
+                zIndex: 101
+            }).css({
+                'pointer-events': 'none'
+            }).add();
 
-                controller2.moveTo(
-                    point2Position.x + 20,
-                    point2Position.y + 10,
-                    void 0,
-                    true
-                );
+            controller2.moveTo(
+                point2Position.x + 20,
+                point2Position.y + 10,
+                void 0,
+                true
+            );
 
-                // draw an circle
-                chart2.renderer.circle(
-                    point2Position.x + 20,
-                    point2Position.y + 10,
-                    3
-                ).attr({
-                    fill: 'orange',
-                    stroke: 'black',
-                    'stroke-width': 1,
-                    zIndex: 101
-                }).css({
-                    'pointer-events': 'none'
-                }).add();
+            // draw an circle
+            chart2.renderer.circle(
+                point2Position.x + 20,
+                point2Position.y + 10,
+                3
+            ).attr({
+                fill: 'orange',
+                stroke: 'black',
+                'stroke-width': 1,
+                zIndex: 101
+            }).css({
+                'pointer-events': 'none'
+            }).add();
 
-                point2Position.x += 20;
-                point2Position.y += 10;
-            }
+            point2Position.x += 20;
+            point2Position.y += 10;
+            //}
 
             controller2.mouseDown(
                 point2Position.x,
