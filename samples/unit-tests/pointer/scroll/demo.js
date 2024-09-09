@@ -87,13 +87,13 @@ QUnit.test(
                 chart1.plotHeight + point2Position.y
             );
             controller2.moveTo(
-                point2Position.x,
+                point2Position.x + 100,
                 point2Position.y, void 0, true
             );
 
             // Workaround for failing test on Linux.
             // Try removing in Chrome v129+.
-            if (true || !controller2.relatedTarget) {
+            if (!controller2.relatedTarget) {
                 controller2.moveTo(
                     point2Position.x - 10,
                     point2Position.y - 20,
@@ -122,7 +122,6 @@ QUnit.test(
                     true
                 );
 
-                
                 // draw an circle
                 chart2.renderer.circle(
                     point2Position.x + 20,
