@@ -109,13 +109,24 @@ class TableCell extends Cell {
         void this.setValue(this.column.data?.[this.row.index], false);
 
         if (this.column.options.editable) {
-            this.htmlElement.setAttribute('contenteditable', true);
-            this.htmlElement.addEventListener('input', function() {
+            this.htmlElement.setAttribute('contenteditable', 'plaintext-only');
+            this.htmlElement.setAttribute('role', 'textbox');
+            this.htmlElement.setAttribute('aria-multiline', true);
+
+            this.htmlElement.addEventListener('focus', function(e) {
+               this.innerText = cell.value?.toString() || '';
+            }, false);
+
+            this.htmlElement.addEventListener('input', function(e) {
                 // set value
                 cell.value = this.innerText;
 
                 // adjust height
                 vp.reflow();
+            }, false);
+
+            this.htmlElement.addEventListener('focusout', function(e) {
+                void cell.setValue(cell.value, false);
             }, false);
         }
     }
