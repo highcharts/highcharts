@@ -94,121 +94,138 @@
     });
 }(Highcharts));
 
-Highcharts.chart('container', {
-    chart: {
-        type: 'spline'
-    },
+(async () => {
+    const fetchedData = await fetch('https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US30303M1027|US0231351067|US64110L1061|US02079K3059&idType=ISIN&endDate=2020-12-31&startDate=2000-01-01&currency=EUR')
+        .then(res => (res.ok ? res.json() : []));
 
-    title: {
-        text: 'United States of America\'s Inflation-related statistics',
-        align: 'left'
-    },
+    const securityData = fetchedData.TimeSeries.Security;
 
-    subtitle: {
-        text: 'Source: <a href="https://www.worldbank.org/en/home">The World Bank</a>',
-        align: 'left'
-    },
+    const facebookData = securityData[0].HistoryDetail.map(
+        detail => [Date.parse(detail.EndDate), +detail.Value]
+    );
 
-    data: {
-        csv: document.getElementById('csv').innerHTML
-    },
+    const amazonData = securityData[1].HistoryDetail.map(
+        detail => [Date.parse(detail.EndDate), +detail.Value]
+    );
 
-    yAxis: [{
-        title: {
-            text: 'Inflation'
+    const netflixData = securityData[2].HistoryDetail.map(
+        detail => [Date.parse(detail.EndDate), +detail.Value]
+    );
+
+    const googleData = securityData[3].HistoryDetail.map(
+        detail => [Date.parse(detail.EndDate), +detail.Value]
+    );
+
+    Highcharts.chart('container', {
+        chart: {
+            type: 'spline'
         },
-        plotLines: [{
-            color: 'black',
-            width: 2,
-            value: 13.5492019749684,
-            animation: {
-                duration: 1000,
-                defer: 4000
-            },
-            label: {
-                text: 'Max Inflation',
-                align: 'right',
-                x: -20
-            }
-        }]
-    }, {
-        title: {
-            text: 'Claims on central government, etc.'
-        }
-    }, {
-        opposite: true,
-        title: {
-            text: 'Net foreign assets'
-        }
-    }, {
-        opposite: true,
-        title: {
-            text: 'Net domestic credit'
-        }
-    }],
 
-    plotOptions: {
-        series: {
-            animation: {
-                duration: 1000
-            },
-            marker: {
-                enabled: false
-            },
-            lineWidth: 2
-        }
-    },
+        title: {
+            text: 'FANG Stock Prices',
+            align: 'left'
+        },
 
-    series: [{
-        yAxis: 0
-    }, {
-        yAxis: 1,
-        animation: {
-            defer: 1000
-        }
-    }, {
-        yAxis: 2,
-        animation: {
-            defer: 2000
-        }
-    }, {
-        yAxis: 3,
-        animation: {
-            defer: 3000
-        }
-    }],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                yAxis: [{
-                    tickAmount: 2,
-                    title: {
-                        x: 15,
-                        reserveSpace: false
-                    }
-                }, {
-                    tickAmount: 2,
-                    title: {
-                        x: 20,
-                        reserveSpace: false
-                    }
-                }, {
-                    tickAmount: 2,
-                    title: {
-                        x: -20,
-                        reserveSpace: false
-                    }
-                }, {
-                    tickAmount: 2,
-                    title: {
-                        x: -20,
-                        reserveSpace: false
-                    }
-                }]
+        subtitle: {
+            text: 'Source: Morningstar',
+            align: 'left'
+        },
+
+        xAxis: {
+            type: 'datetime'
+        },
+
+        yAxis: [{
+            title: {
+                text: 'Facebook'
             }
-        }]
-    }
-});
+        }, {
+            title: {
+                text: 'Amazon'
+            }
+        }, {
+            opposite: true,
+            title: {
+                text: 'Netflix'
+            }
+        }, {
+            opposite: true,
+            title: {
+                text: 'Google'
+            }
+        }],
+
+        plotOptions: {
+            series: {
+                animation: {
+                    duration: 1000
+                },
+                marker: {
+                    enabled: false
+                },
+                lineWidth: 2
+            }
+        },
+
+        series: [{
+            name: 'Facebook',
+            data: facebookData,
+            yAxis: 0
+        }, {
+            name: 'Amazon',
+            data: amazonData,
+            yAxis: 1,
+            animation: {
+                defer: 1000
+            }
+        }, {
+            name: 'Netflix',
+            data: netflixData,
+            yAxis: 2,
+            animation: {
+                defer: 2000
+            }
+        }, {
+            name: 'Google',
+            data: googleData,
+            yAxis: 3,
+            animation: {
+                defer: 3000
+            }
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    yAxis: [{
+                        tickAmount: 2,
+                        title: {
+                            x: 15,
+                            reserveSpace: false
+                        }
+                    }, {
+                        tickAmount: 2,
+                        title: {
+                            x: 20,
+                            reserveSpace: false
+                        }
+                    }, {
+                        tickAmount: 2,
+                        title: {
+                            x: -20,
+                            reserveSpace: false
+                        }
+                    }, {
+                        tickAmount: 2,
+                        title: {
+                            x: -20,
+                            reserveSpace: false
+                        }
+                    }]
+                }
+            }]
+        }
+    });
+})();
