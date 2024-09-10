@@ -1,5 +1,5 @@
 #container {
-    height: 500px;
+    height: 550px;
     min-width: 310px;
     max-width: 600px;
     margin: 0 auto;
@@ -9,4 +9,43 @@
     margin-top: 10em;
     text-align: center;
     color: gray;
+}
+
+#popup-pie {
+    width: 290px;
+    height: 240px;
+    padding: 0.5em 1em;
+    background: #fff;
+    border: 1px solid #c5c5c5;
+    border-radius: 3px;
+    cursor: default;
+}
+
+#annotation-header {
+    display: flex;
+    justify-content: space-between;
+    width: 290px;
+    align-items: center;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    background: #e9e9e9;
+    padding: 0.4em 1em;
+    cursor: move;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+#annotation-close-btn {
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    color: #777;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid #c5c5c5;
+    border-radius: 3px;
+    background: #f6f6f6;
+    cursor: pointer;
 }

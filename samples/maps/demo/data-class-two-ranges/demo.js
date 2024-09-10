@@ -18,17 +18,44 @@
              * a pie chart showing the details for each state.
              */
             function pointClick() {
-                const row = this.options.row,
-                    $div = $('<div></div>')
-                        .dialog({
-                            title: this.name,
-                            width: 320,
-                            height: 300
-                        });
+                const row = this.options.row;
 
-                window.chart = new Highcharts.Chart({
+                const chart = this.series.chart;
+
+                // Remove existing annotation if present
+                chart.removeAnnotation('election-popup');
+
+                // Add new annotation with a pie chart
+                chart.addAnnotation({
+                    id: 'election-popup',
+                    labelOptions: {
+                        useHTML: true,
+                        backgroundColor: '#fff'
+                    },
+                    labels: [{
+                        point: this,
+                        text: `
+                            <div id="annotation-header">
+                                <span>${this.name}</span>
+                                <button id="annotation-close-btn">
+                                x
+                                </button>
+                            </div>
+                            <div id="popup-pie"></div>
+                        `,
+                        shape: 'rect'
+                    }],
+                    zIndex: 10
+                });
+
+                document.getElementById('annotation-close-btn')
+                    .addEventListener('click', function () {
+                        chart.removeAnnotation('election-popup');
+                    });
+
+
+                Highcharts.chart('popup-pie', {
                     chart: {
-                        renderTo: $div[0],
                         type: 'pie',
                         width: 290,
                         height: 240
@@ -39,6 +66,11 @@
                     legend: {
                         enabled: true,
                         reversed: true
+                    },
+                    navigation: {
+                        buttonOptions: {
+                            enabled: false
+                        }
                     },
                     series: [{
                         name: 'Votes',
@@ -70,7 +102,8 @@
                         type: 'map',
                         map: mapData,
                         renderTo: 'container',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        spacingBottom: 1
                     },
 
                     title: {
@@ -154,7 +187,7 @@
             mapData.objects.default.geometries.forEach(function (geometry) {
                 if (geometry.properties['postal-code']) {
                     const postalCode = geometry.properties['postal-code'],
-                        i = $.inArray(postalCode, keys);
+                        i = keys.indexOf(postalCode);
                     options.series[0].data.push(Highcharts.extend({
                         value: parseFloat(percent[i]),
                         name: names[i],
