@@ -22,7 +22,7 @@ describing the internals of how it was fixed.
 
 
 ## Workflow of generating the changelog
-1. Run the script that copies PR descriptions since the last release into markdown files for each product. When including feature branches (typically on minor/major releases), remember to add the `branches` argument: `--branches master,v11`. Since Highcharts Dashboards releases aren't in sync with the rest of packages, to generate only the Dashboards changelog, use the `--dashboards` flag and `--release x.x.x` to specify the version number of the Highcharts Dashboards release.
+1. Run the script that copies PR descriptions since the last release into markdown files for each product. When including feature branches (typically on minor/major releases), remember to add the `branches` argument: `--branches master,v11`. Since Highcharts Dashboards releases aren't in sync with the rest of packages, to generate only the Dashboards changelog, use the `--highchartsDashboards` flag and `--release x.x.x` to specify the version number of the Highcharts Dashboards release.
 
     ```
     node changelog/generate --review
@@ -30,7 +30,7 @@ describing the internals of how it was fixed.
 
     or
     ```
-    node changelog/generate --dashboards --release 1.0.0
+    node changelog/generate --highchartsDashboards --release 2.0.0
     ```
 
     If a `tree.json` error occurs, run `npx gulp jsdoc-options` and try the step above again.

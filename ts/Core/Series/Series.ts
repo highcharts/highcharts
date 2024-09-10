@@ -2172,7 +2172,7 @@ class Series {
          * @private
          */
         function limitedRange(val: number): number {
-            return clamp(val, -1e5, 1e5);
+            return clamp(val, -1e9, 1e9);
         }
 
         // Translate each point
@@ -5161,7 +5161,7 @@ export default Series;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickCallbackFunction.
  *
- * @deprecated
+ * @deprecated 11.4.4
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -5177,7 +5177,7 @@ export default Series;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated
+ * @deprecated 11.4.4
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.

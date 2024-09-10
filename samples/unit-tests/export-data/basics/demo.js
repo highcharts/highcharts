@@ -1592,3 +1592,22 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         should be same as actual, #17639.`
     );
 });
+
+
+QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [5, 10]
+                ],
+                keys: ['y', 'custom.test']
+            }]
+        }),
+        csv = '"Category","Series 1 (y)","Series 1 (custom.test)"\n0,5,10';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'Key notation values should be visible in exported data, #20470.'
+    );
+});

@@ -208,7 +208,7 @@ class DataTableCore {
      *
      * @function Highcharts.DataTable#setColumn
      *
-     * @param {string} columnNameOrAlias
+     * @param {string} columnName
      * Column name or alias to set.
      *
      * @param {Highcharts.DataTableColumn} [column]
@@ -224,12 +224,12 @@ class DataTableCore {
      * @emits #afterSetColumns
      */
     public setColumn(
-        columnNameOrAlias: string,
+        columnName: string,
         column: DataTable.Column = [],
         rowIndex: number = 0,
         eventDetail?: DataEvent.Detail
     ): void {
-        this.setColumns({ [columnNameOrAlias]: column }, rowIndex, eventDetail);
+        this.setColumns({ [columnName]: column }, rowIndex, eventDetail);
     }
 
     /**

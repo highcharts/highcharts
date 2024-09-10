@@ -319,7 +319,8 @@ const options = {
                 label: {
                     text: '<em>Offices:</em><br>Torstein´s<br>basement',
                     style: {
-                        color: '#999999'
+                        color: '#999999',
+                        width: 'auto'
                     },
                     y: 180
                 }

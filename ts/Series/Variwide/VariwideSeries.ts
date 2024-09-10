@@ -114,7 +114,7 @@ class VariwideSeries extends ColumnSeries {
 
         if (this.xAxis.categories) {
             this.xAxis.variwide = true;
-            this.xAxis.zData = this.zData; // Used for label rank
+            this.xAxis.zData = zData; // Used for label rank
         }
         return;
     }

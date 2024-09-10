@@ -180,6 +180,13 @@ QUnit.module('Format', () => {
             'Prototypes should not be accessible through format strings'
         );
 
+        assert.strictEqual(
+            format('{value:%b \u2019%y}', { value: 1706745600000 }),
+            'Feb ’24',
+            `Right single quotation mark shouldn't disable the format method,
+            #21124.`
+        );
+
         // Reset
         Highcharts.setOptions({
             lang: {
@@ -233,6 +240,24 @@ QUnit.module('Format', () => {
             ).replace(/\s\s+/g, ' ').trim(),
             'Value: Deep, deeper: 123',
             'Nested conditions'
+        );
+
+        const f = `
+        {#if (lt value 3)}
+            Green
+        {else}
+            {#if (lt value 7)}
+                Yellow
+            {else}
+                Red
+            {/if}
+        {/if}
+        `;
+
+        assert.deepEqual(
+            [2, 5, 8].map(value => format(f, { value }).trim()),
+            ['Green', 'Yellow', 'Red'],
+            'Nested conditions with sub expression'
         );
 
     });
@@ -322,6 +347,7 @@ QUnit.module('Format', () => {
     });
 
     QUnit.test('Relational helpers', assert => {
+
         assert.strictEqual(
             format(
                 '{#if (lt one 2)}true{/if}',

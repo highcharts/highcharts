@@ -197,7 +197,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *
  * @product highcharts
  *
- * @requires modules/sunburst.js
+ * @requires modules/sunburst
  */
 export interface SunburstSeriesOptions extends TreemapSeriesOptions {
 

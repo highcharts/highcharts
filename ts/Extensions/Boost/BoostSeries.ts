@@ -449,7 +449,7 @@ function createAndAttachRenderer(
                 .addClass(hasClickHandler ? 'highcharts-tracker' : '');
 
             if (target instanceof ChartClass) {
-                (target.boost as any).markerGroup.translate(
+                target.boost?.markerGroup?.translate(
                     chart.plotLeft,
                     chart.plotTop
                 );
@@ -690,7 +690,25 @@ function enterBoost(
 function exitBoost(
     series: Series
 ): void {
-    const boost = series.boost;
+    const boost = series.boost,
+        chart = series.chart,
+        chartBoost = chart.boost;
+
+    if (chartBoost?.markerGroup) {
+        chartBoost.markerGroup.destroy();
+        chartBoost.markerGroup = void 0;
+
+        for (const s of chart.series) {
+            s.markerGroup = void 0;
+            s.markerGroup = s.plotGroup(
+                'markerGroup',
+                'markers',
+                'visible',
+                1,
+                chart.seriesGroup
+            ).addClass('highcharts-tracker');
+        }
+    }
 
     // Reset instance properties and/or delete instance properties and go back
     // to prototype
@@ -709,6 +727,9 @@ function exitBoost(
             boost.clear();
         }
     }
+
+    // #21106, clean up boost clipping on the series groups.
+    (chart.seriesGroup || series.group)?.clip();
 }
 
 /**
@@ -1504,8 +1525,9 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
-            isScatter = series.is('scatter') && !series.is('bubble');
-
+            isScatter = series.is('scatter') &&
+                !series.is('bubble') &&
+                !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
         // do default behaviour.

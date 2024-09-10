@@ -908,7 +908,7 @@ namespace ColorAxis {
 
     export interface Options extends ColorAxisLike.Options {
         dataClasses?: Array<DataClassesOptions>;
-        layout?: string;
+        layout?: 'horizontal'|'vertical';
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;

@@ -23,6 +23,7 @@
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
 import type Globals from '../Globals';
+import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -375,6 +376,10 @@ class AccordionMenu {
             await component.update({
                 chartOptions: this.chartOptionsJSON
             } as any);
+        } else if (component.type === 'HTML') {
+            const options = this.changedOptions as HTMLOptions;
+
+            await component.update(options, true);
         }
 
         fireEvent(

@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -44,7 +45,6 @@ const {
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  *
- * @private
  */
 class ChainModifier extends DataModifier {
 
@@ -195,7 +195,7 @@ class ChainModifier extends DataModifier {
      * @return {Promise<Highcharts.DataTable>}
      * Table with `modified` property as a reference.
      */
-    public modify<T extends DataTable>(
+    public async modify<T extends DataTable>(
         table: T,
         eventDetail?: DataEvent.Detail
     ): Promise<T> {
@@ -209,31 +209,24 @@ class ChainModifier extends DataModifier {
             table.modified = table.clone(false, eventDetail);
         }
 
-        let promiseChain: Promise<T> = Promise.resolve(table);
-
+        let modified: DataTable = table;
         for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
-            const modifier = modifiers[i];
-            promiseChain = promiseChain.then((chainTable): Promise<T> =>
-                modifier.modify(chainTable.modified as T, eventDetail)
-            );
+            try {
+                await modifiers[i].modify(modified, eventDetail);
+            } catch (error) {
+                this.emit<DataModifierEvent>({
+                    type: 'error',
+                    detail: eventDetail,
+                    table
+                });
+                throw error;
+            }
+
+            modified = modified.modified;
         }
 
-        promiseChain = promiseChain.then((chainTable): T => {
-            table.modified.deleteColumns();
-            table.modified.setColumns(chainTable.modified.getColumns());
-            return table;
-        });
-
-        promiseChain = promiseChain['catch']((error): Promise<T> => {
-            this.emit<DataModifierEvent>({
-                type: 'error',
-                detail: eventDetail,
-                table
-            });
-            throw error;
-        });
-
-        return promiseChain;
+        table.modified = modified;
+        return table;
     }
 
     /**
@@ -496,7 +489,6 @@ class ChainModifier extends DataModifier {
 
 /**
  * Additionally provided types for modifier events and options.
- * @private
  */
 namespace ChainModifier {
 

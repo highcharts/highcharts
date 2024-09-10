@@ -27,7 +27,6 @@ import type {
 } from './SankeySeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
@@ -54,6 +53,9 @@ const {
     relativeLength,
     stableSort
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *

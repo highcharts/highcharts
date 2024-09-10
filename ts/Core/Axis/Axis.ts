@@ -306,6 +306,8 @@ class Axis {
     public transA!: number;
     public transB!: number;
     public translationSlope!: number;
+    public type?: AxisOptions['type'];
+    public uniqueNames?: boolean;
     public userMax?: number;
     public userMin?: number;
     public userMinRange?: number;
@@ -409,10 +411,13 @@ class Axis {
          */
         axis.setOptions(userOptions);
 
+        const options = axis.options,
+            labelsOptions = options.labels;
 
-        const options = this.options,
-            labelsOptions = options.labels,
-            type = options.type;
+        // Set the type and fire an event
+        axis.type ??= options.type || 'linear';
+        axis.uniqueNames ??= options.uniqueNames ?? true;
+        fireEvent(axis, 'afterSetType');
 
         /**
          * User's options for this axis without defaults.
@@ -437,7 +442,7 @@ class Axis {
         axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
-        axis.hasNames = type === 'category' || options.categories === true;
+        axis.hasNames = this.type === 'category' || options.categories === true;
 
         /**
          * If categories are present for the axis, names are used instead of
@@ -927,7 +932,7 @@ class Axis {
      * @param {number} value
      * A value in terms of axis units.
      *
-     * @param {boolean} paneCoordinates
+     * @param {boolean} [paneCoordinates=false]
      * Whether to return the pixel coordinate relative to the chart or just the
      * axis/pane itself.
      *
@@ -1041,7 +1046,7 @@ class Axis {
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e9, 1e9);
 
             x1 = x2 = translatedValue + transB;
             y1 = y2 = cHeight - translatedValue - transB;
@@ -1050,7 +1055,11 @@ class Axis {
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
                 y1 = axisTop;
-                y2 = cHeight - axis.bottom + (chart.scrollablePixelsY || 0);
+                y2 = cHeight - axis.bottom + (axis.options.isInternal ?
+                    0 :
+                    (chart.scrollablePixelsY || 0)
+                ); // #20354, scrollablePixelsY shouldn't be used for navigator
+
 
                 x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 
@@ -1428,7 +1437,7 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames && names ?
+            nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
@@ -1712,7 +1721,7 @@ class Axis {
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== linkedParent.options.type) {
+            if (this.type !== linkedParent.type) {
                 // Can't link axes of different type
                 error(11, true, chart);
             }
@@ -1990,14 +1999,6 @@ class Axis {
             this.tickInterval === 1
         ) ? 0.5 : 0; // #3202
 
-
-        // Get minorTickInterval
-        this.minorTickInterval =
-            minorTickIntervalOption === 'auto' &&
-            this.tickInterval ?
-                this.tickInterval / options.minorTicksPerMajor :
-                (minorTickIntervalOption as any);
-
         // When there is only one point, or all points have the same value on
         // this axis, then min and max are equal and tickPositions.length is 0
         // or 1. In this case, add some padding in order to center the point,
@@ -2122,6 +2123,13 @@ class Axis {
 
         }
         this.tickPositions = tickPositions;
+
+
+        // Get minorTickInterval
+        this.minorTickInterval =
+            minorTickIntervalOption === 'auto' && this.tickInterval ?
+                this.tickInterval / options.minorTicksPerMajor :
+                (minorTickIntervalOption as any);
 
 
         // Reset min/max or remove extremes based on start/end on tick
@@ -3940,6 +3948,7 @@ class Axis {
             // Custom plot lines and bands
             if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
+
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -3949,7 +3958,6 @@ class Axis {
                         }
                     );
             }
-
         } // End if hasData
 
         // Remove inactive ticks
