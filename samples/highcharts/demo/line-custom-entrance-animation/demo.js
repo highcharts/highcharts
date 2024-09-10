@@ -136,20 +136,32 @@
         },
 
         yAxis: [{
+            labels: {
+                format: '€{text}'
+            },
             title: {
                 text: 'Facebook'
             }
         }, {
+            labels: {
+                format: '€{text}'
+            },
             title: {
                 text: 'Amazon'
             }
         }, {
             opposite: true,
+            labels: {
+                format: '€{text}'
+            },
             title: {
                 text: 'Netflix'
             }
         }, {
             opposite: true,
+            labels: {
+                format: '€{text}'
+            },
             title: {
                 text: 'Google'
             }
@@ -165,6 +177,11 @@
                 },
                 lineWidth: 2
             }
+        },
+
+        tooltip: {
+            valueDecimals: 2,
+            valuePrefix: '€'
         },
 
         series: [{
