@@ -27,6 +27,7 @@
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
     --highcharts-highlight-color-10: #e6e9ff;
+    --highcharts-highlight-color-7: #0000ff07;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -316,8 +317,13 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column,
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column {
     background-color: var(--highcharts-highlight-color-10);
+}
+
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column {
+    background-color: var(--highcharts-highlight-color-7);
 }
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
