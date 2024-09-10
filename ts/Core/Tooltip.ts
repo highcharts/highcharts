@@ -548,7 +548,6 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            // H.doc.body.appendChild(container);
             this.chart.renderTo.appendChild(container);
         }
 
