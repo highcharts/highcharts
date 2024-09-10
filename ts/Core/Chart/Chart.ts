@@ -713,7 +713,6 @@ class Chart {
         plotY: number,
         options: Chart.IsInsideOptionsObject = {}
     ): boolean {
-
         const {
                 inverted,
                 plotBox,
@@ -776,22 +775,15 @@ class Chart {
             const chartY = options.paneCoordinates ?
                 yAxis.pos + y : plotTop + y;
 
-            // Extend plot area's bottom to navigator when enabled. #21285
-            const calculatedBottom = options.paneCoordinates ?
-                Math.max(
-                    scrollTop + plotTop + box.height,
-                    yAxis.pos + yAxis.len
-                ) :
-                Math.min(
-                    scrollTop + plotTop + box.height,
-                    yAxis.pos + yAxis.len
-                );
             if (!(
                 chartY >= Math.max(
                     scrollTop + plotTop,
                     yAxis.pos
                 ) &&
-                chartY <= calculatedBottom
+                chartY <= Math.min(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                )
             )) {
                 e.isInsidePlot = false;
             }

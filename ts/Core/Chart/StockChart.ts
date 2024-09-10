@@ -402,6 +402,7 @@ namespace StockChart {
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
+            addEvent(ChartClass, 'afterIsInsidePlot', onChartIsInsidePlot);
 
             ChartClass.prototype.setFixedRange = setFixedRange;
 
@@ -612,6 +613,69 @@ namespace StockChart {
                 (axis.opposite ? chart.chartHeight : 0) :
                 posy + crossBox.height / 2
         });
+    }
+
+    /**
+     * Extend isInsidePlot to display the dataLabel in navigator. (#21285)
+     * @private
+     */
+    function onChartIsInsidePlot(
+        this: Chart,
+        e: (Event&{
+            x: number;
+            y: number;
+            isInsidePlot: boolean;
+            options: Chart.IsInsideOptionsObject;
+        })
+    ) : void {
+        const options: Chart.IsInsideOptionsObject = e.options;
+        const {
+                inverted,
+                plotBox,
+                plotTop,
+                scrollablePlotBox
+            } = this,
+            { scrollTop = 0 } = (
+                options.visiblePlotOnly &&
+            this.scrollablePlotArea?.scrollingContainer
+            ) || {},
+            series = options.series,
+            box = (options.visiblePlotOnly && scrollablePlotBox) || plotBox,
+            y = options.inverted ? e.x : e.y;
+
+        if (this.options.isStock) {
+            const yAxis = (
+                !inverted && options.axis &&
+                !options.axis.isXAxis && options.axis
+            ) || (
+                series && (inverted ? series.xAxis : series.yAxis)
+            ) || {
+                pos: plotTop,
+                len: Infinity
+            };
+
+            const chartY = options.paneCoordinates ?
+                yAxis.pos + y : plotTop + y;
+
+            const calculatedBottom = options.paneCoordinates ?
+                Math.max(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                ) :
+                Math.min(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                );
+            if (!(
+                chartY < Math.max(
+                    scrollTop + plotTop,
+                    yAxis.pos
+                ) &&
+                chartY > calculatedBottom
+            )) {
+                e.isInsidePlot = true;
+            }
+        }
     }
 
     /**
