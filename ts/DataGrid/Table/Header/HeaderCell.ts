@@ -59,11 +59,6 @@ class HeaderCell extends Cell {
     public headerContent?: HTMLElement;
 
     /**
-     * The HTML element of the header cell content wrapper.
-     */
-    private contentWrapper?: HTMLElement;
-
-    /**
      * Reference to options in settings header.
      */
     public options: Partial<Column.Options> = {};
@@ -131,15 +126,14 @@ class HeaderCell extends Cell {
         this.headerContent = makeHTMLElement('div', {
             className: Globals.classNames.headerCellContent
         }, this.htmlElement);
-        this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
                 this.value,
-                this.contentWrapper
+                this.headerContent
             );
         } else {
-            this.contentWrapper.innerText = this.value;
+            this.headerContent.innerText = this.value;
         }
 
         // Set the accessibility attributes.
