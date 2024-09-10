@@ -46,11 +46,7 @@ Highcharts.chart('container', {
         shared: true,
         headerFormat: `<span style="font-size:11px">
                         Chart loading time for {point.x} points: 
-                        </span><br/>`,
-        pointFormat: `<span style="color:{series.color}">
-                        {series.name}: 
-                    </span>
-                    <b>{point.y} ms</b><br/>`
+                        </span><br/>`
     },
     yAxis: {
         title: {
