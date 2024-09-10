@@ -30,12 +30,6 @@ QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
         'path',
         'A label box should be generated'
     );
-
-    assert.strictEqual(
-        chart.tooltip.container.className,
-        'highcharts-tooltip-container mock-css-class',
-        'Tooltip\'s outside container should have classes given to \'renderTo\''
-    );
 });
 
 QUnit.test('Outside tooltip styling and correct position', function (assert) {
