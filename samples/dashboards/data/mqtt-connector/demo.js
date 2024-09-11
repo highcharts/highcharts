@@ -7,9 +7,8 @@
 // Global board instance for use in event handlers
 let board = null;
 
-
-// Highcharts common options
-Highcharts.setOptions({
+// Options for chart
+const chartOptions = {
     chart: {
         type: 'spline',
         animation: true
@@ -35,8 +34,9 @@ Highcharts.setOptions({
             return `<b>${date} (UTC)</b><hr>Generated power: ${this.y} MW<br/>`;
         }
     }
-});
+};
 
+// Options for datagrid
 const dataGridOptions = {
     cellHeight: 38,
     editable: false,
@@ -54,17 +54,13 @@ const dataGridOptions = {
     }
 };
 
-// MQTT connection configuration
-const mqttConfig = {
+// Connector configuration
+const connConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
     password: 'Qs0URPjxnWlcuYBmFWNK',
-    useSSL: true
-};
-
-// Connector configuration
-const connConfig = {
+    useSSL: true,
     columnNames: [
         'time',
         'power'
@@ -115,7 +111,6 @@ async function createDashboard() {
                 type: 'MQTT',
                 id: 'mqtt-data-1',
                 options: {
-                    ...mqttConfig,
                     topic: 'prod/DEMO_Highsoft/kraftverk_1/overview',
                     ...connConfig
                 }
@@ -123,7 +118,6 @@ async function createDashboard() {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
                 options: {
-                    ...mqttConfig,
                     topic: 'prod/DEMO_Highsoft/kraftverk_2/overview',
                     ...connConfig
                 }
@@ -143,6 +137,7 @@ async function createDashboard() {
                 highlight: true
             },
             chartOptions: {
+                ...chartOptions,
                 title: {
                     text: 'Power Station 1'
                 }
@@ -171,6 +166,7 @@ async function createDashboard() {
                 highlight: true
             },
             chartOptions: {
+                ...chartOptions,
                 title: {
                     text: 'Power Station 2'
                 }
