@@ -59,6 +59,16 @@ class DataTableCore {
     /**
      * Constructs an instance of the DataTable class.
      *
+     * @example
+     * const dataTable = new Highcharts.DataTableCore({
+     *   columns: {
+     *     year: [2020, 2021, 2022, 2023],
+     *     cost: [11, 13, 12, 14],
+     *     revenue: [12, 15, 14, 18]
+     *   }
+     * });
+
+     *
      * @param {Highcharts.DataTableOptions} [options]
      * Options to initialize the new DataTable instance.
      */
@@ -110,8 +120,6 @@ class DataTableCore {
 
     public modified: DataTableCore;
 
-    // @note Made this public because we're using it for quick checks in
-    // Highcharts
     public rowCount: number;
 
     protected versionTag: string;
@@ -126,6 +134,8 @@ class DataTableCore {
     /**
      * Applies a row count to the table by setting the `rowCount` property and
      * adjusting the length of all columns.
+     *
+     * @private
      * @param {number} rowCount The new row count.
      */
     protected applyRowCount(
@@ -140,11 +150,11 @@ class DataTableCore {
     }
 
     /**
-     * Simplified version of the full `getRow` method, not supporting aliases,
-     * and always returning by reference.
+     * Fetches the given column by the canonical column name. Simplified version
+     * of the full `DataTable.getRow` method, always returning by reference.
      *
      * @param {string} columnName
-     * Name of the column to get, alias takes precedence.
+     * Name of the column to get.
      *
      * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
@@ -158,8 +168,8 @@ class DataTableCore {
     }
 
     /**
-     * Simplified version of the full `getColumns` method, not supporting
-     * aliases, and always returning by reference.
+     * Retrieves all or the given columns. Simplified version of the full
+     * `DataTable.getColumns` method, always returning by reference.
      *
      * @param {Array<string>} [columnNames]
      * Column names to retrieve.
@@ -183,13 +193,13 @@ class DataTableCore {
     }
 
     /**
-     * Simplified version of the full `getRow` method, not supporting aliases.
+     * Retrieves the row at a given index.
      *
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
      *
      * @param {Array<string>} [columnNames]
-     * Column names or aliases in order to retrieve.
+     * Column names to retrieve.
      *
      * @return {Highcharts.DataTableRow}
      * Returns the row values, or `undefined` if not found.
@@ -206,10 +216,8 @@ class DataTableCore {
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
-     * @function Highcharts.DataTable#setColumn
-     *
      * @param {string} columnName
-     * Column name or alias to set.
+     * Column name to set.
      *
      * @param {Highcharts.DataTableColumn} [column]
      * Values to set in the column.
@@ -233,13 +241,12 @@ class DataTableCore {
     }
 
     /**
-     * The simplified version of the full `setColumns`, limited to full
-     * replacement of the columns (undefined `rowIndex`)
-     *
-     * @function Highcharts.DataTable#setColumns
+     * * Sets cell values for multiple columns. Will insert new columns, if not
+     * found. Simplified version of the full `DataTable.setColumns`, limited to
+     * full replacement of the columns (undefined `rowIndex`).
      *
      * @param {Highcharts.DataTableColumnCollection} columns
-     * Columns as a collection, where the keys are the column names or aliases.
+     * Columns as a collection, where the keys are the column names.
      *
      * @param {number} [rowIndex]
      * Index of the first row to change. Keep undefined to reset.
@@ -271,7 +278,23 @@ class DataTableCore {
     }
 
     /**
-     * A smaller version of the full DateTable.setRow, limited to objects
+     * Sets cell values of a row. Will insert a new row if no index was
+     * provided, or if the index is higher than the total number of table rows.
+     * A simplified version of the full `DateTable.setRow`, limited to objects.
+     *
+     * @param {Highcharts.DataTableRowObject} row
+     * Cell values to set.
+     *
+     * @param {number} [rowIndex]
+     * Index of the row to set. Leave `undefind` to add as a new row.
+     *
+     * @param {boolean} [insert]
+     * Whether to insert the row at the given index, or to overwrite the row.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @emits #afterSetRows
      */
     public setRow(
         row: DataTable.RowObject,
@@ -333,11 +356,11 @@ namespace DataTableCore {
     }
 
     /**
-     * Collection of columns, where the key is the column name (or alias) and
+     * Collection of columns, where the key is the column name and
      * the value is an array of column values.
      */
     export interface ColumnCollection {
-        [columnNameOrAlias: string]: Column;
+        [columnName: string]: Column;
     }
 
     /**

@@ -186,6 +186,10 @@ interface KDPointSearchObject extends KDPointSearchObjectLike {
  * - First, `series.options.data` contains all the original config options for
  *   each point whether added by options or methods like `series.addPoint`.
  *
+ * - The `series.dataTable` refers to an instance of [DataTableCore](https://api.highcharts.com/class-reference/Highcharts.Data)
+ *   or `DataTable` that contains the data in a tabular format. Individual
+ *   columns can be read from `series.getColumn()`.
+ *
  * - Next, `series.data` contains those values converted to points, but in case
  *   the series data length exceeds the `cropThreshold`, or if the data is
  *   grouped, `series.data` doesn't contain all the points. It only contains the
@@ -196,12 +200,6 @@ interface KDPointSearchObject extends KDPointSearchObjectLike {
  *   array. The `series.points` array starts at `series.cropStart` compared to
  *   `series.data` and `series.options.data`. If however the series data is
  *   grouped, these can't be correlated one to one.
- *
- * - `series.xData` and `series.processedXData` contain clean x values,
- *   equivalent to `series.data` and `series.points`.
- *
- * - `series.yData` and `series.processedYData` contain clean y values,
- *   equivalent to `series.data` and `series.points`.
  *
  * @class
  * @name Highcharts.Series
