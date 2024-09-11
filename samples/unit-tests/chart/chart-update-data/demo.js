@@ -125,13 +125,13 @@ QUnit.test(
         assert.ok(
             chart.xAxis[0].options.type === 'category' &&
             chart.series[0].points.length === 5,
-            'xAxis type=category should forces data module to use categories'
+            'Explicit xAxis type should be respected by data module'
         );
 
-        // Clear type to check update from a type different than "category"
+        // Clear the type so that the data module can change it
         chart.update({
             xAxis: [{
-                type: 'linear'
+                type: void 0
             }]
         });
         chart.update({
@@ -141,8 +141,12 @@ QUnit.test(
         });
 
         assert.ok(
-            chart.xAxis[0].options.type === 'datetime',
+            chart.xAxis[0].type === 'datetime',
             'xAxis type=linear should be changed by data module to datetime'
+        );
+        assert.ok(
+            chart.xAxis[0].options.type !== 'datetime',
+            'xAxis type should NOT be changed by data module in options'
         );
 
         chart.update({
@@ -152,8 +156,12 @@ QUnit.test(
         });
 
         assert.ok(
-            chart.xAxis[0].options.type === 'linear',
+            chart.xAxis[0].type === 'linear',
             'xAxis type=datetime should be changed by data module to liear'
+        );
+        assert.ok(
+            chart.xAxis[0].options.type !== 'linear',
+            'xAxis type should NOT be changed by data module in options'
         );
     }
 );
