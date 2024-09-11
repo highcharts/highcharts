@@ -9,8 +9,6 @@ on:
       - 'css/**'
       - '.github/workflows/visual-compare.yml'
 
-  workflow_dispatch:
-
 permissions:
   contents: read # to fetch code (actions/checkout)
 
