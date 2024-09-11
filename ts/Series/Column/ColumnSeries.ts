@@ -497,7 +497,11 @@ class ColumnSeries extends Series {
         // tightly, so we allow individual columns to have individual sizes.
         // When pointPadding is greater, we strive for equal-width columns
         // (#2694).
-        if (options.pointPadding) {
+        if (
+            options.pointPadding &&
+            !defined(this.options.pointWidth) &&
+            !this.options.crisp
+        ) {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
@@ -562,9 +566,8 @@ class ColumnSeries extends Series {
             // Handle point.options.pointWidth
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
-                pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as any);
-                barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+                pointWidth = barW = point.options.pointWidth;
+                barX -= (pointWidth - seriesPointWidth) / 2;
             }
 
             // Adjust for null or missing points
