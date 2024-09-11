@@ -6,6 +6,11 @@ DataGrid.dataGrid('container', {
             price: [1.5, 2.53, 120, 4.5]
         }
     },
+    rendering: {
+        table: {
+            className: 'custom-table-class-name'
+        }
+    },
     columnDefaults: {
         cells: {
             className: '{#if (gt value 100)}greater-than-100{/if}',

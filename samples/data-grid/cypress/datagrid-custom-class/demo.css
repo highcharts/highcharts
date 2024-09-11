@@ -22,3 +22,7 @@
 .header-cell-custom-class-price {
     color: #f0f;
 }
+
+.custom-table-class-name {
+    border: 10px solid #533;
+}
