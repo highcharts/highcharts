@@ -5,7 +5,7 @@
 :root {
     /* Dimensions */
     --chart-height: 200px;
-    --log-height: 200px;
+    --log-height: 160px;
 
     /* Colors */
     --custom-background: var(--highcharts-neutral-color-3);
@@ -40,8 +40,8 @@
  *
  * */
 .highcharts-dashboards-wrapper {
-    background-color: var(--highcharts-neutral-color-10);
     padding: 10px;
+    background-color: var(--highcharts-neutral-color-10);
     overflow: hidden;
 }
 
@@ -56,34 +56,38 @@
 
 /* *
  *
- *  Message log
+ *  Message log (outside Dashboard)
  *
  * */
-#html-log {
+#custom {
     background-color: var(--highcharts-neutral-color-10);
-    padding: 0;
     margin: 0;
-    height: var(--log-height);
+    padding: 0;
+    border: 1px solid transparent;
+}
+
+#html-log {
+    padding: 10px;
+    margin: 0;
     overflow: none;
 }
 
-#html-log .highcharts-dashboards-component-title {
+#html-log h1 {
     text-align: center;
     font-size: 1em;
     padding: 5px 0;
     margin: 0;
-    height: 22px;
-    background-color: var(--custom-background);
     border-bottom: 1px dotted var(--highcharts-neutral-color-20);
 }
 
 #log-content {
-    height: 100%;
+    height: var(--log-height);
     margin: 0;
-    padding: 0 10px;
+    padding: 10px;
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9em;
     overflow: auto;
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 #log-content span.error {
@@ -99,9 +103,6 @@
     padding: 0;
     font-size: 0.9em;
     width: 100%;
-}
-
-#app-control .highcharts-dashboards-component-html-content {
     background-color: var(--highcharts-neutral-color-10);
     margin: 0 auto;
     text-align: center;

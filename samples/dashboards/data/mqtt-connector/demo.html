@@ -12,6 +12,17 @@
 ></script>
 
 <div id="container"></div>
+<!-- Custom elements, outside Dashboards -->
+<div id="custom">
+    <div id="html-log">
+        <h1>MQTT log</h1>
+        <pre id="log-content"></pre>
+    </div>
+    <div id="app-control">
+        <button id="clear-log">Clear log</button>
+        <span id="connect-status">disconnected</span>
+    </div>
+</div>
 
 <div class="description"><p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
     broker and subscribe to a topic. The data is then displayed in a Highcharts chart and a Dashboard datagrid.

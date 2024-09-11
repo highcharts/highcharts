@@ -185,16 +185,6 @@ async function createDashboard() {
                 highlight: true
             },
             dataGridOptions: dataGridOptions
-        }, {
-            renderTo: 'html-log',
-            type: 'HTML',
-            title: 'MQTT Event Log',
-            html: '<pre id="log-content"></pre>'
-        }, {
-            renderTo: 'app-control',
-            type: 'HTML',
-            html: '<button id="clear-log">Clear log</button>' +
-                '<span id="connect-status">disconnected</span>'
         }],
         gui: {
             layouts: [{
@@ -211,16 +201,6 @@ async function createDashboard() {
                         id: 'column-chart-2'
                     }, {
                         id: 'data-grid-2'
-                    }]
-                }, {
-                    // Log/info area
-                    cells: [{
-                        id: 'html-log'
-                    }]
-                }, {
-                    // Application control
-                    cells: [{
-                        id: 'app-control'
                     }]
                 }]
             }]
@@ -257,15 +237,15 @@ window.onload = () => {
 function logAppend(message) {
     // Prepend message with timestamp
     const time = new Date().toLocaleTimeString();
-    logContent.innerHTML = `${time}: ${message}\n` + logContent.innerHTML;
+    logContent.innerText = `${time}: ${message}\n` + logContent.innerText;
 }
 
 function logClear() {
-    logContent.innerHTML = '';
+    logContent.innerText = '';
 }
 
 function setConnectStatus(connected) {
-    connectStatus.innerHTML = connected ? 'connected' : 'disconnected';
+    connectStatus.innerText = connected ? 'connected' : 'disconnected';
     connectStatus.style.color = connected ? 'green' : 'red';
 }
 
