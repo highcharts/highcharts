@@ -71,10 +71,7 @@ declare module '../../Series/SeriesLike' {
         negStacks?: boolean;
         singleStacks?: false;
         stack?: StackOverflowValue;
-        stackedYData?: (
-            Array<number>
-            // Array<Array<number>>
-        );
+        stackedYData?: Array<number>;
         stackKey?: string;
         getStackIndicator(
             stackIndicator: (StackItemIndicatorObject|undefined),
@@ -379,9 +376,8 @@ function seriesSetStackedPoints(
 
     // Loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
-        let y = yData[i];
-
         const x = xData[i] || 0,
+            y = yData[i],
             yNumber = isNumber(y) && y || 0;
 
         stackIndicator = series.getStackIndicator(

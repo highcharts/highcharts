@@ -987,22 +987,6 @@ class Series {
     }
 
     /**
-     * Shorthand to get the series' data columns from `Series.dataTable`.
-     *
-     * @private
-     * @function Highcharts.Series#getColumns
-     * /
-    public getColumns(
-        columnNames: Array<string>,
-        modified?: boolean
-    ): Record<string, Array<number>> {
-        // Transitional code for legacy parallel arrays
-        return (modified ? this.table.modified : this.table)
-            .getColumns(columnNames, true) as Record<string, Array<number>>;
-    }
-    */
-
-    /**
      * Finds the index of an existing point that matches the given point
      * options.
      *
@@ -1485,8 +1469,7 @@ class Series {
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
-            const yData = this.getColumn('y');
-            if (isString(yData[0])) {
+            if (isString(this.getColumn('y')[0])) {
                 error(14, true, chart);
             }
 
@@ -1804,7 +1787,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.dataTable.modified || series.dataTable,
+            table = series.dataTable.modified,
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -3939,8 +3922,7 @@ class Series {
             { chart, data, dataTable: table, xAxis } = series,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            xData = series.getColumn('x'),
-            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            xData = series.getColumn('x');
         let isInTheMiddle,
             i: number;
 
@@ -3964,13 +3946,7 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(dataColumnKeys.reduce(
-            (acc: DataTable.RowObject, key: string): DataTable.RowObject => {
-                acc[key] = point[key];
-                return acc;
-            },
-            {} as DataTable.RowObject
-        ), i, true);
+        table.setRow(point, i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -4309,15 +4285,14 @@ class Series {
             {
                 // When oldOptions.index is null it should't be cleared.
                 // Otherwise navigator series will have wrong indexes (#10193).
-                index: typeof oldOptions.index === 'undefined' ?
+                index: oldOptions.index === void 0 ?
                     series.index : oldOptions.index,
-                pointStart: pick(
+                pointStart:
                     // When updating from blank (#7933)
-                    plotOptions?.series?.pointStart,
-                    oldOptions.pointStart,
+                    plotOptions?.series?.pointStart ??
+                    oldOptions.pointStart ??
                     // When updating after addPoint
                     series.getColumn('x')[0]
-                )
             },
             !keepPoints && { data: series.options.data },
             options,

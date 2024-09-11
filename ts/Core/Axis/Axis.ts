@@ -1500,7 +1500,7 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        axis.max as any, series.dataTable.rowCount - 1
+                        axis.max || 0, series.dataTable.rowCount - 1
                     );
 
                     series.processData();
