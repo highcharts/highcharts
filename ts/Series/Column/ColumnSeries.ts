@@ -489,7 +489,6 @@ class ColumnSeries extends Series {
             dataMax = series.dataMax,
             translatedThreshold = series.translatedThreshold =
                 yAxis.getThreshold(threshold as any);
-
         // Postprocessed for border width
         let seriesBarW = series.barW =
                 Math.max(seriesPointWidth, 1 + 2 * borderWidth);
