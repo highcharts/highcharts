@@ -49,6 +49,28 @@ const composedClasses: Array<(Function|GlobalsLike)> = [],
 
 let wheelTimer: number;
 
+interface ZoomBox {
+    height: number;
+    width: number;
+    x: number;
+    y: number;
+    scale: number,
+    panX: number,
+    panY: number
+}
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        zoomBox?: ZoomBox
+    }
+}
+
 
 /* *
  *
@@ -202,6 +224,73 @@ function compose(
         composedClasses.push(ChartClass);
 
         addEvent(ChartClass, 'afterGetContainer', onAfterGetContainer);
+
+        addEvent(ChartClass, 'transform', function (e: any): void {
+            if (
+                e.trigger === 'mousewheel' ||
+                e.trigger === 'zoom' ||
+                e.selection ||
+                e.trigger === 'pan'
+            ) {
+                this.series.forEach((series): void => {
+                    if (!series.isCartesian) {
+                        series.isDirty = true;
+                        if (e.trigger === 'pan' && series.zoomBox) {
+                            series.zoomBox.panX = e.to.x;
+                            series.zoomBox.panY = e.to.y;
+                        } else {
+                            if (e.from) {
+                                let x = e.from.x,
+                                    y = e.from.y,
+                                    scale = series.zoomBox?.scale || 1,
+                                    width = (
+                                        series.zoomBox?.width ||
+                                        series.chart.plotSizeX ||
+                                        0
+                                    ),
+                                    height = (
+                                        series.zoomBox?.height ||
+                                        series.chart.plotSizeY ||
+                                        0
+                                    );
+
+                                if (e.to) {
+                                    width =
+                                        width * (e.from.width / e.to.width);
+                                    height =
+                                        height * (e.from.height / e.to.height);
+
+                                    scale =
+                                        Math.min(
+                                            (series.chart.plotSizeX || 0) /
+                                                width,
+                                            (series.chart.plotSizeY || 0) /
+                                                height
+                                        );
+                                } else {
+                                    scale = Math.min(
+                                        (series.chart.plotSizeX || 0) /
+                                            e.from.width,
+                                        (series.chart.plotSizeY || 0) /
+                                            e.from.height
+                                    );
+                                    width = e.from.width;
+                                    height = e.from.height;
+                                    x = e.from.x + (width / 2);
+                                    y = e.from.y + (height / 2);
+                                }
+
+                                series.zoomBox = {
+                                    x, y, width, height, scale, panX: 0, panY: 0
+                                };
+                            } else {
+                                delete series.zoomBox;
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 }
 

@@ -1,6 +1,9 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'pie'
+        type: 'pie',
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Egg Yolk Composition'

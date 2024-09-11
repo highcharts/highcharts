@@ -3339,7 +3339,10 @@ class Series {
      */
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         let horAxis = this.xAxis,
-            vertAxis = this.yAxis;
+            vertAxis = this.yAxis,
+            scale = 1,
+            left = 0,
+            top = 0;
 
         const chart = this.chart,
             inverted = (
@@ -3348,7 +3351,8 @@ class Series {
                 horAxis &&
                 this.invertible &&
                 name === 'series'
-            );
+            ),
+            { group, zoomBox } = this;
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
@@ -3356,9 +3360,22 @@ class Series {
             vertAxis = this.xAxis;
         }
 
+        let initLeft = horAxis ? horAxis.left : chart.plotLeft,
+            initTop = vertAxis ? vertAxis.top : chart.plotTop;
+
+        if (zoomBox && group) {
+            scale = zoomBox.scale;
+            left = zoomBox.x * (scale - (group.scaleX || 1)) -
+                (name === 'series' ? zoomBox.panX : 0);
+            top = zoomBox.y * (scale - (group.scaleX || 1)) -
+                (name === 'series' ? zoomBox.panY : 0);
+            initLeft = group.translateX || initLeft;
+            initTop = group.translateY || initTop;
+        }
+
         return {
-            translateX: horAxis ? horAxis.left : chart.plotLeft,
-            translateY: vertAxis ? vertAxis.top : chart.plotTop,
+            translateX: initLeft - left,
+            translateY: initTop - top,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
                 (horAxis.len - vertAxis.len) / 2 :
@@ -3366,8 +3383,8 @@ class Series {
             rotationOriginY: inverted ?
                 (horAxis.len + vertAxis.len) / 2 :
                 0,
-            scaleX: inverted ? -1 : 1, // #1623
-            scaleY: 1
+            scaleX: inverted ? -scale : scale, // #1623
+            scaleY: scale
         };
     }
 

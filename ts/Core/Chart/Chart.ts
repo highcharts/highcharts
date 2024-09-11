@@ -3662,12 +3662,13 @@ class Chart {
             } = params,
             { inverted } = this;
 
-        let hasZoomed = false,
-            displayButton: boolean|undefined,
+        let displayButton: boolean|undefined,
             isAnyAxisPanning: true|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
+
+        fireEvent(this, 'transform', params);
 
         for (const axis of axes) {
             const {
@@ -3865,8 +3866,6 @@ class Chart {
                             displayButton = true;
                         }
                     }
-
-                    hasZoomed = true;
                 }
 
                 if (event) {
@@ -3876,40 +3875,38 @@ class Chart {
             }
         }
 
-        if (hasZoomed) {
-            if (selection) {
-                fireEvent(
-                    this,
-                    'selection',
-                    selection,
-                    // Run transform again, this time without the selection data
-                    // so that the transform is applied.
-                    (): void => {
-                        delete params.selection;
-                        params.trigger = 'zoom';
-                        this.transform(params);
-                    }
-                );
-            } else {
-
-                // Show or hide the Reset zoom button, but not while panning
-                if (
-                    displayButton &&
-                    !isAnyAxisPanning &&
-                    !this.resetZoomButton
-                ) {
-                    this.showResetZoom();
-                } else if (!displayButton && this.resetZoomButton) {
-                    this.resetZoomButton = this.resetZoomButton.destroy();
+        if (selection) {
+            fireEvent(
+                this,
+                'selection',
+                selection,
+                // Run transform again, this time without the selection data
+                // so that the transform is applied.
+                (): void => {
+                    delete params.selection;
+                    params.trigger = 'zoom';
+                    this.transform(params);
                 }
+            );
+        } else {
 
-                this.redraw(
-                    trigger === 'zoom' &&
-                    (this.options.chart.animation ?? this.pointCount < 100)
-                );
+            // Show or hide the Reset zoom button, but not while panning
+            if (
+                displayButton &&
+                !isAnyAxisPanning &&
+                !this.resetZoomButton
+            ) {
+                this.showResetZoom();
+            } else if (!displayButton && this.resetZoomButton) {
+                this.resetZoomButton = this.resetZoomButton.destroy();
             }
+
+            this.redraw(
+                trigger === 'zoom' &&
+                (this.options.chart.animation ?? this.pointCount < 100)
+            );
         }
-        return hasZoomed;
+        return true;
     }
 
 }
