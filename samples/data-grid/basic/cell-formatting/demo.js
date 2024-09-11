@@ -41,7 +41,7 @@ DataGrid.dataGrid('container', {
     }, {
         id: 'price',
         cells: {
-            format: '{value:.2f}'
+            format: '$ {value:.2f}'
         }
     }, {
         id: 'icon',
