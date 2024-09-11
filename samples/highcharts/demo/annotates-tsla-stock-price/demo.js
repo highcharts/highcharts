@@ -1,13 +1,50 @@
-(async () => {
-    const fetchedData = await fetch(
-        'https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US88160R1014&idType=ISIN&endDate=2024-01-01&startDate=2017-01-01&currency=EUR'
-    ).then(res => (res.ok ? res.json() : []));
-    const data = fetchedData.TimeSeries.Security[0].HistoryDetail.map(
-        detail => [
-            new Date(detail.EndDate).valueOf(),
-            Number.parseFloat(detail.Value)
-        ]
-    );
+const commonOptions = {
+    api: {
+        url: 'https://demo-live-data.highcharts.com',
+        access: {
+            url: 'https://demo-live-data.highcharts.com/token/oauth',
+            username: '<your username here>',
+            password: '<your password here>'
+        }
+    }
+};
+
+const ISINMap = {
+    Netflix: 'US64110L1061',
+    Apple: 'US0378331005',
+    Intel: 'US4581401001',
+    Nvidia: 'US67066G1040',
+    AMD: 'US0079031078',
+    Microsoft: 'US5949181045',
+    Tesla: 'US88160R1014',
+    Meta: 'US30303M1027',
+    Amazon: 'US0231351067',
+    GoogleClassA: 'US02079K3059',
+    GoogleClassC: 'US02079K1079'
+};
+
+// eslint-disable-next-line no-undef
+const connector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'Price'
+    },
+    securities: [
+        {
+            id: ISINMap.Tesla,
+            idType: 'ISIN'
+        }
+    ],
+    startDate: '2017-01-01',
+    endDate: '2024-01-01',
+    currencyId: 'EUR'
+});
+
+Promise.all([connector.load()]).then(() => {
+    const cols = connector.table.getColumns();
+
+    const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
+    const data = cols[name].map((value, i) => [cols.Date[i], value]);
 
     Highcharts.chart('container', {
         chart: {
@@ -23,8 +60,7 @@
         },
 
         caption: {
-            text:
-                `This chart uses the Highcharts Annotations feature to place
+            text: `This chart uses the Highcharts Annotations feature to place
                 labels at various points of interest. The labels are responsive
                 and will be hidden to avoid overlap on small screens.`
         },
@@ -206,4 +242,4 @@
             }
         ]
     });
-})();
+});
