@@ -477,6 +477,8 @@ class SMAIndicator extends LineSeries {
 
         const pointArrayMap = indicator.pointArrayMap || ['y'],
             valueColumns: Record<string, Array<number|null>> = {};
+
+        // Split legacy twodimensional values into value columns
         (processedData.yData as any)
             .forEach((values: number|null|Array<number|null>): void => {
                 pointArrayMap.forEach((key, index): void => {
