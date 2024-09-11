@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'fibonacci normal and reversed'
+        text: 'Fibonacci annotation: normal and reversed'
     },
     annotations: [{
         type: 'fibonacci',

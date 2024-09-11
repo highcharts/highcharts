@@ -1,5 +1,8 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Time cycles annotation'
+    },
     annotations: [{
         type: 'timeCycles',
         controlPointOptions: {

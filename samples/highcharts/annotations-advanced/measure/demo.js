@@ -11,7 +11,7 @@ const chart = Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Elliott Wave advanced annotation'
+        text: 'Measure advanced annotation'
     },
     annotations: [{
         type: 'measure',

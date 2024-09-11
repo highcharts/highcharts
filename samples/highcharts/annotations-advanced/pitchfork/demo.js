@@ -1,7 +1,7 @@
 const chart = Highcharts.chart('container', {
 
     title: {
-        text: 'pitchfork advanced annotation'
+        text: 'Pitchfork advanced annotation'
     },
     annotations: [{
         type: 'pitchfork',

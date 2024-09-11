@@ -1,5 +1,8 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Tunnel annotation'
+    },
     annotations: [{
         type: 'tunnel',
         controlPointOptions: {

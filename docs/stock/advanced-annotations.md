@@ -8,8 +8,6 @@ Include the following file `modules/annotations-advanced.js` after highcharts.js
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/fibonacci) to check the code.
-
 The concept
 -----------
 
@@ -66,8 +64,6 @@ Most of the advanced annotations have some control points defined by default. Th
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/tunnel allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/tunnel) to check the code.
-
 By default, all control points are set to `visible: false`. To make them visible, change the setting to `true` in the `controlPointOptions`. Read more about [controlPointOptions](https://api.highcharts.com/highstock/annotations.tunnel.controlPointOptions) and [heightControlPoint](https://api.highcharts.com/highstock/annotations.tunnel.typeOptions.heightControlPoint).
 
 List of advanced annotations with examples
@@ -78,50 +74,32 @@ Note the demos with an interactive "Apply colors" button to see how various opti
 ### Vertical line
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/vertical-line allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/vertical-line) to check the code.
 
 ### Tunnel
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/tunnel allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/tunnel) to check the code.
-
 ### Time cycles
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/time-cycles allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/time-cycles) to check the code.
 
 ### Pitchfork
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/pitchfork allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/pitchfork) to check the code.
-
 ### Measure
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/measure allow="fullscreen"></iframe>
-
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/measure) to check the code.
 
 ### Infinity line
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/infinity-line allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/infinity-line) to check the code.
-
 ### Fibonacci
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci allow="fullscreen"></iframe>
-
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/fibonacci) to check the code.
 
 ### Fibonacci time zones
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci-time-zones allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/fibonacci-time-zones) to check the code.
-
 ### Elliot wave
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/elliott-wave allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/elliott-wave) to check the code.
-
 ### Crooked line
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/crooked-line allow="fullscreen"></iframe>
-
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/crooked-line) to check the code.
 
