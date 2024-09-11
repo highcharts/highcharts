@@ -520,7 +520,7 @@ class TreemapSeries extends ScatterSeries {
                     );
 
                     groupPoint = new PointClass(series, {
-                        name: groupAreaThreshold.name,
+                        name: `+ ${groupChildren.length}`,
                         value: val
                     } as TreemapPointOptions);
 
@@ -533,14 +533,14 @@ class TreemapSeries extends ScatterSeries {
                             .colorAxis.toColor(val, groupPoint);
                     }
 
-                    merge(true, groupPoint, {
+                    extend(groupPoint, {
                         node,
                         formatPrefix: 'groupedNodes',
                         groupedPointsAmount: groupChildren.length
                     });
 
 
-                    merge(true, node, {
+                    extend(node, {
                         point: groupPoint,
                         isLeaf: true,
                         isGroup: true,
@@ -558,7 +558,7 @@ class TreemapSeries extends ScatterSeries {
                     children.push(node);
 
                     // Calculate the layout one more time after hiding small
-                    // leafs
+                    // leaves
                     childrenValues = series[algorithm](area, children);
                 }
             }
@@ -836,7 +836,7 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false;
 
         if (
-            (!point.node.isLeaf) &&
+            !point.node.isLeaf &&
             (point.node.level - this.nodeMap[this.rootNode].level) === 1
         ) {
             drillId = point.id;

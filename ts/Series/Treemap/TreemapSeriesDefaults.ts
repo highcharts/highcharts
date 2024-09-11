@@ -215,7 +215,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         headerFormat: '',
         pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
         /**
-         * The HTML of the grouped nodes point's in the tooltip. Works only for
+         * The HTML of the grouped point's nodes in the tooltip. Works only for
          * Treemap series grouping and analogously to
          * [pointFormat](#tooltip.pointFormat).
          *
@@ -578,14 +578,17 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since next
      *
      * @product highcharts
+     * @apioption plotOptions.treemap.groupAreaThreshold
      */
     groupAreaThreshold: {
         /**
          * Enable or disable Treemap grouping.
          *
          * @type {boolean}
+         * @default false
          * @since next
          * @product highcharts
+         * @apioption series.treemap.groupAreaThreshold.enabled
          */
         enabled: false,
 
@@ -593,32 +596,38 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * The pixel threshold width of area, which is used in Treemap grouping.
          *
          * @type {number}
+         * @default undefined
          * @since next
          * @product highcharts
-         * @apioption plotOptions.treemap.groupAreaThreshold.pixelWidth
-         *
+         * @apioption series.treemap.groupAreaThreshold.pixelWidth
          */
+        pixelWidth: void 0,
 
         /**
          * The pixel threshold height of area, which is used in Treemap
          * grouping.
          *
          * @type {number}
+         * @default undefined
          * @since next
          * @product highcharts
-         * @apioption plotOptions.treemap.groupAreaThreshold.pixelHeight
-         *
+         * @apioption series.treemap.groupAreaThreshold.pixelHeight
          */
+        pixelHeight: void 0,
 
         /**
          * The name of the point of grouped nodes shown in the tooltip,
-         * dataLabels, etc.
+         * dataLabels, etc. By default it is set to '+ n', where n is number of
+         * grouped points.
          *
          * @type {string}
+         * @default undefined
          * @since next
          * @product highcharts
+         * @apioption series.treemap.groupAreaThreshold.name
          */
-        name: 'Grouped nodes'
+        name: void 0
+
     }
 
 };

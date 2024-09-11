@@ -4,9 +4,6 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8a1f8f0eb4/samples/data/africa-export-2021.json'
     ).then(response => response.json());
 
-    const lightenDarkenColor = (col, amt) =>
-        '#' + (+('0x' + col) + amt * 0x010101).toString(16).padStart(6, 0);
-
     // Calculate different color if there is not enough colors in array
     if (Highcharts.getOptions().colors.length < 11) {
         const { colors } = Highcharts.getOptions();
@@ -17,10 +14,8 @@
                 k++;
             }
             Highcharts.defaultOptions.colors.push(
-                lightenDarkenColor(
-                    colors[j % colors.length].slice(1, 7),
-                    -20 * k
-                )
+                Highcharts.color(colors[j % colors.length])
+                    .brighten(-0.2 * k).get()
             );
             j++;
         }
@@ -43,6 +38,7 @@
         },
 
         tooltip: {
+            animation: false,
             borderWidth: 0,
             borderRadius: 15,
             backgroundColor: '#474554',

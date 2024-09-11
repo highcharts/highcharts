@@ -123,7 +123,6 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * @type {number}
      * @since next
      * @product highcharts
-     *
      */
     pixelWidth?: number;
 
@@ -138,13 +137,13 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
 
     /**
      * The name of the point of grouped nodes shown in the tooltip, dataLabels,
-     * etc.
+     * etc. By default it is set to '+ n', where n is number of grouped points.
      *
      * @type {string}
      * @since next
      * @product highcharts
      */
-    name: string;
+    name?: string;
 }
 
 
