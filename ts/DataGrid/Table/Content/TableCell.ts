@@ -176,6 +176,7 @@ class TableCell extends Cell {
             element.innerText = cellContent;
         }
 
+        this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
         vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
 
