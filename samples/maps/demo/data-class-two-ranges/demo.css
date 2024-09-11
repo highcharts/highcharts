@@ -1,5 +1,5 @@
 #container {
-    height: 550px;
+    height: 500px;
     min-width: 310px;
     max-width: 600px;
     margin: 0 auto;
@@ -15,9 +15,6 @@
     width: 290px;
     height: 240px;
     padding: 0.5em 1em;
-    background: #fff;
-    border: 1px solid #c5c5c5;
-    border-radius: 3px;
     cursor: default;
 }
 
@@ -37,6 +34,7 @@
 }
 
 #annotation-close-btn {
+    appearance: none;
     width: 20px;
     height: 20px;
     padding: 1px;

@@ -19,7 +19,6 @@
              */
             function pointClick() {
                 const row = this.options.row;
-
                 const chart = this.series.chart;
 
                 // Remove existing annotation if present
