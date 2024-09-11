@@ -54,13 +54,17 @@ const dataGridOptions = {
     }
 };
 
-// Connector configuration
-const connConfig = {
+const mqttLinkConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
     password: 'Qs0URPjxnWlcuYBmFWNK',
-    useSSL: true,
+    useSSL: true
+};
+
+// Connector configuration
+const connConfig = {
+    // ...mqttLinkConfig,
     columnNames: [
         'time',
         'power'
@@ -76,6 +80,7 @@ const connConfig = {
         return modifiedData;
     },
     connectEvent: event => {
+        console.log('connectEvent:', event);
         const { connected, host, port, user } = event.detail;
         setConnectStatus(connected);
         // eslint-disable-next-line max-len
