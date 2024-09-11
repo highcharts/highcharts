@@ -55,11 +55,11 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
-    /**
-     * The input element of a cell after mouse focus.
-     * @internal
-     */
-    public cellInputEl?: HTMLInputElement;
+    // /**
+    //  * The input element of a cell after mouse focus.
+    //  * @internal
+    //  */
+    // public cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -100,9 +100,33 @@ class TableCell extends Cell {
      */
     public override render(): void {
         super.render();
+        const vp = this.column.viewport;
+        const cell = this;
 
         // It may happen that `await` will be needed here in the future.
         void this.setValue(this.column.data?.[this.row.index], false);
+
+        if (this.column.options.editable) {
+            this.htmlElement.setAttribute('contenteditable', 'plaintext-only');
+            this.htmlElement.setAttribute('role', 'textbox');
+            this.htmlElement.setAttribute('aria-multiline', true);
+
+            this.htmlElement.addEventListener('focus', function (): void {
+                this.innerText = cell.value?.toString() || '';
+            }, false);
+
+            this.htmlElement.addEventListener('input', function (): void {
+                // Set value
+                cell.value = this.innerText;
+
+                // Adjust height
+                vp.reflow();
+            }, false);
+
+            this.htmlElement.addEventListener('focusout', function (): void {
+                void cell.setValue(cell.value, false);
+            }, false);
+        }
     }
 
     /**
@@ -138,9 +162,9 @@ class TableCell extends Cell {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
-        if (this.column.options.editable) {
-            vp.cellEditing.startEditing(this);
-        }
+        /// if (this.column.options.editable) {
+        //     vp.cellEditing.startEditing(this);
+        // }
 
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {
@@ -149,7 +173,7 @@ class TableCell extends Cell {
     };
 
     /**
-     * Sets the value & updating content of the cell.
+     * Sets the value & updates content of the cell.
      *
      * @param value
      * The raw value to set.

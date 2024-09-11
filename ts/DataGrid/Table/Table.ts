@@ -34,7 +34,7 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Utils from '../../Core/Utilities.js';
-import CellEditing from './Actions/CellEditing.js';
+// import CellEditing from './Actions/CellEditing.js';
 import TableRow from './Content/TableRow';
 
 const { makeHTMLElement } = DGUtils;
@@ -143,7 +143,7 @@ class Table {
      * the data grid.
      * @internal
      */
-    public cellEditing: CellEditing;
+    // public cellEditing: CellEditing;
 
 
     /* *
@@ -183,7 +183,7 @@ class Table {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
-        this.cellEditing = new CellEditing();
+        // this.cellEditing = new CellEditing();
 
         this.init();
 
