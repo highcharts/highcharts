@@ -73,7 +73,7 @@ By default, all control points are set to `visible: false`. To make them visible
 List of advanced annotations with examples
 --------------------------------
 
-Note the demos with an interactive "Apply colors" button to see how vairous options such as `typeOptions` are applied with different annotations.
+Note the demos with an interactive "Apply colors" button to see how various options such as `typeOptions` are applied with different annotations.
 
 ### Vertical line
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/vertical-line allow="fullscreen"></iframe>
