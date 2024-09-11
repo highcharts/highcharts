@@ -143,6 +143,8 @@ in the sources. As a consequence, types in sources and doclets share only a few
 similarities. Public interfaces for example have to be defined twice, once in
 TypeScript and a second time as JSDoclets.
 
+[More about the Doclets](./DOCLETS.md).
+
 
 
 Testing
