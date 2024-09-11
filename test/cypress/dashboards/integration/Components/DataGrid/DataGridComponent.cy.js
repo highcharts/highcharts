@@ -118,14 +118,14 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-accordion-header-btn').contains('General').click();
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Editable DataGrid').should('be.visible');
-        cy.get('.highcharts-dashboards-edit-toggle-container')
+        cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Editable DataGrid')
             .next()
             .find('input[type="checkbox"]')
-            .should('be.checked')
+            .should('be.checked');
 
         cy.get('.highcharts-dashboards-edit-label-text').contains('Resizable columns').should('be.visible');
-        cy.get('.highcharts-dashboards-edit-toggle-container')
+        cy.get('.highcharts-dashboards-edit-label-text')
             .contains('Resizable columns')
             .next()
             .find('input[type="checkbox"]')
