@@ -47,11 +47,15 @@ Dashboards.board('container', {
         },
         dataGridOptions: {
             columnDefaults: {
-                editable: true
+                cells: {
+                    editable: true
+                }
             },
             columns: [{
                 id: 'time',
-                editable: false
+                cells: {
+                    editable: false
+                }
             }]
         }
     }]

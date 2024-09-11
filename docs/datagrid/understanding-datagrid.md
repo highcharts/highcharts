@@ -11,7 +11,9 @@ Default options for all columns.
 
 ```js
 columnDefaults: {
-    editable: true
+    cells: {
+        editable: true
+    }
 }
 ```
 
@@ -110,7 +112,9 @@ Allows you to edit the main value of the cell.
 
 ```js
 columnDefaults: {
-    editable: true
+    cells: {
+        editable: true
+    }
 }
 ```
 

@@ -138,7 +138,7 @@ class TableCell extends Cell {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
-        if (this.column.options.editable) {
+        if (this.column.options.cells?.editable) {
             vp.cellEditing.startEditing(this);
         }
 

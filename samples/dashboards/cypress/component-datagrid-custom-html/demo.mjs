@@ -75,7 +75,9 @@ Dashboards.board('container', {
             dataGridOptions: {
                 header: ['Food', 'Vitamin A'],
                 columnDefaults: {
-                    editable: true
+                    cells: {
+                        editable: true
+                    }
                 },
                 columns: [{
                     id: 'Vitamin A',

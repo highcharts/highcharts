@@ -87,11 +87,15 @@ Dashboards.board('container', {
             },
             dataGridOptions: {
                 columnDefaults: {
-                    editable: true
+                    cells: {
+                        editable: true
+                    }
                 },
                 columns: [{
                     id: 'USD',
-                    editable: false
+                    cells: {
+                        editable: false
+                    }
                 }]
             },
             sync: {
