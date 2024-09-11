@@ -15,6 +15,8 @@ describe('Formatting cells.', () => {
         cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(4).within(() => {
             cy.get('a').should('have.text', 'Apples URL');
         });
+
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('have.attr', 'data-value', '100');
     });
 
     it('Cells without formatter should not be formatted.', () => {
@@ -33,6 +35,7 @@ describe('Formatting cells.', () => {
         cy.get('@inputField').clear().type('300');
         cy.get('body').click();
         cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('have.text', '300 kg');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('have.attr', 'data-value', '300');
     });
 
     it('The cell containing dates should lose format when editing and gain back when not.', () => {
