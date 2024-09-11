@@ -1,6 +1,16 @@
 /* *
  *
- *  Sample application using a MQTT connector (custom connector)
+ *  Sample application using a MQTT connector (custom connector).
+ *
+ *  Assumes incoming packets on a JSON format with the following content:
+ *
+ *  {
+ *      "name": "Measurement name",
+ *      "time": ISO time stamp, e.g. "2024-09-11T13:54:00Z"
+ *      "power": any decimal number, e.g 3.14
+ *  }
+ *
+ *  The time is for the x-axis, the value for the y-axis.
  *
  * */
 
@@ -54,37 +64,29 @@ const dataGridOptions = {
     }
 };
 
-const mqttLinkConfig = {
-    host: 'mqtt.sognekraft.no',
-    port: 8083,
-    user: 'highsoft',
-    password: 'Qs0URPjxnWlcuYBmFWNK',
-    useSSL: true
-};
 
 // Connector configuration
 const connConfig = {
-    // ...mqttLinkConfig,
     columnNames: [
         'time',
         'power'
     ],
     beforeParse: data => {
-        // Application specific data parsing, extracts power production data
+        // Application specific data parsing
         const modifiedData = [];
-        if (data.aggs) {
-            const ts = new Date(data.tst_iso).valueOf();
-            // Generated power in MW
-            modifiedData.push([ts, data.aggs[0].P_gen]);
-        }
+        const ts = new Date(data.time).valueOf();
+
+        modifiedData.push([ts, data.power]);
+        console.log(modifiedData);
+
         return modifiedData;
     },
     connectEvent: event => {
         console.log('connectEvent:', event);
-        const { connected, host, port, user } = event.detail;
+        const { connected, host, port } = event.detail;
         setConnectStatus(connected);
         // eslint-disable-next-line max-len
-        logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}, user: ${user}`);
+        logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
     },
     subscribeEvent: event => {
         const { subscribed, topic } = event.detail;
@@ -95,7 +97,7 @@ const connConfig = {
     packetEvent: event => {
         const { topic, count } = event.detail;
         if (count === 1) {
-            setPowerPlantName(topic, event.data.name);
+            setChartTitle(topic, event.data.name);
         }
         logAppend(`Packet #${count} received: ${topic}`);
     },
@@ -103,7 +105,7 @@ const connConfig = {
         const { code, message } = event.detail;
         setConnectStatus(false);
         // eslint-disable-next-line max-len
-        logAppend(`<span class="error">${message} (error code #${code})</span>`);
+        logAppend(`${message} (error code #${code})`);
     }
 };
 
@@ -116,14 +118,14 @@ async function createDashboard() {
                 type: 'MQTT',
                 id: 'mqtt-data-1',
                 options: {
-                    topic: 'prod/DEMO_Highsoft/kraftverk_1/overview',
+                    topic: 'highsoft/test/topic1',
                     ...connConfig
                 }
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
                 options: {
-                    topic: 'prod/DEMO_Highsoft/kraftverk_2/overview',
+                    topic: 'highsoft/test/topic2',
                     ...connConfig
                 }
             }]
@@ -144,7 +146,7 @@ async function createDashboard() {
             chartOptions: {
                 ...chartOptions,
                 title: {
-                    text: 'Power Station 1'
+                    text: 'No data 1'
                 }
             }
         }, {
@@ -173,7 +175,7 @@ async function createDashboard() {
             chartOptions: {
                 ...chartOptions,
                 title: {
-                    text: 'Power Station 2'
+                    text: 'No data 2'
                 }
             }
         }, {
@@ -190,14 +192,14 @@ async function createDashboard() {
         gui: {
             layouts: [{
                 rows: [{
-                    // For power station 1
+                    // For topic 1
                     cells: [{
                         id: 'column-chart-1'
                     }, {
                         id: 'data-grid-1'
                     }]
                 }, {
-                    // For power station 2
+                    // For topic 2
                     cells: [{
                         id: 'column-chart-2'
                     }, {
@@ -250,12 +252,12 @@ function setConnectStatus(connected) {
     connectStatus.style.color = connected ? 'green' : 'red';
 }
 
-function setPowerPlantName(topic, name) {
+function setChartTitle(topic, name) {
     let component;
 
-    if (topic.includes('kraftverk_1')) {
+    if (topic.includes('topic1')) {
         component = board.getComponentByCellId('column-chart-1');
-    } else if (topic.includes('kraftverk_2')) {
+    } else if (topic.includes('topic2')) {
         component = board.getComponentByCellId('column-chart-2');
     }
 
@@ -267,7 +269,7 @@ function setPowerPlantName(topic, name) {
             }
         }
     });
-    logAppend('Power plant name: ' + name);
+    logAppend('Data object name: ' + name);
 }
 
 /* *
@@ -475,6 +477,9 @@ class MQTTConnector extends DataConnector {
      *
      */
     onMessageArrived(mqttPacket) {
+        console.log(mqttPacket.destinationName);
+        console.log(mqttPacket.payloadString);
+
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
@@ -493,7 +498,6 @@ class MQTTConnector extends DataConnector {
             // Subsequent message, append as row
             connTable.setRows(convTable.getRows());
         }
-
         connector.packetCount++;
 
         // Execute custom packet handler
@@ -600,13 +604,13 @@ class MQTTConnector extends DataConnector {
  */
 MQTTConnector.defaultOptions = {
     // MQTT client properties
-    host: 'test.mosquitto.org',
-    port: 1883,
+    host: 'broker.hivemq.com',
+    port: 8000,
     user: '',
     password: '',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: '',
+    topic: 'highsoft',
     useSSL: false,
     cleanSession: true,
 
