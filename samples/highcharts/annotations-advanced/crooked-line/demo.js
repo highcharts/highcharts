@@ -1,5 +1,8 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Crooked Line Annotation'
+    },
     annotations: [{
         id: '1',
         type: 'crookedLine',

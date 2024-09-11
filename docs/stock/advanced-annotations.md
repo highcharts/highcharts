@@ -1,7 +1,7 @@
 Advanced Annotations module
 ===========================
 
-Combining multiple shapes and labels to create a meaningful highlight can be challenging and time consuming. The advanced annotations module simplifies this process, enabling users to add complex yet practical annotations to charts—particularly valuable for technical analysis. Below is a list of all available indicators. See here for [basic annotations](https://www.highcharts.com/docs/advanced-chart-features/annotations-module).
+Combining multiple shapes and labels to create a meaningful highlight can be challenging and time consuming. The advanced annotations module simplifies this process, enabling users to add complex yet practical annotations to charts—particularly valuable for technical analysis. Below is a list of all available advanced annotations. See here for [basic annotations](https://www.highcharts.com/docs/advanced-chart-features/annotations-module).
  
 
 Include the following file `modules/annotations-advanced.js` after highcharts.js or highstock.js to enable advanced annotations.
@@ -54,6 +54,7 @@ The `typeOptions` feature allows users to customize the appearance and design of
             lineColor: 'rgba(0, 0, 0, 0.8)'
         }
 
+<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/fibonacci allow="fullscreen"></iframe>
 
 Look for the [typeOptions](https://api.highcharts.com/highstock/annotations.fibonacci.typeOptions) and [labelOptions](https://api.highcharts.com/highstock/annotations.fibonacci.labelOptions) for a specific annotation.
 
@@ -61,7 +62,7 @@ Look for the [typeOptions](https://api.highcharts.com/highstock/annotations.fibo
 Points and control points
 -------------------------
 
-When defining points, control points are automatically generated. These control points enable users to adjust the annotation by dragging points within the chart, allowing for easy resizing and reshaping. Control points can be modified using `controlPointOptions`, within the overall annotation object, or directly in the `points` array with `controlPoint`. For certain advanced annotations, the `typeOptions` includes an additional `heightControlPoint`, which specifically controls the height. See the Tunnel example below:
+Most of the advanced annotations have some control points defined by default. These control points enable users to adjust the annotation by dragging points within the chart, allowing for easy resizing and reshaping. Control points can be modified using `controlPointOptions`, within the overall annotation object, or directly in the `points` array with `controlPoint`. For certain advanced annotations, the `typeOptions` includes an additional `heightControlPoint`, which specifically controls the height. See the Tunnel example below:
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/tunnel allow="fullscreen"></iframe>
 
@@ -69,7 +70,7 @@ Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree
 
 By default, all control points are set to `visible: false`. To make them visible, change the setting to `true` in the `controlPointOptions`. Read more about [controlPointOptions](https://api.highcharts.com/highstock/annotations.tunnel.controlPointOptions) and [heightControlPoint](https://api.highcharts.com/highstock/annotations.tunnel.typeOptions.heightControlPoint).
 
-List of indicators with examples
+List of advanced annotations with examples
 --------------------------------
 
 Note the demos with an interactive "Apply colors" button to see how vairous options such as `typeOptions` are applied with different annotations.
@@ -124,12 +125,3 @@ Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/crooked-line) to check the code.
 
-### Controllable image
-<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/controllable-image allow="fullscreen"></iframe>
-
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/controllable-image) to check the code.
-
-### Controllable
-<iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/highcharts/annotations-advanced/controllable allow="fullscreen"></iframe>
-
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations-advanced/controllable) to check the code.

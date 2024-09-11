@@ -1,5 +1,8 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Infinity line advanced annotation'
+    },
     annotations: [{
         type: 'infinityLine',
         controlPointOptions: {
@@ -29,9 +32,9 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-const applyColors = document.getElementById('applyColors');
+const button = document.getElementById('button');
 
-applyColors.onclick = function () {
+button.onclick = function () {
     chart.annotations[0].update({
         typeOptions: {
             line: {

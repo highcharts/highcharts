@@ -5,6 +5,9 @@ const chart = Highcharts.chart('container', {
         }
     },
 
+    title: {
+        text: 'Fibonacci Annotation'
+    },
     annotations: [{
         type: 'fibonacci',
         controlPointOptions: {

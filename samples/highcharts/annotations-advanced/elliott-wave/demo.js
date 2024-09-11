@@ -1,4 +1,7 @@
 const chart = Highcharts.chart('container', {
+    title: {
+        text: 'Elliott Wave advanced annotation'
+    },
     chart: {
         zooming: {
             type: 'xy'

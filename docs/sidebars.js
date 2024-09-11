@@ -35,6 +35,7 @@ module.exports = {
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
+            'stock/advanced-annotations',
             'stock/candlestick-chart',
             'stock/compare',
             'stock/cumulative-sum',
@@ -165,7 +166,6 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
-            'advanced-chart-features/advanced-annotations',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',

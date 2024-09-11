@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'fibonacci normal and reversed'
+    },
     annotations: [{
         type: 'fibonacci',
         typeOptions: {

@@ -1,5 +1,8 @@
 const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'pitchfork advanced annotation'
+    },
     annotations: [{
         type: 'pitchfork',
         controlPointOptions: {

@@ -10,13 +10,15 @@ const chart = Highcharts.chart('container', {
         }
     },
 
+    title: {
+        text: 'Elliott Wave advanced annotation'
+    },
     annotations: [{
         type: 'measure',
         typeOptions: {
             point: {
                 x: 0,
-                y: 6,
-                controlPoint: { /* control point options */ }
+                y: 6
             },
             label: {
                 enabled: true
@@ -36,9 +38,9 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-const applyColors = document.getElementById('applyColors');
+const button = document.getElementById('button');
 
-applyColors.onclick = function () {
+button.onclick = function () {
     chart.annotations[0].update({
         typeOptions: {
             background: {
