@@ -201,7 +201,7 @@ class DataTableCore {
      * @param {Array<string>} [columnNames]
      * Column names to retrieve.
      *
-     * @return {Highcharts.DataTableRow}
+     * @return {Record<string, number|string|undefined>|undefined}
      * Returns the row values, or `undefined` if not found.
      */
     public getRow(
@@ -225,7 +225,7 @@ class DataTableCore {
      * @param {number} [rowIndex=0]
      * Index of the first row to change. (Default: 0)
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * @param {Record<string, (boolean|number|string|null|undefined)>} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #setColumns
@@ -251,7 +251,7 @@ class DataTableCore {
      * @param {number} [rowIndex]
      * Index of the first row to change. Keep undefined to reset.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * @param {Record<string, (boolean|number|string|null|undefined)>} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #setColumns
@@ -282,7 +282,7 @@ class DataTableCore {
      * provided, or if the index is higher than the total number of table rows.
      * A simplified version of the full `DateTable.setRow`, limited to objects.
      *
-     * @param {Highcharts.DataTableRowObject} row
+     * @param {Record<string, number|string|undefined>} row
      * Cell values to set.
      *
      * @param {number} [rowIndex]
@@ -291,7 +291,7 @@ class DataTableCore {
      * @param {boolean} [insert]
      * Whether to insert the row at the given index, or to overwrite the row.
      *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * @param {Record<string, (boolean|number|string|null|undefined)>} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #afterSetRows
@@ -422,3 +422,38 @@ namespace DataTableCore {
 
 
 export default DataTableCore;
+
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * A column of values in a data table.
+ * @typedef {Array<boolean|null|number|string|undefined>} Highcharts.DataTableColumn
+ *//**
+ * A collection of data table columns defined by a object where the key is the
+ * column name and the value is an array of the column values.
+ * @typedef {Record<string, Highcharts.DataTableColumn>} Highcharts.DataTableColumnCollection
+ */
+
+/**
+ * Options for the `DataTable` or `DataTableCore` classes.
+ * @interface Highcharts.DataTableOptions
+ *//**
+ * The column options for the data table. The columns are defined by an object
+ * where the key is the column ID and the value is an array of the column
+ * values.
+ *
+ * @name Highcharts.DataTableOptions.columns
+ * @type {Highcharts.DataTableColumnCollection|undefined}
+ *//**
+ * Custom ID to identify the new DataTable instance.
+ *
+ * @name Highcharts.DataTableOptions.id
+ * @type {string|undefined}
+ */
+
+(''); // Keeps doclets above in JS file
