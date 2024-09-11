@@ -108,13 +108,19 @@ Dashboards.board('container', {
             },
             columns: [{
                 id: 'Agriculture',
-                cellFormat: '{value:.1f}%'
+                cells: {
+                    format: '{value:.1f}%'
+                }
             }, {
                 id: 'Industry',
-                cellFormat: '{value:.1f}%'
+                cells: {
+                    format: '{value:.1f}%'
+                }
             }, {
                 id: 'Services',
-                cellFormat: '{value:.1f}%'
+                cells: {
+                    format: '{value:.1f}%'
+                }
             }]
         }
     }]

@@ -29,11 +29,9 @@ import Column from '../Column';
 import Row from '../Row';
 import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
-import Templating from '../../../Core/Templating.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
-const { format } = Templating;
 const { makeHTMLElement, isHTML } = DGUtils;
 const { merge } = Utilities;
 
@@ -61,17 +59,13 @@ class HeaderCell extends Cell {
     public headerContent?: HTMLElement;
 
     /**
-     * The HTML element of the header cell content wrapper.
-     */
-    private contentWrapper?: HTMLElement;
-
-    /**
      * Reference to options in settings header.
      */
     public options: Partial<Column.Options> = {};
 
     /**
-     * Columns
+     * Columns that are grouped in the header cell. In most cases is contains
+     * only one column, but can be more if the header cell is grouped.
      */
     public columns?: GroupedHeaderOptions[];
 
@@ -117,25 +111,29 @@ class HeaderCell extends Cell {
         const column = this.column;
         const isSingleColumn = this.row.viewport.getColumn(this.column.id);
         const options = merge(column.options, this.options);
+        const headerCellOptions = options.header || {};
 
-        this.value = options.headerFormat ? (
-            format(options.headerFormat, column)
-        ) : column.id;
+        if (headerCellOptions.formatter) {
+            this.value = headerCellOptions.formatter.call(this);
+        } else if (headerCellOptions.format) {
+            this.value = column.format(headerCellOptions.format);
+        } else {
+            this.value = column.id;
+        }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
         this.headerContent = makeHTMLElement('div', {
             className: Globals.classNames.headerCellContent
         }, this.htmlElement);
-        this.contentWrapper = makeHTMLElement('span', {}, this.headerContent);
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
                 this.value,
-                this.contentWrapper
+                this.headerContent
             );
         } else {
-            this.contentWrapper.innerText = this.value;
+            this.headerContent.innerText = this.value;
         }
 
         // Set the accessibility attributes.
@@ -164,6 +162,32 @@ class HeaderCell extends Cell {
             // Add sorting
             this.initColumnSorting();
         }
+
+        this.setCustomClassName(options.header?.className);
+    }
+
+    public override reflow(): void {
+        const cell = this;
+        const th = cell.htmlElement;
+        const vp = cell.column.viewport;
+
+        if (!th) {
+            return;
+        }
+
+        let width = 0;
+
+        if (cell.columns) {
+            for (const col of cell.columns) {
+                width += (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
+            }
+        } else {
+            width = cell.column.getWidth();
+        }
+
+        // Set the width of the column. Max width is needed for the
+        // overflow: hidden to work.
+        th.style.width = th.style.maxWidth = width + 'px';
     }
 
     /**

@@ -13,18 +13,20 @@ columnDefaults: {
 ```
 
 ## Column headers
-In columns options, use [headerFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the header content for that column.
+In columns options, use [header.format](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat) to customize the header content for that column.
 
 ```js
 columns: [{
   id: 'column1',
-  headerFormat: 'Custom header text'
+  header: {
+    format: 'Custom header text'
+  }
 }]
 ```
 
 ### Customize headers
 By default, all columns from the DataTable are imported into the DataGrid in the order they are declared.
-This can be modified using the [header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSetting#header) option to define columns (or order) that you would like ot display.
+This can be modified using the [header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSetting#header) option to define columns (or order) that you would like to display.
 
 ```js
 header: ['a', 'price', 'weight']
@@ -68,18 +70,22 @@ header: [{
 ```
 
 ## How to format cells
-The [cellFormat](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [cellFormatter](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter) option allow you to customize the cells content and format in that column.
+The [cells.format](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [cells.formatter](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter) option allow you to customize the cells content and format in that column.
 
 
 ```js
 columns: [{
   id: 'column1',
-  cellFormatter: function () {
-    return 'V: ' + this.value;
+  cells: {
+    formatter: function () {
+      return 'V: ' + this.value;
+    }
   }
 }, {
   id: 'column2',
-  cellFormat: '{value}$'
+  cells: {
+    format: '{value}$'
+  }
 }]
 ```
 

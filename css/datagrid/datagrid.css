@@ -27,6 +27,7 @@
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
     --highcharts-highlight-color-10: #e6e9ff;
+    --highcharts-highlight-color-7: #0000ff07;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -87,11 +88,13 @@
 /* ==== DataGrid Core ==== */
 .highcharts-datagrid-container * {
     box-sizing: border-box;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .highcharts-datagrid-container {
     display: block;
     min-height: 200px;
+    font-family: 1em;
     overflow: hidden;
 }
 
@@ -122,16 +125,10 @@
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
-    display: flex;
-    position: absolute;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 10px;
     padding-left: 3px;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    align-items: center;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
@@ -238,10 +235,12 @@
 
 /* .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
-    border-radius: 0;
+    border-width: 0;
     width: 100%;
     height: 100%;
     outline: none;
+    float: left;
+    font-size: 1em;
 } */
 
 /* ==== Default Theme ==== */
@@ -312,15 +311,24 @@
     background-color: var(--highcharts-highlight-color-10);
 }
 
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column,
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column {
     background-color: var(--highcharts-highlight-color-10);
 }
 
-/* .highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input,
-.highcharts-datagrid-table tbody td .highcharts-datagrid-focused-cell input:focus {
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column {
+    background-color: var(--highcharts-highlight-color-7);
+}
+
+/*
+.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
     border: 1px solid #0000ed;
+    box-shadow: inset 0 0 0 1px #0000ed;
+    padding: 0 4px;
     background-color: #b7d4ff;
-} */
+}
+*/
 
 .highcharts-datagrid-table tbody td:focus-visible {
     box-shadow: inset 0 0 0 1px #0000ed;

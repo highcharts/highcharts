@@ -98,7 +98,6 @@ class HeaderRow extends Row {
 
         if (!header) {
             super.render();
-            this.reflow();
             return;
         }
 
@@ -138,7 +137,10 @@ class HeaderRow extends Row {
             );
 
             if (headerFormat) {
-                headerCell.options.headerFormat = headerFormat;
+                if (!headerCell.options.header) {
+                    headerCell.options.header = {};
+                }
+                headerCell.options.header.format = headerFormat;
             }
 
             if (className) {
@@ -167,8 +169,15 @@ class HeaderRow extends Row {
                 }
             }
         }
+    }
 
-        this.reflow();
+    public override reflow(): void {
+        const row = this;
+
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; i++) {
+            const cell = row.cells[i] as HeaderCell;
+            cell.reflow();
+        }
     }
 
     /**

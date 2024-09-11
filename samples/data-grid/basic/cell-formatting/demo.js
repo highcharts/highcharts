@@ -15,28 +15,40 @@ DataGrid.dataGrid('container', {
     },
     columns: [{
         id: 'date',
-        headerFormat: 'Date of purchase',
-        cellFormatter: function () {
-            return new Date(this.value)
-                .toISOString()
-                .substring(0, 10);
+        header: {
+            format: 'Date of purchase'
+        },
+        cells: {
+            formatter: function () {
+                return new Date(this.value)
+                    .toISOString()
+                    .substring(0, 10);
+            }
         }
     }, {
         id: 'product',
-        headerFormat: '{id} name'
+        header: {
+            format: '{id} name'
+        }
     }, {
         id: 'weight',
         className: 'custom-column-class-name',
-        cellFormatter: function () {
-            return `${this.value} kg`;
+        cells: {
+            formatter: function () {
+                return `${this.value} kg`;
+            }
         }
     }, {
         id: 'price',
-        cellFormat: '$ {value:.2f}'
+        cells: {
+            format: '{value:.2f}'
+        }
     }, {
         id: 'icon',
-        cellFormatter: function () {
-            return `<a href="#">${this.value}</a>`;
+        cells: {
+            formatter: function () {
+                return `<a href="#">${this.value}</a>`;
+            }
         }
     }, {
         id: 'metaData',

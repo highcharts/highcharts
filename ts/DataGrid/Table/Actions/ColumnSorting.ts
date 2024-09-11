@@ -127,7 +127,7 @@ class ColumnSorting {
             return;
         }
 
-        column.header?.headerContent?.addEventListener('click', this.toggle);
+        this.headElement.addEventListener('click', this.toggle);
     }
 
     /**
@@ -152,7 +152,6 @@ class ColumnSorting {
             col.sorting?.addHeaderElementAttributes();
         }
 
-        // TODO: Investigate why it is so laggy sometimes
         viewport.dataGrid.options?.events?.column?.afterSorting?.call(
             this.column
         );
@@ -160,8 +159,21 @@ class ColumnSorting {
 
     /**
      * Toggle sorting order for the column in the order: asc -> desc -> none
+     *
+     * @param e
+     * The mouse event.
      */
-    public toggle = (): void => {
+    public toggle = (e: MouseEvent): void => {
+
+        if (
+            e.target !== this.headElement &&
+            e.target !== this.column.header?.headerContent
+        ) {
+            // Do not toggle if the click was not on the header to avoid
+            // accidental sorting, when resizing etc.
+            return;
+        }
+
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;

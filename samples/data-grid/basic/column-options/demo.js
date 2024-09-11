@@ -14,8 +14,10 @@ DataGrid.dataGrid('container', {
     columns: [{
         id: 'weight',
         className: 'custom-column-class-name',
-        cellFormatter: function () {
-            return 'V: ' + this.value;
+        cells: {
+            formatter: function () {
+                return 'V: ' + this.value;
+            }
         }
     }, {
         id: 'metaData',

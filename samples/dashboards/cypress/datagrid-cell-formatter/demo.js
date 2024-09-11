@@ -7,10 +7,12 @@ DataGrid.dataGrid('container', {
     },
     columns: [{
         id: 'date',
-        cellFormatter: function () {
-            return new Date(this.value)
-                .toISOString()
-                .substring(0, 10);
+        cells: {
+            formatter: function () {
+                return new Date(this.value)
+                    .toISOString()
+                    .substring(0, 10);
+            }
         }
     }]
 });

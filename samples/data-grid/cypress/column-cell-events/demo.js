@@ -25,6 +25,15 @@ DataGrid.dataGrid('container', {
             },
             afterEdit: function () {
                 doc.getElementById('cellAfterEdit').value = 'cellAfterEdit';
+            },
+            afterSetValue: function () {
+                if (this.row.index !== 1 || this.column.id !== 'weight') {
+                    return;
+                }
+                const el = doc.getElementById('cellAfterSetValue');
+                console.log(this.row.index, this.column.id);
+                const counter = +el.value;
+                el.value = counter + 1;
             }
         },
         column: {

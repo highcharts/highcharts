@@ -34,6 +34,8 @@ window.dataGrid = DataGrid.dataGrid('container', {
     ],
     columns: [{
         id: 'product',
-        headerFormat: '{id} test'
+        header: {
+            format: '{id} test'
+        }
     }]
 });

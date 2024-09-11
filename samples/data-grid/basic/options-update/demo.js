@@ -7,7 +7,9 @@ const initialOptions = {
     columns: [{
         id: 'weight',
         className: 'custom-column-class-name',
-        cellFormat: 'V: ${value}'
+        cells: {
+            format: 'V: ${value}'
+        }
     }, {
         id: 'metaData',
         enabled: false

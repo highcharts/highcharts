@@ -25,7 +25,6 @@ import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
-import HeaderCell from './HeaderCell';
 import Utils from '../../../Core/Utilities.js';
 const { getStyle } = Utils;
 
@@ -92,7 +91,6 @@ class TableHeader {
                 viewport.dataGrid.options?.header
             );
         }
-
     }
 
     /* *
@@ -133,49 +131,25 @@ class TableHeader {
             theadEL && getStyle(theadEL, 'border-right-width', true) || 0;
         const tableBorder = (
             tableEl && getStyle(tableEl, 'border-right-width', true)) || 0;
+        const bordersWidth =
+            offsetWidth - clientWidth - theadBorder - tableBorder;
 
         for (const row of rows) {
-            for (const cell of row.cells) {
-                const headerCell = cell as HeaderCell;
-                const th = cell.htmlElement;
-
-                if (!th) {
-                    continue;
-                }
-
-                let width = 0;
-
-                if (headerCell.columns) {
-                    for (const col of headerCell.columns) {
-                        width +=
-                            (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
-                    }
-                } else {
-                    width = cell.column.getWidth();
-                }
-
-                // Set the width of the column. Max width is needed for the
-                // overflow: hidden to work.
-                th.style.width = th.style.maxWidth = width + 'px';
-            }
+            row.reflow();
         }
 
         if (vp.rowsWidth) {
-            vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
-                (offsetWidth - clientWidth - theadBorder - tableBorder) + 'px';
+            vp.theadElement.style.width =
+                Math.max(vp.rowsWidth, clientWidth) + bordersWidth + 'px';
         }
 
         // Adjust cell's width when scrollbar is enabled.
-        if (
-            header &&
-            ((offsetWidth - clientWidth) > (theadBorder + tableBorder))
-        ) {
+        if (header && bordersWidth > 0) {
             const cells = header.rows[header.rows.length - 1].cells;
             const cellHtmlElement = cells[cells.length - 1].htmlElement;
 
             cellHtmlElement.style.width = cellHtmlElement.style.maxWidth =
-                cellHtmlElement.offsetWidth +
-                (offsetWidth - clientWidth - theadBorder - tableBorder) + 'px';
+                cellHtmlElement.offsetWidth + bordersWidth + 'px';
         }
     }
 

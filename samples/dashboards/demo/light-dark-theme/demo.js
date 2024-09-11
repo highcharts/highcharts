@@ -107,7 +107,9 @@ Dashboards.board('container', {
             },
             columns: {
                 id: 'Vitamin A',
-                headerFormat: '{text} μg'
+                header: {
+                    format: '{id} μg'
+                }
             }
         }
     }]
