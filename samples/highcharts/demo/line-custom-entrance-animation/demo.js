@@ -120,7 +120,7 @@ const ISINMap = {
 };
 
 // eslint-disable-next-line no-undef
-const FacebookPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+const FANGPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
         type: 'Price'
@@ -129,48 +129,15 @@ const FacebookPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
         {
             id: ISINMap.Meta,
             idType: 'ISIN'
-        }
-    ],
-    currencyId: 'EUR'
-});
-
-// eslint-disable-next-line no-undef
-const AmazonPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'Price'
-    },
-    securities: [
+        },
         {
             id: ISINMap.Amazon,
             idType: 'ISIN'
-        }
-    ],
-    currencyId: 'EUR'
-});
-
-// eslint-disable-next-line no-undef
-const NetflixPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'Price'
-    },
-    securities: [
+        },
         {
             id: ISINMap.Netflix,
             idType: 'ISIN'
-        }
-    ],
-    currencyId: 'EUR'
-});
-
-// eslint-disable-next-line no-undef
-const GooglePriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'Price'
-    },
-    securities: [
+        },
         {
             id: ISINMap.GoogleClassA,
             idType: 'ISIN'
@@ -179,23 +146,17 @@ const GooglePriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
     currencyId: 'EUR'
 });
 
-Promise.all([
-    FacebookPriceConnector.load(),
-    AmazonPriceConnector.load(),
-    NetflixPriceConnector.load(),
-    GooglePriceConnector.load()
-]).then(() => {
-    const processData = connector => {
-        const { Date: dates, ...cols } = connector.table.getColumns();
-        return dates.map((date, i) =>
-            Object.values(cols).map(vals => [date, vals[i]]).flat()
-        );
-    };
+Promise.all([FANGPriceConnector.load()]).then(() => {
+    console.log(FANGPriceConnector);
+    const { Date: dates, ...companies } = FANGPriceConnector.table.getColumns();
 
-    const facebookData = processData(FacebookPriceConnector);
-    const amazonData = processData(AmazonPriceConnector);
-    const netflixData = processData(NetflixPriceConnector);
-    const googleData = processData(GooglePriceConnector);
+    const processedData = Object.fromEntries(
+        Object.entries(companies).map(([key, values]) => [
+            key,
+            values.map((value, i) => [dates[i], value])
+        ])
+    );
+    console.log(processedData);
 
     Highcharts.chart('container', {
         chart: {
@@ -267,25 +228,25 @@ Promise.all([
 
         series: [{
             name: 'Facebook',
-            data: facebookData,
+            data: processedData['0P0001BUKZ'],
             yAxis: 0
         }, {
             name: 'Amazon',
-            data: amazonData,
+            data: processedData['0P00014L1C'],
             yAxis: 1,
             animation: {
                 defer: 1000
             }
         }, {
             name: 'Netflix',
-            data: netflixData,
+            data: processedData['0P0001BUL2'],
             yAxis: 2,
             animation: {
                 defer: 2000
             }
         }, {
             name: 'Google',
-            data: googleData,
+            data: processedData['0P00014KY5'],
             yAxis: 3,
             animation: {
                 defer: 3000
