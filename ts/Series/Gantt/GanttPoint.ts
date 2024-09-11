@@ -25,8 +25,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     xrange: { prototype: { pointClass: XRangePoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { pick } = U;
 
 /* *
  *
