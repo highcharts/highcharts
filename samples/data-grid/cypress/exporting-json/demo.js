@@ -14,7 +14,9 @@ const dataGrid = DataGrid.dataGrid('container', {
         }
     },
     columnDefaults: {
-        editable: true
+        cells: {
+            editable: true
+        }
     },
     columns: [{
         id: 'metaData',

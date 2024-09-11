@@ -193,15 +193,6 @@ export interface ColumnOptions {
     header?: ColumnHeaderOptions;
 
     /**
-     * Whether to make the column cells editable `true`, or read-only `false`.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Editable columns disabled}
-     *
-     * @default true
-     */
-    editable?: boolean;
-
-    /**
      * Column sorting options.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/sorting-options | Sorting options}
@@ -233,6 +224,15 @@ export interface ColumnCellOptions {
      * @default undefined
      */
     className?: string;
+
+    /**
+     * Whether to make the column cells editable `true`, or read-only `false`.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Editable columns disabled}
+     *
+     * @default true
+     */
+    editable?: boolean;
 
     /**
      * The format of the cell content within the given column of the datagrid.

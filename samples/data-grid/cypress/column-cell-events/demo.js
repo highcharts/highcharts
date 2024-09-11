@@ -10,7 +10,9 @@ DataGrid.dataGrid('container', {
         }
     },
     columnDefaults: {
-        editable: true
+        cells: {
+            editable: true
+        }
     },
     events: {
         cell: {

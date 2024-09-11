@@ -2,7 +2,9 @@
 
 const initialOptions = {
     columnDefaults: {
-        editable: true
+        cells: {
+            editable: true
+        }
     },
     columns: [{
         id: 'weight',

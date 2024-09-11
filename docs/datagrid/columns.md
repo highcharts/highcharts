@@ -8,7 +8,9 @@ For instance, you can allow editing of cells in all columns in `columnDefaults` 
 
 ```js
 columnDefaults: {
-  editable: true
+  cells: {
+    editable: true
+  }
 }
 ```
 
@@ -90,12 +92,14 @@ columns: [{
 ```
 
 ### How to edit cells
-Every cell in a column can be edited on the fly by the end user. Set the [editable](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable) option to true.
+Every cell in a column can be edited on the fly by the end user. Set the [cells.editable](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable) option to true.
 
 ```js
 columns: [{
   id: 'column1',
-  editable: true
+  cells: {
+    editable: true
+  }
 }]
 ```
 

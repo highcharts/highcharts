@@ -84,7 +84,9 @@ Dashboards.board('container', {
         },
         dataGridOptions: {
             columnDefaults: {
-                editable: true
+                cells: {
+                    editable: true
+                }
             }
         }
     }]

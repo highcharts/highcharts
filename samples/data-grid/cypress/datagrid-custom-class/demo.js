@@ -7,9 +7,9 @@ DataGrid.dataGrid('container', {
         }
     },
     columnDefaults: {
-        editable: true,
         cells: {
-            className: '{#if (gt value 100)}greater-than-100{/if}'
+            className: '{#if (gt value 100)}greater-than-100{/if}',
+            editable: true
         },
         header: {
             className: 'header-cell-custom-class-{column.id}'

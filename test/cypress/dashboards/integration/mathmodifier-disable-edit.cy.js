@@ -12,7 +12,9 @@ describe('MathModifier created columns and interaction.', () => {
                 dgComponent.dataGrid.options.columns,
                 [{
                     id: 'USD',
-                    editable: false
+                    cells: {
+                        editable: false
+                    }
                 }],
                 'USD column is not editable'
             );

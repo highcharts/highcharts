@@ -130,7 +130,9 @@ Dashboards.board('container', {
             },
             columns: [{
                 id: 'Vitamin A',
-                editable: true
+                cells: {
+                    editable: true
+                }
             }]
         }
     }]
