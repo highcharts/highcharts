@@ -690,7 +690,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: 'Source: <a href="https://www.morningstar.com/stocks/xnas/nflx/quote" target="_blank">Morning star</a>',
+        text: 'Source: <a href="https://www.morningstar.com/stocks/xnas/nflx/quote" target="_blank">Morningstar</a>',
         align: 'left'
     },
     legend: {
