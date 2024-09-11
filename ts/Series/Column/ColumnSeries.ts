@@ -488,8 +488,7 @@ class ColumnSeries extends Series {
             dataMin = series.dataMin,
             dataMax = series.dataMax,
             translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
-            isCrisp = series.options.crisp !== false;
+                yAxis.getThreshold(threshold as any);
 
         // Postprocessed for border width
         let seriesBarW = series.barW =
@@ -499,7 +498,7 @@ class ColumnSeries extends Series {
         // tightly, so we allow individual columns to have individual sizes.
         // When pointPadding is greater, we strive for equal-width columns
         // (#2694).
-        if (options.pointPadding && isCrisp) {
+        if (options.pointPadding && options.crisp) {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
