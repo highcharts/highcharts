@@ -61,15 +61,14 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 options: [
                     {
                         name: 'Caption/title',
-                        propertyPath:
-                            ['dataGridOptions', 'caption', 'text'],
+                        propertyPath: ['dataGridOptions', 'caption', 'text'],
                         type: 'input'
                     }, {
                         name: 'Columns distribution',
                         propertyPath:
                             [
                                 'dataGridOptions',
-                                'settings',
+                                'rendering',
                                 'columns',
                                 'distribution'
                             ],
@@ -85,6 +84,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                             [
                                 'dataGridOptions',
                                 'columnDefaults',
+                                'cells',
                                 'editable'
                             ],
                         type: 'toggle'
@@ -93,8 +93,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'dataGridOptions',
-                                'settings',
-                                'columns',
+                                'columnDefaults',
                                 'resizing'
                             ],
                         type: 'toggle'
@@ -113,7 +112,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                         propertyPath:
                             [
                                 'dataGridOptions',
-                                'settings',
+                                'rendering',
                                 'rows',
                                 'strictHeights'
                             ],

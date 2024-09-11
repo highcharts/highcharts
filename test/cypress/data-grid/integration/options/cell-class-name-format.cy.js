@@ -3,6 +3,10 @@ describe('Cell class name formats.', () => {
         cy.visit('data-grid/cypress/datagrid-custom-class');
     });
 
+    it('Table should have custom class name.', () => {
+        cy.get('.highcharts-datagrid-table').should('have.class', 'custom-table-class-name');
+    });
+
     it('Custom class name should be refreshed on setValue.', () => {
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="weight"]').as('cellA');
         cy.get('.highcharts-datagrid-row[data-row-index="3"] > td[data-column-id="weight"]').as('cellB');
