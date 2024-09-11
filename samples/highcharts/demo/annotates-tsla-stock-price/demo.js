@@ -204,16 +204,16 @@ Promise.all([connector.load()]).then(() => {
                 text: null
             },
             labels: {
-                format: '{value} USD'
+                format: '{value} EUR'
             },
             accessibility: {
                 description: 'Price',
-                rangeDescription: 'Range from 0 to 125 USD'
+                rangeDescription: 'Range from 0 to 125 EUR'
             }
         },
 
         tooltip: {
-            pointFormat: '{point.y:.2f} USD',
+            pointFormat: '{point.y:.2f} EUR',
             shared: true
         },
 
