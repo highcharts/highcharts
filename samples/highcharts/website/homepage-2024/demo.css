@@ -1,7 +1,7 @@
 body {
     /* dark color for testing - background-color: #18171c; */
 
-    background-color: transparent;
+    background-color: #18171c;
     margin: 0 20px 0 0;
     padding: 0;
     font-family: "IBM Plex Sans", sans-serif;
@@ -207,7 +207,7 @@ body {
     font-size: 14px;
     font-weight: 500;
     width: 100%;
-    padding: 1px 0 0;
+    padding: 1px 0 0 8px;
 }
 
 .button-container .stroke {
@@ -244,6 +244,10 @@ body {
     color: #75738c;
 }
 
+.button-text {
+    text-decoration: underline;
+}
+
 .button-text img {
     opacity: 0.8;
 }
@@ -255,6 +259,7 @@ body {
 .button-text:hover {
     color: #f0f0f0;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .button-container .chart-button:disabled .button-text {
