@@ -11,7 +11,7 @@ today = today.getTime();
 // THE CHART
 Highcharts.ganttChart('container', {
     title: {
-        text: 'Gantt Chart Test'
+        text: 'Gantt Chart Tests are quite fun'
     },
     xAxis: {
         currentDateIndicator: true,
