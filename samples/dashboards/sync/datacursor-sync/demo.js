@@ -117,15 +117,11 @@ function buildChartOptions(type, table, cursor) {
     };
 }
 
-// Build table with Highcharts.Series aliases
+// Build table with vegetables data
 function buildVegeTable() {
     const table = new DataTable({
-        aliases: {
-            name: 'vegetable',
-            y: 'amount'
-        },
         columns: {
-            vegetable: [
+            name: [
                 'Broccoli',
                 'Carrots',
                 'Corn',
@@ -136,7 +132,7 @@ function buildVegeTable() {
                 'Tomatos'
 
             ],
-            amount: [
+            y: [
                 44,
                 51,
                 38,

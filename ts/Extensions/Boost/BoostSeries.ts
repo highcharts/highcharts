@@ -726,6 +726,9 @@ function exitBoost(
             boost.clear();
         }
     }
+
+    // #21106, clean up boost clipping on the series groups.
+    (chart.seriesGroup || series.group)?.clip();
 }
 
 /**
@@ -1503,8 +1506,9 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
-            isScatter = series.is('scatter') && !series.is('bubble');
-
+            isScatter = series.is('scatter') &&
+                !series.is('bubble') &&
+                !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
         // do default behaviour.
