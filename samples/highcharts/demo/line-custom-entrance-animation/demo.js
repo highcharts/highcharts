@@ -94,27 +94,108 @@
     });
 }(Highcharts));
 
-(async () => {
-    const fetchedData = await fetch('https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US30303M1027|US0231351067|US64110L1061|US02079K3059&idType=ISIN&endDate=2020-12-31&startDate=2000-01-01&currency=EUR')
-        .then(res => (res.ok ? res.json() : []));
+const commonOptions = {
+    api: {
+        url: 'https://demo-live-data.highcharts.com',
+        access: {
+            url: 'https://demo-live-data.highcharts.com/token/oauth',
+            username: 'username',
+            password: 'password'
+        }
+    }
+};
 
-    const securityData = fetchedData.TimeSeries.Security;
+const ISINMap = {
+    Netflix: 'US64110L1061',
+    Apple: 'US0378331005',
+    Intel: 'US4581401001',
+    Nvidia: 'US67066G1040',
+    AMD: 'US0079031078',
+    Microsoft: 'US5949181045',
+    Tesla: 'US88160R1014',
+    Meta: 'US30303M1027',
+    Amazon: 'US0231351067',
+    GoogleClassA: 'US02079K3059',
+    GoogleClassC: 'US02079K1079'
+};
 
-    const facebookData = securityData[0].HistoryDetail.map(
-        detail => [Date.parse(detail.EndDate), +detail.Value]
-    );
+// eslint-disable-next-line no-undef
+const FacebookPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'Price'
+    },
+    securities: [
+        {
+            id: ISINMap.Meta,
+            idType: 'ISIN'
+        }
+    ],
+    currencyId: 'EUR'
+});
 
-    const amazonData = securityData[1].HistoryDetail.map(
-        detail => [Date.parse(detail.EndDate), +detail.Value]
-    );
+// eslint-disable-next-line no-undef
+const AmazonPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'Price'
+    },
+    securities: [
+        {
+            id: ISINMap.Amazon,
+            idType: 'ISIN'
+        }
+    ],
+    currencyId: 'EUR'
+});
 
-    const netflixData = securityData[2].HistoryDetail.map(
-        detail => [Date.parse(detail.EndDate), +detail.Value]
-    );
+// eslint-disable-next-line no-undef
+const NetflixPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'Price'
+    },
+    securities: [
+        {
+            id: ISINMap.Netflix,
+            idType: 'ISIN'
+        }
+    ],
+    currencyId: 'EUR'
+});
 
-    const googleData = securityData[3].HistoryDetail.map(
-        detail => [Date.parse(detail.EndDate), +detail.Value]
-    );
+// eslint-disable-next-line no-undef
+const GooglePriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'Price'
+    },
+    securities: [
+        {
+            id: ISINMap.GoogleClassA,
+            idType: 'ISIN'
+        }
+    ],
+    currencyId: 'EUR'
+});
+
+Promise.all([
+    FacebookPriceConnector.load(),
+    AmazonPriceConnector.load(),
+    NetflixPriceConnector.load(),
+    GooglePriceConnector.load()
+]).then(() => {
+    const processData = connector => {
+        const { Date: dates, ...cols } = connector.table.getColumns();
+        return dates.map((date, i) =>
+            Object.values(cols).map(vals => [date, vals[i]]).flat()
+        );
+    };
+
+    const facebookData = processData(FacebookPriceConnector);
+    const amazonData = processData(AmazonPriceConnector);
+    const netflixData = processData(NetflixPriceConnector);
+    const googleData = processData(GooglePriceConnector);
 
     Highcharts.chart('container', {
         chart: {
@@ -245,4 +326,4 @@
             }]
         }
     });
-})();
+});
