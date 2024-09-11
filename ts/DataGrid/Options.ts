@@ -121,6 +121,11 @@ export interface RenderingSettings {
      * Options to control the rows rendering.
      */
     rows?: RowsSettings;
+
+    /**
+     * Options to control the table rendering.
+     */
+    table?: TableSettings;
 }
 
 export interface ColumnsSettings {
@@ -174,6 +179,16 @@ export interface RowsSettings {
      * @default false
      */
     strictHeights?: boolean;
+}
+
+/**
+ * Options to control the table rendering.
+ */
+export interface TableSettings {
+    /**
+     * The custom CSS class name for the table.
+     */
+    className?: string;
 }
 
 /**

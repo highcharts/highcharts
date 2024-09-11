@@ -169,6 +169,7 @@ class Table {
         this.dataTable = this.dataGrid.presentationTable as DataTable;
 
         const dgOptions = dataGrid.options;
+        const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnDistribution =
             dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
@@ -184,6 +185,10 @@ class Table {
         }
 
         this.cellEditing = new CellEditing();
+
+        if (customClassName) {
+            tableElement.classList.add(customClassName);
+        }
 
         this.init();
 
