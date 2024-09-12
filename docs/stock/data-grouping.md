@@ -46,7 +46,7 @@ With the `approximation` option, you can decide how the final value for each gro
 
 but you can use the custom function to calculate the final value for each group. Here is an example of custom approximation function:
 
-<iframe width="600" height="600" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-approximation" allowfullscreen></iframe>
+<iframe width="600" height="450" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-approximation" allowfullscreen></iframe>
 
 ##### [Units](https://api.highcharts.com/highstock/series.line.dataGrouping.units)
 The available data grouping units can be set using `units`. By default, it's an array of time units (millisecond, second, minute, hour, day, week, month, year) with their allowed multiples.
