@@ -50,11 +50,11 @@ Promise.all([
             type: 'areaspline'
         },
         title: {
-            text: 'Netflix Inc',
+            text: 'Netflix, Inc.',
             align: 'left'
         },
         subtitle: {
-            text: 'Source: <a href="https://www.morningstar.com/stocks/xnas/nflx/quote" target="_blank">Morning star</a>',
+            text: 'Source: <a href="https://www.morningstar.com/stocks/xnas/nflx/quote" target="_blank">Morningstar</a>',
             align: 'left'
         },
         legend: {
@@ -79,12 +79,12 @@ Promise.all([
         },
         yAxis: {
             title: {
-                text: 'USD'
+                text: 'EUR'
             }
         },
         tooltip: {
             valueDecimals: 2,
-            valuePrefix: '$'
+            valuePrefix: 'USD'
         },
         credits: {
             enabled: false
