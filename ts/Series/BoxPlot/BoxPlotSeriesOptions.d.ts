@@ -291,7 +291,10 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    whiskerLength?: BoxPlotPoint['whiskerLength'];
+    whiskerLength?: (
+        BoxPlotPoint['upperWhiskerLength'] |
+        BoxPlotPoint['upperWhiskerLength']
+    );
 
     /**
      * The line width of the whiskers, the horizontal lines marking low and
