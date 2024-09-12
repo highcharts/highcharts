@@ -19,6 +19,18 @@
 // Global Dashboards instance for use in event handlers.
 let board = null;
 
+// Mapping of MQTT topics to dashboards components
+const topicMap = {
+    'highsoft/test/topic1': {
+        chart: 'column-chart-1',
+        dataGrid: 'data-grid-1'
+    },
+    'highsoft/test/topic2': {
+        chart: 'column-chart-2',
+        dataGrid: 'data-grid-2'
+    }
+};
+
 // Options for chart
 const chartOptions = {
     chart: {
@@ -42,8 +54,8 @@ const chartOptions = {
     tooltip: {
         useHTML: true,
         formatter: function () {
-            const date = Highcharts.dateFormat('%A, %b %e, %H:%M', this.x);
-            return `<b>${date} (UTC)</b><hr>Wind speed: ${this.y} m/s <br/>`;
+            const date = Highcharts.dateFormat('%A, %b %e, %H:%M:%S', this.x);
+            return `<b>${date} </b><hr>Wind speed: ${this.y} m/s <br/>`;
         }
     }
 };
@@ -54,7 +66,7 @@ const dataGridOptions = {
     editable: false,
     columns: {
         time: {
-            headerFormat: 'Time (UTC)',
+            headerFormat: 'Time',
             cellFormatter: function () {
                 const date = new Date(this.value);
                 return Highcharts.dateFormat('%H:%M:%S', date);
@@ -97,21 +109,40 @@ const connConfig = {
     },
     packetEvent: event => {
         const { topic, count } = event.detail;
-        if (count === 1) {
-            setChartTitle(topic, event.data.name);
-        }
         logAppend(`Packet #${count} received: ${topic}`);
+
+        // Get components
+        if (!topicMap[topic]) {
+            logAppend('Invalid topic:', topic);
+            return;
+        }
+
+        const compInfo = topicMap[topic];
+        const { chart, dataGrid } = compInfo;
+
+        if (count === 1) {
+            // Update the chart title
+            const chartComp =  board.getComponentByCellId(chart);
+            chartComp.update({
+                chartOptions: {
+                    title: {
+                        text: event.data.name
+                    }
+                }
+            });
+        }
+
+        // Scroll to last row
+        const dataGridComp = board.getComponentByCellId(dataGrid);
+        dataGridComp.dataGrid.outerContainer.scrollTop = 1000;
     },
     errorEvent: event => {
         const { code, message } = event.detail;
         setConnectStatus(false);
-        // eslint-disable-next-line max-len
         logAppend(`${message} (error code #${code})`);
     }
 };
 
-
-// Create the board
 async function createDashboard() {
     board = await Dashboards.board('container', {
         dataPool: {
@@ -215,7 +246,6 @@ async function createDashboard() {
     }, true);
 }
 
-
 /* *
  *
  *  Event log and application control functions
@@ -233,7 +263,7 @@ window.onload = () => {
     // Initialize connection status
     connectStatus = document.getElementById('connect-status');
 
-    // Add event listener to clear log button
+    // Event listener for the 'clear log' button
     const clearButton = document.getElementById('clear-log');
     clearButton.addEventListener('click', () => {
         logClear();
@@ -254,26 +284,6 @@ function logClear() {
 function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
     connectStatus.style.color = connected ? 'green' : 'red';
-}
-
-function setChartTitle(topic, name) {
-    let component;
-
-    if (topic.includes('topic1')) {
-        component = board.getComponentByCellId('column-chart-1');
-    } else if (topic.includes('topic2')) {
-        component = board.getComponentByCellId('column-chart-2');
-    }
-
-    // Update chart title
-    component.update({
-        chartOptions: {
-            title: {
-                text: name
-            }
-        }
-    });
-    logAppend('Data object name: ' + name);
 }
 
 /* *
