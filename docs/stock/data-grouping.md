@@ -57,7 +57,7 @@ In the example below, the data grouping is set to only group data points into on
 Highcharts.stockChart('container', {
     series: [{
         dataGrouping:{
-            units: [['day',[1, 2, 3]]]
+            units: [['day', [1, 2, 3]]]
         },
         data: [...]
     }]
