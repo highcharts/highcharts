@@ -538,10 +538,24 @@ class Time {
     }
 
     /**
-     * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
-     * into a human readable date string. The available format keys are listed
-     * below. Additional formats can be given in the
-     * {@link Highcharts.dateFormats} hook.
+     * Formats a JavaScript date timestamp (milliseconds since January 1 1970)
+     * into a human readable date string.
+     *
+     * The `format` parameter accepts two types of values:
+     * - An object containing settings that are passed directly on to
+     *   [Intl.DateTimeFormat.prototype.format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format).
+     * - A format string containing either individual or locale-aware format
+     *   keys. **Individual keys**, for example `%Y-%m-%d`, are listed below.
+     *   **Locale-aware keys** are grouped by square brackets, for example
+     *   `%[Ymd]`. The order of keys within the square bracket doesn't affect
+     *   the output, which is determined by the locale. See example below.
+     *   Internally, the locale-aware format keys are just a shorthand for the
+     *   full object formats, but are particularly practical in
+     *   [templating](https://www.highcharts.com/docs/chart-concepts/templating)
+     *   where full object definitions are not an option.
+     *
+     * The available string format keys are listed below. Additional formats can
+     * be given in the {@link Highcharts.dateFormats} hook.
      *
      * Supported format keys:
      * | Key  | Description                     | Notes on locale-aware format |
@@ -569,15 +583,54 @@ class Time {
      * | `%L` | Milliseconds (naming from Ruby)              |       |
      *
      * @example
-     * const time = new Highcharts.Time();
-     * const s = time.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2020, 0, 1));
-     * console.log(s); // => 2020-01-01 00:00:00
+     * // Object format, US English
+     * const time1 = new Highcharts.Time({ locale: 'en-US' });
+     * console.log(
+     *     time1.dateFormat({
+     *         day: 'numeric',
+     *         month: 'short',
+     *         year: 'numeric',
+     *         hour: 'numeric',
+     *         minute: 'numeric'
+     *     }, Date.UTC(2024, 11, 31))
+     * ); // => Dec 31, 2024, 12:00 AM
+     *
+     * // Object format, British English
+     * const time2 = new Highcharts.Time({ locale: 'en-GB' });
+     * console.log(
+     *     time2.dateFormat({
+     *         day: 'numeric',
+     *         month: 'short',
+     *         year: 'numeric',
+     *         hour: 'numeric',
+     *         minute: 'numeric'
+     *     }, Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
+     *
+     * // Individual key string replacement
+     * const time3 = new Highcharts.Time();
+     * console.log(
+     *     time3.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2024, 11, 31))
+     * ); // => 2024-12-31 00:00:00
+     *
+     * // Locale-aware keys, US English
+     * const time4 = new Highcharts.Time({ locale: 'en-US' });
+     * console.log(
+     *     time4.dateFormat('%[YebHM]', Date.UTC(2024, 11, 31))
+     * ); // => Dec 31, 2024, 12:00 AM
+     *
+     * // Locale-aware keys, British English
+     * const time5 = new Highcharts.Time({ locale: 'en-GB' });
+     * console.log(
+     *     time5.dateFormat('%[YebHM]', Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param {string} format
-     *        The desired format where various time representations are
-     *        prefixed with %.
+     * @param {string|Highcharts.DateTimeFormatOptions} format
+     *        The desired string format where various time representations are
+     *        prefixed with %, or an object representing the locale-aware format
+     *        options.
      *
      * @param {number} [timestamp]
      *        The JavaScript timestamp.
