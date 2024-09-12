@@ -3,7 +3,7 @@ Accessibility module
 
 The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an afterthought. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
 
-We recommend to always include the accessibility module, unless there is an explicit reason not to do so. Including this module will make your charts compatible with assistive technologies used by people with disabilities, and also improve the usability of your charts, helping you reach a broader audience. Including the Accessibility module will also help with SEO by making your charts more visible to web crawlers.
+We recommend to always include the Accessibility module, unless there is an explicit reason not to do so. Including this module will make your charts compatible with assistive technologies used by people with disabilities, and also improve the usability of your charts, helping you reach a broader audience. Including the Accessibility module will also help with SEO by making your charts more visible to web crawlers.
 
 Visit our [accessibility portal](https://www.highcharts.com/accessibility/) to learn more about Highcharts' accessibility features.
 
@@ -11,7 +11,7 @@ Getting started with accessibility
 ----------------------------------
 *Read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart).*
 
-To include the accessibility module, simply include the following file after including any of the Highcharts JS files:
+To include the Accessibility module, simply include the following file after including any of the Highcharts JS files:
 
 ```html
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
@@ -32,7 +32,7 @@ Example of a line chart with the Accessibility module:
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-line)
 
 ### What happens if I do not include the module?
-While the demo will be visually identical, it will provide a different experience for users that rely upon assistive technology. A chart with the Accessibility module enabled has additional features that make it more accessible. These features include text description of the chart, keyboard navigation, and support for ARIA roles and attributes on chart elements. This means that assistive technology can interpret the chart, which provides the user with a detailed understanding of its content. You are also able to navigate the chart with a keyboard. A chart without the accessibility module lacks these features and is interpreted as an image with the chart title as the `aria-label` for the SVG.
+While the demo will be visually identical, it will provide a different experience for users that rely upon assistive technology. A chart with the Accessibility module enabled has additional features that make it more accessible. These features include text description of the chart, keyboard navigation, and support for ARIA roles and attributes on chart elements. This means that assistive technology can interpret the chart, which provides the user with a detailed understanding of its content. You are also able to navigate the chart with a keyboard. A chart without the Accessibility module lacks these features and is interpreted as an image with the chart title as the `aria-label` for the SVG.
 
 Basic configuration
 -------------------

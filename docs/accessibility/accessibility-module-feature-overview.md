@@ -26,7 +26,7 @@ If the screen reader user decides to explore the chart in more detail, they have
 
 Screen reader users are also able to interact with the elements and the chart menu. By interacting with the chart menu, they will be able to download the chart as an SVG, suitable for tactile printing.
 
-If the chart enables drilldown or is otherwise updating its data dynamically, Highcharts can announce this to screen reader users, while giving you control over the frequency of announcements and their content. See [Dynamic data with the accessibility module](https://www.highcharts.com/docs/accessibility/accessible-dynamic-data) for more information.
+If the chart enables drilldown or is otherwise updating its data dynamically, Highcharts can announce this to screen reader users, while giving you control over the frequency of announcements and their content. See [Dynamic data with the Accessibility module](https://www.highcharts.com/docs/accessibility/accessible-dynamic-data) for more information.
 
 The Accessibility module is compatible with most screen readers in modern browsers, including JAWS, NVDA, Narrator, VoiceOver, and TalkBack.
 
@@ -81,7 +81,7 @@ Features can be interacted with in this chart:
 
 Internationalization
 --------------------
-All Highcharts generated text content can be translated to different languages, including all text used by the accessibility module. To set these options see [`lang.accessibility`](https://api.highcharts.com/highcharts/lang.accessibility). Read more about [internationalization](https://www.highcharts.com/docs/advanced-chart-features/internationalization).
+All Highcharts generated text content can be translated to different languages, including all text used by the Accessibility module. To set these options see [`lang.accessibility`](https://api.highcharts.com/highcharts/lang.accessibility). Read more about [internationalization](https://www.highcharts.com/docs/advanced-chart-features/internationalization).
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/accessibility/internationalization" allow="fullscreen"></iframe>
 
