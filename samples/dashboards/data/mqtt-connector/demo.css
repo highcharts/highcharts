@@ -42,7 +42,6 @@
 .highcharts-dashboards-wrapper {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
-    overflow: hidden;
 }
 
 .highcharts-dashboards-component {
@@ -52,6 +51,7 @@
 
 .highcharts-datagrid-container {
     font-size: 0.8em;
+    max-height: 100%;
 }
 
 /* *

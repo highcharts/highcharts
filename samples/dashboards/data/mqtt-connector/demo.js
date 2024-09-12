@@ -16,7 +16,7 @@
  *
  * */
 
-// Global Dashboards instance for use in event handlers
+// Global Dashboards instance for use in event handlers.
 let board = null;
 
 // Options for chart
@@ -141,9 +141,6 @@ async function createDashboard() {
                     data: ['time', 'value']
                 }]
             },
-            sync: {
-                highlight: true
-            },
             chartOptions: {
                 ...chartOptions,
                 title: {
@@ -157,7 +154,10 @@ async function createDashboard() {
                 id: 'mqtt-data-1'
             },
             sync: {
-                highlight: true
+                highlight: {
+                    enabled: true,
+                    autoScroll: true
+                }
             },
             dataGridOptions: dataGridOptions
         }, {
@@ -186,7 +186,10 @@ async function createDashboard() {
                 id: 'mqtt-data-2'
             },
             sync: {
-                highlight: true
+                highlight: {
+                    enabled: true,
+                    autoScroll: true
+                }
             },
             dataGridOptions: dataGridOptions
         }],
