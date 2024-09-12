@@ -335,6 +335,8 @@ class Time {
                     error(34);
                     options.timeZone = 'UTC';
                     dTL = new Intl.DateTimeFormat(locale, options);
+                } else {
+                    error((e as Error).message, false);
                 }
             }
         }

@@ -496,25 +496,27 @@ namespace AxisDefaults {
          * on midnight and `hour` unit be used for intermediate values on the
          * same axis.
          *
-         * For an overview of the replacement codes, see
+         * For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * Defaults to:
          * ```js
          * {
-         *     millisecond: '%H:%M:%S.%L',
-         *     second: '%H:%M:%S',
-         *     minute: '%H:%M',
-         *     hour: '%H:%M',
-         *     day: '%e. %b',
-         *     week: '%e. %b',
-         *     month: '%b \'%y',
+         *     millisecond: '%[HMSL]',
+         *     second: '%[HMS]',
+         *     minute: '%[HM]',
+         *     hour: '%[HM]',
+         *     day: '%[eb]',
+         *     week: '%[eb]',
+         *     month: '%[bY]',
          *     year: '%Y'
          * }
          * ```
          *
+         * @sample {highcharts} highcharts/xaxis/datetimelabelformats-object/
+         *         Object day format on X axis
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
-         *         Different day format on X axis
+         *         String day format on X axis
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
          *

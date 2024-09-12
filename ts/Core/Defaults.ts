@@ -2374,7 +2374,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/tooltip/xdateformat/
          *         A different format
          *
-         * @type      {string}
+         * @type      {string|Highcharts.DateTimeFormatOptions}
          * @product   highcharts highstock gantt
          * @apioption tooltip.xDateFormat
          */
@@ -2435,7 +2435,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
-         * @type    {Highcharts.Dictionary<string>}
+         * @type    {Highcharts.Dictionary<string|Highcharts.DateTimeFormatOptions>}
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
