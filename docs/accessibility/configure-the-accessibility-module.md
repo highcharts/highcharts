@@ -178,7 +178,7 @@ The overall description format can be set in the various axis `lang.accessibilit
 
 The range description for an axis can be overridden by setting the [`axis.accessibility.rangeDescription`](https://api.highcharts.com/highcharts/xAxis.accessibility.rangeDescription) option.
 
-Example of setting the [`axis.accessibility.rangeDescription] and [`axis.accessibility.description`]
+Example of setting the [`axis.accessibility.rangeDescription`] and [`axis.accessibility.description`]
 ```js
 Highcharts.chart('container', {
      yAxis: {
