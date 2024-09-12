@@ -3,7 +3,7 @@ Data grouping
 
 The `dataGrouping` feature in Highcharts Stock is a reliable tool for dealing with large sets of data in a more efficient way. By grouping data points into larger chunks, it streamlines the loading and rendering process for your charts.
 Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used.
-In Highstock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
+In Highcharts Stock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
 
 ```js
 Highcharts.stockChart('container', {
