@@ -5,12 +5,11 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- MQTT client library -->
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
     integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP"
-    crossorigin="anonymous"
-></script>
+    crossorigin="anonymous"></script>
 
+<!-- Dashboards container -->
 <div id="container"></div>
 <!-- Custom elements, outside Dashboards -->
 <div id="custom">
@@ -24,12 +23,14 @@
     </div>
 </div>
 
-<div class="description"><p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
-    broker and subscribe to a topic. The data is then displayed in a Highcharts chart and a Dashboard datagrid.
-    The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom Connector 
-    establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The received
-    data are stored in the connector's data table for use in the chart and datagrid. The connector also supports 
-    callbacks for connection status, packet reception and error handling. The connector is a sub-class of the <i>DataConnector</i>
-    and uses the JSON Converter to convert the received data to a format that can be used by the chart and datagrid.</p>
-    <p>TBD: the data format and providing data.</p>
+<div class="description">
+    <p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
+        broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards datagrid</i>.
+        The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom
+        Connector establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The received
+        data are stored in the connector's data table for use in the chart and datagrid. The connector also supports
+        callbacks for connection status, packet reception and error handling. The connector is a sub-class of the
+        <i>DataConnector</i> and uses the JSON Converter to convert the received data to a format that can be used by the chart and datagrid.
+    </p>
+    <p>TBD: Data format and how to provide data.</p>
 </div>

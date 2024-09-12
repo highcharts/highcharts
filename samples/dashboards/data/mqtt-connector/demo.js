@@ -1,20 +1,22 @@
 /* *
  *
- *  Sample application using a MQTT connector (custom connector).
+ *  Sample application using a MQTT connector (custom connector),
+ *  one MQTT topic per connector. The example uses the public
+ *  HIVE MQTT test server, no user credentials required, not encrypted.
  *
- *  Assumes incoming packets on a JSON format with the following content:
- *
+ *  Format of the incoming packets (example):
  *  {
- *      "name": "Measurement name",
- *      "time": ISO time stamp, e.g. "2024-09-11T13:54:00Z"
- *      "power": any decimal number, e.g 3.14
+ *    "name":"North Sea",
+ *    "unit":"m/s",
+ *    "value":35.69,
+ *    "timestamp":"2024-09-12T08:12:01.028Z"
  *  }
  *
- *  The time is for the x-axis, the value for the y-axis.
+ *  Valid MQTT topics: highsoft/test/topic1, highsoft/test/topic2
  *
  * */
 
-// Global board instance for use in event handlers
+// Global Dashboards instance for use in event handlers
 let board = null;
 
 // Options for chart
@@ -34,14 +36,14 @@ const chartOptions = {
     },
     yAxis: {
         title: {
-            text: 'Power (MW)'
+            text: 'Wind speed (m/s)'
         }
     },
     tooltip: {
         useHTML: true,
         formatter: function () {
             const date = Highcharts.dateFormat('%A, %b %e, %H:%M', this.x);
-            return `<b>${date} (UTC)</b><hr>Generated power: ${this.y} MW<br/>`;
+            return `<b>${date} (UTC)</b><hr>Wind speed: ${this.y} m/s <br/>`;
         }
     }
 };
@@ -55,11 +57,11 @@ const dataGridOptions = {
             headerFormat: 'Time (UTC)',
             cellFormatter: function () {
                 const date = new Date(this.value);
-                return Highcharts.dateFormat('%H:%M', date);
+                return Highcharts.dateFormat('%H:%M:%S', date);
             }
         },
-        power: {
-            headerFormat: 'Power (MW)'
+        value: {
+            headerFormat: 'Wind speed (m/s)'
         }
     }
 };
@@ -69,15 +71,14 @@ const dataGridOptions = {
 const connConfig = {
     columnNames: [
         'time',
-        'power'
+        'value'
     ],
     beforeParse: data => {
         // Application specific data parsing
         const modifiedData = [];
-        const ts = new Date(data.time).valueOf();
+        const ts = new Date(data.timestamp).valueOf();
 
-        modifiedData.push([ts, data.power]);
-        console.log(modifiedData);
+        modifiedData.push([ts, data.value]);
 
         return modifiedData;
     },
@@ -136,8 +137,8 @@ async function createDashboard() {
             connector: {
                 id: 'mqtt-data-1',
                 columnAssignment: [{
-                    seriesId: 'power',
-                    data: ['time', 'power']
+                    seriesId: 'value',
+                    data: ['time', 'value']
                 }]
             },
             sync: {
@@ -165,8 +166,8 @@ async function createDashboard() {
             connector: {
                 id: 'mqtt-data-2',
                 columnAssignment: [{
-                    seriesId: 'power',
-                    data: ['time', 'power']
+                    seriesId: 'value',
+                    data: ['time', 'value']
                 }]
             },
             sync: {
@@ -221,7 +222,7 @@ let logContent;
 let connectStatus;
 
 window.onload = () => {
-    // Initialize log
+    // Initialize the message log
     logContent = document.getElementById('log-content');
     logClear();
     logAppend('Application started');
