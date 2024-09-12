@@ -108,7 +108,7 @@ After the algorithm function is finished, then we have to add it by extending th
 Afterwards when you declare the chart options, then specify that the series.layoutAlgorithm should be your new custom algorithm.
 
 
-    var chart = new Highcharts.Chart({
+    const chart = new Highcharts.Chart({
         ...
         series: [{
            layoutAlgorithm: "myCustomAlgorithm",
@@ -125,7 +125,7 @@ The levels option gives the ability to set options on a specific level. This com
 Below is an example where the first level will use the Slice And Dice algorithm, and the rest will use the Squarified algorithm. Also all points on the second level will be colored blue, while the rest will be in the color red.
 
 
-    var chart = new Highcharts.Chart({
+    const chart = new Highcharts.Chart({
         ...
         series: [{
            layoutAlgorithm: 'squarified',
@@ -164,7 +164,7 @@ For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
 
-    var chart = new Highcharts.Chart({
+    const chart = new Highcharts.Chart({
         ...
         colorAxis: {
             minColor: '#FFFFFF',
@@ -177,7 +177,7 @@ After the module is included in your project, a colorAxis object can be defined 
 And each point needs its own colorValue.
 
 
-    var chart = new Highcharts.Chart({
+    const chart = new Highcharts.Chart({
         ...
         colorAxis: {
             ...
@@ -196,6 +196,31 @@ And each point needs its own colorValue.
 
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
+
+### Treemap grouping
+
+Treemap series grouping simplifies the visualization of large datasets by organizing data points into larger blocks, enhancing both readability and performance. This approach is particularly useful for presenting vast amounts of information in a compact, easy-to-understand format.
+
+To configure treemap series grouping, the `groupAreaThreshold` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.groupAreaThreshold) for details about its options.
+
+
+    const chart = new Highcharts.Chart({
+        ...
+        series: [{
+            ...
+            type: "treemap",
+            groupAreaThreshold: {
+                enabled: true,
+                pixelHeight: 20,
+                pixelWidth: 10
+            }
+            ...
+        }],
+        ...
+    });
+
+
+[Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/treemap-grouping-advanced)
 
 ### Options
 
