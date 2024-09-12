@@ -530,12 +530,13 @@ namespace AxisDefaults {
              */
             millisecond: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
@@ -547,12 +548,13 @@ namespace AxisDefaults {
              */
             second: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.second.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
@@ -564,12 +566,13 @@ namespace AxisDefaults {
              */
             minute: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.minute.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
@@ -581,12 +584,13 @@ namespace AxisDefaults {
              */
             hour: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.hour.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
@@ -598,12 +602,13 @@ namespace AxisDefaults {
              */
             day: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.day.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
                 main: '%[eb]'
@@ -614,12 +619,13 @@ namespace AxisDefaults {
              */
             week: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.week.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
                 main: '%[eb]'
@@ -630,12 +636,13 @@ namespace AxisDefaults {
              */
             month: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.month.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
                 main: '%[bY]'
@@ -646,12 +653,13 @@ namespace AxisDefaults {
              */
             year: {
                 /**
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.year.list
                  */
 
                 /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
                 main: '%Y'

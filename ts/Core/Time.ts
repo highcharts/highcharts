@@ -1258,4 +1258,93 @@ export default Time;
  * Timezone offset in minutes.
  */
 
+/**
+ * Options for formatting dates and times using the [Intl.DateTimeFormat](
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+ * ) API, and extended with some custom options for Highcharts.
+ *
+ * @interface Highcharts.DateTimeFormatOptions
+ *//**
+ * The locale matching algorithm to use.
+ *
+ * @name Highcharts.DateTimeFormatOptions#localeMatcher
+ * @type {string|undefined}
+ *//**
+ * The time zone to use. The default is the browser's default time zone.
+ *
+ * @name Highcharts.DateTimeFormatOptions#timeZone
+ * @type {string|undefined}
+ *//**
+ * Whether to use 12-hour time (as opposed to 24-hour time).
+ *
+ * @name Highcharts.DateTimeFormatOptions#hour12
+ * @type {'auto'|'always'|'never'|undefined}
+ *//**
+ * The format matching algorithm to use.
+ *
+ * @name Highcharts.DateTimeFormatOptions#formatMatcher
+ * @type {string|undefined}
+ *//**
+ * The representation of the weekday.
+ *
+ * @name Highcharts.DateTimeFormatOptions#weekday
+ * @type {'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the era.
+ *
+ * @name Highcharts.DateTimeFormatOptions#era
+ * @type {'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the year.
+ *
+ * @name Highcharts.DateTimeFormatOptions#year
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the month.
+ * "narrow", "short", "long".
+ *
+ * @name Highcharts.DateTimeFormatOptions#month
+ * @type {'numeric'|'2-digit'|'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the day.
+ *
+ * @name Highcharts.DateTimeFormatOptions#day
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the hour.
+ *
+ * @name Highcharts.DateTimeFormatOptions#hour
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the minute.
+ *
+ * @name Highcharts.DateTimeFormatOptions#minute
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the second.
+ *
+ * @name Highcharts.DateTimeFormatOptions#second
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The number of fractional digits to use. 3 means milliseconds.
+ *
+ * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
+ * @type {number|undefined}
+ *//**
+ * The representation of the time zone name.
+ *
+ * @name Highcharts.DateTimeFormatOptions#timeZoneName
+ * @type {'short'|'long'|undefined}
+ *//**
+ * A prefix for the time string. Custom Highcharts option.
+ *
+ * @name Highcharts.DateTimeFormatOptions#prefix
+ * @type {'string'|undefined}
+ *//**
+ * A suffix for the time string. Custom Highcharts option.
+ *
+ * @name Highcharts.DateTimeFormatOptions#suffix
+ * @type {'string'|undefined}
+ */
+
 ''; // Keeps doclets above in JS file

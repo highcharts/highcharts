@@ -2430,7 +2430,7 @@ const defaultOptions: DefaultOptions = {
          * For series on datetime axes, the date format in the tooltip's
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
-         * each unit. For an overview of the replacement codes, see
+         * each unit. For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
