@@ -93,9 +93,9 @@ The example below shows how to force the data to be grouped into one second inte
 ```js
 Highcharts.stockChart('container', {
   series: [{
-    dataGrouping:{
+    dataGrouping: {
       forced: true,
-      units: [['second',[1]]]
+      units: [['second', [1]]]
     },
     data: [...]
   }]
