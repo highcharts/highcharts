@@ -6,10 +6,10 @@
  *
  *  Format of the incoming packets (example):
  *  {
- *    "name":"North Sea",
- *    "unit":"m/s",
- *    "value":35.69,
- *    "timestamp":"2024-09-12T08:12:01.028Z"
+ *    "name": "North Sea",
+ *    "unit": "m/s",
+ *    "value": 35.69,
+ *    "timestamp": "2024-09-12T08:12:01.028Z"
  *  }
  *
  *  Valid MQTT topics: highsoft/test/topic1, highsoft/test/topic2

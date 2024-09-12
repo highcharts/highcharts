@@ -187,19 +187,20 @@ You can see a typical implementation of this in the
 Please note that the included connectors use a separate converter instance for
 the second step regarding adding the data to the `DataTable`.
 
-### Custom Connector Tutorial
+Custom Data Connector Tutorial
+------------------------------
 
-This tutorial shows how to implement a `Custom Data Connector` for the *MQTT protocol* and how to deploy it in a simple Highcharts Dashboards application. The connector is implemented in JavaScript and is independent of the application.
+This tutorial shows how to implement a `Custom Data Connector` for the *MQTT protocol* and how to deploy it in a simple Highcharts Dashboards application. The connector is implemented as a JavaScript class and is independent of the application.
 
-#### About MQTT
+### About MQTT
 [MQTT](https://en.wikipedia.org/wiki/MQTT) is the de-facto standard protocol for low resource, low power devices and is widely used in [IoT](https://en.wikipedia.org/wiki/Internet_of_things) applications across a wide range of industries: Mobile Internet, Smart Hardware, Internet of Vehicles, Smart Cities, Telemedicine, Power, Oil, Energy, and other fields.
 
-The hub of the MQTT network infrastructure is the so-called broker, a server that applications can send messages to and where clients (e.g. a web application) can subscribe to a *topic*. MQTT is a protocol on top of TCP/IP, for web clients available as [WebSocket](https://en.wikipedia.org/wiki/WebSocket).
+The hub of the MQTT network infrastructure is the so-called broker, a server that applications can send messages to and where clients (e.g. a web application) can subscribe to a *topic*. MQTT is a protocol on top of TCP/IP, for web clients available as [WebSocket](https://en.wikipedia.org/wiki/WebSocket) or TCP.
 
-##### Data
-The data in an MQTT packet is a JSON object, consisting of the *topic* and a application specific payload. The payload is usually a hierarchical object.
+### MQTT Data
+The MQTT data packet consists of a `topic` that uniquely defines and data set for a specific connection and a text payload. The payload is typically a JSON object and the `MQTT custom connector` described in this tutorial supports JSON only.
 
-##### Connecting
+### Connecting
 Establish a data link to a MQTT broker typically consists of these steps:
 * Connect to the server with a given host name and port number, with optional authentication (user, password).
 * Wait for a successful connection.
@@ -210,7 +211,7 @@ Establish a data link to a MQTT broker typically consists of these steps:
 
 The MQTT client may also send packets to a broker but this feature is not implemented in the Data Connector we use for this tutorial.
 
-#### MQTT Custom Connector
+### MQTT Custom Connector
 
 The base class for the `MQTTConnector` is the `DataConnector` where the constructor and the `load` methods are re-implemented. The `load` method differs from that of the CSV and JSON connectors by not waiting for data to arrive (due to the nature of the MQTT protocol there may not be any data available immediately). It does however establish the connection and subscribes to the subject defined in the connector `options` providing the `autoConnect` and `autoSubscribe` options are set (this is the default behavior).
 
@@ -248,8 +249,8 @@ The `MQTTConnector` uses the [PAHO client library](https://eclipse.dev/paho/inde
 
 The client options are the following:
 
-* host - the name of the MQTT broker (e.g. mqtt.mosquitto.com or mqtt.sognekraft.no)
-* port - 8083 for secure connections, otherwise 1083
+* host - the name of the MQTT broker (e.g. mqtt.mosquitto.org or broker.hivemq.com)
+* port - WebSocket port (depends on the broker). See [HiveMQ](https://www.hivemq.com/mqtt/public-mqtt-broker/) for an example.
 * user - empty for anonymous clients
 * password - empty for anonymous clients
 * useSSL - true for a secure connection
@@ -257,19 +258,134 @@ The client options are the following:
 * timeout - connection timeout, value in seconds
 * qOs - quality of service
 
-#### The sample application
+### The sample application
 
-The `MQTTConnector`is implemented as part of a sample application that uses data from the Norwegian electricity producer `Sognekraft`, featuring two power plants. The incoming payload is a hierarchical JSON structure with many measured values but for the purpose of this example we display only the generated power. The connection uses SSL encryption and is password protected, receiving data on a `WebSocket` (TCP/IP).
+The `MQTTConnector`is implemented as part of a sample application that displays incoming data from two connectors, one for each MQTT topic.
 
-The data is provided as one topic for each of the two power plants, and each topic maps to one connector instance. In this example we thus use two connectors.
+Each connector provides data for a `spline` chart and a `DataGrid` component. In addition timestamped events and the raw data are displayed as unformatted text in a message log that resides outside the Dashboards container. The log may be cleared by the user.
 
-Each connector provides data for a `spline`chart and a `DataGrid` component. The timestamped events and the raw data are displayed in a `HTML component` as unformatted text. The user can clear the log.
+The sample application relies on data being published to the two MQTT topics (*highsoft/test/topic1* and *highsoft/test/topic2*). The payload of the MQTT packet must be of a specific format to work correctly (see example below).
 
-Data packets arrive every 2 minutes so the user will have to wait some minutes before a meaningful chart and data grid is drawn.
+#### Basic data generation
+For basic testing the data can be generated using an online MQTT client, for instance the [HiveMQ Websocket Client](https://www.hivemq.com/demos/websocket-client/). Here you can connect using the default parameters, and then enter the topic and the message payload. Entering the following data will generate one point in the chart and one row in the datagrid.
+
+Topic
+```
+highsoft/test/topic1
+```
+Message
+```javascript
+ {
+    "name": "North Sea",
+    "unit": "m/s",
+    "value": 35.69,
+    "timestamp": "2024-09-12T08:12:01.028Z"
+ }
+```
+#### Advanced data generation
+
+Visualization of real-time data is however best achieved by using a script to generate and send the MQTT packets. An MQTT data provider will typically generated and send a message at fixed interval and the data will normally contain a timestamp (ISO) and one or more measurements values.
+
+```python
+import random
+import time
+import json
+
+# NB! pip install paho-mqtt<2.0.0
+from paho.mqtt import client as mqtt_client
+
+# Connection parameters
+broker = 'broker.mqttdashboard.com'
+port = 1883
+client_id = f'publish-{random.randint(0, 100)}'
+
+# Packet contents
+mqttData = [
+    {
+        'topic': 'highsoft/test/topic1',
+        'payload': {
+            'name': 'North Sea',
+            'unit': 'm/s',
+            'value': 0,
+            'timestamp': ''
+        }
+    },
+    {
+        'topic': 'highsoft/test/topic2',
+        'payload': {
+            'name': 'Baltic Sea',
+            'unit': 'm/s',
+            'value': 0,
+            'timestamp': ''
+        }
+    }
+]
+
+# Application parameters
+max_messages = 20
+packet_interval = 1
+
+
+def connect_mqtt():
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+
+    client = mqtt_client.Client(client_id)
+    client.on_connect = on_connect
+    client.connect(broker, port)
+
+    return client
+
+
+def publish(client):
+    msg_count = 1
+
+    while True:
+        # Alternating topic/packet content
+        pkt = mqttData[msg_count % 2]
+
+        # Get the topic
+        topic = pkt['topic']
+
+        # Update the payload
+        payload = pkt['payload']
+        payload['value'] = random.randint(0, 100)
+        payload['timestamp'] = time.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+        result = client.publish(topic, json.dumps(payload))
+
+        status = result[0]
+
+        if status == 0:
+            print(f"Send `{payload}` to topic `{topic}`")
+        else:
+            print(f"Failed to send message to topic {topic}")
+
+        time.sleep(packet_interval)
+
+        msg_count += 1
+        if msg_count > max_messages:
+            break
+
+
+def run():
+    client = connect_mqtt()
+    client.loop_start()
+    publish(client)
+    client.loop_stop()
+
+
+if __name__ == '__main__':
+    run()
+
+```
 
 #### Reuse
 
-The `MQTTConnector` can be reused for other applications by simply copying the entire class from the demo's Javascript file. The implementation is found at the bottom of the file. It is important to copy also the `MQTTConnector.defaultOptions` and the code line that registers the connector as a `Dashboards` component.
+The `MQTTConnector` can be reused for other applications by simply copying the entire class from the demo's Javascript file. The implementation is found at the bottom of the file. It is important to also copy the `MQTTConnector.defaultOptions` and the code line that registers the connector as a `Dashboards` component.
 
 ```javascript
 // Register the connector
