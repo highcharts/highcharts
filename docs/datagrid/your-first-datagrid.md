@@ -27,7 +27,7 @@ importing the modules to the CSS file as shown below.
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-You can also use your own styles - check our [docs about styling](https://www.highcharts.com/docs/dashboards/style-by-css).
+You can also use your own styles - check our [docs about styling](https://www.highcharts.com/docs/datagrid/style-by-css).
 
 ### 4. Configure the DataGrid
 Inside the script tag, create a new instance of the DataGrid.  

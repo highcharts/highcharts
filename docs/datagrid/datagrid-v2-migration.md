@@ -1,27 +1,22 @@
-Upgrade DataGrid to v2
+Upgrade DataGrid to v3
 ===
-The core of DataGrid has been changed in version 2.0. We have increased the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below. 
+The core of DataGrid has been changed in version 3.0. We have increased the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below.
+
+## Factory function
+The factory function `DataGrid.DataGrid` has been replaced with `DataGrid.dataGrid`.
 
 ## Data source
 In the newest DataGrid, the data source definition has been redesigned. This is a critical upgrade, so please double-check if everything is configured properly.
 
-DataGrid v1
+DataGrid v2.x.x requires you to create a new instance of the DataTable class.
 ```js
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataGrid.DataTable({ columns })
 });
 ```
 
-DataGrid v2
-```js
-const grid = DataGrid.dataGrid('container', {
-    dataTable: new DataTable({
-        columns
-    })
-});
-```
-
-or
+DataGrid v3.0.0 and higher allows to define the data source in the `dataTable` option without creating a new instance of the DataTable class.  
+The grid will automatically create a new instance of the DataTable class for you.
 
 ```js
 const grid = DataGrid.dataGrid('container', {
@@ -34,8 +29,8 @@ const grid = DataGrid.dataGrid('container', {
 ## Styling
 The main change is CSS styling instead of the built-in API options.
 
-Since DataGrid v2 we removed the option:
- * cellHeight
+Since DataGrid v3.0.0 we removed the option:
+ * `cellHeight`
 
 so if you want to change the default height by CSS:
 
@@ -46,7 +41,7 @@ so if you want to change the default height by CSS:
 ```
 
 The next main change is a new naming of CSS classes.
-We recommend reading our [article about styling](https://www.highcharts.com/docs/datagrid/style-by-css) the DataGrid 2.0.
+We recommend reading our [article about styling the DataGrid v3.0.0 and higher](https://www.highcharts.com/docs/datagrid/style-by-css).
 
 ## Example of the new DataGrid
 
@@ -120,25 +115,25 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
     }
 ```
 
-### Defaults
+### Column Defaults
 The options applied to all columns.
 
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridDefaults).
+You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
 
-### Settings
-Options to control the way DataGrid is rendered.
+### Rendering
+Options to control the way datagrid is rendered.
 
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridSettings).
+You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
 
 ### Columns
 Column options that are applied individually.
 
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
+You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columns).
 
 ### Events
 Events applied to column, column header, or a cell.
 
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#events).
+You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#events).
 
 ## Changelog
-The rest of changes and new options you can be found in the Changelog.
+The rest of changes and new options you can be found in [the Changelog.](https://www.highcharts.com/changelog/#highcharts-dashboards)
