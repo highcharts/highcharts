@@ -174,17 +174,6 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
             series[i].isBubble &&
             series[i].visible &&
             series[i].dataTable.rowCount
-            /*
-            (
-                (
-                    (
-                        series[i].getColumn('z').length &&
-                        series[i].getColumn('z')
-                    ) ||
-                    series[i].getColumn('value')
-                ).length
-            )
-            */
         ) {
             return i;
         }

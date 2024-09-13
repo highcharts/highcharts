@@ -975,9 +975,7 @@ namespace OrdinalAxis {
 
                         // Concatenate the processed X data into the existing
                         // positions, or the empty array
-                        ordinalPositions = ordinalPositions.concat(
-                            xData as any
-                        );
+                        ordinalPositions = ordinalPositions.concat(xData);
 
                         len = ordinalPositions.length;
 

@@ -372,7 +372,7 @@ function onChartCallback(
 function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t): (boolean|undefined) {
+    args.forEach((t): boolean|undefined => {
         if (
             typeof t !== 'undefined' &&
             t !== null &&

@@ -1381,7 +1381,7 @@ function seriesRenderCanvas(this: Series): void {
 
         eachAsync(
             isStacked ?
-                (this.data as any).slice(cropStart) :
+                this.data.slice(cropStart) :
                 (xData || rawData),
             processPoint,
             doneProcessing
