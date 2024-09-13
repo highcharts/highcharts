@@ -9,19 +9,7 @@ const commonOptions = {
     }
 };
 
-const ISINMap = {
-    Netflix: 'US64110L1061',
-    Apple: 'US0378331005',
-    Intel: 'US4581401001',
-    Nvidia: 'US67066G1040',
-    AMD: 'US0079031078',
-    Microsoft: 'US5949181045',
-    Tesla: 'US88160R1014',
-    Meta: 'US30303M1027',
-    Amazon: 'US0231351067',
-    GoogleClassA: 'US02079K3059',
-    GoogleClassC: 'US02079K1079'
-};
+const TeslaISIN = 'US88160R1014';
 
 // eslint-disable-next-line no-undef
 const connector = new Connectors.Morningstar.TimeSeriesConnector({
@@ -31,7 +19,7 @@ const connector = new Connectors.Morningstar.TimeSeriesConnector({
     },
     securities: [
         {
-            id: ISINMap.Tesla,
+            id: TeslaISIN,
             idType: 'ISIN'
         }
     ],
@@ -136,8 +124,7 @@ Promise.all([connector.load()]).then(() => {
                             x: Date.UTC(2022, 2, 0),
                             y: 258.47
                         },
-                        // eslint-disable-next-line quotes
-                        text: `Berlin's giga factory opening`,
+                        text: 'Berlin\'s giga factory opening',
                         x: -5,
                         y: 100
                     },
@@ -148,8 +135,7 @@ Promise.all([connector.load()]).then(() => {
                             x: Date.UTC(2022, 3, 12),
                             y: 306.37
                         },
-                        // eslint-disable-next-line quotes
-                        text: `Musk's Twitter aquisition`,
+                        text: 'Musk\'s Twitter aquisition',
                         x: 90
                     }
                 ]
