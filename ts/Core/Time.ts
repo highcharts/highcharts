@@ -627,6 +627,11 @@ class Time {
      *     time5.dateFormat('%[YebHM]', Date.UTC(2024, 11, 31))
      * ); // => 31 Dec 2024, 00:00
      *
+     * // Mixed locale-aware and individual keys
+     * console.log(
+     *     time5.dateFormat('%[Yeb], %H:%M', Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
+     *
      * @function Highcharts.Time#dateFormat
      *
      * @param {string|Highcharts.DateTimeFormatOptions} format
