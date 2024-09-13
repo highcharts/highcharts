@@ -37,7 +37,7 @@
     </p>
     <p>MQTT data can be provided by any program that is capable of connecting to an MQTT broker and publish
         messages. This demo uses the broker
-        <i>broker.hivemq.com</i>, port <i>8000</i> as default but can in principle use any public MQTT broker.
+        <i>broker.hivemq.com</i>, port <i>8000</i> as default but one can in principle use any public MQTT broker.
         The packet must be sent to one of these topics: <i>highcharts/topic1</i> or
         <i>highcharts/topic2</i>.
         The packet payload must be a JSON object with the following structure (example):
@@ -45,16 +45,14 @@
     <pre class="json">
 {
 "name": "North Sea",
-"unit": "m/s",
 "value": 35.69,
 "timestamp": "2024-09-12T08:12:01.028Z"
 }
     </pre>
-    <p>The name and unit fields can be any text, the value field must be a number and the timestamp field must be a
-        string in ISO 8601 format.</p>
+    <p>The name field can be any text, the value must be a number and the timestamp field must a string in ISO 8601 format.</p>
 
-    <p>A straightforward way to generate is us use <a href="https://www.hivemq.com/demos/websocket-client/"
+    <p>A basic  way to generate data is to use <a href="https://www.hivemq.com/demos/websocket-client/"
             target="_blank">HiveMQ Websocket Client</a>.
-        Simply connect, use the topic <i>highcharts/topic1</i>, and enter data (e.g. from the example above).
+        Simply connect, use the topic <i>highcharts/topic1</i>, and enter some data (e.g. from the example above).
     </p>
 </div>

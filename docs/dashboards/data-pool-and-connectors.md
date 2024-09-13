@@ -277,14 +277,13 @@ Message
 ```javascript
  {
     "name": "North Sea",
-    "unit": "m/s",
     "value": 35.69,
     "timestamp": "2024-09-12T08:12:01.028Z"
  }
 ```
 #### Advanced data generation
 
-Visualization of real-time data is however best achieved by using a script to generate and send the MQTT packets. An MQTT data provider will typically generated and send a message at fixed interval and the data will normally contain a timestamp (ISO) and one or more measurements values.
+Visualization of real-time data is however best achieved by using a script to generate and send the MQTT packets. An MQTT data provider will typically generate and send a message at a fixed interval and the data will normally contain a timestamp (ISO) and one or more measurements values.
 
 ```python
 import random
@@ -305,7 +304,6 @@ mqttData = [
         'topic': 'highcharts/topic1',
         'payload': {
             'name': 'North Sea',
-            'unit': 'm/s',
             'value': 0,
             'timestamp': ''
         }
@@ -314,7 +312,6 @@ mqttData = [
         'topic': 'highcharts/topic2',
         'payload': {
             'name': 'Baltic Sea',
-            'unit': 'm/s',
             'value': 0,
             'timestamp': ''
         }
