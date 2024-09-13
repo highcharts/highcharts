@@ -264,14 +264,14 @@ The `MQTTConnector`is implemented as part of a sample application that displays 
 
 Each connector provides data for a `spline` chart and a `DataGrid` component. In addition timestamped events and the raw data are displayed as unformatted text in a message log that resides outside the Dashboards container. The log may be cleared by the user.
 
-The sample application relies on data being published to the two MQTT topics (*highsoft/test/topic1* and *highsoft/test/topic2*). The payload of the MQTT packet must be of a specific format to work correctly (see example below).
+The sample application relies on data being published to the two MQTT topics (*highcharts/topic1* and *highcharts/topic2*). The payload of the MQTT packet must be of a specific format to work correctly (see example below).
 
 #### Basic data generation
 For basic testing the data can be generated using an online MQTT client, for instance the [HiveMQ Websocket Client](https://www.hivemq.com/demos/websocket-client/). Here you can connect using the default parameters, and then enter the topic and the message payload. Entering the following data will generate one point in the chart and one row in the datagrid.
 
 Topic
 ```
-highsoft/test/topic1
+highcharts/topic1
 ```
 Message
 ```javascript
@@ -302,7 +302,7 @@ client_id = f'publish-{random.randint(0, 100)}'
 # Packet contents
 mqttData = [
     {
-        'topic': 'highsoft/test/topic1',
+        'topic': 'highcharts/topic1',
         'payload': {
             'name': 'North Sea',
             'unit': 'm/s',
@@ -311,7 +311,7 @@ mqttData = [
         }
     },
     {
-        'topic': 'highsoft/test/topic2',
+        'topic': 'highcharts/topic2',
         'payload': {
             'name': 'Baltic Sea',
             'unit': 'm/s',

@@ -25,12 +25,36 @@
 
 <div class="description">
     <p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
-        broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards datagrid</i>.
+        broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards
+            datagrid</i>.
         The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom
-        Connector establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The received
+        Connector establishes the connection with the MQTT broker, subscribes to a topic and receives the data. The
+        received
         data are stored in the connector's data table for use in the chart and datagrid. The connector also supports
         callbacks for connection status, packet reception and error handling. The connector is a sub-class of the
-        <i>DataConnector</i> and uses the JSON Converter to convert the received data to a format that can be used by the chart and datagrid.
+        <i>DataConnector</i> and uses the JSON Converter to convert the received data to a format that can be used
+        by the chart and datagrid.
     </p>
-    <p>TBD: Data format and how to provide data.</p>
+    <p>MQTT data can be provided by any program that is capable of connecting to an MQTT broker and publish
+        messages. This demo uses the broker
+        <i>broker.hivemq.com</i>, port <i>8000</i> as default but can in principle use any public MQTT broker.
+        The packet must be sent to one of these topics: <i>highcharts/topic1</i> or
+        <i>highcharts/topic2</i>.
+        The packet payload must be a JSON object with the following structure (example):
+    </p>
+    <pre class="json">
+{
+"name": "North Sea",
+"unit": "m/s",
+"value": 35.69,
+"timestamp": "2024-09-12T08:12:01.028Z"
+}
+    </pre>
+    <p>The name and unit fields can be any text, the value field must be a number and the timestamp field must be a
+        string in ISO 8601 format.</p>
+
+    <p>A straightforward way to generate is us use <a href="https://www.hivemq.com/demos/websocket-client/"
+            target="_blank">HiveMQ Websocket Client</a>.
+        Simply connect, use the topic <i>highcharts/topic1</i>, and enter data (e.g. from the example above).
+    </p>
 </div>

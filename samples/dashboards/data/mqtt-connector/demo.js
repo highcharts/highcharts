@@ -12,7 +12,7 @@
  *    "timestamp": "2024-09-12T08:12:01.028Z"
  *  }
  *
- *  Valid MQTT topics: highsoft/test/topic1, highsoft/test/topic2
+ *  Valid MQTT topics: highcharts/topic1, highcharts/topic2
  *
  * */
 
@@ -21,11 +21,11 @@ let board = null;
 
 // Mapping of MQTT topics to dashboards components
 const topicMap = {
-    'highsoft/test/topic1': {
+    'highcharts/topic1': {
         chart: 'column-chart-1',
         dataGrid: 'data-grid-1'
     },
-    'highsoft/test/topic2': {
+    'highcharts/topic2': {
         chart: 'column-chart-2',
         dataGrid: 'data-grid-2'
     }
@@ -122,7 +122,7 @@ const connConfig = {
 
         if (count === 1) {
             // Update the chart title
-            const chartComp =  board.getComponentByCellId(chart);
+            const chartComp = board.getComponentByCellId(chart);
             chartComp.update({
                 chartOptions: {
                     title: {
@@ -138,7 +138,6 @@ const connConfig = {
     },
     errorEvent: event => {
         const { code, message } = event.detail;
-        setConnectStatus(false);
         logAppend(`${message} (error code #${code})`);
     }
 };
@@ -150,14 +149,14 @@ async function createDashboard() {
                 type: 'MQTT',
                 id: 'mqtt-data-1',
                 options: {
-                    topic: 'highsoft/test/topic1',
+                    topic: Object.keys(topicMap)[0],
                     ...connConfig
                 }
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
                 options: {
-                    topic: 'highsoft/test/topic2',
+                    topic: Object.keys(topicMap)[1],
                     ...connConfig
                 }
             }]
@@ -491,16 +490,27 @@ class MQTTConnector extends DataConnector {
      *
      */
     onMessageArrived(mqttPacket) {
-        console.log(mqttPacket.destinationName);
-        console.log(mqttPacket.payloadString);
-
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
             connTable = connector.table;
 
         // Parse the message
-        const data = JSON.parse(mqttPacket.payloadString);
+        let data;
+        const payload = mqttPacket.payloadString;
+        try {
+            data = JSON.parse(payload);
+        } catch (e) {
+            connector.emit({
+                type: 'errorEvent',
+                detail: {
+                    code: 0, // N.A.
+                    message: 'Invalid JSON: ' + payload
+                }
+            });
+            return; // Skip invalid messages
+        }
+
         converter.parse({ data });
         const convTable = converter.getTable();
 
@@ -624,7 +634,7 @@ MQTTConnector.defaultOptions = {
     password: '',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: 'highsoft',
+    topic: 'highcharts/test',
     useSSL: false,
     cleanSession: true,
 
