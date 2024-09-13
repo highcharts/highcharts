@@ -1448,7 +1448,7 @@ class Axis {
             if (!explicitCategories && names) {
                 x = names.length;
             }
-        } else {
+        } else if (isNumber(nameX)) {
             x = nameX;
         }
 

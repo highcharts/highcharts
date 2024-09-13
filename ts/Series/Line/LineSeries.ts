@@ -607,10 +607,14 @@ export default LineSeries;
  */
 
 /**
- * The x value of the point. For datetime axes, the X value is the timestamp
- * in milliseconds since 1970.
+ * The x value of the point.
  *
- * @type      {number}
+ * For datetime axes, a number value is the timestamp in milliseconds since
+ * 1970, while a date string is parsed according to the [current time zone]
+ * (https://api.highcharts.com/highcharts/time.timezone) of the
+ * chart.
+ *
+ * @type      {number|string}
  * @product   highcharts highstock
  * @apioption series.line.data.x
  */
