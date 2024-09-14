@@ -86,10 +86,10 @@ QUnit.test('Test Price Channel indicator.', function (assert) {
 
     const getValues = series => (
 
-        series.dataTable.columns.x.map((x, i) => [
-            series.dataTable.columns.top[i],
-            series.dataTable.columns.middle[i],
-            series.dataTable.columns.bottom[i]
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('top')[i],
+            series.getColumn('middle')[i],
+            series.getColumn('bottom')[i]
         ])
     );
 

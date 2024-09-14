@@ -46,9 +46,9 @@ QUnit.test('Test Aroon calculations on data updates.', function (assert) {
     });
 
     function toAroonWithRound(series) {
-        return series.dataTable.columns.x.map((x, i) => [
-            parseFloat(series.dataTable.columns.y[i].toFixed(4)),
-            parseFloat(series.dataTable.columns.aroonDown[i].toFixed(4))
+        return series.getColumn('x').map((x, i) => [
+            parseFloat(series.getColumn('y')[i].toFixed(4)),
+            parseFloat(series.getColumn('aroonDown')[i].toFixed(4))
         ]);
     }
 

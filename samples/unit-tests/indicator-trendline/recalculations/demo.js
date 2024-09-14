@@ -13,7 +13,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             ]
         }),
         getYData = () => (
-            chart.series[1].dataTable.columns.y
+            chart.series[1].getColumn('y')
         );
 
     assert.strictEqual(
@@ -70,7 +70,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         [4, 8]
     ]);
     const trendLineYData = (
-        chart.series[1].dataTable.columns.y
+        chart.series[1].getColumn('y')
     );
 
     assert.deepEqual(
@@ -82,8 +82,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     const alpha = 1.57692,
         beta = -0.461538,
-        trendlineX = chart.series[1].dataTable.columns.x,
-        trendlineY = chart.series[1].dataTable.columns.y,
+        trendlineX = chart.series[1].getColumn('x'),
+        trendlineY = chart.series[1].getColumn('y'),
         firstPointX = trendlineX[0],
         firstPointY = trendlineY[0],
         lastPointX = trendlineX[trendlineX.length - 1],

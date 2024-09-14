@@ -121,10 +121,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     const getValues = series => (
-        series.dataTable.columns.x.map((x, i) => [
-            series.dataTable.columns.y[i],
-            series.dataTable.columns.signal[i],
-            series.dataTable.columns.MACD[i]
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('y')[i],
+            series.getColumn('signal')[i],
+            series.getColumn('MACD')[i]
         ])
     );
 
