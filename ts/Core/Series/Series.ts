@@ -1988,7 +1988,7 @@ class Series {
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
                     (key): DataTable.Column => table.getColumn(key, true) || []
                 ) || [],
-            xData = this.getColumn('x'),
+            xData = this.getColumn('x', true),
             activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
