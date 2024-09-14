@@ -351,7 +351,7 @@ function seriesSetStackedPoints(
         xData = series.getColumn('x', true),
         yData = series.getColumn(series.pointValKey || 'y', true),
         stackedYData = [],
-        yDataLength = yData?.length || 0,
+        yDataLength = yData.length,
         seriesOptions = series.options,
         threshold = seriesOptions.threshold || 0,
         stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,

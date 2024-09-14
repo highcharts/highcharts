@@ -330,11 +330,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         132946877
     ]);
 
-    assert.close(
+    assert.strictEqual(
         chart.series[1].points.length -
             chart.series[1].options.params.periodSenkouSpanB + 2,
         chart.series[0].points.length,
-        1.5,
         'After addPoint number of Ichimoku points is correct'
     );
 

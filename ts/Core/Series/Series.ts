@@ -4236,8 +4236,6 @@ class Series {
 
                 'processedData', // #17057
 
-                'processedXData',
-                'processedYData',
                 'xIncrement',
                 'cropped',
                 '_hasPointMarkers',
