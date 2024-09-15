@@ -107,7 +107,7 @@ class TableCell extends Cell {
         const mouseOverHandler = (): void => {
             this.onMouseOver();
         };
-        const mouseOutHanlder = (): void => {
+        const mouseOutHandler = (): void => {
             this.onMouseOut();
         };
         const dblClickHandler = (): void => {
@@ -115,11 +115,11 @@ class TableCell extends Cell {
         };
 
         this.htmlElement.addEventListener('mouseover', mouseOverHandler);
-        this.htmlElement.addEventListener('mouseout', mouseOutHanlder);
+        this.htmlElement.addEventListener('mouseout', mouseOutHandler);
         this.htmlElement.addEventListener('dblclick', dblClickHandler);
 
         this.cellEvents.push(['dblclick', dblClickHandler]);
-        this.cellEvents.push(['mouseout', mouseOutHanlder]);
+        this.cellEvents.push(['mouseout', mouseOutHandler]);
         this.cellEvents.push(['mouseover', mouseOverHandler]);
     }
 
