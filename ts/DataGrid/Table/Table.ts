@@ -371,10 +371,6 @@ class Table {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
-        this.columns.forEach((column): void => {
-            column.sorting?.removeEventListeners();
-        });
-        this.header?.removeHeaderEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();

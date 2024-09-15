@@ -52,7 +52,7 @@ class ColumnSorting {
     /**
      * The head element of the column.
      */
-    public headElement: HTMLElement;
+    public headerCellElement: HTMLElement;
 
 
     /* *
@@ -67,15 +67,14 @@ class ColumnSorting {
      * @param column
      * The column that be sorted.
      *
-     * @param headElement
+     * @param headerCellElement
      * The head element of the column.
      */
-    constructor(column: Column, headElement: HTMLElement) {
+    constructor(column: Column, headerCellElement: HTMLElement) {
         this.column = column;
-        this.headElement = headElement;
+        this.headerCellElement = headerCellElement;
 
         this.addHeaderElementAttributes();
-        this.addSortingOnClick();
     }
 
 
@@ -93,7 +92,7 @@ class ColumnSorting {
         const sortingOptions = col.options.sorting;
         const { currentSorting } = col.viewport.dataGrid.querying.sorting;
 
-        const el = this.headElement;
+        const el = this.headerCellElement;
 
         if (sortingOptions?.sortable) {
             el.classList.add(Globals.classNames.columnSortable);
@@ -115,19 +114,6 @@ class ColumnSorting {
                 el.classList.add(Globals.classNames.columnSortedDesc);
                 break;
         }
-    }
-
-    /**
-     * Adds sorting on click event if the column is sortable.
-     */
-    private addSortingOnClick(): void {
-        const { column } = this;
-
-        if (!column.options.sorting?.sortable) {
-            return;
-        }
-
-        this.headElement.addEventListener('click', this.toggle);
     }
 
     /**
@@ -159,21 +145,8 @@ class ColumnSorting {
 
     /**
      * Toggle sorting order for the column in the order: asc -> desc -> none
-     *
-     * @param e
-     * The mouse event.
      */
-    public toggle = (e: MouseEvent): void => {
-
-        if (
-            e.target !== this.headElement &&
-            e.target !== this.column.header?.headerContent
-        ) {
-            // Do not toggle if the click was not on the header to avoid
-            // accidental sorting, when resizing etc.
-            return;
-        }
-
+    public toggle = (): void => {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
@@ -191,13 +164,6 @@ class ColumnSorting {
 
         void this.setOrder(consequents[currentOrder]);
     };
-
-    /**
-     * Unbind click event
-     */
-    public removeEventListeners(): void {
-        this.headElement.removeEventListener('click', this.toggle);
-    }
 }
 
 

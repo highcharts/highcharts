@@ -82,10 +82,6 @@ class TableCell extends Cell {
         this.row = row;
 
         this.column.registerCell(this);
-
-        this.htmlElement.addEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.addEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.addEventListener('click', this.onClick);
     }
 
 
@@ -105,10 +101,27 @@ class TableCell extends Cell {
         void this.setValue(this.column.data?.[this.row.index], false);
     }
 
+    public override initEvents(): void {
+        super.initEvents();
+
+        const mouseOverHandler = (): void => {
+            this.onMouseOver();
+        };
+        const mouseOutHanlder = (): void => {
+            this.onMouseOut();
+        };
+
+        this.htmlElement.addEventListener('mouseover', mouseOverHandler);
+        this.htmlElement.addEventListener('mouseout', mouseOutHanlder);
+
+        this.cellEvents.push(['mouseover', mouseOverHandler]);
+        this.cellEvents.push(['mouseout', mouseOutHanlder]);
+    }
+
     /**
      * Sets the hover state of the cell and its row and column.
      */
-    private readonly onMouseOver = (): void => {
+    protected onMouseOver(): void {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow(this.row.index);
         dataGrid.hoverColumn(this.column.id);
@@ -116,12 +129,12 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellMouseOver', {
             target: this
         });
-    };
+    }
 
     /**
      * Unset the hover state of the cell and its row and column.
      */
-    private readonly onMouseOut = (): void => {
+    protected onMouseOut(): void {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow();
         dataGrid.hoverColumn();
@@ -129,12 +142,9 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellMouseOut', {
             target: this
         });
-    };
+    }
 
-    /**
-     * Handles the user clicking on a cell.
-     */
-    private readonly onClick = (): void => {
+    protected override onClick(): void {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
@@ -146,7 +156,7 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellClick', {
             target: this
         });
-    };
+    }
 
     /**
      * Sets the value & updating content of the cell.
@@ -243,9 +253,6 @@ class TableCell extends Cell {
      * Destroys the cell.
      */
     public destroy(): void {
-        this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.removeEventListener('click', this.onClick);
         super.destroy();
     }
 }
