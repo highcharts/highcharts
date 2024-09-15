@@ -76,11 +76,6 @@ declare module '../../Core/Series/PointLike' {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        allGroupedData?: (
-            Array<(number|null|undefined)>|
-            Array<Array<(number|null|undefined)>>|
-            TypedArray
-        );
         allGroupedTable?: DataTableCore;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
@@ -392,8 +387,6 @@ function applyGrouping(
         let modified = groupedData.modified,
             groupedXData = modified.getColumn('x', true) as
                 Array<number>|TypedArray,
-            groupedYData = modified.getColumn('y', true) as
-                Array<number>|TypedArray,
             gapSize = 0;
 
         // The smoothed option is deprecated, instead, there is a fallback
@@ -442,20 +435,17 @@ function applyGrouping(
         // We calculated all group positions but we should render only the ones
         // within the visible range
         if (dataGroupingOptions.groupAll) {
-            // Keep the reference to all grouped points for further calculation
-            if (series.is('heikinashi') || series.is('hollowcandlestick')) {
-                series.allGroupedData = groupedYData;
-                series.allGroupedTable = modified;
-            }
+            // Keep the reference to all grouped points for further calculation,
+            // used in Heikin-Ashi and hollow candlestick series.
+            series.allGroupedTable = modified;
 
             croppedData = series.cropData(
                 modified,
-                xAxis.min as any,
-                xAxis.max as any
+                xAxis.min || 0,
+                xAxis.max || 0
             );
             modified = croppedData.modified;
             groupedXData = modified.getColumn('x') as Array<number>;
-            groupedYData = modified.getColumn('y') as Array<number>;
 
             series.cropStart = croppedData.start; // #15005
         }
@@ -532,7 +522,6 @@ function destroyGroupedData(
         // - `this.points`
         // - `preserve` object in series.update()
         this.groupedData.length = 0;
-        delete this.allGroupedData; // #19892
         delete this.allGroupedTable;
     }
 }
