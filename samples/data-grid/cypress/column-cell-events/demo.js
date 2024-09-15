@@ -19,6 +19,9 @@ DataGrid.dataGrid('container', {
             click: function () {
                 doc.getElementById('cellClick').value = 'cellClick';
             },
+            dblClick: function () {
+                doc.getElementById('cellDblClick').value = 'cellDblClick';
+            },
             mouseOver: function () {
                 doc.getElementById('cellMouseOver').value = 'cellMouseOver';
             },

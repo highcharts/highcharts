@@ -110,16 +110,21 @@ class TableCell extends Cell {
         const mouseOutHanlder = (): void => {
             this.onMouseOut();
         };
+        const dblClickHandler = (): void => {
+            this.onDblClick();
+        };
 
         this.htmlElement.addEventListener('mouseover', mouseOverHandler);
         this.htmlElement.addEventListener('mouseout', mouseOutHanlder);
+        this.htmlElement.addEventListener('dblclick', dblClickHandler);
 
-        this.cellEvents.push(['mouseover', mouseOverHandler]);
+        this.cellEvents.push(['dblclick', dblClickHandler]);
         this.cellEvents.push(['mouseout', mouseOutHanlder]);
+        this.cellEvents.push(['mouseover', mouseOverHandler]);
     }
 
     /**
-     * Sets the hover state of the cell and its row and column.
+     * Handles the mouse over event on the cell.
      */
     protected onMouseOver(): void {
         const { dataGrid } = this.row.viewport;
@@ -132,7 +137,7 @@ class TableCell extends Cell {
     }
 
     /**
-     * Unset the hover state of the cell and its row and column.
+     * Handles the mouse out event on the cell.
      */
     protected onMouseOut(): void {
         const { dataGrid } = this.row.viewport;
@@ -144,13 +149,28 @@ class TableCell extends Cell {
         });
     }
 
-    protected override onClick(): void {
+    /**
+     * Handles the double click event on the cell.
+     */
+    protected onDblClick(): void {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
         if (this.column.options.cells?.editable) {
             vp.cellEditing.startEditing(this);
         }
+
+        dataGrid.options?.events?.cell?.dblClick?.call(this);
+        fireEvent(dataGrid, 'cellDblClick', {
+            target: this
+        });
+    }
+
+    protected override onClick(): void {
+        const vp = this.row.viewport;
+        const { dataGrid } = vp;
+
+        // TODO: Cell selector.
 
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {

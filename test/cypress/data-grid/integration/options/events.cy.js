@@ -19,18 +19,26 @@ describe('DataGrid events.', () => {
         cy.get('#cellClick').should('have.value', 'cellClick');
     });
 
+    it('Cell dblClick event', () => {
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]').dblclick({force: true});
+        cy.get('#cellDblClick').should('have.value', 'cellDblClick');
+    });
+
     it('Cell afterEdit event', () => {
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')
-            .click({force: true})
+            .dblclick({force: true})
+            .find('input')
             .clear()
             .type('Strawberries');
+
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
 
     it('AfterSetValue event.', () => {
         cy.get('#cellAfterSetValue').should('have.value', '1');
         cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="weight"]')
-            .click({force: true})
+            .dblclick({force: true})
+            .find('input')
             .type('1{enter}');
         cy.get('#cellAfterSetValue').should('have.value', '2');
     });
