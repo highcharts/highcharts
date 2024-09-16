@@ -35,17 +35,17 @@ For more information on `caption` options see the [API reference](https://api.hi
 Header
 ---------
 
-The [table header](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridTableHeader) is a special row, always on the top, containing the column IDs.
+The [table header](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#header) is a special row, always on the top, containing the column IDs.
 Cells in the `header` are called `headerCell`. Their contents can be edited using the
-[`header.format` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
+[`header.headerFormat` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#headerFormat).
 
 The API allows you to group headers into sections.
-You can find more information about in our [Columns article](/docs/dashboards/columns).
+You can find more information about in our [Columns article](https://www.highcharts.com/docs/datagrid/columns).
 
 Row
 ---------
 
-Represents a [row](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridRow.DataGridRow-1) in the data grid.
+Represents a [row](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) in the data grid.
 
 ```js
 rendering: {
@@ -56,13 +56,13 @@ rendering: {
 }
 ```
 
-For more information on row rendering settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.RowsSettings).
+For more information on row rendering settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings).
 
 Column resizer
 ---------
 
-Allows you to resize the entire [column](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGridColumn.DataGridColumn-1). The functionality is enabled by default,
-but you can disable it in the [`columnDefaults.resizing` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnsSettings).
+Allows you to resize the entire [column](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Column.Column-1). The functionality is enabled by default,
+but you can disable it in the [`columnDefaults.resizing` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnOptions#resizing).
 
 ```js
 columnDefaults: {
@@ -70,12 +70,12 @@ columnDefaults: {
 }
 ```
 
-For more information on the column resizer see the [API reference](https://api.highcharts.com/dashboards/#classes/DataGrid_Actions_ColumnsResizer.ColumnsResizer).
+For more information on the column resizer see the [API reference](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Actions_ColumnsResizer.ColumnsResizer).
 
 Column
 ---------
 
-Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
+Represents a column in the data grid. Options for a column often apply to all of the cells it contains. See the [column options API docs](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.IndividualColumnOptions).
 
 ```js
 columns: [{
@@ -93,16 +93,16 @@ columns: [{
 }]
 ```
 
-For more information on the column element see the [API reference](https://api.highcharts.com/dashboards/typedoc/classes/DataGrid_DataGridColumn.DataGridColumn-1.html).
+For more information on the column element see the [API reference](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Column.Column-1).
 
 
 Cell
 ---------
 
-The basic element in the DataGrid can be formatted by [`cells.format`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormat) or [`cells.formatter`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.ColumnOptions#cellFormatter).
+The basic element in the DataGrid can be formatted by [`cells.format`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnCellOptions#format) or [`cells.formatter`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnCellOptions#formatter).
 You can also set the custom HTML in formatters.
 
-For more information on the cell element see the [API reference](https://api.highcharts.com/dashboards/typedoc/classes/DataGrid_DataGridCell.DataGridCell-1.html).
+For more information on the cell element see the [API reference](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Cell.Cell-1).
 
 
 Value editor
@@ -123,4 +123,4 @@ Click on a cell and change the value.
 If you declared `cells.formatter` or `cells.format` props, it will be applied to the
 new value.
 
-For more information on cell options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable).
+For more information on cell options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnCellOptions#editable).

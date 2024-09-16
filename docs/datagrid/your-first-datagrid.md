@@ -55,23 +55,7 @@ DataGrid.dataGrid('container', {
 });
 ```
 
-or use the [DataTable](https://www.highcharts.com/docs/dashboards/data-table).
-
-```js
-const columns = {
-    product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-    weight: [100, 40, 0.5, 200],
-    price: [1.5, 2.53, 5, 4.5]
-};
-
-DataGrid.dataGrid('container', {
-    dataTable: new DataTable({
-        columns
-    })
-});
-```
-
-6. View the result
+### View the result
 With the config above your DataGrid should look like the example below:
 
 <iframe src="https://www.highcharts.com/samples/embed/data-grid/demo/your-first-datagrid" allow="fullscreen"></iframe>

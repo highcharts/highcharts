@@ -22,13 +22,15 @@ Then import the module as follows:
 import * as DataGrid from '@highcharts/dashboards/datagrid';
 ```
 
+Read more about [the DataGrid installation](https://www.highcharts.com/docs/datagrid/installation).
+
 ## Usage
 The DataGrid can be added as a standalone component or as a part of a Dashboard.
 The following example demonstrates how to use the DataGrid as a standalone component.
 
 First you need to create a container for the DataGrid:
 
-```js
+```html
 <div id="container"></div>
 ```
 
@@ -49,19 +51,6 @@ DataGrid.dataGrid('container', {
 });
 ```
 
-Data Table Instance:
-```ts
-import DataGrid from '@highcharts/dashboards/datagrid';
-const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataGrid.DataTable({
-        columns: {
-            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-            price: [1.5, 2.53, 5, 4.5],
-        }
-    })
-});
-```
-
 ## Styles
 The DataGrid component requires the following styles to be imported in your main CSS file:
 
@@ -75,9 +64,9 @@ The DataGrid component requires the following styles to be imported in your main
 
 The DataGrid has a number of options that can be used to customize the appearance and behavior of the table.
 
-For example, using the [`editable`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) option you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
+For example, using the [`editable`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnCellOptions#editable) option you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
 
-Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, for example by adding units to them. The key is the column name and the value is the object with the column-specific options.
+Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columns), you can format data and headers in cells, for example by adding units to them. The key is the column name and the value is the object with the column-specific options.
 
 ```js
 DataGrid.dataGrid('container', {
@@ -116,6 +105,6 @@ DataGrid.dataGrid('container', {
 });
 ```
 
-A complete list of the API options can be found [here](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.DataGridOptions-1.html).
+A complete list of the API options can be found [here](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1).
 
 [Go to the next article](https://www.highcharts.com/docs/datagrid/understanding-datagrid) to read more about the DataGrid structure.
