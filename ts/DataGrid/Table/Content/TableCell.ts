@@ -28,7 +28,6 @@ import Column from '../Column';
 import TableRow from './TableRow';
 import Utils from '../../../Core/Utilities.js';
 import DGUtils from '../../Utils.js';
-import Globals from '../../Globals.js';
 
 const { defined, fireEvent } = Utils;
 const { isHTML } = DGUtils;
@@ -57,10 +56,10 @@ class TableCell extends Cell {
     public row: TableRow;
 
     /**
-     * The input element of a cell after mouse focus.
+     * The input element of a cell when editing state is active.
      * @internal
      */
-    public cellInputEl?: HTMLInputElement;
+    private cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -114,21 +113,11 @@ class TableCell extends Cell {
         const dblClickHandler = (e: Event): void => {
             this.onDblClick(e as MouseEvent);
         };
-        const focusHandler = (): void => {
-            this.htmlElement.classList.add(Globals.classNames.focusedCell);
-        };
-        const blurHandler = (): void => {
-            this.htmlElement.classList.remove(Globals.classNames.focusedCell);
-        };
 
         this.htmlElement.addEventListener('mouseover', mouseOverHandler);
         this.htmlElement.addEventListener('mouseout', mouseOutHandler);
         this.htmlElement.addEventListener('dblclick', dblClickHandler);
-        this.htmlElement.addEventListener('focus', focusHandler);
-        this.htmlElement.addEventListener('blur', blurHandler);
 
-        this.cellEvents.push(['blur', blurHandler]);
-        this.cellEvents.push(['focus', focusHandler]);
         this.cellEvents.push(['dblclick', dblClickHandler]);
         this.cellEvents.push(['mouseout', mouseOutHandler]);
         this.cellEvents.push(['mouseover', mouseOverHandler]);
