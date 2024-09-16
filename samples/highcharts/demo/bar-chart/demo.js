@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'bar'
+        type: 'bar',
+        height: 100
     },
     title: {
         text: 'Historic World Population by Region',
