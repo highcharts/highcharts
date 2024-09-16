@@ -35,11 +35,11 @@ Highcharts.chart('container', {
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/before-chart-format )
 
-If more detailed control is required, the [`accessibility.screenReaderSection.beforeChartFormatter`](https://api.highcharts.com/highcharts/accessibility.screenReaderSection.beforeChartFormatter) option allows for specifying a function to return the HTML string, receiving the chart as an argument.
+If more detailed control is required, the [`accessibility.screenReaderSection.beforeChartFormatter`](https://api.highcharts.com/highcharts/accessibility.screenReaderSection.beforeChartFormatter) option allows for definition of a function to return the HTML string, receiving the chart as an argument.
 
 ### Individual data points
 
-To configure what screen readers read out for individual data points, see the [`accessibility.point.valueDescriptionFormat`](https://api.highcharts.com/highcharts/accessibility.point.valueDescriptionFormat) option. You can then easily configure what values you want to show the user. Example:
+To configure what screen readers read out for individual data points, see the [`accessibility.point.valueDescriptionFormat`](https://api.highcharts.com/highcharts/accessibility.point.valueDescriptionFormat) option. You can then easily configure what values you want to show to the user. Example:
 
 ```js
 Highcharts.chart('container', {
@@ -126,7 +126,7 @@ Highcharts.chart('container', {
 Large data series
 -----------------
 
-Be aware that for charts with a large number of data points, individual data points are not by default exposed to screen reader users. This can be configured with the [`accessibility.series.pointDescriptionEnabledThreshold`](https://api.highcharts.com/highcharts/accessibility.series.pointDescriptionEnabledThreshold) option.
+Be aware that for charts with a large set of data points, individual data points are not by default exposed to screen reader users. This can be configured with the [`accessibility.series.pointDescriptionEnabledThreshold`](https://api.highcharts.com/highcharts/accessibility.series.pointDescriptionEnabledThreshold) option.
 
 ```js
 Highcharts.chart('container', {

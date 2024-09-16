@@ -7,7 +7,7 @@ Keyboard navigation
 --------------
 An essential part of the Accessibility module is the added keyboard navigation support. This is obviously a critical feature for users with mobility impairments, but also benefits all users. While using a computer mouse can be faster, keyboard navigation allows all users access to precise navigation of the chart.
 
-By including the Accessibility module allows users to navigate and interact with the data points, chart menu, and other chart controls using solely their keyboard. 
+The inclusion of the Accessibility module, allows users to navigate and interact with the data points, chart menu, and other chart controls using solely their keyboard. 
 
 
 Keyboard navigation can be tested in the demo below. Use the tab-key to navigate the chart elements, arrow-keys to navigate within the chart element and space-bar to click.
