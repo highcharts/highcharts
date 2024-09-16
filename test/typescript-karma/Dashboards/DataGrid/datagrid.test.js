@@ -1,7 +1,7 @@
 //@ts-check
 import DataGrid from '/base/code/datagrid/es-modules/masters/datagrid.src.js';
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 //@ts-ignore
 test('DataGrid update methods', async function (assert) {
