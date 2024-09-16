@@ -565,7 +565,7 @@ class VBPIndicator extends SMAIndicator {
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,
             xValues = series.getColumn('x', true),
-            yValues: Array<Array<number>> = (series.processedYData as any),
+            yValues = series.processedYData as Array<Array<number>>,
             chart = indicator.chart,
             ranges: number = (params.ranges as any),
             VBP: Array<Array<number>> = [],
