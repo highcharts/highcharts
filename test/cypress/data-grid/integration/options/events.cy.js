@@ -15,12 +15,16 @@ describe('DataGrid events.', () => {
     });
 
     it('Cell click event', () => {
-        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]').click({force: true});
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')
+            .click({force: true})
+            .should('have.class', 'highcharts-datagrid-focused-cell');
         cy.get('#cellClick').should('have.value', 'cellClick');
     });
 
     it('Cell dblClick event', () => {
-        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]').dblclick({force: true});
+        cy.get('.highcharts-datagrid-row[data-row-index="1"] > td[data-column-id="product"]')
+            .dblclick({force: true})
+            .should('not.have.class', 'highcharts-datagrid-focused-cell');
         cy.get('#cellDblClick').should('have.value', 'cellDblClick');
     });
 
