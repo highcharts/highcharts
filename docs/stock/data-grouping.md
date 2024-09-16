@@ -3,7 +3,7 @@ Data grouping
 
 The `dataGrouping` feature in Highcharts Stock is a reliable tool for dealing with large sets of data in a more efficient way. By grouping data points into larger chunks, it streamlines the loading and rendering process for your charts.
 Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used.
-In Highstock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
+In Highcharts Stock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
 
 ```js
 Highcharts.stockChart('container', {
@@ -57,7 +57,7 @@ In the example below, the data grouping is set to only group data points into on
 Highcharts.stockChart('container', {
     series: [{
         dataGrouping:{
-            units: [['day',[1, 2, 3]]]
+            units: [['day', [1, 2, 3]]]
         },
         data: [...]
     }]
@@ -93,9 +93,9 @@ The example below shows how to force the data to be grouped into one second inte
 ```js
 Highcharts.stockChart('container', {
   series: [{
-    dataGrouping:{
+    dataGrouping: {
       forced: true,
-      units: [['second',[1]]]
+      units: [['second', [1]]]
     },
     data: [...]
   }]
@@ -120,7 +120,7 @@ Additionally [firstAnchor](https://api.highcharts.com/highstock/plotOptions.seri
 
 ### Performance comparison of data grouping
 
- When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readibility of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100 000.
+ When using data grouping, the performance of the chart is improved. The main reason is that when there are a lot of points to be displayed, the number of said points does not improve readability of the chart, and number of points that are being rendered is greatly reduced. The following chart shows the performance improvement of data grouping for a series with varying number of data points, from 10 to 100 000.
 
  <iframe width="800" height="400" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" allow="fullscreen"></iframe>
 
