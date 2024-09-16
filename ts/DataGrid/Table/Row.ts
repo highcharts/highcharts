@@ -146,6 +146,19 @@ abstract class Row {
     }
 
     /**
+     * Returns the cell with the given column ID.
+     *
+     * @param columnId
+     * The column ID that the cell belongs to.
+     *
+     * @returns
+     * The cell with the given column ID or undefined if not found.
+     */
+    public getCell(columnId: string): Cell | undefined {
+        return this.cells.find((cell): boolean => cell.column.id === columnId);
+    }
+
+    /**
      * Registers a cell in the row.
      *
      * @param cell

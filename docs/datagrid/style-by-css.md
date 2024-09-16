@@ -93,7 +93,7 @@ To style the DataGrid's cell:
     border: 1px solid red;
 }
 
-.highcharts-dashboards-focused-cell {
+.highcharts-dashboards-edited-cell {
     border: 1px solid yellow;
 }
 ```

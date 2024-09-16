@@ -437,6 +437,16 @@ class Table {
 
         return this.columns[columnIndex];
     }
+
+    /**
+     * Returns the row with the provided ID.
+     *
+     * @param id
+     * The ID of the row.
+     */
+    public getRow(id: number): TableRow | undefined {
+        return this.rows.find((row): boolean => row.id === id);
+    }
 }
 
 namespace Table {

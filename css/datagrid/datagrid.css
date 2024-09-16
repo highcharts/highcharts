@@ -229,12 +229,12 @@
     text-overflow: ellipsis;
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell {
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell {
     padding: 0 0 1px;
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
     border-width: 0;
     width: 100%;
     height: 100%;
@@ -320,11 +320,19 @@
     background-color: var(--highcharts-highlight-color-7);
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell input:focus {
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
     box-shadow: inset 0 0 0 1px #0000ed;
     padding: 0 4px;
     background-color: #b7d4ff;
+}
+
+.highcharts-datagrid-table tbody td.highcharts-datagrid-focused-cell:not(.highcharts-datagrid-edited-cell) {
+    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
+}
+
+.highcharts-datagrid-table tbody td:focus {
+    outline: none;
 }
 
 /* Credits */
