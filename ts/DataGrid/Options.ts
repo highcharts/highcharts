@@ -81,6 +81,8 @@ export interface Options {
 
     /**
      * Options for the credits label.
+     *
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/credits | Credits options}
      */
     credits?: CreditsOptions;
 
