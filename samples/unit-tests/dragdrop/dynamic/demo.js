@@ -105,6 +105,12 @@ QUnit.test(
             }
         });
 
+        assert.strictEqual(
+            Highcharts.Pointer.unbindDocumentMouseUp.length,
+            1,
+            'For one document there should be one mouseUp event set, #21745.'
+        );
+
         chart1.destroy();
         chart2.destroy();
         container1.remove();
