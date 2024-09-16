@@ -1,7 +1,7 @@
 ---
  name: Highcharts Demo
  authors:
-   - Øystein Moseng
+   - Kacper Madej
  requiresManualTesting: true
  js_wrap: b
 ...
