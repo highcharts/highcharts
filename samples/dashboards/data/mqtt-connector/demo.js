@@ -1,8 +1,8 @@
 /* *
  *
  *  Sample application using a MQTT connector (custom connector),
- *  one MQTT topic per connector. The example uses the public
- *  HIVE MQTT test server, no user credentials required, not encrypted.
+ *  with one MQTT topic per connector. The example uses the public
+ *  Hive MQTT test server, no user credentials nor encryption.
  *
  *  Format of the incoming packets (example):
  *  {
@@ -16,7 +16,7 @@
  * */
 
 // Global Dashboards instance for use in event handlers.
-let board = null;
+let board;
 
 // Mapping of MQTT topics to Dashboards components
 const topicMap = {
@@ -276,6 +276,8 @@ window.onload = () => {
             if (con.connected) {
                 await con.disconnect();
             } else {
+                const { host, port } = con.options;
+                logAppend(`Connecting to ${host}, port: ${port}`);
                 await con.connect();
             }
         }
