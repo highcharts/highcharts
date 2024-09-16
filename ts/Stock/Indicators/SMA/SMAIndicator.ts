@@ -445,7 +445,9 @@ class SMAIndicator extends LineSeries {
                     croppedDataValues.push([
                         croppedData.xData[i]
                     ].concat(
-                        splat(croppedData.yData[i])
+                        // Note: allowing new any here because this code
+                        // will be removed with the Series/DataTable refactor
+                        splat(croppedData.yData[i]) as any
                     ));
                 }
 

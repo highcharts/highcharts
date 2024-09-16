@@ -728,7 +728,7 @@ function attr(
  * @return {Array}
  *         The produced or original array.
  */
-function splat(obj: any): Array<any> {
+function splat<T>(obj: T|Array<T>): Array<T> {
     return isArray(obj) ? obj : [obj];
 }
 

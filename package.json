@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.4.6",
+  "version": "11.4.8",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
@@ -20,13 +20,17 @@
     "webpack"
   ],
   "scripts": {
+    "api": "gulp api",
     "dapi": "gulp dashboards/api",
+    "dapi2": "gulp dashboards/api2",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
     "dlint": "gulp dashboards/lint",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
-    "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npx ts-node ./test/ts-node-unit-tests",
+    "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
+    "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
+    "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npm run test-node",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
@@ -51,9 +55,9 @@
     "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
     "@cypress-audit/lighthouse": "^1.4.2",
-    "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.5",
+    "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.8",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
     "@swc/core": "^1.5.25",
@@ -66,12 +70,14 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
+    "chatgpt": "^5.2.5",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
     "eslint-config-eslint": "7.0.0",
+    "eslint-plugin-brackets": "^0.1.3",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
     "eslint-plugin-jsdoc": "^48.2.0",
     "eslint-plugin-node": "^11.1.0",
@@ -111,13 +117,14 @@
     "proj4": "2.3.6",
     "qunit": "^2.21.0",
     "request": "^2.88.2",
-    "requirejs": "^2.3.6",
+    "requirejs": "^2.3.7",
     "semver": "^7.6.2",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0",
     "svg2pdf.js": "2.2.3",
     "topojson-client": "^3.1.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.0",
     "typedoc": "^0.25.13",
     "typedoc-plugin-rename-defaults": "^0.7.0",
     "typescript": "~5.4.5",
@@ -146,9 +153,5 @@
       "stylelint"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>",
-  "dependencies": {
-    "chatgpt": "^5.2.5",
-    "eslint-plugin-brackets": "^0.1.3"
-  }
+  "license": "SEE LICENSE IN <license.txt>"
 }

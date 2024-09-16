@@ -305,7 +305,7 @@ function getMaxLabelDimensions(
 
     // For tree grid, add indentation
     if (
-        this.options.type === 'treegrid' &&
+        this.type === 'treegrid' &&
         this.treeGrid &&
         this.treeGrid.mapOfPosToGridNode
     ) {
@@ -737,7 +737,7 @@ function onAfterSetAxisTranslation(this: Axis): void {
             // Don't trim ticks which not in min/max range but
             // they are still in the min/max plus tickInterval.
             if (
-                this.options.type !== 'treegrid' &&
+                this.type !== 'treegrid' &&
                 axis.grid &&
                 axis.grid.columns
             ) {
