@@ -109,7 +109,7 @@
 }
 
 #app-control #connect-status,
-#app-control #clear-log {
+#app-control #btn-clear-log {
     margin: 15px 10%;
 }
 
@@ -122,7 +122,7 @@
     content: "MQTT ";
 }
 
-#app-control #clear-log {
+#app-control button {
     font-size: 1em;
     padding: 5px 10px;
 }

@@ -18,7 +18,7 @@
 // Global Dashboards instance for use in event handlers.
 let board = null;
 
-// Mapping of MQTT topics to dashboards components
+// Mapping of MQTT topics to Dashboards components
 const topicMap = {
     'highcharts/topic1': {
         chart: 'column-chart-1',
@@ -251,6 +251,7 @@ async function createDashboard() {
  * */
 let logContent;
 let connectStatus;
+let connectButton;
 
 window.onload = () => {
     // Initialize the message log
@@ -261,11 +262,26 @@ window.onload = () => {
     // Initialize connection status
     connectStatus = document.getElementById('connect-status');
 
-    // Event listener for the 'clear log' button
-    const clearButton = document.getElementById('clear-log');
+    // Event listener for buttons
+    const clearButton = document.getElementById('btn-clear-log');
     clearButton.addEventListener('click', () => {
         logClear();
         logAppend('Log cleared by user');
+    });
+
+    connectButton = document.getElementById('btn-connect');
+    connectButton.addEventListener('click', async () => {
+        async function toggleConnect(connName) {
+            const con = await board.dataPool.getConnector(connName);
+            if (con.connected) {
+                await con.disconnect();
+            } else {
+                await con.connect();
+            }
+        }
+        // Connect/disconnect both connectors
+        await toggleConnect('mqtt-data-1');
+        await toggleConnect('mqtt-data-2');
     });
 };
 
@@ -280,6 +296,7 @@ function logClear() {
 }
 
 function setConnectStatus(connected) {
+    connectButton.innerText = connected ? 'Disconnect' : 'Connect';
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
     connectStatus.style.color = connected ? 'green' : 'red';
 }
@@ -555,6 +572,8 @@ class MQTTConnector extends DataConnector {
         });
 
         if (response.errorCode === 0) {
+            connector.connected = false;
+
             return;
         }
 
@@ -638,7 +657,7 @@ MQTTConnector.defaultOptions = {
     cleanSession: true,
 
     // Custom connector properties
-    autoConnect: true,
+    autoConnect: false,
     autoSubscribe: true
 };
 
