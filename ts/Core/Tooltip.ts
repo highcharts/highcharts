@@ -455,14 +455,17 @@ class Tooltip {
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
                 css(container, {
-                    position: 'absolute',
-                    top: '1px',
+                    position: 'fixed',
+                    top: '8px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
-                    )
+                    ),
+                    // Note: Considered bad practice
+                    fontFamily: 'serif'
                 });
+
 
                 /**
                  * Reference to the tooltip's renderer, when
@@ -548,7 +551,7 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            this.chart.renderTo.appendChild(container);
+            this.chart.container.appendChild(container);
         }
 
         return this.label;
@@ -1192,7 +1195,7 @@ class Tooltip {
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
-        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
+        const { left: chartLeft } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1568,9 +1571,8 @@ class Tooltip {
                 false
             );
 
-            // Position the tooltip container to the chart container
-            container.style.left = boxExtremes.left + 'px';
-            container.style.top = chartTop + 'px';
+            container.style.left = (-scrollLeft) + 'px';
+            container.style.top = (-scrollTop) + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
