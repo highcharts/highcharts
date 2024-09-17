@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #chartspace {
     height: 400px;
     width: 800px;

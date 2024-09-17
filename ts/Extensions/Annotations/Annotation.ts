@@ -116,23 +116,19 @@ function getLabelsAndShapesOptions(
     (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach((
         name
     ): void => {
-        const someBaseOptions = baseOptions[name];
+        const someBaseOptions = baseOptions[name],
+            newOptionsValue = newOptions[name];
+
+        type ControllableOptions = (
+            ControllableLabelOptions|
+            ControllableShapeOptions
+        );
 
         if (someBaseOptions) {
-            if (newOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (
-                            ControllableLabelOptions|
-                            ControllableShapeOptions
-                        ),
-                        i: number
-                    ): (
-                        ControllableLabelOptions|
-                        ControllableShapeOptions
-                        ) {
-                        return merge(someBaseOptions[i], basicOptions);
-                    }
+            if (newOptionsValue) {
+                mergedOptions[name] = splat(newOptionsValue).map(
+                    (basicOptions, i): ControllableOptions =>
+                        merge(someBaseOptions[i], basicOptions)
                 ) as any;
             } else {
                 mergedOptions[name] = baseOptions[name] as any;
@@ -153,6 +149,8 @@ function getLabelsAndShapesOptions(
  * An annotation class which serves as a container for items like labels or
  * shapes. Created items are positioned on the chart either by linking them to
  * existing points or created mock points
+ *
+ * @requires modules/annotations
  *
  * @class
  * @name Highcharts.Annotation
@@ -184,6 +182,8 @@ class Annotation extends EventEmitter implements ControlTarget {
      * An object uses for mapping between a shape type and a constructor.
      * To add a new shape type extend this object with type name as a key
      * and a constructor as its value.
+     *
+     * @private
      */
     public static readonly shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
@@ -868,8 +868,8 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.destroy();
         this.initProperties(chart, options);
         this.init(chart, options);
-        // Update options in chart options, used in exporting (#9767):
-        chart.options.annotations[userOptionsIndex] = options;
+        // Update options in chart options, used in exporting (#9767, #21507):
+        chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
         if (pick(redraw, true)) {

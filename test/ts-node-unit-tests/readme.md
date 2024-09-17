@@ -3,12 +3,13 @@
 Unit tests for the compiled Highcharts modules in pure Typescript + Node. No DOM required.
 
 ## Overview
-These tests utilise the built-in [assert](https://nodejs.org/api/assert.html) module of Node.
-
-The test-runner (found in `index.ts`) runs through every exported function of any `.test.ts` file in `ts-node-unit-tests/tests/`. If the exported function throws an error, the test is considered as failing.
+These tests utilise the built-in [assert](https://nodejs.org/api/assert.html) and [test](https://nodejs.org/api/test.html) modules of Node,
+as well as [tsx](https://tsx.is/) to run from TypeScript sources.
 
 ## How-to:
-From the root folder run `npx ts-node test/ts-node-unit-tests`.
+From the root folder run `node --import tsx --test test/ts-node-unit-tests/tests/**`.
+
+Optionally the `--watch` flag can be used to automatically rerun on changes.
 
 The tests will also run as part of the pre-commit script.
 

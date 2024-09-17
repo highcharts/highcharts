@@ -28,10 +28,17 @@ QUnit.test(
                 legendGroup.translateX +
                 bbox.x +
                 bbox.width / 2,
-            y = seriesLegendGroup.translateY +
+            baseY = seriesLegendGroup.translateY +
                 legendGroup.translateY +
                 bbox.y +
-                bbox.height / 2;
+                bbox.height / 2,
+            // Workaround for failing test on Linux.
+            // Try removing in Chrome v129+.
+            correction = (
+                test.elementsFromPoint(x, baseY)
+                    .indexOf(series.legendItem.symbol.element) < 0
+            ) ? -8 : 0,
+            y = baseY + correction;
 
         test.click(x, y);
 

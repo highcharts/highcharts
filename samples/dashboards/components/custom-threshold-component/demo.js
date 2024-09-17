@@ -1,9 +1,8 @@
 const {
     Component,
-    ComponentRegistry
+    ComponentRegistry,
+    merge
 } = Dashboards;
-// eslint-disable-next-line no-underscore-dangle
-const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
 
 class ThresholdComponent extends Component {
     constructor(cell, options) {
@@ -22,13 +21,13 @@ class ThresholdComponent extends Component {
                 value
             });
 
-        if (thresholds && isNumber(value)) {
+        if (thresholds && Number.isFinite(value)) {
             for (let i = 0; i < thresholds.length; i++) {
                 const threshold = thresholds[i];
 
                 if (
-                    isNumber(threshold.min) && value < threshold.min ||
-                    isNumber(threshold.max) && value > threshold.max
+                    Number.isFinite(threshold.min) && value < threshold.min ||
+                    Number.isFinite(threshold.max) && value > threshold.max
                 ) {
                     continue;
                 }

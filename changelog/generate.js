@@ -346,8 +346,9 @@ const getFile = url => new Promise((resolve, reject) => {
                         products = products.replace('var products = ', '');
                         products = JSON.parse(products);
 
-                        for (name in products) {
+                        delete products['Highcharts Dashboards'];
 
+                        for (name in products) {
                             if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
 
                                 products[name].date =
