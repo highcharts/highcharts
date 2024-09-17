@@ -28,6 +28,7 @@ import type {
     RangeSelectorPositionOptions
 } from './RangeSelectorOptions';
 import type Time from '../../Core/Time';
+import type { ButtonThemeStatesObject } from '../../Core/Renderer/SVG/ButtonThemeObject';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -45,6 +46,7 @@ const {
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     extend,
     fireEvent,
@@ -136,6 +138,7 @@ function preferredInputType(format: string): string {
  * @param {Highcharts.Chart} chart
  */
 class RangeSelector {
+    public isDirty: boolean = false;
 
     /* *
      *
@@ -237,7 +240,7 @@ class RangeSelector {
                     baseAxis.max as any, pick(dataMax, baseAxis.max as any)
                 )
             ), // #1568
-            baseXAxisOptions: AxisOptions,
+            baseXAxisOptions: DeepPartial<AxisOptions>,
             range = rangeOptions._range,
             rangeMin: (number|undefined),
             ctx: Axis,
@@ -362,7 +365,7 @@ class RangeSelector {
             // Axis not yet instantiated. Temporarily set min and range
             // options and axes once defined and remove them on
             // chart load (#4317 & #20529).
-            baseXAxisOptions = splat(chart.options.xAxis)[0];
+            baseXAxisOptions = splat(chart.options.xAxis || {})[0];
             const axisRangeUpdateEvent = addEvent(
                 chart,
                 'afterGetAxes',
@@ -425,9 +428,7 @@ class RangeSelector {
             options = (
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
-            buttonOptions = (
-                options.buttons || rangeSelector.defaultButtons.slice()
-            ),
+            buttonOptions = options.buttons,
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -764,6 +765,10 @@ class RangeSelector {
             dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
 
         if (input) {
+            input.setAttribute(
+                'type',
+                preferredInputType(options.inputDateFormat || '%e %b %Y')
+            );
             const hcTimeAttr = input.getAttribute('data-hc-time');
             let updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
 
@@ -1183,19 +1188,27 @@ class RangeSelector {
             container.parentNode.insertBefore(this.div, container);
         }
         if (inputEnabled) {
-            // Create the group to keep the inputs
-            this.inputGroup = renderer.g('input-group').add(this.group);
-
-            const minElems = this.drawInput('min');
-            this.minDateBox = minElems.dateBox;
-            this.minLabel = minElems.label;
-            this.minInput = minElems.input;
-
-            const maxElems = this.drawInput('max');
-            this.maxDateBox = maxElems.dateBox;
-            this.maxLabel = maxElems.label;
-            this.maxInput = maxElems.input;
+            this.createInputs();
         }
+
+    }
+
+    /**
+     * Create the input elements and its group.
+     *
+     */
+    public createInputs(): void {
+        this.inputGroup = this.chart.renderer.g('input-group').add(this.group);
+
+        const minElems = this.drawInput('min');
+        this.minDateBox = minElems.dateBox;
+        this.minLabel = minElems.label;
+        this.minInput = minElems.input;
+
+        const maxElems = this.drawInput('max');
+        this.maxDateBox = maxElems.dateBox;
+        this.maxLabel = maxElems.label;
+        this.maxInput = maxElems.input;
 
     }
     /**
@@ -1215,22 +1228,29 @@ class RangeSelector {
         max?: number
     ): void {
 
-        const chart = this.chart,
-            chartOptions = chart.options,
-            options =
-                chartOptions.rangeSelector as RangeSelectorOptions,
-            // Place inputs above the container
-            inputEnabled = options.inputEnabled;
-
-        if (options.enabled === false) {
+        if (this.options.enabled === false) {
             return;
         }
 
+        const chart = this.chart,
+            chartOptions = chart.options,
+            options = chartOptions.rangeSelector as RangeSelectorOptions,
+            // Place inputs above the container
+            inputEnabled = options.inputEnabled;
+
         if (inputEnabled) {
+            if (!this.inputGroup) {
+
+                this.createInputs();
+            }
             // Set or reset the input values
             this.setInputValue('min', min);
             this.setInputValue('max', max);
 
+            if (!this.chart.styledMode) {
+                this.maxLabel?.css(options.labelStyle);
+                this.minLabel?.css(options.labelStyle);
+            }
             const unionExtremes = (
                 chart.scroller && chart.scroller.getUnionExtremes()
             ) || chart.xAxis[0] || {};
@@ -1277,6 +1297,17 @@ class RangeSelector {
                     }
                 });
             }
+        } else {
+            if (this.inputGroup) {
+                this.inputGroup.destroy();
+                delete this.inputGroup;
+            }
+        }
+
+        if (!this.chart.styledMode) {
+            if (this.zoomText) {
+                this.zoomText.css(options.labelStyle);
+            }
         }
 
         this.alignElements();
@@ -1292,7 +1323,6 @@ class RangeSelector {
      */
     public renderButtons(): void {
         const {
-            buttons,
             chart,
             options
         } = this;
@@ -1305,7 +1335,6 @@ class RangeSelector {
         // Prevent the button from resetting the width when the button state
         // changes since we need more control over the width when collapsing
         // the buttons
-        const width = buttonTheme.width || 28;
         delete buttonTheme.width;
         delete buttonTheme.states;
 
@@ -1378,63 +1407,94 @@ class RangeSelector {
 
         if (!this.chart.styledMode) {
             this.zoomText.css(options.labelStyle);
-
-            buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
+            options.buttonTheme['stroke-width'] ??= 0;
         }
+
 
         createElement('option', {
             textContent: this.zoomText.textStr,
             disabled: true
         }, void 0, dropdown);
 
+        this.createButtons();
+    }
+
+    private createButtons(): void {
+        const { options } = this;
+        const buttonTheme = merge(options.buttonTheme);
+        const states = buttonTheme && buttonTheme.states;
+
+        // Prevent the button from resetting the width when the button state
+        // changes since we need more control over the width when collapsing
+        // the buttons
+        const width = buttonTheme.width || 28;
+        delete buttonTheme.width;
+        delete buttonTheme.states;
+
+
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
+            this.createButton(rangeOptions, i, width, states);
+        });
+    }
+
+    private createButton(
+        rangeOptions: RangeSelectorButtonOptions,
+        i: number,
+        width: number,
+        states?: ButtonThemeStatesObject
+    ): void {
+        const { dropdown, buttons, chart, options } = this;
+        const renderer = chart.renderer;
+        const buttonTheme = merge(options.buttonTheme);
+        dropdown?.add(
             createElement('option', {
                 textContent: rangeOptions.title || rangeOptions.text
-            }, void 0, dropdown);
+            }) as HTMLOptionElement,
+            i + 2
+        );
 
-            buttons[i] = renderer
-                .button(
-                    rangeOptions.text,
-                    0,
-                    0,
-                    (e: (Event|AnyRecord)): void => {
+        buttons[i] = renderer
+            .button(
+                rangeOptions.text,
+                0,
+                0,
+                (e: (Event | AnyRecord)): void => {
 
-                        // Extract events from button object and call
-                        const buttonEvents = (
-                            rangeOptions.events && rangeOptions.events.click
-                        );
+                    // Extract events from button object and call
+                    const buttonEvents = (
+                        rangeOptions.events && rangeOptions.events.click
+                    );
 
-                        let callDefaultEvent;
+                    let callDefaultEvent;
 
-                        if (buttonEvents) {
-                            callDefaultEvent =
-                                buttonEvents.call(rangeOptions, e as any);
-                        }
+                    if (buttonEvents) {
+                        callDefaultEvent =
+                            buttonEvents.call(rangeOptions, e as any);
+                    }
 
-                        if (callDefaultEvent !== false) {
-                            this.clickButton(i);
-                        }
+                    if (callDefaultEvent !== false) {
+                        this.clickButton(i);
+                    }
 
-                        this.isActive = true;
-                    },
-                    buttonTheme,
-                    states && states.hover,
-                    states && states.select,
-                    states && states.disabled
-                )
-                .attr({
-                    'text-align': 'center',
-                    width
-                })
-                .add(this.buttonGroup);
+                    this.isActive = true;
+                },
+                buttonTheme,
+                states && states.hover,
+                states && states.select,
+                states && states.disabled
+            )
+            .attr({
+                'text-align': 'center',
+                width
+            })
+            .add(this.buttonGroup);
 
-            if (rangeOptions.title) {
-                buttons[i].attr('title', rangeOptions.title);
-            }
-        });
+        if (rangeOptions.title) {
+            buttons[i].attr('title', rangeOptions.title);
+        }
     }
 
     /**
@@ -1542,7 +1602,7 @@ class RangeSelector {
 
             let xOffsetForExportButton = 0;
 
-            if (inputGroup) {
+            if (options.inputEnabled && inputGroup) {
                 // Detect collision between the input group and exporting button
                 xOffsetForExportButton = getXOffsetForExportButton(
                     inputGroup,
@@ -1569,9 +1629,9 @@ class RangeSelector {
 
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
+                this.handleCollision(xOffsetForExportButton);
             }
 
-            this.handleCollision(xOffsetForExportButton);
 
             // Vertical align
             group.align({
@@ -1652,6 +1712,101 @@ class RangeSelector {
             if (dropdown) {
                 dropdown.style.marginTop = group.translateY + 'px';
             }
+        }
+    }
+
+    /**
+     * @private
+     */
+    public redrawElements(): void {
+        const chart = this.chart,
+            { inputBoxHeight, inputBoxBorderColor } = this.options;
+
+        this.maxDateBox?.attr({
+            height: inputBoxHeight
+        });
+
+        this.minDateBox?.attr({
+            height: inputBoxHeight
+        });
+
+        if (!chart.styledMode) {
+            this.maxDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+
+            this.minDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+        }
+
+        if (this.isDirty) {
+
+            this.isDirty = false;
+            // Reset this prop to force redrawing collapse of buttons
+            this.isCollapsed = void 0;
+            const newButtonsOptions = this.options.buttons ?? [];
+            const btnLength = Math.min(
+                newButtonsOptions.length,
+                this.buttonOptions.length
+            );
+            const { dropdown, options } = this;
+            const buttonTheme = merge(options.buttonTheme);
+            const states = buttonTheme && buttonTheme.states;
+
+            // Prevent the button from resetting the width when the button state
+            // changes since we need more control over the width when collapsing
+            // the buttons
+            const width = buttonTheme.width || 28;
+
+
+            // Destroy additional buttons
+            if (newButtonsOptions.length < this.buttonOptions.length) {
+                for (
+                    let i = this.buttonOptions.length - 1;
+                    i >= newButtonsOptions.length;
+                    i--
+                ) {
+                    const btn = this.buttons.pop();
+                    btn?.destroy();
+                    this.dropdown?.options.remove(i + 1);
+                }
+            }
+
+            // Update current buttons
+            for (let i = btnLength - 1; i >= 0; i--) {
+                const diff = diffObjects(
+                    newButtonsOptions[i],
+                    this.buttonOptions[i]
+                );
+
+                if (Object.keys(diff).length !== 0) {
+                    const rangeOptions = newButtonsOptions[i];
+                    this.buttons[i].destroy();
+                    dropdown?.options.remove(i + 1);
+                    this.createButton(rangeOptions, i, width, states);
+                    this.computeButtonRange(rangeOptions);
+
+                }
+            }
+
+            // Create missing buttons
+            if (newButtonsOptions.length > this.buttonOptions.length) {
+                for (
+                    let i = this.buttonOptions.length;
+                    i < newButtonsOptions.length;
+                    i++
+                ) {
+                    this.createButton(newButtonsOptions[i], i, width, states);
+                    this.computeButtonRange(newButtonsOptions[i]);
+                }
+            }
+            this.buttonOptions = this.options.buttons ?? [];
+
+            if (defined(this.options.selected) && this.buttons.length) {
+                this.clickButton(this.options.selected, false);
+            }
+
         }
     }
 
@@ -1978,6 +2133,7 @@ class RangeSelector {
         // between wrapped and non-wrapped layout
         this.alignElements();
 
+
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 +
@@ -2025,10 +2181,20 @@ class RangeSelector {
         redraw: boolean = true
     ): void {
         const chart = this.chart;
-        merge(true, chart.options.rangeSelector, options);
+        merge(true, this.options, options);
+        if (
+            this.options.selected &&
+            this.options.selected >= this.options.buttons!.length
+        ) {
+            this.options.selected = void 0;
+            chart.options.rangeSelector!.selected = void 0;
+        }
+        if (defined(options.enabled)) {
+            this.destroy();
+            return this.init(chart);
+        }
 
-        this.destroy();
-        this.init(chart);
+        this.isDirty = !!options.buttons;
 
         if (redraw) {
             this.render();
@@ -2070,17 +2236,21 @@ class RangeSelector {
                 if (val instanceof SVGElement) {
                     // SVGElement
                     val.destroy();
+
                 } else if (
                     val instanceof window.HTMLElement
                 ) {
                     // HTML element
                     discardElement(val);
                 }
+                delete rSelector[key];
             }
             if (val !== RangeSelector.prototype[key]) {
                 (rSelector as any)[key] = null;
             }
         }, this);
+
+        this.buttons = [];
     }
 }
 
@@ -2096,39 +2266,6 @@ interface RangeSelector {
 }
 
 extend(RangeSelector.prototype, {
-    /**
-     * The default buttons for pre-selecting time frames.
-     * @private
-     */
-    defaultButtons: [{
-        type: 'month',
-        count: 1,
-        text: '1m',
-        title: 'View 1 month'
-    }, {
-        type: 'month',
-        count: 3,
-        text: '3m',
-        title: 'View 3 months'
-    }, {
-        type: 'month',
-        count: 6,
-        text: '6m',
-        title: 'View 6 months'
-    }, {
-        type: 'ytd',
-        text: 'YTD',
-        title: 'View year to date'
-    }, {
-        type: 'year',
-        count: 1,
-        text: '1y',
-        title: 'View 1 year'
-    }, {
-        type: 'all',
-        text: 'All',
-        title: 'View all'
-    }],
     /**
      * The date formats to use when setting min, max and value on date inputs.
      * @private

@@ -498,7 +498,13 @@ class Navigator {
             [0, 1].forEach((index: number): void => {
                 const symbolName = handlesOptions.symbols[index];
 
-                if (!navigator.handles[index]) {
+                if (
+                    !navigator.handles[index] ||
+                    navigator.handles[index].symbolUrl !== symbolName
+                ) {
+                    // Generate symbol from scratch if we're dealing with an URL
+                    navigator.handles[index]?.destroy();
+
                     navigator.handles[index] = renderer.symbol(
                         symbolName,
                         -width / 2 - 1,
@@ -516,8 +522,13 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
+
+                    navigator.addMouseEvents();
                 // If the navigator symbol changed, update its path and name
-                } else if (symbolName !== navigator.handles[index].symbolName) {
+                } else if (
+                    !navigator.handles[index].isImg &&
+                    navigator.handles[index].symbolName !== symbolName
+                ) {
                     const symbolFn = symbols[symbolName],
                         path = symbolFn.call(
                             symbols,

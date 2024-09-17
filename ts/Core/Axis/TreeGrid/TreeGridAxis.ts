@@ -212,8 +212,7 @@ function getTreeGridFromData(
     const categories: Array<string> = [],
         collapsedNodes: Array<GridNode> = [],
         mapOfIdToNode: Record<string, TreeGridNode> = {},
-        uniqueNamesEnabled = typeof uniqueNames === 'boolean' ?
-            uniqueNames : false;
+        uniqueNamesEnabled = uniqueNames || false;
 
     let mapOfPosToGridNode: Record<string, GridNode> = {},
         posIterator = -1;
@@ -395,13 +394,13 @@ function onBeforeRender(
     const chart = e.target,
         axes = chart.axes;
 
-    (axes.filter(function (axis): boolean {
-        return axis.options.type === 'treegrid';
-    }) as Array<TreeGridAxisComposition>).forEach(
+    (axes.filter(
+        (axis): boolean => axis.type === 'treegrid'
+    ) as Array<TreeGridAxisComposition>).forEach(
         function (axis: TreeGridAxisComposition): void {
             const options = axis.options || {},
                 labelOptions = options.labels,
-                uniqueNames = options.uniqueNames,
+                uniqueNames = axis.uniqueNames,
                 max = chart.time.parse(options.max),
                 // Check whether any of series is rendering for the first
                 // time, visibility has changed, or its data is dirty, and
@@ -556,7 +555,7 @@ function wrapGenerateTick(
 ): void {
     const axis = this,
         mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
-        isTreeGrid = axis.options.type === 'treegrid',
+        isTreeGrid = axis.type === 'treegrid',
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
@@ -793,7 +792,7 @@ function wrapSetTickInterval(
         linkedParent = typeof options.linkedTo === 'number' ?
             this.chart[axis.coll]?.[options.linkedTo] :
             void 0,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
         axis.min = axis.userMin ?? time.parse(options.min) ?? axis.dataMin;
@@ -844,8 +843,7 @@ function wrapRedraw(
     proceed: Function
 ): void {
     const axis = this,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = this.type === 'treegrid';
 
     if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos): void {

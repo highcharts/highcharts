@@ -538,7 +538,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 18, 4, 20),
                     label: {
                         rotation: 90,
-                        text: 'Wide Enough'
+                        text: 'Wide Enough',
+                        inside: false
                     }
                 },
                 {
@@ -547,7 +548,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 25, 8),
                     label: {
                         rotation: 90,
-                        text: 'Too Narrow'
+                        text: 'Too Narrow',
+                        inside: false
                     }
                 }
             ]
@@ -875,3 +877,80 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         'plotBand with acrossPanes = true has greater height'
     );
 });
+
+QUnit.test(
+    '#21521: Hiding overlapping plotBand/plotLine labels ',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                xAxis: {
+                    plotBands: [{
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '0000000000000000'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '================'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '%%%%%%%%%%%%%%%%'
+                        }
+                    }]
+                },
+
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            xAxis = chart.series[0].xAxis,
+            opacityTester = vals => {
+                const plotLinesAndBands = xAxis.plotLinesAndBands;
+
+                for (let i = 0; i < 3; i++) {
+                    assert.strictEqual(
+                        plotLinesAndBands[i].label.opacity,
+                        vals[i],
+                        `Opacity of label number ${i} should be ${vals[i]}`
+                    );
+                }
+            };
+
+        opacityTester([1, 0, 0]);
+
+        chart.series[0].xAxis.update({
+            plotBands: [{
+                from: 0,
+                to: 1,
+                label: {
+                    text: '0000000000000000',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '================',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '%%%%%%%%%%%%%%%%'
+                }
+            }]
+        });
+
+        opacityTester([1, 1, 1]);
+    }
+);

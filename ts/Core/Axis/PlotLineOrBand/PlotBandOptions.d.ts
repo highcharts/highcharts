@@ -32,9 +32,11 @@ import type PlotLineOrBand from './PlotLineOrBand';
 
 export interface PlotBandLabelOptions {
     align?: AlignValue;
+    allowOverlap?: boolean,
     className?: string;
     clip?: boolean;
     formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    inside?: boolean;
     rotation?: number;
     style?: CSSObject;
     text?: string;
