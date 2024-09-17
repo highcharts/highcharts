@@ -1,5 +1,17 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.highcharts-figure {
+    margin: 0;
+}
+
 #container,
 #button-container {
     max-width: 800px;
     margin: 1em auto;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

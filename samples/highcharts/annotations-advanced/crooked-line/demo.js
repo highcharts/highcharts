@@ -1,18 +1,14 @@
-Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
+const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Crooked Line Annotation'
+    },
     annotations: [{
         id: '1',
         type: 'crookedLine',
+        controlPointOptions: {
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 1,
@@ -38,13 +34,6 @@ Highcharts.chart('container', {
             line: {
                 // markerEnd: 'arrow'
             }
-        },
-
-        events: {
-            click: function () {
-                this.cpVisibility = !this.cpVisibility;
-                this.setControlPointsVisibility(this.cpVisibility);
-            }
         }
     }],
 
@@ -55,3 +44,16 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            line: {
+                stroke: '#ff5f00',
+                strokeWidth: 4
+            }
+        }
+    });
+};
