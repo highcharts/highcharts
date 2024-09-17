@@ -92,7 +92,7 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             y = p.y - gridOffset.plotTop;
             gridX = Math.floor(x / scaledGridSize);
             gridY = Math.floor(y / scaledGridSize);
-            key = gridY + '-' + gridX;
+            key = gridY + ':' + gridX;
 
             grid[key] ??= [];
 
@@ -1527,7 +1527,7 @@ function seriesPreventClusterCollisions(
     props: MarkerClusterPreventCollisionObject
 ): PositionObject {
     const series = this,
-        [gridY, gridX] = props.key.split('-').map(parseFloat),
+        [gridY, gridX] = props.key.split(':').map(parseFloat),
         gridSize = props.gridSize,
         groupedData = props.groupedData,
         defaultRadius = props.defaultRadius,
@@ -1573,9 +1573,9 @@ function seriesPreventClusterCollisions(
         );
 
         keys = [
-            cornerGridY + '-' + cornerGridX,
-            cornerGridY + '-' + gridX,
-            gridY + '-' + cornerGridX
+            cornerGridY + ':' + cornerGridX,
+            cornerGridY + ':' + gridX,
+            gridY + ':' + cornerGridX
         ];
 
         for (j = 0; j < keys.length; j++) {
@@ -1607,7 +1607,7 @@ function seriesPreventClusterCollisions(
             nextXPixel = pos.x - gridOffset.plotLeft;
             nextYPixel = pos.y - gridOffset.plotTop;
 
-            [itemY, itemX] = item.split('-').map(parseFloat);
+            [itemY, itemX] = item.split(':').map(parseFloat);
 
             if (zoneOptions) {
                 pointsLen = groupedData[item].length;
