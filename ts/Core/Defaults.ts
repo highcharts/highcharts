@@ -137,7 +137,7 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The browser locale to use for date formatting. Defaults to
-         * `undefined`, which takes the client's default locale.
+         * `undefined`, which takes the browser's default locale.
          *
          * Use `en-GB`, British English, for approximate consistency with
          * Highcharts v < 12.
