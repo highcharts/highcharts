@@ -29,7 +29,7 @@ describe('Formatting cells.', () => {
     });
 
     it('The cell containing text should lose format when editing and gain back when not.', () => {
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).click();
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).dblclick();
         cy.get('.highcharts-datagrid-edited-cell input').as('inputField');
         cy.get('@inputField').should('have.value', '100');
         cy.get('@inputField').clear().type('300');
@@ -39,7 +39,7 @@ describe('Formatting cells.', () => {
     });
 
     it('The cell containing dates should lose format when editing and gain back when not.', () => {
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).click();
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).dblclick();
         cy.get('.highcharts-datagrid-edited-cell input').as('inputField');
         cy.get('@inputField').should('have.value', '1640995200000');
         cy.get('@inputField').clear().type('1641081600000');

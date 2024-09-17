@@ -327,7 +327,9 @@
     background-color: #b7d4ff;
 }
 
-.highcharts-datagrid-table tbody td:not(.highcharts-datagrid-edited-cell):focus {
+.highcharts-datagrid-table tbody td:focus-visible,
+.highcharts-datagrid-table thead th:focus-visible {
+    outline: hidden;
     box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
 }
 

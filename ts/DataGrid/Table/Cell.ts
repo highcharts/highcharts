@@ -99,7 +99,6 @@ abstract class Cell {
         this.row.registerCell(this);
 
         this.htmlElement = this.init();
-        this.htmlElement.setAttribute('tabindex', '-1');
 
         this.initEvents();
     }
