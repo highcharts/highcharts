@@ -187,7 +187,7 @@ class Table {
         this.cellEditing = new CellEditing();
 
         if (customClassName) {
-            tableElement.classList.add(customClassName);
+            tableElement.classList.add(...customClassName.split(/\s+/g));
         }
 
         this.init();
@@ -360,7 +360,9 @@ class Table {
         }, this.dataGrid.tableElement);
 
         if (captionOptions.className) {
-            this.captionElement.classList.add(captionOptions.className);
+            this.captionElement.classList.add(
+                ...captionOptions.className.split(/\s+/g)
+            );
         }
     }
 

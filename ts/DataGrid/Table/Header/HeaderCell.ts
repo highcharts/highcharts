@@ -141,13 +141,17 @@ class HeaderCell extends Cell {
         this.htmlElement.setAttribute('data-column-id', column.id);
 
         if (this.options.className) {
-            this.htmlElement.classList.add(this.options.className);
+            this.htmlElement.classList.add(
+                ...this.options.className.split(/\s+/g)
+            );
         }
 
         if (isSingleColumn) {
             // Add user column classname
             if (column.options.className) {
-                this.htmlElement.classList.add(column.options.className);
+                this.htmlElement.classList.add(
+                    ...column.options.className.split(/\s+/g)
+                );
             }
 
             // Add resizing
