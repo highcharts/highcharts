@@ -5,6 +5,10 @@
     margin: 1em auto;
 }
 
+input {
+    margin: 10px;
+}
+
 input:focus {
     outline: 3px solid red;
 }
