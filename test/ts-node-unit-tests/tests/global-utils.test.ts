@@ -1,8 +1,8 @@
-import { ok, strictEqual } from 'assert';
-import { describe, loadHCWithModules } from '../test-utils';
+import { loadHCWithModules } from '../test-utils';
+import { ok, strictEqual, match } from 'node:assert';
+import { describe, it } from 'node:test';
 
-export function testGlobalUtilities() {
-    describe('Testing global utilities ...');
+describe('Global utilities', () => {
     const Highcharts = loadHCWithModules();
     const keys = [
         'addEvent',
@@ -52,22 +52,27 @@ export function testGlobalUtilities() {
         'uniqueKey',
         'useSerialIds',
         'wrap'
-    ]
+    ];
 
     keys.forEach(key => {
-        const prop = Highcharts[key];
-        ok(prop, `The ${key} property is defined on the Highcharts object`);
-        if (!['function', 'object'].includes(typeof prop)) {
-            throw new Error(`${prop} should be either a function or an object/array`);
-        }
+        it(`The ${key} property is defined on the Highcharts object`, () => {
+            const prop = Highcharts[key];
+            ok(prop);
+            match(typeof prop, /function|object/);
+        });
     });
-}
+});
 
-export function testTime() {
+describe('Highcharts.Time', () => {
     const Highcharts = loadHCWithModules();
     const time = new Highcharts.Time();
-    strictEqual(
-        time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),
-        'Sunday,  1 Jan, 00:00:00'
-    );
-}
+
+    describe('dateFormat', () => {
+        it('correctly formats a date', () => {
+            strictEqual(
+                time.dateFormat('%A, %e %b, %H:%M:%S', Date.UTC(1893, 0, 1, 0, 0, 0, 0)),
+                'Sunday,  1 Jan, 00:00:00'
+            );
+        });
+    });
+});
