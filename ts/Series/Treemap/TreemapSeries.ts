@@ -469,6 +469,7 @@ class TreemapSeries extends ScatterSeries {
 
         if (
             parent.visible &&
+            !parent.isGroup &&
             groupAreaThreshold &&
             groupAreaThreshold.enabled &&
             groupAreaThreshold.pixelWidth &&
