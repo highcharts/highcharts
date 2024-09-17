@@ -19,10 +19,17 @@
     border: 0;
     background-color: #ddd;
     padding: 13px 18px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.main-container button:hover {
+    background-color: #ccc;
 }
 
 .main-container button[disabled] {
     color: silver;
+    cursor: not-allowed;
 }
 
 .button-row button {
