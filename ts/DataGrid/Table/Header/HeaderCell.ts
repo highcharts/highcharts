@@ -69,6 +69,17 @@ class HeaderCell extends Cell {
      */
     public columns?: GroupedHeaderOptions[];
 
+    /**
+     * Whether the cell is a main column cell in the header.
+     */
+    private isMain: boolean;
+
+    /**
+     * Content value of the header cell.
+     */
+    public override value: string = '';
+
+
     /* *
     *
     *  Constructor
@@ -87,6 +98,8 @@ class HeaderCell extends Cell {
     constructor(column: Column, row: Row) {
         super(column, row);
         column.header = this;
+
+        this.isMain = !!this.row.viewport.getColumn(this.column.id);
     }
 
     /* *
@@ -109,12 +122,11 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const isSingleColumn = this.row.viewport.getColumn(this.column.id);
         const options = merge(column.options, this.options);
         const headerCellOptions = options.header || {};
 
         if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this);
+            this.value = headerCellOptions.formatter.call(this).toString();
         } else if (headerCellOptions.format) {
             this.value = column.format(headerCellOptions.format);
         } else {
@@ -144,7 +156,7 @@ class HeaderCell extends Cell {
             this.htmlElement.classList.add(this.options.className);
         }
 
-        if (isSingleColumn) {
+        if (this.isMain) {
             // Add user column classname
             if (column.options.className) {
                 this.htmlElement.classList.add(column.options.className);
@@ -155,9 +167,6 @@ class HeaderCell extends Cell {
                 this.column,
                 this
             );
-
-            // Add API click event
-            this.initColumnClickEvent();
 
             // Add sorting
             this.initColumnSorting();
@@ -190,33 +199,23 @@ class HeaderCell extends Cell {
         th.style.width = th.style.maxWidth = width + 'px';
     }
 
-    /**
-     * Add click event to the header
-     */
-    private initColumnClickEvent(): void {
+    protected override onClick(e: MouseEvent): void {
         const column = this.column;
-        const vp = column.viewport;
-        const dataGrid = vp.dataGrid;
 
         if (
-            !this.htmlElement ||
-            !dataGrid.options?.events?.header?.click
+            !this.isMain || (
+                e.target !== this.htmlElement &&
+                e.target !== column.header?.headerContent
+            )
         ) {
             return;
         }
 
-        const onHeaderClick = (): void => {
-            dataGrid.options?.events?.header?.click?.call(
-                column
-            );
-        };
+        if (column.options.sorting?.sortable) {
+            column.sorting?.toggle();
+        }
 
-        vp.header?.addHeaderEvent(
-            this.htmlElement,
-            onHeaderClick
-        );
-
-        this.headerContent?.addEventListener('click', onHeaderClick);
+        column.viewport.dataGrid.options?.events?.header?.click?.call(column);
     }
 
     /**

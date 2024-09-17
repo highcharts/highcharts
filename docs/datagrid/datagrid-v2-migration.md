@@ -89,6 +89,9 @@ We recommend reading our [article about styling the DataGrid in Dashboards v3.0 
             click: function () {
                 // Callback action
             },
+            dblClick: function() {
+
+            },
             mouseOver: function () {
                 // Callback action
             },

@@ -51,6 +51,8 @@ class HeaderRow extends Row {
      * The level in the header.
      */
     public level: number;
+
+
     /* *
     *
     *  Constructor

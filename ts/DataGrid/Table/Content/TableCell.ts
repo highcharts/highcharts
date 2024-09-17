@@ -56,10 +56,10 @@ class TableCell extends Cell {
     public row: TableRow;
 
     /**
-     * The input element of a cell after mouse focus.
+     * The input element of a cell when editing state is active.
      * @internal
      */
-    public cellInputEl?: HTMLInputElement;
+    private cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -82,10 +82,6 @@ class TableCell extends Cell {
         this.row = row;
 
         this.column.registerCell(this);
-
-        this.htmlElement.addEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.addEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.addEventListener('click', this.onClick);
     }
 
 
@@ -105,10 +101,32 @@ class TableCell extends Cell {
         void this.setValue(this.column.data?.[this.row.index], false);
     }
 
+    public override initEvents(): void {
+        super.initEvents();
+
+        const mouseOverHandler = (): void => {
+            this.onMouseOver();
+        };
+        const mouseOutHandler = (): void => {
+            this.onMouseOut();
+        };
+        const dblClickHandler = (e: Event): void => {
+            this.onDblClick(e as MouseEvent);
+        };
+
+        this.htmlElement.addEventListener('mouseover', mouseOverHandler);
+        this.htmlElement.addEventListener('mouseout', mouseOutHandler);
+        this.htmlElement.addEventListener('dblclick', dblClickHandler);
+
+        this.cellEvents.push(['dblclick', dblClickHandler]);
+        this.cellEvents.push(['mouseout', mouseOutHandler]);
+        this.cellEvents.push(['mouseover', mouseOverHandler]);
+    }
+
     /**
-     * Sets the hover state of the cell and its row and column.
+     * Handles the mouse over event on the cell.
      */
-    private readonly onMouseOver = (): void => {
+    protected onMouseOver(): void {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow(this.row.index);
         dataGrid.hoverColumn(this.column.id);
@@ -116,12 +134,12 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellMouseOver', {
             target: this
         });
-    };
+    }
 
     /**
-     * Unset the hover state of the cell and its row and column.
+     * Handles the mouse out event on the cell.
      */
-    private readonly onMouseOut = (): void => {
+    protected onMouseOut(): void {
         const { dataGrid } = this.row.viewport;
         dataGrid.hoverRow();
         dataGrid.hoverColumn();
@@ -129,24 +147,38 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellMouseOut', {
             target: this
         });
-    };
+    }
 
     /**
-     * Handles the user clicking on a cell.
+     * Handles the double click event on the cell.
+     *
+     * @param e
+     * The mouse event object.
      */
-    private readonly onClick = (): void => {
+    protected onDblClick(e: MouseEvent): void {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
         if (this.column.options.cells?.editable) {
+            e.preventDefault();
             vp.cellEditing.startEditing(this);
         }
+
+        dataGrid.options?.events?.cell?.dblClick?.call(this);
+        fireEvent(dataGrid, 'cellDblClick', {
+            target: this
+        });
+    }
+
+    protected override onClick(): void {
+        const vp = this.row.viewport;
+        const { dataGrid } = vp;
 
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {
             target: this
         });
-    };
+    }
 
     /**
      * Sets the value & updating content of the cell.
@@ -229,7 +261,7 @@ class TableCell extends Cell {
         let cellContent = '';
 
         if (formatter) {
-            cellContent = formatter.call(this);
+            cellContent = formatter.call(this).toString();
         } else {
             cellContent = (
                 format ? this.format(format) : value + ''
@@ -243,9 +275,6 @@ class TableCell extends Cell {
      * Destroys the cell.
      */
     public destroy(): void {
-        this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
-        this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
-        this.htmlElement.removeEventListener('click', this.onClick);
         super.destroy();
     }
 }

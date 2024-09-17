@@ -429,6 +429,11 @@ export interface CellEvents {
     click?: CellEventCallback;
 
     /**
+     * Callback function to be called when the cell is double clicked.
+     */
+    dblClick?: CellEventCallback;
+
+    /**
      * Callback function to be called when the cell is hovered.
      */
     mouseOver?: CellEventCallback;

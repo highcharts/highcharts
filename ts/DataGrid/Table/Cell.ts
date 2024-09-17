@@ -68,6 +68,14 @@ abstract class Cell {
      */
     private customClassName?: string;
 
+    /**
+     * Array of cell events to be removed when the cell is destroyed.
+     */
+    protected cellEvents: Array<[
+        keyof HTMLElementEventMap,
+        (e: Event) => void
+    ]> = [];
+
 
     /* *
     *
@@ -91,6 +99,8 @@ abstract class Cell {
         this.row.registerCell(this);
 
         this.htmlElement = this.init();
+
+        this.initEvents();
     }
 
 
@@ -107,6 +117,27 @@ abstract class Cell {
     public init(): HTMLTableCellElement {
         return document.createElement('td', {});
     }
+
+    /**
+     * Initialize event listeners.
+     */
+    protected initEvents(): void {
+        const clickHandler = (e: Event): void => {
+            this.onClick(e as MouseEvent);
+        };
+
+        this.htmlElement.addEventListener('click', clickHandler);
+
+        this.cellEvents.push(['click', clickHandler]);
+    }
+
+    /**
+     * Handles user click on the cell.
+     *
+     * @param e
+     * Mouse event object.
+     */
+    protected abstract onClick(e: MouseEvent): void;
 
     /**
      * Renders the cell by appending the HTML element to the row.
@@ -189,6 +220,10 @@ abstract class Cell {
      * Destroys the cell.
      */
     public destroy(): void {
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.removeEventListener(pair[0], pair[1]);
+        });
+
         this.column.unregisterCell(this);
         this.row.unregisterCell(this);
         this.htmlElement.remove();

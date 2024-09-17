@@ -41,7 +41,7 @@ describe('layout resize on window changes', () => {
         cy.get('tr.highcharts-datagrid-row').eq(1).children().eq(1).as('dataGridCell');
 
         // Act
-        cy.get('@dataGridCell').click().type('{backspace}{backspace}{backspace}000').type('{enter}');
+        cy.get('@dataGridCell').dblclick().type('{backspace}{backspace}{backspace}000{enter}');
 
         // Assert
         cy.chart().then((chart) => {

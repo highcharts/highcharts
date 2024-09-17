@@ -56,6 +56,8 @@ class TableRow extends Row {
      * The index of the row in the original data table (ID).
      */
     public id?: number;
+
+
     /* *
     *
     *  Constructor

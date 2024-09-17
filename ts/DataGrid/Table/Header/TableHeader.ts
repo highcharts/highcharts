@@ -62,11 +62,6 @@ class TableHeader {
     public viewport: Table;
 
     /**
-     * The headers and their mouse click event listeners.
-     */
-    private headersEvents: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
-
-    /**
      * Amount of levels in the header, that is used in creating correct rows.
      */
     public levels: number = 1;
@@ -154,27 +149,6 @@ class TableHeader {
     }
 
     /**
-     * Setter for events
-     *
-     * @param element
-     * HTML column's header element.
-     *
-     * @param event
-     * Callback that is triggered.
-     *
-     * @internal
-     */
-    public addHeaderEvent(
-        element: HTMLElement,
-        event: (e: MouseEvent) => void
-    ): void {
-        this.headersEvents.push([
-            element,
-            event
-        ]);
-    }
-
-    /**
      * Returns amount of rows for the current cell in header tree.
      *
      * @param scope
@@ -208,17 +182,6 @@ class TableHeader {
     public scrollHorizontally(scrollLeft: number): void {
         this.viewport.theadElement.style.transform =
             `translateX(${-scrollLeft}px)`;
-    }
-
-    /**
-     * Unbind header events.
-     * @internal
-     */
-    public removeHeaderEventListeners(): void {
-        for (let i = 0, iEnd = this.headersEvents.length; i < iEnd; i++) {
-            const [handle, listener] = this.headersEvents[i];
-            handle.removeEventListener('click', listener);
-        }
     }
 }
 

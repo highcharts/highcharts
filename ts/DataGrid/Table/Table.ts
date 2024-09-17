@@ -371,10 +371,6 @@ class Table {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
-        this.columns.forEach((column): void => {
-            column.sorting?.removeEventListeners();
-        });
-        this.header?.removeHeaderEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
@@ -440,6 +436,16 @@ class Table {
         }
 
         return this.columns[columnIndex];
+    }
+
+    /**
+     * Returns the row with the provided ID.
+     *
+     * @param id
+     * The ID of the row.
+     */
+    public getRow(id: number): TableRow | undefined {
+        return this.rows.find((row): boolean => row.id === id);
     }
 }
 

@@ -73,8 +73,10 @@ describe('DataGrid events.', () => {
 
     it ('Editing a cell in sorted column should resort the table.', () => {
         cy.get('th[data-column-id="weight"]').click();
-        cy.get('tr[data-row-index="1"] td[data-column-id="weight"]').click()
-            .type('000').type('{enter}');
+        cy.get('tr[data-row-index="1"] td[data-column-id="weight"]')
+            .dblclick()
+            .find('input')
+            .type('000{enter}');
 
         cy.window().its('dataGrid').then(dataGrid => {
             const { rows } = dataGrid.viewport;

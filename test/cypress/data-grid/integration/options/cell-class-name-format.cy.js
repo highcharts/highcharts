@@ -14,10 +14,10 @@ describe('Cell class name formats.', () => {
         cy.get('@cellA').should('not.have.class', 'greater-than-100');
         cy.get('@cellB').should('have.class', 'greater-than-100');
 
-        cy.get('@cellA').click({force: true}).type('0{enter}');
+        cy.get('@cellA').dblclick({force: true}).find('input').type('0{enter}');
         cy.get('@cellA').should('have.class', 'greater-than-100');
 
-        cy.get('@cellB').click({force: true}).clear().type('10{enter}');
+        cy.get('@cellB').dblclick({force: true}).find('input').clear().type('10{enter}');
         cy.get('@cellB').should('not.have.class', 'greater-than-100');
     });
 

@@ -83,7 +83,7 @@ class CellEditing {
         const cellElement = cell.htmlElement;
 
         cellElement.innerHTML = '';
-        cellElement.classList.add(Globals.classNames.focusedCell);
+        cellElement.classList.add(Globals.classNames.editedCell);
 
         this.renderInput();
     }
@@ -106,7 +106,7 @@ class CellEditing {
         let newValue: string | number = input.value;
 
         this.destroyInput();
-        cell.htmlElement.classList.remove(Globals.classNames.focusedCell);
+        cell.htmlElement.classList.remove(Globals.classNames.editedCell);
 
         // Convert to number if possible
         if (!isNaN(+newValue)) {
