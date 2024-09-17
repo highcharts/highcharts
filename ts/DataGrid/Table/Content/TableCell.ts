@@ -261,7 +261,7 @@ class TableCell extends Cell {
         let cellContent = '';
 
         if (formatter) {
-            cellContent = formatter.call(this);
+            cellContent = formatter.call(this).toString();
         } else {
             cellContent = (
                 format ? this.format(format) : value + ''
