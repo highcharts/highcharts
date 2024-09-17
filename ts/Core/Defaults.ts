@@ -120,15 +120,7 @@ const defaultOptions: DefaultOptions = {
      * ```js
      * Highcharts.setOptions({
      *     lang: {
-     *         months: [
-     *             'Janvier', 'Février', 'Mars', 'Avril',
-     *             'Mai', 'Juin', 'Juillet', 'Août',
-     *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
-     *         ],
-     *         weekdays: [
-     *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
-     *             'Jeudi', 'Vendredi', 'Samedi'
-     *         ]
+     *         locale: 'fr'
      *     }
      * });
      * ```
@@ -159,9 +151,6 @@ const defaultOptions: DefaultOptions = {
          * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["January", "February", "March", "April", "May", "June",
-         *          "July", "August", "September", "October", "November",
-         *          "December"]
          */
         months: void 0,
 
@@ -172,8 +161,6 @@ const defaultOptions: DefaultOptions = {
          * to the `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
          */
         shortMonths: void 0,
 
