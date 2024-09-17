@@ -15,6 +15,9 @@
         today.setUTCMilliseconds(0);
 
         defaultConfig = {
+            time: {
+                locale: 'en-GB'
+            },
             title: {
                 text: 'Current Date Indicator'
             },
@@ -138,8 +141,8 @@
     QUnit.test('Format', function (assert) {
         // %a, %b %d %Y, %H:%M:%S
         var formatRegex = new RegExp(
-                // 'Tue, Dec 06 2016, '
-                /^[A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}, /.source +
+                // 'Tue, 6 Dec 2016, '
+                /^[A-Z][a-z]{2}, [0-9]{1,2} [A-Z][a-z]{2,3} [0-9]{4}, /.source +
                     // '21:35:12'
                     /[0-9]{2}:[0-9]{2}$/.source
             ),
@@ -150,7 +153,7 @@
 
         assert.ok(
             formatRegex.test(cdi.label.textStr),
-            'Default format is correct'
+            `Default format should match expected regex: "${cdi.label.textStr}"`
         );
 
         // Custom format
@@ -189,7 +192,7 @@
     QUnit.test('Formatter', function (assert) {
         // Today: Tue, Dec 06 2016
         var formatRegex =
-                /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}$/,
+                /^Today: [A-Z][a-z]{2}, [A-Z][a-z]{2,3} [0-9]{2} [0-9]{4}$/,
             customFormat,
             chart,
             axis,

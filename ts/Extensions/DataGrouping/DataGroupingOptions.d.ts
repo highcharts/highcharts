@@ -15,6 +15,7 @@
  * */
 
 import type { ApproximationKeyValue } from './ApproximationType';
+import type Time from '../../Core/Time';
 
 /* *
  *
@@ -37,7 +38,7 @@ export type DataGroupingAnchorExtremes = (
 export interface DataGroupingOptions {
     anchor?: DataGroupingAnchor;
     approximation?: (ApproximationKeyValue|Function);
-    dateTimeLabelFormats?: Record<string, Array<string>>;
+    dateTimeLabelFormats?: Record<string, Array<Time.DateTimeFormat>>;
     enabled?: boolean;
     firstAnchor?: DataGroupingAnchorExtremes;
     forced?: boolean;

@@ -856,6 +856,9 @@ QUnit.test('XRange series tooltip correct formatting (#19362)', assert => {
         chart: {
             type: 'xrange'
         },
+        time: {
+            locale: 'en-GB'
+        },
         title: {
             text: 'X-range standard'
         },
@@ -936,7 +939,7 @@ QUnit.test('XRange series tooltip correct formatting (#19362)', assert => {
     tooltipText = chart.tooltip.label.text.textStr;
 
     assert.ok(
-        tooltipText.includes('Saturday,  2 Dec 2023 - Tuesday,  5 Dec 2023'),
+        tooltipText.includes('Saturday, 2 Dec 2023 - Tuesday, 5 Dec 2023'),
         'Tooltip for datetime axis is correctly formatted.'
     );
 

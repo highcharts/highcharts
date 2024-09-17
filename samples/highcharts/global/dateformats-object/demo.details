@@ -1,5 +1,5 @@
 ---
- name: Intl.DateTimeFormat study
+ name: Highcharts custom date format
  authors:
    - Torstein Hønsi
  js_wrap: b

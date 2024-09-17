@@ -779,16 +779,16 @@ function onAfterSetOptions(
 
             dateTimeLabelFormats: {
                 hour: {
-                    list: ['%H:%M', '%H']
+                    list: ['%[HM]', '%[H]']
                 },
                 day: {
-                    list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                    list: ['%[AeB]', '%[aeb]', '%[E]']
                 },
                 week: {
                     list: ['Week %W', 'W%W']
                 },
                 month: {
-                    list: ['%B', '%b', '%o']
+                    list: ['%[B]', '%[b]', '%o']
                 }
             },
 

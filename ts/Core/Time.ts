@@ -35,7 +35,8 @@ const {
     objectEach,
     pad,
     splat,
-    timeUnits
+    timeUnits,
+    ucfirst
 } = U;
 
 /* *
@@ -67,6 +68,12 @@ const hasOldSafariBug =
     H.isSafari &&
     win.Intl &&
     !win.Intl.DateTimeFormat.prototype.formatRange;
+
+const isDateTimeFormatOptions = (
+    obj: Intl.DateTimeFormatOptions|Time.DateTimeLabelFormatObject
+): obj is Intl.DateTimeFormatOptions =>
+    (obj as Time.DateTimeLabelFormatObject).main === void 0;
+
 
 // We use the Spanish locale for internal weekday handling because it uses
 // unique letters for narrow weekdays
@@ -159,6 +166,14 @@ class Time {
 
     public Date: typeof Date = win.Date;
 
+    private months!: Array<string>;
+
+    private shortMonths!: Array<string>;
+
+    private weekdays!: Array<string>;
+
+    private shortWeekdays!: Array<string>;
+
     /* *
      *
      *  Functions
@@ -210,6 +225,32 @@ class Time {
             timezone?.indexOf('Etc/GMT') !== 0;
 
         this.timezone = timezone;
+
+        // Assign default time formats from locale strings
+        (
+            ['months', 'shortMonths', 'weekdays', 'shortWeekdays'] as
+            Array<'months'|'shortMonths'|'weekdays'|'shortWeekdays'>
+        ).forEach(
+            (name): void => {
+                const isMonth = /months/i.test(name),
+                    isShort = /short/.test(name),
+                    options: Time.DateTimeFormatOptions = { timeZone: 'UTC' };
+
+                options[
+                    isMonth ? 'month' : 'weekday'
+                ] = isShort ? 'short' : 'long';
+                this[name] = (
+                    isMonth ?
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] :
+                        [3, 4, 5, 6, 7, 8, 9]
+                ).map(
+                    (position): string => this.dateFormat(
+                        options,
+                        (isMonth ? 31 : 1) * 24 * 36e5 * position
+                    )
+                );
+            }
+        );
     }
 
     /**
@@ -274,32 +315,70 @@ class Time {
      * Shorthand to get a cached `Intl.DateTimeFormat` instance.
      */
     private dateTimeFormat(
-        options: Intl.DateTimeFormatOptions,
+        options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale?: string
+        locale: string|Array<string>|undefined = this.options.locale
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
+        if (isString(options)) {
+            options = this.str2dtf(options);
+        }
 
         let dTL = this.dTLCache[cacheKey];
 
         if (!dTL) {
-            options = extend({
-                timeZone: this.timezone
-            }, options);
+            options.timeZone ??= this.timezone;
             try {
                 dTL = new Intl.DateTimeFormat(locale, options);
             } catch (e) {
                 if (/Invalid time zone/i.test((e as Error).message)) {
                     error(34);
                     options.timeZone = 'UTC';
+                    dTL = new Intl.DateTimeFormat(locale, options);
+                } else {
+                    error((e as Error).message, false);
                 }
-                dTL = new Intl.DateTimeFormat(locale, options);
             }
         }
 
         this.dTLCache[cacheKey] = dTL;
 
-        return dTL.format(timestamp);
+        return dTL?.format(timestamp) || '';
+    }
+
+    /**
+     * Take a locale-aware string format and return a full DateTimeFormat in
+     * object form.
+     */
+    private str2dtf(
+        s: string,
+        dtf: Time.DateTimeFormatOptions = {}
+    ): Time.DateTimeFormatOptions {
+        const mapping: Record<string, Time.DateTimeFormatOptions> = {
+            L: { fractionalSecondDigits: 3 },
+            S: { second: '2-digit' },
+            M: { minute: 'numeric' },
+            H: { hour: '2-digit' },
+            k: { hour: 'numeric' },
+            E: { weekday: 'narrow' },
+            a: { weekday: 'short' },
+            A: { weekday: 'long' },
+            d: { day: '2-digit' },
+            e: { day: 'numeric' },
+            b: { month: 'short' },
+            B: { month: 'long' },
+            m: { month: '2-digit' },
+            o: { month: 'numeric' },
+            y: { year: '2-digit' },
+            Y: { year: 'numeric' }
+        };
+
+        Object.keys(mapping).forEach((key): void => {
+            if (s.indexOf(key) !== -1) {
+                extend(dtf, mapping[key]);
+            }
+        });
+        return dtf;
     }
 
     /**
@@ -463,161 +542,251 @@ class Time {
     }
 
     /**
-     * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
-     * into a human readable date string. The available format keys are listed
-     * below. Additional formats can be given in the
-     * {@link Highcharts.dateFormats} hook.
+     * Formats a JavaScript date timestamp (milliseconds since January 1 1970)
+     * into a human readable date string.
+     *
+     * The `format` parameter accepts two types of values:
+     * - An object containing settings that are passed directly on to
+     *   [Intl.DateTimeFormat.prototype.format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format).
+     * - A format string containing either individual or locale-aware format
+     *   keys. **Individual keys**, for example `%Y-%m-%d`, are listed below.
+     *   **Locale-aware keys** are grouped by square brackets, for example
+     *   `%[Ymd]`. The order of keys within the square bracket doesn't affect
+     *   the output, which is determined by the locale. See example below.
+     *   Internally, the locale-aware format keys are just a shorthand for the
+     *   full object formats, but are particularly practical in
+     *   [templating](https://www.highcharts.com/docs/chart-concepts/templating)
+     *   where full object definitions are not an option.
+     *
+     * The available string format keys are listed below. Additional formats can
+     * be given in the {@link Highcharts.dateFormats} hook.
      *
      * Supported format keys:
-     * - `%a`: Short weekday, like 'Mon'
-     * - `%A`: Long weekday, like 'Monday'
-     * - `%d`: Two digit day of the month, 01 to 31
-     * - `%e`: Day of the month, 1 through 31
-     * - `%w`: Day of the week, 0 through 6
-     * - `%b`: Short month, like 'Jan'
-     * - `%B`: Long month, like 'January'
-     * - `%m`: Two digit month number, 01 through 12
-     * - `%y`: Two digits year, like 09 for 2009
-     * - `%Y`: Four digits year, like 2009
-     * - `%H`: Two digits hours in 24h format, 00 through 23
-     * - `%k`: Hours in 24h format, 0 through 23
-     * - `%I`: Two digits hours in 12h format, 00 through 11
-     * - `%l`: Hours in 12h format, 1 through 12
-     * - `%M`: Two digits minutes, 00 through 59
-     * - `%p`: Upper case AM or PM
-     * - `%P`: Lower case AM or PM
-     * - `%S`: Two digits seconds, 00 through 59
-     * - `%L`: Milliseconds (naming from Ruby)
+     * | Key  | Description                     | Notes on locale-aware format |
+     * -------|----------------------------------------------|-------|
+     * | `%A` | Long weekday, like 'Monday'                  |       |
+     * | `%a` | Short weekday, like 'Mon'                    |       |
+     * | `%E` | Narrow weekday, single character             |       |
+     * | `%d` | Two digit day of the month, 01 to 31         |       |
+     * | `%e` | Day of the month, 1 through 31               |       |
+     * | `%w` | Day of the week, 0 through 6                 | N/A   |
+     * | `%b` | Short month, like 'Jan'                      |       |
+     * | `%B` | Long month, like 'January'                   |       |
+     * | `%m` | Two digit month number, 01 through 12        |       |
+     * | `%o` | Month number, 1 through 12                   |       |
+     * | `%y` | Two digits year, like 24 for 2024            |       |
+     * | `%Y` | Four digits year, like 2024                  |       |
+     * | `%H` | Two digits hours in 24h format, 00 through 23 | Depending on the locale, 12h format may be instered. |
+     * | `%k` | Hours in 24h format, 0 through 23            | Depending on the locale, 12h format may be instered. |
+     * | `%I` | Two digits hours in 12h format, 00 through 11 | N/A. The locale determines the hour format. |
+     * | `%l` | Hours in 12h format, 1 through 12            | N/A. The locale determines the hour format. |
+     * | `%M` | Two digits minutes, 00 through 59            |       |
+     * | `%p` | Upper case AM or PM                          | N/A. The locale determines whether to add AM and PM. |
+     * | `%P` | Lower case AM or PM                          | N/A. The locale determines whether to add AM and PM. |
+     * | `%S` | Two digits seconds, 00 through 59            |       |
+     * | `%L` | Milliseconds (naming from Ruby)              |       |
      *
      * @example
-     * const time = new Highcharts.Time();
-     * const s = time.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2020, 0, 1));
-     * console.log(s); // => 2020-01-01 00:00:00
+     * // Object format, US English
+     * const time1 = new Highcharts.Time({ locale: 'en-US' });
+     * console.log(
+     *     time1.dateFormat({
+     *         day: 'numeric',
+     *         month: 'short',
+     *         year: 'numeric',
+     *         hour: 'numeric',
+     *         minute: 'numeric'
+     *     }, Date.UTC(2024, 11, 31))
+     * ); // => Dec 31, 2024, 12:00 AM
+     *
+     * // Object format, British English
+     * const time2 = new Highcharts.Time({ locale: 'en-GB' });
+     * console.log(
+     *     time2.dateFormat({
+     *         day: 'numeric',
+     *         month: 'short',
+     *         year: 'numeric',
+     *         hour: 'numeric',
+     *         minute: 'numeric'
+     *     }, Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
+     *
+     * // Individual key string replacement
+     * const time3 = new Highcharts.Time();
+     * console.log(
+     *     time3.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2024, 11, 31))
+     * ); // => 2024-12-31 00:00:00
+     *
+     * // Locale-aware keys, US English
+     * const time4 = new Highcharts.Time({ locale: 'en-US' });
+     * console.log(
+     *     time4.dateFormat('%[YebHM]', Date.UTC(2024, 11, 31))
+     * ); // => Dec 31, 2024, 12:00 AM
+     *
+     * // Locale-aware keys, British English
+     * const time5 = new Highcharts.Time({ locale: 'en-GB' });
+     * console.log(
+     *     time5.dateFormat('%[YebHM]', Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
+     *
+     * // Mixed locale-aware and individual keys
+     * console.log(
+     *     time5.dateFormat('%[Yeb], %H:%M', Date.UTC(2024, 11, 31))
+     * ); // => 31 Dec 2024, 00:00
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param {string} format
-     *        The desired format where various time representations are
-     *        prefixed with %.
+     * @param {string|Highcharts.DateTimeFormatOptions} format
+     *        The desired string format where various time representations are
+     *        prefixed with %, or an object representing the locale-aware format
+     *        options.
      *
      * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
-     * @param {boolean} [capitalize=false]
+     * @param {boolean} [upperCaseFirst=false]
      *        Upper case first letter in the return.
      *
      * @return {string}
      *         The formatted date.
      */
     public dateFormat(
-        format: string,
+        format: Time.DateTimeFormat,
         timestamp?: number,
-        capitalize?: boolean
+        upperCaseFirst?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang?.invalidDate || '';
         }
         format = format ?? '%Y-%m-%d %H:%M:%S';
 
-        const time = this,
-            [
-                fullYear,
-                month,
-                dayOfMonth,
-                hours,
-                minutes,
-                seconds,
-                milliseconds,
-                weekday
-            ] = this.toParts(timestamp),
-            lang = H.defaultOptions.lang,
-            langWeekdays = (lang && lang.weekdays as any),
-            shortWeekdays = (lang && lang.shortWeekdays),
-
-            // List all format keys. Custom formats can be added from the
-            // outside.
-            replacements = extend(
-                {
-
-                    // Day
-                    // Short weekday, like 'Mon'
-                    a: shortWeekdays ?
-                        shortWeekdays[weekday] :
-                        langWeekdays[weekday].substr(0, 3),
-                    // Long weekday, like 'Monday'
-                    A: langWeekdays[weekday],
-                    // Two digit day of the month, 01 to 31
-                    d: pad(dayOfMonth),
-                    // Day of the month, 1 through 31
-                    e: pad(dayOfMonth, 2, ' '),
-                    // Day of the week, 0 through 6
-                    w: weekday,
-
-                    // Week (none implemented)
-                    // 'W': weekNumber(),
-
-                    // Month
-                    // Short month, like 'Jan'
-                    b: lang.shortMonths[month],
-                    // Long month, like 'January'
-                    B: lang.months[month],
-                    // Two digit month number, 01 through 12
-                    m: pad(month + 1),
-                    // Month number, 1 through 12 (#8150)
-                    o: month + 1,
-
-                    // Year
-                    // Two digits year, like 09 for 2009
-                    y: fullYear.toString().substr(2, 2),
-                    // Four digits year, like 2009
-                    Y: fullYear,
-
-                    // Time
-                    // Two digits hours in 24h format, 00 through 23
-                    H: pad(hours),
-                    // Hours in 24h format, 0 through 23
-                    k: hours,
-                    // Two digits hours in 12h format, 00 through 11
-                    I: pad((hours % 12) || 12),
-                    // Hours in 12h format, 1 through 12
-                    l: (hours % 12) || 12,
-                    // Two digits minutes, 00 through 59
-                    M: pad(minutes),
-                    // Upper case AM or PM
-                    p: hours < 12 ? 'AM' : 'PM',
-                    // Lower case AM or PM
-                    P: hours < 12 ? 'am' : 'pm',
-                    // Two digits seconds, 00 through 59
-                    S: pad(seconds),
-                    // Milliseconds (naming from Ruby)
-                    L: pad(milliseconds, 3)
-                },
-
-                H.dateFormats
-            );
-
-        // Do the replaces
-        objectEach(replacements, function (
-            val: (string|Function),
-            key: string
-        ): void {
-            // Regex would do it in one line, but this is faster
-            while (format.indexOf('%' + key) !== -1) {
-                format = format.replace(
-                    '%' + key,
-                    typeof val === 'function' ? val.call(time, timestamp) : val
-                );
+        // First, identify and replace locale-aware formats like %[Ymd]
+        if (isString(format)) {
+            const localeAwareRegex = /%\[([a-zA-Z]+)\]/g;
+            let match;
+            while ((match = localeAwareRegex.exec(format))) {
+                format = format.replace(match[0], this.dateTimeFormat(
+                    match[1],
+                    timestamp
+                ));
             }
+        }
 
-        });
+        // Then, replace static formats like %Y, %m, %d etc.
+        if (isString(format) && format.indexOf('%') !== -1) {
+            const time = this,
+                [
+                    fullYear,
+                    month,
+                    dayOfMonth,
+                    hours,
+                    minutes,
+                    seconds,
+                    milliseconds,
+                    weekday
+                ] = this.toParts(timestamp),
+                lang = H.defaultOptions.lang,
+                langWeekdays = lang?.weekdays || this.weekdays,
+                shortWeekdays = lang?.shortWeekdays || this.shortWeekdays,
+                months = lang?.months || this.months,
+                shortMonths = lang?.shortMonths || this.shortMonths,
 
-        // Optionally capitalize the string and return
-        return capitalize ?
-            (
-                format.substr(0, 1).toUpperCase() +
-                format.substr(1)
-            ) :
-            format;
+                // List all format keys. Custom formats can be added from the
+                // outside.
+                replacements = extend(
+                    {
+
+                        // Day
+                        // Short weekday, like 'Mon'
+                        a: shortWeekdays ?
+                            shortWeekdays[weekday] :
+                            langWeekdays[weekday].substr(0, 3),
+                        // Long weekday, like 'Monday'
+                        A: langWeekdays[weekday],
+                        // Two digit day of the month, 01 to 31
+                        d: pad(dayOfMonth),
+                        // Day of the month, 1 through 31
+                        e: pad(dayOfMonth, 2, ' '),
+                        // Day of the week, 0 through 6
+                        w: weekday,
+
+                        // Week (none implemented)
+                        // 'W': weekNumber(),
+
+                        // Month
+                        // Short month, like 'Jan'
+                        b: shortMonths[month],
+                        // Long month, like 'January'
+                        B: months[month],
+                        // Two digit month number, 01 through 12
+                        m: pad(month + 1),
+                        // Month number, 1 through 12 (#8150)
+                        o: month + 1,
+
+                        // Year
+                        // Two digits year, like 09 for 2009
+                        y: fullYear.toString().substr(2, 2),
+                        // Four digits year, like 2009
+                        Y: fullYear,
+
+                        // Time
+                        // Two digits hours in 24h format, 00 through 23
+                        H: pad(hours),
+                        // Hours in 24h format, 0 through 23
+                        k: hours,
+                        // Two digits hours in 12h format, 00 through 11
+                        I: pad((hours % 12) || 12),
+                        // Hours in 12h format, 1 through 12
+                        l: (hours % 12) || 12,
+                        // Two digits minutes, 00 through 59
+                        M: pad(minutes),
+                        // Upper case AM or PM
+                        p: hours < 12 ? 'AM' : 'PM',
+                        // Lower case AM or PM
+                        P: hours < 12 ? 'am' : 'pm',
+                        // Two digits seconds, 00 through 59
+                        S: pad(seconds),
+                        // Milliseconds (naming from Ruby)
+                        L: pad(milliseconds, 3)
+                    },
+
+                    H.dateFormats
+                );
+
+            // Do the replaces
+            objectEach(replacements, function (
+                val: (string|number|Function),
+                key: string
+            ): void {
+                if (isString(format)) {
+                    // Regex would do it in one line, but this is faster
+                    while (format.indexOf('%' + key) !== -1) {
+                        format = format.replace(
+                            '%' + key,
+                            typeof val === 'function' ?
+                                val.call(time, timestamp) :
+                                val
+                        );
+                    }
+                }
+            });
+
+        } else if (isObject(format)) {
+            const tzHours = (this.getTimezoneOffset(timestamp) || 0) /
+                    (60000 * 60),
+                timeZone = this.options.timezone || (
+                    'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
+                ),
+                { prefix = '', suffix = '' } = format;
+
+            format = prefix + this.dateTimeFormat(
+                extend({ timeZone }, format),
+                timestamp
+            ) + suffix;
+        }
+
+        // Optionally sentence-case the string and return
+        return upperCaseFirst ? ucfirst(format) : format;
     }
 
     /**
@@ -640,6 +809,12 @@ class Time {
                 to: f[2]
             };
         }
+
+        // Type-check DateTimeFormatOptions against DateTimeLabelFormatObject
+        if (isObject(f, true) && isDateTimeFormatOptions(f)) {
+            return { main: f };
+        }
+
         return f;
     }
 
@@ -898,7 +1073,7 @@ class Time {
         timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
-    ): string|undefined {
+    ): Time.DateTimeFormat|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
             strpos = {
@@ -958,15 +1133,27 @@ class Time {
  * */
 
 namespace Time {
-    export interface DateTimeLabelFormatObject {
-        from?: string;
-        list?: string[];
-        main: string;
-        range?: boolean;
-        to?: string;
+
+    export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
+        dateStyle?: 'full'|'long'|'medium'|'short';
+        fractionalSecondDigits?: number;
+        prefix?: string;
+        suffix?: string;
+        timeStyle?: 'full'|'long'|'medium'|'short';
     }
+
+    export type DateTimeFormat = string|DateTimeFormatOptions;
+
+    export interface DateTimeLabelFormatObject {
+        from?: DateTimeFormat;
+        list?: DateTimeFormat[];
+        main: DateTimeFormat;
+        range?: boolean;
+        to?: DateTimeFormat;
+    }
+
     export type DateTimeLabelFormatOption = (
-        string|
+        DateTimeFormat|
         Array<string>|
         Time.DateTimeLabelFormatObject
     );
@@ -975,13 +1162,13 @@ namespace Time {
     );
     export interface TimeOptions {
         Date?: any;
-        /// getTimezoneOffset?: Function;
+        locale?: string|Array<string>;
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;
     }
     export interface TimeFormatCallbackFunction {
-        (timestamp: number): string;
+        (this: Time, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
         count: number;
@@ -1076,6 +1263,95 @@ export default Time;
  *
  * @return {number}
  * Timezone offset in minutes.
+ */
+
+/**
+ * Options for formatting dates and times using the [Intl.DateTimeFormat](
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+ * ) API, and extended with some custom options for Highcharts.
+ *
+ * @interface Highcharts.DateTimeFormatOptions
+ *//**
+ * The locale matching algorithm to use.
+ *
+ * @name Highcharts.DateTimeFormatOptions#localeMatcher
+ * @type {string|undefined}
+ *//**
+ * The time zone to use. The default is the browser's default time zone.
+ *
+ * @name Highcharts.DateTimeFormatOptions#timeZone
+ * @type {string|undefined}
+ *//**
+ * Whether to use 12-hour time (as opposed to 24-hour time).
+ *
+ * @name Highcharts.DateTimeFormatOptions#hour12
+ * @type {'auto'|'always'|'never'|undefined}
+ *//**
+ * The format matching algorithm to use.
+ *
+ * @name Highcharts.DateTimeFormatOptions#formatMatcher
+ * @type {string|undefined}
+ *//**
+ * The representation of the weekday.
+ *
+ * @name Highcharts.DateTimeFormatOptions#weekday
+ * @type {'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the era.
+ *
+ * @name Highcharts.DateTimeFormatOptions#era
+ * @type {'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the year.
+ *
+ * @name Highcharts.DateTimeFormatOptions#year
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the month.
+ * "narrow", "short", "long".
+ *
+ * @name Highcharts.DateTimeFormatOptions#month
+ * @type {'numeric'|'2-digit'|'narrow'|'short'|'long'|undefined}
+ *//**
+ * The representation of the day.
+ *
+ * @name Highcharts.DateTimeFormatOptions#day
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the hour.
+ *
+ * @name Highcharts.DateTimeFormatOptions#hour
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the minute.
+ *
+ * @name Highcharts.DateTimeFormatOptions#minute
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The representation of the second.
+ *
+ * @name Highcharts.DateTimeFormatOptions#second
+ * @type {'numeric'|'2-digit'|undefined}
+ *//**
+ * The number of fractional digits to use. 3 means milliseconds.
+ *
+ * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
+ * @type {number|undefined}
+ *//**
+ * The representation of the time zone name.
+ *
+ * @name Highcharts.DateTimeFormatOptions#timeZoneName
+ * @type {'short'|'long'|undefined}
+ *//**
+ * A prefix for the time string. Custom Highcharts option.
+ *
+ * @name Highcharts.DateTimeFormatOptions#prefix
+ * @type {'string'|undefined}
+ *//**
+ * A suffix for the time string. Custom Highcharts option.
+ *
+ * @name Highcharts.DateTimeFormatOptions#suffix
+ * @type {'string'|undefined}
  */
 
 ''; // Keeps doclets above in JS file

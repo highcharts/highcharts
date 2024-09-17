@@ -742,6 +742,7 @@
                         return data;
                     }()),
                     tooltip: {
+                        headerFormat: '{point.key}',
                         pointFormat:
                         'name: {point.name} <br>' +
                         'myName: {point.myName} <br>' +
@@ -760,7 +761,7 @@
         assert.strictEqual(
             chart.tooltip.tt.text.textStr.indexOf('a121') > -1,
             true,
-            'Custom name in label is correct (#9928).'
+            'Custom name "a121" should be part of the tooltip (#9928).'
         );
 
         assert.strictEqual(

@@ -231,18 +231,15 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
 });
 
 QUnit.test('Negative timezoneOffset', function (assert) {
-    Highcharts.setOptions({
-        global: {
-            timezoneOffset: -3 * 60
-        }
-    });
-
     var chart = Highcharts.chart('container', {
         chart: {
             width: 400
         },
         xAxis: {
             type: 'datetime'
+        },
+        time: {
+            timezoneOffset: -3 * 60
         },
         series: [
             {
@@ -266,12 +263,7 @@ QUnit.test('Negative timezoneOffset', function (assert) {
 
     assert.deepEqual(ticks, ['14:00:00', '14:00:30'], 'Two ticks');
 
-    // Reset
-    Highcharts.setOptions({
-        global: {
-            timezoneOffset: 0
-        }
-    });
+
 });
 
 QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
