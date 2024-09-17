@@ -74,6 +74,12 @@ class HeaderCell extends Cell {
      */
     private isMain: boolean;
 
+    /**
+     * Content value of the header cell.
+     */
+    public override value: string = '';
+
+
     /* *
     *
     *  Constructor
@@ -120,11 +126,11 @@ class HeaderCell extends Cell {
         const headerCellOptions = options.header || {};
 
         if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this);
+            this.value = headerCellOptions.formatter.call(this).toString();
         } else if (headerCellOptions.format) {
             this.value = column.format(headerCellOptions.format);
         } else {
-            this.value = column.id;
+            this.value = this.column.id;
         }
 
         // Render content of th element
