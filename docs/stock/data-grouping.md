@@ -87,7 +87,7 @@ Here is an example of a chart where you can see the difference between the two o
 
 ##### [forced](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.forced)
 
-Sometimes it's useful to force the data grouping to kick in, event if all of the data points can be easily fitted into the visible range. This can be achieved by setting `forced` to `true`, while also deterimining the `units` option. This way, the series will choose the lowest available option to group the points. This can be used to smoothen the series, similar to what indicators like SMA do.
+Sometimes it's useful to force the data grouping to kick in, even if all of the data points can be easily fitted into the visible range. This can be achieved by setting `forced` to `true`, while also deterimining the `units` option. This way, the series will choose the lowest available option to group the points. This can be used to smoothen the series, similar to what indicators like SMA do.
 
 The example below shows how to force the data to be grouped into one second intervals. (the result can be seen in the first example of the page)
 ```js
