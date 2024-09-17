@@ -480,7 +480,7 @@ export interface GroupedHeaderOptions {
     /**
      * The format of the column header. Use `{id}` to display the column id.
      */
-    headerFormat?: string;
+    format?: string;
 
     /**
      * The custom CSS class name for the header.

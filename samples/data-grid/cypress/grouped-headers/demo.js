@@ -12,20 +12,20 @@ window.dataGrid = DataGrid.dataGrid('container', {
     header: [
         'id',
         {
-            headerFormat: 'Product',
+            format: 'Product',
             columns: [{
-                headerFormat: 'Product name',
+                format: 'Product name',
                 columnId: 'product'
             }, {
-                headerFormat: 'Units',
+                format: 'Units',
                 columns: [{
                     columnId: 'weight'
                 }]
             }]
         }, {
-            headerFormat: 'Product info',
+            format: 'Product info',
             columns: [{
-                headerFormat: 'Meta',
+                format: 'Meta',
                 columns: [{
                     columnId: 'icon'
                 }]
