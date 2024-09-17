@@ -94,6 +94,9 @@ We recommend reading our [article about styling](https://www.highcharts.com/docs
             click: function () {
                 // Callback action
             },
+            dblClick: function() {
+
+            },
             mouseOver: function () {
                 // Callback action
             },

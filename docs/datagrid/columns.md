@@ -92,7 +92,7 @@ columns: [{
 ```
 
 ### How to edit cells
-Every cell in a column can be edited on the fly by the end user. Set the [cells.editable](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable) option to true.
+Each cell in a column can be edited directly by the end user through a double-click. Set the [cells.editable](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable) option to true.
 
 ```js
 columns: [{
@@ -112,6 +112,7 @@ The available events are:
 
  - `cell`
     - `click` - called after click on a cell,
+    - `dblClick` - called after double click on a cell,
     - `mouseOver` - called after mouse over a cell,
     - `mouseOut` - called after mouse out a cell
     - `afterEdit` - called after a cell was edited

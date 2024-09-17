@@ -130,7 +130,7 @@ class HeaderCell extends Cell {
         } else if (headerCellOptions.format) {
             this.value = column.format(headerCellOptions.format);
         } else {
-            this.value = this.column.id;
+            this.value = column.id;
         }
 
         // Render content of th element
