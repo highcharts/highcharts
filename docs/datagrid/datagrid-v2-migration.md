@@ -41,7 +41,7 @@ so if you want to change the default height by CSS:
 ```
 
 The next main change is a new naming of CSS classes.
-We recommend reading our [article about styling the DataGrid v3.0.0 and higher](https://www.highcharts.com/docs/datagrid/style-by-css).
+We recommend reading our [article about styling the DataGrid in Dashboards v3.0 and higher](https://www.highcharts.com/docs/datagrid/style-by-css).
 
 ## Example of the new DataGrid
 
