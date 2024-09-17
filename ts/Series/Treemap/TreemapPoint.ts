@@ -101,11 +101,15 @@ class TreemapPoint extends ScatterPoint {
 
         } else if (
             !this.node.isLeaf &&
-        !pick(options.interactByLeaf, !options.allowTraversingTree)
+            !series.nodeMap[series.rootNode].isGroup &&
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
         ) {
             className += ' highcharts-internal-node-interactive';
 
-        } else if (!this.node.isLeaf) {
+        } else if (
+            !this.node.isLeaf &&
+            !series.nodeMap[series.rootNode].isGroup
+        ) {
             className += ' highcharts-internal-node';
         }
 

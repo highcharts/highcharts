@@ -69,6 +69,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
      *         Enabled
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-traversing/
+     *         Traversing to Grouped Points node
      *
      * @since     7.0.3
      * @product   highcharts

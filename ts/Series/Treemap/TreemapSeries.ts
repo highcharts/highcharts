@@ -449,7 +449,8 @@ class TreemapSeries extends ScatterSeries {
                     level.layoutAlgorithm
                 ),
                 series.options.layoutAlgorithm
-            );
+            ),
+            id = `highcharts-grouped-treemap-points-${parent.id || 'root'}`;
 
         if (!algorithm) {
             return;
@@ -457,11 +458,21 @@ class TreemapSeries extends ScatterSeries {
 
         let childrenValues = series[algorithm](area, children);
 
+        // When drilled into grouped points show all points and set them as
+        // leaves
+        if (series.rootNode === id) {
+            children.forEach((child): void => {
+                child.visible = true;
+                child.isLeaf = !child.children.length;
+            });
+        }
+
         if (
             parent.visible &&
             groupAreaThreshold &&
             groupAreaThreshold.enabled &&
-            groupAreaThreshold.pixelWidth
+            groupAreaThreshold.pixelWidth &&
+            series.rootNode !== id
         ) {
             const { pixelWidth, pixelHeight } = groupAreaThreshold,
                 compareHeight = defined(pixelHeight),
@@ -499,7 +510,9 @@ class TreemapSeries extends ScatterSeries {
                         (acc, child): number => acc + child.val,
                         0
                     ),
-                    PointClass = series.pointClass;
+                    PointClass = series.pointClass,
+                    name = groupAreaThreshold.name ||
+                        `+ ${groupChildren.length}`;
 
                 let groupPoint = series.points.find(
                         (point): boolean =>
@@ -510,7 +523,7 @@ class TreemapSeries extends ScatterSeries {
 
                 if (!groupPoint) {
                     node = new series.NodeClass().init(
-                        `highcharts-grouped-treemap-points-${parent.id || 'root'}`,
+                        id,
                         series.nodeList.length - 1,
                         [],
                         0,
@@ -520,7 +533,7 @@ class TreemapSeries extends ScatterSeries {
                     );
 
                     groupPoint = new PointClass(series, {
-                        name: `+ ${groupChildren.length}`,
+                        name,
                         value: val
                     } as TreemapPointOptions);
 
@@ -536,9 +549,9 @@ class TreemapSeries extends ScatterSeries {
                     extend(groupPoint, {
                         node,
                         formatPrefix: 'groupedNodes',
-                        groupedPointsAmount: groupChildren.length
+                        groupedPointsAmount: groupChildren.length,
+                        id: id
                     });
-
 
                     extend(node, {
                         point: groupPoint,
@@ -546,7 +559,9 @@ class TreemapSeries extends ScatterSeries {
                         isGroup: true,
                         parentNode: parent,
                         val,
-                        visible: true
+                        visible: true,
+                        children: groupChildren,
+                        name
                     });
 
                     series.nodeMap[node.id] = node;
@@ -819,7 +834,7 @@ class TreemapSeries extends ScatterSeries {
 
             // If setRootNode is allowed, set a point cursor on clickables &
             // add drillId to point
-            if (allowTraversingTree && point.graphic && !point.node.isGroup) {
+            if (allowTraversingTree && point.graphic) {
                 point.drillId = options.interactByLeaf ?
                     series.drillToByLeaf(point) :
                     series.drillToByGroup(point);
@@ -836,7 +851,10 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false;
 
         if (
-            !point.node.isLeaf &&
+            (
+                !point.node.isLeaf ||
+                point.node.isGroup
+            ) &&
             (point.node.level - this.nodeMap[this.rootNode].level) === 1
         ) {
             drillId = point.id;
@@ -1571,11 +1589,18 @@ class TreemapSeries extends ScatterSeries {
 
         // @todo Only if series.isDirtyData is true
         const tree = series.tree = series.getTree();
+        if (series.options.groupAreaThreshold?.enabled) {
+            groupPoints.forEach((groupPoint): void => {
+                this.nodeList.push(groupPoint.node);
+                this.nodeMap[groupPoint.node.id] = groupPoint.node;
+            });
+        }
         rootNode = series.nodeMap[rootId];
 
         if (
             rootId !== '' &&
-            (!rootNode)
+            (!rootNode) &&
+            !existingRootNode?.isGroup
         ) {
             series.setRootNode('', false);
             rootId = series.rootNode;
@@ -1664,6 +1689,11 @@ class TreemapSeries extends ScatterSeries {
 
         if (options.allowTraversingTree) {
             updateAxes(rootNode.pointValues);
+        }
+
+        // Hide grouped node if drilled down into grouped node
+        if (rootNode.isGroup) {
+            rootNode.visible = false;
         }
 
         // Assign values to points.

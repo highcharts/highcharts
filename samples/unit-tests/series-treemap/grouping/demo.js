@@ -197,12 +197,12 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
 
     series.setRootNode('par1');
 
-    assert.strictEqual(
+    assert.notEqual(
         series.points.find(point =>
             point.node.isGroup && point.node.parent === 'par1'
         ).drillId,
         void 0,
-        'Traversing should not be possible for grouped node.'
+        'Traversing should  be possible for grouped node.'
     );
 
     series.setRootNode('');
