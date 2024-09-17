@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Controllable image annotation'
+    },
     chart: {
         zooming: {
             type: 'x'

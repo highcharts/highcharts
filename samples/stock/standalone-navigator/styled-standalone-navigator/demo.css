@@ -1,5 +1,10 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #navigator-container {
     min-width: 600px;
+    margin: 10px;
 }
 
 #chart-container {
