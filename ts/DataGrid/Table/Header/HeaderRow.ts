@@ -112,7 +112,7 @@ class HeaderRow extends Row {
                 column : column.columnId;
             const dataColumn = vp.getColumn(columnId || '');
             const headerFormat = (typeof column !== 'string') ?
-                column.headerFormat : void 0;
+                column.format : void 0;
             const className = (typeof column !== 'string') ?
                 column.className : void 0;
 
