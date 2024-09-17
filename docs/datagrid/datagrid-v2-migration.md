@@ -29,7 +29,7 @@ const grid = DataGrid.dataGrid('container', {
 ## Styling
 The main change is CSS styling instead of the built-in API options.
 
-Since DataGrid v3.0.0 we removed the option:
+Since Dashboards v3.0, we have removed the following option from the DataGrid:
  * `cellHeight`
 
 so if you want to change the default height by CSS:
