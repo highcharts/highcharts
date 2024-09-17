@@ -8,12 +8,12 @@ DataGrid.dataGrid('container', {
     },
     rendering: {
         table: {
-            className: 'custom-table-class-name'
+            className: 'custom-table-class-name abc'
         }
     },
     columnDefaults: {
         cells: {
-            className: '{#if (gt value 100)}greater-than-100{/if}',
+            className: '{#if (gt value 100)}greater-than-100 second-class{/if}',
             editable: true
         },
         header: {

@@ -180,7 +180,9 @@ class Column {
     public registerCell(cell: Cell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
         if (this.options.className) {
-            cell.htmlElement.classList.add(this.options.className);
+            cell.htmlElement.classList.add(
+                ...this.options.className.split(/\s+/g)
+            );
         }
         if (this.viewport.dataGrid.hoveredColumnId === this.id) {
             cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
@@ -249,7 +251,7 @@ class Column {
 
         mock.setAttribute('data-column-id', this.id);
         if (this.options.className) {
-            mock.classList.add(this.options.className);
+            mock.classList.add(...this.options.className.split(/\s+/g));
         }
 
         if (viewport.columnDistribution === 'full') {

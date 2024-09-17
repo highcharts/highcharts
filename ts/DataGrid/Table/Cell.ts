@@ -179,7 +179,7 @@ abstract class Cell {
         const element = this.htmlElement;
 
         if (this.customClassName) {
-            element.classList.remove(this.customClassName);
+            element.classList.remove(...this.customClassName.split(/\s+/g));
         }
 
         if (!template) {
@@ -187,13 +187,13 @@ abstract class Cell {
             return;
         }
 
-        const newClassName = this.format(template).replace(/\s+/g, '-');
+        const newClassName = this.format(template);
         if (!newClassName) {
             delete this.customClassName;
             return;
         }
 
-        element.classList.add(newClassName);
+        element.classList.add(...newClassName.split(/\s+/g));
         this.customClassName = newClassName;
     }
 
