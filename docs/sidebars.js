@@ -176,6 +176,7 @@ module.exports = {
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
             'advanced-chart-features/data-sorting',
