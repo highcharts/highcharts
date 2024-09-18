@@ -87,6 +87,64 @@ class BoxPlotSeries extends ColumnSeries {
         return {};
     }
 
+
+    // Get an SVGPath object for both whiskers
+    public geWhiskerPair(
+        halfWidth: number,
+        stemX: number,
+        whiskerLength: number | string,
+        point: BoxPlotPoint
+    ): SVGPath {
+        const strokeWidth = point.whiskers.strokeWidth(),
+            getWhisker = (
+                xLen: (
+                    number |
+                    string |
+                    undefined
+                ) = whiskerLength,
+                yPos: number
+            ): SVGPath.Segment[] => {
+                const halfLen = (
+                        (
+                            typeof xLen === 'string' &&
+                            xLen.endsWith('%')
+                        ) ?
+                            (
+                                halfWidth * parseFloat(xLen)
+                            ) / 100 :
+                            Number(xLen) / 2
+                    ),
+                    crispedYPos = crisp(
+                        yPos,
+                        strokeWidth
+                    );
+
+                return [
+                    [
+                        'M',
+                        crisp(stemX - halfLen),
+                        crispedYPos
+                    ],
+                    [
+                        'L',
+                        crisp(stemX + halfLen),
+                        crispedYPos
+                    ]
+                ];
+            };
+
+        return [
+            ...getWhisker(
+                point.upperWhiskerLength,
+                point.highPlot
+            ),
+            ...getWhisker(
+                point.lowerWhiskerLength,
+                point.lowPlot
+            )
+        ];
+    }
+
     // Translate data points from raw values x and y to plotX and plotY
     public translate(): void {
         const series = this,
@@ -297,59 +355,14 @@ class BoxPlotSeries extends ColumnSeries {
                     // Moved here as "const", refactoring of whiskerlength
                     // triggered "no-loop-func" from eslint
                     const halfWidth = width / 2,
-                        geWhiskerPair = (
-                            point: BoxPlotPoint
-                        ): SVGPath => {
-                            const strokeWidth = point.whiskers.strokeWidth(),
-                                getWhisker = (
-                                    xLen: (
-                                        number |
-                                        string |
-                                        undefined
-                                    ) = whiskerLength,
-                                    yPos: number
-                                ): SVGPath.Segment[] => {
-                                    const halfLen = (
-                                            (
-                                                typeof xLen === 'string' &&
-                                            /%$/.test(xLen)
-                                            ) ?
-                                                (
-                                                    halfWidth * parseFloat(xLen)
-                                                ) / 100 :
-                                                Number(xLen) / 2
-                                        ),
-                                        crispedYPos = crisp(
-                                            yPos,
-                                            strokeWidth
-                                        );
+                        whiskers = this.geWhiskerPair(
+                            halfWidth,
+                            stemX,
+                            whiskerLength,
+                            point
+                        );
 
-                                    return [
-                                        [
-                                            'M',
-                                            crisp(stemX - halfLen),
-                                            crispedYPos
-                                        ],
-                                        [
-                                            'L',
-                                            crisp(stemX + halfLen),
-                                            crispedYPos
-                                        ]
-                                    ];
-                                };
-
-                            return [
-                                ...getWhisker(
-                                    point.upperWhiskerLength,
-                                    point.highPlot
-                                ),
-                                ...getWhisker(
-                                    point.lowerWhiskerLength,
-                                    point.lowPlot
-                                )
-                            ];
-                        };
-                    point.whiskers[verb]({ d: geWhiskerPair(point) });
+                    point.whiskers[verb]({ d: whiskers });
                 }
 
                 // The median
