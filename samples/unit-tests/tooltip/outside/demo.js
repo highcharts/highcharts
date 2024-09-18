@@ -113,9 +113,9 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     );
 
     assert.strictEqual(
-        chart.tooltip.container.parentNode.id,
-        chart.container.id,
-        'The outside tooltip should be a child of chart.container'
+        chart.tooltip.container.parentNode.nodeName,
+        'BODY',
+        'The outside tooltip should be part of the body'
     );
 
     controller.moveTo(-1, -1);
