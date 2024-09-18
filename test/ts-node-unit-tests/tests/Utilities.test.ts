@@ -28,7 +28,7 @@ describe('merge function', () => {
     it('should extend an existing object when the first argument is true', () => {
         const target = { a: 1, b: { c: 2 } };
         const source = { b: { d: 3 }, e: 4 };
-        const result = merge(true, target, source);
+        const result = merge<{}>(true, target, source);
 
         strictEqual(result, target); // The target object is modified
         deepStrictEqual(target, {
@@ -60,9 +60,25 @@ describe('merge function', () => {
         const maliciousPayload = JSON.parse('{"__proto__":{"polluted":"yes"}}');
         const obj = {};
         merge(obj, maliciousPayload);
-
         strictEqual({}.polluted, undefined);
+
+        // test filtering of constructor
+        const objConstructor = JSON.parse(`{
+            "constructor": {
+                "prototype": {
+                    "pollutedByConstructor": true
+                }
+            }
+        }`);
+
+        merge({}, objConstructor);
+        strictEqual(
+            typeof {}.pollutedByConstructor,
+            'undefined',
+            'The prototype (and window) should not be polluted through merge'
+        );
     });
+
 
     it('replaces arrays', () => {
         const obj1 = { arr: [1, 2, 3] };
