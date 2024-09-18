@@ -21,8 +21,6 @@ const connector = new Connectors.Morningstar.TimeSeriesConnector({
             idType: 'ISIN'
         }
     ],
-    startDate: '2020-01-01',
-    endDate: '2020-09-01',
     currencyId: 'EUR'
 });
 
