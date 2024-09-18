@@ -51,6 +51,7 @@ declare global {
         AST: typeof AST;
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
+        dataGrids: Array<(_DataGrid|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -80,6 +81,7 @@ G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
 G.DataGrid = _DataGrid;
 G.dataGrid = _DataGrid.dataGrid;
+G.dataGrids = _DataGrid.dataGrids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;

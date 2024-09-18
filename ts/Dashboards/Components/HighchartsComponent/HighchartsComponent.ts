@@ -291,7 +291,7 @@ class HighchartsComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        super.resize(width, height);
+        this.resizeDynamicContent(width, height);
 
         while (this.innerResizeTimeouts.length) {
             const timeoutID = this.innerResizeTimeouts.pop();

@@ -119,16 +119,19 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
-            columns: {
-                Day: {
-                    cellFormatter: function () {
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Day',
+                cells: {
+                    formatter: function () {
                         return new Date(this.value)
                             .toISOString()
                             .substring(0, 10);
                     }
                 }
-            }
+            }]
         }
     }]
 });

@@ -318,40 +318,45 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
-                columns: {
-                    state: {
-                        headerFormat: 'State'
+                rendering: {
+                    columns: {
+                        included: [
+                            'state', 'demColVotes', 'repColVotes',
+                            'demVoteSummary', 'repVoteSummary', 'totalVotes'
+                        ]
+                    }
+                },
+                columnDefaults: {
+                    sorting: {
+                        sortable: false
+                    }
+                },
+                columns: [{
+                    id: 'state',
+                    header: {
+                        format: 'State'
+                    }
+                }, {
+                    id: 'demVoteSummary',
+                    header: {
+                        format: 'Dem. votes'
+                    }
+                }, {
+                    id: 'repVoteSummary',
+                    header: {
+                        format: 'Rep. votes'
+                    }
+                }, {
+                    id: 'totalVotes',
+                    header: {
+                        format: 'Total votes'
                     },
-                    'postal-code': {
-                        show: false
-                    },
-                    demPercent: {
-                        show: false
-                    },
-                    repPercent: {
-                        show: false
-                    },
-                    demVotes: {
-                        show: false
-                    },
-                    repVotes: {
-                        show: false
-                    },
-                    demVoteSummary: {
-                        headerFormat: 'Dem. votes'
-                    },
-                    repVoteSummary: {
-                        headerFormat: 'Rep. votes'
-                    },
-                    totalVotes: {
-                        headerFormat: 'Total votes',
-                        cellFormatter: function () {
+                    cells: {
+                        formatter: function () {
                             return Number(this.value).toLocaleString('en-US');
                         }
                     }
-                }
+                }]
             }
         }]
     }, true);
@@ -789,14 +794,20 @@ async function updateGridComponent(component, year) {
             id: 'votes' + year
         },
         dataGridOptions: {
-            columns: {
-                repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
-                },
-                demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'repColVotes',
+                header: {
+                    format: candRep + ' (Republican)'
                 }
-            }
+            }, {
+                id: 'demColVotes',
+                header: {
+                    format: candDem + ' (Democrat)'
+                }
+            }]
         }
     });
 }

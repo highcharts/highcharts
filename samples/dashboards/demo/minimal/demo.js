@@ -233,6 +233,11 @@ Dashboards.board('container', {
         sync: {
             highlight: true,
             visibility: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);
