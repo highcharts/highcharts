@@ -14,8 +14,7 @@
         parsed: function (columns) {
 
             /**
-             * Event handler for clicking points. Use jQuery UI to pop up
-             * a pie chart showing the details for each state.
+             * Event handler for clicking points.
              */
             function pointClick() {
                 const row = this.options.row;
@@ -32,12 +31,15 @@
                         backgroundColor: '#fff'
                     },
                     labels: [{
-                        point: this,
+                        point: {
+                            x: chart.plotWidth / 2,
+                            y: chart.plotHeight / 10
+                        },
                         text: `
                             <div id="annotation-header">
                                 <span>${this.name}</span>
                                 <button id="annotation-close-btn">
-                                x
+                                X
                                 </button>
                             </div>
                             <div id="popup-pie"></div>
@@ -47,6 +49,8 @@
                     zIndex: 10
                 });
 
+                console.log(chart);
+
                 document.getElementById('annotation-close-btn')
                     .addEventListener('click', function () {
                         chart.removeAnnotation('election-popup');
@@ -55,9 +59,7 @@
 
                 Highcharts.chart('popup-pie', {
                     chart: {
-                        type: 'pie',
-                        width: 290,
-                        height: 240
+                        type: 'pie'
                     },
                     title: {
                         text: null

@@ -12,8 +12,8 @@
 }
 
 #popup-pie {
-    width: 290px;
-    height: 240px;
+    width: 280px;
+    height: 230px;
     padding: 0.5em 1em;
     cursor: default;
 }
@@ -21,7 +21,7 @@
 #annotation-header {
     display: flex;
     justify-content: space-between;
-    width: 290px;
+    width: 280px;
     align-items: center;
     color: #333;
     font-size: 1.45em;
@@ -40,7 +40,7 @@
     padding: 1px;
     color: #777;
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.7em;
     font-weight: 700;
     border: 1px solid #c5c5c5;
     border-radius: 3px;
