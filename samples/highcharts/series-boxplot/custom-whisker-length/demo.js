@@ -4,7 +4,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Configuring whisker length\'s'
+        text: 'Configuring whisker lengths'
     },
 
     yAxis: {
