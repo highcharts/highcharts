@@ -1,0 +1,14 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+}
+
+#container {
+    background-color: var(--highcharts-neutral-color-0);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
