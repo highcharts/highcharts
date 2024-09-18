@@ -457,6 +457,7 @@ class Tooltip {
                 css(container, {
                     position: 'fixed',
                     top: '8px',
+                    left: '8px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
@@ -1571,8 +1572,8 @@ class Tooltip {
                 false
             );
 
-            container.style.left = (-scrollLeft) + 'px';
-            container.style.top = (-scrollTop) + 'px';
+            container.style.left = (8 - scrollLeft) + 'px';
+            container.style.top = (8 - scrollTop) + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
