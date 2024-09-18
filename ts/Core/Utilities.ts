@@ -220,7 +220,7 @@ function merge<T>(
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.
-    if (typeof extendOrSource === 'boolean' && extendOrSource === true) {
+    if (extendOrSource === true) {
         ret = args[1] as T;
         args = Array.prototype.slice.call(args, 2) as any;
     }
