@@ -89,7 +89,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 
     // Get an SVGPath object for both whiskers
-    public geWhiskerPair(
+    public getWhiskerPair(
         halfWidth: number,
         stemX: number,
         whiskerLength: number | string,
@@ -355,7 +355,7 @@ class BoxPlotSeries extends ColumnSeries {
                     // Moved here as "const", refactoring of whiskerlength
                     // triggered "no-loop-func" from eslint
                     const halfWidth = width / 2,
-                        whiskers = this.geWhiskerPair(
+                        whiskers = this.getWhiskerPair(
                             halfWidth,
                             stemX,
                             whiskerLength,
