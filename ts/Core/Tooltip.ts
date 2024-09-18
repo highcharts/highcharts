@@ -436,7 +436,8 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart.style,
+                const chart = this.chart,
+                    chartStyle = chart.options.chart.style,
                     Renderer = RendererRegistry.getRendererType();
 
                 /**
@@ -449,22 +450,26 @@ class Tooltip {
                  */
                 this.container = container = H.doc.createElement('div');
 
-                container.className = 'highcharts-tooltip-container';
+                container.className = (
+                    'highcharts-tooltip-container ' +
+                    (
+                        chart.renderTo.className.match(
+                            /(highcharts[a-zA-Z0-9-]+)\s?/gm
+                        ) || [].join(' ')
+                    )
+                );
 
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
                 css(container, {
-                    position: 'fixed',
-                    top: '8px',
-                    left: '8px',
+                    position: 'absolute',
+                    top: '1px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
-                    ),
-                    // Note: Considered bad practice
-                    fontFamily: 'serif'
+                    )
                 });
 
 
@@ -552,7 +557,7 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            this.chart.container.appendChild(container);
+            H.doc.body.appendChild(container);
         }
 
         return this.label;
@@ -1196,7 +1201,7 @@ class Tooltip {
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
-        const { left: chartLeft } = pointer.getChartPosition();
+        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1572,8 +1577,9 @@ class Tooltip {
                 false
             );
 
-            container.style.left = (8 - scrollLeft) + 'px';
-            container.style.top = (8 - scrollTop) + 'px';
+            // Position the tooltip container to the chart container
+            container.style.left = boxExtremes.left + 'px';
+            container.style.top = chartTop + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
