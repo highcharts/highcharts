@@ -571,7 +571,7 @@ class Tooltip {
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
-                ) - 2 * distance :
+                ) - (2 * distance) - 2 :
                 chart.chartWidth,
             height: outside ?
                 Math.max(
@@ -1094,8 +1094,8 @@ class Tooltip {
                             x: clamp(
                                 label.x || 0,
                                 0,
-                                this.getPlayingField().width -
-                                    (label.width || 0)
+                                (this.getPlayingField().width) -
+                                (label.width || 0)
                             )
                         });
                     }
@@ -1805,8 +1805,16 @@ class Tooltip {
                 2
             );
 
+            const baseWidth = width + pad;
+
             renderer.setSize(
-                Math.floor(width + pad) - (this.outside ? distance + 2 : 0),
+                this.outside ? clamp(
+                    baseWidth,
+                    0,
+                    // 'Outside' container always has 'left: 1px;'
+                    H.doc.documentElement.clientWidth - 1
+                ) :
+                    baseWidth,
                 height + pad,
                 false
             );
