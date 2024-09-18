@@ -32,6 +32,7 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
+import Globals from '../../Core/Globals';
 const {
     addEvent,
     createElement,
@@ -152,6 +153,8 @@ class SidebarPopup extends BaseForm {
             this.iconsURL,
             this.hide.bind(this)
         );
+
+
     }
 
     /* *
@@ -186,6 +189,11 @@ class SidebarPopup extends BaseForm {
      * List of components that can be added to the board.
      */
     private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
+
+    /**
+     * Content wrapper for sticking.
+     */
+    private sidebarWrapper?: HTMLElement;
 
     /* *
      *
@@ -292,6 +300,20 @@ class SidebarPopup extends BaseForm {
 
     public generateContent(context?: Cell | Row | CellHTML): void {
 
+        // Render content wrapper
+        this.sidebarWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarWrapper
+            },
+            void 0,
+            this.container
+        );
+
+        // if (window.scrollY > this.sidebarWrapper.getBoundingClientRect().y) {
+        //     this.sidebarWrapper.style.top = '20px'; // stick
+        // }
+
         // Title
         this.renderHeader(
             context ?
@@ -312,7 +334,7 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordionMenu.renderContent(this.container, component);
+            this.accordionMenu.renderContent(this.sidebarWrapper, component);
         }
     }
 
@@ -501,7 +523,11 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderHeader(title: string, iconURL: string): void {
-        const icon = EditRenderer.renderIcon(this.container, {
+        if (!this.sidebarWrapper) {
+            return;
+        }
+
+        const icon = EditRenderer.renderIcon(this.sidebarWrapper, {
             icon: iconURL,
             className: EditGlobals.classNames.editSidebarTitle
         });

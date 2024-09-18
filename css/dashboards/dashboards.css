@@ -827,6 +827,13 @@
     display: block;
 }
 
+.highcharts-dashboards-edit-sidebar-wrapper {
+    position: fixed;
+    width: 300px;
+    height: calc(100% - 40px);
+    overflow: scroll;
+}
+
 .highcharts-dashboards-edit-grid-items {
     display: flex;
     margin-top: 20px;
