@@ -1035,7 +1035,7 @@ class Tooltip {
 
         // Register the current series
         const currentSeries = point.series;
-        this.distance = pick(currentSeries.tooltipOptions.distance, 16);
+        this.distance = pick(currentSeries.tooltipOptions.distance, 15);
 
         // Update the inner HTML
         if (text === false) {
@@ -1796,9 +1796,24 @@ class Tooltip {
                 pos.y += top - distance;
             }
 
+            let distanceMultiPlier, containerLeftOffset;
+
+            if (this.outside) {
+                containerLeftOffset = distanceMultiPlier = 1;
+            } else {
+                distanceMultiPlier = 1;
+                containerLeftOffset = 0;
+            }
+
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).
-            pad = (options.borderWidth || 0) + 2 * distance + 2;
+            pad = (
+                (options.borderWidth || 0) +
+                distanceMultiPlier *
+                distance +
+                2 -
+                containerLeftOffset
+            );
 
             renderer.setSize(
                 width + pad,
