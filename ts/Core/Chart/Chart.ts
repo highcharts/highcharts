@@ -431,7 +431,8 @@ class Chart {
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
             const options = merge(defaultOptions, userOptions), // Do the merge
-                optionsChart = options.chart;
+                optionsChart = options.chart,
+                renderTo = this.renderTo || optionsChart.renderTo;
 
             /**
              * The original options given to the constructor or a chart factory
@@ -450,6 +451,17 @@ class Chart {
              * @type {Highcharts.Options}
              */
             this.userOptions = extend<Partial<Options>>({}, userOptions);
+
+            if (!(
+                this.renderTo = (
+                    isString(renderTo) ?
+                        doc.getElementById(renderTo) :
+                        renderTo
+                ) as HTMLDOMElement
+            )) {
+                // Display an error if the renderTo is wrong
+                error(13, true, this);
+            }
 
             this.margin = [];
             this.spacing = [];
@@ -501,7 +513,13 @@ class Chart {
              */
             this.time = new Time(extend(
                 options.time || {},
-                { locale: options.lang.locale }
+                {
+                    locale: (
+                        options.lang.locale ??
+                        (this.renderTo.closest('[lang]') as HTMLDOMElement|null)
+                            ?.lang
+                    )
+                }
             ));
             options.time = this.time.options;
 
@@ -1524,25 +1542,10 @@ class Chart {
             options = chart.options,
             optionsChart = options.chart,
             indexAttrName = 'data-highcharts-chart',
-            containerId = uniqueKey();
-
-        let containerStyle: (CSSObject|undefined),
+            containerId = uniqueKey(),
             renderTo = chart.renderTo;
 
-        if (!renderTo) {
-            chart.renderTo = renderTo =
-                optionsChart.renderTo as HTMLDOMElement;
-        }
-
-        if (isString(renderTo)) {
-            chart.renderTo = renderTo =
-                doc.getElementById(renderTo as any) as any;
-        }
-
-        // Display an error if the renderTo is wrong
-        if (!renderTo) {
-            error(13, true, chart);
-        }
+        let containerStyle: (CSSObject|undefined);
 
         // If the container already holds a chart, destroy it. The check for
         // hasRendered is there because web pages that are saved to disk from

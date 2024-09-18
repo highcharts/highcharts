@@ -128,11 +128,20 @@ const defaultOptions: DefaultOptions = {
     lang: {
 
         /**
-         * The browser locale to use for date formatting. Defaults to
-         * `undefined`, which takes the browser's default locale.
+         * The browser locale to use for date formatting. The actual locale used
+         * for each chart is determined in three steps:
+         * 1. If this `lang.locale` option is specified, it is used.
+         * 2. Else, look for the closest ancestor HTML element with a `lang`
+         *    attribute, typically the `<html>` element.
+         * 3. If no 'lang' attribute is found, use the default browser locale.
          *
          * Use `en-GB`, British English, for approximate consistency with
          * Highcharts v < 12.
+         *
+         * @sample highcharts/lang/locale/
+         *         Set the locale using the `lang.locale` option
+         * @sample highcharts/lang/locale-attribute/
+         *         Pick up the locale from the HTML `lang` attribute
          *
          * @since next
          * @type {string|Array<string>}
@@ -2835,7 +2844,9 @@ function setOptions(
         defaultTime.update(defaultOptions.time);
     }
     if (options.lang && 'locale' in options.lang) {
-        defaultTime.update({ locale: options.lang.locale as string|Array<string> });
+        defaultTime.update({
+            locale: options.lang.locale as string|Array<string>
+        });
     }
 
     return defaultOptions;
