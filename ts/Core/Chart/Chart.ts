@@ -59,8 +59,7 @@ const {
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
-    defaultOptions,
-    defaultTime
+    defaultOptions
 } = D;
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
@@ -500,10 +499,11 @@ class Chart {
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
              */
-            this.time =
-                userOptions.time && Object.keys(userOptions.time).length ?
-                    new Time(userOptions.time) :
-                    H.time;
+            this.time = new Time(extend(
+                options.time || {},
+                { locale: options.lang.locale }
+            ));
+            options.time = this.time.options;
 
             /**
              * Callback function to override the default function that formats
@@ -3284,23 +3284,6 @@ class Chart {
         // Moved up, because tooltip needs updated plotOptions (#6218)
         if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
-        }
-
-        if (options.time) {
-            // Maintaining legacy global time. If the chart is instantiated
-            // first with global time, then updated with time options, we need
-            // to create a new Time instance to avoid mutating the global time
-            // (#10536).
-            if (this.time === defaultTime) {
-                this.time = new Time(options.time);
-            }
-
-            // If we're updating, the time class is different from other chart
-            // classes (chart.legend, chart.tooltip etc) in that it doesn't know
-            // about the chart. The other chart[something].update functions also
-            // set the chart.options[something]. For the time class however we
-            // need to update the chart options separately. #14230.
-            merge(true, chart.options.time, options.time);
         }
 
         // Some option structures correspond one-to-one to chart objects that

@@ -37,7 +37,7 @@ Highcharts.setOptions({
     chart: {
         animation: false
     },
-    time: {
+    lang: {
         locale: 'en-GB'
     },
     plotOptions: {

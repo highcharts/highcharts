@@ -414,7 +414,7 @@ QUnit.test('DataGrouping unequal series length', function (assert) {
         chart: {
             height: 500
         },
-        time: {
+        lang: {
             // Spanish resolves date formats reliably between browsers
             locale: 'es'
         },

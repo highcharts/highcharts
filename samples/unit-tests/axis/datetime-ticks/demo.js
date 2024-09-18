@@ -2,7 +2,7 @@ QUnit.test(
     'Time zone is negative, crossing midnight (#5935)',
     function (assert) {
         Highcharts.setOptions({
-            global: {
+            time: {
                 timezone: 'US/Pacific'
             }
         });
@@ -38,7 +38,7 @@ QUnit.test(
 
         // Reset
         Highcharts.setOptions({
-            global: {
+            time: {
                 timezone: undefined
             }
         });
@@ -47,7 +47,7 @@ QUnit.test(
 
 QUnit.test('Time zone with small interval (#4951)', function (assert) {
     Highcharts.setOptions({
-        global: {
+        time: {
             timezone: 'America/New_York'
         }
     });
@@ -88,7 +88,7 @@ QUnit.test('Time zone with small interval (#4951)', function (assert) {
 
     // Reset
     Highcharts.setOptions({
-        global: {
+        time: {
             timezone: undefined
         }
     });
@@ -96,7 +96,7 @@ QUnit.test('Time zone with small interval (#4951)', function (assert) {
 
 QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
     Highcharts.setOptions({
-        global: {
+        time: {
             timezone: 'Europe/Lisbon'
         }
     });
@@ -159,7 +159,7 @@ QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
 
     // Reset
     Highcharts.setOptions({
-        global: {
+        time: {
             timezone: undefined
         }
     });
@@ -169,7 +169,7 @@ QUnit.test(
     'Higher rank applied to first and last labels (#1649, #1760)',
     function (assert) {
         Highcharts.setOptions({
-            global: {
+            time: {
                 useUTC: true,
                 getTimezoneOffset: undefined
             }
@@ -218,7 +218,7 @@ QUnit.test(
     'Higher rank not showing with negative time offset (#3359)',
     function (assert) {
         Highcharts.setOptions({
-            global: {
+            time: {
                 timezoneOffset: -60
             }
         });
@@ -251,7 +251,7 @@ QUnit.test(
 
         // Reset
         Highcharts.setOptions({
-            global: {
+            time: {
                 timezoneOffset: 0
             }
         });

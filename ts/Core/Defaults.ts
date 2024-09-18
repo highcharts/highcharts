@@ -135,6 +135,7 @@ const defaultOptions: DefaultOptions = {
          * Highcharts v < 12.
          *
          * @since next
+         * @type {string|Array<string>}
          */
         locale: void 0,
 
@@ -298,72 +299,6 @@ const defaultOptions: DefaultOptions = {
      * ```
      */
     global: {
-        /**
-         * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-         * Use the [libURL](#exporting.libURL) option to configure exporting._
-         *
-         * The URL to the additional file to lazy load for Android 2.x devices.
-         * These devices don't support SVG, so we download a helper file that
-         * contains [canvg](https://github.com/canvg/canvg), its dependency
-         * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-         * our site, you can install canvas-tools.js on your own server and
-         * change this option accordingly.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
-         * @product   highcharts highmaps
-         * @apioption global.canvasToolsURL
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.useUTC](#time.useUTC) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {boolean}
-         * @apioption global.useUTC
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.Date](#time.Date) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.Date
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezone](#time.timezone) that supports individual time
-         * settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @product   highcharts highstock
-         * @apioption global.timezone
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-         * time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {number}
-         * @product   highcharts highstock
-         * @apioption global.timezoneOffset
-         */
-
         /**
          * General theme for buttons. This applies to the zoom button, exporting
          * context menu, map navigation, range selector buttons and custom
@@ -2877,7 +2812,6 @@ function getOptions(): DefaultOptions {
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
  *
- * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  *
  * @function Highcharts.setOptions
@@ -2891,40 +2825,19 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
-    let time = H.time;
     fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
     merge(true, defaultOptions, options);
 
     // Update the time object
-    if (options.time || options.global) {
-        if (time) {
-            time.update(merge(
-                defaultOptions.global,
-                defaultOptions.time,
-                options.global,
-                options.time
-            ));
-        } else {
-            /**
-             * Global `Time` object with default options. Since v6.0.5, time
-             * settings can be applied individually for each chart. If no
-             * individual settings apply, this `Time` object is shared by all
-             * instances.
-             *
-             * @name Highcharts.time
-             * @type {Highcharts.Time}
-             */
-            time = defaultTime;
-        }
+    if (options.time) {
+        defaultTime.update(defaultOptions.time);
     }
-
     if (options.lang && 'locale' in options.lang) {
-        time.update({ locale: options.lang.locale as string|Array<string> });
+        defaultTime.update({ locale: options.lang.locale as string|Array<string> });
     }
 
-    H.time = time;
     return defaultOptions;
 }
 
