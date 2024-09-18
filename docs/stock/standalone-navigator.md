@@ -16,8 +16,6 @@ The configuration options for the Standalone Navigator are the same as those for
 
 <iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/standalone-navigator/styled-standalone-navigator allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/standalone-navigator/styled-standalone-navigator) to check the code.
-
 ## Including the Standalone Navigator in a Project
 The Standalone Navigator can be included in a project in two ways:
 - As a separate module, alongside Highcharts:
@@ -33,9 +31,9 @@ The Standalone Navigator can be included in a project in two ways:
 
 ## Binding Charts to the Navigator
 
-The `bind` method binds a chart or an axis to the Standalone Navigator. Once a chart is bound, any range adjustments made using the navigator are automatically reflected in the bound chart. See the [bind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.bind) for more details.
+The `bind` method binds a chart or an axis to the Standalone Navigator. Once a chart is bound, any range adjustments made using the navigator are automatically reflected in the bound chart. See the [bind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator#bind) for more details.
 
-The `unbind` method is used to detach a chart or axis from the Standalone Navigator. This method can unbind either a single chart or all charts bound to the navigator simultaneously. Detaching charts from the navigator stops it from influencing their range. See the [unbind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.unbind) for additional information.
+The `unbind` method is used to detach a chart or axis from the Standalone Navigator. This method can unbind either a single chart or all charts bound to the navigator simultaneously. Detaching charts from the navigator stops it from influencing their range. See the [unbind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator#unbind) for additional information.
 
 ## Managing Navigator Range
 
@@ -43,7 +41,7 @@ The `setRange` method allows programmatic control of the navigator's range. This
 
 The `getRange` method retrieves the current range of the Standalone Navigator, enabling users to view or use the navigator's existing range settings.
 
-See the [setRange](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.setRange) and [getRange](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator.getRange) methods documentation for more details.
+See the [setRange](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator#setRange) and [getRange](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator#getRange) methods documentation for more details.
 
 ## API
 
