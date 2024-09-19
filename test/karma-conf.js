@@ -114,7 +114,7 @@ function resolveJSON(js) {
             /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
-        if (!data && innerMatch) {
+        if (innerMatch) {
 
             filename = innerMatch[2];
             data = fs.readFileSync(
@@ -132,7 +132,7 @@ function resolveJSON(js) {
         innerMatch = src.match(
             /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
-        if (!data && innerMatch) {
+        if (innerMatch) {
             filename = innerMatch[2];
             data = fs.readFileSync(
                 path.join(
