@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
-const alias = require('../samples/data/json-sources/alias.json');
+const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -91,9 +91,9 @@ function resolveJSON(js) {
             data;
 
         // Look for aliases
-        const aliasMatch = alias.find(item => item.url === src);
-        if (aliasMatch) {
-            filename = aliasMatch.filename;
+        const alias = aliases.find(item => item.url === src);
+        if (alias) {
+            filename = alias.filename;
             data = fs.readFileSync(
                 path.join(
                     __dirname,
