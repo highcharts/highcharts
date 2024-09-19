@@ -82,9 +82,7 @@ function getHTML(path) {
 function resolveJSON(js) {
     const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
-    const codeblocks = [
-        'window.JSONSources = {};'
-    ];
+    const codeblocks = [];
 
     while (match = regex.exec(js)) {
         let src = match[2],
