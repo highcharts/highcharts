@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 @media (max-width: 575px) {
     img {
         display: none;
@@ -8,4 +12,8 @@
     min-width: 320px;
     max-width: 800px;
     margin: 1em auto;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

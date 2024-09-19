@@ -216,7 +216,7 @@
 
 // /////////////////////////////////////////////////////////////////////////////
 
-const chart = Highcharts.chart('chart-container', {
+const chart = Highcharts.chart('container', {
     chart: {
         animation: {
             duration: 1000

@@ -36,3 +36,7 @@
     width: calc(100% - 90px);
     background: #f8f8f8;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
