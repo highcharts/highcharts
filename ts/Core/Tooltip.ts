@@ -346,7 +346,16 @@ class Tooltip {
             let chartX = 0,
                 chartY = 0;
             points.forEach(function (point): void {
-                const pos = point.pos(true);
+                const plotY = (
+                    point.series.options as any
+                )?.nullInteraction && point.isNull ?
+                    chart.plotSizeY :
+                    point.plotY;
+
+                const pos = point.pos(
+                    true,
+                    plotY
+                );
                 if (pos) {
                     chartX += pos[0];
                     chartY += pos[1];
