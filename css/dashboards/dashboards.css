@@ -180,7 +180,7 @@
     overflow: hidden;
     min-height: 300px;
     transition: 0.5s;
-    overflow-x: scroll;
+    overflow-x: hidden;
     font-family: Helvetica, Arial, sans-serif;
     font-size: 1rem;
 }
