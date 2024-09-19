@@ -320,7 +320,7 @@ class SidebarPopup extends BaseForm {
         const paddingTop =
             (getStyle(this.container, 'padding-top') || 0) as number;
         const offsetTop =
-            (this.sidebarWrapper as HTMLElement).getBoundingClientRect().y;
+            (this.container as HTMLElement).getBoundingClientRect().y;
 
         sidebarWrapper.appendChild(this.closeButton);
 
@@ -333,14 +333,14 @@ class SidebarPopup extends BaseForm {
             }
 
             document.addEventListener('scroll', (event) => {
-                if (window.scrollY > 0) {
-                    sidebarWrapper.style.top = Math.max(
-                        offsetTop - window.scrollY,
-                        paddingTop
-                    ) + 'px';
+                if (
+                    window.scrollY > offsetTop &&
+                    this.container.getBoundingClientRect().y < 0
+                ) {
+                    sidebarWrapper.style.top = paddingTop + 'px';
                     sidebarWrapper.style.position = 'fixed';
                 } else {
-                    sidebarWrapper.style.top = 'auto';
+                    sidebarWrapper.style.top = offsetTop + 'px';
                     sidebarWrapper.style.position = 'static';
                 }         
             });
