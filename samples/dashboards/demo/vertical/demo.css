@@ -4,11 +4,20 @@
 
 body {
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-5);
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+.highcharts-background {
+    fill: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-datagrid-container {
+    height: 402px;
 }
