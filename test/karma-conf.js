@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const alias = require('../samples/data/json-sources/alias.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -81,13 +82,30 @@ function getHTML(path) {
 function resolveJSON(js) {
     const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
-    const codeblocks = [];
+    const codeblocks = [
+        'window.JSONSources = {};'
+    ];
 
     while (match = regex.exec(js)) {
         let src = match[2],
             innerMatch,
             filename,
             data;
+
+        // Look for aliases
+        const aliasMatch = alias.find(item => item.url === src);
+        if (aliasMatch) {
+            filename = aliasMatch.filename;
+            data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'samples/data/json-sources',
+                    filename
+                ),
+                'utf8'
+            )
+        }
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
@@ -96,7 +114,7 @@ function resolveJSON(js) {
             /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
-        if (innerMatch) {
+        if (!data && innerMatch) {
 
             filename = innerMatch[2];
             data = fs.readFileSync(
@@ -114,7 +132,7 @@ function resolveJSON(js) {
         innerMatch = src.match(
             /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
-        if (innerMatch) {
+        if (!data && innerMatch) {
             filename = innerMatch[2];
             data = fs.readFileSync(
                 path.join(
@@ -278,7 +296,6 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
-            'test/json-sources.js',
 
             // Highcharts
             ...files,

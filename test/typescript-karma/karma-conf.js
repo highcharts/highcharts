@@ -147,7 +147,6 @@ module.exports = function (config) {
             'vendor/require.js',
             'test/test-controller.js',
             'test/test-utilities.js',
-            'test/json-sources.js',
             'test/typescript-karma/karma-fetch.js',
             'test/typescript-karma/karma-setup.js',
             {
