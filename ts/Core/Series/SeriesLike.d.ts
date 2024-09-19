@@ -25,6 +25,16 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
  *
  * */
 
+interface ZoomBox {
+    height: number;
+    width: number;
+    x: number;
+    y: number;
+    scale: number,
+    panX: number,
+    panY: number
+}
+
 /**
  * Helper interface for series types to add optional members to all series
  * instances.
@@ -52,6 +62,7 @@ export interface SeriesLike {
     render(): void;
     translate(): void;
     update(options: DeepPartial<SeriesOptions>): void;
+    zoomBox?: ZoomBox;
 }
 
 /* *

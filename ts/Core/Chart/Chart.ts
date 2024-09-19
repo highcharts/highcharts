@@ -3577,7 +3577,7 @@ class Chart {
             this,
             'selection',
             { resetSelection: true },
-            (): boolean => this.transform({ reset: true, trigger: 'zoom' })
+            (): void => this.transform({ reset: true, trigger: 'zoom' })
         );
     }
 
@@ -3650,7 +3650,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#transform
      */
-    public transform(params: Chart.ChartTransformParams): boolean {
+    public transform(params: Chart.ChartTransformParams): void {
         const {
                 axes = this.axes,
                 event,
@@ -3660,7 +3660,8 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted } = this;
+            { inverted } = this,
+            chart = this;
 
         let displayButton: boolean|undefined,
             isAnyAxisPanning: true|undefined;
@@ -3668,7 +3669,74 @@ class Chart {
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
 
-        fireEvent(this, 'transform', params);
+        // Logic for non-cartesian series zooming and panning
+        if (
+            trigger === 'mousewheel' ||
+            trigger === 'zoom' ||
+            trigger === 'pan' ||
+            selection
+        ) {
+            chart.series.forEach((series): void => {
+                if (!series.isCartesian) {
+                    series.isDirty = true;
+                    if (trigger === 'pan' && series.zoomBox) {
+                        series.zoomBox.panX = to.x || 0;
+                        series.zoomBox.panY = to.y || 0;
+                    } else {
+                        if (Object.keys(from).length) {
+                            const {
+                                width: toWidth = 1,
+                                height: toHeight = 1
+                            } = to;
+
+                            let {
+                                    x = 0,
+                                    y = 0,
+                                    width: fromWidth = 1,
+                                    height: fromHeight = 1
+                                } = from,
+                                scale = series.zoomBox?.scale || 1,
+                                width = (
+                                    series.zoomBox?.width ||
+                                    chart.plotSizeX ||
+                                    0
+                                ),
+                                height = (
+                                    series.zoomBox?.height ||
+                                    chart.plotSizeY ||
+                                    0
+                                );
+
+                            if (Object.keys(to).length) {
+                                width = width * (fromWidth / toWidth);
+                                height = height * (fromWidth / toHeight);
+
+                                scale =
+                                    Math.min(
+                                        (chart.plotSizeX || 0) / width,
+                                        (chart.plotSizeY || 0) / height
+                                    );
+                            } else {
+                                scale = Math.min(
+                                    (chart.plotSizeX || 0) / fromWidth,
+                                    (chart.plotSizeY || 0) / fromHeight
+                                );
+                                width = fromWidth;
+                                height = fromHeight;
+                                x = x + (width / 2);
+                                y = y + (height / 2);
+                            }
+
+                            series.zoomBox = {
+                                x, y, width, height, scale, panX: 0, panY: 0
+                            };
+                        } else {
+                            delete series.zoomBox;
+                        }
+                    }
+                }
+            });
+        }
 
         for (const axis of axes) {
             const {
@@ -3906,7 +3974,6 @@ class Chart {
                 (this.options.chart.animation ?? this.pointCount < 100)
             );
         }
-        return true;
     }
 
 }
