@@ -22,6 +22,7 @@ import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -32,11 +33,11 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
-import Globals from '../../Core/Globals';
 const {
     addEvent,
     createElement,
     fireEvent,
+    getStyle,
     merge
 } = U;
 
@@ -300,6 +301,9 @@ class SidebarPopup extends BaseForm {
 
     public generateContent(context?: Cell | Row | CellHTML): void {
 
+        // Reset
+        this.container.innerHTML = AST.emptyHTML;
+
         // Render content wrapper
         this.sidebarWrapper = createElement(
             'div',
@@ -310,9 +314,26 @@ class SidebarPopup extends BaseForm {
             this.container
         );
 
-        // if (window.scrollY > this.sidebarWrapper.getBoundingClientRect().y) {
-        //     this.sidebarWrapper.style.top = '20px'; // stick
-        // }
+        const paddingTop =
+            (getStyle(this.container, 'padding-top') || 0) as number;
+        const offsetTop =
+            (this.sidebarWrapper as HTMLElement).getBoundingClientRect().y;
+        const popupCloseButton = this.closeButton;
+
+        this.sidebarWrapper.appendChild(popupCloseButton);
+
+        if (window.scrollY > offsetTop) {
+            this.sidebarWrapper.style.top = paddingTop + 'px'; // stick
+        }
+
+        document.addEventListener('scroll', (event) => {
+           (this.sidebarWrapper as HTMLElement).style.top =
+                window.scrollY > 0 ?
+                    Math.max(
+                        offsetTop - window.scrollY,
+                        paddingTop
+                    ) + 'px' : 'auto';
+        });
 
         // Title
         this.renderHeader(
