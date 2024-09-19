@@ -30,6 +30,8 @@ document.body.appendChild(demoHTML);
 
 var currentTests = [];
 
+window.JSONSources = {};
+
 Highcharts.useSerialIds(true);
 
 // Disable animation over all.
