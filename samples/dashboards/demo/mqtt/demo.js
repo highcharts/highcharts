@@ -13,17 +13,13 @@ const defaultZoom = 11;
 let activePowerPlant = '';
 
 
-// MQTT configuration for Sognekraft AS (topic discovery).
-const mqttConfig = {
+// MQTT configuration for Sognekraft AS
+const mqttLinkConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
     user: 'highsoft',
     password: 'Qs0URPjxnWlcuYBmFWNK',
-    timeout: 10,
-    qOs: 0,  // Quality of Service
-    useSSL: true,
-    autoConnect: true,
-    topic: 'prod/+/+/overview'
+    useSSL: true
 };
 
 // Mapping of MQTT topics to Dashboards components
@@ -92,7 +88,7 @@ const intakeConfig = {
 
 
 // Creates the dashboard
-async function dashboardCreate() {
+async function createDashboard() {
     // eslint-disable-next-line no-use-before-define
     console.log('Topics discovered, creating dashboard...');
 
@@ -164,22 +160,16 @@ async function dashboardCreate() {
 
     // The data pool is updated by incoming MQTT data
     function createDataConnector(topic, connId) {
-        logAppend(`Creating connector for topic: ${topic} ${connId}`);
         return {
             id: connId,
             type: 'MQTT',
             options: {
-                host: 'mqtt.sognekraft.no',
-                port: 8083,
-                user: 'highsoft',
-                password: 'Qs0URPjxnWlcuYBmFWNK',
-                useSSL: true,
+                ...mqttLinkConfig,
                 topic: topic,
                 autoConnect: true,
                 columnNames: ['time', 'power'],
                 beforeParse: data => {
-                    // Application specific data parsing,
-                    // extracts power production data
+                    // Extract power production data
                     const modifiedData = [];
                     if (data.aggs) {
                         const ts = new Date(data.tst_iso).valueOf();
@@ -189,13 +179,13 @@ async function dashboardCreate() {
                     return modifiedData;
                 },
                 connectEvent: event => {
-                    console.log('connectEvent:', event);
                     const { connected, host, port } = event.detail;
                     controlBar.setConnectState(connected);
                     if (connected) {
                         controlBar.showStatus(`Connected to ${host}:${port}`);
                     } else {
                         controlBar.showStatus('Not connected');
+                        uiSetComponentVisibility(false);
                     }
                     // eslint-disable-next-line max-len
                     logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
@@ -211,7 +201,7 @@ async function dashboardCreate() {
                 packetEvent: event => {
                     const { topic, count } = event.detail;
                     logAppend(`Packet #${count} received: ${topic}`);
-                    dashboardsComponentUpdate(event.data, connId);
+                    dashboardUpdate(event.data, connId);
                 },
                 errorEvent: event => {
                     const { code, message } = event.detail;
@@ -311,7 +301,7 @@ async function dashboardCreate() {
     function createKpiComponent() {
         return {
             type: 'KPI',
-            renderTo: 'kpi-agg-1',
+            renderTo: 'el-kpi',
             chartOptions: {
                 ...commonChartOptions,
                 chart: {
@@ -362,7 +352,7 @@ async function dashboardCreate() {
     function createChartComponent(connId) {
         return {
             type: 'Highcharts',
-            renderTo: 'chart-agg-1',
+            renderTo: 'el-chart',
             connector: {
                 id: connId,
                 columnAssignment: [{
@@ -407,7 +397,7 @@ async function dashboardCreate() {
     function createDatagridComponent(connId) {
         return {
             type: 'DataGrid',
-            renderTo: 'data-grid-1',
+            renderTo: 'el-datagrid',
             connector: {
                 id: connId
             },
@@ -460,7 +450,7 @@ async function dashboardCreate() {
 const powPlantList = {};
 
 // Maintain power plant list and selection menu
-function updatePowerStationList(data, topic) {
+function updatePowerPlantList(data, topic) {
     const stationName = data.name;
     if (stationName in powPlantList) {
         return;
@@ -484,8 +474,7 @@ function updatePowerStationList(data, topic) {
 
 
 // Update all Dashboards components
-async function dashboardsComponentUpdate(mqttData, connId) {
-    logAppend('Updating dashboard components...' + connId);
+async function dashboardUpdate(mqttData, connId) {
     function getInfoRecord(item, fields) {
         const ret = [];
         fields.forEach(field => {
@@ -687,7 +676,6 @@ async function dashboardsComponentUpdate(mqttData, connId) {
     // Update KPI, chart and datagrid
     const i = 0; // TBD: fix
     const aggInfo = mqttData.aggs[i];
-    const pgIdx = 1; // TBD: fix
 
     // Get data
     const dataTable = await dashboard.dataPool.getConnectorTable(connId);
@@ -706,7 +694,7 @@ async function dashboardsComponentUpdate(mqttData, connId) {
     }
 
     // KPI
-    const kpiComp = dashboard.getComponentByCellId('kpi-agg-' + pgIdx);
+    const kpiComp = dashboard.getComponentByCellId('el-kpi');
     await kpiComp.update({
         value: rowCount > 0 ?
             dataTable.getCellAsNumber('power', rowCount - 1) : 0,
@@ -715,7 +703,7 @@ async function dashboardsComponentUpdate(mqttData, connId) {
     });
 
     // Spline chart
-    const chartComp = dashboard.getComponentByCellId('chart-agg-' + pgIdx);
+    const chartComp = dashboard.getComponentByCellId('el-chart');
     await chartComp.update({
         connector: {
             id: connId
@@ -725,7 +713,7 @@ async function dashboardsComponentUpdate(mqttData, connId) {
     });
 
     // Datagrid
-    const gridComp = dashboard.getComponentByCellId('data-grid-' + pgIdx);
+    const gridComp = dashboard.getComponentByCellId('el-datagrid');
     await gridComp.update({
         connector: {
             id: connId
@@ -841,6 +829,8 @@ class ControlBar {
             // Power plant menu items
             if (event.target.matches('.dropdown-select')) {
                 const name = event.target.innerText;
+
+                // Change the active power plant
                 if (name in powPlantList && activePowerPlant !== name) {
                     // Unsubscribe data from currently active power plant
                     if (activePowerPlant !== '') {
@@ -850,6 +840,10 @@ class ControlBar {
                         // eslint-disable-next-line max-len
                         const con = await dashboard.dataPool.getConnector(connName);
                         await con.unsubscribe();
+                    } else {
+                        if (!dashboard) {
+                            await createDashboard();
+                        }
                     }
                     // Show the power plant name in the connection bar
                     this.elDropdownButton.innerHTML = name + '&nbsp;&#9662;';
@@ -884,9 +878,10 @@ class ControlBar {
 let discoveryTopic;
 
 function startTopicDiscovery() {
-    // Topic discovery
+    // Create a special connector for topic (power plant) discovery
     const config = {
-        ...mqttConfig,
+        ...mqttLinkConfig,
+        topic: 'prod/+/+/overview',
         autoConnect: true,
         connectEvent: event => {
             console.log('connectEvent:', event);
@@ -904,14 +899,11 @@ function startTopicDiscovery() {
             const { count } = event.detail;
             logAppend(`Packet #${count} received`);
             // eslint-disable-next-line max-len
-            updatePowerStationList(event.data, event.detail.topic);
+            updatePowerPlantList(event.data, event.detail.topic);
             nDiscoveredTopics++;
-            const nTopic = Object.keys(topicMap).length;
-            if (count === nTopic) {
+            const expTopics = Object.keys(topicMap).length;
+            if (count === expTopics) {
                 discoveryTopic.unsubscribe();
-                if (!dashboard) {
-                    dashboardCreate();
-                }
             }
         }
     };
@@ -1390,9 +1382,9 @@ MQTTConnector.defaultOptions = {
     port: 8000,
     user: '',
     password: '',
+    topic: 'highcharts/test',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: 'highcharts/test',
     useSSL: false,
     cleanSession: true,
 

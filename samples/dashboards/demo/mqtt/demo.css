@@ -33,7 +33,7 @@
 
 /* Colors */
 
-.el-kpi {
+#el-kpi {
     --color-axis-labels: var(--color-custom);
     --color-gauge: var(--color-custom);
     --color-pane: #eee;
@@ -75,7 +75,7 @@
         --color-table-caption: rgb(148, 183, 212);
     }
 
-    .el-kpi {
+    #el-kpi {
         --color-axis-labels: #dfdfde;
         --color-pane: #20202c;
         --color-pane-line: #838394;
@@ -184,18 +184,18 @@ body {
     flex: 1 1 50%;
 }
 
-.el-kpi,
-.data-grid {
+#el-kpi,
+#el-datagrid {
     flex: 1 1 25%;
     height: var(--chart-row-height);
 }
 
-.el-chart {
+#el-chart {
     flex: 1 1 50%;
     height: var(--chart-row-height);
 }
 
-.el-kpi .highcharts-dashboards-component-kpi-value,
+#el-kpi .highcharts-dashboards-component-kpi-value,
 .el-aggr,
 #el-info,
 #el-map {
@@ -218,9 +218,9 @@ body {
 
 /* SMALL */
 @media (max-width: 576px) {
-    .el-kpi,
-    .el-chart,
-    .data-grid,
+    #el-kpi,
+    #el-chart,
+    #el-datagrid,
     .el-info,
     .el-info > div,
     .el-aggr {
@@ -378,27 +378,27 @@ div#connect-bar button:hover {
  *
  * */
 
-.el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
+#el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
     margin: 0.5em 0;
 }
 
-.el-kpi .highcharts-data-label text {
+#el-kpi .highcharts-data-label text {
     fill: var(--color-axis-labels);
     font-size: 18px;
 }
 
-.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
     fill: var(--color-axis-labels);
     font-weight: bold;
 }
 
-.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
     fill: var(--highcharts-neutral-color-5);
     stroke: var(--highcharts-neutral-color-20);
     fill-opacity: 1;
 }
 
-.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
     fill: var(--color-gauge);
     stroke: none;
 }
@@ -408,7 +408,7 @@ div#connect-bar button:hover {
  *  Data grid
  *
  * */
-.data-grid {
+#el-datagrid {
     font-size: var(--text-font-size);
 }
 
