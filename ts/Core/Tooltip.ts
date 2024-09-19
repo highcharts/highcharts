@@ -1035,7 +1035,7 @@ class Tooltip {
 
         // Register the current series
         const currentSeries = point.series;
-        this.distance = pick(currentSeries.tooltipOptions.distance, 15);
+        this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
         // Update the inner HTML
         if (text === false) {
