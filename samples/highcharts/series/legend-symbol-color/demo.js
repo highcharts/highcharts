@@ -1,28 +1,52 @@
-Highcharts.chart('container', {
-    title: {
-        text: 'Legend symbol color'
-    },
+(async () => {
+    const data = await fetch(
+        'https://www.highcharts.com/samples/data/range.json'
+    ).then(response => response.json());
 
-    series: [{
-        data: [1, 5, 2, 6],
-        legendSymbolColor: '#ff0000'
-    }, {
-        data: [4, 2, 2, 1]
-    }, {
-        type: 'pie',
-        data: [{
-            name: 'Point 1',
-            y: 20,
-            legendSymbolColor: '#ff0000'
-        }, {
-            name: 'Point 2',
-            y: 20
-        }],
-        center: ['10%', '20%'],
-        size: 60,
-        dataLabels: {
-            enabled: false
+    Highcharts.chart('container', {
+        chart: {
+            type: 'arearange',
+            zooming: {
+                type: 'x'
+            },
+            scrollablePlotArea: {
+                minWidth: 600,
+                scrollPositionX: 1
+            }
         },
-        showInLegend: true
-    }]
-});
+        title: {
+            text: 'Temperature variation by day'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C',
+            xDateFormat: '%A, %b %e'
+        },
+        series: [{
+            name: 'Temperatures',
+            data: data,
+            color: {
+                linearGradient: {
+                    x1: 0,
+                    x2: 0,
+                    y1: 0,
+                    y2: 1
+                },
+                stops: [
+                    [0, '#ff0000'],
+                    [1, '#0000ff']
+                ]
+            },
+            legendSymbolColor: '#880088' // change legend symbol color
+        }]
+    });
+})();
