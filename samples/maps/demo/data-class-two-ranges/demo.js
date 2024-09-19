@@ -17,8 +17,8 @@
              * Event handler for clicking points.
              */
             function pointClick() {
-                const row = this.options.row;
-                const chart = this.series.chart;
+                const row = this.options.row,
+                    chart = this.series.chart;
 
                 // Remove existing annotation if present
                 chart.removeAnnotation('election-popup');
@@ -48,8 +48,6 @@
                     }],
                     zIndex: 10
                 });
-
-                console.log(chart);
 
                 document.getElementById('annotation-close-btn')
                     .addEventListener('click', function () {

@@ -34,7 +34,6 @@
 }
 
 #annotation-close-btn {
-    appearance: none;
     width: 20px;
     height: 20px;
     padding: 1px;
@@ -46,4 +45,5 @@
     border-radius: 3px;
     background: #f6f6f6;
     cursor: pointer;
+    z-index: 999;
 }
