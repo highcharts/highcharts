@@ -53,6 +53,9 @@ Dashboards.board(
             enabled: true,
             contextMenu: {
                 enabled: true
+            },
+            sidebar: {
+                sticky: true
             }
         },
         components: [

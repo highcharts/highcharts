@@ -828,10 +828,10 @@
 }
 
 .highcharts-dashboards-edit-sidebar-wrapper {
-    position: fixed;
     width: 300px;
     height: calc(100% - 40px);
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .highcharts-dashboards-edit-grid-items {

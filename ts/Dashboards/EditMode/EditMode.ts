@@ -95,6 +95,9 @@ class EditMode {
                 settings: {
                     enabled: true
                 },
+                sidebar: {
+                    sticky: false
+                },
                 toolbars: {
                     cell: {
                         enabled: true
@@ -1126,6 +1129,10 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+        /**
+         * 
+         */
+        sidebar: SidebarOptions;
     }
 
     /**
@@ -1267,6 +1274,19 @@ namespace EditMode {
     export interface ContextPointer {
         isVisible: boolean;
         element: HTMLDOMElement;
+    }
+
+    /**
+     * Sidebar options
+     */
+    export interface SidebarOptions {
+        /**
+         * Whether the sidebar should be sticky when scrolling down or
+         * compontent is out of the view port.
+         *
+         * @default false
+         */
+        sticky?: boolean;
     }
 }
 

@@ -301,11 +301,14 @@ class SidebarPopup extends BaseForm {
 
     public generateContent(context?: Cell | Row | CellHTML): void {
 
+        let sidebarWrapper: HTMLElement;
+        const isSticky = this.editMode.options.sidebar.sticky;
+
         // Reset
         this.container.innerHTML = AST.emptyHTML;
 
         // Render content wrapper
-        this.sidebarWrapper = createElement(
+        this.sidebarWrapper = sidebarWrapper = createElement(
             'div',
             {
                 className: EditGlobals.classNames.editSidebarWrapper
@@ -319,20 +322,29 @@ class SidebarPopup extends BaseForm {
         const offsetTop =
             (this.sidebarWrapper as HTMLElement).getBoundingClientRect().y;
 
-        this.sidebarWrapper.appendChild(this.closeButton);
+        sidebarWrapper.appendChild(this.closeButton);
 
-        if (window.scrollY > offsetTop) {
-            this.sidebarWrapper.style.top = paddingTop + 'px'; // stick
-        }
+        if (isSticky) {
+            if (window.scrollY > offsetTop) {
+                sidebarWrapper.style.top = paddingTop + 'px'; // stick
+                sidebarWrapper.style.position = 'fixed';
+            } else {
+                sidebarWrapper.style.position = 'static';
+            }
 
-        document.addEventListener('scroll', (event) => {
-           (this.sidebarWrapper as HTMLElement).style.top =
-                window.scrollY > 0 ?
-                    Math.max(
+            document.addEventListener('scroll', (event) => {
+                if (window.scrollY > 0) {
+                    sidebarWrapper.style.top = Math.max(
                         offsetTop - window.scrollY,
                         paddingTop
-                    ) + 'px' : 'auto';
-        });
+                    ) + 'px';
+                    sidebarWrapper.style.position = 'fixed';
+                } else {
+                    sidebarWrapper.style.top = 'auto';
+                    sidebarWrapper.style.position = 'static';
+                }         
+            });
+        }
 
         // Title
         this.renderHeader(
@@ -365,7 +377,7 @@ class SidebarPopup extends BaseForm {
 
         const gridWrapper = createElement('div', {
             className: EditGlobals.classNames.editGridItems
-        }, {}, sidebar.container);
+        }, {}, sidebar.sidebarWrapper);
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             gridElement = createElement(
