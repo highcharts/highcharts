@@ -84,6 +84,10 @@ QUnit.test('timezone', function (assert) {
             text: 'timezone with local DST crossover'
         },
 
+        lang: {
+            locale: 'en-GB'
+        },
+
         subtitle: {
             text: 'From October 27, UTC midnight is 01:00 AM in Oslo'
         },
@@ -149,16 +153,16 @@ QUnit.test('timezone', function (assert) {
     assert.equal(
         chart.time.dateFormat('%H:%M', oct27Point.x),
         '05:30',
-        'Non full-hour timezone - UTC midnight should render 05:00 in Calcutta'
+        'Non full-hour timezone - UTC midnight should render 05:30 in Calcutta'
     );
 
     assert.equal(
         chart.time.dateFormat({
-            hour: 'numeric',
+            hour: '2-digit',
             minute: 'numeric'
         }, oct27Point.x),
         '05:30',
-        'Non full-hour timezone - UTC midnight should render 05:00 in Calcutta'
+        'Non full-hour timezone - UTC midnight should render 05:30 in Calcutta'
     );
 
     chart.update({
