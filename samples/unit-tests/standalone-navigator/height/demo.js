@@ -1,5 +1,5 @@
 QUnit.test('Standalone navigator height', function (assert) {
-    const navigator = Highcharts.navigator('navigator-container', {
+    const navigator = Highcharts.navigator('container', {
         height: 150,
         series: [{
             data: [1, 2, 3, 4]
