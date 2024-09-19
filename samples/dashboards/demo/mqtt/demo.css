@@ -195,10 +195,8 @@ body {
     height: var(--chart-row-height);
 }
 
-#el-kpi .highcharts-dashboards-component-kpi-value,
-.el-aggr,
-#el-info,
-#el-map {
+.el-info,
+.el-aggr {
     display: none;
 }
 
@@ -377,6 +375,9 @@ div#connect-bar button:hover {
  *  KPI
  *
  * */
+#el-kpi .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
 
 #el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
     margin: 0.5em 0;

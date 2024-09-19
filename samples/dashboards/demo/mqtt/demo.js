@@ -93,9 +93,6 @@ const intakeConfig = {
 
 // Creates the dashboard
 async function createDashboard() {
-    // eslint-disable-next-line no-use-before-define
-    console.log('Topics discovered, creating dashboard...');
-
     const powerUnit = 'MW';
 
     const commonChartOptions = {
@@ -433,23 +430,16 @@ async function createDashboard() {
         };
     }
 
-    // Update component visibility according to the number
-    // of used power generator (or entirely hidden).
+    // Update component visibility. Hide all but first row
+    // if not connected.
     function uiSetComponentVisibility(visible) {
-        const powGenCells = document.getElementsByClassName('el-aggr');
+        const cells = document.getElementsByClassName('row');
 
-        for (let i = 0; i < powGenCells.length; i++) {
-            const el = powGenCells[i];
+        for (let i = 1; i < cells.length; i++) {
+            const el = cells[i];
             el.style.display = visible ? 'flex' : 'none';
         }
-
-        let el = document.getElementById('el-info');
-        el.style.display = visible ? 'flex' : 'none';
-
-        el = document.getElementById('el-map');
-        el.style.display = visible ? 'flex' : 'none';
     }
-
 }
 
 // Power stations: Name indexes topic and traffic stats.
@@ -833,77 +823,95 @@ class ControlBar {
         }
     }
 
+    // eslint-disable-next-line class-methods-use-this
+    async onConnectClicked() {
+        if (nDiscoveredTopics === 0) {
+            startTopicDiscovery();
+            return;
+        }
+        const connName = 'mqtt-data-1';
+        const con = await dashboard.dataPool.getConnector(connName);
+        if (con.connected) {
+            await con.disconnect();
+        } else {
+            await con.connect();
+        }
+    }
+
+    async onPowPlantClicked(fullName) {
+        if (activeItem.fullName === fullName) {
+            // Power planet/generator already selected
+            return;
+        }
+
+        // Extract the power plant name
+        const tmp = fullName.split('-');
+        const plant = tmp[0];
+
+        if (!(plant in powPlantList)) {
+            this.showError('Invalid power plant selection: ' + plant);
+            return;
+        }
+
+        // Extract the generator ID
+        const genId = tmp.length > 1 ? tmp[1] : 1;
+
+        // Show the power plant name
+        this.elDropdownButton.innerHTML =
+            fullName + '&nbsp;&#9662;';
+
+        const id = activeItem.plantName;
+        if (id === '') {
+            // First power plant selection, create the dashboard
+            if (!dashboard) {
+                await createDashboard();
+            }
+        } else {
+            // Unsubscribe from the current power plant topic
+            const topic = powPlantList[id].topic;
+            const cn = topicMap[topic];
+
+            const con = await dashboard.dataPool.getConnector(cn);
+            logAppend('Unsubscribed: ' + con.options.topic);
+            await con.unsubscribe();
+        }
+
+        // Subscribe to the new power plant topic
+        const topic = powPlantList[plant].topic;
+        const cn = topicMap[topic];
+        const con = await dashboard.dataPool.getConnector(cn);
+
+        logAppend('Subscribed: ' + con.options.topic);
+        await con.subscribe();
+
+        // Update the active power plant/generator
+        activeItem.generatorId = genId;
+        activeItem.fullName = fullName;
+        activeItem.plantName = plant;
+    }
+
     async clickHandler(event) {
         if (event.target === this.elDropdownButton) {
             // Reveals the dropdown list of power stations
             this.elDropdownContent.classList.toggle('show');
-        } else if (event.target === this.elToggle) {
-            if (nDiscoveredTopics === 0) {
-                startTopicDiscovery();
-                return;
-            }
-            const connName = 'mqtt-data-1';
-            const con = await dashboard.dataPool.getConnector(connName);
-            if (con.connected) {
-                await con.disconnect();
-            } else {
-                await con.connect();
-            }
-        } else {
-            // Power plant menu items
-            if (event.target.matches('.dropdown-select')) {
-                const fullName = event.target.innerText;
-
-                // Extract the power plant name
-                const tmp = fullName.split('-');
-                const plant = tmp[0];
-                const genId = tmp.length > 1 ? tmp[1] : 1;
-
-                // Has selected power plant/generator changed?
-                // eslint-disable-next-line max-len
-                if (plant in powPlantList && activeItem.fullName !== fullName) {
-                    // Show the power plant name
-                    this.elDropdownButton.innerHTML =
-                        fullName + '&nbsp;&#9662;';
-
-                    const id = activeItem.plantName;
-                    if (id !== '') {
-                        const topic = powPlantList[id].topic;
-                        const cn = topicMap[topic];
-                        // eslint-disable-next-line max-len
-                        logAppend('Unsubscribing from current topic ' + topic);
-                        // eslint-disable-next-line max-len
-                        const con = await dashboard.dataPool.getConnector(cn);
-                        await con.unsubscribe();
-                    } else {
-                        if (!dashboard) {
-                            await createDashboard();
-                        }
-                    }
-                    // Subscribe to the new power plant topic
-                    const topic = powPlantList[plant].topic;
-                    const cn = topicMap[topic];
-                    const con = await dashboard.dataPool.getConnector(cn);
-
-                    if (con.connected) {
-                        // eslint-disable-next-line max-len
-                        logAppend('topic ' + con.options.topic);
-                        await con.subscribe();
-                    }
-                    activeItem.generatorId = genId;
-                    activeItem.fullName = fullName;
-                    activeItem.plantName = plant;
-                }
-            }
-
-            // Hide the power plant dropdown if the user clicks outside of it
-            const dropdowns =
-                document.getElementsByClassName('dropdown-content');
-            for (let i = 0; i < dropdowns.length; i++) {
-                const item = dropdowns[i];
-                if (item.classList.contains('show')) {
-                    item.classList.remove('show');
-                }
+            return;
+        }
+        if (event.target === this.elToggle) {
+            // Connect/Disconnect button
+            await this.onConnectClicked();
+            return;
+        }
+        if (event.target.matches('.dropdown-select')) {
+            // Power plant selection
+            await this.onPowPlantClicked(event.target.innerText);
+            return;
+        }
+        // Hide the dropdown if the user clicks outside of it
+        const items = document.getElementsByClassName('dropdown-content');
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.classList.contains('show')) {
+                item.classList.remove('show');
             }
         }
     }
