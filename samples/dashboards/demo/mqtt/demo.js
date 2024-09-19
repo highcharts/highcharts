@@ -171,6 +171,8 @@ async function createDashboard() {
                 ...mqttLinkConfig,
                 topic: topic,
                 autoConnect: true,
+                autoReset: true, // Clear data table on subscribe
+
                 columnNames: ['time', 'power'],
                 beforeParse: data => {
                     // Extract power production data
@@ -1168,6 +1170,18 @@ class MQTTConnector extends DataConnector {
     }
 
     /**
+     * Clear the data table and reset the packet count.
+     *
+     */
+    async reset() {
+        const connector = this,
+            table = connector.table;
+
+        connector.packetCount = 0;
+        table.deleteRows();
+    }
+
+    /**
      * Connects to the MQTT broker.
      *
      */
@@ -1199,7 +1213,13 @@ class MQTTConnector extends DataConnector {
      *
      */
     async subscribe() {
-        const { topic, qOs } = this.options;
+        const { topic, qOs, autoReset } = this.options;
+
+        if (autoReset) {
+            // Reset the data table
+            await this.reset();
+        }
+
         this.mqtt.subscribe(topic, {
             qos: qOs,
             onSuccess: () => {
@@ -1274,7 +1294,6 @@ class MQTTConnector extends DataConnector {
      *
      */
     onMessageArrived(mqttPacket) {
-        console.log('CID = ' + this.clientId);
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
@@ -1426,7 +1445,8 @@ MQTTConnector.defaultOptions = {
 
     // Custom connector properties
     autoConnect: false,
-    autoSubscribe: true
+    autoSubscribe: true,
+    autoReset: false
 };
 
 // Register the connector
