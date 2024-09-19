@@ -1,11 +1,11 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- MQTT client library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
@@ -51,19 +51,24 @@
 
 <div class="highcharts-description">
     <p>
-        This application displays key data from a selection of power generation plants in the county of Vestland,
-        Norway. The data set contains information about the power plant, and also of water intakes and
-        water reservoirs (providing these exist). The data are provided by <b>Sognekraft</b>.
+        This application displays key data from a selection of power stations in the area of Sogn,
+        Norway. The chart, datagrid, KPI display the generated power in units of MW (Megawatts). Additional 
+        power generation parameters are displayed in the information section. The location of the power plant
+        with connected water intakes and reservoirs is indicated on the map.
     </p>
-    <p>How to use</p>
+    <p>
+        How to use:
     <ul>
-        <li>Click the switch in the top bar to connect to <b>Sognekraft</b>'s MQTT server.</li>
-        <li>When connecting succeeds, a selection of power plants becomes available in the <b>Power Plant</b>
-            dropdown.</li>
-        <li>Select any of the power plants. This subscribes to the MQTT subjected that are particular to each
-            power plant. The reporting interval is determined by the server but will normally be every two
-            minutes.
+        <li>Click <b>Connect MQTT</b> to connect to Sognekraft's MQTT server.</li>
+        <li>When connecting succeeds the available power plants become available in the <b>Power Plant</b>
+            dropdown. The MQTT server name and IP port are displayed.
         </li>
-        <li>The application only displays data for one power plant at a time.</li>
+        <li>Select any of the power plants to start displaying data. The reporting interval is determined by
+            the server but will normally be every two minutes.
+        </li>
+        <li>The application only displays one generator of one power plant simultaneously (some power plants may have multiple generators).</li>
+        <li>The power plant can be selected without disconnecting from the server.
+        </li>
     </ul>
+    </p>
 </div>

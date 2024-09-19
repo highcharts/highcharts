@@ -959,7 +959,7 @@ function measDataInfo() {
         },
         h: {
             brief: 'Elevation',
-            unit: 'moh'
+            unit: 'MASL'
         },
         location: {
             brief: 'Location',
@@ -979,15 +979,15 @@ function measDataInfo() {
         },
         level: {
             brief: 'level',
-            unit: 'moh'
+            unit: 'MASL'
         },
         HRV: {
             brief: 'Highest regulated level',
-            unit: 'moh'
+            unit: 'MASL'
         },
         LRV: {
             brief: 'Lowest regulated level',
-            unit: 'moh'
+            unit: 'MASL'
         },
         energy: {
             brief: 'Energy',
