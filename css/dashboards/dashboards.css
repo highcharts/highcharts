@@ -701,7 +701,7 @@
     min-height: 300px;
     height: 100%;
     padding: 20px;
-    overflow: scroll;
+    overflow: hidden;
 }
 
 .highcharts-dashboards-edit-sidebar-right {
