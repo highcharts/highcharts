@@ -9,8 +9,12 @@ let dashboard;
 // Default map zoom level
 const defaultZoom = 11;
 
-// Currently active power plant (name)
-let activePowerPlant = '';
+// Currently active power plant/generator
+const activeItem = {
+    fullName: '',
+    plantName: '',
+    generatorId: 1
+};
 
 
 // MQTT configuration for Sognekraft AS
@@ -174,7 +178,8 @@ async function createDashboard() {
                     if (data.aggs) {
                         const ts = new Date(data.tst_iso).valueOf();
                         // Generated power in MW
-                        modifiedData.push([ts, data.aggs[0].P_gen]);
+                        const idx = activeItem.generatorId - 1;
+                        modifiedData.push([ts, data.aggs[idx].P_gen]);
                     }
                     return modifiedData;
                 },
@@ -451,24 +456,32 @@ const powPlantList = {};
 
 // Maintain power plant list and selection menu
 function updatePowerPlantList(data, topic) {
-    const stationName = data.name;
-    if (stationName in powPlantList) {
+    const powerPlantName = data.name;
+    if (powerPlantName in powPlantList) {
         return;
     }
 
     // Add station if these conditions are satisfied:
     // - valid location data
     // - valid generator data
-    if (data.location && data.location.lon && data.aggs.length > 0) {
-        powPlantList[stationName] = {
-            topic: topic
+    const nGenr = data.aggs.length;
+    if (data.location && data.location.lon && nGenr > 0) {
+        const info = {
+            topic: topic,
+            aggs: []
         };
-    }
-    // Update dropdown list
-    // eslint-disable-next-line no-use-before-define
-    if (controlBar) {
-        // eslint-disable-next-line no-use-before-define
-        controlBar.updateDropdownList(Object.keys(powPlantList));
+        // Add generator data if applicable
+        if (nGenr > 1) {
+            for (let i = 0; i < nGenr; i++) {
+                info.aggs.push(data.aggs[i].name);
+            }
+        }
+        powPlantList[powerPlantName] = info;
+
+        // Update dropdown list
+        if (controlBar) {
+            controlBar.updatePowPlantDropdown(powPlantList);
+        }
     }
 }
 
@@ -674,8 +687,8 @@ async function dashboardUpdate(mqttData, connId) {
     await updateInfoHtml(mqttData);
 
     // Update KPI, chart and datagrid
-    const i = 0; // TBD: fix
-    const aggInfo = mqttData.aggs[i];
+    const idx = activeItem.generatorId - 1;
+    const aggInfo = mqttData.aggs[idx];
 
     // Get data
     const dataTable = await dashboard.dataPool.getConnectorTable(connId);
@@ -799,13 +812,22 @@ class ControlBar {
         this.showStatus('Error: ' + msg);
     }
 
-    updateDropdownList(names) {
+    updatePowPlantDropdown(powPlantList) {
         const el = this.elDropdownContent;
         el.innerHTML = '';
 
-        for (const key of names) {
-            el.innerHTML +=
-                `<a class="dropdown-select" href="#">${key}</a>`;
+        for (const [key, value] of Object.entries(powPlantList)) {
+            const tag = '<a class="dropdown-select" href="#">';
+            if (value.aggs.length === 0) {
+                // Single generator, no need to specify
+                el.innerHTML += `${tag}${key}</a>`;
+            } else {
+                // Multiple generators, list them all
+                for (let i = 0; i < value.aggs.length; i++) {
+                    const id = i + 1;
+                    el.innerHTML += `${tag}${key}-${id}</a>`;
+                }
+            }
         }
     }
 
@@ -828,34 +850,47 @@ class ControlBar {
         } else {
             // Power plant menu items
             if (event.target.matches('.dropdown-select')) {
-                const name = event.target.innerText;
+                const fullName = event.target.innerText;
 
-                // Change the active power plant
-                if (name in powPlantList && activePowerPlant !== name) {
-                    // Unsubscribe data from currently active power plant
-                    if (activePowerPlant !== '') {
-                        const topic = powPlantList[activePowerPlant].topic;
-                        const connName = topicMap[topic];
+                // Extract the power plant name
+                const tmp = fullName.split('-');
+                const plant = tmp[0];
+                const genId = tmp.length > 1 ? tmp[1] : 1;
+
+                // Has selected power plant/generator changed?
+                // eslint-disable-next-line max-len
+                if (plant in powPlantList && activeItem.fullName !== fullName) {
+                    // Show the power plant name
+                    this.elDropdownButton.innerHTML =
+                        fullName + '&nbsp;&#9662;';
+
+                    const id = activeItem.plantName;
+                    if (id !== '') {
+                        const topic = powPlantList[id].topic;
+                        const cn = topicMap[topic];
+                        // eslint-disable-next-line max-len
                         logAppend('Unsubscribing from current topic ' + topic);
                         // eslint-disable-next-line max-len
-                        const con = await dashboard.dataPool.getConnector(connName);
+                        const con = await dashboard.dataPool.getConnector(cn);
                         await con.unsubscribe();
                     } else {
                         if (!dashboard) {
                             await createDashboard();
                         }
                     }
-                    // Show the power plant name in the connection bar
-                    this.elDropdownButton.innerHTML = name + '&nbsp;&#9662;';
-                    const connName = topicMap[powPlantList[name].topic];
-                    const con = await dashboard.dataPool.getConnector(connName);
+                    // Subscribe to the new power plant topic
+                    const topic = powPlantList[plant].topic;
+                    const cn = topicMap[topic];
+                    const con = await dashboard.dataPool.getConnector(cn);
 
                     if (con.connected) {
                         // eslint-disable-next-line max-len
                         logAppend('topic ' + con.options.topic);
                         await con.subscribe();
                     }
-                    activePowerPlant = name;
+                    activeItem.generatorId = genId;
+                    activeItem.fullName = fullName;
+                    activeItem.plantName = plant;
                 }
             }
 
@@ -898,8 +933,9 @@ function startTopicDiscovery() {
         packetEvent: event => {
             const { count } = event.detail;
             logAppend(`Packet #${count} received`);
-            // eslint-disable-next-line max-len
             updatePowerPlantList(event.data, event.detail.topic);
+
+            // Check if all topics have been discovered
             nDiscoveredTopics++;
             const expTopics = Object.keys(topicMap).length;
             if (count === expTopics) {
