@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .highcharts-figure {
     min-width: 320px;
     max-width: 750px;
@@ -12,4 +16,8 @@
     margin-top: 10em;
     text-align: center;
     color: gray;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

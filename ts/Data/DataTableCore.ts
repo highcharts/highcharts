@@ -114,7 +114,7 @@ class DataTableCore {
 
     public readonly autoId: boolean;
 
-    protected columns: Record<string, DataTable.Column>;
+    public readonly columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
 

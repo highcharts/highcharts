@@ -5,9 +5,25 @@
     "basePath": "../../../ts/",
     "disableSources": true,
     "entryPoints": [
-        "../../../ts/Dashboards/Actions/DragDrop.ts",
-        "../../../ts/Dashboards/Actions/Resizer.ts",
+        // Board
         "../../../ts/Dashboards/Board.ts",
+        "../../../ts/Dashboards/Globals.ts",
+        "../../../ts/Dashboards/Layout/Cell.ts",
+        "../../../ts/Dashboards/Layout/Layout.ts",
+        "../../../ts/Dashboards/Layout/Row.ts",
+
+        // EditMode
+        "../../../ts/Dashboards/Actions/Resizer.ts",
+        "../../../ts/Dashboards/EditMode/ConfirmationPopup.ts",
+        "../../../ts/Dashboards/EditMode/EditContextMenu.ts",
+        "../../../ts/Dashboards/EditMode/EditMode.ts",
+        "../../../ts/Dashboards/EditMode/Toolbar/EditToolbar.ts",
+        "../../../ts/Dashboards/EditMode/Toolbar/CellEditToolbar.ts",
+        "../../../ts/Dashboards/EditMode/Toolbar/RowEditToolbar.ts",
+        "../../../ts/Dashboards/EditMode/Toolbar/SidebarEditToolbar.ts",
+        "../../../ts/Dashboards/EditMode/SidebarPopup.ts",
+
+        // Components
         "../../../ts/Dashboards/Components/Component.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
         "../../../ts/Dashboards/Components/ConnectorHandler.ts",
@@ -24,24 +40,16 @@
         "../../../ts/Dashboards/Components/NavigatorComponent/NavigatorComponentOptions.ts",
         "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/Components/TextOptions.d.ts",
-        "../../../ts/Dashboards/EditMode/ConfirmationPopup.ts",
-        "../../../ts/Dashboards/EditMode/EditContextMenu.ts",
-        "../../../ts/Dashboards/EditMode/EditMode.ts",
-        "../../../ts/Dashboards/EditMode/Toolbar/EditToolbar.ts",
-        "../../../ts/Dashboards/EditMode/Toolbar/CellEditToolbar.ts",
-        "../../../ts/Dashboards/EditMode/Toolbar/RowEditToolbar.ts",
-        "../../../ts/Dashboards/EditMode/Toolbar/SidebarEditToolbar.ts",
-        "../../../ts/Dashboards/EditMode/SidebarPopup.ts",
-        "../../../ts/Dashboards/Globals.ts",
-        "../../../ts/Dashboards/Layout/Cell.ts",
-        "../../../ts/Dashboards/Layout/Layout.ts",
-        "../../../ts/Dashboards/Layout/Row.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
+
+        // Connectors
         "../../../ts/Data/Connectors/CSVConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/JSONConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/DataConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/HTMLTableConnectorOptions.d.ts",
+
+        // Modifiers
         "../../../ts/Data/Modifiers/DataModifier.ts",
         "../../../ts/Data/Modifiers/DataModifierOptions.ts",
         "../../../ts/Data/Modifiers/DataModifierType.d.ts",
@@ -53,11 +61,37 @@
         "../../../ts/Data/Modifiers/RangeModifierOptions.ts",
         "../../../ts/Data/Modifiers/ChainModifier.ts",
         "../../../ts/Data/Modifiers/ChainModifierOptions.ts",
+
+        // DataLayer
         "../../../ts/Data/DataPool.ts",
         "../../../ts/Data/DataPoolOptions.ts",
         "../../../ts/Data/DataTable.ts",
+        "../../../ts/Data/DataTableOptions.ts",
+
+        // DataGrid
         "../../../ts/DataGrid/DataGrid.ts",
-        "../../../ts/DataGrid/DataGridOptions.d.ts"
+        "../../../ts/DataGrid/Options.ts",
+        "../../../ts/DataGrid/Table/Cell.ts",
+        "../../../ts/DataGrid/Table/Column.ts",
+        "../../../ts/DataGrid/Table/Row.ts",
+        "../../../ts/DataGrid/Table/Table.ts",
+        "../../../ts/DataGrid/Table/Header/TableHeader.ts",
+        "../../../ts/DataGrid/Globals.ts",
+        "../../../ts/DataGrid/Utils.ts",
+
+        // DataGrid - Header
+        "../../../ts/DataGrid/Header/HeaderCell.ts",
+        "../../../ts/DataGrid/Header/HeaderRow.ts",
+        "../../../ts/DataGrid/Header/TableHeader.ts",
+
+        // DataGrid - Content
+        "../../../ts/DataGrid/Content/TableCell.ts",
+        "../../../ts/DataGrid/Content/TableRow.ts",
+
+        "../../../ts/DataGrid/Table/Actions/CellEditing.ts",
+        "../../../ts/DataGrid/Table/Actions/ColumnsResizer.ts",
+        "../../../ts/DataGrid/Table/Actions/ColumnSorting.ts",
+        "../../../ts/DataGrid/Table/Actions/RowsVirtualizer.ts",
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,

@@ -218,8 +218,9 @@ Dashboards.board('container', {
         title: 'Transactions',
         type: 'DataGrid',
         dataGridOptions: {
-            cellHeight: 37,
-            editable: false
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);

@@ -34,7 +34,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Run unit tests
-        run: npx ts-node test/ts-node-unit-tests/index.ts
+        run: npm run test-node
 
   test_cypress:
     name: Cypress tests
