@@ -318,9 +318,8 @@ class SidebarPopup extends BaseForm {
             (getStyle(this.container, 'padding-top') || 0) as number;
         const offsetTop =
             (this.sidebarWrapper as HTMLElement).getBoundingClientRect().y;
-        const popupCloseButton = this.closeButton;
 
-        this.sidebarWrapper.appendChild(popupCloseButton);
+        this.sidebarWrapper.appendChild(this.closeButton);
 
         if (window.scrollY > offsetTop) {
             this.sidebarWrapper.style.top = paddingTop + 'px'; // stick
