@@ -31,6 +31,7 @@ export default async function benchmarkTest(
 
   const chart = hc.stockChart(el, {
     chart: {
+        animation: false,
         height: 400,
         width: 800
     },

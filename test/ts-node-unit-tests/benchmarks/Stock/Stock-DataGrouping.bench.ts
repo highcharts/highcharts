@@ -30,6 +30,7 @@ export default async function benchmarkTest(
   performance.mark('Start');
   hc.stockChart(el, {
     chart: {
+        animation: false,
         height: 400,
         width: 800
     },
