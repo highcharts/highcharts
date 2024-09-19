@@ -18,7 +18,9 @@
     <div class="row">
         <div class="cell" id="connect-bar">
             <h1 id="logo-text">Sognekraft</h1>
+                <!--
             <img id="logo-img-1" src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
+                -->
             <!-- Dropdown for selecting power plant -->
             <div id="dropdown-container">
                 <button id="dropdown-button"></button>
@@ -36,11 +38,11 @@
             </div>
     </div>
     </div>
-    <!-- Two rows for the power plant, max 2 generators ("aggregat") -->
+    <!-- Middle row - data synced with MQTT connector -->
     <div class="row el-aggr">
-        <div class="cell el-kpi" id="kpi-agg-1"></div>
-        <div class="cell el-chart" id="chart-agg-1"></div>
-        <div class="cell data-grid" id="data-grid-1"></div>
+        <div class="cell" id="el-kpi"></div>
+        <div class="cell" id="el-chart"></div>
+        <div class="cell" id="el-datagrid"></div>
     </div>
     <!-- Bottom row: information (HTML) and Highcharts map -->
     <div class="row el-info">
