@@ -1094,7 +1094,7 @@ class Tooltip {
                             x: clamp(
                                 label.x || 0,
                                 0,
-                                (this.getPlayingField().width) -
+                                this.getPlayingField().width -
                                 (label.width || 0)
                             )
                         });
@@ -1781,7 +1781,8 @@ class Tooltip {
                 width,
                 height,
                 point
-            );
+            ),
+            doc = H.doc;
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
@@ -1812,7 +1813,7 @@ class Tooltip {
                     baseWidth,
                     0,
                     // 'Outside' container always has 'left: 1px;'
-                    H.doc.documentElement.clientWidth - 1
+                    doc.documentElement.clientWidth - 1
                 ) :
                     baseWidth,
                 height + pad,
