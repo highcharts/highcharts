@@ -560,6 +560,10 @@ a:hover {
     color: #7e29a8;
 }
 
+.options-tree .deprecated .title {
+    color: #ccc;
+}
+
 /* Body */
 
 .body h1 {
@@ -901,6 +905,10 @@ a:hover {
 
     .options-tree .default.type-boolean {
         color: #ce59e8;
+    }
+
+    .options-tree .deprecated .title {
+        color: #aaa;
     }
 
     .description code {
