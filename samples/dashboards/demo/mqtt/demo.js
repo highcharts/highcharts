@@ -6,6 +6,9 @@
 let controlBar;
 let dashboard;
 
+// Whether or not to use historical data
+const useHistoricalData = true;
+
 // Default map zoom level
 const defaultZoom = 11;
 
@@ -119,6 +122,42 @@ async function createDashboard() {
         components: dashConfig.components
     });
 
+    function dataParser(data) {
+        if (!data.aggs) {
+            return data;
+        }
+
+        // Extract power production data
+        const modifiedData = [];
+        const idx = activeItem.generatorId - 1;
+        const aggData = data.aggs[idx];
+
+        if (useHistoricalData) {
+            // Get measurement history (24 hours, 10 minute intervals)
+            const hist = aggData.P_hist;
+            let ts = new Date(hist.start).valueOf();
+
+            const interval = hist.res * 1000; // Resolution: seconds
+            const histLen = hist.values.length;
+
+            for (let j = 0; j < histLen; j++) {
+                const power = hist.values[j];
+
+                // Add row with historical data
+                modifiedData.push([ts, power]);
+
+                // Next measurement
+                ts += interval;
+            }
+        } else {
+            // Use latest measurement
+            const ts = new Date(data.tst_iso).valueOf();
+            modifiedData.push([ts, aggData.P_gen]);
+        }
+
+        return modifiedData;
+    }
+
     async function createDashConfig() {
         const dashConfig = {
             connectors: [],
@@ -135,7 +174,7 @@ async function createDashboard() {
             createMapComponent()
         );
 
-        // Connector on power plant level
+        // Connector(s) on power plant level
         for (const [key, value] of Object.entries(topicMap)) {
             dashConfig.connectors.push(
                 createDataConnector(key, value)
@@ -147,7 +186,7 @@ async function createDashboard() {
             createKpiComponent()
         );
 
-        // Data connector ID
+        // Chart and datagrid get data from the same connector
         const connId = 'mqtt-data-1';
         dashConfig.components.push(
             createChartComponent(connId)
@@ -169,19 +208,10 @@ async function createDashboard() {
                 topic: topic,
                 autoConnect: true,
                 autoReset: true, // Clear data table on subscribe
+                autoClear: useHistoricalData, // Avoid reuse of historical data
 
                 columnNames: ['time', 'power'],
-                beforeParse: data => {
-                    // Extract power production data
-                    const modifiedData = [];
-                    if (data.aggs) {
-                        const ts = new Date(data.tst_iso).valueOf();
-                        // Generated power in MW
-                        const idx = activeItem.generatorId - 1;
-                        modifiedData.push([ts, data.aggs[idx].P_gen]);
-                    }
-                    return modifiedData;
-                },
+                beforeParse: data => dataParser(data),
                 connectEvent: event => {
                     const { connected, host, port } = event.detail;
                     controlBar.setConnectState(connected);
@@ -412,26 +442,38 @@ async function createDashboard() {
                 }
             },
             dataGridOptions: {
-                editable: false,
-                columns: {
-                    time: {
-                        headerFormat: 'Measure time (UTC)',
-                        cellFormatter: function () {
-                            // eslint-disable-next-line max-len
-                            return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' +
-                                Highcharts.dateFormat('%H:%M:%S', this.value);
-                        }
+                credits: {
+                    enabled: false
+                },
+                columns: [{
+                    id: 'time',
+                    header: {
+                        format: 'Measure time (UTC)'
                     },
-                    power: {
-                        headerFormat: measInfo.descr('P_gen')
+                    cells: {
+                        formatter: function () {
+                            const ts = this.value;
+                            const dStr = Highcharts.dateFormat('%Y-%m-%d', ts);
+                            const tStr = Highcharts.dateFormat('%H:%M:%S', ts);
+
+                            return `${dStr} ${tStr}`;
+                        }
                     }
-                }
+                }, {
+                    id: 'power',
+                    header: {
+                        format: measInfo.descr('P_gen')
+                    },
+                    cells: {
+                        // Float precisoion 2
+                        format: '{value:.2f}'
+                    }
+                }]
             }
         };
     }
 
-    // Update component visibility. Hide all but first row
-    // if not connected.
+    // Update component visibility. Hide all but first row if not connected.
     function uiSetComponentVisibility(visible) {
         const cells = document.getElementsByClassName('row');
 
@@ -881,8 +923,10 @@ class ControlBar {
         const cn = topicMap[topic];
         const con = await dashboard.dataPool.getConnector(cn);
 
-        logAppend('Subscribed: ' + con.options.topic);
-        await con.subscribe();
+        if (con.connected) {
+            logAppend('Subscribed: ' + con.options.topic);
+            await con.subscribe();
+        }
 
         // Update the active power plant/generator
         activeItem.generatorId = genId;
@@ -1307,6 +1351,11 @@ class MQTTConnector extends DataConnector {
             converter = connector.converter,
             connTable = connector.table;
 
+        // Clear the data table on each packet
+        if (connector.options.autoClear) {
+            connTable.deleteRows();
+        }
+
         // Parse the message
         let data;
         const payload = mqttPacket.payloadString;
@@ -1452,9 +1501,10 @@ MQTTConnector.defaultOptions = {
     cleanSession: true,
 
     // Custom connector properties
-    autoConnect: false,
-    autoSubscribe: true,
-    autoReset: false
+    autoConnect: false,  // Automatically connect after load
+    autoSubscribe: true, // Automatically subscribe after connect
+    autoReset: false,    // Clear data table on subscribe
+    autoClear: false     // Clear data table on each packet
 };
 
 // Register the connector
