@@ -197,6 +197,9 @@ const browserStackBrowsers = require('./karma-bs.json');
 
 // Create JSONSources and write to a temporary file
 const JSONSources = {};
+if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
+    fs.mkdirSync(path.join(__dirname, '../tmp'));
+}
 aliases.forEach(alias => {
     JSONSources[alias.url] = JSON.parse(fs.readFileSync(
         path.join(
