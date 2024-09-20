@@ -26,3 +26,6 @@ The custom implementations have the following requirements:
 7. `@productdesc` adds additional product-specific information to the initial
    doclet text. The first word following the tag has to be the product key in
    curly brackets.
+
+8. `@since` and `@deprecated` support usage of `next` as the version number
+   that is resolved on the next release when the next code version is known.

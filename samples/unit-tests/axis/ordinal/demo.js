@@ -1251,3 +1251,199 @@ QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
     const length = chart.series[0].processedXData.length;
     assert.notEqual(length, 0, 'The processedXData should be calculated.');
 });
+
+QUnit.test('Zooming on ordinal axis, #21483', assert => {
+    const data = [
+        [
+            1628515800000,
+            146.2,
+            146.7,
+            145.52,
+            146.09,
+            48908700
+        ],
+        [
+            1628602200000,
+            146.44,
+            147.71,
+            145.3,
+            145.6,
+            69023100
+        ],
+        [
+            1628688600000,
+            146.05,
+            146.72,
+            145.53,
+            145.86,
+            48493500
+        ],
+        [
+            1628775000000,
+            146.19,
+            149.05,
+            145.84,
+            148.89,
+            72282600
+        ],
+        [
+            1628861400000,
+            148.97,
+            149.44,
+            148.27,
+            149.1,
+            59375000
+        ],
+        [
+            1629120600000,
+            148.54,
+            151.19,
+            146.47,
+            151.12,
+            103296000
+        ],
+        [
+            1629207000000,
+            150.23,
+            151.68,
+            149.09,
+            150.19,
+            92229700
+        ],
+        [
+            1629293400000,
+            149.8,
+            150.72,
+            146.15,
+            146.36,
+            86326000
+        ],
+        [
+            1629379800000,
+            145.03,
+            148,
+            144.5,
+            146.7,
+            86960300
+        ],
+        [
+            1629466200000,
+            147.44,
+            148.5,
+            146.78,
+            148.19,
+            60549600
+        ],
+        [
+            1629725400000,
+            148.31,
+            150.19,
+            147.89,
+            149.71,
+            60131800
+        ],
+        [
+            1629811800000,
+            149.45,
+            150.86,
+            149.15,
+            149.62,
+            48606400
+        ],
+        [
+            1629898200000,
+            149.81,
+            150.32,
+            147.8,
+            148.36,
+            58991300
+        ],
+        [
+            1629984600000,
+            148.35,
+            149.12,
+            147.51,
+            147.54,
+            48597200
+        ],
+        [
+            1630071000000,
+            147.48,
+            148.75,
+            146.83,
+            148.6,
+            55802400
+        ],
+        [
+            1630330200000,
+            149,
+            153.49,
+            148.61,
+            153.12,
+            90956700
+        ],
+        [
+            1630416600000,
+            152.66,
+            152.8,
+            151.29,
+            151.83,
+            86453100
+        ],
+        [
+            1630503000000,
+            152.83,
+            154.98,
+            152.34,
+            152.51,
+            80313700
+        ],
+        [
+            1630589400000,
+            153.87,
+            154.72,
+            152.4,
+            153.65,
+            71115500
+        ],
+        [
+            1630675800000,
+            153.76,
+            154.63,
+            153.09,
+            154.3,
+            57808700
+        ]
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'candlestick',
+            data: data,
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1629259209625, 1629740234408);
+
+    const controller = new TestController(chart);
+
+    // Emulate scrolling with mouse wheel to gradually zoom out, instead of
+    // calling one big mousewheel zoom out event
+    for (let i = 0; i < 40; i++) {
+        controller.mouseWheel(chart.plotWidth / 2, chart.plotHeight / 2, 50);
+    }
+
+    assert.strictEqual(
+        chart.xAxis[0].dataMin,
+        chart.xAxis[0].min,
+        'Chart should be zoomed out - min value.'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].dataMax,
+        chart.xAxis[0].max,
+        'Chart should be zoomed out - max value.'
+    );
+});

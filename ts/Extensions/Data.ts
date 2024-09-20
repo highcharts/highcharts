@@ -18,11 +18,13 @@
  *
  * */
 
+import type XAxisOptions from '../Core/Axis/AxisOptions';
 import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
@@ -68,7 +70,7 @@ declare module '../Core/Options' {
 type DataValueType = (number|string|null);
 
 interface DataAfterCompleteCallbackFunction {
-    (dataOptions?: Partial<Options>): void;
+    (dataInstance: Data, dataOptions?: Partial<Options>): void;
 }
 
 interface DataBeforeParseCallbackFunction {
@@ -301,6 +303,10 @@ class Data {
     public rowsToColumns = Data.rowsToColumns; // Backwards compatibility
     public options: DataOptions;
     public valueCount?: DataValueCountObject;
+    public xAxisOptions?: {
+        type?: XAxisOptions['type'];
+        uniqueNames?: false;
+    };
 
     /* *
      *
@@ -391,7 +397,7 @@ class Data {
         }
 
         if (!hasData && dataOptions.afterComplete) {
-            dataOptions.afterComplete();
+            dataOptions.afterComplete(this);
         }
     }
 
@@ -457,12 +463,12 @@ class Data {
             const builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
-                seriesArr = (chartOptions && chartOptions.series) || [],
-                series = seriesArr[seriesIndex] || {},
+                seriesArr = chartOptions?.series ?? [],
+                series = seriesArr[seriesIndex] ?? {},
                 defaultPointArrayMap = getPointArrayMap(
                     series.type || globalType
                 ),
-                pointArrayMap = defaultPointArrayMap || ['y'];
+                pointArrayMap = defaultPointArrayMap ?? ['y'];
 
             if (
                 // User-defined x.mapping
@@ -711,7 +717,7 @@ class Data {
                     }
 
                 // Perform "plugin" handling
-                } else if (callbacks && callbacks[c]) {
+                } else if (callbacks?.[c]) {
                     if (callbacks[c](c, token)) {
                         push();
                     }
@@ -877,7 +883,7 @@ class Data {
             for (; i < limit; i++) {
                 if (
                     typeof data[i] !== 'undefined' &&
-                    data[i] && data[i].length
+                    data[i]?.length
                 ) {
                     thing = data[i]
                         .trim()
@@ -1205,7 +1211,7 @@ class Data {
                     success: function (
                         res: (string|JSON.Type)
                     ): void {
-                        if (chart && chart.series) {
+                        if (chart?.series) {
                             done(res);
                         }
 
@@ -1220,7 +1226,7 @@ class Data {
                             poll();
                         }
 
-                        return options.error && options.error(text, xhr);
+                        return options.error?.(text, xhr);
                     }
                 });
 
@@ -1341,7 +1347,7 @@ class Data {
                     xhr: XMLHttpRequest,
                     text: (string|Error)
                 ): void {
-                    return options.error && options.error(text, xhr);
+                    return options.error?.(text, xhr);
                 }
             });
         }
@@ -1379,7 +1385,7 @@ class Data {
                     }
                 });
 
-                if (chart && chart.series) {
+                if (chart?.series) {
                     chart.update({
                         data: {
                             columns: columns
@@ -1530,7 +1536,7 @@ class Data {
             // String, continue to determine if it is a date string or really a
             // string
             } else {
-                if (trimVal && trimVal.length) {
+                if (trimVal?.length) {
                     dateVal = this.parseDate(val as any);
                 }
 
@@ -1803,10 +1809,7 @@ class Data {
             options = this.options,
             allSeriesBuilders: SeriesBuilder[] = [];
 
-        let type: (
-                'linear'|'logarithmic'|'datetime'|'category'|'treegrid'|
-                undefined
-            ),
+        let type: XAxisOptions['type'] = 'linear',
             series: Array<SeriesOptions>,
             data: SeriesOptions['data'],
             i: number,
@@ -1951,28 +1954,60 @@ class Data {
 
             // Do the callback
             chartOptions = { series };
-            if (type) {
-                chartOptions.xAxis = {
-                    type: type
-                };
+
+            // Prepare the axis options
+            if (
+                type === 'linear' && (
+                    !this.xAxisOptions ||
+                    this.xAxisOptions.type === type
+                )
+            ) {
+                // Clear default value ('linear') if it is not changing the
+                // axis type to avoid loosing animation
+                type = this.xAxisOptions = void 0;
+            } else {
+                this.xAxisOptions = { type };
                 if (type === 'category') {
-                    chartOptions.xAxis.uniqueNames = false;
-                } else {
-                    chartOptions.xAxis.categories = false;
+                    this.xAxisOptions.uniqueNames = false;
                 }
             }
 
-            if (options.complete) {
-                options.complete(chartOptions);
+            // Merge the xAxisOptions for the standalone Data module
+            if (!this.chart) {
+                merge(true, chartOptions, { xAxis: this.xAxisOptions || {} });
             }
+
+            options.complete?.(chartOptions);
 
             // The afterComplete hook is used internally to avoid conflict with
             // the externally available complete option.
-            if (options.afterComplete) {
-                options.afterComplete(chartOptions);
-            }
+            options.afterComplete?.(this, chartOptions);
+        }
+    }
+
+    /**
+     * Sets properties directly on the xAxis object.
+     *
+     * @private
+     */
+    public xAxisUpdateHandler(axis: Axis): void {
+        const options = this.xAxisOptions;
+
+        if (!options) {
+            return;
         }
 
+        // Set the axis properties if not blocked by the axis options that could
+        // have changed in the update event.
+        if (!axis.options.type && options.type) {
+            axis.type = options.type;
+        }
+        if (
+            !axis.options.uniqueNames &&
+            options.uniqueNames === false
+        ) {
+            axis.uniqueNames = options.uniqueNames;
+        }
     }
 
     /**
@@ -1996,33 +2031,46 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
+                dataInstance: Data,
                 dataOptions?: Partial<Options>
             ): void {
-                // Avoid setting axis options unless the type changes. Running
-                // Axis.update will cause the whole structure to be destroyed
-                // and rebuilt, and animation is lost.
-                if (dataOptions) {
-                    if (
-                        dataOptions.xAxis &&
-                        chart.xAxis[0] &&
-                        (dataOptions.xAxis as any).type ===
-                        chart.xAxis[0].options.type
-                    ) {
-                        delete dataOptions.xAxis;
-                    }
-
-                    // @todo looks not right:
-                    chart.update(dataOptions, redraw, true);
+                if (!dataOptions) {
+                    return;
                 }
+
+                // Avoid setting axis options unless they change. Running
+                // Axis.update will cause the whole structure to be
+                // destroyed and rebuilt, and animation is lost.
+                const xAxis = chart.xAxis[0],
+                    xAxisOptions = dataInstance.xAxisOptions;
+
+                // Update axis if xAxisOptions are different from the current
+                // and not blocked by the axis options.
+                if (xAxisOptions && xAxis && (
+                    (xAxis.type !== xAxisOptions.type && !xAxis.options.type) ||
+                    (
+                        xAxis.uniqueNames &&
+                        xAxisOptions.uniqueNames === false &&
+                        xAxis.options.uniqueNames === void 0
+                    )
+                )) {
+                    xAxis.update({}, false);
+                } else {
+                    // Prefer smooth points update when no axis update
+                    (dataOptions?.series || []).forEach(function (
+                        seriesOptions: SeriesOptions
+                    ): void {
+                        delete seriesOptions.pointStart;
+                    });
+                }
+
+                chart.update(dataOptions, redraw, true);
             };
             // Apply it
             merge(true, chartOptions.data, options);
 
             // Reset columns if fetching spreadsheet, to force a re-fetch
-            if (
-                chartOptions.data && chartOptions.data.googleSpreadsheetKey &&
-                !options.columns
-            ) {
+            if (chartOptions.data?.googleSpreadsheetKey && !options.columns) {
                 delete chartOptions.data.columns;
             }
 
@@ -2030,6 +2078,22 @@ class Data {
         }
     }
 }
+
+// Fire 1st xAxis properties modifier after the options are set.
+addEvent(
+    Axis,
+    'afterSetOptions',
+    function (): void {
+        // Target first xAxis only
+        if (
+            this.isXAxis &&
+            // Init or update
+            (!this.chart.xAxis.length || this.chart.xAxis[0] === this)
+        ) {
+            this.chart.data?.xAxisUpdateHandler(this);
+        }
+    }
+);
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
 // option group, data.
@@ -2065,8 +2129,8 @@ addEvent(
             const dataOptions = merge(defaultDataOptions, userOptions.data);
 
             chart.data = new Data(extend(dataOptions, {
-
                 afterComplete: function (
+                    dataInstance: Data,
                     dataOptions?: Partial<Options>
                 ): void {
                     let i, series;
@@ -2081,17 +2145,13 @@ addEvent(
                         if (typeof userOptions.series === 'object') {
                             i = Math.max(
                                 userOptions.series.length,
-                                dataOptions && dataOptions.series ?
-                                    dataOptions.series.length :
-                                    0
+                                dataOptions?.series?.length ?? 0
                             );
                             while (i--) {
                                 series = userOptions.series[i] || {};
                                 userOptions.series[i] = merge(
                                     series,
-                                    dataOptions && dataOptions.series ?
-                                        dataOptions.series[i] :
-                                        {}
+                                    dataOptions?.series?.[i] ?? {}
                                 );
                             }
                         } else { // Allow merging in dataOptions.series (#2856)
@@ -2101,6 +2161,9 @@ addEvent(
 
                     // Do the merge
                     userOptions = merge(dataOptions, userOptions);
+
+                    // Register for access in events (Axis' afterSetOptions)
+                    chart.data = dataInstance;
 
                     // Run chart.init again
                     chart.init(userOptions, callback);

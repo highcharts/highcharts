@@ -195,8 +195,7 @@ function wrapGetLabelPosition(
         ),
         pos = tick.pos,
         axis = tick.axis,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid',
+        isTreeGrid = axis.type === 'treegrid',
         result = proceed.apply(
             tick,
             [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
@@ -271,7 +270,7 @@ function wrapRenderLabel(
         } = node || {},
         hasDescendants = node && descendants && descendants > 0,
         level = depth,
-        isTreeGridElement = (axisOptions.type === 'treegrid') && labelElement,
+        isTreeGridElement = (axis.type === 'treegrid') && labelElement,
         shouldRender = tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
         prefixLevelClass = prefixClassName + 'level-',

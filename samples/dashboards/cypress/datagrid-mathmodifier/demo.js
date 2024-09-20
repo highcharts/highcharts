@@ -85,6 +85,19 @@ Dashboards.board('container', {
             connector: {
                 id: 'EUR-USD'
             },
+            dataGridOptions: {
+                columnDefaults: {
+                    cells: {
+                        editable: true
+                    }
+                },
+                columns: [{
+                    id: 'USD',
+                    cells: {
+                        editable: false
+                    }
+                }]
+            },
             sync: {
                 highlight: true
             }

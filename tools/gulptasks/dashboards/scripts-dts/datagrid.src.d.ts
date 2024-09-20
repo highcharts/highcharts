@@ -7,6 +7,10 @@
 import Globals from "./es-modules/DataGrid/Globals";
 
 export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
+export { default as Column } from './es-modules/DataGrid/Table/Column';
+export { default as TableRow } from './es-modules/DataGrid/Table/Content/TableRow';
+export { default as TableCell } from './es-modules/DataGrid/Table/Content/TableCell';
+export { default as Options } from './es-modules/DataGrid/Options';
 
 export { default as DataConnector } from "./es-modules/Data/Connectors/DataConnector";
 export { default as DataConverter } from "./es-modules/Data/Converters/DataConverter";

@@ -1,8 +1,6 @@
 import type { AssertionError } from 'assert';
 import * as PosixPath from 'node:path/posix';
-import { message, failure } from '../../tools/libs/log.js';
-
-const { argv } = process;
+import { failure } from '../../tools/libs/log.js';
 
 const codePath = PosixPath.join(__dirname, '../../code/');
 
@@ -10,16 +8,6 @@ const defaultHTML = (
     '<!DOCTYPE html><html><head><meta charset="UTF-8" /></head>' +
     '<body><div id="container"></div></body></html>'
 );
-
-/**
- * Logs the output if `argv.verbose` is given
- * @param text
- */
-export function describe(...text: string[]): void {
-    if (argv.includes('--verbose')) {
-        message(...text);
-    }
-}
 
 /**
  * Handles logging a failed test to the console.
@@ -115,6 +103,6 @@ export function wrapRequire() {
             }
             id = codePath + id;
         }
-        return originalRequire.call(this, id)
+        return originalRequire.call(this, id);
     };
 }

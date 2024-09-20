@@ -104,7 +104,7 @@ Legend.compose(G.Chart);
 LogarithmicAxis.compose(G.Axis);
 OverlappingDataLabels.compose(G.Chart);
 PieDataLabel.compose(G.Series.types.pie);
-PlotLineOrBand.compose(G.Axis);
+PlotLineOrBand.compose(G.Chart, G.Axis);
 Pointer.compose(G.Chart);
 Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);

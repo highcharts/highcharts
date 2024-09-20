@@ -1505,6 +1505,7 @@ class SVGRenderer implements SVGRendererLike {
                 });
             }
             img.isImg = true;
+            img.symbolUrl = symbol;
 
             if (defined(img.imgwidth) && defined(img.imgheight)) {
                 centerImage(img);

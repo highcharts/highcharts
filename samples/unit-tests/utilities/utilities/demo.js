@@ -1,5 +1,6 @@
 /* eslint func-style:0, object-curly-spacing: 0 */
 (function () {
+    console.time('Utils test time');
     var dateFormat = Highcharts.dateFormat,
         extend = Highcharts.extend,
         numberFormat = Highcharts.numberFormat,
@@ -140,38 +141,6 @@
             4,
             countMembers(result)
         );
-    });
-
-    QUnit.test('Merge', assert => {
-
-        // test filtering of __proto__
-        const objProto = JSON.parse(`{
-            "__proto__": {
-                "pollutedByProto": true
-            }
-        }`);
-        Highcharts.merge({}, objProto);
-        assert.strictEqual(
-            typeof pollutedByProto, // eslint-disable-line no-undef
-            'undefined',
-            'The prototype (and window) should not be polluted through merge'
-        );
-
-        // test filtering of constructor
-        const objConstructor = JSON.parse(`{
-            "constructor": {
-                "prototype": {
-                    "pollutedByConstructor": true
-                }
-            }
-        }`);
-        Highcharts.merge({}, objConstructor);
-        assert.strictEqual(
-            typeof {}.pollutedByConstructor, // eslint-disable-line no-undef
-            'undefined',
-            'The prototype (and window) should not be polluted through merge'
-        );
-
     });
 
     QUnit.test('PInt', function (assert) {
@@ -977,4 +946,6 @@
             Object.keys({ foo: 'bar' })
         );
     });
+
+    console.timeEnd('Utils test time');
 }());

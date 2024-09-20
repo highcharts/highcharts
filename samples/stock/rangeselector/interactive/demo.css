@@ -1,24 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-
-#button-box {
-    padding: 10px;
+* {
+    font-family: Helvetica, Arial, sans-serif;
 }
 
-button {
-    height: 36px;
-    padding: 8px 17px;
-    border: 1px solid rgba(227, 227, 232, 1);
+.highcharts-demo-button {
+    background: #f2f2f2;
+    border: none;
     border-radius: 4px;
-    background-color: white;
-    text-decoration: none;
-    font-size: 14px;
-    line-height: 18px;
-    font-weight: 500;
-    font-family: "IBM Plex Sans", sans-serif;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+    transition: background 250ms;
 }
 
-button:hover {
-    opacity: 0.8;
-    cursor: pointer;
-    border-color: #000;
+.highcharts-demo-button:hover {
+    background: #e6e6e6;
 }

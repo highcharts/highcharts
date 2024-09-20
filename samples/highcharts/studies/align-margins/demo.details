@@ -1,0 +1,6 @@
+---
+ name: Align margins plugin
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...
