@@ -105,40 +105,56 @@ jobs:
         run: npx gulp scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-        id: visual-reference-hc
+        id: visual_reference_hc
       - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-        id: visual-reference-maps
+        id: visual_reference_maps
       - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-        id: visual-reference-stock
+        id: visual_reference_stock
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
-        id: visual-reference-gantt
+        id: visual_reference_gantt
+
+      - id: partial-success
+        run: |
+          if [ ${{ steps.visual_reference_hc.outcome }} == 'success' ] || \
+             [ ${{ steps.visual_reference_maps.outcome }} == 'success' ] || \
+             [ ${{ steps.visual_reference_stock.outcome }} == 'success' ] || \
+             [ ${{ steps.visual_reference_gantt.outcome }} == 'success' ]
+          then
+            exit 0
+          else
+            exit 1
+          fi
 
       - name: Checkout current branch
         uses: actions/checkout@v4
+        if: steps.partial-success.outcome == 'success'
         with:
           clean: false
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
+        if: steps.partial-success.outcome == 'success'
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.partial-success.outcome == 'success'
         run: npm i
 
       - name: Build Highcharts
+        if: steps.partial-success.outcome == 'success'
         run: npx gulp scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare
-        if: steps.visual-reference-hc.outcome == 'success'
+        if: steps.visual_reference_hc.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare
-        if: steps.visual-reference-stock.outcome == 'success'
+        if: steps.visual_reference_stock.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare
-        if: steps.visual-reference-maps.outcome == 'success'
+        if: steps.visual_reference_maps.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare
-        if: steps.visual-reference-gantt.outcome == 'success'
+        if: steps.visual_reference_gantt.outcome == 'success'
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
