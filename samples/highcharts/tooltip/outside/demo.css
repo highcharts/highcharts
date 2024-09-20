@@ -1,3 +1,13 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    font-size: 1.5em;
+    margin: 10px;
+    text-align: center;
+}
+
 #outer {
     max-width: 420px;
     margin: 1em auto;

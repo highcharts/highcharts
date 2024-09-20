@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -88,6 +89,21 @@ function resolveJSON(js) {
             innerMatch,
             filename,
             data;
+
+        // Look for aliases
+        const alias = aliases.find(item => item.url === src);
+        if (alias) {
+            filename = alias.filename;
+            data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'samples/data/json-sources',
+                    filename
+                ),
+                'utf8'
+            )
+        }
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
@@ -278,7 +294,6 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
-            'test/json-sources.js',
 
             // Highcharts
             ...files,

@@ -133,7 +133,7 @@ page. Details are listed in the
 ``` JavaScript
 async function run() {
     const connector = new DataConnector.types.HTMLTable({
-        table: document.querySelector('#table');
+        dataTable: document.querySelector('#table');
     });
     await connector.load();
 }

@@ -278,15 +278,17 @@
     background-color: var(--color-background);
 }
 
-#selection-grid .highcharts-datagrid-column-header,
-.highcharts-datagrid-cell {
+#selection-grid .highcharts-datagrid-table thead {
     font-size: 12px;
 }
 
-#selection-grid .highcharts-datagrid-row.hovered {
+#selection-grid .highcharts-datagrid-hovered-row {
     background-color: var(--color-hover-background);
-    border-color: var(--color-hover-border);
     color: var(--color-hover-text);
+}
+
+#selection-grid .highcharts-datagrid-hovered-column {
+    background: none;
 }
 
 /* *

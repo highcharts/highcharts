@@ -51,3 +51,7 @@
     font-size: 1.1em;
     font-weight: bold;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
