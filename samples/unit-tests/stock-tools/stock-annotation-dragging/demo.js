@@ -73,7 +73,6 @@ QUnit.test('Dragging annotation', assert => {
         1,
         `Annotation moved by ${diff} pixels`
     );
-
 });
 
 QUnit.test(
@@ -150,11 +149,11 @@ QUnit.test(
 
         const annotation = chart.annotations[0];
 
-        const diff = 1;
+        const diff = 30;
         const testController = new TestController(chart);
         const originalPlotX = annotation.shapes[0].points[0].plotX;
         const start = chart.plotLeft + originalPlotX;
-        testController.pan([start, 200], [diff + start, 200], {}, true);
+        testController.pan([start, 200], [diff + start, 200]);
         const newPlotX = annotation.shapes[0].points[0].plotX;
         assert.close(
             originalPlotX + diff,
