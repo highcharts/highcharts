@@ -11,6 +11,7 @@ const useHistoricalData = true;
 
 // Default map zoom level
 const defaultZoom = 11;
+const log = console.log;
 
 // Currently active power plant/generator
 const activeItem = {
@@ -20,7 +21,7 @@ const activeItem = {
 };
 
 
-// MQTT configuration for Sognekraft AS
+// MQTT configuration for Sognekraft AS broker
 const mqttLinkConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
@@ -29,16 +30,18 @@ const mqttLinkConfig = {
     useSSL: true
 };
 
-// Mapping of MQTT topics to Dashboards components
+// Mapping of MQTT topics to MQTT connectors
 let nDiscoveredTopics = 0;
 const topicMap = {
     'prod/DEMO_Highsoft/kraftverk_1/overview': 'mqtt-data-1',
     'prod/DEMO_Highsoft/kraftverk_2/overview': 'mqtt-data-2'
 };
 
-// TBD: remove
-function logAppend(msg) {
-    console.log(msg);
+
+function printLog(msg) {
+    if (log) {
+        log(msg);
+    }
 }
 
 //
@@ -222,11 +225,11 @@ async function createDashboard() {
                         uiSetComponentVisibility(false);
                     }
                     // eslint-disable-next-line max-len
-                    logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
+                    printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
                 },
                 subscribeEvent: event => {
                     const { subscribed, topic } = event.detail;
-                    logAppend(
+                    printLog(
                         // eslint-disable-next-line max-len
                         `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
                     );
@@ -234,12 +237,12 @@ async function createDashboard() {
                 },
                 packetEvent: event => {
                     const { topic, count } = event.detail;
-                    logAppend(`Packet #${count} received: ${topic}`);
+                    printLog(`Packet #${count} received: ${topic}`);
                     dashboardUpdate(event.data, connId);
                 },
                 errorEvent: event => {
                     const { code, message } = event.detail;
-                    logAppend(`${message} (error code #${code})`);
+                    printLog(`${message} (error code #${code})`);
                     controlBar.showError(message);
                 }
             }
@@ -914,7 +917,7 @@ class ControlBar {
             const cn = topicMap[topic];
 
             const con = await dashboard.dataPool.getConnector(cn);
-            logAppend('Unsubscribed: ' + con.options.topic);
+            printLog('Unsubscribed: ' + con.options.topic);
             await con.unsubscribe();
         }
 
@@ -924,7 +927,7 @@ class ControlBar {
         const con = await dashboard.dataPool.getConnector(cn);
 
         if (con.connected) {
-            logAppend('Subscribed: ' + con.options.topic);
+            printLog('Subscribed: ' + con.options.topic);
             await con.subscribe();
         }
 
@@ -973,7 +976,6 @@ function startTopicDiscovery() {
         topic: 'prod/+/+/overview',
         autoConnect: true,
         connectEvent: event => {
-            console.log('connectEvent:', event);
             const { connected, host, port } = event.detail;
             controlBar.setConnectState(connected);
             if (connected) {
@@ -982,11 +984,11 @@ function startTopicDiscovery() {
                 controlBar.showStatus('Not connected');
             }
             // eslint-disable-next-line max-len
-            logAppend(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
+            printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
         },
         packetEvent: event => {
             const { count } = event.detail;
-            logAppend(`Packet #${count} received`);
+            printLog(`Packet #${count} received`);
             updatePowerPlantList(event.data, event.detail.topic);
 
             // Check if all topics have been discovered
