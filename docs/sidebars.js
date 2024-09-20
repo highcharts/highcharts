@@ -62,6 +62,7 @@ module.exports = {
             'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
+            'maps/map-drill-down',
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
