@@ -1436,7 +1436,8 @@ namespace OrdinalAxis {
 
             // When more series assign to axis, find the smallest one, #15987.
             axis.series.forEach((series): void => {
-                if (!series.visible) {
+                // Don't include indicators and invisible series
+                if (!series.visible || series.is('sma')) {
                     return;
                 }
                 const firstPoint = series.points?.[0];
