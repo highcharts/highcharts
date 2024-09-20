@@ -526,8 +526,8 @@ function onBeforeRender(
                             ): void {
                                 const toArray = splat(d);
                                 if (
-                                    toArray.indexOf(point.x) >= 0 &&
-                                        toArray.indexOf(point.x2) >= 0
+                                    toArray.indexOf(point.x || 0) >= 0 &&
+                                        toArray.indexOf(point.x2 || 0) >= 0
                                 ) {
                                     d = point;
                                 }
