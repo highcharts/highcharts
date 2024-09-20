@@ -65,3 +65,7 @@ div#description {
 .highcharts-dashboards-component {
     padding: 10px;
 }
+
+.highcharts-dashboards-component-content {
+    height: 300px;
+}
