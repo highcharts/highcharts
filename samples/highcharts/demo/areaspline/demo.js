@@ -9,29 +9,15 @@ const commonOptions = {
     }
 };
 
-const ISINMap = {
-    Netflix: 'US64110L1061',
-    Apple: 'US0378331005',
-    Intel: 'US4581401001',
-    Nvidia: 'US67066G1040',
-    AMD: 'US0079031078',
-    Microsoft: 'US5949181045',
-    Tesla: 'US88160R1014',
-    Meta: 'US30303M1027',
-    Amazon: 'US0231351067',
-    GoogleClassA: 'US02079K3059',
-    GoogleClassC: 'US02079K1079'
-};
-
 // eslint-disable-next-line no-undef
-const ApplePriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+const connector = new Connectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
         type: 'Price'
     },
     securities: [
         {
-            id: ISINMap.Netflix,
+            id: 'US64110L1061',
             idType: 'ISIN'
         }
     ],
@@ -39,11 +25,8 @@ const ApplePriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
 });
 
 Promise.all([
-    ApplePriceConnector.load()
+    connector.load()
 ]).then(() => {
-    const { Date: dates, ...cols } = ApplePriceConnector.table.getColumns(),
-        data = Object.values(cols)
-            .flatMap(vals => vals.map((v, i) => [dates[i], v]));
 
     Highcharts.chart('container', {
         chart: {
@@ -96,7 +79,7 @@ Promise.all([
         },
         series: [{
             name: 'NFLX',
-            data: data
+            data: connector.table.getRows(0, undefined)
         }]
     });
 });
