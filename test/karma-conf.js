@@ -90,21 +90,6 @@ function resolveJSON(js) {
             filename,
             data;
 
-        // Look for aliases
-        const alias = aliases.find(item => item.url === src);
-        if (alias) {
-            filename = alias.filename;
-            data = fs.readFileSync(
-                path.join(
-                    __dirname,
-                    '..',
-                    'samples/data/json-sources',
-                    filename
-                ),
-                'utf8'
-            )
-        }
-
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
             /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-\.]+$)/
@@ -210,6 +195,24 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
+// Create JSONSources and write to a temporary file
+const JSONSources = {};
+aliases.forEach(alias => {
+    JSONSources[alias.url] = JSON.parse(fs.readFileSync(
+        path.join(
+            __dirname,
+            '..',
+            'samples/data/json-sources',
+            alias.filename
+        ),
+        'utf8'
+    ));
+});
+fs.writeFileSync(
+    path.join(__dirname, '../tmp/json-sources.js'),
+    `window.JSONSources = ${JSON.stringify(JSONSources)};`
+);
+
 
 module.exports = function (config) {
     const argv = require('yargs').argv;
@@ -294,6 +297,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'tmp/json-sources.js',
 
             // Highcharts
             ...files,
