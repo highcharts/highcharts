@@ -39,10 +39,13 @@ const chartOptions = {
     legend: {
         enabled: false
     },
+    credits: {
+        enabled: false
+    },
     xAxis: {
         type: 'datetime',
         labels: {
-            format: '{value:%H:%M}'
+            format: '{value:%H:%M:%S}'
         }
     },
     yAxis: {
@@ -61,20 +64,30 @@ const chartOptions = {
 
 // Options for datagrid
 const dataGridOptions = {
-    cellHeight: 38,
+    cellHeight: 30,
     editable: false,
-    columns: {
-        time: {
-            headerFormat: 'Time',
-            cellFormatter: function () {
-                const date = new Date(this.value);
-                return Highcharts.dateFormat('%H:%M:%S', date);
-            }
+    credits: {
+        enabled: false
+    },
+    columns: [{
+        id: 'time',
+        header: {
+            format: 'Time (UTC)'
         },
-        value: {
-            headerFormat: 'Wind speed (m/s)'
+        cells: {
+            formatter: function () {
+                return  Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
+            }
         }
-    }
+    }, {
+        id: 'value',
+        header: {
+            format: 'Wind speed (m/s)'
+        },
+        cells: {
+            format: '{value:.1f}'
+        }
+    }]
 };
 
 
@@ -116,12 +129,11 @@ const connConfig = {
             return;
         }
 
-        const compInfo = topicMap[topic];
-        const { chart, dataGrid } = compInfo;
-
         if (count === 1) {
             // Update the chart title
-            const chartComp = board.getComponentByCellId(chart);
+            const compInfo = topicMap[topic];
+            const chartComp = board.getComponentByCellId(compInfo.chart);
+
             chartComp.update({
                 chartOptions: {
                     title: {
@@ -130,10 +142,6 @@ const connConfig = {
                 }
             });
         }
-
-        // Scroll to last row
-        const dataGridComp = board.getComponentByCellId(dataGrid);
-        dataGridComp.dataGrid.outerContainer.scrollTop = 1000;
     },
     errorEvent: event => {
         const { code, message } = event.detail;
