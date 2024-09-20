@@ -35,6 +35,7 @@ module.exports = {
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
+            'stock/advanced-annotations',
             'stock/candlestick-chart',
             'stock/compare',
             'stock/cumulative-sum',
@@ -106,7 +107,16 @@ module.exports = {
             'dashboards/frequently-asked-questions',
         ],
         'DataGrid': [
+            'datagrid/installation',
+            'datagrid/your-first-datagrid',
             'datagrid/general',
+            'datagrid/understanding-datagrid',
+            'datagrid/columns',
+            'datagrid/datagrid-v2-migration',
+            'datagrid/datagrid-with-angular',
+            'datagrid/datagrid-with-react',
+            'datagrid/datagrid-with-vue',
+            'datagrid/style-by-css'
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -166,6 +176,7 @@ module.exports = {
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
             'advanced-chart-features/data-sorting',
