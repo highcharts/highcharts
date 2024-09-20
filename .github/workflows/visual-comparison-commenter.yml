@@ -1,0 +1,33 @@
+name: Highcharts Visual Comparison Commenter
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'samples/**'
+      - 'ts/**'
+      - 'css/**'
+      - '.github/workflows/visual-compare.yml'
+  status:
+
+jobs:
+  on_error:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.state == 'error' ||
+      github.event.state == 'failure'
+    steps:
+      - env:
+          DESCRIPTION: ${{ github.event.description }}
+        run: |
+          echo The status is error or failed: $DESCRIPTION
+
+  on_success:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.state == 'success'
+    steps:
+      - env:
+          DESCRIPTION: ${{ github.event.description }}
+        run: |
+          echo The status is success: $DESCRIPTION
