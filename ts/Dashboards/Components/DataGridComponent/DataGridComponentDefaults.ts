@@ -40,11 +40,96 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
     dataGridClassName: 'dataGrid-container',
     dataGridID: 'dataGrid-' + uniqueKey(),
     dataGridOptions: {},
-    editableOptions: [{
-        name: 'connectorName',
-        propertyPath: ['connector', 'id'],
-        type: 'select'
-    }],
+    editableOptions: [
+        {
+            name: 'connectorName',
+            propertyPath: ['connector', 'id'],
+            type: 'select'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }, {
+            name: 'DataGrid options',
+            type: 'nested',
+            nestedOptions: [{
+                name: 'General',
+                options: [
+                    {
+                        name: 'Caption/title',
+                        propertyPath: ['dataGridOptions', 'caption', 'text'],
+                        type: 'input'
+                    }, {
+                        name: 'Columns distribution',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'rendering',
+                                'columns',
+                                'distribution'
+                            ],
+                        type: 'select',
+                        selectOptions: [{
+                            name: 'full'
+                        }, {
+                            name: 'fixed'
+                        }]
+                    }, {
+                        name: 'Editable DataGrid',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'columnDefaults',
+                                'cells',
+                                'editable'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Resizable columns',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'columnDefaults',
+                                'resizing'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Sortable columns',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'columnDefaults',
+                                'sorting',
+                                'sortable'
+                            ],
+                        type: 'toggle'
+                    }, {
+                        name: 'Cell text truncation',
+                        propertyPath:
+                            [
+                                'dataGridOptions',
+                                'rendering',
+                                'rows',
+                                'strictHeights'
+                            ],
+                        type: 'toggle'
+                    }
+                ]
+            }]
+        }, {
+            name: 'DataGrid class name',
+            propertyPath: ['dataGridClassName'],
+            type: 'input'
+        }, {
+            name: 'DataGrid ID',
+            propertyPath: ['dataGridID'],
+            type: 'input'
+        }
+    ],
     onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {

@@ -163,8 +163,6 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
-
-/* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
@@ -173,42 +171,23 @@ function merge<
  *
  * @function Highcharts.merge<T>
  *
- * @param {boolean} extend
- *        Whether to extend the left-side object (a) or return a whole new
- *        object.
+ * @param {true | T} extendOrSource
+ *        Whether to extend the left-side object,
+ *        or the first object to merge as a deep copy.
  *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
- *
- * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- *//**
- * Utility function to deep merge two or more objects and return a third object.
- * The merge function can also be used with a single object argument to create a
- * deep copy of an object.
- *
- * @function Highcharts.merge<T>
- *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
+ * @param {...Array<object|undefined>} [sources]
+ *        Object(s) to merge into the previous one.
  *
  * @return {T}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T>(): T {
-    /* eslint-enable valid-jsdoc */
+function merge<T>(
+    extendOrSource: true | T,
+    ...sources: Array<DeepPartial<T> | undefined>
+): T {
     let i,
-        args = arguments,
+        args = [extendOrSource, ...sources],
         ret = {} as T;
     const doCopy = function (copy: any, original: any): any {
         // An object is replacing a primitive
@@ -241,8 +220,8 @@ function merge<T>(): T {
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.
-    if (args[0] === true) {
-        ret = args[1];
+    if (extendOrSource === true) {
+        ret = args[1] as T;
         args = Array.prototype.slice.call(args, 2) as any;
     }
 
