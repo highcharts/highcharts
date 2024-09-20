@@ -1,7 +1,15 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container,
 #button-container {
     max-width: 800px;
     margin: 1em auto;
+}
+
+#button-container {
+    padding: 0 10px;
 }
 
 #pdf {
@@ -9,6 +17,12 @@
     border-radius: 3px;
     background: #a4edba;
     padding: 0.5em 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#pdf:hover {
+    background: #8ae09d;
 }
 
 #pdf i {

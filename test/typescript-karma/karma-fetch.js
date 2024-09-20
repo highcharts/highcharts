@@ -8,7 +8,7 @@
  * and used from karma-setup.js.
  */
 window.JSONSources = {
-    ...window.JSONSources,
+    ...(window.JSONSources || {}),
     '/data/sine-data.csv': function () {
         const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
 
