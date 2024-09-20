@@ -11,6 +11,11 @@ const useHistoricalData = true;
 
 // Default map zoom level
 const defaultZoom = 11;
+
+// Unit for generated power (megawatts)
+const powerUnit = 'MW';
+
+// Options log (comment out to disable)
 const log = console.log;
 
 // Currently active power plant/generator
@@ -36,17 +41,9 @@ const topicMap = {
     'prod/DEMO_Highsoft/kraftverk_1/overview': 'mqtt-data-1',
     'prod/DEMO_Highsoft/kraftverk_2/overview': 'mqtt-data-2'
 };
+// Default connector ID
+const defaultConnId = 'mqtt-data-1';
 
-
-function printLog(msg) {
-    if (log) {
-        log(msg);
-    }
-}
-
-//
-// Application configuration
-//
 
 // Information about the received measurement data
 const measInfo = measDataInfo();
@@ -96,24 +93,244 @@ const intakeConfig = {
     }
 };
 
+// Common chart options for Highcharts components
+const commonChartOptions = {
+    title: {
+        text: ''
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            stickyTracking: false
+        }
+    }
+};
+
+
+// Custom HTML component for displaying power plant, reservoir and
+// water intake parameters. If a description of the power plant
+// is available, it is also shown here.
+const infoComponent = {
+    type: 'HTML',
+    renderTo: 'el-info',
+    chartOptions: {
+        chart: {
+            styledMode: false
+        }
+    }
+};
+
+// Highcharts map with points for power plant, reservoirs and intakes.
+const mapComponent = {
+    type: 'Highcharts',
+    renderTo: 'el-map',
+    chartConstructor: 'mapChart',
+    title: 'Power plant with water reservoirs and intakes',
+    chartOptions: {
+        ...commonChartOptions,
+        chart: {
+            styledMode: false,
+            animation: false
+        },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                alignTo: 'spacingBox'
+            }
+        },
+        series: [{
+            type: 'tiledwebmap',
+            provider: {
+                type: 'OpenStreetMap',
+                theme: 'Standard'
+            }
+        }, {
+            type: 'mappoint',
+            name: 'stations',
+            color: 'white',
+            dataLabels: {
+                align: 'left',
+                crop: false,
+                enabled: true,
+                format: '{point.name}',
+                padding: 0,
+                verticalAlign: 'bottom',
+                y: -2,
+                x: 10
+            },
+            tooltip: {
+                headerFormat: '',
+                footerFormat: '',
+                pointFormatter: function () {
+                    let rows = '';
+                    this.info.forEach(item => {
+                        const unit = item.value === '?' ?
+                            '' : item.unit;
+                        rows += `<tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.value}</td>
+                                    <td>${unit}</td>
+                                </tr>`;
+                    });
+
+                    return `<table class="map-tooltip">
+                            <caption>${this.name}</caption>
+                            ${rows}
+                            </table>`;
+                }
+            },
+            data: [] // Populated on update
+        }],
+        tooltip: {
+            useHTML: true
+        }
+    }
+};
+
+// KPI components for displaying the latest generated power.
+const kpiComponent = {
+    type: 'KPI',
+    renderTo: 'el-kpi',
+    chartOptions: {
+        ...commonChartOptions,
+        chart: {
+            type: 'solidgauge',
+            styledMode: false
+        },
+        pane: {
+            background: {
+                innerRadius: '80%',
+                outerRadius: '120%',
+                shape: 'arc'
+            },
+            center: ['50%', '70%'],
+            endAngle: 90,
+            startAngle: -90
+        },
+        yAxis: {
+            title: {
+                text: measInfo.descr('P_gen'),
+                y: -80
+            },
+            labels: {
+                distance: '100%',
+                y: 5,
+                align: 'auto'
+            },
+            minorTicks: false,
+            tickAmount: 1,
+            visible: true,
+            min: 0,
+            max: 0 // Populated on update
+        },
+        series: [{
+            name: measInfo.brief('P_gen'),
+            enableMouseTracking: true,
+            innerRadius: '80%',
+            radius: '120%'
+        }],
+        tooltip: {
+            valueSuffix: ' ' + powerUnit
+        }
+    }
+};
+
+// Chart for displaying generated power.
+const chartComponent = {
+    type: 'Highcharts',
+    renderTo: 'el-chart',
+    connector: {
+        id: defaultConnId,
+        columnAssignment: [{
+            seriesId: measInfo.brief('P_gen'),
+            data: ['time', 'power']
+        }]
+    },
+    sync: {
+        highlight: {
+            enabled: true,
+            autoScroll: true
+        }
+    },
+    chartOptions: {
+        ...commonChartOptions,
+        chart: {
+            type: 'spline',
+            animation: true
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            min: 0,
+            max: 0, // Populated on update
+            title: {
+                text: measInfo.descr('P_gen')
+            }
+        },
+        tooltip: {
+            valueSuffix: ' ' + powerUnit
+        }
+    }
+};
+
+// Datagrid displaying the history of generated power
+// over the last 'n' hours. Oldest measurements at the top.
+const datagridComponent = {
+    type: 'DataGrid',
+    renderTo: 'el-datagrid',
+    connector: {
+        id: defaultConnId
+    },
+    sync: {
+        highlight: {
+            enabled: true,
+            autoScroll: true
+        }
+    },
+    dataGridOptions: {
+        credits: {
+            enabled: false
+        },
+        columns: [{
+            id: 'time',
+            header: {
+                format: 'Time (UTC)'
+            },
+            cells: {
+                formatter: function () {
+                    return Highcharts.dateFormat(
+                        '%H:%M:%S',
+                        this.value
+                    );
+                }
+            }
+        }, {
+            id: 'power',
+            header: {
+                format: measInfo.descr('P_gen')
+            },
+            cells: {
+                format: '{value:.2f}'
+            }
+        }]
+    }
+};
+
+// Print log message
+function printLog(msg) {
+    if (log) {
+        log(msg);
+    }
+}
 
 // Creates the dashboard
 async function createDashboard() {
-    const powerUnit = 'MW';
-
-    const commonChartOptions = {
-        title: {
-            text: ''
-        },
-        legend: {
-            enabled: false
-        },
-        plotOptions: {
-            series: {
-                stickyTracking: false
-            }
-        }
-    };
 
     // Create configuration for power generator units
     const dashConfig = await createDashConfig();
@@ -167,36 +384,27 @@ async function createDashboard() {
             components: []
         };
 
-        // Information on power plant level
-        dashConfig.components.push(
-            createInfoComponent()
-        );
-
-        // Map on power plant level
-        dashConfig.components.push(
-            createMapComponent()
-        );
-
-        // Connector(s) on power plant level
+        // One connector per data source (MQTT topic)
         for (const [key, value] of Object.entries(topicMap)) {
             dashConfig.connectors.push(
                 createDataConnector(key, value)
             );
         }
 
-        // Dash components
-        dashConfig.components.push(
-            createKpiComponent()
-        );
+        // Information component (HTML)
+        dashConfig.components.push(infoComponent);
 
-        // Chart and datagrid get data from the same connector
-        const connId = 'mqtt-data-1';
-        dashConfig.components.push(
-            createChartComponent(connId)
-        );
-        dashConfig.components.push(
-            createDatagridComponent(connId)
-        );
+        // Map for displaying power plant, reservoirs and intakes locations
+        dashConfig.components.push(mapComponent);
+
+        // KPI for displaying the latest generated power
+        dashConfig.components.push(kpiComponent);
+
+        // Chart component for displaying generated power (history)
+        dashConfig.components.push(chartComponent);
+
+        // Datagrid component for displaying generated power (history)
+        dashConfig.components.push(datagridComponent);
 
         return dashConfig;
     }
@@ -245,233 +453,6 @@ async function createDashboard() {
                     printLog(`${message} (error code #${code})`);
                     controlBar.showError(message);
                 }
-            }
-        };
-    }
-
-    // Custom HTML component for displaying power plant, reservoir and
-    // water intake parameters. If a briefiption of the power plant
-    // is available, it is also briefibed here.
-    function createInfoComponent() {
-        return {
-            type: 'HTML',
-            renderTo: 'el-info',
-            chartOptions: {
-                chart: {
-                    styledMode: false
-                }
-            }
-        };
-    }
-
-    // Highcharts map with points for power plant, reservoirs and intakes.
-    function createMapComponent() {
-        return {
-            type: 'Highcharts',
-            renderTo: 'el-map',
-            chartConstructor: 'mapChart',
-            title: 'Power plant with water reservoirs and intakes',
-            chartOptions: {
-                ...commonChartOptions,
-                chart: {
-                    styledMode: false,
-                    animation: false
-                },
-                mapNavigation: {
-                    enabled: true,
-                    buttonOptions: {
-                        alignTo: 'spacingBox'
-                    }
-                },
-                series: [{
-                    type: 'tiledwebmap',
-                    provider: {
-                        type: 'OpenStreetMap',
-                        theme: 'Standard'
-                    }
-                }, {
-                    type: 'mappoint',
-                    name: 'stations',
-                    color: 'white',
-                    dataLabels: {
-                        align: 'left',
-                        crop: false,
-                        enabled: true,
-                        format: '{point.name}',
-                        padding: 0,
-                        verticalAlign: 'bottom',
-                        y: -2,
-                        x: 10
-                    },
-                    tooltip: {
-                        headerFormat: '',
-                        footerFormat: '',
-                        pointFormatter: function () {
-                            let rows = '';
-                            this.info.forEach(item => {
-                                const unit = item.value === '?' ?
-                                    '' : item.unit;
-                                rows += `<tr>
-                                    <td>${item.name}</td>
-                                    <td>${item.value}</td>
-                                    <td>${unit}</td>
-                                </tr>`;
-                            });
-
-                            return `<table class="map-tooltip">
-                            <caption>${this.name}</caption>
-                            ${rows}
-                            </table>`;
-                        }
-                    },
-                    data: [] // Populated on update
-                }],
-                tooltip: {
-                    useHTML: true
-                }
-            }
-        };
-    }
-
-    // KPI components for displaying the latest generated power.
-    // One KPI for each generator.
-    function createKpiComponent() {
-        return {
-            type: 'KPI',
-            renderTo: 'el-kpi',
-            chartOptions: {
-                ...commonChartOptions,
-                chart: {
-                    type: 'solidgauge',
-                    styledMode: false
-                },
-                pane: {
-                    background: {
-                        innerRadius: '80%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
-                    endAngle: 90,
-                    startAngle: -90
-                },
-                yAxis: {
-                    title: {
-                        text: measInfo.descr('P_gen'),
-                        y: -80
-                    },
-                    labels: {
-                        distance: '100%',
-                        y: 5,
-                        align: 'auto'
-                    },
-                    minorTicks: false,
-                    tickAmount: 1,
-                    visible: true,
-                    min: 0,
-                    max: 0 // Populated on update
-                },
-                series: [{
-                    name: measInfo.brief('P_gen'),
-                    enableMouseTracking: true,
-                    innerRadius: '80%',
-                    radius: '120%'
-                }],
-                tooltip: {
-                    valueSuffix: ' ' + powerUnit
-                }
-            }
-        };
-    }
-
-    // Chart for displaying the history of generated power
-    // over the last 'n' hours. Latest measurement to the right.
-    function createChartComponent(connId) {
-        return {
-            type: 'Highcharts',
-            renderTo: 'el-chart',
-            connector: {
-                id: connId,
-                columnAssignment: [{
-                    seriesId: measInfo.brief('P_gen'),
-                    data: ['time', 'power']
-                }]
-            },
-            sync: {
-                highlight: {
-                    enabled: true,
-                    autoScroll: true
-                }
-            },
-            chartOptions: {
-                ...commonChartOptions,
-                chart: {
-                    type: 'spline',
-                    animation: true
-                },
-                credits: {
-                    enabled: false
-                },
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    min: 0,
-                    max: 0, // Populated on update
-                    title: {
-                        text: measInfo.descr('P_gen')
-                    }
-                },
-                tooltip: {
-                    valueSuffix: ' ' + powerUnit
-                }
-            }
-        };
-    }
-
-    // Datagrid displaying the history of generated power
-    // over the last 'n' hours. Oldest measurements at the top.
-    function createDatagridComponent(connId) {
-        return {
-            type: 'DataGrid',
-            renderTo: 'el-datagrid',
-            connector: {
-                id: connId
-            },
-            sync: {
-                highlight: {
-                    enabled: true,
-                    autoScroll: true
-                }
-            },
-            dataGridOptions: {
-                credits: {
-                    enabled: false
-                },
-                columns: [{
-                    id: 'time',
-                    header: {
-                        format: 'Measure time (UTC)'
-                    },
-                    cells: {
-                        formatter: function () {
-                            const ts = this.value;
-                            const dStr = Highcharts.dateFormat('%Y-%m-%d', ts);
-                            const tStr = Highcharts.dateFormat('%H:%M:%S', ts);
-
-                            return `${dStr} ${tStr}`;
-                        }
-                    }
-                }, {
-                    id: 'power',
-                    header: {
-                        format: measInfo.descr('P_gen')
-                    },
-                    cells: {
-                        // Float precisoion 2
-                        format: '{value:.2f}'
-                    }
-                }]
             }
         };
     }
