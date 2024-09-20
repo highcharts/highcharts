@@ -127,10 +127,14 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare
+        if: ${{ always() }} # Always run to get all visual changes
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare
+        if: ${{ always() }}
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare
+        if: ${{ always() }}
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare
+        if: ${{ always() }}
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
@@ -139,10 +143,8 @@ jobs:
         if: ${{ always() }}
 
       - name: Comment on PR and upload visual test images if any produced
-        run: |
-          npx gulp update-pr-testresults \
-          --fail-silently \
-          --pr ${{github.event.pull_request.number}}
+        run:
+          npx gulp update-pr-testresults --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:
           GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
