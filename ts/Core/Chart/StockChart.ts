@@ -49,6 +49,7 @@ import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
 import U from '../Utilities.js';
+import DataLabelOptions from '../Series/DataLabelOptions';
 const {
     addEvent,
     clamp,
@@ -409,6 +410,11 @@ namespace StockChart {
             seriesProto.forceCropping = seriesForceCropping;
 
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
+            addEvent(
+                SeriesClass,
+                'getJustifiedOptions',
+                onSeriesGetJustifiedOptions
+            );
 
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
         }
@@ -675,6 +681,37 @@ namespace StockChart {
             )) {
                 e.isInsidePlot = true;
             }
+        }
+    }
+
+    /**
+     * Extend plotArea to correctly justify the navigator dataLabel. (#21285)
+     * @private
+     */
+    function onSeriesGetJustifiedOptions(
+        this: Series,
+        e: (Event&{
+            y: number;
+            off: number;
+            options: DataLabelOptions;
+            plotHeight: number;
+            justified: boolean;
+        })
+    ): void {
+        const series = this;
+        const chart = series.chart;
+        const plotHeight = chart.navigator ?
+            series.yAxis.top + series.yAxis.height :
+            chart.plotHeight;
+
+        if (e.off > plotHeight) {
+            if (e.options.verticalAlign === 'top' && e.y <= 0) {
+                e.options.verticalAlign = 'bottom';
+                e.options.inside = true;
+            } else {
+                e.y += chart.plotHeight - e.off;
+            }
+            e.justified = true;
         }
     }
 

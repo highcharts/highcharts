@@ -390,6 +390,7 @@ namespace DataLabel {
                     alignTo,
                     isNew
                 );
+                dataLabel.align(options, void 0, alignTo);
             } else if (pick(options.crop, true)) {
                 const { x, y } = dataLabel.alignAttr,
                     correction = 1;
@@ -892,14 +893,16 @@ namespace DataLabel {
 
         // Off bottom
         off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
-        // Check if 'off' exceeds the yAxis bottom or plot height. #21285
-        if (
-            off > (
-                this.yAxis ?
-                    this.yAxis.top + this.yAxis.height :
-                    chart.plotHeight
-            )
-        ) {
+
+        const e = {
+            y: y,
+            off: off,
+            options: options,
+            plotHeight: chart.plotHeight,
+            justified: justified
+        };
+
+        if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
                 options.inside = true;
@@ -915,6 +918,14 @@ namespace DataLabel {
             dataLabel.placed = !isNew;
             dataLabel.align(options, void 0, alignTo);
         }
+
+        fireEvent(this, 'getJustifiedOptions', e);
+
+        // Correct y position of dataLabels if they're in navigator. #21285
+        options.y = e.y;
+        options.verticalAlign = e.options.verticalAlign;
+        options.inside = e.options.inside;
+        justified = e.justified;
 
         return justified;
     }
