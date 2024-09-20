@@ -106,45 +106,33 @@ jobs:
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
         id: visual_reference_hc
+        continue-on-error: true
       - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
         id: visual_reference_maps
+        continue-on-error: true
       - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
         id: visual_reference_stock
+        continue-on-error: true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
         id: visual_reference_gantt
-
-      - id: partial-success
-        run: |
-          if [ ${{ steps.visual_reference_hc.outcome }} == 'success' ] || \
-             [ ${{ steps.visual_reference_maps.outcome }} == 'success' ] || \
-             [ ${{ steps.visual_reference_stock.outcome }} == 'success' ] || \
-             [ ${{ steps.visual_reference_gantt.outcome }} == 'success' ]
-          then
-            exit 0
-          else
-            exit 1
-          fi
+        continue-on-error: true
 
       - name: Checkout current branch
         uses: actions/checkout@v4
-        if: steps.partial-success.outcome == 'success'
         with:
           clean: false
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
-        if: steps.partial-success.outcome == 'success'
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
-        if: steps.partial-success.outcome == 'success'
         run: npm i
 
       - name: Build Highcharts
-        if: steps.partial-success.outcome == 'success'
         run: npx gulp scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare
