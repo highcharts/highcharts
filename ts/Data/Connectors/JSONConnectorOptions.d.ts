@@ -73,9 +73,11 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
      * Whether data is in columns or rows.
      *
-     * @default rows
+     * Try it:
      *
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
+     *
+     * @default 'rows'
      */
     orientation?: 'columns'|'rows';
 }
