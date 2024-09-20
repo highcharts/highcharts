@@ -1,0 +1,2 @@
+# Forecast line chart
+A [line chart](https://api.highcharts.com/highcharts/plotOptions.line) is often used to visualize predicted temperature changes over a few hours. This visual helps quickly understand expected temperature trends throughout the day, highlighting the highest and lowest points.

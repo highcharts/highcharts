@@ -497,7 +497,7 @@ class ColumnSeries extends Series {
         // tightly, so we allow individual columns to have individual sizes.
         // When pointPadding is greater, we strive for equal-width columns
         // (#2694).
-        if (options.pointPadding) {
+        if (options.pointPadding && options.crisp) {
             seriesBarW = Math.ceil(seriesBarW);
         }
 

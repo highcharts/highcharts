@@ -114,15 +114,15 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
-            columns: {
-                Revenue: {
-                    headerFormat: '{text} (€)'
-                },
-                Category: {
-                    show: false
+            columns: [{
+                id: 'Revenue',
+                header: {
+                    format: '{id} (€)'
                 }
-            }
+            }, {
+                id: 'Category',
+                enabled: false
+            }]
         }
     }]
 });
