@@ -830,13 +830,12 @@
 .highcharts-dashboards-edit-sidebar-wrapper {
     width: 300px;
     height: calc(100% - 40px);
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
 .highcharts-dashboards-edit-grid-items {
     display: flex;
-    margin-top: 20px;
     flex-direction: column;
 }
 

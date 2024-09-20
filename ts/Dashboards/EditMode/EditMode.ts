@@ -1284,6 +1284,10 @@ namespace EditMode {
          * Whether the sidebar should be sticky when scrolling down or
          * compontent is out of the view port.
          *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/vertical}
+         *
          * @default false
          */
         sticky?: boolean;
