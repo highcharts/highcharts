@@ -1,13 +1,5 @@
 name: Highcharts Visual Comparison Commenter
 on:
-  pull_request:
-    branches:
-      - 'master'
-    paths:
-      - 'samples/**'
-      - 'ts/**'
-      - 'css/**'
-      - '.github/workflows/visual-compare.yml'
   status:
 
 jobs:

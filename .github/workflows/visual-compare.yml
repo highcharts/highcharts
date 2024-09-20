@@ -105,9 +105,13 @@ jobs:
         run: npx gulp scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+        id: visual-reference-hc
       - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+        id: visual-reference-maps
       - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+        id: visual-reference-stock
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+        id: visual-reference-gantt
 
       - name: Checkout current branch
         uses: actions/checkout@v4
@@ -128,13 +132,13 @@ jobs:
         run: npx gulp scripts
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare
-        if: ${{ always() }} # Always run to get all visual changes
+        if: steps.visual-reference-hc.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare
-        if: ${{ always() }}
+        if: steps.visual-reference-stock.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare
-        if: ${{ always() }}
+        if: steps.visual-reference-maps.outcome == 'success'
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare
-        if: ${{ always() }}
+        if: steps.visual-reference-gantt.outcome == 'success'
 
       - name: Save test results where both an reference.svg and candidate.svg exists
         run: |
