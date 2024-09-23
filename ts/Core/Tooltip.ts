@@ -571,7 +571,7 @@ class Tooltip {
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
-                ) - 2 * distance :
+                ) - (2 * distance) - 2 :
                 chart.chartWidth,
             height: outside ?
                 Math.max(
@@ -1095,7 +1095,7 @@ class Tooltip {
                                 label.x || 0,
                                 0,
                                 this.getPlayingField().width -
-                                    (label.width || 0)
+                                (label.width || 0)
                             )
                         });
                     }
@@ -1781,7 +1781,8 @@ class Tooltip {
                 width,
                 height,
                 point
-            );
+            ),
+            doc = H.doc;
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
@@ -1801,7 +1802,13 @@ class Tooltip {
             pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
-                width + pad,
+                // Clamp width to keep tooltip in viewport (#21698)
+                // and subtract one since tooltip container has 'left: 1px;'
+                clamp(
+                    width + pad,
+                    0,
+                    doc.documentElement.clientWidth
+                ) - 1,
                 height + pad,
                 false
             );
