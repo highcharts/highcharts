@@ -3095,10 +3095,12 @@ class Axis {
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = labelStyleOptions.textOverflow;
+            textOverflowOption = labelStyleOptions.textOverflow,
+            whiteSpaceOption = labelStyleOptions.whiteSpace;
 
         let commonWidth: number,
             commonTextOverflow: string,
+            commonWhiteSpace: string,
             maxLabelLength = 0,
             label,
             i,
@@ -3149,8 +3151,11 @@ class Axis {
             // For word-wrap or ellipsis
             commonWidth = innerWidth;
 
-            if (!textOverflowOption) {
-                commonTextOverflow = 'clip';
+            // if (!textOverflowOption) {
+            if (!whiteSpaceOption) {
+                // commonTextOverflow = 'clip';
+                commonWhiteSpace = 'normal';
+
 
                 // On vertical axis, only allow word wrap if there is room
                 // for more lines.
@@ -3159,12 +3164,13 @@ class Axis {
                     pos = tickPositions[i];
                     label = ticks[pos].label;
                     if (label) {
-                        // Reset ellipsis in order to get the correct
+                        // Reset white-space in order to get the correct
                         // bounding box (#4070)
                         if (
-                            label.styles.textOverflow === 'ellipsis'
+                            // label.styles.textOverflow === 'ellipsis'
+                            label.styles.whiteSpace !== 'nowrap'
                         ) {
-                            label.css({ textOverflow: 'clip' });
+                            label.css({ whiteSpace: 'nowrap' });
 
                         // Set the correct width in order to read
                         // the bounding box height (#4678, #5034)
@@ -3178,7 +3184,8 @@ class Axis {
                                 (labelMetrics.h - labelMetrics.f)
                             )
                         ) {
-                            label.specificTextOverflow = 'ellipsis';
+                            // label.specificTextOverflow = 'ellipsis';
+                            label.specificWhiteSpace = 'nowrap';
                         }
                     }
                 }
@@ -3193,8 +3200,11 @@ class Axis {
                     (chart.chartHeight as any) * 0.33 :
                     maxLabelLength
             );
-            if (!textOverflowOption) {
-                commonTextOverflow = 'ellipsis';
+            //if (!textOverflowOption) {
+            //    commonTextOverflow = 'ellipsis';
+            //}
+            if (!whiteSpaceOption) {
+                commonWhiteSpace = 'nowrap';
             }
         }
 
@@ -3221,9 +3231,6 @@ class Axis {
                 } else if (
                     commonWidth &&
                     !widthOption &&
-                    // Setting width in this case messes with the bounding box
-                    // (#7975)
-                    labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
@@ -3232,20 +3239,25 @@ class Axis {
                     )
                 ) {
                     css.width = commonWidth + 'px';
-                    if (!textOverflowOption) {
-                        css.textOverflow = (
+                    //if (!textOverflowOption) {
+                    if (!whiteSpaceOption) {
+                        /*css.textOverflow = (
                             label.specificTextOverflow ||
                             commonTextOverflow
+                        );*/
+                        css.whiteSpace = (
+                            label.specificWhiteSpace ||
+                            commonWhiteSpace
                         );
                     }
                     label.css(css);
-
                 // Reset previously shortened label (#8210)
                 } else if (label.styles.width && !css.width && !widthOption) {
                     label.css({ width: null as any });
                 }
 
-                delete label.specificTextOverflow;
+                // delete label.specificTextOverflow;
+                delete label.specificWhiteSpace;
                 tick.rotation = attr.rotation;
             }
         }, this);

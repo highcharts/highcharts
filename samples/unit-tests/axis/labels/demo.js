@@ -1522,7 +1522,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     );
 });
 
-QUnit.test('Explicit textOverflow setting', function (assert) {
+QUnit.test('Explicit whiteSpace setting', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 250
@@ -1531,7 +1531,7 @@ QUnit.test('Explicit textOverflow setting', function (assert) {
             categories: ['Very long month name', 'Feb', 'Mar'],
             labels: {
                 style: {
-                    textOverflow: 'ellipsis'
+                    whiteSpace: 'nowrap'
                 }
             }
         },

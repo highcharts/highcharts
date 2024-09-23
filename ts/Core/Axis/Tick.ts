@@ -399,12 +399,13 @@ class Tick {
 
         // Un-rotated length
         if (label) {
+            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
             // Without position absolute, IE export sometimes is wrong
             if (!chart.styledMode) {
-                label.css(merge(labelOptions.style));
+                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
             }
-
             label.textPxLength = label.getBBox().width;
+            label.css({ whiteSpace });
         }
 
         return label;

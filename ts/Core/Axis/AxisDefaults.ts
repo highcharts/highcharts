@@ -1161,7 +1161,9 @@ namespace AxisDefaults {
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '0.8em'
+                fontSize: '0.8em',
+                /** @internal */
+                textOverflow: 'ellipsis'
             }
         },
 

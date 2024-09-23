@@ -256,26 +256,7 @@ class TextBuilder {
             let lineNo = 0;
             let startAt = wrapper.actualWidth;
 
-            if (this.ellipsis) {
-                if (text) {
-                    this.truncate(
-                        textNode,
-                        text,
-                        void 0,
-                        0,
-                        // Target width
-                        Math.max(
-                            0,
-                            // Subtract the font face to make room for the
-                            // ellipsis itself
-                            width - 0.8 * dy
-                        ),
-                        // Build the text to test for
-                        (text: string, currentIndex: number): string =>
-                            text.substring(0, currentIndex) + '\u2026'
-                    );
-                }
-            } else if (hasWhiteSpace) {
+            if (hasWhiteSpace) {
                 const lines: string[] = [];
 
                 // Remove preceding siblings in order to make the text length
@@ -312,7 +293,8 @@ class TextBuilder {
                             words
                                 .slice(0, currentIndex)
                                 .join(' ')
-                                .replace(/- /g, '-')
+                                .replace(/- /g, '-'),
+                        dy
                     );
 
                     startAt = wrapper.actualWidth;
@@ -343,6 +325,26 @@ class TextBuilder {
                     parentElement.insertBefore(br, textNode);
                 });
 
+            } else if (this.ellipsis) {
+                if (text) {
+                    this.truncate(
+                        textNode,
+                        text,
+                        void 0,
+                        0,
+                        // Target width
+                        Math.max(
+                            0,
+                            // Subtract the font face to make room for the
+                            // ellipsis itself
+                            width - 0.8 * dy
+                        ),
+                        // Build the text to test for
+                        (text: string, currentIndex: number): string =>
+                            text.substring(0, currentIndex) + '\u2026',
+                        dy
+                    );
+                }
             }
         };
 
@@ -482,7 +484,8 @@ class TextBuilder {
         words: (Array<string>|undefined),
         startAt: number,
         width: number,
-        getString: Function
+        getString: Function,
+        dy: number
     ): void {
         const svgElement = this.svgElement;
         const { rotation } = svgElement;
@@ -572,6 +575,26 @@ class TextBuilder {
                 textNode.textContent = str || getString(
                     text || words,
                     currentIndex
+                );
+            }
+
+            // Add ellipsis on individual lines
+            if (this.ellipsis && actualWidth > width) {
+                this.truncate(
+                    textNode,
+                    textNode.textContent || '',
+                    void 0,
+                    0,
+                    // Target width
+                    Math.max(
+                        0,
+                        // Subtract the font face to make room for the
+                        // ellipsis itself
+                        width - 0.8 * dy
+                    ),
+                    (text: string, currentIndex: number): string =>
+                        text.substring(0, currentIndex) + '\u2026',
+                    dy
                 );
             }
         }

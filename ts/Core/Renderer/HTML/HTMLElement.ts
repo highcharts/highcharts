@@ -251,7 +251,7 @@ class HTMLElement extends SVGElement {
         });
 
         // Keep the whiteSpace style outside the `HTMLElement.styles` collection
-        this.element.style.whiteSpace = 'nowrap';
+        //this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -291,7 +291,7 @@ class HTMLElement extends SVGElement {
         }
 
         if (styles?.textOverflow === 'ellipsis') {
-            styles.whiteSpace = 'nowrap';
+            //styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
         extend(this.styles, styles);
