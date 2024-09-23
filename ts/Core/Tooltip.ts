@@ -1797,6 +1797,8 @@ class Tooltip {
                 pos.y += top - distance;
             }
 
+            // Pad it by the border width and distance. Add 2 to make room for
+            // the default shadow (#19314).
             pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
