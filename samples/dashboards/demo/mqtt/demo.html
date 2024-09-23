@@ -16,7 +16,7 @@
 <div id="container">
     <!-- Top row, control and status bar -->
     <div class="row">
-        <div class="cell" id="connect-bar">
+        <div class="cell" id="control-bar">
             <h1 id="logo-text">Sognekraft</h1>
                 <!--
             <img id="logo-img-1" src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
@@ -32,7 +32,7 @@
             </div>
             <span id="connect-status">Not connected</span>
             <div id="connect-switch">
-                <span>Connect MQTT</span>
+                <span>Connect</span>
                 <input id="connect-toggle" type="checkbox"></input>
                 <label id="button" for="connect-toggle" title="Connect/disconnect MQTT"></label>
             </div>
@@ -54,14 +54,14 @@
 <div class="highcharts-description">
     <p>
         This application displays key data from a selection of power stations in the area of Sogn,
-        Norway. The chart, datagrid, KPI display the generated power in units of MW (Megawatts). Additional 
+        Norway. The chart, datagrid, and KPI display the generated power in units of MW (Megawatts). Additional 
         power generation parameters are displayed in the information section. The location of the power plant
         with connected water intakes and reservoirs is indicated on the map.
     </p>
     <p>
         How to use:
     <ul>
-        <li>Click <b>Connect MQTT</b> to connect to Sognekraft's MQTT server.</li>
+        <li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
         <li>When connecting succeeds the available power plants become available in the <b>Power Plant</b>
             dropdown. The MQTT server name and IP port are displayed.
         </li>
