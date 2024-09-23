@@ -696,6 +696,7 @@ namespace StockChart {
             options: DataLabelOptions;
             plotHeight: number;
             justified: boolean;
+            triggered: boolean;
         })
     ): void {
         const series = this;
@@ -705,14 +706,12 @@ namespace StockChart {
             chart.plotHeight;
 
         if (e.off > plotHeight) {
-            if (e.options.verticalAlign === 'top' && e.y <= 0) {
-                e.options.verticalAlign = 'bottom';
-                e.options.inside = true;
-            } else {
+            if (!(e.options.verticalAlign === 'top' && e.y <= 0)) {
                 e.y += chart.plotHeight - e.off;
             }
             e.justified = true;
         }
+        e.triggered = true;
     }
 
     /**

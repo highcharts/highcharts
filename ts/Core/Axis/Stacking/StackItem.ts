@@ -310,6 +310,7 @@ class StackItem {
                     labelBox,
                     stackBox
                 );
+                label.align(label.options, void 0, stackBox);
             }
 
             // Add attr to avoid the default animation of justifyDataLabel.
