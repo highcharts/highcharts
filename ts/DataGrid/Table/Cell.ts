@@ -23,6 +23,7 @@
  * */
 
 import type DataTable from '../../Data/DataTable';
+import type TableRow from './Content/TableRow';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
@@ -99,6 +100,7 @@ abstract class Cell {
         this.row.registerCell(this);
 
         this.htmlElement = this.init();
+        this.htmlElement.setAttribute('tabindex', '-1');
 
         this.initEvents();
     }
@@ -125,9 +127,14 @@ abstract class Cell {
         const clickHandler = (e: Event): void => {
             this.onClick(e as MouseEvent);
         };
+        const keyDownHandler = (e: Event): void => {
+            this.onKeyDown(e as KeyboardEvent);
+        };
 
         this.htmlElement.addEventListener('click', clickHandler);
+        this.htmlElement.addEventListener('keydown', keyDownHandler);
 
+        this.cellEvents.push(['keydown', keyDownHandler]);
         this.cellEvents.push(['click', clickHandler]);
     }
 
@@ -138,6 +145,42 @@ abstract class Cell {
      * Mouse event object.
      */
     protected abstract onClick(e: MouseEvent): void;
+
+    protected onKeyDown(e: KeyboardEvent): void {
+        const { row, column } = this;
+        const vp = row.viewport;
+
+        const changeFocusKeys: Record<typeof e.key, [number, number]> = {
+            ArrowDown: [1, 0],
+            ArrowUp: [-1, 0],
+            ArrowLeft: [0, -1],
+            ArrowRight: [0, 1]
+        };
+
+        const dir = changeFocusKeys[e.key];
+
+        if (dir) {
+            e.preventDefault();
+
+            const localRowIndex = (row as TableRow).index === void 0 ? -1 : (
+                (row as TableRow).index - vp.rows[0].index
+            );
+
+            const nextVerticalDir = localRowIndex + dir[0];
+
+            if (nextVerticalDir < 0 && vp.header) {
+                vp.columns[column.index + dir[1]]?.header?.htmlElement.focus();
+                return;
+            }
+
+            const nextRow = vp.rows[nextVerticalDir];
+
+
+            if (nextRow) {
+                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+            }
+        }
+    }
 
     /**
      * Renders the cell by appending the HTML element to the row.

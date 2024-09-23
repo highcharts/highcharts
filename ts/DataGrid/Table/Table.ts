@@ -60,7 +60,7 @@ class Table {
     /**
      * The data grid instance which the table (viewport) belongs to.
      */
-    public dataGrid: DataGrid;
+    public readonly dataGrid: DataGrid;
 
     /**
      * The presentation version of the data table. It has applied modifiers
@@ -74,12 +74,12 @@ class Table {
     /**
      * The HTML element of the table head.
      */
-    public theadElement: HTMLElement;
+    public readonly theadElement: HTMLElement;
 
     /**
      * The HTML element of the table body.
      */
-    public tbodyElement: HTMLElement;
+    public readonly tbodyElement: HTMLElement;
 
     /**
      * The head of the table.
@@ -144,6 +144,12 @@ class Table {
      * @internal
      */
     public cellEditing: CellEditing;
+
+    /**
+     * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
+     * table cell is not focused.
+     */
+    public focusCursor?: [number, number];
 
 
     /* *

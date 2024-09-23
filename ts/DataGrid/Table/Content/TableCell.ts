@@ -55,12 +55,6 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
-    /**
-     * The input element of a cell when editing state is active.
-     * @internal
-     */
-    private cellInputEl?: HTMLInputElement;
-
 
     /* *
     *
@@ -113,11 +107,24 @@ class TableCell extends Cell {
         const dblClickHandler = (e: Event): void => {
             this.onDblClick(e as MouseEvent);
         };
+        const focusHandler = (): void => {
+            this.row.viewport.focusCursor = [
+                this.row.index,
+                this.column.index
+            ];
+        };
+        const blurHandler = (): void => {
+            delete this.row.viewport.focusCursor;
+        };
 
         this.htmlElement.addEventListener('mouseover', mouseOverHandler);
         this.htmlElement.addEventListener('mouseout', mouseOutHandler);
         this.htmlElement.addEventListener('dblclick', dblClickHandler);
+        this.htmlElement.addEventListener('focus', focusHandler);
+        this.htmlElement.addEventListener('blur', blurHandler);
 
+        this.cellEvents.push(['blur', blurHandler]);
+        this.cellEvents.push(['focus', focusHandler]);
         this.cellEvents.push(['dblclick', dblClickHandler]);
         this.cellEvents.push(['mouseout', mouseOutHandler]);
         this.cellEvents.push(['mouseover', mouseOverHandler]);
@@ -178,6 +185,22 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellClick', {
             target: this
         });
+    }
+
+    protected onKeyDown(e: KeyboardEvent): void {
+        if (e.target !== this.htmlElement) {
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            if (this.column.options.cells?.editable) {
+                this.row.viewport.cellEditing.startEditing(this);
+            }
+
+            return;
+        }
+
+        super.onKeyDown(e);
     }
 
     /**
@@ -242,8 +265,21 @@ class TableCell extends Cell {
             return;
         }
 
+        let focusedRowId: number | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+        }
+
         await vp.dataGrid.querying.proceed(true);
         vp.loadPresentationData();
+
+        if (focusedRowId !== void 0 && vp.focusCursor) {
+            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+            if (newRowIndex !== void 0) {
+                vp.rows[newRowIndex - vp.rows[0].index]
+                    ?.cells[vp.focusCursor[1]].htmlElement.focus();
+            }
+        }
     }
 
     /**

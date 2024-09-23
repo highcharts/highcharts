@@ -50,7 +50,7 @@ class RowsVirtualizer {
     /**
      * The default height of a row.
      */
-    public defaultRowHeight: number;
+    public readonly defaultRowHeight: number;
 
     /**
      * The index of the first visible row.
@@ -60,19 +60,19 @@ class RowsVirtualizer {
     /**
      * The viewport (table) of the data grid.
      */
-    public viewport: Table;
+    public readonly viewport: Table;
 
     /**
      * Size of the row buffer - how many rows should be rendered outside of the
      * viewport from the top and the bottom.
      */
-    private buffer: number;
+    public readonly buffer: number;
 
     /**
      * Flag indicating if the rows should have strict heights (no custom or
      * dynamic heights allowed).
      */
-    private strictRowHeights: boolean;
+    private readonly strictRowHeights: boolean;
 
     /**
      * Flag indicating if the scrolling handler should be prevented to avoid
@@ -278,6 +278,17 @@ class RowsVirtualizer {
 
         if (alwaysLastRow) {
             rows.push(alwaysLastRow);
+        }
+
+        if (vp.focusCursor) {
+            const [rowIndex, columnIndex] = vp.focusCursor;
+            const row = rows.find((row): boolean => row.index === rowIndex);
+
+            if (row) {
+                row.cells[columnIndex]?.htmlElement.focus({
+                    preventScroll: true
+                });
+            }
         }
     }
 
