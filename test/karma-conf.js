@@ -255,7 +255,7 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    // Set karma.browsercount to bypass disconnection problem on Windows
+    // Adjust karma.browsercount number to bypass disconnect problem on Windows
     const browserCount = Number(getProperties()['karma.browsercount']) ||
         argv.browsercount || (Math.max(1, os.cpus().length - 2));
 
