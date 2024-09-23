@@ -1797,25 +1797,16 @@ class Tooltip {
                 pos.y += top - distance;
             }
 
-            // Pad it by the border width and distance. Add 2 to make room for
-            // the default shadow (#19314).
-            pad = (
-                (options.borderWidth || 0) +
-                2 *
-                distance +
-                2
-            );
-
-            const baseWidth = width + pad;
+            pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
-                this.outside ? clamp(
-                    baseWidth,
+                // Clamp width to keep tooltip in viewport (#21698)
+                // and subtract one since tooltip container has 'left: 1px;'
+                clamp(
+                    width + pad,
                     0,
-                    // 'Outside' container always has 'left: 1px;'
-                    doc.documentElement.clientWidth - 1
-                ) :
-                    baseWidth,
+                    doc.documentElement.clientWidth
+                ) - 1,
                 height + pad,
                 false
             );
