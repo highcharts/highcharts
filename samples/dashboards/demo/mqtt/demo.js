@@ -35,13 +35,13 @@ const mqttLinkConfig = {
     useSSL: true
 };
 
-// Mapping of MQTT topics to MQTT connectors
+// Mapping of MQTT topics to data connectors
 let nDiscoveredTopics = 0;
 const topicMap = {
     'prod/DEMO_Highsoft/kraftverk_1/overview': 'mqtt-data-1',
     'prod/DEMO_Highsoft/kraftverk_2/overview': 'mqtt-data-2'
 };
-// Default connector ID
+// Default connector
 const defaultConnId = 'mqtt-data-1';
 
 
@@ -109,9 +109,9 @@ const commonChartOptions = {
 };
 
 
-// Custom HTML component for displaying power plant, reservoir and
+// HTML component for displaying power plant, reservoir and
 // water intake parameters. If a description of the power plant
-// is available, it is also shown here.
+// is available, it is displayed here.
 const infoComponent = {
     type: 'HTML',
     renderTo: 'el-info',
@@ -127,7 +127,7 @@ const mapComponent = {
     type: 'Highcharts',
     renderTo: 'el-map',
     chartConstructor: 'mapChart',
-    title: 'Power plant with water reservoirs and intakes',
+    title: 'Power plant - water reservoirs - intakes',
     chartOptions: {
         ...commonChartOptions,
         chart: {
@@ -332,7 +332,7 @@ function printLog(msg) {
 // Creates the dashboard
 async function createDashboard() {
 
-    // Create configuration for power generator units
+    // Create configuration for power plant dashboard
     const dashConfig = await createDashConfig();
 
     dashboard = await Dashboards.board('container', {
@@ -381,35 +381,32 @@ async function createDashboard() {
     async function createDashConfig() {
         const dashConfig = {
             connectors: [],
-            components: []
+            components: [
+                // Information component (HTML)
+                infoComponent,
+                // Location of power plant, reservoirs and intakes
+                mapComponent,
+                // KPI for displaying the latest generated power
+                kpiComponent,
+                // Chart component for displaying generated power (history)
+                chartComponent,
+                // Datagrid component for displaying generated power (history)
+                datagridComponent
+            ]
         };
 
-        // One connector per data source (MQTT topic)
+        // One connector per MQTT topic
         for (const [key, value] of Object.entries(topicMap)) {
             dashConfig.connectors.push(
                 createDataConnector(key, value)
             );
         }
 
-        // Information component (HTML)
-        dashConfig.components.push(infoComponent);
-
-        // Map for displaying power plant, reservoirs and intakes locations
-        dashConfig.components.push(mapComponent);
-
-        // KPI for displaying the latest generated power
-        dashConfig.components.push(kpiComponent);
-
-        // Chart component for displaying generated power (history)
-        dashConfig.components.push(chartComponent);
-
-        // Datagrid component for displaying generated power (history)
-        dashConfig.components.push(datagridComponent);
-
         return dashConfig;
     }
 
-    // The data pool is updated by incoming MQTT data
+    // The data pool is updated by incoming MQTT data,
+    // via an MQTT custom connector.
     function createDataConnector(topic, connId) {
         return {
             id: connId,
@@ -419,7 +416,7 @@ async function createDashboard() {
                 topic: topic,
                 autoConnect: true,
                 autoReset: true, // Clear data table on subscribe
-                autoClear: useHistoricalData, // Avoid reuse of historical data
+                autoClear: useHistoricalData,
 
                 columnNames: ['time', 'power'],
                 beforeParse: data => dataParser(data),
@@ -443,10 +440,10 @@ async function createDashboard() {
                     );
                     uiSetComponentVisibility(subscribed);
                 },
-                packetEvent: event => {
+                packetEvent: async event => {
                     const { topic, count } = event.detail;
                     printLog(`Packet #${count} received: ${topic}`);
-                    dashboardUpdate(event.data, connId);
+                    await dashboardUpdate(event.data, connId);
                 },
                 errorEvent: event => {
                     const { code, message } = event.detail;
@@ -457,7 +454,7 @@ async function createDashboard() {
         };
     }
 
-    // Update component visibility. Hide all but first row if not connected.
+    // Update component visibility. The control bar is always visible.
     function uiSetComponentVisibility(visible) {
         const cells = document.getElementsByClassName('row');
 
@@ -468,7 +465,7 @@ async function createDashboard() {
     }
 }
 
-// Power stations: Name indexes topic and traffic stats.
+// Power plants: Name indexes topic and traffic stats.
 // Dynamically updated by incoming messages.
 const powPlantList = {};
 
@@ -733,7 +730,7 @@ async function dashboardUpdate(mqttData, connId) {
         title: aggName
     });
 
-    // Spline chart
+    // Chart
     const chartComp = dashboard.getComponentByCellId('el-chart');
     await chartComp.update({
         connector: {
@@ -743,14 +740,16 @@ async function dashboardUpdate(mqttData, connId) {
         title: aggName
     });
 
-    // Datagrid
-    const gridComp = dashboard.getComponentByCellId('el-datagrid');
-    await gridComp.update({
-        connector: {
-            id: connId
-        },
-        title: aggName
-    });
+    // Datagrid (a delay seems necessary)
+    setTimeout(async () => {
+        const gridComp = dashboard.getComponentByCellId('el-datagrid');
+        await gridComp.update({
+            connector: {
+                id: connId
+            },
+            title: aggName
+        });
+    }, 100);
 }
 
 
@@ -898,7 +897,7 @@ class ControlBar {
             const cn = topicMap[topic];
 
             const con = await dashboard.dataPool.getConnector(cn);
-            printLog('Unsubscribed: ' + con.options.topic);
+            printLog('Unsubscribe...' + con.options.topic);
             await con.unsubscribe();
         }
 
@@ -908,7 +907,7 @@ class ControlBar {
         const con = await dashboard.dataPool.getConnector(cn);
 
         if (con.connected) {
-            printLog('Subscribed: ' + con.options.topic);
+            printLog('Subscribe...' + con.options.topic);
             await con.subscribe();
         }
 
@@ -1032,7 +1031,7 @@ function measDataInfo() {
         },
         h: {
             brief: 'Elevation',
-            unit: 'MASL'
+            unit: 'masl'
         },
         location: {
             brief: 'Location',
@@ -1052,15 +1051,15 @@ function measDataInfo() {
         },
         level: {
             brief: 'level',
-            unit: 'MASL'
+            unit: 'masl'
         },
         HRV: {
             brief: 'Highest regulated level',
-            unit: 'MASL'
+            unit: 'masl'
         },
         LRV: {
             brief: 'Lowest regulated level',
-            unit: 'MASL'
+            unit: 'masl'
         },
         energy: {
             brief: 'Energy',
