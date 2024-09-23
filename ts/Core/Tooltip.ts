@@ -339,7 +339,7 @@ class Tooltip {
         // Some series types use a specificly calculated tooltip position for
         // each point
         } else if (points[0].tooltipPos) {
-            ret = points[0].tooltipPos;
+            ret = [points[0].tooltipPos[0], points[0].tooltipPos[1]];
 
         // Calculate the average position and adjust for axis positions
         } else {
@@ -369,6 +369,19 @@ class Tooltip {
             ret = [chartX - plotLeft, chartY - plotTop];
 
         }
+
+        if (
+            points[0].series &&
+            points[0].series.group &&
+            points[0].series.zoomBox
+        ) {
+            const scale = points[0].series.zoomBox.scale,
+                left = (points[0].series.group.translateX || 0),
+                top = (points[0].series.group.translateY || 0);
+            ret[0] = (ret[0] * scale) + left - chart.plotLeft;
+            ret[1] = (ret[1] * scale) + top - chart.plotTop;
+        }
+
         return ret.map(Math.round);
 
     }

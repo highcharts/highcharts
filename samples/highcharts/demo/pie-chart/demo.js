@@ -3,13 +3,19 @@ Highcharts.chart('container', {
         type: 'pie',
         zooming: {
             type: 'xy'
-        }
+        },
+        panning: {
+            enabled: true,
+            type: 'xy'
+        },
+        panKey: 'shift'
     },
     title: {
         text: 'Egg Yolk Composition'
     },
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        followPointer: false
     },
     subtitle: {
         text:
