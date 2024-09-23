@@ -255,7 +255,10 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
+    // Set karma.browsercount to bypass disconnection problem on Windows
+    const browserCount = Number(getProperties()['karma.browsercount']) ||
+        argv.browsercount || (Math.max(1, os.cpus().length - 2));
+
     if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
