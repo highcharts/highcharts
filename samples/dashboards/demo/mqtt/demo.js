@@ -773,7 +773,7 @@ class ControlBar {
             errColor: '#c33'
         };
 
-        this.elConnectBar = document.getElementById('connect-bar');
+        this.elConnectBar = document.getElementById('control-bar');
         this.elConnectStatus = document.getElementById('connect-status');
         this.color.offColor =
             this.elConnectBar.style.backgroundColor; // From CSS
@@ -1213,7 +1213,7 @@ class MQTTConnector extends DataConnector {
             table = connector.table;
 
         connector.packetCount = 0;
-        table.deleteRows();
+        await table.deleteRows();
     }
 
     /**
@@ -1328,15 +1328,15 @@ class MQTTConnector extends DataConnector {
      * Process incoming message
      *
      */
-    onMessageArrived(mqttPacket) {
+    async onMessageArrived(mqttPacket) {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
             connTable = connector.table;
 
-        // Clear the data table on each packet
+        // Clear the data table on each packet, without resetting counter
         if (connector.options.autoClear) {
-            connTable.deleteRows();
+            await connTable.deleteRows();
         }
 
         // Parse the message

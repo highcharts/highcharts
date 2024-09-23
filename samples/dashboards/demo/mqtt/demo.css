@@ -10,12 +10,11 @@
 
 :root {
     /* Dashboards container */
-    --container-background: var(--highcharts-neutral-color-3);
+    --container-background: var(--highcharts-neutral-color-0);
 
     /* Dashboards components */
-    --component-background: var(--highcharts-neutral-color-10);
-    --component-title-text: #136326;
-    --component-rounded-corners: 10px;
+    --component-background: #ebf1f4;
+    --component-title-text: rgb(0, 112, 192);
 
     /* Frequently used colors */
     --color-text: #2f2b38;
@@ -41,7 +40,7 @@
 }
 
 #el-info {
-    --color-table-td: var(--highcharts-neutral-color-5);
+    --color-table-td: var(--highcharts-neutral-color-0);
     --color-table-bg: var(--highcharts-neutral-color-20);
     --color-header: var(--highcharts-neutral-color-80);
     --color-unit: green;
@@ -102,9 +101,9 @@ body {
 }
 
 .highcharts-dashboards-component {
-    border-radius: var(--component-rounded-corners);
     background-color: var(--component-background);
     padding: 0;
+    margin: 0;
 }
 
 .highcharts-background {
@@ -114,12 +113,12 @@ body {
 
 .highcharts-dashboards-component-title {
     white-space: nowrap;
-    font-size: 16px;
+    font-size: 20px;
     letter-spacing: 1.2px;
     color: var(--component-title-text);
-    text-align: center;
+    text-align: left;
     margin: 0;
-    padding: 0;
+    padding: 10px;
 }
 
 .highcharts-tooltip-box {
@@ -165,8 +164,8 @@ body {
 
 .cell > .highcharts-dashboards-component {
     position: relative;
-    margin: 10px;
-    padding: 10px;
+    margin: 5px;
+    padding: 5px;
     background-clip: border-box;
 }
 
@@ -232,31 +231,31 @@ body {
  *  Control/status bar (top row)
  *
  * */
-div#connect-bar .highcharts-dashboards-component-content {
+div#control-bar .highcharts-dashboards-component-content {
     background-color: none;
 }
 
-div#connect-bar {
+div#control-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: var(--component-rounded-corners);
     background-color: #336;
-    padding: 5px;
+    padding: 0;
+    margin: 0;
     font-size: 14px;
     color: white;
 }
 
-div#connect-bar h1 {
+div#control-bar h1 {
     padding: 0 5%;
     font-size: 2.5vw;
 }
 
-div#connect-bar img {
+div#control-bar img {
     display: none;
 }
 
-div#connect-bar #connect-status {
+div#control-bar #connect-status {
     color: #dadae2;
     font-size: 12px;
     margin-left: 20px;
@@ -266,7 +265,7 @@ div#connect-bar #connect-status {
     }
 }
 
-div#connect-bar button:hover {
+div#control-bar button:hover {
     background-color: #41c6c1;
     cursor: pointer;
 }
@@ -284,7 +283,7 @@ div#connect-bar button:hover {
 #connect-switch span {
     position: relative;
     top: -20px;
-    left: 60px;
+    left: 45px;
     text-align: center;
     font-size: 12px;
 }
@@ -325,22 +324,29 @@ div#connect-bar button:hover {
     width: var(--dropdown-width);
     position: relative;
     display: inline-block;
-    visibility: hidden; /* Visible on connect */
-}
 
-#dropdown-button {
-    width: 100%;
-    background-color: #3498db;
-    color: white;
-    padding: 10px;
-    font-size: 1.3vw;
-    border: none;
-    cursor: pointer;
-}
+    /* Hidden until connected */
+    visibility: hidden;
 
-#dropdown-button:hover,
-#dropdown-button:focus {
-    background-color: #1777a1;
+    /* Show the dropdown menu */
+    & .show {
+        display: block;
+    }
+
+    & #dropdown-button {
+        width: 100%;
+        background-color: #3498db;
+        color: white;
+        padding: 10px;
+        font-size: 1.3vw;
+        border: none;
+        cursor: pointer;
+    }
+
+    & #dropdown-button:hover,
+    & #dropdown-button:focus {
+        background-color: #1777a1;
+    }
 }
 
 /* Dropdown content  */
@@ -363,11 +369,6 @@ div#connect-bar button:hover {
     & a:hover {
         background-color: #abc;
     }
-}
-
-/* Show the dropdown menu */
-.show {
-    display: block;
 }
 
 /* *
@@ -431,9 +432,9 @@ div#connect-bar button:hover {
     max-height: 100%;
 
     & h3 {
-        padding: 3px;
+        padding: 5px;
         margin: 0;
-        text-align: center;
+        text-align: left;
         font-size: 12px;
     }
 
@@ -450,7 +451,7 @@ div#connect-bar button:hover {
 }
 
 #el-info table.info-field {
-    margin-top: 10px;
+    margin: 15px 0 10px;
     background-color: var(--color-table-bg);
     width: 100%;
     border-spacing: 1px;
@@ -461,6 +462,7 @@ div#connect-bar button:hover {
         color: var(--color-table-caption);
         font-size: 14px;
         font-weight: bold;
+        text-align: left;
     }
 
     & th {
@@ -491,7 +493,6 @@ div#connect-bar button:hover {
     }
 
     & td:first-of-type {
-        color: var(--color-table-caption);
         text-transform: capitalize;
     }
 }
