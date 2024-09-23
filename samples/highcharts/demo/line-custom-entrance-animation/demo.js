@@ -106,17 +106,10 @@ const commonOptions = {
 };
 
 const ISINMap = {
-    Netflix: 'US64110L1061',
-    Apple: 'US0378331005',
-    Intel: 'US4581401001',
-    Nvidia: 'US67066G1040',
-    AMD: 'US0079031078',
-    Microsoft: 'US5949181045',
-    Tesla: 'US88160R1014',
     Meta: 'US30303M1027',
     Amazon: 'US0231351067',
-    GoogleClassA: 'US02079K3059',
-    GoogleClassC: 'US02079K1079'
+    Netflix: 'US64110L1061',
+    GoogleClassA: 'US02079K3059'
 };
 
 // eslint-disable-next-line no-undef
@@ -147,7 +140,6 @@ const FANGPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
 });
 
 Promise.all([FANGPriceConnector.load()]).then(() => {
-    console.log(FANGPriceConnector);
     const { Date: dates, ...companies } = FANGPriceConnector.table.getColumns();
 
     const processedData = Object.fromEntries(
@@ -156,7 +148,6 @@ Promise.all([FANGPriceConnector.load()]).then(() => {
             values.map((value, i) => [dates[i], value])
         ])
     );
-    console.log(processedData);
 
     Highcharts.chart('container', {
         chart: {
