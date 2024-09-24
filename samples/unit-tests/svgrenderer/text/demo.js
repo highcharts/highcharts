@@ -283,8 +283,6 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
 
         assert.strictEqual(text.getBBox().width, 500, 'Initial bounding box');
 
-        return;
-
         text.attr({
             text: '<div style="width: 400px">Styled div</div>'
         });
@@ -474,7 +472,7 @@ QUnit.test('HTML', function (assert) {
             500
         );
 
-        var text = renderer.text('Hello & <tag>', 10, 30).add();
+        var text = renderer.text('Hello &amp; &lt;tag&gt;', 10, 30).add();
 
         assert.strictEqual(
             text.element.textContent,
