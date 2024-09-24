@@ -3097,7 +3097,7 @@ class Axis {
             labelMetrics = this.labelMetrics(),
             textOverflowOption = labelStyleOptions.textOverflow,
             whiteSpaceOption = labelStyleOptions.whiteSpace;
-
+console.log('slotWidth', slotWidth);
         let commonWidth: number,
             commonTextOverflow: string,
             commonWhiteSpace: string,
