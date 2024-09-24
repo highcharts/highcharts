@@ -105,7 +105,7 @@ Dashboards.board('container', {
             columns: [{
                 id: 'Global Avg Temperature Increase',
                 header: {
-                    format: 'Global Avg Temperature Increase °C'
+                    format: 'Global Average Temperature Increase °C'
                 }
             }, {
                 id: 'CO2 Concentration',
@@ -157,7 +157,7 @@ Dashboards.board('container', {
             },
             series: [{
                 id: 'temp',
-                name: 'Global Avg Temperature Increase',
+                name: 'Global Average Temperature Increase',
                 type: 'column',
                 yAxis: 0,
                 tooltip: {
