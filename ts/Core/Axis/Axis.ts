@@ -3233,6 +3233,9 @@ class Axis {
                 } else if (
                     commonWidth &&
                     !widthOption &&
+                    // Setting width in this case messes with the bounding box
+                    // (#7975)
+                    labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
