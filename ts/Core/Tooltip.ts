@@ -450,14 +450,7 @@ class Tooltip {
                  */
                 this.container = container = H.doc.createElement('div');
 
-                container.className = (
-                    'highcharts-tooltip-container ' +
-                    (
-                        chart.renderTo.className.match(
-                            /(highcharts[a-zA-Z0-9-]+)\s?/gm
-                        ) || [].join(' ')
-                    )
-                );
+                container.className = 'highcharts-tooltip-container';
 
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
@@ -557,7 +550,10 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            H.doc.body.appendChild(container);
+            (
+                this.chart.scrollablePlotArea?.parentDiv ||
+                this.chart.container
+            ).appendChild(container);
         }
 
         return this.label;
@@ -617,7 +613,6 @@ class Tooltip {
         boxHeight: number,
         point: Point
     ): PositionObject {
-
         const { distance, chart, outside, pointer } = this,
             { inverted, plotLeft, plotTop, polar } = chart,
             { plotX = 0, plotY = 0 } = point,
@@ -644,10 +639,9 @@ class Tooltip {
                     // position to match scaling of the container in case there
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
-                    isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
-                        chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                    isX ?
+                        scaleX(plotX + plotLeft) :
+                        scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -1183,6 +1177,15 @@ class Tooltip {
             scrollTop = 0
         } = chart.scrollablePlotArea?.scrollingContainer || {};
 
+        const {
+            left: rawChartLeft,
+            top: rawChartTop
+        } = pointer.getChartPosition();
+
+        const [chartLeft, chartTop] = [
+            rawChartLeft - 8,
+            rawChartTop - 8
+        ];
 
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If
@@ -1201,7 +1204,6 @@ class Tooltip {
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
-        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1517,10 +1519,7 @@ class Tooltip {
                 x,
                 anchorX,
                 anchorY,
-                pos,
-                point: {
-                    isHeader
-                }
+                pos
             } = box;
             const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
@@ -1535,27 +1534,8 @@ class Tooltip {
                 anchorY
             };
 
-            // Handle left-aligned tooltips overflowing the chart area
-            if (tooltip.outside && x < anchorX) {
-                const offset = chartLeft - boxExtremes.left;
-                // Skip this if there is no overflow
-                if (offset > 0) {
-                    if (!isHeader) {
-                        attributes.x = x + offset;
-                        attributes.anchorX = anchorX + offset;
-                    }
-                    if (isHeader) {
-                        attributes.x = (
-                            boxExtremes.right - boxExtremes.left
-                        ) / 2;
-                        attributes.anchorX = anchorX + offset;
-                    }
-                }
-            }
-
             // Put the label in place
             box.tt.attr(attributes);
-
         });
 
         /* If we have a separate tooltip container, then update the necessary
@@ -1578,8 +1558,10 @@ class Tooltip {
             );
 
             // Position the tooltip container to the chart container
-            container.style.left = boxExtremes.left + 'px';
-            container.style.top = chartTop + 'px';
+            if (chart.scrollablePlotArea) {
+                container.style.left = boxExtremes.left + 'px';
+                container.style.top = chartTop + 'px';
+            }
         }
 
         // Workaround for #18927, artefacts left by the shadows of split

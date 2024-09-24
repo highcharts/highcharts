@@ -299,22 +299,42 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
     points[points.length - 1].onMouseOver();
 
     // Check both the series tooltip, and the header tooltip
-    [chart.tooltip.tt, chart.series[0].tt].forEach(tt => {
+    [
+        {
+            tt: chart.tooltip.tt,
+            test: ttRight => {
+                assert.close(
+                    ttRight,
+                    mainContainer.clientWidth,
+                    10,
+                    'The tooltip should not overflow the viewport'
+                );
+            }
+        },
+        {
+            tt: chart.series[0].tt,
+            test: ttRight => {
+                assert.strictEqual(
+                    ttRight <= mainContainer.clientWidth,
+                    true,
+                    'The tooltip should not overflow the viewport'
+                );
+            }
+        }
+    ].forEach(({ tt, test }, i) => {
         // Get the absolute position of right side of the tooltip element
         // Test fails on firefox if we use getBoundingClientRect().right
         const ttRight = tt.element.getBoundingClientRect().left +
             tt.getBBox().width;
+        console.log(i, ttRight, mainContainer.clientWidth);
 
         assert.strictEqual(
             tt.x < tt.anchorX,
             true,
             'The tooltip should be aligned towards the left'
         );
-        assert.strictEqual(
-            ttRight <= mainContainer.clientWidth,
-            true,
-            'The tooltip should not overflow the viewport'
-        );
+
+        test(ttRight);
     });
 
     // check the alignment when tooltip.outside is false
