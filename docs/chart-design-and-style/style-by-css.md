@@ -12,14 +12,14 @@ To customize your styles, you can create your own themes, or just add your own i
 Highcharts since v11 honors the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. If you end user prefers dark mode, the Highcharts CSS will pick this up and set the CSS color variables accordingly. To avoid this, you can set either the `.highcharts-light` or `.highcharts-dark` class name on the chart container. See a [live demo for switching between modes](https://www.highcharts.com/samples/highcharts/css/prefers-color-scheme).
 
 
-WHAT CAN BE STYLED?
+What can be styled?
 -------------------
 Typography, colors and visual properties like stroke width and style can be set by CSS.
 
 However, layout and positioning of elements like the title or legend cannot be controlled by CSS. This is a limitation of CSS for SVG, that does not (yet - [SVG 2 Geometric Style Properties](https://github.com/w3c/svgwg/wiki/SVG-2-new-features#geometric-attributes-that-can-now-be-specified-as-style-properties)) allow geometric attributes like `x`, `y`, `width` or `height`. And even if those were settable, we would still need to compute the layout flow in JavaScript. Instead, positioning is subject to Highcharts JavaScript options like `align`, `verticalAlign` etc.
 
 
-WHAT CSS RULES APPLY
+What css rules apply
 --------------------
 
 Depending on how you prefer to work, you can use the browser's developer console to select SVG elements in the chart and see what CSS rules apply to it.
@@ -474,7 +474,7 @@ When [zones](https://api.highcharts.com/highcharts/plotOptions.series.zones) a
 [Demo of styling zones](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/).
 
 
-COMPATIBILITY NOTE
+Compatibility note
 -------------------
 
 Prior to Highcharts v7, styled mode was served as a separate set of files. Instead of an option `chart.styledMode`, styled mode was enabled by loading files from the `/js/` folder on `code.highcharts.com`, in the zip file and in the npm package. These files are no longer maintained.
