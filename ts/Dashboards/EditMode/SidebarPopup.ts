@@ -326,13 +326,13 @@ class SidebarPopup extends BaseForm {
 
         if (isSticky) {
             if (window.scrollY > offsetTop) {
-                sidebarWrapper.style.top = paddingTop + 'px'; // stick
+                sidebarWrapper.style.top = paddingTop + 'px'; // Stick
                 sidebarWrapper.style.position = 'fixed';
             } else {
                 sidebarWrapper.style.position = 'static';
             }
 
-            document.addEventListener('scroll', (event) => {
+            document.addEventListener('scroll', (): void => {
                 if (
                     window.scrollY > offsetTop &&
                     this.container.getBoundingClientRect().y < 0
@@ -342,7 +342,7 @@ class SidebarPopup extends BaseForm {
                 } else {
                     sidebarWrapper.style.top = offsetTop + 'px';
                     sidebarWrapper.style.position = 'static';
-                }         
+                }
             });
         }
 

@@ -1130,7 +1130,7 @@ namespace EditMode {
          */
         tools?: Tools;
         /**
-         * 
+         * Options to configure the sidebar.
          */
         sidebar: SidebarOptions;
     }
