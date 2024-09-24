@@ -829,7 +829,7 @@
 
 .highcharts-dashboards-edit-sidebar-wrapper {
     width: 300px;
-    height: calc(100% - 100px);
+    height: calc(100% - 40px);
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -1287,10 +1287,6 @@
     display: flex;
     flex-direction: column-reverse;
     gap: 10px;
-    position: fixed;
-    bottom: 0;
-    width: 300px;
-    padding-bottom: 10px;
 }
 
 /* stylelint-disable-next-line max-line-length */
