@@ -3168,9 +3168,9 @@ class Axis {
                         // bounding box (#4070)
                         if (
                             // label.styles.textOverflow === 'ellipsis'
-                            label.styles.whiteSpace !== 'nowrap'
+                            label.styles.whiteSpace === 'nowrap'
                         ) {
-                            label.css({ whiteSpace: 'nowrap' });
+                            label.css({ whiteSpace: 'normal' });
 
                         // Set the correct width in order to read
                         // the bounding box height (#4678, #5034)
@@ -3185,6 +3185,8 @@ class Axis {
                             )
                         ) {
                             // label.specificTextOverflow = 'ellipsis';
+                            // @todo: This is where we could consider a
+                            // maxHeight property
                             label.specificWhiteSpace = 'nowrap';
                         }
                     }
