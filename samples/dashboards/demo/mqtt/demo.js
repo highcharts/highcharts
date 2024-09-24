@@ -22,9 +22,10 @@ const log = console.log;
 const activeItem = {
     fullName: '',
     plantName: '',
-    generatorId: 1
+    generatorId: 1,
+    connector: null
 };
-
+let discoveryConnector;
 
 // MQTT configuration for Sognekraft AS broker
 const mqttLinkConfig = {
@@ -127,7 +128,7 @@ const mapComponent = {
     type: 'Highcharts',
     renderTo: 'el-map',
     chartConstructor: 'mapChart',
-    title: 'Power plant - water reservoirs - intakes',
+    title: '',
     chartOptions: {
         ...commonChartOptions,
         chart: {
@@ -139,6 +140,10 @@ const mapComponent = {
             buttonOptions: {
                 alignTo: 'spacingBox'
             }
+        },
+        mapView: {
+            center: [],
+            zoom: defaultZoom
         },
         series: [{
             type: 'tiledwebmap',
@@ -197,7 +202,7 @@ const kpiComponent = {
         ...commonChartOptions,
         chart: {
             type: 'solidgauge',
-            styledMode: false
+            styledMode: true
         },
         pane: {
             background: {
@@ -305,7 +310,7 @@ const datagridComponent = {
             cells: {
                 formatter: function () {
                     return Highcharts.dateFormat(
-                        '%H:%M:%S',
+                        '%H:%M',
                         this.value
                     );
                 }
@@ -386,7 +391,7 @@ async function createDashboard() {
                 infoComponent,
                 // Location of power plant, reservoirs and intakes
                 mapComponent,
-                // KPI for displaying the latest generated power
+                // KPI for displaying generated power (current)
                 kpiComponent,
                 // Chart component for displaying generated power (history)
                 chartComponent,
@@ -424,9 +429,9 @@ async function createDashboard() {
                     const { connected, host, port } = event.detail;
                     controlBar.setConnectState(connected);
                     if (connected) {
-                        controlBar.showStatus(`Connected to ${host}:${port}`);
+                        controlBar.showStatus(`${host}:${port}`);
                     } else {
-                        controlBar.showStatus('Not connected');
+                        controlBar.showStatus('');
                         uiSetComponentVisibility(false);
                     }
                     // eslint-disable-next-line max-len
@@ -647,8 +652,7 @@ async function dashboardUpdate(mqttData, connId) {
         // Center map at the new power plant location
         const mapView = mapComp.chart.mapView;
         await mapView.setView(
-            [location.lon, location.lat],
-            defaultZoom
+            [location.lon, location.lat]
         );
     }
 
@@ -657,7 +661,7 @@ async function dashboardUpdate(mqttData, connId) {
         const infoComp = dashboard.getComponentByCellId('el-info');
 
         await infoComp.update({
-            title: data.name
+            title: data.name + ' - details'
         });
 
         // Description of power plant (if available)
@@ -727,7 +731,7 @@ async function dashboardUpdate(mqttData, connId) {
         value: rowCount > 0 ?
             dataTable.getCellAsNumber('power', rowCount - 1) : 0,
         chartOptions: chartOptions,
-        title: aggName
+        title: aggName + ' (current)'
     });
 
     // Chart
@@ -737,19 +741,19 @@ async function dashboardUpdate(mqttData, connId) {
             id: connId
         },
         chartOptions: chartOptions,
-        title: aggName
+        title: aggName + ' (24h)'
     });
 
-    // Datagrid (a delay seems necessary)
-    setTimeout(async () => {
-        const gridComp = dashboard.getComponentByCellId('el-datagrid');
-        await gridComp.update({
-            connector: {
-                id: connId
-            },
-            title: aggName
-        });
-    }, 100);
+    // Datagrid
+    const gridComp = dashboard.getComponentByCellId('el-datagrid');
+    // gridComp.dataGrid.viewport.loadPresentationData();
+    log('Update datagrid: ' + connId + ', ' + aggName);
+    await gridComp.update({
+        connector: {
+            id: connId
+        },
+        title: aggName + ' (24h)'
+    });
 }
 
 
@@ -768,7 +772,7 @@ class ControlBar {
         // Connect bar colors
         this.color = {
             offColor: '', // Populated from CSS
-            onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
+            onColor: '#297ac2',
             errColor: '#c33'
         };
 
@@ -790,15 +794,19 @@ class ControlBar {
 
         this.elDropdownButton.title = 'Click to select a power plant';
         this.elDropdownButton.innerHTML = 'Power plant &nbsp;&#9662;';
+
+        this.connected = false;
     }
 
     setConnectState(connected) {
+        this.connected = connected;
+
         const st = this.elConnectBar.style;
         st.backgroundColor = connected ?
             this.color.onColor : this.color.offColor;
 
         // Use logo image only when connected, otherwise text
-        this.setLogoVisibility(connected);
+        this.setLogoVisibility();
 
         this.elDropdown.style.visibility = connected ? 'visible' : 'hidden';
         this.elToggle.checked = connected;
@@ -808,7 +816,7 @@ class ControlBar {
         // Use logo image only on a wider screen, otherwise text only.
         const el = this.elLogo;
         if (el) {
-            const showLogo = (window.innerWidth > 576);
+            const showLogo = (window.innerWidth > 576) && this.connected;
             el.style.display = showLogo ? 'inline' : 'none';
             if (this.elLogoText) {
                 this.elLogoText.style.display = showLogo ? 'none' : 'block';
@@ -854,12 +862,20 @@ class ControlBar {
             startTopicDiscovery();
             return;
         }
-        const connName = 'mqtt-data-1';
-        const con = await dashboard.dataPool.getConnector(connName);
-        if (con.connected) {
-            await con.disconnect();
-        } else {
-            await con.connect();
+        if (discoveryConnector) {
+            if (discoveryConnector.connected) {
+                discoveryConnector.disconnect();
+            } else {
+                discoveryConnector.connect();
+            }
+        }
+        if (activeItem.connector) {
+            const con = activeItem.connector;
+            if (con.connected) {
+                await con.disconnect();
+            } else {
+                await con.connect();
+            }
         }
     }
 
@@ -894,27 +910,28 @@ class ControlBar {
         } else {
             // Unsubscribe from the current power plant topic
             const topic = powPlantList[id].topic;
-            const cn = topicMap[topic];
+            const connName = topicMap[topic];
 
-            const con = await dashboard.dataPool.getConnector(cn);
+            const con = await dashboard.dataPool.getConnector(connName);
             printLog('Unsubscribe...' + con.options.topic);
             await con.unsubscribe();
         }
 
         // Subscribe to the new power plant topic
         const topic = powPlantList[plant].topic;
-        const cn = topicMap[topic];
-        const con = await dashboard.dataPool.getConnector(cn);
+        const connName = topicMap[topic];
+        const connector = await dashboard.dataPool.getConnector(connName);
 
-        if (con.connected) {
-            printLog('Subscribe...' + con.options.topic);
-            await con.subscribe();
+        if (connector.connected) {
+            printLog('Subscribe...' + connector.options.topic);
+            await connector.subscribe();
         }
 
         // Update the active power plant/generator
         activeItem.generatorId = genId;
         activeItem.fullName = fullName;
         activeItem.plantName = plant;
+        activeItem.connector = connector;
     }
 
     async clickHandler(event) {
@@ -931,7 +948,6 @@ class ControlBar {
         if (event.target.matches('.dropdown-select')) {
             // Power plant selection
             await this.onPowPlantClicked(event.target.innerText);
-            return;
         }
         // Hide the dropdown if the user clicks outside of it
         const items = document.getElementsByClassName('dropdown-content');
@@ -947,8 +963,6 @@ class ControlBar {
 /*
 * Topic discovery
 */
-let discoveryTopic;
-
 function startTopicDiscovery() {
     // Create a special connector for topic (power plant) discovery
     const config = {
@@ -959,9 +973,9 @@ function startTopicDiscovery() {
             const { connected, host, port } = event.detail;
             controlBar.setConnectState(connected);
             if (connected) {
-                controlBar.showStatus(`Connected to ${host}:${port}`);
+                controlBar.showStatus(`${host}:${port}`);
             } else {
-                controlBar.showStatus('Not connected');
+                controlBar.showStatus('');
             }
             // eslint-disable-next-line max-len
             printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
@@ -975,13 +989,13 @@ function startTopicDiscovery() {
             nDiscoveredTopics++;
             const expTopics = Object.keys(topicMap).length;
             if (count === expTopics) {
-                discoveryTopic.unsubscribe();
+                discoveryConnector.unsubscribe();
             }
         }
     };
     // eslint-disable-next-line no-use-before-define
-    discoveryTopic = new MQTTConnector(config);
-    discoveryTopic.load();
+    discoveryConnector = new MQTTConnector(config);
+    discoveryConnector.load();
 }
 
 /*
