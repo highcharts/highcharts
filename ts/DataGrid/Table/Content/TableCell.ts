@@ -187,7 +187,7 @@ class TableCell extends Cell {
         });
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         if (e.target !== this.htmlElement) {
             return;
         }

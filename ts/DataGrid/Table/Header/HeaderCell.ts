@@ -203,7 +203,7 @@ class HeaderCell extends Cell {
         th.style.width = th.style.maxWidth = width + 'px';
     }
 
-    protected onKeyDown(e: KeyboardEvent): void {
+    protected override onKeyDown(e: KeyboardEvent): void {
         if (e.target !== this.htmlElement) {
             return;
         }

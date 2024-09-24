@@ -185,6 +185,8 @@ class Table {
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
+        this.tbodyElement.setAttribute('tabindex', '0');
+
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -202,6 +204,8 @@ class Table {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
         this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
 
     /* *
@@ -292,6 +296,13 @@ class Table {
         this.rowsVirtualizer.reflowRows();
     }
 
+    private onTBodyFocus = (e: FocusEvent): void => {
+        e.preventDefault();
+
+        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
+            ?.cells[0]?.htmlElement.focus();
+    };
+
     /**
      * Handles the resize event.
      */
@@ -376,6 +387,7 @@ class Table {
      * Destroys the data grid table.
      */
     public destroy(): void {
+        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
