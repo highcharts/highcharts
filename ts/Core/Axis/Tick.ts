@@ -733,16 +733,18 @@ class Tick {
             );
         }
 
-        if (textWidth) {
+        if (textWidth && label) {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
                 css.width = Math.floor(textWidth) + 'px';
+                if (!(labelOptions.style || {}).whiteSpace) {
+                    css.whiteSpace = 'nowrap';
+                }
                 if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }
-                (label as any).css(css);
-
+                label.css(css);
             }
         }
     }

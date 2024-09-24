@@ -31,7 +31,8 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
         x: 0,
         y: void 0, // Auto
         style: {
-            textOverflow: 'none' // Wrap lines by default (#7248)
+            // Wrap lines by default (#7248)
+            whiteSpace: 'normal'
         }
     },
     maxPadding: 0,

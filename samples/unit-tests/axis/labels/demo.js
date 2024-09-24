@@ -1560,6 +1560,7 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             polar: true,
             type: 'line',
             width: 800,
+            height: 400,
             borderWidth: 1
         },
         credits: {
@@ -1621,11 +1622,14 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             var bBox = chart.xAxis[0].ticks['1'].label.element.getBBox();
             assert.ok(
                 bBox.x + bBox.width < chart.chartWidth,
-                'Label ' + pos + ' inside right at ' + chart.chartWidth
+                `Label ${pos} should be inside right
+                    (${bBox.x + bBox.width} < ${chart.chartWidth},
+                    chartWidth = ${chart.chartWidth})`
             );
             assert.ok(
                 bBox.x > 0,
-                'Label ' + pos + ' inside left at ' + chart.chartWidth
+                `Label ${pos} should be inside left
+                    (${bBox.x} > 0, chartWidth = ${chart.chartWidth}`
             );
         });
     }
