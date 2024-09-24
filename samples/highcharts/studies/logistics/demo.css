@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .clearfix {
     clear: both;
 }
@@ -22,7 +26,8 @@
     color: #c79495;
 }
 
-#description {
+.highcharts-description {
     max-width: 800px;
     margin: 0 auto;
+    padding: 10px;
 }
