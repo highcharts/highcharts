@@ -3095,11 +3095,9 @@ class Axis {
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = labelStyleOptions.textOverflow,
             whiteSpaceOption = labelStyleOptions.whiteSpace;
-console.log('slotWidth', slotWidth);
+
         let commonWidth: number,
-            commonTextOverflow: string,
             commonWhiteSpace: string,
             maxLabelLength = 0,
             label,
@@ -3151,11 +3149,8 @@ console.log('slotWidth', slotWidth);
             // For word-wrap or ellipsis
             commonWidth = innerWidth;
 
-            // if (!textOverflowOption) {
             if (!whiteSpaceOption) {
-                // commonTextOverflow = 'clip';
                 commonWhiteSpace = 'normal';
-
 
                 // On vertical axis, only allow word wrap if there is room
                 // for more lines.
@@ -3166,10 +3161,7 @@ console.log('slotWidth', slotWidth);
                     if (label) {
                         // Reset white-space in order to get the correct
                         // bounding box (#4070)
-                        if (
-                            // label.styles.textOverflow === 'ellipsis'
-                            label.styles.whiteSpace === 'nowrap'
-                        ) {
+                        if (label.styles.whiteSpace === 'nowrap') {
                             label.css({ whiteSpace: 'normal' });
 
                         // Set the correct width in order to read
@@ -3184,7 +3176,6 @@ console.log('slotWidth', slotWidth);
                                 (labelMetrics.h - labelMetrics.f)
                             )
                         ) {
-                            // label.specificTextOverflow = 'ellipsis';
                             // @todo: This is where we could consider a
                             // maxHeight property
                             label.specificWhiteSpace = 'nowrap';
@@ -3202,9 +3193,6 @@ console.log('slotWidth', slotWidth);
                     (chart.chartHeight as any) * 0.33 :
                     maxLabelLength
             );
-            //if (!textOverflowOption) {
-            //    commonTextOverflow = 'ellipsis';
-            //}
             if (!whiteSpaceOption) {
                 commonWhiteSpace = 'nowrap';
             }
@@ -3244,12 +3232,7 @@ console.log('slotWidth', slotWidth);
                     )
                 ) {
                     css.width = commonWidth + 'px';
-                    //if (!textOverflowOption) {
                     if (!whiteSpaceOption) {
-                        /*css.textOverflow = (
-                            label.specificTextOverflow ||
-                            commonTextOverflow
-                        );*/
                         css.whiteSpace = (
                             label.specificWhiteSpace ||
                             commonWhiteSpace
@@ -3261,7 +3244,6 @@ console.log('slotWidth', slotWidth);
                     label.css({ width: null as any });
                 }
 
-                // delete label.specificTextOverflow;
                 delete label.specificWhiteSpace;
                 tick.rotation = attr.rotation;
             }
