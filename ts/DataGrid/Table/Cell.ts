@@ -146,6 +146,12 @@ abstract class Cell {
      */
     protected abstract onClick(e: MouseEvent): void;
 
+    /**
+     * Handles user keydown on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     */
     protected onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
         const vp = row.viewport;

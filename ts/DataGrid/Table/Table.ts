@@ -296,6 +296,12 @@ class Table {
         this.rowsVirtualizer.reflowRows();
     }
 
+    /**
+     * Handles the focus event on the table body.
+     *
+     * @param e
+     * The focus event.
+     */
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
 
