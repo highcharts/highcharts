@@ -15,28 +15,32 @@
 <!-- Dashboards container -->
 <div id="container">
     <!-- Top row, control and status bar -->
-    <div class="row">
-        <div class="cell" id="control-bar">
+    <div class="row" id="control-bar">
+        <div class="cell">
             <h1 id="logo-text">Sognekraft</h1>
-                <!--
-            <img id="logo-img-1" src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
-                -->
-            <!-- Dropdown for selecting power plant -->
-            <div id="dropdown-container">
-                <button id="dropdown-button"></button>
-                <div id="dropdown-content" class="dropdown-content">
-                    <!-- Populated dynamically, e.g 
-						<a class="dropdown-select" href="#">Kråkeelvi</a>
-					-->
-                </div>
-            </div>
-            <span id="connect-status">Not connected</span>
-            <div id="connect-switch">
+            <img id="logo-img-1"
+                src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
+        </div>
+        <div class="cell">
+            <span id="connect-status"></span>
+        </div>
+        <div class="cell" id="control-cell">
+            <div class="cell" id="connect-switch">
                 <span>Connect</span>
                 <input id="connect-toggle" type="checkbox"></input>
                 <label id="button" for="connect-toggle" title="Connect/disconnect MQTT"></label>
             </div>
-    </div>
+            <!-- Dropdown for selecting power plant -->
+            <div class="cell" id="dropdown-container">
+                <button id="dropdown-button"></button>
+                <div id="dropdown-content" class="dropdown-content">
+                    <!--
+                        Populated dynamically, e.g 
+    					<a class="dropdown-select" href="#">Kråkeelvi</a>
+    				-->
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Middle row - data synced with MQTT connector -->
     <div class="row el-aggr">

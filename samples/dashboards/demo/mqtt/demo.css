@@ -21,12 +21,13 @@
     --color-tooltip-background: #dce5ec;
     --color-tooltip-text: #000;
     --color-tooltip-border: #666;
-    --color-custom: rgb(0, 112, 192); /* Sognekraft color */
+    --color-custom: #297ac2;
 
     /* Dimensions */
+    --control-bar-height: 100px;
     --chart-row-height: 300px;
     --info-row-height: 450px;
-    --dropdown-width: 12vw;
+    --dropdown-width: 140px;
     --text-font-size: 14px;
 }
 
@@ -64,7 +65,7 @@
     :root {
         --color-text: #dadae2;
         --component-background: var(--highcharts-neutral-color-20);
-        --component-title-text: rgb(160, 238, 160);
+        --component-title-text: rgb(148, 183, 212);
         --color-tooltip-background: #c0d8ec;
         --color-tooltip-border: #ccc;
     }
@@ -113,7 +114,7 @@ body {
 
 .highcharts-dashboards-component-title {
     white-space: nowrap;
-    font-size: 20px;
+    font-size: 16px;
     letter-spacing: 1.2px;
     color: var(--component-title-text);
     text-align: left;
@@ -199,33 +200,6 @@ body {
     display: none;
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    .row {
-        flex-direction: row;
-    }
-}
-
-/* MEDIUM */
-@media (max-width: 992px) {
-    .row {
-        flex-direction: column;
-    }
-}
-
-/* SMALL */
-@media (max-width: 576px) {
-    #el-kpi,
-    #el-chart,
-    #el-datagrid,
-    .el-info,
-    .el-info > div,
-    .el-aggr {
-        flex: unset;
-        width: 100%;
-    }
-}
-
 /* *
  *
  *  Control/status bar (top row)
@@ -237,18 +211,20 @@ div#control-bar .highcharts-dashboards-component-content {
 
 div#control-bar {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: #336;
+    background-color: var(--highcharts-neutral-color-80);
+    color: white;
     padding: 0;
     margin: 0;
     font-size: 14px;
-    color: white;
+    height: var(--control-bar-height);
 }
 
 div#control-bar h1 {
     padding: 0 5%;
-    font-size: 2.5vw;
+    font-size: 2em;
 }
 
 div#control-bar img {
@@ -257,16 +233,17 @@ div#control-bar img {
 
 div#control-bar #connect-status {
     color: #dadae2;
-    font-size: 12px;
+    font-size: 1vw;
     margin-left: 20px;
-
-    & b {
-        color: #15f651;
-    }
 }
 
-div#control-bar button:hover {
-    background-color: #41c6c1;
+div#control-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+div#control-cell button:hover {
     cursor: pointer;
 }
 
@@ -282,8 +259,8 @@ div#control-bar button:hover {
 
 #connect-switch span {
     position: relative;
-    top: -20px;
-    left: 45px;
+    top: 5px;
+    left: -10px;
     text-align: center;
     font-size: 12px;
 }
@@ -319,7 +296,7 @@ div#control-bar button:hover {
     transform: translateX(20px);
 }
 
-/* Container for power station names */
+/* Container for power plant names */
 #dropdown-container {
     width: var(--dropdown-width);
     position: relative;
@@ -335,17 +312,14 @@ div#control-bar button:hover {
 
     & #dropdown-button {
         width: 100%;
-        background-color: #3498db;
         color: white;
+        background-color: var(--color-custom);
+        margin: 0;
+        text-align: left;
         padding: 10px;
-        font-size: 1.3vw;
+        font-size: 1em;
         border: none;
         cursor: pointer;
-    }
-
-    & #dropdown-button:hover,
-    & #dropdown-button:focus {
-        background-color: #1777a1;
     }
 }
 
@@ -354,12 +328,12 @@ div#control-bar button:hover {
     width: 100%;
     display: none;
     position: absolute;
-    background-color: #169ed8;
-    font-size: 1vw;
+    font-size: 1em;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 
     & a {
+        background-color: var(--color-custom);
         color: #fff;
         padding: 4% 10%;
         text-decoration: none;
@@ -419,7 +393,6 @@ div#control-bar button:hover {
  *  Information panel (HTML)
  *
  * */
-
 #el-info .highcharts-dashboards-component-content {
     overflow-y: auto;
     background-color: var(--component-background);
@@ -582,4 +555,34 @@ div#control-bar button:hover {
 
 #el-map .map-tooltip td:nth-of-type(2) {
     font-weight: bold;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    .row {
+        flex-direction: row;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #el-kpi,
+    #el-chart,
+    #el-datagrid,
+    .el-info,
+    .el-info > div,
+    .el-aggr {
+        flex: unset;
+        width: 100%;
+    }
+    #connect-status {
+        display: none;
+    }
 }
