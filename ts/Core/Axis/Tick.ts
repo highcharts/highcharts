@@ -385,9 +385,9 @@ class Tick {
         xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
-            chart = axis.chart,
+            { renderer, styledMode } = axis.chart,
             label = defined(str) && labelOptions.enabled ?
-                chart.renderer
+                renderer
                     .text(
                         str,
                         xy?.x,
@@ -401,11 +401,13 @@ class Tick {
         if (label) {
             const whiteSpace = labelOptions.style.whiteSpace || 'normal';
             // Without position absolute, IE export sometimes is wrong
-            if (!chart.styledMode) {
+            if (!styledMode) {
                 label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
             }
             label.textPxLength = label.getBBox().width;
-            label.css({ whiteSpace });
+            if (!styledMode) {
+                label.css({ whiteSpace });
+            }
         }
 
         return label;
