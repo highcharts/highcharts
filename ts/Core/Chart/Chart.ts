@@ -321,6 +321,7 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -370,6 +371,7 @@ class Chart {
     public xAxis!: Array<AxisType>;
     public yAxis!: Array<AxisType>;
     public zooming!: ChartZoomingOptions;
+    public zoomClipRect?: SVGElement;
 
     /* *
      *
@@ -2245,6 +2247,20 @@ class Chart {
             });
         }
 
+        if (chart.series.find((series): boolean => !!series.zoomBox)) {
+            if (!chart.zoomClipRect) {
+                chart.zoomClipRect = renderer.clipRect({
+                    x: chart.plotLeft,
+                    y: chart.plotTop,
+                    width: clipBox.width,
+                    height: clipBox.height
+                });
+            }
+
+            chart.seriesGroup?.clip(chart.zoomClipRect);
+            chart.dataLabelsGroup?.clip(chart.zoomClipRect);
+        }
+
         // Plot area border
         verb = 'animate';
         if (!plotBorder) {
@@ -2541,6 +2557,11 @@ class Chart {
             chart.seriesGroup = renderer.g('series-group')
                 .attr({ zIndex: 3 })
                 .shadow(chart.options.chart.seriesGroupShadow)
+                .add();
+        }
+        if (!chart.dataLabelsGroup) {
+            chart.dataLabelsGroup = renderer.g('datalabels-group')
+                .attr({ zIndex: 3 })
                 .add();
         }
         chart.renderSeries();
@@ -3679,6 +3700,7 @@ class Chart {
             chart.series.forEach((series): void => {
                 if (!series.isCartesian) {
                     series.isDirty = true;
+                    chart.isDirtyBox = true;
                     if (trigger === 'pan' && series.zoomBox) {
                         series.zoomBox.panX = to.x || 0;
                         series.zoomBox.panY = to.y || 0;
