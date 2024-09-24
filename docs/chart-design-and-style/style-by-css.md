@@ -11,6 +11,21 @@ To customize your styles, you can create your own themes, or just add your own i
 
 Highcharts since v11 honors the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. If you end user prefers dark mode, the Highcharts CSS will pick this up and set the CSS color variables accordingly. To avoid this, you can set either the `.highcharts-light` or `.highcharts-dark` class name on the chart container. See a [live demo for switching between modes](https://www.highcharts.com/samples/highcharts/css/prefers-color-scheme).
 
+## Loading from node_modules
+
+To use Highcharts’ default CSS styles in your project, you can include the highcharts.css file from the node_modules directory. Simply add a `<link>` tag in your HTML file:
+
+```html
+<link rel="stylesheet" href="./node_modules/highcharts/css/highcharts.css" />
+```
+
+or import it in CSS:
+
+```html
+<style>
+@import url('./node_modules/highcharts/css/highcharts.css');
+</style>
+```
 
 What can be styled?
 -------------------
