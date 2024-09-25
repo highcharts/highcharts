@@ -145,7 +145,8 @@ function getDlOptions(
         )[0],
         options = merge<SunburstDataLabelOptions>({
             style: {}
-        }, optionsLevel, optionsPoint);
+        }, optionsLevel, optionsPoint),
+        { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
         rotation: (number|undefined),
@@ -164,8 +165,8 @@ function getDlOptions(
             }
 
             if (
-                (point.innerArcLength as any) < 1 &&
-                (point.outerArcLength as any) > (shape.radius as any)
+                innerArcLength < 1 &&
+                outerArcLength > (shape.radius as any)
             ) {
                 rotationRad = 0;
                 // Trigger setTextPath function to get textOutline etc.
@@ -175,8 +176,8 @@ function getDlOptions(
                     };
                 }
             } else if (
-                (point.innerArcLength as any) > 1 &&
-                (point.outerArcLength as any) > 1.5 * (shape.radius as any)
+                innerArcLength > 1 &&
+                outerArcLength > 1.5 * (shape.radius as any)
             ) {
                 if (rotationMode === 'circular') {
                     options.textPath = {
@@ -191,8 +192,7 @@ function getDlOptions(
             } else {
                 // Trigger the destroyTextPath function
                 if (
-                    point.dataLabel &&
-                    point.dataLabel.textPath &&
+                    point.dataLabel?.textPath &&
                     rotationMode === 'circular'
                 ) {
                     options.textPath = {
@@ -219,7 +219,7 @@ function getDlOptions(
         if (rotationMode === 'parallel') {
             (options.style as any).width = Math.min(
                 (shape.radius as any) * 2.5,
-                ((point.outerArcLength as any) + point.innerArcLength) / 2
+                (outerArcLength + innerArcLength) / 2
             );
         } else {
             if (
@@ -232,15 +232,18 @@ function getDlOptions(
             }
         }
 
-        if (
-            rotationMode === 'perpendicular' &&
+        if (rotationMode === 'perpendicular') {
             // 16 is the inferred line height. We don't know the real line
             // yet because the label is not rendered. A better approach for this
             // would be to hide the label from the `alignDataLabel` function
             // when the actual line height is known.
-            point.outerArcLength as any < 16
-        ) {
-            (options.style as any).width = 1;
+            if (outerArcLength < 16) {
+                (options.style as any).width = 1;
+            } else {
+                (options.style as any).lineClamp = Math.floor(
+                    outerArcLength / 16
+                );
+            }
         }
 
         // Apply padding (#8515)
