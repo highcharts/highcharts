@@ -467,6 +467,7 @@ namespace OrdinalAxis {
                 index = correctFloat(
                     ordinal.getIndexOfPoint(pixelVal, positions)
                 ),
+
                 mantissa = correctFloat(index % 1);
 
             // Check if the index is inside position array. If true,
@@ -1406,75 +1407,35 @@ namespace OrdinalAxis {
          * @param {number} val
          * The pixel value of a point.
          *
-         * @param {Array<number>} [ordinalArray]
+         * @param {number[]} [ordinalArray]
          * An array of all points available on the axis for the given data set.
          * Either ordinalPositions if the value is inside the plotArea or
          * extendedOrdinalPositions if not.
          */
-        public getIndexOfPoint(
-            val: number,
-            ordinalArray: Array<number>
-        ): number {
+        public getIndexOfPoint(val: number, ordinalArray: number[]): number {
             const ordinal = this,
-                axis = ordinal.axis;
-            let firstPointVal = 0;
+                axis = ordinal.axis,
+                min = axis.min as number,
+                minX = axis.minPixelPadding,
+                indexOfMin = Additions.findIndexOf(ordinalArray, min, true);
 
-            // Check whether the series has at least one point inside the chart
-            const hasPointsInside = function (series: Series): boolean {
-                const { min, max } = axis;
+            const valOfFirstPoint = ordinalArray[indexOfMin];
+            const valOfNextPoint = ordinalArray[indexOfMin + 1];
 
-                if (defined(min) && defined(max)) {
-                    return series.points.some((point): boolean =>
-                        point.x >= min && point.x <= max
-                    );
-                }
+            const mantissa =
+                (min - valOfFirstPoint) / (valOfNextPoint - valOfFirstPoint);
 
-                return false;
-            };
-
-            let firstPointX: number;
-
-            // When more series assign to axis, find the smallest one, #15987.
-            axis.series.forEach((series): void => {
-                // Don't include indicators and invisible series
-                if (!series.visible || series.is('sma')) {
-                    return;
-                }
-                const firstPoint = series.points?.[0];
-
-                if (
-                    defined(firstPoint?.plotX) &&
-                    (
-                        firstPoint.plotX < firstPointX ||
-                        !defined(firstPointX)
-                    ) &&
-                    hasPointsInside(series)
-                ) {
-                    firstPointX = firstPoint.plotX;
-                    firstPointVal = firstPoint.x;
-                }
-            });
-
-            // If undefined, give a default value
-            firstPointX ??= axis.minPixelPadding;
-
-            // Distance in pixels between two points on the ordinal axis in the
-            // current zoom.
-            const ordinalPointPixelInterval = axis.translationSlope * (
-                    ordinal.slope ||
+            const ordinalPointPixelInterval =
+                axis.translationSlope *
+                (ordinal.slope ||
                     axis.closestPointRange ||
-                    ordinal.overscrollPointsRange as number
-                ),
-                // `toValue` for the first point.
-                shiftIndex = correctFloat(
-                    (val - firstPointX) / ordinalPointPixelInterval
-                );
+                    (ordinal.overscrollPointsRange as number));
 
-            return Additions.findIndexOf(
-                ordinalArray,
-                firstPointVal,
-                true
-            ) + shiftIndex;
+            const shiftIndex = correctFloat(
+                (val - minX) / ordinalPointPixelInterval
+            );
+
+            return indexOfMin + mantissa + shiftIndex;
         }
 
         /**

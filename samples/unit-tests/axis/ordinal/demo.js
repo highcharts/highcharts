@@ -371,9 +371,6 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', assert => {
         },
         series: [
             {
-                // Check if series is indicator
-                is: type => type !== 'sma',
-                visible: true,
                 points: [
                     {
                         x: 3,
