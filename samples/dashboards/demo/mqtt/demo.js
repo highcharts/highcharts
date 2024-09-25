@@ -515,7 +515,8 @@ async function dashboardUpdate(mqttData, connId) {
             ret.push({
                 name: measInfo.brief(field),
                 value: isKnown ? item[field] : '?',
-                unit: measInfo.unit(field)
+                unit: measInfo.unit(field),
+                precision: measInfo.precision(field)
             });
         });
         return ret;
@@ -549,7 +550,8 @@ async function dashboardUpdate(mqttData, connId) {
         let colHtml = '';
 
         cols.forEach(col => {
-            colHtml += `<td>${col.value}</td>`;
+            const value = col.value.toFixed(col.precision);
+            colHtml += `<td>${value}</td>`;
         });
 
         return colHtml;
@@ -661,7 +663,7 @@ async function dashboardUpdate(mqttData, connId) {
         const infoComp = dashboard.getComponentByCellId('el-info');
 
         await infoComp.update({
-            title: data.name + ' - details'
+            title: data.name + ' (details)'
         });
 
         // Description of power plant (if available)
@@ -761,7 +763,6 @@ async function dashboardUpdate(mqttData, connId) {
  *  Control/status bar
  */
 class ControlBar {
-
     constructor() {
         if (controlBar) {
             throw new Error('ControlBar instance already exists!!');
@@ -776,6 +777,7 @@ class ControlBar {
             errColor: '#c33'
         };
 
+        // Connect bar elements
         this.elConnectBar = document.getElementById('control-bar');
         this.elConnectStatus = document.getElementById('connect-status');
         this.color.offColor =
@@ -793,7 +795,7 @@ class ControlBar {
         this.elDropdownContent = document.getElementById('dropdown-content');
 
         this.elDropdownButton.title = 'Click to select a power plant';
-        this.elDropdownButton.innerHTML = 'Power plant &nbsp;&#9662;';
+        this.elDropdownButton.innerHTML = 'Power plant';
 
         this.connected = false;
     }
@@ -898,8 +900,7 @@ class ControlBar {
         const genId = tmp.length > 1 ? tmp[1] : 1;
 
         // Show the power plant name
-        this.elDropdownButton.innerHTML =
-            fullName + '&nbsp;&#9662;';
+        this.elDropdownButton.innerHTML = fullName;
 
         const id = activeItem.plantName;
         if (id === '') {
@@ -1021,6 +1022,12 @@ window.onload = () => {
 // Brief description and unit of received MQTT measurement data
 //
 function measDataInfo() {
+    const unit2prec = {
+        MW: 2,
+        'm3/sec': 1,
+        'mill. m3': 2,
+        masl: 1
+    };
     return {
         // Power generation parameters
         P_gen: {
@@ -1115,6 +1122,16 @@ function measDataInfo() {
         // Full description, brief + unit
         descr: function (id) {
             return this.brief(id) + ' (' + this.unit(id) + ')';
+        },
+
+        // Precision for numeric values
+        precision: function (id) {
+            if (id in this) {
+                if ('unit' in this[id]) {
+                    return unit2prec[this[id].unit];
+                }
+            }
+            return 0;
         }
     };
 }
@@ -1357,6 +1374,7 @@ class MQTTConnector extends DataConnector {
         const payload = mqttPacket.payloadString;
         try {
             data = JSON.parse(payload);
+        // eslint-disable-next-line no-unused-vars
         } catch (e) {
             connector.emit({
                 type: 'errorEvent',
