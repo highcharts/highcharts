@@ -67,10 +67,12 @@ class TextBuilder {
         this.ellipsis = Boolean(
             textStyles && textStyles.textOverflow === 'ellipsis'
         );
+        this.lineClamp = textStyles?.lineClamp;
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
     }
 
     public ellipsis: boolean;
+    public lineClamp?: number;
     public noWrap: boolean;
     public renderer: SVGRenderer;
     public svgElement: SVGElement;
@@ -299,6 +301,36 @@ class TextBuilder {
 
                     startAt = wrapper.actualWidth;
                     lineNo++;
+
+                    // Line clamp. Break out after n lines and append an
+                    // ellipsis regardless of the text length.
+                    if (this.lineClamp && lineNo >= this.lineClamp) {
+                        // Only if there are remaining words that should have
+                        // been rendered.
+                        if (words.length) {
+                            this.truncate(
+                                textNode,
+                                textNode.textContent || '',
+                                void 0,
+                                0,
+                                // Target width
+                                Math.max(
+                                    0,
+                                    // Subtract the font face to make room for
+                                    // the ellipsis itself
+                                    width - 0.8 * dy
+                                ),
+                                // Build the text to test for
+                                (text: string, currentIndex: number): string =>
+                                    text.substring(0, currentIndex) + '\u2026',
+                                dy
+                            );
+
+                            textNode.textContent = textNode.textContent
+                                ?.replace('\u2026', '') + '\u2026';
+                        }
+                        break;
+                    }
                 }
 
                 // Reinsert the preceding child nodes
