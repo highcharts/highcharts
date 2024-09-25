@@ -241,8 +241,8 @@ function getDlOptions(
                 (options.style as any).width = 1;
             } else {
                 (options.style as any).lineClamp = Math.floor(
-                    outerArcLength / 16
-                );
+                    innerArcLength / 16
+                ) || 1;
             }
         }
 
