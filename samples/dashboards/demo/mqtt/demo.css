@@ -182,17 +182,24 @@ body {
     flex-direction: column;
     min-width: 0;
     height: var(--info-row-height);
-    flex: 1 1 50%;
+}
+
+#el-info {
+    flex: 1 1 70%;
+}
+
+#el-map {
+    flex: 1 1 30%;
 }
 
 #el-kpi,
 #el-datagrid {
-    flex: 1 1 25%;
+    flex: 1 1 30%;
     height: var(--chart-row-height);
 }
 
 #el-chart {
-    flex: 1 1 50%;
+    flex: 1 1 40%;
     height: var(--chart-row-height);
 }
 
@@ -235,8 +242,7 @@ div#control-bar img {
 
 div#control-bar #connect-status {
     color: #dadae2;
-    font-size: 1vw;
-    margin-left: 20px;
+    font-size: 1em;
 }
 
 div#control-cell {
@@ -264,7 +270,7 @@ div#control-cell button:hover {
     top: 5px;
     left: -10px;
     text-align: center;
-    font-size: 12px;
+    font-size: 1em;
 }
 
 #connect-switch label#button {
@@ -318,10 +324,18 @@ div#control-cell button:hover {
         background-color: var(--color-custom);
         margin: 0;
         text-align: left;
-        padding: 10px;
+        padding: 16px 3px;
         font-size: 1em;
         border: none;
         cursor: pointer;
+    }
+
+    & #dropdown-button::after {
+        content: " \25BC";
+        position: absolute;
+        font-size: 1.5em;
+        top: 12px;
+        right: 40px;
     }
 }
 
@@ -573,10 +587,22 @@ div#control-cell button:hover {
     .row {
         flex-direction: column;
     }
+
+    #connect-status {
+        display: none;
+    }
+
+    .highcharts-description {
+        text-align: justify;
+    }
 }
 
 /* SMALL */
 @media (max-width: 576px) {
+    :root {
+        --control-bar-height: 120px;
+    }
+
     #el-kpi,
     #el-chart,
     #el-datagrid,
@@ -589,5 +615,13 @@ div#control-cell button:hover {
 
     #connect-status {
         display: none;
+    }
+
+    #connect-switch span {
+        font-size: 1em;
+    }
+
+    .highcharts-description {
+        text-align: justify;
     }
 }
