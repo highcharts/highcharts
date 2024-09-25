@@ -1190,7 +1190,8 @@ class Axis {
             pointRangePadding = axis.pointRangePadding || 0,
             min = (axis.min || 0) - pointRangePadding, // #1498
             max = (axis.max || 0) + pointRangePadding, // #1498
-            range = max - min;
+            range = axis.brokenAxis?.hasBreaks ?
+                axis.brokenAxis.unitLength : max - min;
 
         let minorTickPositions = [] as Array<number>,
             pos: number;
