@@ -732,7 +732,8 @@ class Chart {
                 x,
                 y,
                 isInsidePlot: true,
-                options
+                options,
+                triggered: false
             };
 
         if (!options.ignoreX) {
@@ -775,15 +776,21 @@ class Chart {
             const chartY = options.paneCoordinates ?
                 yAxis.pos + y : plotTop + y;
 
+            const calculatedBottom = options.paneCoordinates ?
+                Math.max(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                ) :
+                Math.min(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                );
             if (!(
                 chartY >= Math.max(
                     scrollTop + plotTop,
                     yAxis.pos
                 ) &&
-                chartY <= Math.min(
-                    scrollTop + plotTop + box.height,
-                    yAxis.pos + yAxis.len
-                )
+                chartY <= calculatedBottom
             )) {
                 e.isInsidePlot = false;
             }
