@@ -5,7 +5,6 @@
     ).then(response => response.json());
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/spreadsheets/d/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs',
@@ -49,12 +48,16 @@
                     zIndex: 10
                 });
 
-                document.getElementById('annotation-close-btn')
-                    .addEventListener('click', function () {
+
+                const closeButton = document
+                    .getElementById('annotation-close-btn');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function () {
                         chart.removeAnnotation('election-popup');
                     });
+                }
 
-
+                // Create the pie chart inside the annotation
                 Highcharts.chart('popup-pie', {
                     chart: {
                         type: 'pie'
@@ -91,7 +94,6 @@
             }
 
             // Make the columns easier to read
-
             let keys = columns[0];
             const names = columns[1],
                 percent = columns[7],
@@ -197,16 +199,16 @@
             });
 
             // Initialize the chart
-            window.chart = new Highcharts.Map(options);
+            Highcharts.mapChart('container', options);
         },
 
         error: function () {
-            $('#container').html(
-                '<div class="loading">' +
-                '<i class="icon-frown icon-large"></i> ' +
-                '<p>Error loading data from Google Spreadsheets</p>' +
-                '</div>'
-            );
+            const container = document.getElementById('container');
+            container.innerHTML = `
+                <div class="loading">
+                    <p>Error loading data from Google Spreadsheets</p>
+                </div>
+            `;
         }
     });
 
