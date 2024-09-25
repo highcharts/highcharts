@@ -4,7 +4,7 @@
 
 /* *
  *
- *  Common
+ *  Common CSS variables
  *
  * */
 
@@ -91,6 +91,7 @@
  *  Common styles
  *
  * */
+
 body {
     background-color: var(--container-background);
     font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -205,6 +206,7 @@ body {
  *  Control/status bar (top row)
  *
  * */
+
 div#control-bar .highcharts-dashboards-component-content {
     background-color: none;
 }
@@ -350,6 +352,7 @@ div#control-cell button:hover {
  *  KPI
  *
  * */
+
 #el-kpi .highcharts-dashboards-component-kpi-value {
     display: none;
 }
@@ -384,6 +387,7 @@ div#control-cell button:hover {
  *  Data grid
  *
  * */
+
 #el-datagrid {
     font-size: var(--text-font-size);
 }
@@ -582,6 +586,7 @@ div#control-cell button:hover {
         flex: unset;
         width: 100%;
     }
+
     #connect-status {
         display: none;
     }
