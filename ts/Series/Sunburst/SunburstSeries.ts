@@ -299,6 +299,7 @@ function getDlOptions(
                 (point.innerArcLength as any)) / 2 -
                 2 * (options.padding || 0), 1
             );
+            (options.style as any).whiteSpace = 'nowrap';
         }
     }
     return options;
