@@ -1,9 +1,8 @@
 
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
-import { join } from 'node:path';
 import { generateOHLC } from '../../data-generators';
-import { setupDOM } from '../../test-utils';
+import { getHighchartsJSDOM } from '../../test-utils';
 
 
 export const config = {
@@ -18,45 +17,36 @@ export function before(size: number) {
   };
 }
 
-export default async function benchmarkTest(
-    {
-        size,
-        CODE_PATH,
-        data
-    }: BenchmarkContext
-): Promise<BenchmarkResult> {
-  const { win, el } = setupDOM();
-  const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
+export default function benchmarkTest({
+    size,
+    CODE_PATH,
+    data
+}: BenchmarkContext): BenchmarkResult {
+    const { Highcharts: hc, el } = getHighchartsJSDOM('highstock');
 
-  performance.mark('Start');
-  hc.stockChart(el, {
-    chart: {
-        height: 400,
-        width: 800
-    },
-    accessibility: {
-      enabled: false
-    },
-    plotOptions: {
-        series: {
-            animation: false,
-            dataLabels: {
-                defer: false
+    performance.mark('Start');
+    hc.stockChart(el, {
+        chart: {
+            height: 400,
+            width: 800
+        },
+        accessibility: {
+            enabled: false
+        },
+        xAxis: {
+            ordinal: false
+        },
+        series: [
+            {
+                data: data,
+                type: 'candlestick',
+                dataGrouping: {
+                    enabled: false
+                }
             }
-        }
-    },
-    xAxis: {
-        ordinal: false
-    },
-    series: [{
-      data: data,
-      type: 'candlestick',
-      dataGrouping: {
-        enabled: false
-      }
-    }]
-  });
-  performance.mark('End');
+        ]
+    });
+    performance.mark('End');
 
-  return performance.measure('Start to Now', 'Start', 'End').duration;
+    return performance.measure('Start to Now', 'Start', 'End').duration;
 }
