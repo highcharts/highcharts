@@ -27,6 +27,9 @@ or import it in CSS:
 </style>
 ```
 
+Some build tools, such as [Vite](https://vitejs.dev/), also support CSS imports using the package name: `@import url('highcharts/css/highcharts.css')`
+
+
 What can be styled?
 -------------------
 Typography, colors and visual properties like stroke width and style can be set by CSS.
