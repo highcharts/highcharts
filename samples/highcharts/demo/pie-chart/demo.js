@@ -14,8 +14,7 @@ Highcharts.chart('container', {
         text: 'Egg Yolk Composition'
     },
     tooltip: {
-        valueSuffix: '%',
-        followPointer: false
+        valueSuffix: '%'
     },
     subtitle: {
         text:

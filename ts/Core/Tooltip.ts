@@ -339,7 +339,7 @@ class Tooltip {
         // Some series types use a specificly calculated tooltip position for
         // each point
         } else if (points[0].tooltipPos) {
-            ret = [points[0].tooltipPos[0], points[0].tooltipPos[1]];
+            ret = points[0].tooltipPos;
 
         // Calculate the average position and adjust for axis positions
         } else {
