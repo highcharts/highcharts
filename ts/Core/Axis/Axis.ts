@@ -603,7 +603,7 @@ class Axis {
             {
                 labels: {
                     autoRotation: [-45],
-                    padding: 2
+                    padding: 3
                 },
                 margin: 15
             } :
