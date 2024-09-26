@@ -3352,6 +3352,10 @@ class Series {
                 this.invertible &&
                 name === 'series'
             ),
+            {
+                plotSizeX = 0,
+                plotSizeY = 0
+            } = chart,
             { group, zoomBox } = this;
 
         // Swap axes for inverted (#2339)
@@ -3361,21 +3365,45 @@ class Series {
         }
 
         let initLeft = horAxis ? horAxis.left : chart.plotLeft,
-            initTop = vertAxis ? vertAxis.top : chart.plotTop;
+            initTop = vertAxis ? vertAxis.top : chart.plotTop,
+            translateX = initLeft,
+            translateY = initTop;
 
-        if (zoomBox && group) {
+        if (group && zoomBox) {
             scale = zoomBox.scale;
             left = zoomBox.x * (scale - (group.scaleX || 1)) -
                 (name === 'series' ? zoomBox.panX : 0);
-            top = zoomBox.y * (scale - (group.scaleX || 1)) -
+            top = zoomBox.y * (scale - (group.scaleY || 1)) -
                 (name === 'series' ? zoomBox.panY : 0);
+
             initLeft = group.translateX || initLeft;
             initTop = group.translateY || initTop;
+
+            translateX = initLeft - left;
+            translateY = initTop = top;
+
+            // Do not allow to move outside the chart
+            // Vertical lock
+            if (translateY > chart.plotTop) {
+                translateY = initTop;
+            } else if (
+                initTop - top < (plotSizeY * (1 - scale) + chart.plotTop)
+            ) {
+                translateY = (plotSizeY * (1 - scale)) + chart.plotTop;
+            }
+            // Horizontal lock
+            if (translateX > chart.plotLeft) {
+                translateX = initLeft;
+            } else if (
+                translateX < (plotSizeX * (1 - scale) + chart.plotLeft)
+            ) {
+                translateX = (plotSizeX * (1 - scale)) + chart.plotLeft;
+            }
         }
 
         return {
-            translateX: initLeft - left,
-            translateY: initTop - top,
+            translateX,
+            translateY,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
                 (horAxis.len - vertAxis.len) / 2 :

@@ -3752,6 +3752,10 @@ class Chart {
                             series.zoomBox = {
                                 x, y, width, height, scale, panX: 0, panY: 0
                             };
+
+                            if (scale < 1) {
+                                delete series.zoomBox;
+                            }
                         } else {
                             delete series.zoomBox;
                         }
