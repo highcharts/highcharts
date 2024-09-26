@@ -3380,7 +3380,7 @@ class Series {
             initTop = group.translateY || initTop;
 
             translateX = initLeft - left;
-            translateY = initTop = top;
+            translateY = initTop - top;
 
             // Do not allow to move outside the chart
             // Vertical lock
