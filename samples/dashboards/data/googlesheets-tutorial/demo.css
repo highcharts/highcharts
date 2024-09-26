@@ -1,21 +1,23 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+/* Vraiables */
+
+:root {
+    --title-bg-1: #363;
+    --title-bg-2: #336;
+    --title-text: #fff;
+}
+
 /* General */
 
 body {
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 #container {
     padding: 10px;
-}
-
-#orig-sheet-cell .highcharts-dashboards-component-title {
-    background-color: #363;
-}
-
-#mod-sheet-cell .highcharts-dashboards-component-title {
-    background-color: #336;
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 .config-cell {
@@ -29,12 +31,19 @@ body {
 .config-cell label {
     display: block;
     margin: 10px 0;
+    color: var(--highcharts-neutral-color-100);
 }
 
 div#description {
     margin: 10px 30px;
     font-size: 1.2em;
     text-align: justify;
+    color: var(--highcharts-neutral-color-100);
+}
+
+div#description a {
+    color: var(--highcharts-highlight-color-80);
+    letter-spacing: 2px;
 }
 
 /* Dashboards */
@@ -59,7 +68,15 @@ div#description {
     padding: 10px;
     margin: 0;
     text-align: center;
-    color: var(--highcharts-neutral-color-5);
+    color: var(--title-text);
+}
+
+#orig-sheet-cell .highcharts-dashboards-component-title {
+    background-color: var(--title-bg-1);
+}
+
+#mod-sheet-cell .highcharts-dashboards-component-title {
+    background-color: var(--title-bg-2);
 }
 
 .highcharts-dashboards-component {
@@ -67,5 +84,5 @@ div#description {
 }
 
 .highcharts-dashboards-component-content {
-    height: 300px;
+    height: 250px;
 }

@@ -72,6 +72,9 @@ const board = Dashboards.board('container', {
         },
         title: sheetTitle().original,
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             editable: false
         }
     }, {
@@ -83,6 +86,9 @@ const board = Dashboards.board('container', {
         },
         title: sheetTitle().modified,
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             editable: false
         }
     }]
