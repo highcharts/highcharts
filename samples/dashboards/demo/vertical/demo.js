@@ -105,17 +105,26 @@ Dashboards.board('container', {
             columns: [{
                 id: 'Global Avg Temperature Increase',
                 header: {
-                    format: 'Global Average Temperature Increase °C'
+                    format: 'Average Temperature Increase'
+                },
+                cells: {
+                    format: '{value} °C'
                 }
             }, {
                 id: 'CO2 Concentration',
                 header: {
-                    format: 'CO2 Concentration ppm'
+                    format: 'CO2 Concentration'
+                },
+                cells: {
+                    format: '{value} ppm'
                 }
             }, {
                 id: 'Sea Level Rise',
                 header: {
-                    format: 'Sea Level Rise cm'
+                    format: 'Sea Level Rise'
+                },
+                cells: {
+                    format: '{value} cm'
                 }
             }, {
                 id: 'Mapped events',
@@ -202,7 +211,7 @@ Dashboards.board('container', {
                 title: {
                     text: ''
                 },
-                visible: true
+                visible: false
             }],
             series: [{
                 id: 'co2',
@@ -249,7 +258,7 @@ Dashboards.board('container', {
                 title: {
                     text: ''
                 },
-                visible: true
+                visible: false
             }],
             series: [{
                 id: 'sea-level-rise',

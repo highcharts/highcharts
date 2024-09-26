@@ -4,20 +4,62 @@
 
 body {
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-    color: var(--highcharts-neutral-color-100);
+    color: #4d5156;
+}
+
+p {
+    line-height: 1.3em;
+}
+
+img {
+    width: 100%;
+}
+
+figcaption {
+    text-align: right;
+    font-size: 0.9em;
+    margin-top: 0.5em;
 }
 
 #container {
-    background-color: var(--highcharts-neutral-color-5);
-    max-width: 1200px;
+    background-color: var(--highcharts-neutral-color-0);
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.highcharts-background {
-    fill: var(--highcharts-neutral-color-5);
+#title {
+    font-size: 3em;
 }
 
 .highcharts-datagrid-container {
     height: 402px;
+}
+
+.section-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.chart {
+    height: 400px;
+    padding: 10px;
+}
+
+.chart,
+.section-text {
+    flex: 1;
+    margin: 6px;
+    max-width: 450px;
+}
+
+@media (max-width: 900px) {
+    .section-container {
+        flex-direction: column;
+    }
+
+    .chart-container,
+    .section-text {
+        max-width: unset;
+    }
 }
