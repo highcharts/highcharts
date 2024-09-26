@@ -15,7 +15,7 @@ const defaultZoom = 11;
 // Unit for generated power (megawatts)
 const powerUnit = 'MW';
 
-// Options log (comment out to disable)
+// Options log (comment out/remove to disable)
 const log = console.log;
 
 // Currently active power plant/generator
@@ -334,6 +334,16 @@ function printLog(msg) {
     }
 }
 
+// Set Dashboard visibility. The control bar is always visible.
+function setVisibility(visible) {
+    const cells = document.getElementsByClassName('row');
+
+    for (let i = 1; i < cells.length; i++) {
+        const el = cells[i];
+        el.style.display = visible ? 'flex' : 'none';
+    }
+}
+
 // Creates the dashboard
 async function createDashboard() {
 
@@ -420,6 +430,7 @@ async function createDashboard() {
                 ...mqttLinkConfig,
                 topic: topic,
                 autoConnect: true,
+                autoSubscribe: true,
                 autoReset: true, // Clear data table on subscribe
                 autoClear: useHistoricalData,
 
@@ -432,7 +443,6 @@ async function createDashboard() {
                         controlBar.showStatus(`${host}:${port}`);
                     } else {
                         controlBar.showStatus('');
-                        uiSetComponentVisibility(false);
                     }
                     // eslint-disable-next-line max-len
                     printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
@@ -443,7 +453,6 @@ async function createDashboard() {
                         // eslint-disable-next-line max-len
                         `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
                     );
-                    uiSetComponentVisibility(subscribed);
                 },
                 packetEvent: async event => {
                     const { topic, count } = event.detail;
@@ -457,16 +466,6 @@ async function createDashboard() {
                 }
             }
         };
-    }
-
-    // Update component visibility. The control bar is always visible.
-    function uiSetComponentVisibility(visible) {
-        const cells = document.getElementsByClassName('row');
-
-        for (let i = 1; i < cells.length; i++) {
-            const el = cells[i];
-            el.style.display = visible ? 'flex' : 'none';
-        }
     }
 }
 
@@ -769,6 +768,7 @@ class ControlBar {
         }
 
         controlBar = this;
+        this.connected = false;
 
         // Connect bar colors
         this.color = {
@@ -780,13 +780,12 @@ class ControlBar {
         // Connect bar elements
         this.elConnectBar = document.getElementById('control-bar');
         this.elConnectStatus = document.getElementById('connect-status');
-        this.color.offColor =
-            this.elConnectBar.style.backgroundColor; // From CSS
+        this.color.offColor = this.elConnectBar.style.backgroundColor;
 
         this.elLogo = document.getElementById('logo-img-1');
         this.elLogoText = document.getElementById('logo-text');
 
-        // Connect/Disconnect button
+        // Connect/disconnect button
         this.elToggle = document.getElementById('connect-toggle');
 
         // Dropdown menu button for selecting power plant
@@ -796,8 +795,6 @@ class ControlBar {
 
         this.elDropdownButton.title = 'Click to select a power plant';
         this.elDropdownButton.innerHTML = 'Power plant';
-
-        this.connected = false;
     }
 
     setConnectState(connected) {
@@ -826,9 +823,9 @@ class ControlBar {
         }
     }
 
-    showStatus(msg, arg = '') {
+    showStatus(msg) {
         if (this.elConnectStatus) {
-            this.elConnectStatus.innerHTML = msg + ' ' + arg;
+            this.elConnectStatus.innerHTML = msg;
         }
     }
 
@@ -840,11 +837,11 @@ class ControlBar {
     }
 
     updatePowPlantDropdown(powPlantList) {
+        const tag = '<a class="dropdown-select" href="#">';
         const el = this.elDropdownContent;
-        el.innerHTML = '';
 
+        el.innerHTML = '';
         for (const [key, value] of Object.entries(powPlantList)) {
-            const tag = '<a class="dropdown-select" href="#">';
             if (value.aggs.length === 0) {
                 // Single generator, no need to specify
                 el.innerHTML += `${tag}${key}</a>`;
@@ -866,9 +863,9 @@ class ControlBar {
         }
         if (discoveryConnector) {
             if (discoveryConnector.connected) {
-                discoveryConnector.disconnect();
+                await discoveryConnector.disconnect();
             } else {
-                discoveryConnector.connect();
+                await discoveryConnector.connect();
             }
         }
         if (activeItem.connector) {
@@ -879,6 +876,7 @@ class ControlBar {
                 await con.connect();
             }
         }
+        setVisibility(false);
     }
 
     async onPowPlantClicked(fullName) {
@@ -903,36 +901,24 @@ class ControlBar {
         this.elDropdownButton.innerHTML = fullName;
 
         const id = activeItem.plantName;
-        if (id === '') {
-            // First power plant selection, create the dashboard
-            if (!dashboard) {
-                await createDashboard();
-            }
-        } else {
+        if (id !== '') {
             // Unsubscribe from the current power plant topic
-            const topic = powPlantList[id].topic;
-            const connName = topicMap[topic];
-
-            const con = await dashboard.dataPool.getConnector(connName);
-            printLog('Unsubscribe...' + con.options.topic);
-            await con.unsubscribe();
+            await activeItem.connector.unsubscribe();
         }
 
         // Subscribe to the new power plant topic
         const topic = powPlantList[plant].topic;
         const connName = topicMap[topic];
         const connector = await dashboard.dataPool.getConnector(connName);
-
-        if (connector.connected) {
-            printLog('Subscribe...' + connector.options.topic);
-            await connector.subscribe();
-        }
+        await connector.subscribe();
 
         // Update the active power plant/generator
         activeItem.generatorId = genId;
         activeItem.fullName = fullName;
         activeItem.plantName = plant;
         activeItem.connector = connector;
+
+        setVisibility(true);
     }
 
     async clickHandler(event) {
@@ -943,7 +929,10 @@ class ControlBar {
         }
         if (event.target === this.elToggle) {
             // Connect/Disconnect button
+            this.elDropdownButton.innerHTML = 'Power plant';
+            activeItem.fullName = '';
             await this.onConnectClicked();
+
             return;
         }
         if (event.target.matches('.dropdown-select')) {
@@ -970,6 +959,7 @@ function startTopicDiscovery() {
         ...mqttLinkConfig,
         topic: 'prod/+/+/overview',
         autoConnect: true,
+        autoSubscribe: true,
         connectEvent: event => {
             const { connected, host, port } = event.detail;
             controlBar.setConnectState(connected);
@@ -991,6 +981,8 @@ function startTopicDiscovery() {
             const expTopics = Object.keys(topicMap).length;
             if (count === expTopics) {
                 discoveryConnector.unsubscribe();
+                // All topics discovered, create the dashboard
+                createDashboard();
             }
         }
     };
@@ -1374,13 +1366,13 @@ class MQTTConnector extends DataConnector {
         const payload = mqttPacket.payloadString;
         try {
             data = JSON.parse(payload);
-        // eslint-disable-next-line no-unused-vars
         } catch (e) {
             connector.emit({
                 type: 'errorEvent',
                 detail: {
-                    code: 0, // N.A.
-                    message: 'Invalid JSON: ' + payload
+                    code: -1,
+                    message: 'Invalid JSON: ' + payload,
+                    jsError: e
                 }
             });
             return; // Skip invalid messages
@@ -1516,7 +1508,7 @@ MQTTConnector.defaultOptions = {
 
     // Custom connector properties
     autoConnect: false,  // Automatically connect after load
-    autoSubscribe: true, // Automatically subscribe after connect
+    autoSubscribe: false, // Automatically subscribe after connect
     autoReset: false,    // Clear data table on subscribe
     autoClear: false     // Clear data table on each packet
 };
