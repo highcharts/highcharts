@@ -368,37 +368,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', assert => {
             extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
             positions: [3, 4.2, 4.8, 5, 7, 8],
             slope: 500
-        },
-        series: [
-            {
-                points: [
-                    {
-                        x: 3,
-                        plotX: -20
-                    },
-                    {
-                        x: 4.2,
-                        plotX: 80 // distance between points 100px
-                    },
-                    {
-                        x: 4.8,
-                        plotX: 180 // distance between points 100px
-                    },
-                    {
-                        x: 5,
-                        plotX: 280 // distance between points 100px
-                    },
-                    {
-                        x: 7,
-                        plotX: 380 // distance between points 100px
-                    },
-                    {
-                        x: 8,
-                        plotX: 480 // distance between points 100px
-                    }
-                ]
-            }
-        ]
+        }
     };
     axis.ordinal.axis = axis;
 
