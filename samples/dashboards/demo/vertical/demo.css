@@ -2,9 +2,17 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
+:root {
+    --text-color: #4d5156;
+
+    @media (prefers-color-scheme: dark) {
+        --text-color: #fff;
+    }
+}
+
 body {
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-    color: #4d5156;
+    color: var(--text-color);
 }
 
 p {
@@ -22,7 +30,7 @@ figcaption {
 }
 
 #container {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
