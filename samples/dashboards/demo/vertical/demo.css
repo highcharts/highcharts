@@ -79,7 +79,7 @@ h2 {
         flex-direction: column-reverse;
     }
 
-    .chart-container,
+    .chart,
     .section-text {
         max-width: unset;
     }
