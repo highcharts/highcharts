@@ -15,6 +15,14 @@ body {
     color: var(--text-color);
 }
 
+h2 {
+    margin-top: 1.5em;
+}
+
+.highcharts-background {
+    fill: var(--highcharts-neutral-color-5);
+}
+
 #container {
     background-color: var(--highcharts-background-color);
     max-width: 900px;
@@ -24,6 +32,7 @@ body {
 
 #container p {
     line-height: 1.3em;
+    margin: 0 0 1.4em;
 }
 
 #container .illustration {
@@ -33,7 +42,7 @@ body {
 #container figcaption {
     text-align: right;
     font-size: 0.9em;
-    margin-top: 0.5em;
+    margin: 0.5em 0 1em;
 }
 
 #title {
@@ -47,17 +56,17 @@ body {
 .section-container {
     display: flex;
     flex-direction: row;
+    gap: 15px;
 }
 
 .chart {
     height: 400px;
-    padding: 10px;
+    border-radius: 5px;
 }
 
 .chart,
 .section-text {
     flex: 1;
-    margin: 6px;
     max-width: 450px;
 }
 
@@ -66,7 +75,11 @@ body {
         flex-direction: column;
     }
 
-    .chart-container,
+    .section-container:has(#sea-chart) {
+        flex-direction: column-reverse;
+    }
+
+    .chart,
     .section-text {
         max-width: unset;
     }
