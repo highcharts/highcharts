@@ -9,7 +9,7 @@ export async function assignNextMilestone (
     prNumber,
     milestoneName
 ) {
-    core.debug("Running something at the moment");
+    core.debug("assignNextMilestone started");
 
     const milestones = await github.rest.issues.listMilestones({
         owner: context.repo.owner,
@@ -20,6 +20,7 @@ export async function assignNextMilestone (
 
     // Assign the milestone
     if (nextMileStone?.number) {
+        core.debug(`Assigning milestone ${nextMileStone.title} to PR #${prNumber}`);
         await github.rest.issues.update({
             owner: context.repo.owner,
             repo: context.repo.repo,
