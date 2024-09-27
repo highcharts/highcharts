@@ -56,6 +56,7 @@ h2 {
 .section-container {
     display: flex;
     flex-direction: row;
+    gap: 15px;
 }
 
 .chart {
