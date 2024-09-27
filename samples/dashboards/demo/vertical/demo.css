@@ -74,7 +74,9 @@ h2 {
     .section-container {
         flex-direction: column;
     }
-
+.section-container:has(#sea-chart) {
+    flex-direction: column-reverse;
+}
     .chart-container,
     .section-text {
         max-width: unset;
