@@ -1,4 +1,4 @@
-name: Highcharts Milestone
+name: Dashboards Milestone
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - 'master'
     types:
       - 'closed'
-    paths-ignore:
+    paths:
       - '.github/workflows/dashboards*'
       - 'css/dashboards*'
       - 'css/datagrid*'
@@ -15,6 +15,7 @@ on:
       - 'test/cypress/dashboards/visual/**'
       - 'test/cypress/data-grid/visual/**'
       - 'ts/Dashboards/**'
+      - 'ts/Data/**'
       - 'ts/DataGrid/**'
 
 jobs:
@@ -34,5 +35,5 @@ jobs:
               await import('${{ github.workspace }}/.github/scripts/assignMilestone.mjs');
 
             const prNumber = ${{ github.event.pull_request.number }};
-            await assignMilestone({ github, context, core }, prNumber, 'Next');
+            await assignMilestone({ github, context, core }, prNumber, 'Dashboards-Next');
 
