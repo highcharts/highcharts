@@ -1,0 +1,21 @@
+name: Assign Next Milestone
+
+on:
+  pull_request:
+    # types: [closed]
+
+jobs:
+  assign-next-milestone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign Milestone
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { default: assignMilestone } =
+              await import('${{ github.workspace }}/.github/scripts/assignMilestone.mjs');
+
+            const prNumber = ${{ github.event.pull_request.number }};
+            await assignMilestone({ github, context, core }, prNumber, 'Next');
+

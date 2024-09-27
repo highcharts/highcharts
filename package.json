@@ -61,6 +61,7 @@
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
     "@swc/core": "^1.5.25",
+    "@types/github-script": "github:actions/github-script",
     "@types/jquery": "^3.5.30",
     "@types/qunit": "^2.19.10",
     "@types/trusted-types": "^2.0.7",
