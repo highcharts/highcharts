@@ -15,6 +15,14 @@ body {
     color: var(--text-color);
 }
 
+h2 {
+    margin-top: 1.5em;
+}
+
+.highcharts-background {
+    fill: var(--highcharts-neutral-color-5);
+}
+
 #container {
     background-color: var(--highcharts-background-color);
     max-width: 900px;
@@ -24,6 +32,7 @@ body {
 
 #container p {
     line-height: 1.3em;
+    margin-bottom: 1.4em;
 }
 
 #container .illustration {
@@ -51,7 +60,7 @@ body {
 
 .chart {
     height: 400px;
-    padding: 10px;
+    border-radius: 5px;
 }
 
 .chart,
