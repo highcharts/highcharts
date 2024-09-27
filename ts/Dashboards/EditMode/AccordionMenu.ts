@@ -138,7 +138,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.accordionMenuButtonsContainer
             },
             {},
-            accordionContainer
+            container
         );
 
         EditRenderer.renderButton(
