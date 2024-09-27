@@ -41,6 +41,10 @@ const {
     pick
 } = U;
 
+// Function used to test string length including an ellipsis
+const stringWithEllipsis = (text: string, currentIndex: number): string =>
+    text.substring(0, currentIndex) + '\u2026';
+
 /* *
  *
  *  Class
@@ -254,7 +258,13 @@ class TextBuilder {
                 words.length > 1 || wrapper.element.childNodes.length > 1
             );
 
-            const dy = this.getLineHeight(parentElement);
+            const dy = this.getLineHeight(parentElement),
+                ellipsisWidth = Math.max(
+                    0,
+                    // Subtract the font face to make room for
+                    // the ellipsis itself
+                    width - 0.8 * dy
+                );
 
             let lineNo = 0;
             let startAt = wrapper.actualWidth;
@@ -291,13 +301,13 @@ class TextBuilder {
                         words,
                         lineNo === 0 ? (startAt || 0) : 0,
                         width,
+                        ellipsisWidth,
                         // Build the text to test for
                         (t: string, currentIndex: number): string =>
                             words
                                 .slice(0, currentIndex)
                                 .join(' ')
-                                .replace(/- /g, '-'),
-                        dy
+                                .replace(/- /g, '-')
                     );
 
                     startAt = wrapper.actualWidth;
@@ -315,16 +325,9 @@ class TextBuilder {
                                 void 0,
                                 0,
                                 // Target width
-                                Math.max(
-                                    0,
-                                    // Subtract the font face to make room for
-                                    // the ellipsis itself
-                                    width - 0.8 * dy
-                                ),
-                                // Build the text to test for
-                                (text: string, currentIndex: number): string =>
-                                    text.substring(0, currentIndex) + '\u2026',
-                                dy
+                                width,
+                                ellipsisWidth,
+                                stringWithEllipsis
                             );
 
                             textNode.textContent = textNode.textContent
@@ -366,16 +369,9 @@ class TextBuilder {
                         void 0,
                         0,
                         // Target width
-                        Math.max(
-                            0,
-                            // Subtract the font face to make room for the
-                            // ellipsis itself
-                            width - 0.8 * dy
-                        ),
-                        // Build the text to test for
-                        (text: string, currentIndex: number): string =>
-                            text.substring(0, currentIndex) + '\u2026',
-                        dy
+                        width,
+                        ellipsisWidth,
+                        stringWithEllipsis
                     );
                 }
             }
@@ -517,8 +513,8 @@ class TextBuilder {
         words: (Array<string>|undefined),
         startAt: number,
         width: number,
-        getString: Function,
-        dy: number
+        ellipsisWidth: number,
+        getString: Function
     ): void {
         const svgElement = this.svgElement;
         const { rotation } = svgElement;
@@ -532,6 +528,10 @@ class TextBuilder {
         let currentIndex = maxIndex;
         let str;
         let actualWidth: number;
+
+        if (!words) {
+            width = ellipsisWidth;
+        }
 
         const getSubStringLength = function (
             charEnd: number,
@@ -618,16 +618,9 @@ class TextBuilder {
                     textNode.textContent || '',
                     void 0,
                     0,
-                    // Target width
-                    Math.max(
-                        0,
-                        // Subtract the font face to make room for the
-                        // ellipsis itself
-                        width - 0.8 * dy
-                    ),
-                    (text: string, currentIndex: number): string =>
-                        text.substring(0, currentIndex) + '\u2026',
-                    dy
+                    width,
+                    ellipsisWidth,
+                    stringWithEllipsis
                 );
             }
         }
