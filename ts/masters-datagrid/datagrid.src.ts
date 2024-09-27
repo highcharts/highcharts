@@ -20,6 +20,7 @@
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
+import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
 import _DataGrid from '../DataGrid/DataGrid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
@@ -50,6 +51,8 @@ declare global {
         AST: typeof AST;
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
+        dataGrids: Array<(_DataGrid|undefined)>;
+        DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataConnector: typeof DataConnector;
@@ -75,8 +78,10 @@ const G = Globals as unknown as DataGridNamespace;
 G.AST = AST;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
+G.DataConverter = DataConverter;
 G.DataGrid = _DataGrid;
 G.dataGrid = _DataGrid.dataGrid;
+G.dataGrids = _DataGrid.dataGrids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;

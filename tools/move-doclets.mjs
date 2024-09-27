@@ -22,7 +22,7 @@ import FS from 'node:fs';
 import FSLib from './libs/fs.js';
 import Path from 'node:path';
 import TS from 'typescript';
-import TSLib from './libs/ts.js';
+import TSLib from './libs/TS.js';
 import Yargs from 'yargs';
 
 
@@ -248,8 +248,8 @@ function decorateName(
 
     if (branch.doclet) {
         optionName = (
-            TSLib.getTagText(branch.doclet, 'apioption') ||
-            TSLib.getTagText(branch.doclet, 'optionparent')
+            TSLib.extractTagText(branch.doclet, 'apioption') ||
+            TSLib.extractTagText(branch.doclet, 'optionparent')
         );
         if (optionName) {
             branch.name = optionName.split('.').pop();
@@ -337,7 +337,7 @@ function decorateType(
         !optionType &&
         branch.doclet
     ) {
-        optionType = TSLib.getTagText(branch.doclet, 'type');
+        optionType = TSLib.extractTagText(branch.doclet, 'type');
         if (optionType) {
             optionType = optionType.replace(/^{(.*)}/g, '$1')
         }
@@ -376,8 +376,8 @@ function decorateType(
             }
 
             optionType = (
-                TSLib.toTypeof(child) ||
-                TSLib.toTypeof(TSLib.getNodesFirstChild(node))
+                getTypeOf(child) ||
+                getTypeOf(TSLib.getNodesFirstChild(node))
             );
 
         }
@@ -391,7 +391,7 @@ function decorateType(
         if (node.type) {
             optionType = node.type.getText();
         } else {
-            optionType = TSLib.toTypeof(node.getLastToken());
+            optionType = getTypeOf(node.getLastToken());
         }
     }
 
@@ -708,8 +708,8 @@ function getInterfaceName(
 
     if (doclet) {
         const fullName = (
-            TSLib.getTagText(doclet, 'apioption') ||
-            TSLib.getTagText(doclet, 'optionparent')
+            TSLib.extractTagText(doclet, 'apioption') ||
+            TSLib.extractTagText(doclet, 'optionparent')
         );
 
         if (fullName) {
@@ -732,7 +732,7 @@ function getMemberType(
     let interfaceName = getInterfaceName(branch);
     let memberType = (
             branch.type ||
-            (doclet && TSLib.getTagText(doclet, 'type')) ||
+            (doclet && TSLib.extractTagText(doclet, 'type')) ||
             '*'
         )
         .replace(/[{}]/gu, '')
@@ -764,6 +764,40 @@ function getPropertyName(
         branch.fullName?.split('.').pop() ||
         ''
     );
+}
+
+
+/**
+ * @param {TS.Node} node
+ * @return {InfoType|undefined}
+ */
+function getTypeOf(
+    node
+) {
+    const _type = {
+        // [TS.SyntaxKind.BigIntKeyword]: 'bigint', // JSON issue
+        // [TS.SyntaxKind.BigIntLiteral]: 'bigint', // JSON issue
+        [TS.SyntaxKind.FalseKeyword]: 'boolean',
+        [TS.SyntaxKind.TrueKeyword]: 'boolean',
+        [TS.SyntaxKind.ArrowFunction]: 'function',
+        [TS.SyntaxKind.FunctionDeclaration]: 'function',
+        [TS.SyntaxKind.FunctionExpression]: 'function',
+        [TS.SyntaxKind.FunctionKeyword]: 'function',
+        [TS.SyntaxKind.NumberKeyword]: 'number',
+        [TS.SyntaxKind.NumericLiteral]: 'number',
+        [TS.SyntaxKind.ObjectKeyword]: '*',
+        [TS.SyntaxKind.ObjectLiteralExpression]: '*',
+        [TS.SyntaxKind.StringKeyword]: 'string',
+        [TS.SyntaxKind.StringLiteral]: 'string'
+    }[node.kind];
+
+    if (!_type) {
+        return void 0;
+    }
+
+    return [{
+        type: _type
+    }];
 }
 
 

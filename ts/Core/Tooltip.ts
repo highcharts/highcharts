@@ -201,20 +201,20 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
      */
-    public bodyFormatter(items: Array<Point>): Array<string> {
-        return items.map(function (item): string {
-            const tooltipOptions = (item as any).series.tooltipOptions;
+    public bodyFormatter(
+        items: Array<Tooltip.FormatterContextObject>
+    ): Array<string> {
+        return items.map((item): string => {
+            const tooltipOptions = item.series.tooltipOptions,
+                point = item.point,
+                formatPrefix = point.formatPrefix || 'point';
 
             return (
-                (tooltipOptions as any)[
-                    ((item as any).point.formatPrefix || 'point') + 'Formatter'
-                ] ||
-                (item as any).point.tooltipFormatter
+                (tooltipOptions as any)[formatPrefix + 'Formatter'] ||
+                point.tooltipFormatter
             ).call(
-                (item as any).point,
-                tooltipOptions[
-                    ((item as any).point.formatPrefix || 'point') + 'Format'
-                ] || ''
+                point,
+                (tooltipOptions as any)[formatPrefix + 'Format'] || ''
             );
         });
     }
@@ -412,7 +412,9 @@ class Tooltip {
      * @return {Highcharts.SVGElement}
      * Tooltip label
      */
-    public getLabel(): SVGElement {
+    public getLabel(
+        { anchorX, anchorY }: Partial<SVGElement> = { anchorX: 0, anchorY: 0 }
+    ): SVGElement {
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
@@ -489,8 +491,8 @@ class Tooltip {
                 this.label = renderer
                     .label(
                         '',
-                        0,
-                        0,
+                        anchorX,
+                        anchorY,
                         options.shape,
                         void 0,
                         void 0,
@@ -569,7 +571,7 @@ class Tooltip {
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
-                ) - 2 * distance :
+                ) - (2 * distance) - 2 :
                 chart.chartWidth,
             height: outside ?
                 Math.max(
@@ -982,7 +984,8 @@ class Tooltip {
             formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
             styledMode = chart.styledMode;
-        let formatterContext = {} as Tooltip.FormatterContextObject;
+        let formatterContext = {} as Tooltip.FormatterContextObject,
+            wasShared = tooltip.allowShared;
 
         if (!options.enabled || !point.series) { // #16820
             return;
@@ -997,6 +1000,8 @@ class Tooltip {
             pointOrPoints.series &&
             pointOrPoints.series.noSharedTooltip
         );
+
+        wasShared = wasShared && !tooltip.allowShared;
 
         // Get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = (
@@ -1057,7 +1062,9 @@ class Tooltip {
                             p.series.shouldShowTooltip(checkX, checkY)
                     )
                 ) {
-                    const label = tooltip.getLabel();
+                    const label = tooltip.getLabel(
+                        wasShared && tooltip.tt || {}
+                    );
 
                     // Prevent the tooltip from flowing over the chart box
                     // (#6659)
@@ -1078,6 +1085,20 @@ class Tooltip {
                             (text as any).join('') :
                             text
                     });
+
+                    // When the length of the label has increased, immediately
+                    // update the x position to prevent tooltip from flowing
+                    // outside the viewport during animation (#21371)
+                    if (this.outside) {
+                        label.attr({
+                            x: clamp(
+                                label.x || 0,
+                                0,
+                                this.getPlayingField().width -
+                                (label.width || 0)
+                            )
+                        });
+                    }
 
                     if (!styledMode) {
                         label.attr({
@@ -1760,7 +1781,8 @@ class Tooltip {
                 width,
                 height,
                 point
-            );
+            ),
+            doc = H.doc;
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
@@ -1780,7 +1802,13 @@ class Tooltip {
             pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
-                width + pad,
+                // Clamp width to keep tooltip in viewport (#21698)
+                // and subtract one since tooltip container has 'left: 1px;'
+                clamp(
+                    width + pad,
+                    0,
+                    doc.documentElement.clientWidth
+                ) - 1,
                 height + pad,
                 false
             );

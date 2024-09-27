@@ -1,5 +1,5 @@
 QUnit.test(
-    'Handles should not be overlapped by xAxis labels (#2908)',
+    'Navigator handles general tests',
     function (assert) {
         const chart = Highcharts.StockChart('container', {
             navigator: {
@@ -31,7 +31,7 @@ QUnit.test(
         assert.ok(
             chart.scroller.handles[0].zIndex >=
                 chart.scroller.xAxis.labelGroup.zIndex,
-            'Labels no overlap handles'
+            'Handles should not be overlapped by xAxis labels (#2908)'
         );
 
         assert.ok(
@@ -42,6 +42,23 @@ QUnit.test(
         assert.ok(
             chart.get('navigator-y-axis') !== undefined,
             'Navigator yAxis should be accessed by the default id.'
+        );
+
+        chart.update({
+            navigator: {
+                handles: {
+                    symbols: [
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    ]
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.navigator.handles[0].element.tagName,
+            'image',
+            'Navigator handles should be updated to images. (#21660)'
         );
     }
 );

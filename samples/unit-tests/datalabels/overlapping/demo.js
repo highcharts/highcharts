@@ -145,45 +145,80 @@ QUnit.test(
     }
 );
 
-QUnit.test('Overlapping labels with paddings', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'bar',
-            width: 530
-        },
-        yAxis: {
-            min: -10,
-            stackLabels: {
-                enabled: true
-            }
-        },
-        plotOptions: {
-            series: {
-                stacking: 'normal',
-                dataLabels: {
+QUnit.test(
+    'Overlapping labels with paddings, applying width in styledMode (#20499)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar',
+                width: 530
+            },
+            yAxis: {
+                min: -10,
+                stackLabels: {
                     enabled: true
                 }
-            }
-        },
-        series: [
-            {
-                name: 'John',
-                data: [2.89765436543]
             },
-            {
-                name: 'Jane',
-                data: [1.89765436543]
+            plotOptions: {
+                series: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
             },
-            {
-                name: 'Joe',
-                data: [5.89765436543]
-            }
-        ]
-    });
+            series: [
+                {
+                    name: 'John',
+                    data: [2.89765436543]
+                },
+                {
+                    name: 'Jane',
+                    data: [1.89765436543]
+                },
+                {
+                    name: 'Joe',
+                    data: [5.89765436543]
+                }
+            ]
+        });
 
-    assert.ok(
-        chart.series[0].points[0].dataLabel.attr('y') < 0 ||
-            chart.series[0].points[0].dataLabel.attr('opacity') === 0,
-        'Overlapping dataLabel is hidden (#9119).'
-    );
-});
+        assert.ok(
+            chart.series[0].points[0].dataLabel.attr('y') < 0 ||
+                chart.series[0].points[0].dataLabel.attr('opacity') === 0,
+            'Overlapping dataLabel is hidden (#9119).'
+        );
+
+        chart.destroy();
+
+        const markerWidth = 60;
+        chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true
+            },
+            series: [{
+                type: 'treegraph',
+                keys: ['parent', 'id', 'level'],
+                data: [
+                    [undefined, 'Proto Indo-European'],
+                    ['Proto Indo-European', 'Balto-Slavic'],
+                    ['Proto Indo-European', 'Indo-Iraniasdsan']
+                ],
+                marker: {
+                    symbol: 'rect',
+                    height: '40px',
+                    width: markerWidth
+                },
+                dataLabels: {
+                    pointFormat: '{point.id}'
+                }
+            }]
+        });
+
+        assert.equal(
+            chart.series[0].data[0].dataLabels[0].text.textWidth,
+            markerWidth,
+            'Defined width should be applied in styledMode (#20499).'
+        );
+    }
+);

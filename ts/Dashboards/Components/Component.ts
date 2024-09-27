@@ -209,6 +209,10 @@ abstract class Component {
      */
     public titleElement?: HTMLElement;
     /**
+     * Whether the component state is active.
+     */
+    public isActive?: boolean;
+    /**
      * The HTML element where the caption is.
      */
     public captionElement?: HTMLElement;
@@ -389,8 +393,7 @@ abstract class Component {
      * */
 
     /**
-     * Function fired when component's `tableChanged` event is fired.
-     * @internal
+     * Function fired when component's data source's data is changed.
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
 
@@ -554,6 +557,44 @@ abstract class Component {
     }
 
     /**
+     * It's a temporary alternative for the `resize` method. It sets the strict
+     * pixel height for the component so that the content can be distributed in
+     * the right way, without looping the resizers in the content and container.
+     * @param width
+     * The width to set the component to.
+     * @param height
+     * The height to set the component to.
+     */
+    protected resizeDynamicContent(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        const { element } = this;
+        if (height) {
+            const margins = getMargins(element).y;
+            const paddings = getPaddings(element).y;
+
+            if (typeof height === 'string') {
+                height = parseFloat(height);
+            }
+            height = Math.round(height);
+
+            element.style.height = `${height - margins - paddings}px`;
+            this.contentElement.style.height = `${
+                element.clientHeight - this.getContentHeight() - paddings
+            }px`;
+        } else if (height === null) {
+            this.dimensions.height = null;
+            element.style.removeProperty('height');
+        }
+
+        fireEvent(this, 'resize', {
+            width,
+            height
+        });
+    }
+
+    /**
      * Adjusts size of component to parent's cell size when animation is done.
      * @param element
      * HTML element that is resized.
@@ -603,7 +644,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: ConnectorHandler.ConnectorOptions[] = (
+        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -802,7 +843,9 @@ abstract class Component {
          * TODO: Should perhaps set an `isActive` flag to false.
          */
 
-        this.sync.stop();
+        if (this.sync.isSyncing) {
+            this.sync.stop();
+        }
 
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -1066,7 +1109,7 @@ namespace Component {
         /**
          * Connector options
          */
-        connector?: ConnectorOptions | ConnectorOptions[];
+        connector?: (ConnectorOptions|Array<ConnectorOptions>);
         /**
          * Sets an ID for the component's container.
          */
@@ -1087,6 +1130,48 @@ namespace Component {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
+
+        /**
+         * States for the component.
+         */
+        states?: StatesOptions;
+    }
+
+    /**
+     * States options for the component.
+     */
+    export interface StatesOptions {
+        active?: {
+            /**
+             * Whether the component is active. Only used when `enabled` is
+             * `true`.
+             * If `true`, the `highcharts-dashboards-cell-state-active` class
+             * will be added to the component's container.
+             *
+             * Only one component can be active at a time.
+             *
+             * Try it:
+             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+             *
+             * @default false
+             */
+            isActive?: boolean;
+
+            /**
+             * Whether to enable the active state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
+        hover?: {
+            /**
+             * Whether to enable the hover state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
     }
 
     /**

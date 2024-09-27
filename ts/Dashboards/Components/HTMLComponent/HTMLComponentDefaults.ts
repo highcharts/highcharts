@@ -34,6 +34,10 @@ import Component from '../Component.js';
 
 const HTMLComponentDefaults: Globals.DeepPartial<Options> = {
     type: 'HTML',
+    className: [
+        Component.defaultOptions.className,
+        `${Component.defaultOptions.className}-html`
+    ].join(' '),
     elements: [],
     editableOptions: [
         ...Component.defaultOptions.editableOptions || [],
