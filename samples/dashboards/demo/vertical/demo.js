@@ -1,4 +1,4 @@
-const weatherEvents = [
+const weatherEventsMap = [
     'Rare',
     'Uncommon',
     'Increasing',
@@ -9,6 +9,27 @@ const weatherEvents = [
     'Common, intense',
     'Extreme'
 ];
+
+Highcharts.setOptions({
+    chart: {
+        animation: false
+    },
+    credits: {
+        enabled: false
+    },
+    title: {
+        text: ''
+    },
+    tooltip: {
+        shared: true
+    }
+});
+
+const pointFormatter = function () {
+    const series = this.series;
+    return `<span style="color:{point.color}">\u25CF</span>
+    ${series.name}:<b>${weatherEventsMap[this.y]}</b><br/>`;
+};
 
 Dashboards.board('container', {
     dataPool: {
@@ -23,7 +44,8 @@ Dashboards.board('container', {
                     'Global Avg Temperature Increase',
                     'CO2 Concentration',
                     'Sea Level Rise',
-                    'Extreme Weather Events'
+                    'Extreme Weather Events',
+                    'Mapped events'
                 ],
                 data: [
                     [
@@ -41,8 +63,26 @@ Dashboards.board('container', {
                     [0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8],
                     [305, 310, 312, 315, 320, 327, 340, 355, 375, 400],
                     [0.0, 0.2, 0.4, 0.8, 1.0, 2.0, 3.0, 4.5, 6.0, 8.0],
-                    [0, 1, 1, 2, 3, 4, 5, 6, 7, 8]
-                ]
+                    [
+                        'Rare',
+                        'Uncommon',
+                        'Uncommon',
+                        'Increasing',
+                        'More frequent',
+                        'Frequent',
+                        'Much more frequent',
+                        'Common',
+                        'Common, intense',
+                        'Extreme'
+                    ]
+                ],
+                beforeParse: function (data) {
+                    data.push(data[4].map(function (event) {
+                        return weatherEventsMap.indexOf(event);
+                    }));
+                    return data;
+
+                }
             }
         }]
     },
@@ -61,9 +101,6 @@ Dashboards.board('container', {
             id: 'climate-data'
         },
         type: 'DataGrid',
-        sync: {
-            highlight: true
-        },
         dataGridOptions: {
             credits: {
                 enabled: false
@@ -71,36 +108,41 @@ Dashboards.board('container', {
             columns: [{
                 id: 'Global Avg Temperature Increase',
                 header: {
-                    format: 'Global Avg Temperature Increase °C'
+                    format: 'Average Temperature Increase'
+                },
+                cells: {
+                    format: '{value} °C'
                 }
             }, {
                 id: 'CO2 Concentration',
                 header: {
-                    format: 'CO2 Concentration ppm'
+                    format: 'CO2 Concentration'
+                },
+                cells: {
+                    format: '{value} ppm'
                 }
             }, {
                 id: 'Sea Level Rise',
                 header: {
-                    format: 'Sea Level Rise cm'
+                    format: 'Sea Level Rise'
+                },
+                cells: {
+                    format: '{value} cm'
                 }
             }, {
-                id: 'Extreme Weather Events',
-                cells: {
-                    formatter: function () {
-                        return weatherEvents[this.value];
-                    }
-                }
+                id: 'Mapped events',
+                enabled: false
             }]
         }
     }, {
-        sync: {
-            highlight: true
-        },
         connector: {
             id: 'climate-data',
             columnAssignment: [{
-                seriesId: 'Global Avg Temperature Increase',
+                seriesId: 'temp',
                 data: ['Decade', 'Global Avg Temperature Increase']
+            }, {
+                seriesId: 'events',
+                data: ['Decade', 'Mapped events']
             }]
         },
         renderTo: 'temp-chart',
@@ -112,33 +154,45 @@ Dashboards.board('container', {
                     description: 'Decades'
                 }
             },
-            yAxis: {
+            yAxis: [{
                 title: {
                     text: '°C'
                 }
-            },
-            credits: {
-                enabled: false
-            },
-            chart: {
-                animation: false
-            },
-            title: {
-                text: ''
-            },
+            }, {
+                title: {
+                    text: ''
+                },
+                visible: false
+            }],
             tooltip: {
                 valueSuffix: ' °C'
-            }
+            },
+            series: [{
+                id: 'temp',
+                name: 'Global Average Temperature Increase',
+                type: 'column',
+                yAxis: 0,
+                tooltip: {
+                    valueSuffix: ' °C'
+                }
+            }, {
+                id: 'events',
+                yAxis: 1,
+                name: 'Extreme Weather Events',
+                tooltip: {
+                    pointFormatter: pointFormatter
+                }
+            }]
         }
     }, {
-        sync: {
-            highlight: true
-        },
         connector: {
             id: 'climate-data',
             columnAssignment: [{
-                seriesId: 'CO2 Concentration',
+                seriesId: 'co2',
                 data: ['Decade', 'CO2 Concentration']
+            }, {
+                seriesId: 'events',
+                data: ['Decade', 'Mapped events']
             }]
         },
         renderTo: 'co2-chart',
@@ -150,33 +204,44 @@ Dashboards.board('container', {
                     description: 'Decades'
                 }
             },
-            yAxis: {
+            yAxis: [{
                 title: {
                     text: 'ppm'
                 },
                 min: 250,
                 max: 400
-            },
-            credits: {
-                enabled: false
-            },
-            chart: {
-                animation: false,
-                type: 'column'
-            },
-            title: {
-                text: ''
-            }
+            }, {
+                title: {
+                    text: ''
+                },
+                visible: false
+            }],
+            series: [{
+                id: 'co2',
+                name: 'CO2 Concentration',
+                type: 'column',
+                yAxis: 0,
+                tooltip: {
+                    valueSuffix: ' ppm'
+                }
+            }, {
+                id: 'events',
+                yAxis: 1,
+                name: 'Extreme Weather Events',
+                tooltip: {
+                    pointFormatter: pointFormatter
+                }
+            }]
         }
     }, {
-        sync: {
-            highlight: true
-        },
         connector: {
             id: 'climate-data',
             columnAssignment: [{
-                seriesId: 'Sea Level Rise',
+                seriesId: 'sea-level-rise',
                 data: ['Decade', 'Sea Level Rise']
+            }, {
+                seriesId: 'events',
+                data: ['Decade', 'Mapped events']
             }]
         },
         renderTo: 'sea-chart',
@@ -188,59 +253,32 @@ Dashboards.board('container', {
                     description: 'Decades'
                 }
             },
-            yAxis: {
+            yAxis: [{
                 title: {
                     text: 'cm'
                 }
-            },
-            credits: {
-                enabled: false
-            },
-            chart: {
-                animation: false,
-                type: 'spline'
-            },
-            title: {
-                text: ''
-            }
-        }
-    }, {
-        sync: {
-            highlight: true
-        },
-        connector: {
-            id: 'climate-data',
-            columnAssignment: [{
-                seriesId: 'Extreme Weather Events',
-                data: ['Decade', 'Extreme Weather Events']
-            }]
-        },
-        renderTo: 'events-chart',
-        type: 'Highcharts',
-        chartOptions: {
-            xAxis: {
-                type: 'category',
-                accessibility: {
-                    description: 'Decades'
-                }
-            },
-            yAxis: {
+            }, {
                 title: {
                     text: ''
                 },
-                type: 'category',
-                categories: weatherEvents
-            },
-            credits: {
-                enabled: false
-            },
-            chart: {
-                animation: false,
-                type: 'scatter'
-            },
-            title: {
-                text: ''
-            }
+                visible: false
+            }],
+            series: [{
+                id: 'sea-level-rise',
+                type: 'column',
+                yAxis: 0,
+                name: 'Sea Level Rise',
+                tooltip: {
+                    valueSuffix: ' cm'
+                }
+            }, {
+                id: 'events',
+                yAxis: 1,
+                name: 'Extreme Weather Events',
+                tooltip: {
+                    pointFormatter: pointFormatter
+                }
+            }]
         }
     }]
 }, true);
