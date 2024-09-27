@@ -458,7 +458,7 @@ namespace OrdinalAxis {
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions && positions.length) {
+        if (positions?.length) {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
@@ -1202,15 +1202,20 @@ namespace OrdinalAxis {
          * it will be regenerated the next time a panning operation starts.
          * @private
          */
-        public getExtendedPositions(withOverscroll: boolean = true): Array<number> {
+        public getExtendedPositions(withOverscroll = true): Array<number> {
             const ordinal = this,
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
                 chart = axis.chart,
-                grouping = axis.series[0]?.currentDataGrouping,
-                key = grouping ?
-                    grouping.count + (grouping.unitName as any) :
-                    'raw',
+                key = axis.series.reduce((key, series): string => {
+                    const grouping = series.currentDataGrouping;
+                    if (grouping) {
+                        key += grouping.count + (grouping.unitName as any);
+                    } else {
+                        key += 'raw';
+                    }
+                    return key;
+                }, ''),
                 overscroll = withOverscroll ?
                     axis.ordinal.convertOverscroll(
                         axis.options.overscroll
@@ -1279,7 +1284,7 @@ namespace OrdinalAxis {
                     }
 
                     fakeSeries.options = {
-                        dataGrouping: grouping ? {
+                        dataGrouping: series.currentDataGrouping ? {
                             firstAnchor:
                                 series.options.dataGrouping?.firstAnchor,
                             anchor: series.options.dataGrouping?.anchor,
@@ -1287,11 +1292,10 @@ namespace OrdinalAxis {
                                 series.options.dataGrouping?.firstAnchor,
                             enabled: true,
                             forced: true,
-                            // Doesn't matter which, use the fastest
                             approximation: 'open',
                             units: [[
-                                (grouping as any).unitName,
-                                [grouping.count]
+                                series.currentDataGrouping.unitName,
+                                [series.currentDataGrouping.count]
                             ]]
                         } : {
                             enabled: false
@@ -1412,18 +1416,15 @@ namespace OrdinalAxis {
          * Either ordinalPositions if the value is inside the plotArea or
          * extendedOrdinalPositions if not.
          */
-        public getIndexOfPoint(val: number, ordinalArray: number[]): number {
+        public getIndexOfPoint(
+            pixelVal: number,
+            ordinalArray: number[]
+        ): number {
             const ordinal = this,
                 axis = ordinal.axis,
                 min = axis.min as number,
                 minX = axis.minPixelPadding,
-                indexOfMin = Additions.findIndexOf(ordinalArray, min, true);
-
-            const valOfFirstPoint = ordinalArray[indexOfMin];
-            const valOfNextPoint = ordinalArray[indexOfMin + 1];
-
-            const mantissa =
-                (min - valOfFirstPoint) / (valOfNextPoint - valOfFirstPoint);
+                indexOfMin = getIndexInArray(ordinalArray, min);
 
             const ordinalPointPixelInterval =
                 axis.translationSlope *
@@ -1432,10 +1433,10 @@ namespace OrdinalAxis {
                     (ordinal.overscrollPointsRange as number));
 
             const shiftIndex = correctFloat(
-                (val - minX) / ordinalPointPixelInterval
+                (pixelVal - minX) / ordinalPointPixelInterval
             );
 
-            return indexOfMin + mantissa + shiftIndex;
+            return indexOfMin + shiftIndex;
         }
 
         /**

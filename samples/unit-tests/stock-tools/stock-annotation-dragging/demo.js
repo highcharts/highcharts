@@ -61,11 +61,11 @@ QUnit.test('Dragging annotation', assert => {
 
     const annotation = chart.annotations[0];
 
-    const diff = 25;
+    const diff = 125;
     const testController = new TestController(chart);
     const originalPlotX = annotation.points[0].plotX;
     const start = chart.plotLeft + originalPlotX;
-    testController.pan([start, 200], [diff + start, 200], {}, true);
+    testController.pan([start, 200], [diff + start, 200]);
     const newPlotX = annotation.points[0].plotX;
     assert.close(
         originalPlotX + diff,
@@ -149,7 +149,109 @@ QUnit.test(
 
         const annotation = chart.annotations[0];
 
-        const diff = 30;
+        const diff = 100;
+        const testController = new TestController(chart);
+        const originalPlotX = annotation.shapes[0].points[0].plotX;
+        const start = chart.plotLeft + originalPlotX;
+        testController.pan([start, 200], [diff + start, 200]);
+        const newPlotX = annotation.shapes[0].points[0].plotX;
+        assert.close(
+            originalPlotX + diff,
+            newPlotX,
+            1,
+            `Annotation moved by ${diff} pixels`
+        );
+    }
+);
+
+QUnit.test(
+    'Dragging annotation in ordinal one series is grouped and other is not',
+    assert => {
+        const options = {
+            tooltip: { enabled: false },
+            annotations: [
+                {
+                    draggable: 'x',
+                    animation: {
+                        defer: 0
+                    },
+                    shapes: [
+                        {
+                            strokeWidth: 3,
+                            type: 'path',
+
+                            points: [
+                                {
+                                    x: 550,
+                                    y: 0,
+                                    xAxis: 0,
+                                    yAxis: 0
+                                },
+                                {
+                                    x: 550,
+                                    y: 240,
+                                    xAxis: 0,
+                                    yAxis: 0
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            scrollbar: {
+                enabled: false
+            },
+            navigator: {
+                enabled: false
+            },
+            chart: {
+                width: 600
+            },
+            xAxis: {
+                min: 220,
+                max: 900,
+                labels: {
+                    format: '{value}'
+                }
+            },
+            series: [
+                {
+                    type: 'line',
+                    dataGrouping: {
+                        _enabled: false,
+                        forced: true,
+                        units: [
+                            [
+                                'millisecond', // unit name
+                                [10] // allowed multiples
+                            ]
+                        ]
+                    },
+                    data: [
+                        [201, 177.97],
+                        [219, 177.13],
+                        [236, 172.3],
+                        [271, 177.06],
+                        [824, 171.88],
+                        [988, 185.82],
+                        [1005, 187.85],
+                        [1023, 190.25]
+                    ]
+                },
+                {
+                    type: 'scatter',
+                    data: [
+                        [201, 200],
+                        [538, 200],
+                        [884, 200]
+                    ]
+                }
+            ]
+        };
+        const chart = Highcharts.stockChart('container', options);
+        const annotation = chart.annotations[0];
+
+        const diff = 100;
         const testController = new TestController(chart);
         const originalPlotX = annotation.shapes[0].points[0].plotX;
         const start = chart.plotLeft + originalPlotX;
