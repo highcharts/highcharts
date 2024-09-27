@@ -406,6 +406,77 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         1,
         'Ellipsis text should have a title tag'
     );
+
+    text1.destroy();
+    text1 = ren
+        .text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            width: '100px',
+            textOverflow: 'ellipsis'
+        })
+        .add();
+    assert.ok(
+        text1.getBBox().width <= 100,
+        'Multiline ellipsis, the width should be constrained'
+    );
+    assert.close(
+        text1.element.querySelectorAll('tspan[dy]').length,
+        3,
+        1.00001,
+        'Three line breaks should be applied'
+    );
+
+    text1.destroy();
+    text1 = ren
+        .text('Datavisualiseringsprodusent søkjer grafikkmedarbeidar', 30, 30)
+        .css({
+            width: '100px',
+            textOverflow: 'ellipsis'
+        })
+        .add();
+    assert.ok(
+        text1.getBBox().width <= 100,
+        'Multiline ellipsis, the width should be constrained'
+    );
+    assert.notEqual(
+        text1.element.textContent.indexOf('\u2026'),
+        -1,
+        'Ellipsis should be present'
+    );
+    assert.notEqual(
+        text1.element.textContent.lastIndexOf('\u2026'),
+        -1,
+        'Ellipsis should be present'
+    );
+    assert.notEqual(
+        text1.element.textContent.indexOf('\u2026'),
+        text1.element.textContent.lastIndexOf('\u2026'),
+        'Two ellipsis should be present'
+    );
+
+});
+
+
+QUnit.test('lineClamp', function (assert) {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const text = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            lineClamp: 2,
+            width: '100px'
+        })
+        .add();
+
+    assert.strictEqual(
+        text.element.querySelectorAll('tspan[dy]').length,
+        1,
+        'Exactly one line break should be applied'
+    );
+
 });
 
 QUnit.test('BBox for mulitiple lines', function (assert) {
