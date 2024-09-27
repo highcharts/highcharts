@@ -48,17 +48,8 @@
                     zIndex: 10
                 });
 
-
-                const closeButton = document
-                    .getElementById('annotation-close-btn');
-                if (closeButton) {
-                    closeButton.addEventListener('click', function () {
-                        chart.removeAnnotation('election-popup');
-                    });
-                }
-
                 // Create the pie chart inside the annotation
-                Highcharts.chart('popup-pie', {
+                const pieChart = Highcharts.chart('popup-pie', {
                     chart: {
                         type: 'pie'
                     },
@@ -91,6 +82,19 @@
                         showInLegend: true
                     }]
                 });
+
+                const closeButton = document
+                    .getElementById('annotation-close-btn');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function () {
+                        if (pieChart) {
+                            pieChart.destroy();
+                        }
+                        setTimeout(function () {
+                            chart.removeAnnotation('election-popup');
+                        }, 0);
+                    });
+                }
             }
 
             // Make the columns easier to read
@@ -203,8 +207,7 @@
         },
 
         error: function () {
-            const container = document.getElementById('container');
-            container.innerHTML = `
+            document.getElementById('container').innerHTML = `
                 <div class="loading">
                     <p>Error loading data from Google Spreadsheets</p>
                 </div>
