@@ -739,7 +739,7 @@ class Tick {
             } else {
                 label.css(extend(css, {
                     width: Math.floor(textWidth) + 'px',
-                    lineClamp: 1
+                    lineClamp: axis.isRadial ? 0 : 1
                 }));
             }
         }
