@@ -83,18 +83,14 @@
                     }]
                 });
 
-                const closeButton = document
-                    .getElementById('annotation-close-btn');
-                if (closeButton) {
-                    closeButton.addEventListener('click', function () {
-                        if (pieChart) {
-                            pieChart.destroy();
-                        }
+                document.getElementById('annotation-close-btn')
+                    .addEventListener('click', function () {
+                        pieChart?.destroy();
                         setTimeout(function () {
                             chart.removeAnnotation('election-popup');
                         }, 0);
                     });
-                }
+
             }
 
             // Make the columns easier to read
