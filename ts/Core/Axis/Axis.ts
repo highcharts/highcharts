@@ -3192,8 +3192,7 @@ class Axis {
                         // Speed optimizing, #7656
                         commonWidth < label.textPxLength ||
                         // Resetting CSS, #4928
-                        label.element.tagName === 'SPAN' ||
-                        attr.rotation
+                        label.element.tagName === 'SPAN'
                     )
                 ) {
                     label.css(extend(css, {
