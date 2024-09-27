@@ -15,25 +15,25 @@ body {
     color: var(--text-color);
 }
 
-p {
-    line-height: 1.3em;
-}
-
-img {
-    width: 100%;
-}
-
-figcaption {
-    text-align: right;
-    font-size: 0.9em;
-    margin-top: 0.5em;
-}
-
 #container {
     background-color: var(--highcharts-background-color);
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
+}
+
+#container p {
+    line-height: 1.3em;
+}
+
+#container .illustration {
+    width: 100%;
+}
+
+#container figcaption {
+    text-align: right;
+    font-size: 0.9em;
+    margin-top: 0.5em;
 }
 
 #title {
