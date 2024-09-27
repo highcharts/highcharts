@@ -738,12 +738,6 @@ class Tick {
                 tick.shortenLabel();
             } else {
                 css.width = Math.floor(textWidth) + 'px';
-                if (!(labelOptions.style || {}).whiteSpace) {
-                    css.whiteSpace = 'nowrap';
-                }
-                if (!(labelOptions.style || {}).textOverflow) {
-                    css.textOverflow = 'ellipsis';
-                }
                 label.css(css);
             }
         }
