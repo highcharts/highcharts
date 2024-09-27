@@ -11,7 +11,10 @@ export async function assignNextMilestone (
 ) {
     core.debug("Running something at the moment");
 
-    const milestones = await github.rest.issues.listMilestones();
+    const milestones = await github.rest.issues.listMilestones({
+        owner: context.repo.owner,
+        repo: context.repo.repo
+    });
 
     const nextMileStone = milestones.data.find(milestone => milestone.title === milestoneName);
 
