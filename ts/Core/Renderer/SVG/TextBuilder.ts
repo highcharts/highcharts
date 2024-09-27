@@ -106,6 +106,7 @@ class TextBuilder {
                 this.textLineHeight,
                 this.textOutline,
                 wrapper.getStyle('font-size'),
+                wrapper.styles.lineClamp,
                 this.width
             ].join(',');
 
