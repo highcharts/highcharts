@@ -737,8 +737,10 @@ class Tick {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = Math.floor(textWidth) + 'px';
-                label.css(css);
+                label.css(extend(css, {
+                    width: Math.floor(textWidth) + 'px',
+                    lineClamp: 1
+                }));
             }
         }
     }
