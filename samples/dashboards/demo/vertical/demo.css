@@ -42,7 +42,7 @@ h2 {
 #container figcaption {
     text-align: right;
     font-size: 0.9em;
-    margin-top: 0.5em;
+    margin: 0.5em 0 1em 0;
 }
 
 #title {
