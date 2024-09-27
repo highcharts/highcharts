@@ -32,7 +32,7 @@ h2 {
 
 #container p {
     line-height: 1.3em;
-    margin: 0 0 1.4em 0;
+    margin: 0 0 1.4em;
 }
 
 #container .illustration {
@@ -42,7 +42,7 @@ h2 {
 #container figcaption {
     text-align: right;
     font-size: 0.9em;
-    margin: 0.5em 0 1em 0;
+    margin: 0.5em 0 1em;
 }
 
 #title {
@@ -74,9 +74,11 @@ h2 {
     .section-container {
         flex-direction: column;
     }
-.section-container:has(#sea-chart) {
-    flex-direction: column-reverse;
-}
+
+    .section-container:has(#sea-chart) {
+        flex-direction: column-reverse;
+    }
+
     .chart-container,
     .section-text {
         max-width: unset;
