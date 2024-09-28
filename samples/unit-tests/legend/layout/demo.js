@@ -1,6 +1,7 @@
 QUnit.test('Legend layout', function (assert) {
     var chart = Highcharts.chart('container', {
         legend: {
+            enabled: false,
             layout: 'proximate',
             align: 'right'
         },
@@ -32,6 +33,13 @@ QUnit.test('Legend layout', function (assert) {
                 name: 'Positioned Axis'
             }
         ]
+    });
+
+    // We should be able to update the legend.enabled property, #19078.
+    chart.update({
+        legend: {
+            enabled: true
+        }
     });
 
     chart.series.forEach(function (s) {
@@ -78,7 +86,8 @@ QUnit.test('Legend layout', function (assert) {
             chart.series[0].legendItem.group.translateY -
                 chart.series[1].legendItem.group.translateY
         ) > 12,
-        'The overlapping items should have sufficient distance with useHTML (#12055)'
+        'The overlapping items should have sufficient distance with useHTML ' +
+        '(#12055)'
     );
 
     chart.legend.update({
@@ -92,7 +101,8 @@ QUnit.test('Legend layout', function (assert) {
             chart.series[0].legendItem.group.translateY -
                 chart.series[1].legendItem.group.translateY
         ) > 30,
-        'The overlapping items should have sufficient distance when an item margin is applied'
+        'The overlapping items should have sufficient distance when an item ' +
+        'margin is applied'
     );
 });
 
@@ -102,6 +112,7 @@ QUnit.test('Proximate layout and dataGrouping', assert => {
             animation: false
         },
         legend: {
+            enabled: true,
             align: 'right',
             layout: 'proximate'
         },
@@ -133,6 +144,19 @@ QUnit.test('Proximate layout and dataGrouping', assert => {
                 ]
             }
         ]
+    });
+
+    // These updates should not cause an error, #19028.
+    chart.update({
+        legend: {
+            enabled: false
+        }
+    });
+
+    chart.update({
+        legend: {
+            enabled: true
+        }
     });
 
     chart.series[1].hide();

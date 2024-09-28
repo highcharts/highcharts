@@ -769,7 +769,8 @@ QUnit.test('Complete callback', function (assert) {
                         assert.strictEqual(
                             this,
                             circle,
-                            'The SVGElement should be the context of complete when ' +
+                            'The SVGElement should be the context of ' +
+                            'complete when ' +
                                 'skipping animation to equal values (#7146)'
                         );
                     }
@@ -791,7 +792,8 @@ QUnit.test('Complete callback', function (assert) {
 
         assert.ok(
             completeCalled,
-            '#16045: complete callback in options should be called when duration=0'
+            '#16045: complete callback in options should be called when ' +
+            'duration=0'
         );
 
         // Run and reset animation
@@ -930,12 +932,15 @@ QUnit.test('Defer test #12901', function (assert) {
             assert.strictEqual(
                 circle.attr('x') !== 200,
                 true,
-                'X should be different than the initial position - element cannot be back to the initial position after the defer time #12901.'
+                'X should be different than the initial position - element ' +
+                'cannot be back to the initial position after the defer time ' +
+                '#12901.'
             );
             assert.strictEqual(
                 circ.attr('x'),
                 300,
-                'X should be in the final position after sum of the duration and defer time'
+                'X should be in the final position after sum of the duration ' +
+                'and defer time'
             );
             document.body.removeChild(div);
         }, 500);

@@ -74,7 +74,7 @@ class ADIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -97,6 +97,7 @@ class ADIndicator extends SMAIndicator {
         yVal: Array<Array<number>>,
         yValVolume: Array<number>,
         i: number,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _period: number
     ): Array<number> {
         const high = yVal[i][1],
@@ -117,9 +118,9 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ADPoint> = void 0 as any;
-    public options: ADOptions = void 0 as any;
-    public points: Array<ADPoint> = void 0 as any;
+    public data!: Array<ADPoint>;
+    public options!: ADOptions;
+    public points!: Array<ADPoint>;
 
     /* *
      *
@@ -164,7 +165,7 @@ class ADIndicator extends SMAIndicator {
             return;
         }
 
-        // i = period <-- skip first N-points
+        // When i = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
 
@@ -248,4 +249,4 @@ export default ADIndicator;
  * @apioption series.ad
  */
 
-''; // add doclet above to transpiled file
+''; // Add doclet above to transpiled file

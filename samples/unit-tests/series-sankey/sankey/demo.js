@@ -1,6 +1,6 @@
 QUnit.test('Sankey', function (assert) {
-    var chart = Highcharts.chart('container', {});
-    var series = chart.addSeries(
+    const chart = Highcharts.chart('container', {});
+    let series = chart.addSeries(
         {
             keys: ['from', 'to', 'weight'],
             data: [
@@ -115,6 +115,52 @@ QUnit.test('Sankey', function (assert) {
         typeof chart.container.querySelector('.highcharts-no-data'),
         'object',
         'No-data label should display when there is no data (#7489)'
+    );
+
+    series = chart.addSeries({
+        type: 'sankey',
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['A', 'B', 500],
+            ['B', 'C', 1]
+        ]
+    });
+
+    const { toNode } = series.points[1];
+
+    assert.ok(
+        toNode.graphic.r < toNode.graphic.height,
+        `Border radius should not greater than half the height of the node,
+        small nodes shouldn't be rendered as circles (#18956).`
+    );
+
+    const lastNode = series.nodeColumns[2][0];
+
+    assert.close(
+        lastNode.nodeY,
+        (chart.plotHeight - lastNode.graphic.height) / 2,
+        2,
+        'Center-aligned nodes should be in the correct y-position. (#19096)'
+    );
+
+    series.update({
+        nodeAlignment: 'top'
+    });
+
+    assert.strictEqual(
+        lastNode.nodeY,
+        0,
+        'Top-aligned nodes should be in the correct y-position. (#19096)'
+    );
+
+    series.update({
+        nodeAlignment: 'bottom'
+    });
+
+    assert.strictEqual(
+        lastNode.nodeY,
+        chart.plotHeight - lastNode.graphic.height,
+        'Bottom-aligned nodes should be in the correct y-position. (#19096)'
     );
 });
 
@@ -751,31 +797,30 @@ QUnit.test('Test null data in sankey #12666', function (assert) {
 });
 
 QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            height: 200
-        },
+    const chart = Highcharts.chart('container', {
+            chart: {
+                height: 200
+            },
 
-        series: [
-            {
-                keys: ['from', 'to', 'weight'],
-                nodePadding: 50,
-                minLinkWidth: 0,
-                data: [
-                    ['Brazil', 'Portugal', 5],
-                    ['Brazil', 'France', 1],
-                    ['Canada', 'Portugal', 1],
-                    ['Canada', 'France', 1000],
-                    ['Portugal', 'Angola', 2],
-                    ['Portugal', 'Senegal', 1],
-                    ['Portugal', 'Morocco', 1]
-                ],
-                type: 'sankey'
-            }
-        ]
-    });
-
-    const nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
+            series: [
+                {
+                    keys: ['from', 'to', 'weight'],
+                    nodePadding: 50,
+                    minLinkWidth: 0,
+                    data: [
+                        ['Brazil', 'Portugal', 5],
+                        ['Brazil', 'France', 1],
+                        ['Canada', 'Portugal', 1],
+                        ['Canada', 'France', 1000],
+                        ['Portugal', 'Angola', 2],
+                        ['Portugal', 'Senegal', 1],
+                        ['Portugal', 'Morocco', 1]
+                    ],
+                    type: 'sankey'
+                }
+            ]
+        }),
+        nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
         factorBeforeUpdate = chart.series[0].translationFactor,
         newMinLinkWidth = 5;
 
@@ -800,6 +845,53 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
         0.02,
         'The translate-factor value should not be changed significantly ' +
             'while changing the minLinkWidth (#13308)'
+    );
+
+    const node = chart.series[0].nodes[4],
+        hor = -100,
+        ver = -100;
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    const posBefore = node.shapeArgs;
+
+    node.update({
+        offsetHorizontal: hor,
+        offsetVertical: ver
+    });
+
+    assert.strictEqual(
+        posBefore.x - ver,
+        node.shapeArgs.x,
+        'Point should be moved to the left (#18988 and #17594).'
+    );
+
+    assert.strictEqual(
+        posBefore.y - hor,
+        node.shapeArgs.y,
+        'Point should be moved to the bottom (#18988 and #17594).'
+    );
+
+    const series = chart.addSeries({
+        type: 'sankey',
+        keys: ['from', 'to', 'weight'],
+        minLinkWidth: 30,
+        data: [
+            ['Brazil', 'Portugal', 1],
+            ['Canada', 'Portugal', 1],
+            ['Mexico', 'Portugal', 1],
+            ['India', 'Portugal', 1],
+            ['USA', 'Portugal', 2]
+        ]
+    });
+
+    assert.ok(
+        series.translationFactor >= 0,
+        'The translationFactor property shouldn\'t be less than zero (#19110).'
     );
 });
 

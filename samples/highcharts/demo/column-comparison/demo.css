@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container {
     min-width: 310px;
     max-width: 800px;
@@ -8,7 +12,7 @@
 .buttons {
     min-width: 310px;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin: 1rem 0;
     font-size: 0;
 }
 

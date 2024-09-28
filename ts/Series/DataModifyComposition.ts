@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,14 +20,10 @@ import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
 import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
-
 const {
-    prototype: {
-        tooltipFormatter: pointTooltipFormatter
-    }
-} = Point;
-
+    tooltipFormatter: pointTooltipFormatter
+} = Point.prototype;
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -80,6 +76,7 @@ declare module '../Core/Series/SeriesOptions' {
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
+        cumulativeStart?: boolean;
     }
 }
 
@@ -136,19 +133,9 @@ namespace DataModifyComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extends the series, axis and point classes with
@@ -170,10 +157,11 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
+        const axisProto = AxisClass.prototype as AxisComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!seriesProto.setCompare) {
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
 
@@ -182,16 +170,10 @@ namespace DataModifyComposition {
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
         }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
-            const axisProto = AxisClass.prototype as AxisComposition;
-
+        if (!axisProto.setCompare) {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
-        }
-
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.tooltipFormatter = tooltipFormatter;
         }
@@ -390,7 +372,7 @@ namespace DataModifyComposition {
         const series = this;
 
         if (
-            series.xAxis && // not pies
+            series.xAxis && // Not pies
             series.processedYData &&
             series.dataModify
         ) {
@@ -409,7 +391,7 @@ namespace DataModifyComposition {
                 );
             }
 
-            // find the first value for comparison
+            // Find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
                 const compareValue = processedYData[i] && keyIndex > -1 ?
                     (processedYData[i] as any)[keyIndex] : processedYData[i];
@@ -644,7 +626,7 @@ namespace DataModifyComposition {
                             (compareBase === 100 ? 0 : 100);
                     }
 
-                    // record for tooltip etc.
+                    // Record for tooltip etc.
                     if (typeof index !== 'undefined') {
                         const point = this.series.points[index];
 
@@ -685,8 +667,19 @@ namespace DataModifyComposition {
                     // Record for tooltip etc.
                     const point = this.series.points[index];
 
+                    const cumulativeStart =
+                            point.series.options.cumulativeStart,
+                        withinRange =
+                            point.x <= this.series.xAxis.max! &&
+                            point.x >= this.series.xAxis.min!;
+
+
                     if (point) {
-                        point.cumulativeSum = value;
+                        if (!cumulativeStart || withinRange) {
+                            point.cumulativeSum = value;
+                        } else {
+                            point.cumulativeSum = void 0;
+                        }
                     }
 
                     return value;
@@ -739,7 +732,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
@@ -777,6 +770,8 @@ export default DataModifyComposition;
  * Adds the `cumulativeSum` field to each point object that can be accessed
  * e.g. in the [tooltip.pointFormat](https://api.highcharts.com/highstock/tooltip.pointFormat).
  *
+ * With `dataGrouping` enabled, default grouping approximation is set to `sum`.
+ *
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
  * @see [Series.setCumulative()](/class-reference/Highcharts.Series#setCumulative)
  *
@@ -790,4 +785,22 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+/**
+ * Defines if cumulation should start from the first point within the visible
+ * range or should start from the last point **before** the range.
+ *
+ * In other words, this flag determines if first point within the visible range
+ * will start at 0 (`cumulativeStart=true`) or should have been already calculated
+ * according to the previous point (`cumulativeStart=false`).
+ *
+ * @sample {highstock} stock/plotoptions/series-cumulativestart/
+ *         Cumulative Start
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since 11.4.2
+ * @product   highstock
+ * @apioption plotOptions.series.cumulativeStart
+ */
+
+''; // Keeps doclets above in transpiled file

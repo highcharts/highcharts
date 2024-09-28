@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -26,10 +26,12 @@ import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
+const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    defined
+    defined,
+    pushUnique
 } = U;
 
 import Announcer from '../../Utils/Announcer.js';
@@ -129,12 +131,12 @@ class NewDataAnnouncer {
      *
      * */
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public chart: Accessibility.ChartComposition;
     public dirty: NewDataAnnouncer.DirtyObject = {
         allSeries: {}
     };
-    public eventProvider: EventProvider = void 0 as any;
+    public eventProvider!: EventProvider;
     public lastAnnouncementTime: number = 0;
     public queuedAnnouncement?: NewDataAnnouncer.QueuedAnnouncementObject;
     public queuedAnnouncementTimer?: number;
@@ -416,15 +418,6 @@ namespace NewDataAnnouncer {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    export const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Static Functions
      *
      * */
@@ -436,7 +429,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, 'A11y.NDA')) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',
@@ -462,7 +455,8 @@ namespace NewDataAnnouncer {
         e: { point: Accessibility.PointComposition }
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&
@@ -488,7 +482,8 @@ namespace NewDataAnnouncer {
         this: Accessibility.SeriesComposition
     ): void {
         const chart = this.chart,
-            newDataAnnouncer = this.newDataAnnouncer;
+            newDataAnnouncer = chart.accessibility?.components
+                .series.newDataAnnouncer;
 
         if (
             newDataAnnouncer &&

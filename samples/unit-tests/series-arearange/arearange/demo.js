@@ -95,7 +95,8 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
 
     assert.ok(
         !series.labelBySeries,
-        'Series label is destroyed when onArea: true and there is no place to render it (#14602)'
+        'Series label is destroyed when onArea: true and there is no place ' +
+        'to render it (#14602)'
     );
 });
 

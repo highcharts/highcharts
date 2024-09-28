@@ -1,0 +1,6 @@
+---
+ name: Disabling the cell / row toolbars
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

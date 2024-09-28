@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 body {
     margin: 0 !important;
@@ -63,7 +63,7 @@ textarea {
 }
 
 .main-container .fade:not(.show) {
-    opacity: 0%;
+    opacity: 0;
     visibility: hidden;
 }
 
@@ -214,12 +214,12 @@ textarea {
     width: 250px;
     text-align: center;
     margin-top: 10px;
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
 .main-container #button-group.on {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .main-container .btn {
@@ -271,7 +271,7 @@ textarea {
 }
 
 .chart-container .transparent {
-    opacity: 100%;
+    opacity: 1;
     stroke-width: 1;
     stroke: white;
     color: white;
@@ -288,13 +288,13 @@ textarea {
 .chart-container .highcharts-subtitle {
     fill: #fff;
     stroke: #fff;
-    opacity: 100%;
+    opacity: 1;
     font-size: 0.9rem;
     font-weight: 400;
 }
 
 .chart-container .highcharts-subtitle {
-    opacity: 0%;
+    opacity: 0;
 }
 
 .chart-container .highcharts-title {
@@ -412,11 +412,11 @@ textarea {
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
@@ -464,11 +464,11 @@ textarea {
 }
 
 #gantt .hide {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #gantt .show {
-    opacity: 100%;
+    opacity: 1;
 }
 
 #gantt .highcharts-plot-background {
@@ -520,53 +520,53 @@ textarea {
 
 #gantt .particle-2 {
     transform-origin: center;
-    opacity: 0%;
+    opacity: 0;
     transform: translate(-10px, -30px) scale(0.2);
     transition: all 1s;
 }
 
 #gantt .particle-2.grow {
     transform: translate(-10px, -10px) scale(0.5);
-    opacity: 100%;
+    opacity: 1;
     transform-origin: center;
 }
 
 #gantt .particle-3 {
     transform-origin: center;
-    opacity: 0%;
+    opacity: 0;
     transform: translate(0, -70px) scale(0.2);
     transition: all 1s;
 }
 
 #gantt .particle-3.grow {
     transform: translate(0, -40px) scale(0.6);
-    opacity: 100%;
+    opacity: 1;
     transform-origin: center;
 }
 
 #gantt .particle-5 {
     transform-origin: center;
-    opacity: 0%;
+    opacity: 0;
     transform: translate(-20px, -68px) scale(0.2);
     transition: all 1s;
 }
 
 #gantt .particle-5.grow {
     transform: translate(-20px, -38px) scale(0.6);
-    opacity: 100%;
+    opacity: 1;
     transform-origin: center;
 }
 
 #gantt .particle-6 {
     transform-origin: center;
-    opacity: 0%;
+    opacity: 0;
     transform: translate(-20px, -45px) scale(0.2);
     transition: all 1s;
 }
 
 #gantt .particle-6.grow {
     transform: translate(-20px, -15px) scale(0.6);
-    opacity: 100%;
+    opacity: 1;
     transform-origin: center;
 }
 
@@ -668,7 +668,7 @@ textarea {
 
     #gantt .highcharts-subtitle {
         font-size: 1em;
-        opacity: 100%;
+        opacity: 1;
     }
 
     .main-container #button-group {
@@ -677,50 +677,50 @@ textarea {
 
     #gantt .particle-2 {
         transform-origin: center;
-        opacity: 0%;
+        opacity: 0;
         transform: translate(-20px, -60px) scale(0.2);
         transition: all 1s;
     }
 
     #gantt .particle-2.grow {
         transform: none;
-        opacity: 100%;
+        opacity: 1;
     }
 
     #gantt .particle-3 {
         transform-origin: center;
-        opacity: 0%;
+        opacity: 0;
         transform: translate(10px, -150px) scale(0.2);
         transition: all 1s;
     }
 
     #gantt .particle-3.grow {
         transform: none;
-        opacity: 100%;
+        opacity: 1;
     }
 
     #gantt .particle-5 {
         transform-origin: center;
-        opacity: 0%;
+        opacity: 0;
         transform: translate(-40px, -150px) scale(0.2);
         transition: all 1s;
     }
 
     #gantt .particle-5.grow {
         transform: none;
-        opacity: 100%;
+        opacity: 1;
     }
 
     #gantt .particle-6 {
         transform-origin: center;
-        opacity: 0%;
+        opacity: 0;
         transform: translate(-40px, -100px) scale(0.2);
         transition: all 1s;
     }
 
     #gantt .particle-6.grow {
         transform: none;
-        opacity: 100%;
+        opacity: 1;
     }
 
     #gantt .gantt-label {

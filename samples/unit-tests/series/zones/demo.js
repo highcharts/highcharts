@@ -267,6 +267,19 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
         '40,30',
         'Zones dash array'
     );
+
+    const colors = chart.series[0].points.map(p => p.graphic.attr('fill'));
+    chart.update({
+        series: [{
+            data: [1.1, 3, 2, 4]
+        }]
+    });
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.graphic.attr('fill')),
+        colors,
+        'Colors should be preserved after update (#20426)'
+    );
+
 });
 
 QUnit.test('Adding and removing zones', function (assert) {
@@ -284,22 +297,14 @@ QUnit.test('Adding and removing zones', function (assert) {
         ]
     });
 
-    const clips = chart.series[0].clips;
-
     chart.series[0].update({
         zones: []
     });
 
     assert.strictEqual(
-        chart.series[0].clips,
-        clips,
-        '#15420: Clips array should have been preserved'
-    );
-
-    assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
         'inherit',
-        'Series line is visible after removing zones (#10569).'
+        'Series line should be visible after removing zones (#10569).'
     );
 
     chart.series[0].setVisible(false);
@@ -307,7 +312,8 @@ QUnit.test('Adding and removing zones', function (assert) {
     assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
         'inherit',
-        'Series line\'s visibility inherited from the parent group (#10569).'
+        'Series line\'s visibility should be inherited from the parent ' +
+        'group (#10569).'
     );
 
     chart.series[0].setVisible(true);
@@ -324,10 +330,10 @@ QUnit.test('Adding and removing zones', function (assert) {
     assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
         'hidden',
-        'Series line is hidden after adding zones back (#10569).'
+        'Series line should be hidden after adding zones back (#10569).'
     );
 
-    const clip = chart.series[0].clips[0];
+    const clip = chart.series[0].zones[0].clip;
     chart.series[0].destroy();
 
     assert.notOk(
@@ -358,9 +364,9 @@ QUnit.test('#9198 setData and zones', function (assert) {
     chart.series[0].setData([4, 3, 4, -3, -3, 10]);
 
     assert.strictEqual(
-        chart.series[0]['zone-graph-1'].attr('clip-path') !== 0,
-        true,
-        'Negative color is applied on the line and area.'
+        chart.series[0].zones[1].graph.attr('clip-path').indexOf('url('),
+        0,
+        'Negative color should be applied on the line and area.'
     );
 
     chart.series[0].update({
@@ -370,5 +376,23 @@ QUnit.test('#9198 setData and zones', function (assert) {
         chart.series[0].data[0].color,
         'red',
         'Points color is correctly updated when series is updated.'
+    );
+
+    chart.series[0].update({
+        zones: [{
+            color: 'red'
+        }]
+    }, false);
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.series[0].zones[0].graph !== chart.series[1].zones[0].graph,
+        `Zones graphs should be differents between original series and
+        navigator series (#20440).`
     );
 });

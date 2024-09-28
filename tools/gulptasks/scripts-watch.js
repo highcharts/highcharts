@@ -30,9 +30,9 @@ const WATCH_GLOBS = [
 async function task() {
 
     const argv = require('yargs').argv;
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     if (processLib.isRunning('scripts-watch')) {
         logLib.warn('Running watch process detected.');
@@ -53,7 +53,7 @@ async function task() {
 
             if (newJsHash !== jsHash || argv.force || argv.dts) {
                 jsHash = newJsHash;
-                buildTasks.push('scripts-js');
+                buildTasks.push('scripts-js', 'scripts-code');
                 if (argv.dts) {
                     buildTasks.task('jsdoc-dts')();
                 }
@@ -98,5 +98,5 @@ require('./scripts-ts.js');
 
 gulp.task(
     'scripts-watch',
-    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
+    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', 'scripts-code', task)
 );

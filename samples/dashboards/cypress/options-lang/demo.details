@@ -1,0 +1,6 @@
+---
+ name: Options lang demo
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

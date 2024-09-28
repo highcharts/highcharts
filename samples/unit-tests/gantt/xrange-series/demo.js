@@ -18,6 +18,8 @@
             },
             series: [
                 {
+                    colorByPoint: false,
+                    color: 'lime',
                     name: 'Project 1',
                     // pointPadding: 0,
                     // groupPadding: 0,
@@ -137,23 +139,14 @@
             i,
             points,
             point,
-            $graphic,
-            $graphOrig,
-            $graphOver,
-            clipRectID,
-            $clipRect,
-            graphOverBox,
             origX,
             overX,
             origY,
             overY,
             origWidth,
             overWidth,
-            clipWidth,
             origHeight,
             overHeight,
-            clipHeight,
-            partialFill,
             error = 1;
 
         // THE CHART
@@ -230,7 +223,9 @@
     );
 
     /**
-     * Checks that the fill option in a series' partialFill options is applied
+     * Checks that the fill option in a series' partialFill options is applied,
+     * that the tooltip header displays a properly formatted date, and
+     * that updating a series color is working
      */
     QUnit.test('General', function (assert) {
         var chart,
@@ -255,7 +250,14 @@
         assert.notEqual(
             chart.tooltip.label.element.textContent.indexOf('Monday'),
             -1,
-            'The tooltip header should container formatted date (#9301)'
+            'The tooltip header should contain a formatted date (#9301)'
+        );
+
+        chart.series[0].update({ color: 'red' });
+        assert.strictEqual(
+            chart.series[0].points[0].color,
+            'red',
+            'The series color should have changed to red'
         );
     });
 }());

@@ -32,7 +32,7 @@ export interface PCOptions extends SMAOptions, MultipleLinesComposition.Indicato
 }
 
 export interface PCParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

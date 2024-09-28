@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Class representing a Synth Patch, used by Instruments in the
  *  sonification.js module.
@@ -72,11 +72,11 @@ namespace SynthPatch {
 
 
 /**
- * Get the multipler value from a pitch tracked multiplier. The parameter
+ * Get the multiplier value from a pitch tracked multiplier. The parameter
  * specifies the multiplier at ca 3200Hz. It is 1 at ca 50Hz. In between
  * it is mapped logarithmically.
  * @private
- * @param {number} multiplier The multipler to track.
+ * @param {number} multiplier The multiplier to track.
  * @param {number} freq The current frequency.
  */
 function getPitchTrackedMultiplierVal(
@@ -346,8 +346,10 @@ class Oscillator {
         time: number, frequency: number, glideDuration = 0
     ): void {
         const opts = this.options,
-            f = clamp(pick(opts.fixedFrequency, frequency) *
-                (opts.freqMultiplier || 1), 0, 21000),
+            f = clamp(
+                pick(opts.fixedFrequency, frequency) *
+                (opts.freqMultiplier || 1), 0, 21000
+            ),
             oscTarget = this.getOscTarget(),
             timeConstant = glideDuration / 5000;
 
@@ -382,7 +384,7 @@ class Oscillator {
     }
 
 
-    // Schedule one of the osciallator envelopes at a specified time in
+    // Schedule one of the oscillator envelopes at a specified time in
     // seconds (in AudioContext timespace).
     runEnvelopeAtTime(type: 'attack'|'release', time: number): void {
         if (!this.gainNode) {
@@ -390,8 +392,10 @@ class Oscillator {
         }
         const env = (type === 'attack' ? this.options.attackEnvelope :
             this.options.releaseEnvelope) || [];
-        scheduleGainEnvelope(env, type, time, this.gainNode,
-            this.options.volume);
+        scheduleGainEnvelope(
+            env, type, time, this.gainNode,
+            this.options.volume
+        );
     }
 
 
@@ -433,7 +437,8 @@ class Oscillator {
                 v, time, rampTime / 5
             );
             this.volTrackingNode.gain.setValueAtTime(
-                v, time + rampTime);
+                v, time + rampTime
+            );
         }
     }
 
@@ -542,8 +547,10 @@ class Oscillator {
     // Gain node used for frequency dependent volume tracking
     private createVolTracking(): void {
         const opts = this.options;
-        if (opts.volumePitchTrackingMultiplier &&
-            opts.volumePitchTrackingMultiplier !== 1) {
+        if (
+            opts.volumePitchTrackingMultiplier &&
+            opts.volumePitchTrackingMultiplier !== 1
+        ) {
             this.volTrackingNode = new GainNode(this.audioContext, {
                 gain: 1
             });
@@ -620,12 +627,16 @@ class SynthPatch {
                 }
             };
             if (defined(osc.fmOscillatorIx)) {
-                connectTarget('getFMTarget',
-                    this.oscillators[osc.fmOscillatorIx]);
+                connectTarget(
+                    'getFMTarget',
+                    this.oscillators[osc.fmOscillatorIx]
+                );
             }
             if (defined(osc.vmOscillatorIx)) {
-                connectTarget('getVMTarget',
-                    this.oscillators[osc.vmOscillatorIx]);
+                connectTarget(
+                    'getVMTarget',
+                    this.oscillators[osc.vmOscillatorIx]
+                );
             }
         });
     }
@@ -722,7 +733,8 @@ class SynthPatch {
      */
     cancelScheduled(): void {
         this.outputNode.gain.cancelScheduledValues(
-            this.audioContext.currentTime);
+            this.audioContext.currentTime
+        );
         this.oscillators.forEach((o): void => o.cancelScheduled());
     }
 
@@ -875,6 +887,7 @@ export default SynthPatch;
  * width of 0.5 is roughly equal to a square wave. This is the default.
  * @name Highcharts.SynthPatchOscillatorOptionsObject#pulseWidth
  * @type {number|undefined}
+ *//**
  * Index of another oscillator to use as carrier, with this oscillator being
  * used as a volume modulator. The first oscillator in the array has index 0,
  * and so on. This option can be used to produce tremolo effects.

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -81,7 +81,7 @@ function getAssignedAxis(
         return isNumber(axisMin) && isNumber(axisMax) &&
             coord.value >= (axisMin - minPointOffset) &&
             coord.value <= (axisMax + minPointOffset) &&
-            // don't count navigator axis
+            // Don't count navigator axis
             !coord.axis.options.isInternal;
     })[0]; // If the axes overlap, return the first axis that was found.
 }

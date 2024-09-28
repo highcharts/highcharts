@@ -424,22 +424,26 @@ QUnit.test('Series.setVisible', assert => {
     assert.strictEqual(
         series1.points[0].y,
         0,
-        'should have "Point 1" y-value equal 0 when "Series 2" is visible again.'
+        'should have "Point 1" y-value equal 0 when "Series 2" is visible ' +
+        'again.'
     );
     assert.strictEqual(
         series2.points[0].y,
         1,
-        'should have "Point 2" y-value equal 1 when "Series 2" is visible again.'
+        'should have "Point 2" y-value equal 1 when "Series 2" is visible ' +
+        'again.'
     );
     assert.strictEqual(
         series3.points[0].y,
         2,
-        'should have "Point 3" y-value equal 3 when "Series 2" is visible again.'
+        'should have "Point 3" y-value equal 3 when "Series 2" is visible ' +
+        'again.'
     );
     assert.deepEqual(
         [axis.min, axis.max],
         [0, 2],
-        'should have axis [min, max] equal [0, 2] when "Series 2" is visible again.'
+        'should have axis [min, max] equal [0, 2] when "Series 2" is visible ' +
+        'again.'
     );
 });
 

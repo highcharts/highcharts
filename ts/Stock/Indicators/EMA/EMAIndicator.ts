@@ -92,11 +92,11 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<EMAPoint> = void 0 as any;
+    public data!: Array<EMAPoint>;
 
-    public options: EMAOptions = void 0 as any;
+    public options!: EMAOptions;
 
-    public points: Array<EMAPoint> = void 0 as any;
+    public points!: Array<EMAPoint>;
 
     /* *
      *
@@ -136,8 +136,10 @@ class EMAIndicator extends SMAIndicator {
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
             y: number = typeof calEMA === 'undefined' ?
-                SMA : correctFloat((yValue * EMApercent) +
-                (calEMA * (1 - EMApercent)));
+                SMA : correctFloat(
+                    (yValue * EMApercent) +
+                (calEMA * (1 - EMApercent))
+                );
         return [x, y];
     }
 
@@ -178,7 +180,7 @@ class EMAIndicator extends SMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         SMA = sum / period;
 
         // Calculate value one-by-one for each period in visible data
@@ -256,4 +258,4 @@ export default EMAIndicator;
  * @apioption series.ema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

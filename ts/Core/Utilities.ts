@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type {
@@ -24,6 +25,7 @@ import type {
 } from './Renderer/DOMElementType';
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
@@ -99,10 +101,10 @@ function error(
         if (stop) {
             throw new Error(message);
         }
-        // else ...
+        // Else ...
         if (
             win.console &&
-            error.messages.indexOf(message) === -1 // prevent console flooting
+            error.messages.indexOf(message) === -1 // Prevent console flooting
         ) {
             console.warn(message); // eslint-disable-line no-console
         }
@@ -161,8 +163,6 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
-
-/* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
@@ -171,42 +171,23 @@ function merge<
  *
  * @function Highcharts.merge<T>
  *
- * @param {boolean} extend
- *        Whether to extend the left-side object (a) or return a whole new
- *        object.
+ * @param {true | T} extendOrSource
+ *        Whether to extend the left-side object,
+ *        or the first object to merge as a deep copy.
  *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
- *
- * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- *//**
- * Utility function to deep merge two or more objects and return a third object.
- * The merge function can also be used with a single object argument to create a
- * deep copy of an object.
- *
- * @function Highcharts.merge<T>
- *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
+ * @param {...Array<object|undefined>} [sources]
+ *        Object(s) to merge into the previous one.
  *
  * @return {T}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T>(): T {
-    /* eslint-enable valid-jsdoc */
+function merge<T>(
+    extendOrSource: true | T,
+    ...sources: Array<DeepPartial<T> | undefined>
+): T {
     let i,
-        args = arguments,
+        args = [extendOrSource, ...sources],
         ret = {} as T;
     const doCopy = function (copy: any, original: any): any {
         // An object is replacing a primitive
@@ -222,7 +203,8 @@ function merge<T>(): T {
             }
 
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
+            if (
+                isObject(value, true) &&
                 !isClass(value) &&
                 !isDOMElement(value)
             ) {
@@ -238,8 +220,8 @@ function merge<T>(): T {
 
     // If first argument is true, copy into the existing object. Used in
     // setOptions.
-    if (args[0] === true) {
-        ret = args[1];
+    if (extendOrSource === true) {
+        ret = args[1] as T;
         args = Array.prototype.slice.call(args, 2) as any;
     }
 
@@ -265,48 +247,129 @@ function clamp(value: number, min: number, max: number): number {
     return value > min ? value < max ? value : max : min;
 }
 
+/**
+ * Utility for crisping a line position to the nearest full pixel depening on
+ * the line width
+ * @param {number} value       The raw pixel position
+ * @param {number} lineWidth   The line width
+ * @param {boolean} [inverted] Whether the containing group is inverted.
+ *                             Crisping round numbers on the y-scale need to go
+ *                             to the other side because the coordinate system
+ *                             is flipped (scaleY is -1)
+ * @return {number}            The pixel position to use for a crisp display
+ */
+const crisp = (
+    value: number,
+    lineWidth: number = 0,
+    inverted?: boolean
+): number => {
+    const mod = lineWidth % 2 / 2,
+        inverter = inverted ? -1 : 1;
+    return (Math.round(value * inverter - mod) + mod) * inverter;
+};
+
 // eslint-disable-next-line valid-jsdoc
 /**
- * Remove settings that have not changed, to avoid unnecessary rendering or
- * computing (#9197).
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
  * @private
  */
-function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
-    newer: TNew,
-    older: TOld
-): TNew & TOld {
-    const result: AnyRecord = {};
+function diffObjects(
+    newer: AnyRecord,
+    older: AnyRecord,
+    keepOlder?: boolean,
+    collectionsWithUpdate?: string[]
+): AnyRecord {
+    const ret = {};
 
-    objectEach(newer, function (_val: unknown, key: (number|string)): void {
-        let ob;
+    /**
+     * Recurse over a set of options and its current values, and store the
+     * current values in the ret object.
+     */
+    function diff(
+        newer: AnyRecord,
+        older: AnyRecord,
+        ret: AnyRecord,
+        depth: number
+    ): void {
+        const keeper = keepOlder ? older : newer;
 
-        // Dive into objects (except DOM nodes)
-        if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
-        ) {
-            ob = cleanRecursively(
-                newer[key],
+        objectEach(newer, function (newerVal, key): void {
+            if (
+                !depth &&
+                collectionsWithUpdate &&
+                collectionsWithUpdate.indexOf(key) > -1 &&
                 older[key]
-            );
-            if (Object.keys(ob).length) {
-                result[key] = ob;
+            ) {
+                newerVal = splat(newerVal);
+
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (
+                    let i = 0;
+                    i < Math.max(newerVal.length, older[key].length);
+                    i++
+                ) {
+
+                    // Item exists in current data (#6347)
+                    if (older[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (newerVal[i] === void 0) {
+                            ret[key][i] = older[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            diff(
+                                newerVal[i],
+                                older[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
+                    }
+                }
+            } else if (
+                isObject(newerVal, true) &&
+                !newerVal.nodeType // #10044
+            ) {
+                ret[key] = isArray(newerVal) ? [] : {};
+                diff(newerVal, older[key] || {}, ret[key], depth + 1);
+                // Delete empty nested objects
+                if (
+                    Object.keys(ret[key]).length === 0 &&
+                    // Except colorAxis which is a special case where the empty
+                    // object means it is enabled. Which is unfortunate and we
+                    // should try to find a better way.
+                    !(key === 'colorAxis' && depth === 0)
+                ) {
+                    delete ret[key];
+                }
+
+            } else if (
+                newer[key] !== older[key] ||
+                // If the newer key is explicitly undefined, keep it (#10525)
+                (key in newer && !(key in older))
+            ) {
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
             }
+        });
+    }
 
-        // Arrays, primitives and DOM nodes are copied directly
-        } else if (
-            isObject(newer[key]) ||
-            newer[key] !== older[key] ||
-            // If the newer key is explicitly undefined, keep it (#10525)
-            (key in newer && !(key in older))
-        ) {
-            result[key] = newer[key];
-        }
-    });
+    diff(newer, older, ret, 0);
 
-    return result;
+    return ret;
 }
+
 
 /**
  * Shortcut for parseInt
@@ -463,6 +526,59 @@ function erase(arr: Array<unknown>, item: unknown): void {
 }
 
 /**
+ * Insert a series or an axis in a collection with other items, either the
+ * chart series or yAxis series or axis collections, in the correct order
+ * according to the index option and whether it is internal. Used internally
+ * when adding series and axes.
+ *
+ * @private
+ * @function Highcharts.Chart#insertItem
+ * @param  {Highcharts.Series|Highcharts.Axis} item
+ *         The item to insert
+ * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis>} collection
+ *         A collection of items, like `chart.series` or `xAxis.series`.
+ * @return {number} The index of the series in the collection.
+ */
+function insertItem(
+    item: Series|AxisType,
+    collection: Array<Series|AxisType>
+): number {
+    const indexOption = (item as Series).options.index,
+        length = collection.length;
+    let i: number|undefined;
+
+    for (
+        // Internal item (navigator) should always be pushed to the end
+        i = item.options.isInternal ? length : 0;
+        i < length + 1;
+        i++
+    ) {
+        if (
+            // No index option, reached the end of the collection,
+            // equivalent to pushing
+            !collection[i] ||
+
+            // Handle index option, the element to insert has lower index
+            (
+                isNumber(indexOption) &&
+                indexOption < pick(
+                    (collection[i] as Series).options.index,
+                    (collection[i] as Series)._i
+                )
+            ) ||
+
+            // Insert the new item before other internal items
+            // (navigator)
+            collection[i].options.isInternal
+        ) {
+            collection.splice(i, 0, item);
+            break;
+        }
+    }
+    return i;
+}
+
+/**
  * Adds an item to an array, if it is not present in the array.
  *
  * @function Highcharts.pushUnique
@@ -591,7 +707,7 @@ function attr(
  * @return {Array}
  *         The produced or original array.
  */
-function splat(obj: any): Array<any> {
+function splat<T>(obj: T|Array<T>): Array<T> {
     return isArray(obj) ? obj : [obj];
 }
 
@@ -731,11 +847,6 @@ function css(
     el: DOMElementType,
     styles: CSSObject
 ): void {
-    if (H.isMS && !H.svg) { // #2686
-        if (styles && defined(styles.opacity)) {
-            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
-        }
-    }
     extend(el.style, styles as any);
 }
 
@@ -870,6 +981,40 @@ function relativeLength(
 }
 
 /**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+function replaceNested(
+    text: string,
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
+): string {
+    let previous: string,
+        replacement: [(string|RegExp), string];
+
+    do {
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
+
+    return text;
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function.
  *
  * @function Highcharts.wrap
@@ -964,11 +1109,11 @@ function normalizeTickInterval(
     let i,
         retInterval = interval;
 
-    // round to a tenfold of 1, 2, 2.5 or 5
+    // Round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, getMagnitude(interval));
     const normalized = interval / magnitude;
 
-    // multiples for a linear scale
+    // Multiples for a linear scale
     if (!multiples) {
         multiples = hasTickAmount ?
             // Finer grained ticks when the tick amount is hard set, including
@@ -979,7 +1124,7 @@ function normalizeTickInterval(
             [1, 2, 2.5, 5, 10];
 
 
-        // the allowDecimals option
+        // The allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
                 multiples = multiples.filter(function (num: number): boolean {
@@ -991,10 +1136,10 @@ function normalizeTickInterval(
         }
     }
 
-    // normalize the interval to the nearest multiple
+    // Normalize the interval to the nearest multiple
     for (i = 0; i < multiples.length; i++) {
         retInterval = multiples[i];
-        // only allow tick amounts smaller than natural
+        // Only allow tick amounts smaller than natural
         if (
             (
                 hasTickAmount &&
@@ -1052,7 +1197,7 @@ function stableSort<T>(
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        (arr[i] as any).safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // Stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1062,7 +1207,7 @@ function stableSort<T>(
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete (arr[i] as any).safeI; // stable sort index
+        delete (arr[i] as any).safeI; // Stable sort index
     }
 }
 
@@ -1129,16 +1274,22 @@ function arrayMax(data: Array<any>): number {
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj: any, except?: any): void {
+function destroyObjectProperties(
+    obj: any,
+    except?: any,
+    destructablesOnly?: boolean
+): void {
     objectEach(obj, function (val, n): void {
         // If the object is non-null and destroy is defined
-        if (val && val !== except && val.destroy) {
+        if (val !== except && val?.destroy) {
             // Invoke the destroy
             val.destroy();
         }
 
-        // Delete the property from the object.
-        delete obj[n];
+        // Delete the property from the object
+        if (val?.destroy || !destructablesOnly) {
+            delete obj[n];
+        }
     });
 }
 
@@ -1214,6 +1365,48 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Find the closest distance between two values of a two-dimensional array
+ * @private
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
+ *
+ * @return {number | undefined}
+ *          The closest distance between values
+ */
+function getClosestDistance(
+    arrays: number[][],
+    onError?: Function
+): (number|undefined) {
+    const allowNegative = !onError;
+    let closest: number | undefined,
+        loopLength: number,
+        distance: number,
+        i: number;
+
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
+                }
+            }
+        }
+    });
+
+    return closest;
+}
+
+/**
  * Returns the value of a property path on a given object.
  *
  * @private
@@ -1240,7 +1433,15 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof pathElement === 'undefined' ||
             pathElement === '__proto__'
         ) {
-            return; // undefined
+            return; // Undefined
+        }
+
+        if (pathElement === 'this') {
+            let thisProp;
+            if (isObject(parent)) {
+                thisProp = (parent as Record<string, unknown>)['@this'];
+            }
+            return thisProp ?? parent;
         }
 
         const child = (parent as Record<string, unknown>)[
@@ -1254,7 +1455,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof child.nodeType === 'number' ||
             child as unknown === win
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         // Else, proceed
@@ -1575,7 +1776,7 @@ function objectEach<TObject, TContext>(
  *        The array to test
  *
  * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
+ *        The function to run on each item. Return truthy to pass the test.
  *        Receives arguments `currentValue`, `index` and `array`.
  *
  * @param {*} ctx
@@ -1605,18 +1806,21 @@ objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {Highcharts.Class<T>|T} el
- *        The element or object to add a listener to. It can be a
- *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
+ * @param  {Highcharts.Class<T>|T} el
+ *         The element or object to add a listener to. It can be a
+ *         {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
- * @param {string} type
- *        The event type.
+ * @param  {string} type
+ *         The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>|Function} fn
- *        The function callback to execute when the event is fired.
+ * @param  {Highcharts.EventCallbackFunction<T>|Function} fn
+ *         The function callback to execute when the event is fired.
  *
- * @param {Highcharts.EventOptionsObject} [options]
- *        Options for adding the event.
+ * @param  {Highcharts.EventOptionsObject} [options]
+ *         Options for adding the event.
+ *
+ * @sample highcharts/members/addevent
+ *         Use a general `render` event to draw shapes on a chart
  *
  * @return {Function}
  *         A callback function to remove the added event.
@@ -1642,7 +1846,8 @@ function addEvent<T>(
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
+    if (
+        (H as any).Point && // Without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -1737,7 +1942,7 @@ function removeEvent<T>(
             len;
 
         if (!(el as any).nodeName) {
-            return; // break on non-DOM events
+            return; // Break on non-DOM events
         }
 
         if (type) {
@@ -1814,12 +2019,10 @@ function fireEvent<T>(
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
-    let e,
-        i;
-
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent &&
+    if (
+        doc.createEvent &&
         (
             (el as any).dispatchEvent ||
             (
@@ -1829,7 +2032,7 @@ function fireEvent<T>(
             )
         )
     ) {
-        e = doc.createEvent('Events');
+        const e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
         eventArguments = extend(e, eventArguments);
@@ -1995,7 +2198,7 @@ if ((win as any).jQuery) {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
@@ -2006,7 +2209,7 @@ if ((win as any).jQuery) {
     (win as any).jQuery.fn.highcharts = function (): any {
         const args = [].slice.call(arguments) as any;
 
-        if (this[0]) { // this[0] is the renderTo div
+        if (this[0]) { // `this[0]` is the renderTo div
 
             // Create the chart
             if (args[0]) {
@@ -2084,13 +2287,14 @@ const Utilities = {
     arrayMin,
     attr,
     clamp,
-    cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
+    crisp,
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     erase,
     error,
@@ -2098,10 +2302,12 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,
     inArray,
+    insertItem,
     isArray,
     isClass,
     isDOMElement,
@@ -2120,6 +2326,7 @@ const Utilities = {
     pushUnique,
     relativeLength,
     removeEvent,
+    replaceNested,
     splat,
     stableSort,
     syncTimeout,
@@ -2145,7 +2352,7 @@ export default Utilities;
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
- * A callback function to exectute when the animation finishes.
+ * A callback function to execute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
@@ -2185,7 +2392,7 @@ export default Utilities;
  * @interface Highcharts.Class<T>
  * @extends Function
  *//**
- * Class costructor.
+ * Class constructor.
  * @function Highcharts.Class<T>#new
  * @param {...Array<*>} args
  *        Constructor arguments.
@@ -2362,7 +2569,7 @@ export default Utilities;
  */
 
 /**
- * Formats data as a string. Usually the data is accessible throught the `this`
+ * Formats data as a string. Usually the data is accessible through the `this`
  * keyword.
  *
  * @callback Highcharts.FormatterCallbackFunction<T>
@@ -2476,4 +2683,4 @@ export default Utilities;
  * @namespace Highcharts
  */
 
-''; // detach doclets above
+''; // Detach doclets above

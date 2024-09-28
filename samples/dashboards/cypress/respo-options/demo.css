@@ -1,0 +1,8 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+@media (max-width: 576px) {
+    #cell-1,
+    #cell-2 {
+        flex: 1 1 100%;
+    }
+}

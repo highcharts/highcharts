@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'spline'
     },
@@ -30,7 +30,7 @@ var chart = Highcharts.chart('container', {
                 gapBetweenNotes: 100
             },
             activeWhen: function (context) {
-                var point = context.point,
+                const point = context.point,
                     series = point.series;
                 // Return true when this point is the max point in its series
                 return point.y === Math.max.apply(Math, series.points.map(

@@ -14,25 +14,32 @@ Math.easeOutBounce = function (pos) {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-// Generate the chart
-Highcharts.stockChart('container', {
+(async () => {
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    plotOptions: {
-        series: {
-            animation: {
-                duration: 2000,
-                easing: 'easeOutBounce'
+
+    // Generate the chart
+    Highcharts.stockChart('container', {
+
+        plotOptions: {
+            series: {
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutBounce'
+                }
             }
-        }
-    },
+        },
 
-    rangeSelector: {
-        selected: 4
-    },
+        rangeSelector: {
+            selected: 4
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur,
-        type: 'area'
-    }]
-});
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur,
+            type: 'area'
+        }]
+    });
+})();

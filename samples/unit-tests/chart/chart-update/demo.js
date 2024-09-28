@@ -92,7 +92,7 @@
             }
         });
         assert.strictEqual(
-            chart.series[0].legendItem.label.styles.fill,
+            chart.series[0].legendItem.label.styles.color,
             'gray',
             'Text color is updated'
         );
@@ -154,7 +154,9 @@
             Highcharts.merge(getConfig(), {
                 chart: {
                     style: {
-                        fontFamily: 'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif'
+                        fontFamily:
+                            'ProximaNova, Arial, \'Helvetica Neue\', ' +
+                            'Helvetica, sans-serif'
                     }
                 },
                 title: {
@@ -433,7 +435,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': #15445: Options should not be mutated after chart creation'
+                constructor + ': #15445: Options should not be mutated after ' +
+                    'chart creation'
             );
 
             chart.update(options);
@@ -441,7 +444,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': Options should not be mutated after chart.update'
+                constructor + ': Options should not be mutated after ' +
+                    'chart.update'
             );
 
             chart.update({
@@ -453,7 +457,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': #14305: Options should not be mutated after actually changing something with chart.update'
+                constructor + ': #14305: Options should not be mutated after ' +
+                    'actually changing something with chart.update'
             );
         });
     });

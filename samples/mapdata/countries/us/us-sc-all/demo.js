@@ -37,7 +37,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-sc-all.topo.json">South Carolina</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-sc-all.topo.json">South Carolina</a>'
         },
 
         mapNavigation: {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -25,7 +25,7 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../Core/FormatUtilities';
+import type Templating from '../Core/Templating';
 import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
 import type {
     PlotLineLabelOptions,
@@ -33,12 +33,15 @@ import type {
 } from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -54,13 +57,10 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-interface CurrentDateIndicatorLabelFormatterCallbackFunction {
-    (value: number, format: string): string;
-}
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
     format?: string;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;
@@ -87,8 +87,6 @@ interface CurrentDateIndicatorOptions {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 /**
  * Show an indicator on the axis for the current date and time. Can be a
@@ -157,11 +155,9 @@ function compose(
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, 'CurrentDateIndication')) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-    }
 
-    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
 
         wrap(

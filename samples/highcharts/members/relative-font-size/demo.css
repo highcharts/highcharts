@@ -1,6 +1,10 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #main {
     width: 600px;
-    margin: 0 auto;
+    margin: 10px auto;
 }
 
 #container {

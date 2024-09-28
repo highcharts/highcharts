@@ -2,7 +2,7 @@
  *
  *  Arc diagram module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -49,23 +49,23 @@ class ArcDiagramPoint extends SankeyPoint {
      *
      * */
 
-    public fromNode: ArcDiagramPoint = void 0 as any;
+    public fromNode!: ArcDiagramPoint;
 
-    public index: number = void 0 as any;
+    public index!: number;
 
-    public linksFrom: Array<ArcDiagramPoint> = void 0 as any;
+    public linksFrom!: Array<ArcDiagramPoint>;
 
-    public linksTo: Array<ArcDiagramPoint> = void 0 as any;
+    public linksTo!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramPointOptions = void 0 as any;
+    public options!: ArcDiagramPointOptions;
 
-    public series: ArcDiagramSeries = void 0 as any;
+    public series!: ArcDiagramSeries;
 
-    public scale: number = void 0 as any;
+    public scale!: number;
 
-    public shapeArgs: SVGAttributes = void 0 as any;
+    public shapeArgs!: SVGAttributes;
 
-    public toNode: ArcDiagramPoint = void 0 as any;
+    public toNode!: ArcDiagramPoint;
 
 
     /* *

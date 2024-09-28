@@ -1,5 +1,5 @@
 QUnit.test('Network Graph', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'networkgraph'
         },
@@ -15,7 +15,6 @@ QUnit.test('Network Graph', function (assert) {
             }
         }
     });
-    var point;
 
     assert.notStrictEqual(
         chart.container.querySelector('.highcharts-no-data'),
@@ -70,6 +69,34 @@ QUnit.test('Network Graph', function (assert) {
         'No-data label should NOT display when there is data (#9801)'
     );
 
+    // Addition for bug #20405
+    const controller = new TestController(chart);
+
+    const firstNode = chart.series[0].nodes[0],
+        secondNodePosX = chart.series[0].nodes[1].plotX;
+
+    // Simulate dragging of the first node
+    controller.moveTo(
+        chart.plotLeft + firstNode.plotX,
+        chart.plotTop + firstNode.plotY
+    );
+    controller.mouseDown(
+        chart.plotLeft + firstNode.plotX,
+        chart.plotTop + firstNode.plotY
+    );
+    controller.moveTo(
+        chart.plotLeft + firstNode.plotX + 100,
+        chart.plotTop + firstNode.plotY
+    );
+    controller.mouseUp();
+
+    assert.notStrictEqual(
+        secondNodePosX,
+        chart.series[0].nodes[1].plotX,
+        'The second node should follow so its position should be changed.'
+    );
+    // End of #20405 test
+
     chart.series[0].nodes[0].update({
         marker: {
             fillColor: 'red'
@@ -97,7 +124,7 @@ QUnit.test('Network Graph', function (assert) {
         'Custom series.nodes.color is correct'
     );
 
-    point = chart.series[1].points[1];
+    const point = chart.series[1].points[1];
 
     assert.strictEqual(
         point.graphic.element.getAttribute('stroke').toUpperCase(),
@@ -198,7 +225,8 @@ QUnit.test('Network Graph', function (assert) {
 
     assert.ok(
         true,
-        'Clearing nodes and links in `series.update()` should not throw errors (#11176)'
+        'Clearing nodes and links in `series.update()` should not throw ' +
+        'errors (#11176)'
     );
 });
 

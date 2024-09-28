@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -26,5 +26,11 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
 export interface HistogramPointOptions extends ColumnPointOptions {
     x2?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HistogramPointOptions;

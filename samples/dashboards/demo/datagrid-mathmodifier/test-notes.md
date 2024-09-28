@@ -1,0 +1,1 @@
+1. Drag the `Rate` and `EUR` series on the chart. It should effect the result on the table.

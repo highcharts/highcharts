@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         spacingTop: 3,
         spacingRight: 0,

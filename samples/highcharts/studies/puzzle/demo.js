@@ -1,25 +1,16 @@
 (function (H) {
-    var addEvent = H.addEvent,
-        Chart = H.Chart,
-        each = H.each,
-        seriesTypes = H.seriesTypes,
-        SVGElement = H.SVGElement;
-
-    if (!SVGElement.prototype.removeClass) {
-        SVGElement.prototype.removeClass = function (className) {
-            this.element.setAttribute(
-                'class',
-                this.element.getAttribute('class').replace(className, '')
-            );
-            return this;
-        };
-    }
+    const {
+        addEvent,
+        Chart,
+        each,
+        seriesTypes
+    } = H;
 
     Chart.prototype.presentNext = function presentNext() {
-        var point;
-        for (var sI = 0; sI < this.series.length && !point; sI++) {
+        let point;
+        for (let sI = 0; sI < this.series.length && !point; sI++) {
             for (
-                var pI = 0;
+                let pI = 0;
                 pI < this.series[sI].points.length && !point;
                 pI++
             ) {
@@ -41,7 +32,7 @@
 
 
     Chart.prototype.callbacks.push(function (chart) {
-        var total = 0;
+        let total = 0;
         each(chart.series, function (series) {
             if (series.initPuzzle) {
                 total += series.initPuzzle();
@@ -60,7 +51,8 @@
         function updateCount(diff) {
             chart.puzzle.remaining += diff;
             chart.puzzleCount.attr({
-                text: (chart.puzzle.total - chart.puzzle.remaining) + ' / ' + chart.puzzle.total
+                text: (chart.puzzle.total - chart.puzzle.remaining) +
+                    ' / ' + chart.puzzle.total
             });
         }
         updateCount(0);
@@ -89,8 +81,8 @@
         }
 
         function pointerDown(e) {
-            var point = e.target.point,
-                graphic;
+            const point = e.target.point;
+            let   graphic;
 
             if (point) {
                 graphic = point.graphic;
@@ -110,9 +102,10 @@
         }
 
         function pointerMove(e) {
-            var point = chart.dragPoint,
-                dragStart = point && point.inPuzzle && point.dragStart,
-                startTranslateX,
+            const point = chart.dragPoint,
+                dragStart = point && point.inPuzzle && point.dragStart;
+
+            let startTranslateX,
                 startTranslateY,
                 translateX,
                 translateY,
@@ -172,13 +165,16 @@
     });
 
     seriesTypes.map.prototype.initPuzzle = function () {
-        var total = 0;
+        let total = 0;
 
         if (this.options.puzzle) {
 
+            const seriesScale = this.transformGroups[0].scaleX;
+
             each(this.points, function (point) {
-                var bBox = point.graphic.getBBox(),
-                    scale = Math.min(100 / bBox.width, 100 / bBox.height);
+                const bBox = point.graphic.getBBox(),
+                    scale = Math.min(100 / bBox.width, 100 / bBox.height) /
+                        seriesScale;
 
                 // Small items are hard to place
                 if (bBox.width > 5 && bBox.height > 5) {
@@ -206,14 +202,14 @@
 
 }(Highcharts));
 
-var n,
-    mapData,
-    data = [],
+let mapData;
+
+const data = [],
     maps = Highcharts.maps;
 
-for (n in maps) {
+for (const n in maps) {
     if (Object.hasOwnProperty.call(maps, n)) {
-        mapData = maps[n];
+        mapData = maps[n].features;
         break;
     }
 }
@@ -272,5 +268,9 @@ Highcharts.mapChart('container', {
                 color: Highcharts.getOptions().colors[2]
             }
         }
-    }]
+    }],
+
+    accessibility: {
+        enabled: false
+    }
 });

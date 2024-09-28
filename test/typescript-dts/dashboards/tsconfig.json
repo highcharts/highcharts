@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": false,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "baseUrl": "../../../",
+        "module": "umd",
+        "moduleResolution": "node",
+        "rootDir": "../../../",
+        "lib": ["es5", "dom"],
+        "paths": {
+            "@highcharts/dashboards": ["code/dashboards/dashboards"],
+            "@highcharts/dashboards/*": ["code/dashboards/*"],
+            "highcharts": ["code/highcharts.src"],
+            "highcharts/*": ["code/*"],
+            "@highcharts/dashboards/datagrid": ["code/datagrid/datagrid.src"],
+            "@highcharts/dashboards/datagrid/*": ["code/datagrid/*"],
+
+        },
+        "types": []
+    },
+    "exclude": [
+        "../../../node_modules"
+    ]
+}

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,5 +30,11 @@ export interface SVGPath3D {
     top?: SVGPath;
     zIndexes?: Record<string, number>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGPath3D;

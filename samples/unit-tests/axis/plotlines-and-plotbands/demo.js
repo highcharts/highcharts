@@ -288,12 +288,11 @@ QUnit.test('General tests', function (assert) {
         ]
     });
 
-    assert.notEqual(
+    assert.ok(
         chart.yAxis[0].plotLinesAndBands[0].svgElem.element
-            .getAttribute('class')
-            .indexOf('my-custom-class'),
-        -1,
-        'Class name should be applied to plot lines (#8415)'
+            .classList
+            .contains('my-custom-class'),
+        'Class name should be applied to plot lines (#8415, #20586)'
     );
 
     var line = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' ');
@@ -514,7 +513,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 18, 4, 20),
                     label: {
                         rotation: 90,
-                        text: 'Wide Enough'
+                        text: 'Wide Enough',
+                        inside: false
                     }
                 },
                 {
@@ -523,7 +523,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 25, 8),
                     label: {
                         rotation: 90,
-                        text: 'Too Narrow'
+                        text: 'Too Narrow',
+                        inside: false
                     }
                 }
             ]
@@ -770,7 +771,8 @@ QUnit.test('Dynamically added plotbands', function (assert) {
 
     assert.ok(
         !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
-        '#14310: plotBand should render when axis visibility gets dynamically updated'
+        '#14310: plotBand should render when axis visibility gets ' +
+        'dynamically updated'
     );
 
     chart.xAxis[0].update({}, false);
@@ -784,7 +786,8 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].plotLinesAndBands.length,
         2,
-        '#14053: plotBands from before update with redraw=false should also be added'
+        '#14053: plotBands from before update with redraw=false should also ' +
+        'be added'
     );
 
     chart.series[0].hide();
@@ -849,3 +852,80 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         'plotBand with acrossPanes = true has greater height'
     );
 });
+
+QUnit.test(
+    '#21521: Hiding overlapping plotBand/plotLine labels ',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                xAxis: {
+                    plotBands: [{
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '0000000000000000'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '================'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '%%%%%%%%%%%%%%%%'
+                        }
+                    }]
+                },
+
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            xAxis = chart.series[0].xAxis,
+            opacityTester = vals => {
+                const plotLinesAndBands = xAxis.plotLinesAndBands;
+
+                for (let i = 0; i < 3; i++) {
+                    assert.strictEqual(
+                        plotLinesAndBands[i].label.opacity,
+                        vals[i],
+                        `Opacity of label number ${i} should be ${vals[i]}`
+                    );
+                }
+            };
+
+        opacityTester([1, 0, 0]);
+
+        chart.series[0].xAxis.update({
+            plotBands: [{
+                from: 0,
+                to: 1,
+                label: {
+                    text: '0000000000000000',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '================',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '%%%%%%%%%%%%%%%%'
+                }
+            }]
+        });
+
+        opacityTester([1, 1, 1]);
+    }
+);

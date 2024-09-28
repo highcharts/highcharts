@@ -1,28 +1,25 @@
 /**
- * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highcharts Stock.
- * It also shows custom graphics drawn in the chart area on chart load.
+ * This is an advanced demo of setting up Highcharts with the flags feature
+ * borrowed from Highcharts Stock. It also shows custom graphics drawn in the
+ * chart area on chart load.
  */
 
 /**
  * Fires on chart load, called from the chart.events.load option.
  */
 function onChartLoad() {
-    var centerX = 140,
+    const centerX = 140,
         centerY = 110,
         path = [],
-        angle,
-        radius,
         badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
             .brighten(-0.2)
-            .get(),
-        spike,
-        empImage,
-        big5,
-        label,
+            .get();
+
+    let spike,
+        angle,
+        radius,
         left,
-        right,
-        years,
-        renderer;
+        right;
 
     if (this.chartWidth < 530) {
         return;
@@ -49,7 +46,7 @@ function onChartLoad() {
         .add();
 
     // Employee image overlay
-    empImage = this.renderer
+    const empImage = this.renderer
         .path(path)
         .attr({
             zIndex: 7,
@@ -60,12 +57,12 @@ function onChartLoad() {
         .add();
 
     // Find timedifference in  year
-    var diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
+    let diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
     diff /= 60 * 60 * 24;
-    var yearsSince = Math.abs(Math.round(diff / 365.25));
+    const yearsSince = Math.abs(Math.round(diff / 365.25));
 
     // Big 5
-    big5 = this.renderer
+    const big5 = this.renderer
         .text(yearsSince)
         .attr({
             zIndex: 6
@@ -83,7 +80,7 @@ function onChartLoad() {
     });
 
     // Draw the label
-    label = this.renderer
+    const label = this.renderer
         .text('years and counting')
         .attr({
             zIndex: 6
@@ -170,7 +167,7 @@ function onChartLoad() {
         .add();
 
     // 2009-2014
-    years = this.renderer
+    const years = this.renderer
         .text('2009-' + new Date().getFullYear())
         .attr({
             zIndex: 6
@@ -187,7 +184,7 @@ function onChartLoad() {
     });
 
     // Prepare mouseover
-    renderer = this.renderer;
+    const renderer = this.renderer;
     if (renderer.defs) {
         // is SVG
         this.get('employees').points.forEach(point => {
@@ -287,13 +284,25 @@ const employees = [
     { x: Date.UTC(2022, 6, 1), y: 36 },
     { x: Date.UTC(2022, 7, 1), y: 39 },
     { x: Date.UTC(2022, 8, 1), y: 38 },
-    { x: Date.UTC(2022, 10, 1), y: 39 }
+    { x: Date.UTC(2022, 10, 1), y: 39 },
+    { x: Date.UTC(2022, 11, 1), y: 39 },
+    { x: Date.UTC(2023, 0, 1), y: 39 },
+    { x: Date.UTC(2023, 1, 1), y: 39 },
+    { x: Date.UTC(2023, 2, 1), y: 40 },
+    { x: Date.UTC(2023, 3, 1), y: 41 },
+    { x: Date.UTC(2023, 4, 1), y: 41 },
+    { x: Date.UTC(2023, 5, 1), y: 40 },
+    { x: Date.UTC(2023, 6, 1), y: 38 }
 ];
 
 const options = {
     chart: {
         events: {
             load: onChartLoad
+        },
+        scrollablePlotArea: {
+            minWidth: 700,
+            scrollPositionX: 1
         }
     },
     xAxis: {
@@ -310,7 +319,8 @@ const options = {
                 label: {
                     text: '<em>Offices:</em><br>Torstein´s<br>basement',
                     style: {
-                        color: '#999999'
+                        color: '#999999',
+                        width: 'auto'
                     },
                     y: 180
                 }
@@ -357,7 +367,11 @@ const options = {
         text: 'Highcharts and Highsoft timeline'
     },
     caption: {
-        text: 'An advanced demo showing a combination of various Highcharts features, including flags and plot bands. The chart shows how Highcharts and Highsoft has evolved over time, with number of employees, revenue, search popularity, office locations, and various events of interest.'
+        text: 'An advanced demo showing a combination of various Highcharts ' +
+            'features, including flags and plot bands. The chart shows how ' +
+            'Highcharts and Highsoft has evolved over time, with number of ' +
+            'employees, revenue, search popularity, office locations, and ' +
+            'various events of interest.'
     },
     credits: {
         enabled: false
@@ -422,33 +436,33 @@ const options = {
             id: 'revenue',
             type: 'area',
             data: [
-                [1259622000000, 20],
-                [1262300400000, 18],
-                [1264978800000, 15],
-                [1267398000000, 19],
-                [1270072800000, 16],
-                [1272664800000, 16],
-                [1275343200000, 18],
-                [1277935200000, 16],
-                [1280613600000, 17],
-                [1283292000000, 20],
-                [1285884000000, 24],
-                [1288566000000, 19],
-                [1291158000000, 22],
-                [1293836400000, 20],
-                [1296514800000, 17],
-                [1298934000000, 21],
-                [1301608800000, 17],
-                [1304200800000, 17],
-                [1306879200000, 20],
-                [1309471200000, 18],
-                [1312149600000, 19],
-                [1314828000000, 22],
-                [1317420000000, 26],
-                [1320102000000, 21],
-                [1322694000000, 24],
-                [1325372400000, 23],
-                [1328050800000, 19],
+                [1259622000000, 16],
+                [1262300400000, 15],
+                [1264978800000, 12],
+                [1267398000000, 15],
+                [1270072800000, 13],
+                [1272664800000, 13],
+                [1275343200000, 14],
+                [1277935200000, 13],
+                [1280613600000, 14],
+                [1283292000000, 16],
+                [1285884000000, 19],
+                [1288566000000, 16],
+                [1291158000000, 18],
+                [1293836400000, 16],
+                [1296514800000, 14],
+                [1298934000000, 17],
+                [1301608800000, 14],
+                [1304200800000, 14],
+                [1306879200000, 16],
+                [1309471200000, 14],
+                [1312149600000, 15],
+                [1314828000000, 18],
+                [1317420000000, 21],
+                [1320102000000, 17],
+                [1322694000000, 20],
+                [1325372400000, 18],
+                [1328050800000, 15],
                 [1330556400000, 23],
                 [1333231200000, 19],
                 [1335823200000, 19],
@@ -460,7 +474,7 @@ const options = {
                 [1351724400000, 24],
                 [1354316400000, 27],
                 [1356994800000, 25],
-                [1359673200000, 23],
+                [1359673200000, 19],
                 [1362092400000, 22],
                 [1364767200000, 28],
                 [1367359200000, 29],
@@ -472,7 +486,7 @@ const options = {
                 [1383260400000, 36],
                 [1385852400000, 33],
                 [1388530800000, 31],
-                [1391209200000, 35],
+                [1391209200000, 28],
                 [1393628400000, 29],
                 [1396303200000, 38],
                 [1398895200000, 31],
@@ -484,7 +498,7 @@ const options = {
                 [1414796400000, 54],
                 [1417388400000, 46],
                 [1420066800000, 65],
-                [1422745200000, 48],
+                [1422745200000, 39],
                 [1425164400000, 47],
                 [1427839200000, 70],
                 [1430431200000, 53],
@@ -496,7 +510,7 @@ const options = {
                 [1446332400000, 81],
                 [1448924400000, 63],
                 [1451602800000, 65],
-                [1454281200000, 56],
+                [1454281200000, 45],
                 [1456786800000, 58],
                 [1459461600000, 71],
                 [1462053600000, 57],
@@ -508,7 +522,7 @@ const options = {
                 [1477954800000, 69],
                 [1480546800000, 70],
                 [1483225200000, 68],
-                [1485903600000, 43],
+                [1485903600000, 35],
                 [1488322800000, 51],
                 [1490997600000, 70],
                 [1493589600000, 56],
@@ -520,7 +534,7 @@ const options = {
                 [1509490800000, 70],
                 [1512082800000, 62],
                 [1514761200000, 72],
-                [1517439600000, 56],
+                [1517439600000, 46],
                 [1519858800000, 46],
                 [1522533600000, 77],
                 [1525125600000, 61],
@@ -532,54 +546,62 @@ const options = {
                 [1541026800000, 71],
                 [1543618800000, 77],
                 [1546297200000, 64],
-                [1548975600000, 67],
-                [1551394800000, 62],
-                [1554069600000, 78],
-                [1556661600000, 63],
-                [1559340000000, 82],
-                [1561932000000, 62],
-                [1564610400000, 77],
-                [1567288800000, 67],
-                [1569880800000, 56],
-                [1572480000000, 78],
-                [1575072000000, 72],
+                [1548975600000, 55],
+                [1551394800000, 50],
+                [1554069600000, 63],
+                [1556661600000, 51],
+                [1559340000000, 67],
+                [1561932000000, 50],
+                [1564610400000, 63],
+                [1567288800000, 54],
+                [1569880800000, 45],
+                [1572480000000, 63],
+                [1575072000000, 59],
                 [1577750400000, 68],
-                [1580428800000, 69],
-                [1582848000000, 65],
-                [1585612800000, 59],
-                [1588204800000, 84],
-                [1590883200000, 68],
-                [1593475200000, 58],
-                [1596153600000, 72],
-                [1598832000000, 55],
-                [1601424000000, 72],
-                [1604102400000, 77],
-                [1606694400000, 55],
-                [1609372800000, 60],
-                [1612051200000, 63],
-                [1614470400000, 55],
-                [1617148800000, 76],
-                [1619740800000, 53],
-                [1622419200000, 71],
-                [1625011200000, 62],
-                [1627689600000, 72],
-                [1630368000000, 56],
-                [1632960000000, 66],
-                [1635638400000, 72],
-                [1638230400000, 61],
-                [1640908800000, 60],
-                [1643587200000, 100],
-                [1646006400000, 64],
-                [1648684800000, 91],
-                [1651276800000, 47],
-                [1653955200000, 66],
-                [1656547200000, 79],
-                [1659225600000, 70],
-                [1661904000000, 61],
-                [1664496000000, 55],
-                [1667174400000, 73],
-                [1669766400000, 74],
-                [1672444800000, null]
+                [1580428800000, 56],
+                [1582848000000, 53],
+                [1585612800000, 48],
+                [1588204800000, 69],
+                [1590883200000, 55],
+                [1593475200000, 47],
+                [1596153600000, 59],
+                [1598832000000, 45],
+                [1601424000000, 58],
+                [1604102400000, 62],
+                [1606694400000, 45],
+                [1609372800000, 49],
+                [1612051200000, 52],
+                [1614470400000, 45],
+                [1617148800000, 62],
+                [1619740800000, 43],
+                [1622419200000, 58],
+                [1625011200000, 50],
+                [1627689600000, 59],
+                [1630368000000, 46],
+                [1632960000000, 53],
+                [1635638400000, 59],
+                [1638230400000, 50],
+                [1640908800000, 49],
+                [1643587200000, 81],
+                [1646006400000, 52],
+                [1648684800000, 74],
+                [1651276800000, 38],
+                [1653955200000, 53],
+                [1656547200000, 65],
+                [1659225600000, 57],
+                [1661904000000, 49],
+                [1664496000000, 45],
+                [1667174400000, 60],
+                [1669766400000, 60],
+                [1672444800000, 50],
+                [1675141200000, 73],
+                [1677560400000, 100],
+                [1680235200000, 94],
+                [1682827200000, 68],
+                [1685505600000, 66],
+                [1688097600000, 61],
+                [1690776000000, 60],
+                [1693454400000, null]
             ],
             tooltip: {
                 xDateFormat: '%B %Y',
@@ -594,7 +616,8 @@ const options = {
             step: 'left',
             tooltip: {
                 headerFormat:
-                    '<span style="font-size: 11px;color:#666">{point.x:%B %e, %Y}</span><br>',
+                    '<span style="font-size: 11px;color:#666">{point.x:%B %e,' +
+                    ' %Y}</span><br>',
                 pointFormat: '{point.name}<br><b>{point.y}</b>',
                 valueSuffix: ' employees'
             },
@@ -654,6 +677,21 @@ if (Highcharts.Series.types.flags) {
         },
         {
             type: 'flags',
+            name: 'Highcharts GPT',
+            color: '#333333',
+            shape: 'squarepin',
+            y: -55,
+            data: [
+                {
+                    x: Date.UTC(2023, 4, 5),
+                    text: 'Highcharts GPT (powered by ChatGPT) released',
+                    title: 'Highcharts GPT'
+                }
+            ],
+            showInLegend: false
+        },
+        {
+            type: 'flags',
             name: 'Highcharts',
             color: '#333333',
             shape: 'circlepin',
@@ -696,7 +734,8 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2016, 8, 29),
-                    text: 'Styled mode, responsive options, accessibility, chart.update',
+                    text: 'Styled mode, responsive options, accessibility, ' +
+                        'chart.update',
                     title: '5.0'
                 },
                 {
@@ -716,13 +755,22 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2021, 1, 2),
-                    text: 'Improved security, accessibility options, zoom by single touch',
+                    text: 'Improved security, accessibility options, zoom by ' +
+                        'single touch',
                     title: '9.0'
                 },
                 {
                     x: Date.UTC(2022, 2, 7),
-                    text: 'Bread crumbs, improved Boost pixel ratio, threshold alignment in charts with multiple axes',
+                    text: 'Bread crumbs, improved Boost pixel ratio, ' +
+                        'threshold alignment in charts with multiple axes',
                     title: '10.0'
+                },
+                {
+                    x: Date.UTC(2023, 3, 27),
+                    text: 'Design upgrade, Faster codebase, Flow maps, ' +
+                        'Pictorial charts, Treegraphs, Geographical heatmaps,' +
+                        ' Audio charts',
+                    title: '11.0'
                 }
             ],
             showInLegend: false
@@ -735,12 +783,15 @@ if (Highcharts.Series.types.flags) {
             data: [
                 {
                     x: Date.UTC(2012, 10, 1),
-                    text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
+                    text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
+                        'Fjordane, Norway',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2012, 11, 25),
-                    text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.',
+                    text: 'Packt Publishing published <em>Learning ' +
+                        'Highcharts by Example</em>. Since then, many other ' +
+                        'books are written about Highcharts.',
                     title: 'First book'
                 },
                 {
@@ -750,17 +801,20 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2014, 4, 25),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2018, 11, 13),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2017, 9, 20),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 }
             ],

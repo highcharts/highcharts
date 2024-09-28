@@ -23,7 +23,7 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
-const logLib = require('./lib/log');
+const logLib = require('../libs/log');
 
 function getDemoBuildPath() {
     const config = getGitIgnoreMeProperties();
@@ -148,8 +148,8 @@ function assembleSample(template, variables) {
 async function createExamples(title, sourcePath, targetPath, template) {
 
     const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
+    const FSLib = require('../libs/fs');
+    const LogLib = require('../libs/log');
 
     const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
 
@@ -166,8 +166,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-          FS.readFileSync(path).toString() ||
-          ''
+                    FS.readFileSync(path).toString() ||
+                    ''
                 );
                 return obj;
             },
@@ -190,7 +190,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     function getLocalSidebar(path) {
         const sidebarPath =
-      Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
         try {
             const file = readFileSync(sidebarPath,
                 'utf-8');
@@ -204,12 +204,23 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     LogLib.success('Created', targetPath);
 
-    const localsidebar = getLocalSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, ''));
+    let localsidebar;
+    try {
+        localsidebar = getLocalSidebar(
+            sourcePath
+                .replaceAll('samples/', '')
+                .replaceAll('/demo', '')
+        );
+    } catch (e) {
+        LogLib.warn(e);
+        LogLib.warn('Missing sidebar.html, using empty file');
+        localsidebar = '';
+    }
 
     LogLib.success('Created', targetPath);
     const indexContent = localsidebar
-        .replace(/style=\"display:none;\"/g, '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
+        .replaceAll('style="display:none;"', '') // remove hidden style
+        .replace(/(?!href= ")(\.\/.+?)(?=")/gu, 'examples\/$1\/index.html'); // replace links
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(
@@ -263,7 +274,6 @@ function convertURLToLocal(str) {
  *         Promise to keep
  */
 function distExamples() {
-
     const FS = require('fs');
 
     return new Promise((resolve, reject) => {
@@ -312,3 +322,7 @@ function distExamples() {
 }
 
 Gulp.task('dist-examples', distExamples);
+
+module.exports = {
+    getDemoBuildPath
+};

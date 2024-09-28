@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
 import GraphLayout from '../GraphLayoutComposition.js';
@@ -62,6 +62,8 @@ const {
     pick
 } = U;
 
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -120,13 +122,13 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
-    public data: Array<NetworkgraphPoint> = void 0 as any;
+    public data!: Array<NetworkgraphPoint>;
 
-    public nodes: Array<NetworkgraphPoint> = void 0 as any;
+    public nodes!: Array<NetworkgraphPoint>;
 
-    public options: NetworkgraphSeriesOptions = void 0 as any;
+    public options!: NetworkgraphSeriesOptions;
 
-    public points: Array<NetworkgraphPoint> = void 0 as any;
+    public points!: Array<NetworkgraphPoint>;
 
     public deferDataLabels: boolean = true;
 
@@ -148,11 +150,12 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public deferLayout(): void {
-        let layoutOptions = this.options.layoutAlgorithm,
+        const layoutOptions = this.options.layoutAlgorithm,
+            chartOptions = this.chart.options.chart;
+
+        let layout: ReingoldFruchtermanLayout,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
-            graphLayoutsLookup = this.chart.graphLayoutsLookup,
-            chartOptions = this.chart.options.chart,
-            layout: ReingoldFruchtermanLayout;
+            graphLayoutsLookup = this.chart.graphLayoutsLookup;
 
         if (!this.visible) {
             return;
@@ -197,14 +200,14 @@ class NetworkgraphSeries extends Series {
         if (this.layout) {
             this.layout.removeElementFromCollection(
                 this,
-                this.layout.series
+                this.layout.series as Array<this>
             );
         }
         NodesComposition.destroy.call(this);
     }
 
     /**
-     * Networkgraph has two separate collecions of nodes and lines, render
+     * Networkgraph has two separate collections of nodes and lines, render
      * dataLabels for both sets:
      * @private
      */
@@ -250,7 +253,7 @@ class NetworkgraphSeries extends Series {
 
         NodesComposition.generatePoints.apply(this, arguments as any);
 
-        // In networkgraph, it's fine to define stanalone nodes, create
+        // In networkgraph, it's fine to define standalone nodes, create
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
@@ -365,7 +368,7 @@ class NetworkgraphSeries extends Series {
         const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
-        // series.render() is called before initial positions are set:
+        // Series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
@@ -384,13 +387,14 @@ class NetworkgraphSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
-            attribs = Series.prototype.pointAttribs.call(
-                this,
-                point,
-                pointState
-            ),
+        const pointState = state || point && point.state || 'normal',
             stateOptions = (this.options.states as any)[pointState];
+
+        let attribs = Series.prototype.pointAttribs.call(
+            this,
+            point,
+            pointState
+        );
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
@@ -443,7 +447,8 @@ class NetworkgraphSeries extends Series {
             series.redrawHalo(hoverPoint);
         }
 
-        if (series.chart.hasRendered &&
+        if (
+            series.chart.hasRendered &&
             !(series.options.dataLabels as any).allowOverlap
         ) {
             series.nodes.concat(series.points).forEach(function (node): void {
@@ -641,10 +646,10 @@ export default NetworkgraphSeries;
  * @callback Highcharts.NetworkgraphAfterSimulationCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
-''; // detach doclets above
+''; // Detach doclets above

@@ -1,0 +1,27 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "composite": false,
+        "declaration": true,
+        "baseUrl": "./",
+        "moduleResolution": "node",
+        "outDir": "../../js/",
+        "rootDir": "../",
+        "paths": {
+            "highcharts": [
+                "../Dashboards/highcharts"
+            ],
+            "@highcharts/dashboards/datagrid": [
+                "../Dashboards/datagrid"
+            ]
+        }
+    },
+    "exclude": [
+        "../masters/**/*.ts",
+        "../masters-datagrid/**/*.ts",
+        "../masters-es5/**/*.ts"
+    ],
+    "include": [
+        "../**/*.ts"
+    ]
+}

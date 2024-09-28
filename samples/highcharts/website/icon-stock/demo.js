@@ -1,38 +1,45 @@
-Math.easeInSine = function (pos) {
-    return -Math.cos(pos * (Math.PI / 2)) + 1;
-};
+(async () => {
 
-Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
-};
-// Math.easeInQuint = function (pos) {
-//     return Math.pow(pos, 5);
-// },
+    Math.easeInSine = function (pos) {
+        return -Math.cos(pos * (Math.PI / 2)) + 1;
+    };
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
-    }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-    }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
-    }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
-};
+    Math.easeOutQuint = function (pos) {
+        return (Math.pow((pos - 1), 5) + 1);
+    };
+    // Math.easeInQuint = function (pos) {
+    //     return Math.pow(pos, 5);
+    // },
 
-const big = window.matchMedia('(min-width: 500px)').matches;
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    Math.easeOutBounce = pos => {
+        if ((pos) < (1 / 2.75)) {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75)) {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75)) {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    };
+
+    const big = window.matchMedia('(min-width: 500px)').matches;
+    const reduced = window.matchMedia(
+        '(prefers-reduced-motion: ' +
+        'reduce)'
+    ).matches;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+    const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
-// Create the chart
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
         dataLength = data.length,
         // set the allowed units for data grouping
@@ -42,11 +49,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         ], [
             'month',
             [1, 2, 3, 4, 6]
-        ]],
+        ]];
 
-        i = 0;
-
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -90,9 +95,17 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         visible: true
                     });
 
-                    const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
-                    const candlestick =  document.querySelector('#stock .stick');
-                    const column = document.querySelector('#stock .highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '#stock .highcharts-range-selector-group'
+                    );
+                    const candlestick =  document.querySelector(
+                        '#stock ' +
+                        '.stick'
+                    );
+                    const column = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-column-series.column'
+                    );
                     candlestick.classList.add('fade-in');
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
@@ -100,8 +113,12 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 },
                 redraw: function () {
                     const candlestick =  document.querySelector('.stick');
-                    const rangeSelectorGroup =  document.querySelector('.highcharts-range-selector-group');
-                    const column = document.querySelector('.highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '.highcharts-range-selector-group'
+                    );
+                    const column = document.querySelector(
+                        '.highcharts-column-series.column'
+                    );
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
                     candlestick.classList.add('fade-in');
@@ -389,21 +406,59 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 load: function () {
                     const chart = this;
 
-                    const particle1 = document.querySelector('#stock .particle-1');
-                    const particle2 = document.querySelector('#stock .particle-2');
-                    const particle3 = document.querySelector('#stock .particle-3');
-                    const particle4 = document.querySelector('#stock .particle-4');
-                    const particle5 = document.querySelector('#stock .particle-5');
-                    const particle6 = document.querySelector('#stock .particle-6');
-                    const particles = [particle1, particle2, particle3,
-                        particle4, particle5, particle6];
-                    const greenLine = document.querySelector('#stock .highcharts-series-2.green-line');
-                    const greenArrow = document.getElementsByClassName('green-line')[1];
-                    const purpleLine = document.querySelector('#stock .highcharts-series-3.purple-line');
-                    const purpleArrow = document.getElementsByClassName('purple-line')[1];
-                    const bottomArea =  document.querySelector('#stock .stock-bottom');
-                    const topArea =  document.querySelector('#stock .stock-top');
-                    const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
+                    const particle1 = document.querySelector(
+                        '#stock ' +
+                        '.particle-1'
+                    );
+                    const particle2 = document.querySelector(
+                        '#stock ' +
+                        '.particle-2'
+                    );
+                    const particle3 = document.querySelector(
+                        '#stock ' +
+                        '.particle-3'
+                    );
+                    const particle4 = document.querySelector(
+                        '#stock ' +
+                        '.particle-4'
+                    );
+                    const particle5 = document.querySelector(
+                        '#stock ' +
+                        '.particle-5'
+                    );
+                    const particle6 = document.querySelector(
+                        '#stock ' +
+                        '.particle-6'
+                    );
+                    const particles = [
+                        particle1, particle2, particle3,
+                        particle4, particle5, particle6
+                    ];
+                    const greenLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-2.green-line'
+                    );
+                    const greenArrow = document.getElementsByClassName(
+                        'green-line'
+                    )[1];
+                    const purpleLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-3.purple-line'
+                    );
+                    const purpleArrow = document.getElementsByClassName(
+                        'purple-line'
+                    )[1];
+                    const bottomArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-bottom'
+                    );
+                    const topArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-top'
+                    );
+                    const rangeSelectorGroup =  document.querySelector(
+                        '#stock .highcharts-range-selector-group'
+                    );
 
                     // /for the arrow head sizes
                     // /based on screen size
@@ -623,7 +678,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             chart.xAxis[1].setExtremes(0, 7);
                         }, 5200);
                         setTimeout(function () {
-                            // /hides all the earlier chart stuff and sets the yAxis extremes so
+                            // /hides all the earlier chart stuff and sets
+                            // the yAxis extremes so
                             // /the lines part vertically
                             chart.yAxis[2].setExtremes(10, 20);
                             chart.yAxis[3].setExtremes(10, 20);
@@ -837,7 +893,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         series: [
-        // 0 - top area (11) y0
+            // 0 - top area (11) y0
             {
                 type: 'arearange',
                 className: 'stock-top',
@@ -1301,4 +1357,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
     Highcharts.stockChart('stock', animated);
 
-});
+})();

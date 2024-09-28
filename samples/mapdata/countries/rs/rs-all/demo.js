@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/rs/rs-all.topo.json">Republic of Serbia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/rs/rs-all.topo.json">Republic of Serbia</a>'
         },
 
         mapNavigation: {

@@ -1,4 +1,4 @@
-var data = Highcharts
+const data = Highcharts
     .data({
         csv: document.getElementById('data').innerHTML
     })

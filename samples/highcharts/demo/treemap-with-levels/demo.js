@@ -105,6 +105,7 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         pointFormat:
-            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
+            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>' +
+            '2</sup></b>'
     }
 });

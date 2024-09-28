@@ -1,3 +1,6 @@
+@import url("https://code.highcharts.com/css/stocktools/gui.css");
+@import url("https://code.highcharts.com/css/annotations/popup.css");
+
 #container {
     max-height: 800px;
     min-height: 75vh;

@@ -1,7 +1,12 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://www.highcharts.com/samples/data/large-dataset.json'
+    ).then(response => response.json());
 
     // Create a timer
-    var start = +new Date();
+    const start = +new Date();
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -10,12 +15,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                 load: function () {
                     if (!window.TestController) {
                         this.setTitle(null, {
-                            text: 'Built chart in ' + (new Date() - start) + 'ms'
+                            text:
+                                'Built chart in ' + (new Date() - start) + 'ms'
                         });
                     }
                 }
             },
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         },
 
         rangeSelector: {
@@ -59,7 +67,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         subtitle: {
-            text: 'Built chart in ...', // placeholder text to reserve space for dynamic subtitle
+            text:
+                'Built chart in ...', // placeholder text to reserve space
+            // for dynamic subtitle
             align: 'left'
         },
 
@@ -75,4 +85,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
 
     });
-});
+
+})();

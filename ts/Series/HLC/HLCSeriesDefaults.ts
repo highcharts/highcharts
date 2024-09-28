@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Pawel Lysy
+ *  (c) 2010-2024 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -120,6 +120,7 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      * @sample {highstock} stock/plotoptions/hlc-pointvalkey/
      *         Possible values
      *
+     * @declare    Highcharts.OptionsHLCPointValKeyValue
      * @type       {string}
      * @default    close
      * @validvalue ["high", "low", "close"]
@@ -203,7 +204,7 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
  * @apioption series.hlc.data.close
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
 
 /* *
  *

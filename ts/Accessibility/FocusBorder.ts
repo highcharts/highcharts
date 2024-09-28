@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -27,7 +27,6 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -103,8 +102,6 @@ namespace FocusBorderComposition {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     // Attributes that trigger a focus border update
     const svgElementBorderUpdateTriggers = [
         'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
@@ -116,8 +113,6 @@ namespace FocusBorderComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -125,19 +120,17 @@ namespace FocusBorderComposition {
         ChartClass: typeof Chart,
         SVGElementClass: typeof SVGElement
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            svgElementProto = (
+                SVGElementClass.prototype as SVGElementCompositon
+            );
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.renderFocusBorder) {
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
         }
 
-        if (U.pushUnique(composedMembers, SVGElementClass)) {
-            const svgElementProto = (
-                SVGElementClass.prototype as SVGElementCompositon
-            );
-
+        if (!svgElementProto.addFocusBorder) {
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;
         }
@@ -312,7 +305,7 @@ namespace FocusBorderComposition {
             };
         }
 
-        const isLabel = this instanceof SVGLabel;
+        const isLabel = !!this.text;
         if (this.element.nodeName === 'text' || isLabel) {
             const isRotated = !!this.rotation;
             const correction = !isLabel ? getTextAnchorCorrection(this) :

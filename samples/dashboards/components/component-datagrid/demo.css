@@ -1,0 +1,10 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#cell-id {
+    text-align: center;
+}
+
+#cell-id-2 {
+    min-height: 350px;
+}

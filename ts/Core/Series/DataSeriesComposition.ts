@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,12 +27,15 @@ import type {
 import type Series from './Series';
 
 import DataTable from '../../Data/DataTable.js';
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     fireEvent,
     isNumber,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -57,14 +60,6 @@ declare module './SeriesOptions' {
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -97,7 +92,7 @@ function wrapSeriesGeneratePoints(
         cursor = cropStart + i;
         point = data[cursor];
         if (!point) {
-            point = data[cursor] = (new PointClass()).init(
+            point = data[cursor] = new PointClass(
                 this,
                 processedYData[cursor],
                 processedXData[i]
@@ -139,7 +134,7 @@ function wrapSeriesSetData(
         keys = (this.options.keys || this.parallelArrays).slice();
 
     if (isNumber(data[0]) || keys.length === 1) {
-        // first column is implicit index
+        // First column is implicit index
         const xData: Array<number> = columns.x = [];
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             xData.push(this.autoIncrement());
@@ -147,7 +142,7 @@ function wrapSeriesSetData(
         columns[keys[1] || 'y'] = data as Array<number>;
     } else {
         if (keys.indexOf('x') === -1 && keys.length > data.length) {
-            // first column is implicit index
+            // First column is implicit index
             const xData: Array<number> = columns.x = [];
             for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
                 xData.push(this.autoIncrement());
@@ -189,14 +184,14 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, 'Core.DataSeries')) {
+            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
+
             addEvent(SeriesClass, 'init', function (): void {
                 this.datas = new DataSeriesAdditions(
                     this as DataSeriesComposition
                 );
             });
-
-            const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             wrap(seriesProto, 'generatePoints', wrapSeriesGeneratePoints);
             wrap(seriesProto, 'setData', wrapSeriesSetData);
@@ -303,7 +298,7 @@ class DataSeriesAdditions {
             }
 
             for (let i = 0, iEnd = oldData.length; i < iEnd; ++i) {
-                if (oldData[i] && (oldData[i].destroy)) {
+                if (oldData[i] && !!oldData[i].destroy) {
                     oldData[i].destroy();
                 }
             }
@@ -335,7 +330,7 @@ class DataSeriesAdditions {
         }
 
         if (failure) {
-            // fallback to index
+            // Fallback to index
             const columnNames = table.getColumnNames(),
                 emptyColumn: DataTable.Column = [];
 
@@ -344,7 +339,7 @@ class DataSeriesAdditions {
             let columnOffset = 0;
 
             if (columnNames.length === keys.length - 1) {
-                // table index becomes x
+                // Table index becomes x
                 columnOffset = 1;
                 indexAsX = true;
             }
@@ -413,7 +408,7 @@ class DataSeriesAdditions {
             anySeries: AnyRecord = series,
             onChange = (e: DataTable.Event): void => {
                 if (e.type === 'afterDeleteColumns') {
-                    // deletion affects all points
+                    // Deletion affects all points
                     this.setTable(table, true);
                     return;
                 }
@@ -422,7 +417,7 @@ class DataSeriesAdditions {
                         e.rowIndex > 0 &&
                         e.rowIndex + e.rowCount < series.points.length
                     ) {
-                        // deletion affects trailing points
+                        // Deletion affects trailing points
                         this.setTable(table, true);
                         return;
                     }
@@ -480,11 +475,9 @@ export default DataSeriesAdditions;
 /* *
  * Indicates data is structured as columns instead of rows.
  *
- * @requires  es-modules/Data/DataSeriesComposition.js
- *
  * @type      {boolean}
  * @since     Future
  * @apioption plotOptions.series.dataAsColumns
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

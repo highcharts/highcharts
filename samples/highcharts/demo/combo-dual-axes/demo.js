@@ -1,19 +1,23 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
-        text: 'Average Monthly Precipitation and Temperature in Karasjok, 2021',
+        text: 'Karasjok weather, 2023',
         align: 'left'
     },
-    subtitle: {
+    credits: {
         text: 'Source: ' +
-            '<a href="https://www.yr.no/nb/historikk/graf/5-97251/Norge/Troms%20og%20Finnmark/Karasjok/Karasjok?q=2021"' +
+            '<a href="https://www.yr.no/nb/historikk/graf/5-97251/Norge/Finnmark/Karasjok/Karasjok?q=2023"' +
             'target="_blank">YR</a>'
     },
     xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
         crosshair: true
     }],
     yAxis: [{ // Primary yAxis
@@ -49,10 +53,7 @@ Highcharts.chart('container', {
     },
     legend: {
         align: 'left',
-        x: 80,
         verticalAlign: 'top',
-        y: 80,
-        floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme
             'rgba(255,255,255,0.25)'
@@ -61,8 +62,10 @@ Highcharts.chart('container', {
         name: 'Precipitation',
         type: 'column',
         yAxis: 1,
-        data: [27.6, 28.8, 21.7, 34.1, 29.0, 28.4, 45.6, 51.7, 39.0,
-            60.0, 28.6, 32.1],
+        data: [
+            45.7, 37.0, 28.9, 17.1, 39.2, 18.9, 90.2, 78.5, 74.6,
+            18.7, 17.1, 16.0
+        ],
         tooltip: {
             valueSuffix: ' mm'
         }
@@ -70,8 +73,10 @@ Highcharts.chart('container', {
     }, {
         name: 'Temperature',
         type: 'spline',
-        data: [-13.6, -14.9, -5.8, -0.7, 3.1, 13.0, 14.5, 10.8, 5.8,
-            -0.7, -11.0, -16.4],
+        data: [
+            -11.4, -9.5, -14.2, 0.2, 7.0, 12.1, 13.5, 13.6, 8.2,
+            -2.8, -12.0, -15.5
+        ],
         tooltip: {
             valueSuffix: '°C'
         }

@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2021 Paweł Fus
+ *  (c) 2009-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -32,8 +32,6 @@ import type Toolbar from './StockToolbar';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
-const { getAssignedAxis } = NBU;
 import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
@@ -81,6 +79,7 @@ declare module '../../Extensions/Annotations/NavigationBindingsLike' {
  * @optionparent navigation.bindings
  */
 const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
+
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
@@ -99,9 +98,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -114,8 +111,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'segment',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -153,9 +150,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -171,8 +166,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -210,9 +205,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -226,8 +219,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'infinityLine',
                         typeOptions: {
                             type: 'ray',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -265,9 +258,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -284,8 +275,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -322,9 +313,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -338,8 +327,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'infinityLine',
                         typeOptions: {
                             type: 'line',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -377,9 +366,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -396,8 +383,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -432,9 +419,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -449,8 +434,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         draggable: 'y',
                         typeOptions: {
                             type: 'horizontalLine',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -478,9 +463,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -495,8 +478,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         draggable: 'x',
                         typeOptions: {
                             type: 'verticalLine',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -528,9 +511,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -545,8 +526,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'crooked3',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -583,9 +564,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -600,8 +579,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'crooked5',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -642,9 +621,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -659,8 +636,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'elliott3',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -704,9 +681,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -721,8 +696,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'elliott5',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -770,9 +745,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -788,8 +761,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'x',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
@@ -841,9 +814,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -859,8 +830,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'y',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 enabled: false,
@@ -912,9 +883,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -930,8 +899,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'xy',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             background: {
                                 width: 0,
@@ -974,10 +943,9 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
+     * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": { "typeOptions": { "reversed": false }}}
      */
     fibonacci: {
-        /** @ignore-option */
         className: 'highcharts-fibonacci',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
@@ -985,9 +953,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1002,8 +968,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'fibonacci',
                         type: 'fibonacci',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1044,9 +1010,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1061,8 +1025,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'parallelChannel',
                         type: 'tunnel',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1099,9 +1063,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1116,8 +1078,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'pitchfork',
                         type: 'pitchfork',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value,
@@ -1128,7 +1090,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 }
                             },
                             { x, y },
-                            { x, y }],
+                            { x, y }
+                            ],
                             innerBackground: {
                                 fill: 'rgba(100, 170, 255, 0.8)'
                             }
@@ -1405,9 +1368,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1420,8 +1381,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'fibonacciTimeZones',
                         langKey: 'fibonacciTimeZones',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value
                             }]
@@ -1444,21 +1405,21 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             ): void {
                 const mockPointOpts = annotation.options.typeOptions.points,
                     x = mockPointOpts && mockPointOpts[0].x,
-                    coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis);
+                    [coordsX, coordsY] = this.getCoords(e);
 
-                annotation.update({
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: x
-                        }, {
-                            x: coordsX.value
-                        }]
-                    }
-                });
+                if (coordsX && coordsY) {
+                    annotation.update({
+                        typeOptions: {
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
+                            points: [{
+                                x: x
+                            }, {
+                                x: coordsX.value
+                            }]
+                        }
+                    });
+                }
             }
         ]
     },

@@ -41,7 +41,7 @@ function checkJSWrap() {
 
     const fs = require('fs');
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -57,11 +57,11 @@ function checkJSWrap() {
                 fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                logLib.failure('js_wrap not found:', detailsFile);
+                LogLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            logLib.failure('File not found:', detailsFile);
+            LogLib.failure('File not found:', detailsFile);
             errors++;
         }
     });
@@ -72,6 +72,7 @@ function checkJSWrap() {
 }
 
 /**
+ * Checks if demos has valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -93,14 +94,16 @@ function checkDemosConsistency() {
     });
 
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const FSLib = require('../libs/fs.js');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
 
     glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details'
+        FSLib.path(process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details', true)
     ).forEach(detailsFile => {
+        detailsFile = FSLib.path(detailsFile, true);
 
         if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
             try {
@@ -114,32 +117,32 @@ function checkDemosConsistency() {
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
                 if (!name || /High.*demo/.test(name)) {
-                    logLib.failure('no name set, or default name used:', detailsFile);
+                    LogLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
 
                 if (!demoCategories || !demoCategories.length) {
-                    logLib.failure('no categories found:', detailsFile);
+                    LogLib.failure('no categories found:', detailsFile);
                     errors++;
                 } else {
                     if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                        logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                        LogLib.failure('one or more categories are missing from demo-config:', detailsFile);
                         errors++;
                     }
                 }
 
                 if (!demoTags || !demoTags.length) {
-                    logLib.failure('no tags found:', detailsFile);
+                    LogLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
-                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        LogLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
 
             } catch (e) {
-                logLib.failure('File not found:', detailsFile);
+                LogLib.failure('File not found:', detailsFile);
                 errors++;
             }
 
@@ -151,13 +154,13 @@ function checkDemosConsistency() {
 
                 if (typeof details === 'object') {
                     if (details.categories) {
-                        logLib.failure(
+                        LogLib.failure(
                             'categories should not be used in demo.details outside demo folder',
                             detailsFile
                         );
                         errors++;
                     } else if (details.tags) {
-                        logLib.failure(
+                        LogLib.failure(
                             'tags should not be used in demo.details outside demo folder',
                             detailsFile
                         );
@@ -175,13 +178,13 @@ function checkDemosConsistency() {
 }
 
 /**
+ * Checks if documentation is added to sidebar file
  * @async
- * @return {void}
+ * @return {Promise<void>}
  */
 function checkDocsConsistency() {
     const FS = require('fs');
-    const glob = require('glob');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     const sidebar = require('../../docs/sidebars.js');
     const { unlisted } = require('../../docs/doc-config.js');
@@ -221,121 +224,8 @@ function checkDocsConsistency() {
     }
 
     // Check links and references to samples
-    glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
-        const md = FS.readFileSync(file),
-            regex = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu;
-
-        const error404s = [];
-
-        let match;
-        while ((match = regex.exec(md))) {
-            const sample = match[2].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
-        }
-
-        if (error404s.length) {
-            throw new Error(
-                'Rotten links\n' + JSON.stringify(error404s, null, '  ')
-            );
-        }
-
-    });
 
 }
-
-/**
- * @return {void}
- */
-function saveRun() {
-
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const StringLib = require('./lib/string');
-
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
-    );
-    const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
-    );
-    const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
-    );
-
-    const configuration = {
-        latestCodeHash,
-        latestJsHash,
-        latestTestsHash
-    };
-
-    FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
-}
-
-/**
- * @return {boolean}
- *         True if outdated
- */
-function shouldRun() {
-
-    const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const stringLib = require('./lib/string');
-
-    let configuration = {
-        latestCodeHash: '',
-        latestJsHash: '',
-        latestTestsHash: ''
-    };
-
-    if (fs.existsSync(CONFIGURATION_FILE)) {
-        configuration = JSON.parse(
-            fs.readFileSync(CONFIGURATION_FILE).toString()
-        );
-    }
-
-    const latestCodeHash = fsLib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringLib.removeComments
-    );
-    const latestJsHash = fsLib.getDirectoryHash(
-        JS_DIRECTORY, true, stringLib.removeComments
-    );
-    const latestTestsHash = fsLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, stringLib.removeComments
-    );
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestJsHash !== configuration.latestJsHash
-    ) {
-
-        logLib.failure(
-            '✖ The files have not been built' +
-            ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.'
-        );
-
-        throw new Error('Code out of sync');
-    }
-
-    if (latestCodeHash === configuration.latestCodeHash &&
-        latestTestsHash === configuration.latestTestsHash
-    ) {
-
-        logLib.success(
-            '✓ Source code and unit tests not have been modified' +
-            ' since the last successful test run.'
-        );
-
-        return false;
-    }
-
-    return true;
-}
-
 
 /* *
  *
@@ -349,139 +239,164 @@ function shouldRun() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function test() {
+async function test() {
+    const fs = require('fs');
+    const argv = require('yargs').argv;
+    const log = require('../libs/log');
 
-    const LogLib = require('./lib/log');
-    const Yargs = require('yargs');
+    const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
-    return new Promise((resolve, reject) => {
+    if (argv.help || argv.helpme) {
+        log.message(
+            `HIGHCHARTS TYPESCRIPT TEST RUNNER
 
-        const argv = Yargs.argv;
+Available arguments for 'gulp test':` +
+            HELP_TEXT_COMMON +
+            `--visualcompare
+Performs a visual comparison of the output and creates a reference.svg and candidate.svg
+when doing so. A JSON file with the results is produced in the location
+specified by config.imageCapture.resultsOutputPath.
+            `
+        );
+        return;
+    }
 
-        if (argv.help) {
-            LogLib.message(`
-HIGHCHARTS TEST RUNNER
+    checkDocsConsistency();
+    checkDemosConsistency();
+    checkJSWrap();
 
-Available arguments for 'gulp test':
+    const forceRun = !!(
+        argv.browsers ||
+        argv.browsercount ||
+        argv.force ||
+        argv.tests ||
+        argv.testsAbsolutePath
+    );
+    const runConfig = {
+        configFile: CONFIGURATION_FILE,
+        codeDirectory: CODE_DIRECTORY,
+        jsDirectory: JS_DIRECTORY,
+        testsDirectory: TESTS_DIRECTORY
+    };
 
---browsers
-    Comma separated list of browsers to test. Available browsers are
-    'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
-    installed on the local system. Defaults to ChromeHeadless.
+    const { getProductTests } = require('./lib/test');
+    const productTests = getProductTests();
 
-    In addition, virtual browsers from Browserstack are supported. They are
-    prefixed by the operating system. Available BrowserStack browsers are
-    'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
-    Win.IE'.
+    // If false, there's no modified products
+    // If undefined, there's no product argument, so fall back to karma config
+    if (productTests === false) {
+        log.message('No tests to run, exiting early');
+        return;
+    }
 
-    For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
+    // Conditionally build required code
+    await gulp.task('scripts')();
 
-    A shorthand option, '--browsers all', runs all BrowserStack machines.
+    const shouldRunTests = forceRun ||
+        (await shouldRun(runConfig).catch(error => {
+            log.failure(error.message);
 
---browsercount
-    Number of browserinstances to spread/shard the tests across. Default value is 2.
-    Will default use ChromeHeadless browser. For other browsers specify
-    argument --splitbrowsers (same usage as above --browsers argument).
+            log.failure(
+                '✖ The files have not been built' +
+                ' since the last source code changes.' +
+                ' Run `npx gulp` and try again.' +
+                ' If this error occures contantly ' +
+                ' without a reason, then remove ' +
+                '`node_modules/_gulptasks_*.json` files.'
+            );
 
---debug
-    Skips rebuilding and prints some debugging info.
+            return false;
+        }));
 
---force
-    Forces all tests without cached results.
+    if (shouldRunTests) {
 
---speak
-    Says if tests failed or succeeded.
+        log.message('Run `gulp test --help` for available options');
 
---tests
-    Comma separated list of tests to run. Defaults to '*.*' that runs all tests
-    in the 'samples/' directory.
-    Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
-    directory.
+        const KarmaServer = require('karma').Server;
+        const { parseConfig } = require('karma').config;
 
---testsAbsolutePath
-    Comma separated list of tests to run. By default runs all tests
-    in the 'samples/' directory.
-    Example:
-    'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
-    runs all tests in the file.
+        const PluginError = require('plugin-error');
+        const {
+            reporters: defaultReporters,
+            browserDisconnectTimeout: defaultTimeout
+        } = require(KARMA_CONFIG_FILE);
 
---visualcompare
-    Performs a visual comparison of the output and creates a reference.svg and candidate.svg
-    when doing so. A JSON file with the results is produced in the location
-    specified by config.imageCapture.resultsOutputPath.
+        const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
+            reporters: argv.dots ? ['dots'] : defaultReporters,
+            browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
+            singleRun: true,
+            tests: Array.isArray(productTests) ?
+                productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
+                void 0,
+            client: {
+                cliArgs: argv
+            }
+        });
 
---ts
-    Compile TypeScript-based tests.
+        await new Promise((resolve, reject) => new KarmaServer(
+            karmaConfig,
+            err => {
 
---dots
-    Use the less verbose 'dots' reporter
+                // Force exit in BrowserStack GitHub Action
+                // eslint-disable-next-line node/no-process-exit
+                setTimeout(() => process.exit(err), 3000);
 
---timeout
-    Set a different disconnect timeout from default config
-
-`);
-            return;
-        }
-        checkDocsConsistency();
-        checkDemosConsistency();
-        checkJSWrap();
-
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath);
-
-        if (forceRun || shouldRun()) {
-
-            LogLib.message('Run `gulp test --help` for available options');
-
-            const KarmaServer = require('karma').Server;
-            const PluginError = require('plugin-error');
-            const {
-                reporters: defaultReporters,
-                browserDisconnectTimeout: defaultTimeout
-            } = require(KARMA_CONFIG_FILE);
-
-            new KarmaServer(
-                {
-                    configFile: KARMA_CONFIG_FILE,
-                    reporters: argv.dots ? ['dots'] : defaultReporters,
-                    browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-                    singleRun: true,
-                    client: {
-                        cliArgs: argv
-                    }
-                },
-                err => {
-
-                    if (err !== 0) {
-
-                        if (argv.speak) {
-                            LogLib.say('Tests failed!');
-                        }
-
-                        reject(new PluginError('karma', {
-                            message: 'Tests failed'
-                        }));
-
-                        return;
-                    }
-
-                    try {
-                        saveRun();
-                    } catch (catchedError) {
-                        LogLib.warn(catchedError);
-                    }
+                if (err !== 0) {
 
                     if (argv.speak) {
-                        LogLib.say('Tests succeeded!');
+                        log.say('Tests failed!');
                     }
 
-                    resolve();
-                }
-            ).start();
-        } else {
+                    reject(new PluginError('karma', {
+                        message: 'Tests failed'
+                    }));
 
-            resolve();
+                    return;
+                }
+
+                try {
+                    saveRun(runConfig);
+                } catch (catchedError) {
+                    log.warn(catchedError);
+                }
+
+                if (argv.speak) {
+                    log.say('Tests succeeded!');
+                }
+
+                resolve();
+            }
+        ).start());
+
+        // Capture console.error, console.warn and console.log
+        const consoleLogPath = `${BASE}/test/console.log`;
+        const consoleLog = await fs.promises.readFile(
+            consoleLogPath,
+            'utf-8'
+        ).catch(() => {});
+        if (consoleLog) {
+            const errors = (consoleLog.match(/ ERROR:/g) || []).length,
+                warnings = (consoleLog.match(/ WARN:/g) || []).length,
+                logs = (consoleLog.match(/ LOG:/g) || []).length;
+
+            const message = [];
+            if (errors) {
+                message.push(`${errors} errors`.red);
+            }
+            if (warnings) {
+                message.push(`${warnings} warnings`.yellow);
+            }
+            if (logs) {
+                message.push(`${logs} logs`);
+            }
+
+            log.message(
+                `The browser console logged ${message.join(', ')}.\n` +
+                'They can be reviewed in ' + consoleLogPath.cyan + '.'
+            );
         }
-    });
+
+    }
 }
 
-gulp.task('test', gulp.series('scripts', test));
+gulp.task('test', gulp.series('test-docs', test));

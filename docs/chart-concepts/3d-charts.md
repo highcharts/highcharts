@@ -71,7 +71,7 @@ For all 3D charts the following options are the most important (part of _chart.o
 
 **Beware that setting a low _viewDistance_ can result in twisted effects in the perspective because the view point is too close to the chart.**
 
-In _chart.options3d_ there is also the possibility to construct three panes around the chart called the _frame_, by default these panes are invisible but they can each be configured seperately in _chart.options.3d.frame_:
+In _chart.options3d_ there is also the possibility to construct three panes around the chart called the _frame_, by default these panes are invisible but they can each be configured separately in _chart.options.3d.frame_:
 
 
     bottom|side|back: {
@@ -93,7 +93,7 @@ A 3D chart of type [columns](https://highcharts.com/docs/chart-and-series-types/
 
 Just like in normal column charts, the Highcharts 3D plugin does allow to display a series of charts and to order these as desired using techniques like _grouping_ and _stacking_.
 
-By default, _grouping_ is **true** in Highcharts, displaying the columns next to each other, in Highcharts 3D this is still the same: the columns will be standing next to each other on the front row of your chart. By setting _grouping_ to **false**, the columns will be placed behind each other in order of appearance. The default behavious is to place the columns without any spacing against each other, this can be modified by setting the _groupZPadding_ option
+By default, _grouping_ is **true** in Highcharts, displaying the columns next to each other, in Highcharts 3D this is still the same: the columns will be standing next to each other on the front row of your chart. By setting _grouping_ to **false**, the columns will be placed behind each other in order of appearance. The default behaviour is to place the columns without any spacing against each other, this can be modified by setting the _groupZPadding_ option
 
 
     plotOptions.column.groupZPadding: Spacing between columns on the z-axis.

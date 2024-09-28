@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -38,7 +38,7 @@ export type SymbolKey = keyof SymbolTypeRegistry;
 export type SymbolType = SymbolTypeRegistry[SymbolKey];
 
 export interface SymbolTypeRegistry {
-    // add with declare module pattern
+    // Add with declare module pattern
 }
 
 /* *

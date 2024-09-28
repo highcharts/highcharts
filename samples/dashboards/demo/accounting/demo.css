@@ -1,0 +1,148 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+/* Dashboards */
+
+#container {
+    container: dashboard / inline-size;
+}
+
+.highcharts-dashboards-component-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 48px;
+    margin-bottom: 8px;
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-component-subtitle {
+    font-weight: 100;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-dashboards-component-kpi-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+#rev-chart-kpi,
+#cost-chart-kpi,
+#res-chart-kpi {
+    flex-basis: 25%;
+    height: 185px;
+}
+
+#rev-chart-kpi .highcharts-dashboards-component-kpi-value,
+#cost-chart-kpi .highcharts-dashboards-component-kpi-value,
+#res-chart-kpi .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
+
+#rev-chart-kpi .highcharts-dashboards-component-caption,
+#cost-chart-kpi .highcharts-dashboards-component-caption,
+#res-chart-kpi .highcharts-dashboards-component-caption {
+    padding-bottom: 10px;
+    font-size: 12px;
+    color: #aaa;
+}
+
+@container dashboard (max-width: 992px) {
+    #rev-chart,
+    #cost-chart,
+    #stock-cell {
+        flex-basis: 100%;
+    }
+}
+
+@container dashboard (max-width: 576px) {
+    #rev-chart-kpi,
+    #cost-chart-kpi,
+    #res-chart-kpi {
+        flex-basis: 100%;
+    }
+}
+
+/* Highcharts */
+
+:root,
+.highcharts-light {
+    --highcharts-color-0: #4689eb;
+    --highcharts-color-1: #949494;
+    --demo-prediction-color: #d36f00;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-color-1: #7c7c7c;
+        --demo-prediction-color: #debd5b;
+    }
+}
+
+.highcharts-gauge-chart {
+    max-height: 185px;
+}
+
+.highcharts-gauge-chart .highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.highcharts-gauge-chart .highcharts-title {
+    font-size: 0.8rem;
+}
+
+.highcharts-data-label-box {
+    display: none;
+}
+
+.highcharts-gauge-series .highcharts-pivot,
+.highcharts-gauge-series .highcharts-dial {
+    fill: var(--highcharts-neutral-color-60);
+    stroke: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-plot-band {
+    fill-opacity: 1;
+}
+
+.highcharts-plot-band.null-band {
+    fill: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-plot-band.warn-band {
+    fill: #ffa92e;
+}
+
+.highcharts-plot-band.opt-band {
+    fill: #a2efbb;
+}
+
+.highcharts-plot-band.high-band {
+    fill: #8383e5;
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-stock-chart .highcharts-color-1,
+.highcharts-stock-chart .highcharts-color-2 {
+    fill: var(--demo-prediction-color);
+    stroke: var(--demo-prediction-color);
+    stroke-dasharray: 1px 6px;
+}
+
+/* Custom */
+
+.year-plotline {
+    stroke-dasharray: 5px 3px;
+    stroke: #a0a0a080;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}
+
+#csv {
+    display: none;
+}

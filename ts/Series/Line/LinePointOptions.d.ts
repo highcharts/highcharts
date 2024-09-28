@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -33,7 +33,7 @@ declare module '../../Core/Series/PointOptions' {
 }
 
 export interface LinePointOptions extends PointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

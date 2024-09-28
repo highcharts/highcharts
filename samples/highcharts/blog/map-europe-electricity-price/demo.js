@@ -66,7 +66,8 @@
         },
 
         title: {
-            text: 'Average wholesale baseload electricity prices (third quarter of 2022)',
+            text: 'Average wholesale baseload electricity prices (third ' +
+                'quarter of 2022)',
             align: 'left'
         },
 

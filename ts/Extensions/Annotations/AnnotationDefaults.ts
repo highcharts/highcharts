@@ -20,7 +20,7 @@ const { defined } = U;
 
 /**
  * A basic type of an annotation. It allows to add custom labels
- * or shapes. The items  can be tied to points, axis coordinates
+ * or shapes. The items can be tied to points, axis coordinates
  * or chart pixel coordinates.
  *
  * @sample highcharts/annotations/basic/
@@ -161,7 +161,7 @@ const AnnotationDefaults: AnnotationOptions = {
         borderColor: Palette.neutralColor100,
 
         /**
-         * The border radius in pixels for the annotaiton's label.
+         * The border radius in pixels for the annotation's label.
          *
          * @sample highcharts/annotations/label-presentation/
          *         Set labels graphic options
@@ -536,7 +536,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
         /**
          * The type of the shape.
-         * Avaliable options are circle, rect and ellipse.
+         * Available options are circle, rect and ellipse.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -665,7 +665,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
     /**
      * Event callback when annotation is updated (e.g. drag and
-     * droppped or resized by control points).
+     * dropped or resized by control points).
      *
      * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
      * @since     7.1.0
@@ -678,6 +678,13 @@ const AnnotationDefaults: AnnotationOptions = {
      * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
      * @since     7.1.0
      * @apioption annotations.events.click
+     */
+
+    /**
+     * Fires when the annotation is dragged.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
+     * @apioption annotations.events.drag
      */
 
     /**
@@ -700,7 +707,7 @@ const AnnotationDefaults: AnnotationOptions = {
      */
     zIndex: 6
 
-} as AnnotationOptions; // typeOptions are expected but not set
+} as AnnotationOptions; // Type options are expected but not set
 
 /* *
  *

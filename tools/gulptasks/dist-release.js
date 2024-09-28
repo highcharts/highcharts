@@ -4,10 +4,10 @@
 
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
-const log = require('./lib/log');
+const log = require('../libs/log');
 const fs = require('fs-extra');
 // const fs = require('fs');
-// const libFS = require('./lib/fs');
+// const libFS = require('../libs/fs');
 const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
@@ -18,7 +18,6 @@ const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.j
 const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';
 const pathToDistRepo = '../' + releaseRepo + '/';
-
 
 /**
  * Asks user a question, and waits for input.
@@ -166,12 +165,24 @@ function copyFiles() {
     }];
 
     const files = {
-        'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
+        // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
         'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
         'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
     };
+
+    const filesToIgnore = [
+        '.DS_Store',
+        'package.json', // Is handled in `updateJSONFiles`
+        '.js.map'
+    ];
+
+    const pathsToIgnore = [
+        'dashboards',
+        'datagrid',
+        'es5'
+    ];
 
     // Copy all the files in the code folder
     folders.forEach(folder => {
@@ -186,7 +197,8 @@ function copyFiles() {
                     !path.startsWith('es-modules') ||
                     !path.endsWith('.d.ts')
                 ) &&
-                path !== 'package.json'
+                !pathsToIgnore.some(pattern => path.startsWith(pattern)) &&
+                !filesToIgnore.some(pattern => path.endsWith(pattern))
             ))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);

@@ -12,24 +12,18 @@ Highcharts.ganttChart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var completedValue = point.completed ?
-                        point.completed.amount || point.completed : null,
-                    completed = completedValue ?
-                        ' Task completed ' + Math.round(completedValue * 1000) / 10 + '%.' :
-                        '';
-                return Highcharts.format(
-                    '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
-                    { point, completed }
-                );
-            }
+            descriptionFormat: '{yCategory}. ' +
+                '{#if completed}Task {(multiply completed.amount 100):.1f}% ' +
+                'completed. {/if}' +
+                'Start {x:%Y-%m-%d}, end {x2:%Y-%m-%d}.'
         }
     },
 
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },
@@ -40,7 +34,9 @@ Highcharts.ganttChart('container', {
             name: 'Start prototype',
             start: Date.UTC(2014, 10, 18),
             end: Date.UTC(2014, 10, 25),
-            completed: 0.25
+            completed: {
+                amount: 0.25
+            }
         }, {
             name: 'Test prototype',
             start: Date.UTC(2014, 10, 27),

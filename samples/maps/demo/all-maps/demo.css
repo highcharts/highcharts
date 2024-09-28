@@ -1,124 +1,60 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #demo-wrapper {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 10px auto;
     height: 560px;
     background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#map-box {
-    width: 80%;
-    float: left;
-}
-
-#container {
-    height: 500px;
-}
-
-#side-box {
-    float: right;
-    width: 16%;
-    margin: 100px 1% 0;
-    padding-left: 1%;
-    border-left: 1px solid silver;
-    display: none;
-}
-
-#info-box {
-    margin-top: 10px;
-}
-
-.or-view-as {
-    margin: 0.5em 0;
-}
-
-#up {
-    line-height: 30px;
-    height: 30px;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-#up a {
-    cursor: pointer;
-    padding-left: 40px;
-}
-
-#chkDataLabels {
-    display: inline;
-}
-
-.selector {
+#selector {
+    display: flex;
+    align-items: center;
     height: 40px;
-    max-width: 400px;
-    margin: 0 auto;
-    position: relative;
+    width: 60%;
 }
 
-.selector .prev-next {
-    position: absolute;
-    padding: 0 10px;
+#selector .prev-next {
+    padding: 0 20px;
     font-size: 30px;
     line-height: 20px;
     background: white;
     font-weight: bold;
+    opacity: 0;
     color: #999;
-    top: -2px;
-    display: none;
     border: none;
 }
 
-.selector .custom-combobox {
-    display: block;
-    position: absolute;
-    left: 40px;
-    right: 65px;
-}
-
-.selector .custom-combobox .custom-combobox-input {
-    position: absolute;
-    font-size: 14px;
-    color: silver;
-    border-radius: 3px 0 0 3px;
-    height: 32px;
-    display: block;
-    background: url("https://www.highcharts.com/samples/graphics/search.png") 5px 8px no-repeat white;
-    padding: 1px 5px 1px 30px;
+#selector #map-datalist-input {
     width: 100%;
-    box-sizing: border-box;
-}
-
-.selector .custom-combobox .ui-autocomplete-input:focus {
-    color: black;
-}
-
-.selector .custom-combobox .ui-autocomplete-input.valid {
-    color: black;
-}
-
-.selector .custom-combobox-toggle {
-    position: absolute;
-    display: block;
-    right: -32px;
-    border-radius: 0 3px 3px 0;
     height: 32px;
-    width: 32px;
+    font-size: 14px;
+    border: 1px solid silver;
+    border-radius: 3px;
+    padding: 1px 5px 1px 30px;
+    background: url("https://www.highcharts.com/samples/graphics/search.png") 5px 8px no-repeat white;
 }
 
-.selector #btn-next-map {
-    right: -12px;
+#map-box {
+    display: flex;
+    width: 100%;
 }
 
-.ui-autocomplete {
-    max-height: 500px;
-    overflow: auto;
+#container {
+    flex: 0.8;
+    height: 500px;
 }
 
-.ui-autocomplete .option-header {
-    font-style: italic;
-    font-weight: bold;
-    margin: 5px 0;
-    font-size: 1.2em;
-    color: gray;
+#side-box {
+    flex: 0.2;
+    margin: 100px 1% 0;
+    padding-left: 1%;
+    border-left: 1px solid silver;
 }
 
 .loading {
@@ -127,35 +63,115 @@
     color: gray;
 }
 
-.ui-button-icon-only .ui-button-text {
-    height: 26px;
-    padding: 0 !important;
-    background: white;
+#checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-#info-box .button {
+#checkbox-wrapper #datalabels-checkbox {
+    appearance: none;
+    background-color: #dfe1e4;
+    border-radius: 72px;
+    border-style: none;
+    flex-shrink: 0;
+    height: 20px;
+    margin: 0;
+    position: relative;
+    width: 30px;
+}
+
+#checkbox-wrapper #datalabels-checkbox::before {
+    bottom: -6px;
+    content: "";
+    left: -6px;
+    position: absolute;
+    right: -6px;
+    top: -6px;
+}
+
+#checkbox-wrapper #datalabels-checkbox,
+#checkbox-wrapper #datalabels-checkbox::after {
+    transition: all 100ms ease-out;
+}
+
+#checkbox-wrapper #datalabels-checkbox::after {
+    background-color: #fff;
+    border-radius: 50%;
+    content: "";
+    height: 14px;
+    left: 3px;
+    position: absolute;
+    top: 3px;
+    width: 14px;
+}
+
+#checkbox-wrapper #datalabels-checkbox:hover {
+    background-color: #c9cbcd;
+    transition-duration: 0s;
+}
+
+#checkbox-wrapper #datalabels-checkbox:checked {
+    background-color: #6e79d6;
+}
+
+#checkbox-wrapper #datalabels-checkbox:checked::after {
+    background-color: #fff;
+    left: 13px;
+}
+
+.checkbox-wrapper-2 :focus:not(.focus-visible) {
+    outline: 0;
+}
+
+#checkbox-wrapper #datalabels-checkbox:checked:hover {
+    background-color: #535db3;
+}
+
+#info-box #clean-demo-btn {
+    background: #00766f;
+    display: inline-block;
+    color: #fff;
     border: none;
-    border-radius: 3px;
-    background: #a4edba;
-    padding: 5px;
-    color: black;
+    border-radius: 4px;
+    outline: none;
     text-decoration: none;
-    font-size: 12px;
-    white-space: nowrap;
-    cursor: pointer;
-    margin: 0 3px;
-    line-height: 30px;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    font-size: 1rem;
+    line-height: 140%;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 8px 16px;
+}
+
+#info-box #clean-demo-btn:hover {
+    opacity: 0.8;
+}
+
+.links {
+    transition: all 250ms;
+    touch-action: manipulation;
+}
+
+.links a {
+    color: #00e;
+    line-height: 1.5rem;
+}
+
+.links:hover {
+    font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {
-    #demo-wrapper {
-        width: auto;
-        height: auto;
+    #selector {
+        width: 100%;
     }
 
     #map-box {
-        width: auto;
-        float: none;
+        flex-direction: column;
     }
 
     #container {
@@ -163,9 +179,8 @@
     }
 
     #side-box {
-        float: none;
-        width: auto;
         margin-top: 0;
+        padding-top: 16px;
         border-left: none;
         border-top: 1px solid silver;
     }

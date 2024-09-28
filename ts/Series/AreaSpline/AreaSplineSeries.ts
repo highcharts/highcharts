@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -65,9 +65,9 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    public data: Array<AreaSplinePoint> = void 0 as any;
-    public points: Array<AreaSplinePoint> = void 0 as any;
-    public options: AreaSplineSeriesOptions = void 0 as any;
+    public data!: Array<AreaSplinePoint>;
+    public points!: Array<AreaSplinePoint>;
+    public options!: AreaSplineSeriesOptions;
 }
 
 /* *
@@ -246,4 +246,4 @@ export default AreaSplineSeries;
  * @apioption series.areaspline.fillOpacity
  */
 
-''; // adds doclets above into transpilat
+''; // Adds doclets above into transpiled

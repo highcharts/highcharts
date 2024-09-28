@@ -1,6 +1,7 @@
 /**
- * This is an advanced demo of setting up Highcharts with the flags feature borrowed from Highcharts Stock.
- * It also shows custom graphics drawn in the chart area on chart load.
+ * This is an advanced demo of setting up Highcharts with the flags feature
+ * borrowed from Highcharts Stock. It also shows custom graphics drawn in the
+ * chart area on chart load.
  */
 
 
@@ -9,22 +10,18 @@
  */
 function onChartLoad() {
 
-    var centerX = Math.max(this.chartWidth * 0.2, 140),
+    const centerX = Math.max(this.chartWidth * 0.2, 140),
         centerY = Math.max(this.chartHeight * 0.3, 110),
-        path = [],
-        angle,
-        radius,
         badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
             .brighten(-0.2)
             .get(),
+        path = [];
+
+    let angle,
+        radius,
         spike,
-        empImage,
-        big5,
-        label,
         left,
-        right,
-        years,
-        renderer;
+        right;
 
     if (this.chartWidth < 530) {
         return;
@@ -50,7 +47,7 @@ function onChartLoad() {
         .add();
 
     // Employee image overlay
-    empImage = this.renderer.path(path)
+    const empImage = this.renderer.path(path)
         .attr({
             zIndex: 7,
             opacity: 0,
@@ -60,7 +57,7 @@ function onChartLoad() {
         .add();
 
     // Big 5
-    big5 = this.renderer.text('10')
+    const big5 = this.renderer.text('10')
         .attr({
             zIndex: 6
         })
@@ -77,7 +74,7 @@ function onChartLoad() {
     });
 
     // Draw the label
-    label = this.renderer.text('Highcharts Anniversary')
+    const label = this.renderer.text('Highcharts Anniversary')
         .attr({
             zIndex: 6
         })
@@ -134,7 +131,7 @@ function onChartLoad() {
         .add();
 
     // 2009-2019
-    years = this.renderer.text('2009-2019')
+    const years = this.renderer.text('2009-2019')
         .attr({
             zIndex: 6
         })
@@ -150,7 +147,7 @@ function onChartLoad() {
     });
 
     // Prepare mouseover
-    renderer = this.renderer;
+    const renderer = this.renderer;
     if (renderer.defs) { // is SVG
         this.get('employees').points.forEach(point => {
             let pattern;
@@ -222,7 +219,8 @@ function getTurnover() {
 
             return turnover;
         },
-        [])
+        []
+    )
         .sort((a, b) => a.x - b.x)
         .map(event => Object.assign(
             event, {
@@ -251,7 +249,8 @@ const options = {
             label: {
                 text: '<em>Offices:</em><br> Torstein\'s<br>basement',
                 style: {
-                    color: '#999999'
+                    color: '#999999',
+                    width: 'auto'
                 },
                 y: 180
             }
@@ -471,7 +470,8 @@ const options = {
         type: 'area',
         step: 'left',
         tooltip: {
-            headerFormat: '<span style="font-size: 11px;color:#666">{point.x:%B %e, %Y}</span><br>',
+            headerFormat: '<span style="font-size: 11px;color:#666">' +
+                '{point.x:%B %e, %Y}</span><br>',
             pointFormat: '{point.name}<br><b>{point.y}</b>',
             valueSuffix: ' employees'
         },
@@ -560,7 +560,8 @@ if (Highcharts.Series.types.flags) {
         },
         {
             x: Date.UTC(2016, 8, 29),
-            text: 'Styled mode, responsive options, accessibility, chart.update',
+            text: 'Styled mode, responsive options, accessibility, ' +
+                'chart.update',
             title: '5.0'
         },
         {
@@ -594,12 +595,15 @@ if (Highcharts.Series.types.flags) {
         fillColor: 'rgba(255,255,255,0.8)',
         data: [{
             x: Date.UTC(2012, 10, 1),
-            text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
+            text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
+                'Fjordane, Norway',
             title: 'Award'
         },
         {
             x: Date.UTC(2012, 11, 25),
-            text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.',
+            text: 'Packt Publishing published <em>Learning Highcharts by ' +
+                'Example</em>. Since then, many other books are written ' +
+                'about Highcharts.',
             title: 'First book'
         },
         {

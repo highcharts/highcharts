@@ -3,7 +3,7 @@
  * @module highcharts/modules/broken-axis
  * @requires highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,5 +11,6 @@
 import Highcharts from '../../Core/Globals.js';
 import BrokenAxis from '../../Core/Axis/BrokenAxis.js';
 const G: AnyRecord = Highcharts;
-// Compositions
-BrokenAxis.compose(G.Axis, G.Series);
+G.BrokenAxis = G.BrokenAxis || BrokenAxis;
+G.BrokenAxis.compose(G.Axis, G.Series);
+export default Highcharts;

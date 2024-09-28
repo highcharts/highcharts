@@ -13,7 +13,7 @@ Highcharts.getOptions().colors = Highcharts.getOptions().colors.map(
             ]
         };
     });
-var left = Highcharts.chart('left', {
+const left = Highcharts.chart('left', {
     chart: {
         renderTo: 'container',
         margin: 100,
@@ -70,7 +70,7 @@ var left = Highcharts.chart('left', {
     }]
 });
 
-var right = Highcharts.chart('right', {
+const right = Highcharts.chart('right', {
     chart: {
         renderTo: 'container',
         margin: 100,
@@ -137,7 +137,8 @@ setInterval(function () {
 }, 200);
 
 function returnData() {
-    return [[1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7],
+    return [
+        [1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7],
         [6, 9, 6], [7, 0, 5], [2, 3, 3], [3, 9, 8], [3, 6, 5], [4, 9, 4],
         [2, 3, 3], [6, 9, 9], [0, 7, 0], [7, 7, 9], [7, 2, 9], [0, 6, 2],
         [4, 6, 7], [3, 7, 7], [0, 1, 7], [2, 8, 6], [2, 3, 7], [6, 4, 8],
@@ -155,5 +156,6 @@ function returnData() {
         [9, 7, 4], [5, 4, 2], [9, 6, 1], [2, 7, 3], [4, 5, 4],
         [6, 8, 1], [3, 4, 0], [2, 2, 6], [5, 1, 2], [9, 9, 7],
         [6, 9, 9], [8, 4, 3], [4, 1, 7], [6, 2, 5], [0, 4, 9],
-        [3, 5, 9], [6, 9, 1], [1, 9, 2]];
+        [3, 5, 9], [6, 9, 1], [1, 9, 2]
+    ];
 }

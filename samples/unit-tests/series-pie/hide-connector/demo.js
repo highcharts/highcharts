@@ -14,15 +14,16 @@ QUnit.test('Pie connector with HTML(#4365)', function (assert) {
         .highcharts();
 
     assert.strictEqual(
-        typeof chart.series[0].points[0].connector.element.getBBox(),
+        typeof chart.series[0].points[0].dataLabel.connector.element.getBBox(),
         'object',
         'Connector has a bounding box'
     );
 
-    // Now hide the series and check that one of the connector's parents is hidden
+    // Now hide the series and check that one of the connector's parents is
+    // hidden
     chart.series[0].hide();
     var hiddenParent,
-        parent = chart.series[0].points[0].connector.element;
+        parent = chart.series[0].points[0].dataLabel.connector.element;
 
     while (parent && hiddenParent === undefined) {
         if (parent.getAttribute('visibility') === 'visible') {

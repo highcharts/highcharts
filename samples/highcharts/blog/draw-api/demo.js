@@ -1,4 +1,4 @@
-var renderer = new Highcharts.Renderer(
+const renderer = new Highcharts.Renderer(
     document.querySelector('#container'),
     400,
     300

@@ -1,0 +1,8 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+#container {
+    height: 400px;
+    min-width: 310px;
+}

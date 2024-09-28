@@ -1,0 +1,6 @@
+---
+name: Basic configuration for TiledWebMap
+authors:
+  - Kamil Musialowski
+js_wrap: b
+...

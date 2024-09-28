@@ -1,4 +1,4 @@
-var data = [
+const data = [
     1, // first group
     2, // first group ---> (1 + 2) / 2 = 1,5
     3, // second group

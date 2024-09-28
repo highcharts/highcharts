@@ -24,7 +24,8 @@
                     point: {
                         events: {
                             select: function () {
-                                const text = 'Selected ' + this.name + ' (' + this.value + '/km²)',
+                                const text = 'Selected ' + this.name + ' (' +
+                                        this.value + '/km²)',
                                     chart = this.series.chart;
                                 if (!chart.selectedLabel) {
                                     chart.selectedLabel = chart.renderer
@@ -37,7 +38,8 @@
                                 }
                             },
                             unselect: function () {
-                                const text = 'Unselected ' + this.name + ' (' + this.value + '/km²)',
+                                const text = 'Unselected ' + this.name + ' (' +
+                                        this.value + '/km²)',
                                     chart = this.series.chart;
                                 if (!chart.unselectedLabel) {
                                     chart.unselectedLabel = chart.renderer

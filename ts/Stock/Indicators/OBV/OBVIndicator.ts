@@ -90,7 +90,7 @@ class OBVIndicator extends SMAIndicator {
             period: void 0,
             /**
              * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * indicator calculation.
              */
             volumeSeriesID: 'volume'
         },
@@ -105,9 +105,9 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<OBVPoint> = void 0 as any;
-    public points: Array<OBVPoint> = void 0 as any;
-    public options: OBVOptions = void 0 as any;
+    public data!: Array<OBVPoint>;
+    public points!: Array<OBVPoint>;
+    public options!: OBVOptions;
 
     /* *
      *
@@ -152,11 +152,11 @@ class OBVIndicator extends SMAIndicator {
                 curentClose = hasOHLC ?
                     (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
 
-                if (curentClose > previousClose) { // up
+                if (curentClose > previousClose) { // Up
                     curentOBV = previousOBV + volume[i];
-                } else if (curentClose === previousClose) { // constant
+                } else if (curentClose === previousClose) { // Constant
                     curentOBV = previousOBV;
-                } else { // down
+                } else { // Down
                     curentOBV = previousOBV - volume[i];
                 }
 
@@ -197,12 +197,12 @@ class OBVIndicator extends SMAIndicator {
  * */
 
 interface OBVIndicator {
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
 }
 
 extend(OBVIndicator.prototype, {
-    nameComponents: void 0 as any
+    nameComponents: void 0
 });
 
 /* *
@@ -246,4 +246,4 @@ export default OBVIndicator;
  * @apioption series.obv
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

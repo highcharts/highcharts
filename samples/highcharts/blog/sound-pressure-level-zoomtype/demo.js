@@ -1,4 +1,4 @@
-var data1 = [
+const data1 = [
     [1, 250],
     [2, 180],
     [3, 140],
@@ -14,7 +14,7 @@ var data1 = [
     [13, 31]
 ];
 
-var data2 = [
+const data2 = [
     [1, 350],
     [2, 250],
     [3, 200],
@@ -30,7 +30,7 @@ var data2 = [
     [13, 36]
 ];
 
-var data3 = [
+const data3 = [
     [1, 550],
     [2, 450],
     [3, 390],
@@ -46,10 +46,12 @@ var data3 = [
     [13, 110]
 ];
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Sound pressure level'
@@ -121,10 +123,11 @@ var chart = Highcharts.chart('container', {
 });
 
 const changeType = () => {
-    var series = document.querySelector('.series');
-    var seriesInd =
+    const series = document.querySelector('.series');
+    const seriesInd =
         parseInt(series.options[series.selectedIndex].value, 10) - 1;
-    var type = chart.series[seriesInd].type === 'column' ? 'scatter' : 'column';
+    const type = chart.series[seriesInd].type ===
+        'column' ? 'scatter' : 'column';
     chart.series[seriesInd].update({
         type: type
     });

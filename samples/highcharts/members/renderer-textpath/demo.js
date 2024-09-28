@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
     },

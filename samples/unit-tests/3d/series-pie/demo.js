@@ -37,11 +37,6 @@ QUnit.test('3d pie with zeroes (#4584)', function (assert) {
         'Null point does not have graphic'
     );
     assert.strictEqual(
-        chart.series[0].points[0].connector instanceof Highcharts.SVGElement,
-        false,
-        'Null point does not have connector'
-    );
-    assert.strictEqual(
         chart.series[0].points[0].dataLabel instanceof Highcharts.SVGElement,
         false,
         'Null point does not have data label'
@@ -52,19 +47,22 @@ QUnit.test('3d pie with zeroes (#4584)', function (assert) {
         'Not null point has graphic'
     );
     assert.strictEqual(
-        chart.series[0].points[1].connector instanceof Highcharts.SVGElement,
-        true,
-        'Not null point has connector'
-    );
-    assert.strictEqual(
         chart.series[0].points[1].dataLabel instanceof Highcharts.SVGElement,
         true,
         'Not null point has data label'
     );
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.connector instanceof
+            Highcharts.SVGElement,
+        true,
+        'Not null point has connector'
+    );
+
 });
 
 QUnit.test(
-    'Pie points\' graphic should have visibility=hidden when slices are hidden (#4891)',
+    'Pie points\' graphic should have visibility=hidden when slices are ' +
+    'hidden (#4891)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({

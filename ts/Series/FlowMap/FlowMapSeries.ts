@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -16,14 +16,16 @@
  * */
 
 import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
+import type { LonLatArray } from '../..//Maps/MapViewOptions';
+import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type { MarkerEndOptions } from './FlowMapPointOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import FlowMapPoint from './FlowMapPoint.js';
-import MapSeries from '../Map/MapSeries.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import { LonLatArray } from '../..//Maps/MapViewOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import FlowMapPoint from './FlowMapPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
         prototype: {
@@ -32,11 +34,10 @@ const {
     },
     seriesTypes: {
         column: ColumnSeries,
+        map: MapSeries,
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
-import { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -340,12 +341,12 @@ class FlowMapSeries extends MapLineSeries {
      *
      * */
 
-    public data: Array<FlowMapPoint> = void 0 as any;
-    public options: FlowMapSeriesOptions = void 0 as any;
-    public points: Array<FlowMapPoint> = void 0 as any;
-    public smallestWeight?: number = void 0 as any;
-    public greatestWeight?: number = void 0 as any;
-    public centerOfPoints: PositionObject = void 0 as any;
+    public data!: Array<FlowMapPoint>;
+    public options!: FlowMapSeriesOptions;
+    public points!: Array<FlowMapPoint>;
+    public smallestWeight?: number;
+    public greatestWeight?: number;
+    public centerOfPoints!: PositionObject;
 
     /**
      *
@@ -366,7 +367,7 @@ class FlowMapSeries extends MapLineSeries {
         const series = this,
             points = series.points;
 
-        if (!init) { // run the animation
+        if (!init) { // Run the animation
             points.forEach((point: FlowMapPoint): void => {
                 if (
                     point.shapeArgs &&
@@ -377,7 +378,7 @@ class FlowMapSeries extends MapLineSeries {
                         x = path[0][1],
                         y = path[0][2];
 
-                    // to animate SVG path the initial path array needs to be
+                    // To animate SVG path the initial path array needs to be
                     // same as target, but element should be visible, so we
                     // insert array elements with start (M) values
                     if (x && y) {
@@ -549,7 +550,7 @@ class FlowMapSeries extends MapLineSeries {
                         foundPoint.plotX &&
                         foundPoint.plotY
                     ) {
-                        // after linked point update flowmap point should
+                        // After linked point update flowmap point should
                         // be also updated
                         addEvent(foundPoint, 'update', dirtySeries);
 
@@ -560,8 +561,8 @@ class FlowMapSeries extends MapLineSeries {
                     }
                 },
                 getLonLatXY = (
-                    lonLat: LonLatArray | Highcharts.MapLonLatObject
-                ): Highcharts.MapLonLatObject => {
+                    lonLat: (LonLatArray|MapLonLatObject)
+                ): MapLonLatObject => {
                     if (isArray(lonLat)) {
                         return {
                             lon: lonLat[0],
@@ -811,14 +812,15 @@ class FlowMapSeries extends MapLineSeries {
                 markerEndOptions
             );
 
-            (shapeArgs.d as SVGPath).splice(2, 0,
+            (shapeArgs.d as SVGPath).splice(
+                2, 0,
                 ...marker
             );
         }
 
         // Objects converted to string to be used in tooltip.
-        const fromPoint = point.options.from as Highcharts.MapLonLatObject,
-            toPoint = point.options.to as Highcharts.MapLonLatObject,
+        const fromPoint = point.options.from as MapLonLatObject,
+            toPoint = point.options.to as MapLonLatObject,
             fromLat = fromPoint.lat,
             fromLon = fromPoint.lon,
             toLat = toPoint.lat,
@@ -1071,4 +1073,4 @@ export default FlowMapSeries;
  */
 
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -107,12 +107,12 @@ class AroonIndicator extends SMAIndicator {
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of aroon series points.
+         * Parameters used in calculation of aroon series points.
          *
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             period: 25
         },
         marker: {
@@ -122,7 +122,7 @@ class AroonIndicator extends SMAIndicator {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
         },
         /**
-         * aroonDown line options.
+         * AroonDown line options.
          */
         aroonDown: {
             /**
@@ -153,11 +153,11 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AroonPoint> = void 0 as any;
+    public data!: Array<AroonPoint>;
 
-    public options: AroonOptions = void 0 as any;
+    public options!: AroonOptions;
 
-    public points: Array<AroonPoint> = void 0 as any;
+    public points!: Array<AroonPoint>;
 
     /* *
      *
@@ -228,7 +228,7 @@ class AroonIndicator extends SMAIndicator {
 
 interface AroonIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointArrayMap: Array<keyof AroonPoint>;
     pointValKey: string;
     pointClass: typeof AroonPoint;
@@ -285,4 +285,4 @@ export default AroonIndicator;
  * @apioption series.aroon
  */
 
-''; // to avoid removal of the above jsdoc
+''; // To avoid removal of the above jsdoc

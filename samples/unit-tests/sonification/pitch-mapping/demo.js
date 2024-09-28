@@ -51,8 +51,14 @@ QUnit.test('Pitch and note mapping', function (assert) {
         frequency: 440
     });
 
-    assert.strictEqual(notes(), '100,10', 'Note mapping remains after setting frequency');
-    assert.strictEqual(notes('frequency'), '440,440', 'Fixed frequency mapping');
+    assert.strictEqual(
+        notes(),
+        '100,10', 'Note mapping remains after setting frequency'
+    );
+    assert.strictEqual(notes(
+        'frequency'
+    ), '440,440', 'Fixed frequency mapping'
+    );
 
     updateMapping({
         pitch: [60, 'C6', 'e4', 96],
@@ -63,7 +69,10 @@ QUnit.test('Pitch and note mapping', function (assert) {
         }
     });
 
-    assert.strictEqual(notes(), '60,72,52,96,60,72,52,96', 'Multiple note mapping');
+    assert.strictEqual(
+        notes(),
+        '60,72,52,96,60,72,52,96', 'Multiple note mapping'
+    );
     assert.strictEqual(
         chart.sonification.timeline
             .channels[0].events.map(e => e.time)
@@ -95,8 +104,16 @@ QUnit.test('Pitch and note mapping', function (assert) {
 
     chart.series[0].setData([0, 5.5435, 10]);
 
-    assert.strictEqual(notes(), '0,5.5435,10', 'Rounding to musical notes off (pitch)');
-    assert.strictEqual(notes('frequency'), '1000,1554.35,2000', 'Rounding to musical notes off (freq)');
+    assert.strictEqual(
+        notes(),
+        '0,5.5435,10',
+        'Rounding to musical notes off (pitch)'
+    );
+    assert.strictEqual(
+        notes('frequency'),
+        '1000,1554.35,2000',
+        'Rounding to musical notes off (freq)'
+    );
 
     delete Highcharts.sonification.Sonification.prototype.forceReady;
 });
@@ -234,8 +251,10 @@ QUnit.test('Map to musical scales', function (assert) {
             }
         },
         series: [{
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+            data: [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+                12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
+            ]
         }]
     });
 
@@ -290,7 +309,8 @@ QUnit.test('Map to musical scales', function (assert) {
 
     assert.strictEqual(
         getNotes(chart),
-        '48.3,49.8,52.2,53.1,54.75,57.22,59.1,60.3,61.8,64.2,65.1,66.75,69.22,71.1,72.3',
+        '48.3,49.8,52.2,53.1,54.75,57.22,59.1,60.3,61.8,64.2,65.1,66.75,' +
+        '69.22,71.1,72.3',
         'Detuned piano.'
     );
 

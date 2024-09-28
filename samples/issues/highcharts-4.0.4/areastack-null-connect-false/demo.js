@@ -10,7 +10,8 @@ $(function () {
         },
 
         subtitle: {
-            text: 'connectNulls = false (default)<br>reversedStacks = true (default)'
+            text: 'connectNulls = false (default)<br>reversedStacks = true ' +
+                '(default)'
         },
 
         plotOptions: {

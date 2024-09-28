@@ -226,11 +226,43 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     assert.close(
         chart.yAxis[0].toPixels(point.y),
-        tooltipClient.y + tooltipClient.height -
+        tooltipClient.y + tooltipClient.height - 2 -
             pointBox.height - (pointBox.height / 2),
         4,
         `Tooltip with outside and split properties set to true should be
         rendered properly - y position (#17720).`
+    );
+    chart.update({
+        tooltip: {
+            shadow: false
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    const tooltipClientRect = chart.tooltip.container.getBoundingClientRect();
+
+    chart.update({
+        tooltip: {
+            shadow: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.close(
+        tooltipClientRect.width,
+        chart.tooltip.container.getBoundingClientRect().width,
+        1,
+        `Tooltip's shadow offsetX should be evaluated in container width
+        to avoid cutting it off (#19314).`
+    );
+
+    assert.close(
+        tooltipClientRect.height,
+        chart.tooltip.container.getBoundingClientRect().height,
+        1,
+        `Tooltip's shadow offsetY should be evaluated in container height
+        to avoid cutting it off (#19314).`
     );
 });
 
@@ -435,7 +467,8 @@ QUnit.test('positioning', assert => {
     // Test tooltip position when point is inside plot area
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when ' +
+        'point is inside plot area'
     );
 });
 
@@ -492,7 +525,8 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
         assert.strictEqual(
             chart.series[0].tt,
             undefined,
-            'When a point is outside the plot height, its tooltip should not show'
+            'When a point is outside the plot height, its tooltip should not ' +
+            'show'
         );
     } finally {
         container.style.width = originalContainerWidth;
@@ -575,4 +609,49 @@ QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
         );
         endTest();
     }, 1000);
+});
+
+QUnit.test('Split tooltip, hovering between series', assert => {
+    const clock = TestUtilities.lolexInstall(),
+        chart = Highcharts.chart('container', {
+            tooltip: {
+                split: true,
+                animation: {
+                    // We need some time to catch the tooltip
+                    duration: 2000
+                }
+            },
+            series: [{
+                data: [0, 1, 3]
+            }, {
+                data: [[1, 2]],
+                type: 'scatter'
+            }]
+        }),
+        { plotLeft, plotTop, series } = chart,
+        startPoint = series[0].points[2],
+        endPoint =  series[1].points[0],
+        controller = new TestController(chart),
+        controlPos = endPoint.plotX + plotLeft,
+        endTest = assert.async();
+
+    controller.moveTo(
+        startPoint.plotX + plotLeft,
+        startPoint.plotY + plotTop
+    );
+    controller.moveTo(
+        controlPos,
+        endPoint.plotY + plotTop
+    );
+
+    setTimeout(function () {
+        assert.strictEqual(
+            true,
+            chart.tooltip.label.x > controlPos,
+            'Tooltip should travel from the right side.'
+        );
+        endTest();
+    }, 1000);
+
+    TestUtilities.lolexRunAndUninstall(clock);
 });

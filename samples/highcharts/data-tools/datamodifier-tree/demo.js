@@ -1,11 +1,15 @@
 const sortModifier = new Highcharts.DataModifier.types.Sort();
 const rangeModifier = new Highcharts.DataModifier.types.Range();
+const mathModifier = new Highcharts.DataModifier.types.Math();
 const invertModifier = new Highcharts.DataModifier.types.Invert();
 const chainModifier = new Highcharts.DataModifier.types.Chain();
 
 const table = new Highcharts.DataTable({
     columns: {
-        name: ['Bakso', 'Dahipuri', 'Mochi', 'Imqaret', 'Mochi', 'Bakso', 'Empanada', 'Kebab', 'Rustico', 'Obatzda'],
+        name: [
+            'Bakso', 'Dahipuri', 'Mochi', 'Imqaret', 'Mochi', 'Bakso',
+            'Empanada', 'Kebab', 'Rustico', 'Obatzda'
+        ],
         x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         y: [28, 30, 13, 9, 39, 2, 31, 11, 18, 15]
     }
@@ -14,10 +18,19 @@ const table = new Highcharts.DataTable({
 
 // "Run Modifiers" Button
 
-document.querySelector('#modify').addEventListener('click', () => {
-    const sortModifierActivate = document.querySelector('#sortmodifier-activate');
-    const rangeModifierActivate = document.querySelector('#rangemodifier-activate');
-    const invertModifierActivate = document.querySelector('#invertmodifier-activate');
+document.querySelector('#modify').addEventListener('click', async () => {
+    const sortModifierActivate = document.querySelector(
+        '#sortmodifier-activate'
+    );
+    const rangeModifierActivate = document.querySelector(
+        '#rangemodifier-activate'
+    );
+    const mathModifierActivate = document.querySelector(
+        '#mathmodifier-activate'
+    );
+    const invertModifierActivate = document.querySelector(
+        '#invertmodifier-activate'
+    );
 
     // reset chain
     chainModifier.clear();
@@ -48,13 +61,26 @@ document.querySelector('#modify').addEventListener('click', () => {
         chainModifier.add(rangeModifier);
     }
 
+    // add math to chain
+    if (mathModifierActivate.checked) {
+        mathModifier.options.columnFormulas = [{
+            column: document
+                .querySelector('#mathmodifier-columnformulas-column')
+                .value,
+            formula: document
+                .querySelector('#mathmodifier-columnformulas-formula')
+                .value
+        }];
+        chainModifier.add(mathModifier);
+    }
+
     // add invert to chain
     if (invertModifierActivate.checked) {
         chainModifier.add(invertModifier);
     }
 
     // apply modifier changes
-    table.setModifier(chainModifier);
+    await table.setModifier(chainModifier);
     console.log(table);
 
     // render results

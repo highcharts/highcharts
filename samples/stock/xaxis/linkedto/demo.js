@@ -1,20 +1,27 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    title: {
-        text: 'Linked Y axis on left side'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    yAxis: [{}, {
-        linkedTo: 0,
-        opposite: false
-    }],
+    Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 1
-    },
+        title: {
+            text: 'Linked Y axis on left side'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        yAxis: [{}, {
+            linkedTo: 0,
+            opposite: false
+        }],
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -37,7 +37,7 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const {
     format,
     numberFormat
@@ -51,6 +51,7 @@ import U from '../../../Core/Utilities.js';
 const {
     find,
     isNumber,
+    isString,
     pick,
     defined
 } = U;
@@ -108,7 +109,7 @@ function findFirstPointWithGraphic(
  * order to describe a point that has no graphic.
  * @private
  */
-function shouldAddMockPoint(point: Point): boolean {
+function shouldAddMockPoint(point: Point): boolean|undefined {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const series = point.series,
@@ -197,7 +198,7 @@ function hasMorePointsThanDescriptionThreshold(
     return !!(
         threshold !== false &&
         series.points &&
-        series.points.length >= threshold
+        series.points.length >= +threshold
     );
 }
 
@@ -227,7 +228,7 @@ function shouldSetKeyboardNavPropsOnPoints(
     return !!(
         series.points && (
             series.points.length <
-                seriesNavOptions.pointNavigationEnabledThreshold ||
+                +seriesNavOptions.pointNavigationEnabledThreshold ||
             seriesNavOptions.pointNavigationEnabledThreshold === false
         )
     );
@@ -539,15 +540,29 @@ function setPointScreenReaderAttribs(
     pointElement: DOMElementType
 ): void {
     const series = point.series,
+        seriesPointA11yOptions = series.options.accessibility?.point || {},
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesPointA11yOptions = series.options.accessibility &&
-            series.options.accessibility.point || {},
         label = stripHTMLTags(
-            seriesPointA11yOptions.descriptionFormatter &&
-            seriesPointA11yOptions.descriptionFormatter(point) ||
-            a11yPointOptions.descriptionFormatter &&
-            a11yPointOptions.descriptionFormatter(point) ||
-            defaultPointDescriptionFormatter(point)
+            (
+                isString(seriesPointA11yOptions.descriptionFormat) &&
+                format(
+                    seriesPointA11yOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            seriesPointA11yOptions.descriptionFormatter?.(point) ||
+            (
+                isString(a11yPointOptions.descriptionFormat) &&
+                format(
+                    a11yPointOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            a11yPointOptions.descriptionFormatter?.(point) ||
+            defaultPointDescriptionFormatter(point),
+            series.chart.renderer.forExport
         );
 
     pointElement.setAttribute('role', 'img');
@@ -690,7 +705,8 @@ function describeSeriesElement(
         stripHTMLTags(
             (a11yOptions.series as any).descriptionFormatter &&
             (a11yOptions.series as any).descriptionFormatter(series) ||
-            defaultSeriesDescriptionFormatter(series)
+            defaultSeriesDescriptionFormatter(series),
+            series.chart.renderer.forExport
         )
     );
 }

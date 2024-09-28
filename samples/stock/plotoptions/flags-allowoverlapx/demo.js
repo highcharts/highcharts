@@ -1,10 +1,14 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
+(async () => {
+
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
+
     const year = 2021,
         monthIndex = 11;
 
     // Create the chart
     Highcharts.stockChart('container', {
-
 
         rangeSelector: {
             selected: 0
@@ -30,7 +34,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/sa
 
         series: [{
             name: 'USD to EUR',
-            data: data,
+            data: usdeur,
             id: 'dataseries'
 
             // the event marker flags
@@ -186,4 +190,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/sa
             width: 16
         }]
     });
-});
+})();

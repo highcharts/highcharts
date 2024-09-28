@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fj/fj-all.topo.json">Fiji</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fj/fj-all.topo.json">Fiji</a>'
         },
 
         mapNavigation: {

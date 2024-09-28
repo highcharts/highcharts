@@ -15,9 +15,9 @@ Highcharts.setOptions({
 });
 
 function getRandomData() {
-    var data = [];
+    const data = [];
 
-    for (var i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i++) {
         data.push([Math.random() * 14, Math.random() * 14]);
     }
 
@@ -25,7 +25,7 @@ function getRandomData() {
 }
 
 // Set up the chart
-var chart = Highcharts.chart({
+const chart = Highcharts.chart({
     chart: {
         renderTo: 'container',
         margin: 100,

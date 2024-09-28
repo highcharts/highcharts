@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -59,6 +59,7 @@ export interface SVGAttributes {
     fill?: ColorType;
     'fill-opacity'?: number;
     filter?: string;
+    filterUnits?: string;
     'flood-color'?: string;
     'flood-opacity'?: number;
     gradientUnits?: 'userSpaceOnUse';
@@ -75,6 +76,7 @@ export interface SVGAttributes {
     offset?: number;
     opacity?: number;
     open?: boolean;
+    operator?: string;
     padding?: number;
     paddingLeft?: number|'unset';
     paddingRight?: number|'unset';
@@ -83,6 +85,7 @@ export interface SVGAttributes {
     patternUnits?: 'userSpaceOnUse';
     preserveAspectRatio?: string;
     r?: number;
+    radius?: number;
     refX?: number;
     refY?: number;
     rx?: number;
@@ -125,6 +128,7 @@ export interface SVGAttributes {
     x?: number;
     x1?: number;
     x2?: number;
+    xmlns?: string;
     y?: number;
     y1?: number;
     y2?: number;

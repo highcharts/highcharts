@@ -40,8 +40,12 @@ const getBuildOptions = input => {
     const {
         base = './js/masters/',
         debug = false,
+        namespace = 'Highcharts',
+        product = 'Highcharts',
+        output = './code/',
         version = getProductVersion(),
-        output = './code/'
+        assetPrefix = void 0,
+        date = new Date().toISOString().split('T')[0]
     } = input;
     const files = (
         isArray(input.files) ?
@@ -57,10 +61,14 @@ const getBuildOptions = input => {
         base,
         debug,
         files,
+        namespace,
         output,
         type,
         version,
-        mapTypeToSource
+        mapTypeToSource,
+        product,
+        assetPrefix,
+        date
     };
 };
 
@@ -75,7 +83,7 @@ const getExcludedFilenames = (requires, base) => requires
     .reduce((arr, name) => {
         const filePath = join(
             base,
-            `${name.replace('highcharts/', '')}.src.js`
+            `${name.replace(/^(?:dashboards|highcharts)\//, '')}.src.js`
         );
         const dependencies = exists(filePath) ?
             getOrderedDependencies(filePath).map(str => resolve(str)) :
@@ -102,7 +110,7 @@ const getListOfDependencies = (files, pathSource) => {
 
 const getTime = () => (new Date()).toTimeString().substr(0, 8);
 
-const watchSourceFiles = (event, { output, type: types, version }) => {
+const watchSourceFiles = (event, { namespace, output, type: types, version }) => {
     const pathFile = event.path;
     const base = './js/';
     const pathRelative = relative(base, pathFile);
@@ -120,6 +128,7 @@ const watchSourceFiles = (event, { output, type: types, version }) => {
     return buildModules({
         base,
         files: [pathRelative.split(sep).join('/')],
+        namespace,
         output,
         type: types,
         version
@@ -152,6 +161,7 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
     const {
         debug,
         fileOptions,
+        namespace,
         output,
         version
     } = options;
@@ -160,6 +170,7 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
         debug,
         fileOptions,
         files: filesModified,
+        namespace,
         output,
         type: [type],
         version
@@ -178,18 +189,24 @@ const fnFirstBuild = options => {
     const {
         type: types,
         mapTypeToSource,
+        base,
         debug,
         fileOptions,
         files,
+        namespace,
         output,
         version,
-        base
+        assetPrefix,
+        product
     } = options;
     buildModules({
         base: pathJSParts,
+        namespace,
         output,
         type: types,
-        version
+        version,
+        assetPrefix,
+        product
     });
     const promises = [];
     types.forEach(type => {
@@ -200,9 +217,12 @@ const fnFirstBuild = options => {
             debug,
             fileOptions,
             files,
+            namespace,
             output,
             type: [type],
-            version
+            version,
+            assetPrefix,
+            product
         }));
     });
     return Promise.all(promises);
@@ -217,6 +237,7 @@ const getBuildScripts = params => {
         mapTypeToSource,
         base
     } = options;
+
     const result = {
         fnFirstBuild: () => fnFirstBuild(options),
         mapOfWatchFn: {
@@ -245,8 +266,20 @@ const getBuildScripts = params => {
     return result;
 };
 
+function replaceMeta(text, input = {}) {
+    const { product, assetPrefix, version, date } = getBuildOptions(input);
+
+    const safeReplace = x => () => x;
+
+    return text.replace(/@product.name@/g, safeReplace(product))
+        .replace(/@product.assetPrefix@/g, safeReplace(assetPrefix))
+        .replace(/@product.version@/g, safeReplace(version))
+        .replace(/@product.date@/g, safeReplace(date));
+}
+
 module.exports = {
     getBuildScripts,
     getProductVersion,
-    scripts
+    scripts,
+    replaceMeta
 };

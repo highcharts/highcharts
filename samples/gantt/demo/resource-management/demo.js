@@ -1,9 +1,8 @@
 // Set to 00:00:00:000 today
-var today = new Date(),
-    day = 1000 * 60 * 60 * 24,
-    dateFormat = Highcharts.dateFormat,
-    series,
-    cars;
+let today = new Date();
+
+const day = 1000 * 60 * 60 * 24,
+    dateFormat = Highcharts.dateFormat;
 
 // Set to 00:00:00:000 today
 today.setUTCHours(0);
@@ -12,7 +11,7 @@ today.setUTCSeconds(0);
 today.setUTCMilliseconds(0);
 today = today.getTime();
 
-cars = [{
+const cars = [{
     model: 'Nissan Leaf',
     current: 0,
     deals: [{
@@ -95,8 +94,8 @@ cars = [{
 }];
 
 // Parse car data into series.
-series = cars.map(function (car, i) {
-    var data = car.deals.map(function (deal) {
+const series = cars.map(function (car, i) {
+    const data = car.deals.map(function (deal) {
         return {
             id: 'deal-' + i,
             rentedTo: deal.rentedTo,
@@ -121,7 +120,8 @@ Highcharts.ganttChart('container', {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    fontWeight: 'normal'
+                    fontWeight: 'normal',
+                    textOverflow: 'ellipsis'
                 }
             }
         }
@@ -130,13 +130,17 @@ Highcharts.ganttChart('container', {
         text: 'Car Rental Schedule'
     },
     tooltip: {
-        pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
+        pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>' +
+            'From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. ' +
+            '%b}</span>'
     },
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                yAxisDescriptionSingular: 'The chart has a tabular Y axis showing a data table row for each point.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.',
+                yAxisDescriptionSingular: 'The chart has a tabular Y axis ' +
+                    'showing a data table row for each point.'
             }
         }
     },
@@ -147,16 +151,20 @@ Highcharts.ganttChart('container', {
             }
         },
         point: {
-            valueDescriptionFormat: 'Rented to {point.rentedTo} from {point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
+            valueDescriptionFormat: 'Rented to {point.rentedTo} from ' +
+                '{point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
         },
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', car ' + (series.index + 1) + ' of ' + series.chart.series.length + '.';
-            }
+            descriptionFormat: '{series.name}, car {add series.index 1} of ' +
+                '{series.chart.series.length}.'
         }
     },
     xAxis: {
-        currentDateIndicator: true
+        currentDateIndicator: {
+            label: {
+                allowOverlap: true
+            }
+        }
     },
     yAxis: {
         type: 'category',

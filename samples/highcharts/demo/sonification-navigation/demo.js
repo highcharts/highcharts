@@ -96,16 +96,19 @@ document.getElementById('controls').onkeydown = function (e) {
     // We use a single SonificationSpeaker for the announcement, since it makes
     // it easy to avoid multiple announcements overlapping.
     function onSinglePointPlayed(e) {
-        var point = e.pointsPlayed && e.pointsPlayed[0];
+        const point = e.pointsPlayed && e.pointsPlayed[0];
         if (point) {
-            speaker.sayAtTime(700, point.accessibility.valueDescription +
-                ' ' + point.series.name);
+            speaker.sayAtTime(
+                700, point.accessibility.valueDescription +
+                ' ' + point.series.name
+            );
         }
     }
 
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         chart.sonification.playAdjacent(
-            e.key === 'ArrowRight', onSinglePointPlayed);
+            e.key === 'ArrowRight', onSinglePointPlayed
+        );
 
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         const newSeries = chart.sonification

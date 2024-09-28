@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,7 +36,7 @@ export interface LangOptions {
     loading: string;
     months: Array<string>;
     numericSymbolMagnitude?: number;
-    numericSymbols: Array<string>;
+    numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
     shortMonths: Array<string>;
@@ -67,9 +67,12 @@ export interface Options {
     colors?: Array<ColorString>;
     lang: LangOptions;
     loading?: LoadingOptions;
-    plotOptions?: SeriesTypePlotOptions;
+    plotOptions: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;
     global: GlobalOptions;
+}
+
+export interface DefaultOptions extends Options {
 }
 
 export type OptionsOverflowValue = ('allow'|'justify');

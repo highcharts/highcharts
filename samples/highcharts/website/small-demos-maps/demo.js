@@ -113,11 +113,15 @@ function spider() {
 
             tooltip: {
                 headerFormat: '',
-                pointFormat: '{point.city} ({point.country}, {point.year})<br/>' +
+                pointFormat: '{point.city} ({point.country}, ' +
+                    '{point.year})<br/>' +
                     'Total medals: {point.z}<br/>' +
-                    '<span style="color: #ffd700;">\u25CF</span> {point.gold}<br/>' +
-                    '<span style="color: #c0c0c0;">\u25CF</span> {point.silver}<br/>' +
-                    '<span style="color: #cd7f32;">\u25CF</span> {point.bronze}<br/>'
+                    '<span style="color: #ffd700;">\u25CF</span> ' +
+                    '{point.gold}<br/>' +
+                    '<span style="color: #c0c0c0;">\u25CF</span> ' +
+                    '{point.silver}<br/>' +
+                    '<span style="color: #cd7f32;">\u25CF</span> ' +
+                    '{point.bronze}<br/>'
             },
 
             series: [{
@@ -128,13 +132,19 @@ function spider() {
                 type: 'mapbubble',
                 color: '#fe5f55',
                 lineWidth: 1,
-                keys: ['city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
+                keys: [
+                    'city', 'country', 'year', 'lat', 'lon', 'z', 'gold',
+                    'silver', 'bronze'
+                ],
                 data: data,
                 minSize: '5%',
                 maxSize: '12.5%',
                 accessibility: {
                     point: {
-                        valueDescriptionFormat: '{point.city}, {point.country}, {point.year}. Total medals: {point.z}. Gold: {point.gold}, silver: {point.silver}, bronze: {point.bronze}.'
+                        valueDescriptionFormat: '{point.city}, ' +
+                            '{point.country}, {point.year}. Total medals: ' +
+                            '{point.z}. Gold: {point.gold}, silver: ' +
+                            '{point.silver}, bronze: {point.bronze}.'
                     }
                 }
             }],
@@ -289,8 +299,8 @@ function temps() {
                 margin: [0, 0, 10, 0],
                 events: {
                     load: function () {
-                        var countries = this.series[0];
-                        var capitals = this.series[1];
+                        const countries = this.series[0];
+                        const capitals = this.series[1];
                         newData.forEach(function (elem) {
                             getTemp(elem, countries, capitals);
                         });
@@ -359,9 +369,11 @@ function temps() {
             },
 
             tooltip: {
-                headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
+                headerFormat: '<span style="color:{point.color}">' +
+                    '\u25CF</span> {point.key}:<br/>',
                 pointFormatter: function () {
-                    var value = Number.isInteger(this.temp) ? this.temp + '°C' : 'No data';
+                    const value = Number.isInteger(this.temp) ? this.temp +
+                        '°C' : 'No data';
                     return 'Temperature: <b>' + value + '</b>';
                 }
             },
@@ -379,7 +391,8 @@ function temps() {
                 enableMouseTracking: false,
                 accessibility: {
                     point: {
-                        valueDescriptionFormat: '{xDescription}, {point.value}°C.'
+                        valueDescriptionFormat: '{xDescription}, ' +
+                            '{point.value}°C.'
                     }
                 }
             }, {
@@ -393,13 +406,17 @@ function temps() {
                 dataLabels: {
                     crop: true,
                     formatter: function () {
-                        var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
-                        return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
+                        const value = Number.isInteger(this.point.temp) ?
+                            this.point.temp + '°C' :
+                            'No data';
+                        return '<span>' + this.key + '</span><br/><span>' +
+                            value + '</span>';
                     }
                 },
                 accessibility: {
                     point: {
-                        valueDescriptionFormat: '{xDescription}, {point.temp}°C.'
+                        valueDescriptionFormat: '{xDescription}, ' +
+                            '{point.temp}°C.'
                     }
                 }
             }],
@@ -454,7 +471,7 @@ function clusters() {
         ).then(response => response.json());
 
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d60fbe27ef0b41e2f93112dd68fb7a3/samples/data/european-train-stations-near-airports.json'
+            'https://www.highcharts.com/samples/data/european-train-stations-near-airports.json'
         ).then(response => response.json());
 
         Highcharts.mapChart('container', {
@@ -496,9 +513,12 @@ function clusters() {
             tooltip: {
                 formatter: function () {
                     if (this.point.clusteredData) {
-                        return 'Clustered points: ' + this.point.clusterPointsAmount;
+                        return 'Clustered points: ' +
+                            this.point.clusterPointsAmount;
                     }
-                    return '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
+                    return '<b>' + this.key + '</b><br>Lat: ' +
+                        this.point.lat.toFixed(2) + ', Lon: ' +
+                        this.point.lon.toFixed(2);
                 }
             },
             legend: {

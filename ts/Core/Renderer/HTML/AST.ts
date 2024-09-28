@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -61,18 +61,6 @@ const emptyHTML = trustedTypesPolicy ?
     trustedTypesPolicy.createHTML('') as unknown as string :
     '';
 
-
-// IE9 and PhantomJS are only able to parse XML.
-const hasValidDOMParser = (function (): boolean {
-    try {
-        return Boolean(new DOMParser().parseFromString(
-            emptyHTML,
-            'text/html'
-        ));
-    } catch (e) {
-        return false;
-    }
-}());
 
 /* *
  *
@@ -139,22 +127,26 @@ class AST {
         'dy',
         'disabled',
         'fill',
+        'filterUnits',
         'flood-color',
         'flood-opacity',
         'height',
         'href',
         'id',
         'in',
+        'in2',
         'markerHeight',
         'markerWidth',
         'offset',
         'opacity',
+        'operator',
         'orient',
         'padding',
         'paddingLeft',
         'paddingRight',
         'patternUnits',
         'r',
+        'radius',
         'refX',
         'refY',
         'role',
@@ -247,12 +239,15 @@ class AST {
         'dt',
         'em',
         'feComponentTransfer',
+        'feComposite',
         'feDropShadow',
+        'feFlood',
         'feFuncA',
         'feFuncB',
         'feFuncG',
         'feFuncR',
         'feGaussianBlur',
+        'feMorphology',
         'feOffset',
         'feMerge',
         'feMergeNode',
@@ -303,7 +298,7 @@ class AST {
     /**
      * Allow all custom SVG and HTML attributes, references and tags (together
      * with potentially harmful ones) to be added to the DOM from the chart
-     * configuration. In other words, disable the the allow-listing which is the
+     * configuration. In other words, disable the allow-listing which is the
      * primary functionality of the AST.
      *
      * WARNING: Setting this property to `true` while allowing untrusted user
@@ -587,14 +582,23 @@ class AST {
             .replace(/ style=(["'])/g, ' data-style=$1');
 
         let doc;
-        if (hasValidDOMParser) {
+        try {
             doc = new DOMParser().parseFromString(
                 trustedTypesPolicy ?
                     trustedTypesPolicy.createHTML(markup) as unknown as string :
                     markup,
                 'text/html'
             );
-        } else {
+        } catch (e) {
+            // There are two cases where this fails:
+            // 1. IE9 and PhantomJS, where the DOMParser only supports parsing
+            //    XML
+            // 2. Due to a Chromium issue where chart redraws are triggered by
+            //    a `beforeprint` event (#16931),
+            //    https://issues.chromium.org/issues/40222135
+        }
+
+        if (!doc) {
             const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
@@ -710,4 +714,4 @@ export default AST;
  * @type {string|undefined}
  */
 
-(''); // keeps doclets above in file
+(''); // Keeps doclets above in file

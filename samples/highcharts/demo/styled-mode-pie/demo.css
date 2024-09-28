@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 .highcharts-pie-series .highcharts-point {
     stroke: #ede;
@@ -52,4 +52,8 @@
 
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

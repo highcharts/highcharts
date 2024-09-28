@@ -1,11 +1,12 @@
-.highcharts-figure {
-    width: 550px;
-    margin: 0 auto;
-    position: relative;
+* {
+    font-family: Helvetica, Arial, sans-serif;
 }
 
-#container {
-    height: 550px;
+.highcharts-figure {
+    max-width: 550px;
+    min-width: 360px;
+    margin: 0 auto;
+    position: relative;
 }
 
 #sonify {
@@ -32,4 +33,15 @@
 #sonify:hover {
     background-color: #25386f;
     color: #fff;
+}
+
+@media (max-width: 530px) {
+    #sonify {
+        position: static;
+        margin: 10px;
+    }
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -45,6 +45,40 @@ QUnit.test('softMin and softMax', function (assert) {
     chart.series[0].setData([-100, -101, -102]);
 
     assert.strictEqual(chart.yAxis[0].max, 100, 'Soft max should be respected');
+
+    let { min, max } = chart.yAxis[0];
+    let diff = max - min;
+
+    chart.yAxis[0].update({
+        softMin: undefined,
+        minPadding: 0.5
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        min - diff / 2,
+        'Min padding should be added when when soft max set, #18110'
+    );
+
+    chart.yAxis[0].update({
+        softMin: -200,
+        softMax: undefined
+    });
+
+    min = chart.yAxis[0].min;
+    max = chart.yAxis[0].max;
+    diff = max - min;
+
+    chart.yAxis[0].update({
+        minPadding: 0,
+        maxPadding: 0.5
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        max + diff / 2,
+        'Max padding should be added when when soft min set, #18110'
+    );
 });
 
 QUnit.test('softMax combined with ceiling (#6359)', function (assert) {

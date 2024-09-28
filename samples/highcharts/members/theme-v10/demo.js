@@ -14,7 +14,8 @@ Highcharts.setOptions({
     ],
     chart: {
         style: {
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
+            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, ' +
+                'Arial, Helvetica, sans-serif',
             fontSize: '16px'
         }
     },
@@ -50,6 +51,10 @@ Highcharts.setOptions({
     legend: {
         itemStyle: {
             fontWeight: 'bold'
+        },
+        itemHiddenStyle: {
+            color: '#cccccc',
+            textDecoration: 'none'
         }
     },
     xAxis: {

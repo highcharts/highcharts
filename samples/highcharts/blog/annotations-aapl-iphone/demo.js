@@ -1,6 +1,10 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json', function (data) {
+(async () => {
 
-    for (var i = 0; i < data.length; i++) {
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json'
+    ).then(response => response.json());
+
+    for (let i = 0; i < data.length; i++) {
 
         data[i][0] = Date.parse(data[i][0]);
     }
@@ -8,7 +12,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85
     // Create the chart
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         },
         title: {
             text: 'AAPL Stock Price'
@@ -159,4 +165,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85
             }
         }]
     });
-});
+})();

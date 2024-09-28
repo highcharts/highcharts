@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -22,16 +22,11 @@
 
 import type CylinderPointOptions from './CylinderPointOptions';
 import type CylinderSeries from './CylinderSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    column: { prototype: { pointClass: ColumnPoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -49,9 +44,9 @@ class CylinderPoint extends ColumnPoint {
      *
      * */
 
-    public options: CylinderPointOptions = void 0 as any;
+    public options!: CylinderPointOptions;
 
-    public series: CylinderSeries = void 0 as any;
+    public series!: CylinderSeries;
 
 }
 
@@ -64,6 +59,7 @@ class CylinderPoint extends ColumnPoint {
 interface CylinderPoint {
     shapeType: string;
 }
+
 extend(CylinderPoint.prototype, {
     shapeType: 'cylinder'
 });

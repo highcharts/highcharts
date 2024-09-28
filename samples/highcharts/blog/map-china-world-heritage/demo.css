@@ -1,0 +1,14 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.highcharts-tooltip span {
+    height: 120px;
+    width: 160px;
+    padding: 2px;
+    overflow: auto;
+    white-space: normal !important;
+}

@@ -61,7 +61,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-palestine-highres.topo.json">World with Palestine areas, high resolution</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-palestine-highres.topo.json">World with Palestine areas, high resolution</a>'
         },
 
         mapNavigation: {

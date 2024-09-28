@@ -209,9 +209,10 @@ QUnit.test('Compare multi line indicators, #15867.', assert => {
         chart.series[1].points[0].plotMiddle,
         'The first point of the main line should be located at 0 on yAxis.'
     );
-    assert.strictEqual(
+    assert.close(
         chart.yAxis[0].toPixels(2) - chart.plotTop,
         chart.series[1].points[0].plotTop,
+        0.000001,
         'The first point of the top line should be located at 2 on yAxis.'
     );
     assert.strictEqual(

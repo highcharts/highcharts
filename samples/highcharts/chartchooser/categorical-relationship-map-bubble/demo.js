@@ -1,4 +1,4 @@
-var dirDist50 = '#E8544E',
+const dirDist50 = '#E8544E',
     dirDist10 = '#FFD265',
     dirDistLess10 = '#2AA775';
 
@@ -11,7 +11,7 @@ var dirDist50 = '#E8544E',
 
 
     // Initialize the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
         title: {
             text: 'South Korea domestic flight routes'
         },
@@ -88,7 +88,8 @@ var dirDist50 = '#E8544E',
                 dataLabels: {
                     format: '{point.id}'
                 },
-                // Use id instead of name to allow for referencing points later using
+                // Use id instead of name to allow for referencing points
+                // later using
                 // chart.get
                 data: [
                     {
@@ -264,7 +265,7 @@ var dirDist50 = '#E8544E',
         ];
     }
 
-    var seoulICNPoint = chart.get('Seoul ICN'),
+    const seoulICNPoint = chart.get('Seoul ICN'),
         seoulGMPPoint = chart.get('Seoul GMP'),
         busanPoint = chart.get('Busan'),
         jejuPoint = chart.get('Jeju');

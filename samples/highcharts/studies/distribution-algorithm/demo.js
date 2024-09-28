@@ -1,10 +1,6 @@
-var renderer;
-
-
-var each = Highcharts.each,
-    len = 600,
-    boxes;
-
+const each = Highcharts.each,
+    len = 600;
+let boxes;
 
 function getBoxes() {
 
@@ -40,7 +36,7 @@ function getBoxes() {
 }
 
 
-renderer = new Highcharts.Renderer(
+const renderer = new Highcharts.Renderer(
     document.getElementById('container'),
     800,
     300

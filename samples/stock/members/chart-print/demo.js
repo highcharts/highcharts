@@ -1,14 +1,21 @@
-const chart = Highcharts.stockChart('container', {
-    rangeSelector: {
-        selected: 1
-    },
+(async () => {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-document.getElementById('button').addEventListener('click', () => {
-    chart.print();
-});
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+
+    document.getElementById('button').addEventListener('click', () => {
+        chart.print();
+    });
+})();

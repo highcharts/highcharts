@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,9 +46,9 @@ class GaugePoint extends Point {
      * */
 
     public dial?: SVGElement;
-    public options: GaugePointOptions = void 0 as any;
-    public series: GaugeSeries = void 0 as any;
-    public shapeArgs: SVGAttributes = void 0 as any;
+    public options!: GaugePointOptions;
+    public series!: GaugeSeries;
+    public shapeArgs!: SVGAttributes;
 
 
     /* *

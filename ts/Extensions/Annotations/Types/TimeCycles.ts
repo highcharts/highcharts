@@ -151,7 +151,8 @@ class TimeCycles extends CrookedLine {
             merge(typeOptions.line, {
                 type: 'path',
                 d: this.getPath(),
-                points: this.options.points
+                points: this.options.points,
+                className: 'highcharts-timecycles-lines'
             }),
             0
         );
@@ -249,8 +250,25 @@ interface TimeCycles {
 
 TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
+    /**
+     * The TimeCycles Annotation
+     *
+     * @sample highcharts/annotations-advanced/time-cycles/
+     *         Time Cycles annotation
+     *
+     * @extends      annotations.crookedLine
+     * @product      highstock
+     * @exclude      labelOptions
+     * @optionparent annotations.timeCycles
+     */
     {
         typeOptions: {
+            /**
+             * @exclude   y
+             * @product   highstock
+             * @apioption annotations.timeCycles.typeOptions.points
+             */
+
             controlPointOptions: [{
                 positioner: function (
                     this: ControlPoint,
@@ -260,8 +278,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
+                        x: position.x - (this.graphic.width || 0) / 2,
+                        y: target.y - (this.graphic.height || 0)
                     };
                 },
                 events: {
@@ -286,8 +304,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
+                        x: position.x - (this.graphic.width || 0) / 2,
+                        y: target.y - (this.graphic.height || 0)
                     };
                 },
                 events: {
@@ -345,28 +363,3 @@ Annotation.types.timeCycles = TimeCycles;
  * */
 
 export default TimeCycles;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * The TimeCycles Annotation
- * @sample highcharts/annotations-advanced/time-cycles/
- *     Time Cycles annotation
- *
- * @extends   annotations.crookedLine
- * @product   highstock
- * @exclude  labelOptions
- * @apioption annotations.timeCycles
- */
-
-/**
- * @exclude   y
- * @product   highstock
- * @apioption annotations.timeCycles.typeOptions.points
- */
-
-(''); // keeps doclets above in transpiled file

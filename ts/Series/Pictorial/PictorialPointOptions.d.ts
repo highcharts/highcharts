@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2024 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface PictorialPointOptions extends ColumnPointOptions {
-    // nothing here for now
+    // Nothing here for now
 }
 
 /* *

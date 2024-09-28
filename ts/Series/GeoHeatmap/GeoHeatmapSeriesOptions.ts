@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -24,9 +24,15 @@ import type MapSeriesOptions from '../Map/MapSeriesOptions';
  *
  * */
 
+export interface InterpolationObject {
+    enabled: boolean,
+    blur: number;
+}
+
 interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
     colsize?: number;
     rowsize?: number;
+    interpolation: boolean|InterpolationObject;
 }
 
 /* *

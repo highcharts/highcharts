@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,6 +15,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type DataLabel from '../../Core/Series/DataLabel';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 
 /* *
@@ -24,13 +25,11 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
  * */
 
 export interface PieDataLabelOptions extends DataLabelOptions {
-    alignTo?: string;
     connectorColor?: ColorType;
     connectorPadding?: number;
-    connectorShape?: (string|Function);
+    connectorShape?: (string|DataLabel.ConnectorShapeFunction);
     connectorWidth?: number;
     crookDistance?: string;
-    distance?: number;
     softConnector?: boolean;
 }
 

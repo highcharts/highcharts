@@ -1,0 +1,6 @@
+---
+ name: Change context menu icon
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...

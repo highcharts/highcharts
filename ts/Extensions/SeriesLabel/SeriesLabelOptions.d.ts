@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type Series from '../../Core/Series/Series';
 
 /* *
@@ -31,7 +31,7 @@ export interface SeriesLabelOptions {
     connectorNeighbourDistance?: number;
     enabled?: boolean;
     format?: string;
-    formatter?: FormatUtilities.FormatterCallback<Series>;
+    formatter?: Templating.FormatterCallback<Series>;
     maxFontSize?: (number|null);
     minFontSize?: (number|null);
     onArea?: (boolean|null);

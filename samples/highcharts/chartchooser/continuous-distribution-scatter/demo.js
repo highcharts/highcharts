@@ -1,5 +1,8 @@
 Highcharts.setOptions({
-    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+    colors: [
+        '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+        '#FF9655', '#FFF263', '#6AF9C4'
+    ]
 });
 
 const discipline = [{
@@ -19,7 +22,7 @@ const discipline = [{
 
 async function getData() {
     const response = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/olympic2012.json'
+        'https://www.highcharts.com/samples/data/olympic2012.json'
     );
     return response.json();
 }
@@ -49,7 +52,9 @@ getData().then(data => {
     Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         colors,
         title: {

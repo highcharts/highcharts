@@ -1,43 +1,44 @@
-Highcharts.getJSON(
-    'https://code.highcharts.com/mapdata/custom/europe.topo.json',
-    topology => {
+(async () => {
 
-        // Create a data value for each geometry
-        const data = topology.objects.default.geometries.map((f, i) => i % 5);
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/europe.topo.json'
+    ).then(response => response.json());
 
-        // Initialize the chart
-        Highcharts.mapChart('container', {
-            chart: {
-                map: topology
-            },
+    // Create a data value for each geometry
+    const data = topology.objects.default.geometries.map((f, i) => i % 5);
 
-            title: {
-                text: 'TopoJSON in Highcharts Maps'
-            },
+    // Initialize the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-            mapView: {
-                projection: {
-                    name: 'LambertConformalConic',
-                    parallels: [43, 62],
-                    rotation: [-10]
-                }
-            },
+        title: {
+            text: 'TopoJSON in Highcharts Maps'
+        },
 
-            colorAxis: {
-                tickPixelInterval: 100,
-                minColor: '#F1EEF6',
-                maxColor: '#900037'
-            },
+        mapView: {
+            projection: {
+                name: 'LambertConformalConic',
+                parallels: [43, 62],
+                rotation: [-10]
+            }
+        },
 
-            series: [{
-                data,
-                joinBy: null,
-                name: 'Random data',
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}'
-                }
-            }]
-        });
-    }
-);
+        colorAxis: {
+            tickPixelInterval: 100,
+            minColor: '#F1EEF6',
+            maxColor: '#900037'
+        },
+
+        series: [{
+            data,
+            joinBy: null,
+            name: 'Random data',
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+})();

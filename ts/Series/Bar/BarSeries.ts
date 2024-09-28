@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,7 +54,7 @@ class BarSeries extends ColumnSeries {
      * A bar series is a special type of column series where the columns are
      * horizontal.
      *
-     * @sample highcharts/demo/bar-basic/
+     * @sample highcharts/demo/bar-chart/
      *         Bar chart
      *
      * @extends      plotOptions.column
@@ -62,7 +62,7 @@ class BarSeries extends ColumnSeries {
      * @optionparent plotOptions.bar
      */
     public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // nothing here yet
+        // Nothing here yet
     });
 
     /* *
@@ -71,9 +71,9 @@ class BarSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<BarPoint> = void 0 as any;
-    public options: BarSeriesOptions = void 0 as any;
-    public points: Array<BarPoint> = void 0 as any;
+    public data!: Array<BarPoint>;
+    public options!: BarSeriesOptions;
+    public points!: Array<BarPoint>;
 
 }
 
@@ -201,4 +201,4 @@ export default BarSeries;
  * @apioption series.bar.states.select
  */
 
-''; // gets doclets above into transpilat
+''; // Gets doclets above into transpiled

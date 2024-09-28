@@ -545,7 +545,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Positioning labels according to real points for half of the yAxis height #13956',
+    'Positioning labels according to real points for half of the yAxis ' +
+    'height #13956',
     function (assert) {
         var chart = Highcharts.chart('container', {
                 yAxis: [

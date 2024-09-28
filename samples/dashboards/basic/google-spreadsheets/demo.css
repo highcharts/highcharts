@@ -1,0 +1,51 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+body {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+}
+
+#container {
+    padding: 10px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 10px;
+    background-clip: border-box;
+}
+
+.highcharts-dashboards-component-title {
+    padding: 10px;
+    margin: 0;
+    background-color: #363;
+    text-align: center;
+    color: #fff;
+}
+
+#dashboard-col-1 .highcharts-dashboards-component-title {
+    background-color: #336;
+}
+
+.highcharts-dashboards-component {
+    padding: 10px;
+}
+
+div#description {
+    margin: 10px 30px;
+    font-size: 1.2em;
+    text-align: justify;
+}
+
+.highcharts-dashboards-component-content {
+    height: 300px;
+}

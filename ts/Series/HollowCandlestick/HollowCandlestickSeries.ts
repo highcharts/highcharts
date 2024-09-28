@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -145,13 +145,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Properties
      *
      * */
-    public data: Array<HollowCandlestickPoint> = void 0 as any;
+    public data!: Array<HollowCandlestickPoint>;
 
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
-    public options: HollowCandlestickSeriesOptions = void 0 as any;
+    public options!: HollowCandlestickSeriesOptions;
 
-    public points: Array<HollowCandlestickPoint> = void 0 as any;
+    public points!: Array<HollowCandlestickPoint>;
 
     /* *
      *
@@ -169,31 +169,26 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            // procesed and grouped data
+            // Processed and grouped data
             processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (
-            !hollowCandlestickData.length &&
-            processedYData &&
-            processedYData.length
-        ) {
+        hollowCandlestickData.length = 0;
 
-            // First point is allways bullish (transparent).
-            hollowCandlestickData.push({
-                isBullish: true,
-                trendDirection: 'up'
-            });
+        // First point is always bullish (transparent).
+        hollowCandlestickData.push({
+            isBullish: true,
+            trendDirection: 'up'
+        });
 
-            for (let i = 1; i < processedYData.length; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = processedYData[i - 1];
+        for (let i = 1; i < processedYData.length; i++) {
+            const dataPoint: any = processedYData[i],
+                previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(
-                    dataPoint,
-                    previousDataPoint
-                ));
-            }
+            hollowCandlestickData.push(series.isBullish(
+                dataPoint,
+                previousDataPoint
+            ));
         }
     }
 
@@ -244,7 +239,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * @private
-     * @function Highcarts.seriesTypes.hollowcandlestick#init
+     * @function Highcharts.seriesTypes.hollowcandlestick#init
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -293,8 +288,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
         point: HollowCandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs = super.pointAttribs.call(this, point, state),
-            stateOptions;
+        const attribs = super.pointAttribs.call(this, point, state);
+        let stateOptions;
 
         const index = point.index,
             hollowcandleInfo = this.hollowCandlestickData[index];
@@ -437,4 +432,4 @@ export default HollowCandlestickSeries;
  * @apioption series.hollowcandlestick.data
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled

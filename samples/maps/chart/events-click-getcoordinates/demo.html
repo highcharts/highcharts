@@ -1,4 +1,4 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.10.0/proj4.js" integrity="sha512-e3rsOu6v8lmVnZylXpOq3DO/UxrCgoEMqosQxGygrgHlves9HTwQzVQ/dLO+nwSbOSAecjRD7Y/c4onmiBVo6w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 <script src="https://code.highcharts.com/maps/modules/data.js"></script>
 <script src="https://code.highcharts.com/maps/modules/draggable-points.js"></script>
@@ -8,7 +8,7 @@
     <div id="outer-container">
         <div id="container"></div>
         <div id="code-container">
-            <button id="close">Back to map</button>
+            <button id="close" class="highcharts-demo-button">Back to map</button>
             <div id="code-inner"></div>
         </div>
     </div>
@@ -23,18 +23,18 @@
 
             <p>
                 Clicking adds points to
-                <input type="radio" name="series" value="points" id="points" checked="checked" />
+                <input type="radio" name="series" value="points" id="points" checked="checked" >
                 <label for="points">Points</label>
-                <input type="radio" name="series" value="connected-points" id="connected-points" />
+                <input type="radio" name="series" value="connected-points" id="connected-points" >
                 <label for="connected-points">Connected points</label>
             </p>
 
             <p>
-                <input type="checkbox" name="delete" id="delete" />
+                <input type="checkbox" name="delete" id="delete" >
                 <label for="delete">Delete points by click</label>
             </p>
-            <p>
-                <button id="getconfig">Get series configuration</button>
+            <p class="button-row">
+                <button id="getconfig" class="highcharts-demo-button">Get series configuration</button>
             </p>
         </div>
     </form>

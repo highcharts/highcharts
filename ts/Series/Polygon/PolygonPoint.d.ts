@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,18 +10,20 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
+
 import type PolygonPointOptions from './PolygonPointOptions';
 import type PolygonSeries from './PolygonSeries';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
+
 declare class PolygonPoint extends ScatterPoint {
     public options: PolygonPointOptions;
     public series: PolygonSeries;
@@ -29,7 +31,8 @@ declare class PolygonPoint extends ScatterPoint {
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default PolygonPoint;

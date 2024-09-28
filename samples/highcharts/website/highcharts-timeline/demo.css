@@ -1,4 +1,8 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#timeline {
+    font-family: Helvetica, Arial, sans-serif;
+}
 
 #timeline .highcharts-container {
     position: relative;
@@ -111,47 +115,29 @@ table th {
     fill-opacity: 1;
 }
 
-#timeline .award .highcharts-label {
-    color: #fff;
+#timeline .award .highcharts-point .highcharts-label-box {
+    fill: #534daa;
+    stroke-width: 0;
 }
 
-#timeline .highcharts-label span {
-    transform: translateY(-3px);
+#timeline .award .highcharts-label text {
+    fill: white;
 }
 
-#timeline .highcharts-markers.product {
-    transform: translate(10px, 4px);
+#timeline .product .highcharts-point .highcharts-label-box {
+    fill: #2f2b38;
+    stroke: #2f2b38;
 }
 
-#timeline .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(4) .highcharts-label-box,
-#timeline .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(10) .highcharts-label-box,
-#timeline .highcharts-markers.highcharts-series-2.product .highcharts-label .highcharts-label-box,
-#timeline .highcharts-markers.highcharts-series-6.product .highcharts-label .highcharts-label-box {
-    transform: translate(-46px, -88px);
+#timeline .release .highcharts-point .highcharts-label-box {
+    fill: #78768b;
+    stroke: #78768b;
 }
 
 #timeline .highcharts-flags-series.cloud .highcharts-point text,
-#timeline .highcharts-flags-series.product .highcharts-point text {
+#timeline .highcharts-flags-series.product .highcharts-point text,
+#timeline .highcharts-flags-series.release .highcharts-point text {
     fill: #fff;
-}
-
-#timeline .highcharts-flags-series.product .highcharts-label text {
-    transform: translate(0, -6px);
-}
-
-#timeline .highcharts-flags-series.cloud .highcharts-label text {
-    transform: translate(-3px, -8px);
-}
-
-#timeline .highcharts-series-2.product .highcharts-label:nth-of-type(1) text,
-#timeline .highcharts-series-3.product .highcharts-label:nth-of-type(4) text,
-#timeline .highcharts-series-3.product .highcharts-label:nth-of-type(10) text,
-#timeline .highcharts-series-6.product .highcharts-label:nth-of-type(1) text {
-    transform: translate(-2px, -62px);
-}
-
-#timeline .highcharts-markers.cloud {
-    transform: translate(0, -23px);
 }
 
 #timeline .award.highcharts-flags-series .highcharts-point .highcharts-label-box {
@@ -166,11 +152,27 @@ table th {
     margin-left: 40%;
 }
 
+.tip {
+    color: #f0f0f0;
+    width: 100px;
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 2px 0;
+}
+
+.tipheader {
+    font-size: 11px;
+    padding: 0;
+    margin: 0;
+    color: #f0f0f0;
+}
+
 .tip .tip-box {
     fill: #46465c;
     stroke: transparent;
     color: #f0f0f0;
     max-width: 200px;
+    width: 200px;
 }
 
 .highcharts-tooltip-box {
@@ -186,14 +188,6 @@ table th {
 }
 
 @media screen  and (min-width: 530px) {
-    #timeline .highcharts-markers.product {
-        transform: translate(10px, 54px);
-    }
-
-    #timeline .highcharts-markers.cloud {
-        transform: translate(10px, 28px);
-    }
-
     #timeline .highcharts-yaxis {
         visibility: visible;
     }
@@ -212,10 +206,6 @@ table th {
 @media screen  and (min-width: 1400px) {
     #timeline .highcharts-plot-band-label:nth-of-type(1) {
         left: 60px !important;
-    }
-
-    #timeline .highcharts-flags-series.product .highcharts-label text {
-        transform: translate(0, -6px);
     }
 
     #timeline .award p {

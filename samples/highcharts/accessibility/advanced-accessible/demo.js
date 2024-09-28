@@ -1,18 +1,23 @@
-// Define custom series type for displaying low/med/high values using boxplot as a base
+// Define custom series type for displaying low/med/high values using boxplot
+// as a base
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: ' +
-            'Low <b>{point.low}</b> - Median <b>{point.median}</b> - High <b>{point.high}</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: ' +
+            'Low <b>{point.low}</b> - Median <b>{point.median}</b> - High <b>' +
+            '{point.high}</b><br/>'
     }
 }, {
-    // Change point shape to a line with three crossing lines for low/median/high
-    // Stroke width is hardcoded to 1 for simplicity
+    // Change point shape to a line with three crossing lines for
+    // low/median/high. Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
-        var series = this;
+        const series = this;
         this.points.forEach(function (point) {
-            var graphic = point.graphic,
-                verb = graphic ? 'animate' : 'attr',
+
+            let graphic = point.graphic;
+
+            const verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
                 width = shapeArgs.width,
                 left = Math.floor(shapeArgs.x) + 0.5,
@@ -29,7 +34,9 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
             }
 
             if (!graphic) {
-                point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
+                point.graphic = graphic = series.chart.renderer.path(
+                    'point'
+                ).add(series.group);
             }
 
             graphic.attr({
@@ -54,7 +61,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 });
 
 // Create chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
@@ -80,14 +87,20 @@ var chart = Highcharts.chart('container', {
             descriptionFormat: '{seriesDescription}'
         },
 
-        typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
+        typeDescription: 'Low, median, high. Each data point has a low, ' +
+            'median and high value, depicted vertically as small ticks.' //
+            // Describe the chart type to screen reader users, since this is
+            // not a traditional boxplot chart
     },
 
     xAxis: [{
         accessibility: {
             description: 'Months of the year'
         },
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        categories: [
+            'January', 'February', 'March', 'April', 'May', 'June', 'July',
+            'August', 'September', 'October', 'November', 'December'
+        ]
     }],
 
     yAxis: {
@@ -104,7 +117,10 @@ var chart = Highcharts.chart('container', {
             },
             chartOptions: {
                 xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    categories: [
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+                        'Sep', 'Oct', 'Nov', 'Dec'
+                    ]
                 }
             }
         }]

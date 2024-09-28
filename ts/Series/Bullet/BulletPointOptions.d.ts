@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,10 +14,9 @@
  *
  * */
 
-import type BulletTargetOptions from './BulletTargetOptions';
+import type { BulletTargetOptions } from './BulletSeriesOptions';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
-
 
 /* *
  *
@@ -26,14 +25,29 @@ import type ColorType from '../../Core/Color/ColorType';
  * */
 
 export interface BulletPointOptions extends ColumnPointOptions {
+
     borderColor?: ColorType;
+
+    /**
+     * The target value of a point.
+     *
+     * @product highcharts
+     */
     target?: number;
+
+    /**
+     * Individual target options for each point.
+     *
+     * @since 6.0.0
+     */
     targetOptions?: BulletTargetOptions;
+
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BulletPointOptions;

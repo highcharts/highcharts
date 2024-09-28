@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,6 +17,7 @@
  * */
 
 import type Axis from './Axis.js';
+import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
@@ -48,14 +49,6 @@ export declare class NavigatorAxisComposition extends Axis {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -79,34 +72,37 @@ function onAxisInit(
  * selector.
  * @private
  */
-function onAxisZoom(
+function onAxisSetExtremes(
     this: Axis,
-    e: AnyRecord
+    e: AxisSetExtremesEventObject
 ): void {
     const axis = this as NavigatorAxisComposition,
         chart = axis.chart,
         chartOptions = chart.options,
         navigator = chartOptions.navigator,
         navigatorAxis = axis.navigatorAxis,
-        pinchType = chartOptions.chart.zooming.pinchType,
+        pinchType = chart.zooming.pinchType,
         rangeSelector = chartOptions.rangeSelector,
-        zoomType = chartOptions.chart.zooming.type;
+        zoomType = chart.zooming.type;
 
-    if (axis.isXAxis && ((navigator && navigator.enabled) ||
-            (rangeSelector && rangeSelector.enabled))) {
+    let zoomed: boolean|undefined;
+
+    if (
+        axis.isXAxis &&
+        (navigator?.enabled || rangeSelector?.enabled)
+    ) {
 
         // For y only zooming, ignore the X axis completely
-        if (zoomType === 'y') {
-            e.zoomed = false;
+        if (zoomType === 'y' && e.trigger === 'zoom') {
+            zoomed = false;
 
-        // For xy zooming, record the state of the zoom before zoom
-        // selection, then when the reset button is pressed, revert to
-        // this state. This should apply only if the chart is
-        // initialized with a range (#6612), otherwise zoom all the way
-        // out.
+        // For xy zooming, record the state of the zoom before zoom selection,
+        // then when the reset button is pressed, revert to this state. This
+        // should apply only if the chart is initialized with a range (#6612),
+        // otherwise zoom all the way out.
         } else if (
             (
-                (!isTouchDevice && zoomType === 'xy') ||
+                (e.trigger === 'zoom' && zoomType === 'xy') ||
                 (isTouchDevice && pinchType === 'xy')
             ) &&
             axis.options.range
@@ -114,17 +110,20 @@ function onAxisZoom(
 
             const previousZoom = navigatorAxis.previousZoom;
 
-            if (defined(e.newMin)) {
+            // Minimum defined, zooming in
+            if (defined(e.min)) {
                 navigatorAxis.previousZoom = [axis.min, axis.max];
+
+            // Minimum undefined, resetting zoom
             } else if (previousZoom) {
-                e.newMin = previousZoom[0];
-                e.newMax = previousZoom[1];
+                e.min = previousZoom[0];
+                e.max = previousZoom[1];
                 navigatorAxis.previousZoom = void 0;
             }
         }
 
     }
-    if (typeof e.zoomed !== 'undefined') {
+    if (typeof zoomed !== 'undefined') {
         e.preventDefault();
     }
 }
@@ -154,11 +153,11 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('navigatorAxis')) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
-            addEvent(AxisClass, 'zoom', onAxisZoom);
+            addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
         }
 
     }
@@ -183,7 +182,7 @@ class NavigatorAxisAdditions {
 
     public axis: NavigatorAxisComposition;
     public fake?: boolean;
-    public previousZoom?: [(number|null), (number|null)];
+    public previousZoom?: [number|undefined, number|undefined];
 
     /* *
      *
@@ -212,7 +211,7 @@ class NavigatorAxisAdditions {
         fixedMax?: number
     ): RangeSelector.RangeObject {
         const axis = this.axis,
-            chart = axis.chart;
+            halfPointRange = (axis.pointRange || 0) / 2;
 
         let newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
@@ -221,9 +220,6 @@ class NavigatorAxisAdditions {
                 fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
             );
 
-        const fixedRange = chart && chart.fixedRange,
-            halfPointRange = (axis.pointRange || 0) / 2,
-            changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
         // Add/remove half point range to/from the extremes (#1172)
         if (!defined(fixedMin)) {
@@ -233,16 +229,6 @@ class NavigatorAxisAdditions {
             newMax = correctFloat(newMax - halfPointRange);
         }
 
-        // If the difference between the fixed range and the actual requested
-        // range is too great, the user is dragging across an ordinal gap, and
-        // we need to release the range selector button.
-        if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
-            if (fixedMax) {
-                newMin = newMax - (fixedRange as any);
-            } else {
-                newMax = newMin + (fixedRange as any);
-            }
-        }
         if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
             newMin = newMax = void 0 as any;
         }

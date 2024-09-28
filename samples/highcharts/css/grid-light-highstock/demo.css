@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/themes/grid-light.css";
+@import url("https://code.highcharts.com/css/themes/grid-light.css");
 
 #container {
     height: 400px;

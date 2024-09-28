@@ -1,0 +1,17 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.highcharts-figure {
+    margin: 0;
+}
+
+#container {
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

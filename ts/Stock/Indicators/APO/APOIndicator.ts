@@ -75,13 +75,13 @@ class APOIndicator extends EMAIndicator {
      */
     public static defaultOptions: APOOptions = merge(EMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Absolute Price Oscillator
+         * Parameters used in calculation of Absolute Price Oscillator
          * series points.
          *
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * Periods for Absolute Price Oscillator calculations.
              *
@@ -99,9 +99,9 @@ class APOIndicator extends EMAIndicator {
      *
      * */
 
-    public data: Array<APOPoint> = void 0 as any;
-    public options: APOOptions = void 0 as any;
-    public points: Array<APOPoint> = void 0 as any;
+    public data!: Array<APOPoint>;
+    public options!: APOOptions;
+    public points!: Array<APOPoint>;
 
     /* *
      *
@@ -231,4 +231,4 @@ export default APOIndicator;
  * @apioption series.apo
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

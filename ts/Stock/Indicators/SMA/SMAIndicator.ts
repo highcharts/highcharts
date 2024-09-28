@@ -105,8 +105,8 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
+
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -115,12 +115,14 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         name: void 0,
+
         tooltip: {
             /**
              * Number of decimals in indicator series.
              */
             valueDecimals: 4
         },
+
         /**
          * The main series ID that indicator will be based on. Required for this
          * indicator.
@@ -128,6 +130,7 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         linkedTo: void 0,
+
         /**
          * Whether to compare indicator to the main series values
          * or indicator values.
@@ -139,23 +142,28 @@ class SMAIndicator extends LineSeries {
          * @type {boolean}
          */
         compareToMain: false,
+
         /**
-         * Paramters used in calculation of regression series' points.
+         * Parameters used in calculation of regression series' points.
          */
         params: {
+
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              */
             index: 3,
+
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
              * calculations.
              */
             period: 14
+
         }
+
     } as SMAOptions);
 
     /* *
@@ -164,17 +172,17 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    public data: Array<SMAPoint> = void 0 as any;
+    public data!: Array<SMAPoint>;
 
-    public dataEventsToUnbind: Array<Function> = void 0 as any;
+    public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent: LineSeriesType = void 0 as any;
+    public linkedParent!: LineSeriesType;
 
     public nameBase?: string;
 
-    public options: SMAOptions = void 0 as any;
+    public options!: SMAOptions;
 
-    public points: Array<SMAPoint> = void 0 as any;
+    public points!: Array<SMAPoint>;
 
     /* *
      *
@@ -401,7 +409,7 @@ class SMAIndicator extends LineSeries {
         // for example when using Axis.setDataGrouping(). See #16670
         const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
             indicator.linkedParent.yData && // #18176, #18177 indicators should
-            indicator.linkedParent.yData.length ? // work with empty dataset
+            indicator.linkedParent.yData.length ? // Work with empty dataset
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -437,7 +445,9 @@ class SMAIndicator extends LineSeries {
                     croppedDataValues.push([
                         croppedData.xData[i]
                     ].concat(
-                        splat(croppedData.yData[i])
+                        // Note: allowing new any here because this code
+                        // will be removed with the Series/DataTable refactor
+                        splat(croppedData.yData[i]) as any
                     ));
                 }
 
@@ -526,7 +536,7 @@ class SMAIndicator extends LineSeries {
 interface SMAIndicator extends IndicatorLike {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
     useCommonDataGrouping: boolean;
@@ -538,7 +548,7 @@ extend(SMAIndicator.prototype, {
     },
     hasDerivedData: true,
     nameComponents: ['period'],
-    nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
+    nameSuffixes: [], // E.g. Zig Zag uses extra '%'' in the legend name
     useCommonDataGrouping: true
 });
 
@@ -581,4 +591,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-(''); // adds doclet above to the transpiled file
+(''); // Adds doclet above to the transpiled file

@@ -8,15 +8,15 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['af-kt', 10], ['af-pk', 11], ['af-gz', 12], ['af-bd', 13],
-        ['af-nr', 14], ['af-kr', 15], ['af-kz', 16], ['af-ng', 17],
-        ['af-tk', 18], ['af-bl', 19], ['af-kb', 20], ['af-kp', 21],
-        ['af-2030', 22], ['af-la', 23], ['af-lw', 24], ['af-pv', 25],
-        ['af-sm', 26], ['af-vr', 27], ['af-pt', 28], ['af-bg', 29],
-        ['af-hr', 30], ['af-bk', 31], ['af-jw', 32], ['af-bm', 33],
-        ['af-gr', 34], ['af-fb', 35], ['af-sp', 36], ['af-fh', 37],
-        ['af-hm', 38], ['af-nm', 39], ['af-2014', 40], ['af-oz', 41],
-        ['af-kd', 42], ['af-zb', 43]
+        ['af-bds', 10], ['af-tak', 11], ['af-nur', 12], ['af-kdz', 13],
+        ['af-kan', 14], ['af-hel', 15], ['af-knr', 16], ['af-nim', 17],
+        ['af-lag', 18], ['af-kap', 19], ['af-nan', 20], ['af-par', 21],
+        ['af-bgl', 22], ['af-sam', 23], ['af-bal', 24], ['af-jow', 25],
+        ['af-fra', 26], ['af-her', 27], ['af-bdg', 28], ['af-fyb', 29],
+        ['af-gho', 30], ['af-day', 31], ['af-zab', 32], ['af-bam', 33],
+        ['af-log', 34], ['af-kab', 35], ['af-kho', 36], ['af-pia', 37],
+        ['af-uru', 38], ['af-sar', 39], ['af-pan', 40], ['af-pka', 41],
+        ['af-gha', 42], ['af-war', 43]
     ];
 
     // Create the chart
@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/af/af-all.topo.json">Afghanistan</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/af/af-all.topo.json">Afghanistan</a>'
         },
 
         mapNavigation: {

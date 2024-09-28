@@ -1,13 +1,15 @@
 const chart = Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Hide overlapping data labels'
     },
     series: [{
         data: ((arr, len) => {
-            var i;
+            let i;
             for (i = 0; i < len; i = i + 1) {
                 arr.push(i);
             }

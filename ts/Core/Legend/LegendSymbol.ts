@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@ import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
 import U from '../Utilities.js';
@@ -38,13 +39,13 @@ const {
 
 declare module '../Axis/AxisLike' {
     interface AxisLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 
 declare module '../Series/PointLike' {
     interface PointLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -70,13 +71,25 @@ namespace LegendSymbol {
     *
     * */
 
-    /* eslint-disable valid-jsdoc */
+    /**
+     * Draw a line, a point marker and an area in the legend.
+     *
+     * @private
+     * @function Highcharts.LegendSymbolMixin.areaMarker
+     *
+     * @param {Highcharts.Legend} legend
+     * The legend object.
+     */
+    export function areaMarker(
+        this: Series,
+        legend: Legend,
+        item?: LegendItem
+    ): void {
+        lineMarker.call(this, legend, item, true);
+    }
 
     /**
-     * Get the series' symbol in the legend.
-     *
-     * This method should be overridable to create custom symbols through
-     * Highcharts.seriesTypes[type].prototype.drawLegendSymbol.
+     * Draw a line and a point marker in the legend.
      *
      * @private
      * @function Highcharts.LegendSymbolMixin.lineMarker
@@ -87,29 +100,32 @@ namespace LegendSymbol {
     export function lineMarker(
         this: Series,
         legend: Legend,
-        item?: LegendItem
+        item?: LegendItem,
+        hasArea?: boolean
     ): void {
 
         const legendItem = this.legendItem = this.legendItem || {},
-            options = this.options,
-            symbolWidth = legend.symbolWidth,
-            symbolHeight = legend.symbolHeight,
+            { chart, options } = this,
+            { baseline = 0, symbolWidth, symbolHeight } = legend,
+            symbol = this.symbol || 'circle',
             generalRadius = symbolHeight / 2,
-            renderer = this.chart.renderer,
+            renderer = chart.renderer,
             legendItemGroup = legendItem.group,
-            verticalCenter = (legend.baseline as any) -
-                Math.round((legend.fontMetrics as any).b * 0.3);
+            verticalCenter = baseline - Math.round(
+                (legend.fontMetrics?.b || symbolHeight) *
+                // Render line and marker slightly higher to make room for the
+                // area
+                (hasArea ? 0.4 : 0.3)
+            ),
+            attr: SVGAttributes = {};
 
-        let attr: SVGAttributes = {},
-            legendSymbol,
+        let legendSymbol,
             markerOptions = options.marker,
             lineSizer = 0;
 
         // Draw the line
-        if (!this.chart.styledMode) {
-            attr = {
-                'stroke-width': Math.min(options.lineWidth || 0, 24)
-            };
+        if (!chart.styledMode) {
+            attr['stroke-width'] = Math.min(options.lineWidth || 0, 24);
 
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
@@ -124,6 +140,13 @@ namespace LegendSymbol {
             .attr(attr)
             .add(legendItemGroup);
 
+        if (hasArea) {
+            legendItem.area = renderer
+                .path()
+                .addClass('highcharts-area')
+                .add(legendItemGroup);
+        }
+
         if (attr['stroke-linecap']) {
             lineSizer = Math.min(
                 legendItem.line.strokeWidth(),
@@ -132,13 +155,20 @@ namespace LegendSymbol {
         }
 
         if (symbolWidth) {
-            legendItem.line
-                .attr({
-                    d: [
-                        ['M', lineSizer, verticalCenter],
-                        ['L', symbolWidth - lineSizer, verticalCenter]
-                    ]
-                });
+            const d: SVGPath = [
+                ['M', lineSizer, verticalCenter],
+                ['L', symbolWidth - lineSizer, verticalCenter]
+            ];
+
+            legendItem.line.attr({ d });
+
+            legendItem.area?.attr({
+                d: [
+                    ...d,
+                    ['L', symbolWidth - lineSizer, baseline],
+                    ['L', lineSizer, baseline]
+                ]
+            });
         }
 
         // Draw the marker
@@ -151,7 +181,7 @@ namespace LegendSymbol {
             );
 
             // Restrict symbol markers size
-            if ((this.symbol as any).indexOf('url') === 0) {
+            if (symbol.indexOf('url') === 0) {
                 markerOptions = merge(markerOptions, {
                     width: symbolHeight,
                     height: symbolHeight
@@ -161,7 +191,7 @@ namespace LegendSymbol {
 
             legendItem.symbol = legendSymbol = renderer
                 .symbol(
-                    this.symbol as any,
+                    symbol,
                     (symbolWidth / 2) - radius,
                     verticalCenter - radius,
                     2 * radius,

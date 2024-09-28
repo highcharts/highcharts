@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -200,10 +200,10 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         /**
-         * The minimum for the Z value range. Defaults to the highest Z
-         * value in the data.
+         * The maximum for the Z value range. Defaults to the highest Z value in
+         * the data.
          *
-         * @see [zMax](#plotOptions.mapbubble.zMin)
+         * @see [zMin](#plotOptions.mapbubble.zMin)
          *
          * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
@@ -262,11 +262,11 @@ class MapBubbleSeries extends BubbleSeries {
      *
      * */
 
-    public data: Array<MapBubblePoint> = void 0 as any;
+    public data!: Array<MapBubblePoint>;
 
-    public options: MapBubbleSeriesOptions = void 0 as any;
+    public options!: MapBubbleSeriesOptions;
 
-    public points: Array<MapBubblePoint> = void 0 as any;
+    public points!: Array<MapBubblePoint>;
 
     public clearBounds = mapProto.clearBounds;
 
@@ -275,7 +275,7 @@ class MapBubbleSeries extends BubbleSeries {
         compareX?: boolean
     ): (Point|undefined) {
         return this.searchKDTree({
-            clientX: e.chartX - this.chart.plotLeft,
+            plotX: e.chartX - this.chart.plotLeft,
             plotY: e.chartY - this.chart.plotTop
         }, compareX, e);
     }
@@ -298,7 +298,7 @@ class MapBubbleSeries extends BubbleSeries {
             iArgs
         );
 
-        let processedXData = this.processedXData,
+        const processedXData = this.processedXData,
             xData = this.xData;
 
         if (processedXData && xData) {
@@ -342,6 +342,8 @@ extend(MapBubbleSeries.prototype, {
     processData: mapProto.processData,
 
     projectPoint: mapPointProto.projectPoint,
+
+    kdAxisArray: ['plotX', 'plotY'],
 
     setData: mapProto.setData,
 
@@ -447,4 +449,4 @@ export default MapBubbleSeries;
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -1,5 +1,5 @@
 function generateConnectedCuboids(level) {
-    var data = [];
+    const data = [];
 
     while (level--) {
         // Top

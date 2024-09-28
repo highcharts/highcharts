@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -18,10 +18,12 @@
 
 import type FlowMapPointOptions from './FlowMapPointOptions';
 import type FlowMapSeries from './FlowMapSeries';
+import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import ColorMapComposition from '../ColorMapComposition.js';
+import type ColorMapComposition from '../ColorMapComposition.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { LonLatArray } from '../..//Maps/MapViewOptions';
+import { LonLatArray } from '../../Maps/MapViewOptions';
 const {
     seriesTypes: {
         mapline: {
@@ -56,9 +58,9 @@ class FlowMapPoint extends MapLinePoint {
 
     public toPos?: PositionObject;
 
-    public options: FlowMapPointOptions = void 0 as any;
+    public options!: FlowMapPointOptions;
 
-    public series: FlowMapSeries = void 0 as any;
+    public series!: FlowMapSeries;
 
     /* *
      *
@@ -74,13 +76,17 @@ class FlowMapPoint extends MapLinePoint {
         [this.options.to, this.options.from]
             .forEach(function (toOrFrom): void {
                 valid = !!(valid && (toOrFrom && (
-                    isString(toOrFrom) || ( // point id or has lat/lon coords
+                    isString(toOrFrom) || ( // Point id or has lat/lon coords
                         isNumber(pick(
                             (toOrFrom as LonLatArray)[0],
-                            (toOrFrom as Highcharts.MapLonLatObject).lat)) &&
+                            (toOrFrom as MapLonLatObject).lat
+                        )
+                        ) &&
                         isNumber(pick(
                             (toOrFrom as LonLatArray)[1],
-                            (toOrFrom as Highcharts.MapLonLatObject).lon))
+                            (toOrFrom as MapLonLatObject).lon
+                        )
+                        )
                     )
                 )));
             });

@@ -29,7 +29,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat:
-      '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.0f}%</b><br/>',
+      '<span style="color:{series.color}">{series.name}</span>: <b>' +
+      '{point.percentage:.0f}%</b><br/>',
         shared: true
     },
     plotOptions: {
@@ -39,6 +40,8 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '{series.name}: {y}%',
                 color: 'black',
+                crop: false,
+                allowOverlap: true,
                 rotation: -55,
                 y: -100,
                 x: 30

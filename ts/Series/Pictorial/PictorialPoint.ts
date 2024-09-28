@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2024 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -44,9 +44,9 @@ class PictorialPoint extends ColumnPoint {
      *
      * */
 
-    public options: PictorialPointOptions = void 0 as any;
-    public series: PictorialSeries = void 0 as any;
-    public pathDef: string | SVGPath | undefined = void 0 as any;
+    public options!: PictorialPointOptions;
+    public series!: PictorialSeries;
+    public pathDef!: string | SVGPath | undefined;
 
     /* *
      *

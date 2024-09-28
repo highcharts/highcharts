@@ -27,7 +27,7 @@ import type {
 } from '../Controllables/ControllableOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../../../Core/FormatUtilities';
+import type Templating from '../../../Core/Templating';
 import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -82,7 +82,7 @@ function bins(
         );
 
     let bins: (''|number) = 0,
-        isCalculated = false; // to avoid Infinity in formatter
+        isCalculated = false; // To avoid Infinity in formatter
 
     series.forEach((serie): void => {
         if (
@@ -204,7 +204,7 @@ function init(
         );
     }
 
-    // x / y selection type
+    // X / y selection type
     if (selectType === 'x') {
         this.startYMin = yAxis.toValue(top);
         this.startYMax = yAxis.toValue(top + yAxis.len);
@@ -230,7 +230,7 @@ function max(
         );
 
     let max: (''|number) = -Infinity,
-        isCalculated = false; // to avoid Infinity in formatter
+        isCalculated = false; // To avoid Infinity in formatter
 
     series.forEach((serie): void => {
         if (
@@ -276,7 +276,7 @@ function min(
         );
 
     let min: (''|number) = Infinity,
-        isCalculated = false; // to avoid Infinity in formatter
+        isCalculated = false; // To avoid Infinity in formatter
 
     series.forEach((serie): void => {
         if (
@@ -397,6 +397,18 @@ function updateStartPoints(
         this.offsetX = 0;
         this.offsetY = 0;
     }
+
+    this.options.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
+
+    // We need to update userOptions as well as they are used in
+    // the Annotation.update() method to initialize the annotation, #19121.
+    this.userOptions.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
 }
 
 /* *
@@ -514,7 +526,7 @@ class Measure extends Annotation {
 
         this.controlPoints.push(controlPoint);
 
-        // add extra controlPoint for horizontal and vertical range
+        // Add extra controlPoint for horizontal and vertical range
         if (selectType !== 'xy') {
             controlPoint = new ControlPoint(
                 this.chart,
@@ -537,7 +549,7 @@ class Measure extends Annotation {
         const typeOptions = this.options.typeOptions,
             formatter = typeOptions.label.formatter;
 
-        // set xAxisMin, xAxisMax, yAxisMin, yAxisMax
+        // Set xAxisMin, xAxisMax, yAxisMin, yAxisMax
         recalculate.call(this, resize);
 
         if (!typeOptions.label.enabled) {
@@ -608,7 +620,8 @@ class Measure extends Annotation {
             extend<Partial<ControllableShapeOptions>>(
                 {
                     type: 'path',
-                    points: this.shapePointsOptions()
+                    points: this.shapePointsOptions(),
+                    className: 'highcharts-measure-background'
                 },
                 this.options.typeOptions.background
             ),
@@ -651,7 +664,7 @@ class Measure extends Annotation {
             xAxisMax = yAxisMax;
             yAxisMax = temp;
         }
-        // horizontal line
+        // Horizontal line
         if (options.crosshairX.enabled) {
             pathH = [[
                 'M',
@@ -664,7 +677,7 @@ class Measure extends Annotation {
             ]];
         }
 
-        // vertical line
+        // Vertical line
         if (options.crosshairY.enabled) {
             pathV = [[
                 'M',
@@ -686,8 +699,16 @@ class Measure extends Annotation {
         } else {
 
             // Add new crosshairs
-            crosshairOptionsX = merge(defaultOptions, options.crosshairX);
-            crosshairOptionsY = merge(defaultOptions, options.crosshairY);
+            crosshairOptionsX = merge(
+                defaultOptions,
+                { className: 'highcharts-measure-crosshair-x' },
+                options.crosshairX
+            );
+            crosshairOptionsY = merge(
+                defaultOptions,
+                { className: 'highcharts-measure-crosshair-y' },
+                options.crosshairY
+            );
 
             this.initShape(
                 extend<Partial<ControllableShapeOptions>>(
@@ -719,7 +740,7 @@ class Measure extends Annotation {
         this.offsetX += x;
         this.offsetY += y;
 
-        // animation, resize, setStartPoints
+        // Animation, resize, setStartPoints
         this.redraw(false, false, true);
     }
 
@@ -743,7 +764,7 @@ class Measure extends Annotation {
         selectType?: AnnotationDraggableValue
     ): void {
 
-        // background shape
+        // Background shape
         const bckShape = this.shapes[2];
 
         if (selectType === 'x') {
@@ -818,7 +839,7 @@ class Measure extends Annotation {
         this.redrawItems(this.shapes, animation);
         this.redrawItems(this.labels, animation);
 
-        // redraw control point to run positioner
+        // Redraw control point to run positioner
         this.controlPoints.forEach((controlPoint): void =>
             controlPoint.redraw()
         );
@@ -828,11 +849,6 @@ class Measure extends Annotation {
         this.shapes.forEach((item): void =>
             item.translate(dx, dy)
         );
-
-        this.options.typeOptions.point = {
-            x: this.startXMin,
-            y: this.startYMin
-        };
     }
 
 }
@@ -1009,7 +1025,7 @@ Measure.prototype.defaultOptions = merge(
                  *
                  * <td>`this.min`</td>
                  *
-                 * <td>The mininimum value of the points in the selected
+                 * <td>The minimum value of the points in the selected
                  * range.</td>
                  *
                  * </tr>
@@ -1076,7 +1092,7 @@ Measure.prototype.defaultOptions = merge(
                 if (selectType === 'x') {
                     targetY = (ext.yAxisMax + ext.yAxisMin) / 2;
 
-                    // first control point
+                    // First control point
                     if (cpIndex === 0) {
                         targetX = target.xAxisMin;
                     }
@@ -1086,7 +1102,7 @@ Measure.prototype.defaultOptions = merge(
                     targetX = ext.xAxisMin +
                                         ((ext.xAxisMax - ext.xAxisMin) / 2);
 
-                    // first control point
+                    // First control point
                     if (cpIndex === 0) {
                         targetY = target.yAxisMin;
                     }
@@ -1151,7 +1167,7 @@ namespace Measure {
     }
     export interface MeasureTypeLabelOptions {
         enabled: boolean;
-        formatter?: FormatUtilities.FormatterCallback<Measure>;
+        formatter?: Templating.FormatterCallback<Measure>;
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {

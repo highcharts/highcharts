@@ -24,11 +24,13 @@ Math.easeOutBounce = pos => {
 
 const big = window.matchMedia('(min-width: 500px)').matches;
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/';
 
 Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    colors: [
+        '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+    ],
     chart: {
         style: {
             fontFamily: 'IBM Plex Sans, sans-serif'
@@ -114,8 +116,10 @@ const support = {
                     if (big) {
                         head.style.transform = 'rotate(15deg) ';
                         face.style.transform = 'rotate(15deg)';
-                        p1.style.transform = 'translate(0px,0px) rotate(360deg)';
-                        p6.style.transform = 'translate(20px,4px) rotate(-45deg)';
+                        p1.style.transform = 'translate(0px,0px) ' +
+                            'rotate(360deg)';
+                        p6.style.transform = 'translate(20px,4px) ' +
+                            'rotate(-45deg)';
                         p5.style.transform = 'translate(0px,0px) rotate(0deg)';
                         p3.style.transform = 'translate(0px,0px) rotate(8deg)';
 
@@ -123,10 +127,14 @@ const support = {
 
                         head.style.transform = 'rotate(15deg) scale(1.2)';
                         face.style.transform = 'rotate(15deg) scale(.5)';
-                        p1.style.transform = 'translate(-30px,10px) rotate(360deg) scale(.5)';
-                        p6.style.transform = 'translate(20px,15px) rotate(-45deg) scale(.5)';
-                        p5.style.transform = 'translate(-65px,0px) rotate(0deg) scale(.5)';
-                        p3.style.transform = 'translate(65px,0px) rotate(8deg) scale(.5)';
+                        p1.style.transform = 'translate(-30px,10px) ' +
+                            'rotate(360deg) scale(.5)';
+                        p6.style.transform = 'translate(20px,15px) ' +
+                            'rotate(-45deg) scale(.5)';
+                        p5.style.transform = 'translate(-65px,0px) ' +
+                            'rotate(0deg) scale(.5)';
+                        p3.style.transform = 'translate(65px,0px) ' +
+                            'rotate(8deg) scale(.5)';
                     }
                 }, 1000);
 
@@ -156,19 +164,27 @@ const support = {
 
                             head.style.transform = 'rotate(315deg)';
                             face.style.transform = 'rotate(315deg)';
-                            p1.style.transform = 'translate(-20px,4px) rotate(320deg)';
-                            p6.style.transform = 'translate(40px,4px) rotate(0deg)';
-                            p5.style.transform = 'translate(0px,0px) rotate(-30deg)';
-                            p3.style.transform = 'translate(0px,0px) rotate(50deg)';
+                            p1.style.transform = 'translate(-20px,4px) ' +
+                                'rotate(320deg)';
+                            p6.style.transform = 'translate(40px,4px) ' +
+                                'rotate(0deg)';
+                            p5.style.transform = 'translate(0px,0px) ' +
+                                'rotate(-30deg)';
+                            p3.style.transform = 'translate(0px,0px) ' +
+                                'rotate(50deg)';
 
                         } else {
 
                             head.style.transform = 'rotate(315deg) scale(1.2)';
                             face.style.transform = 'rotate(315deg) scale(.5)';
-                            p1.style.transform = 'translate(-20px,32px) rotate(320deg) scale(.5)';
-                            p6.style.transform = 'translate(20px,26px) rotate(0deg) scale(.5)';
-                            p5.style.transform = 'translate(-55px,30px) rotate(-30deg) scale(.5)';
-                            p3.style.transform = 'translate(55px,20px) rotate(50deg) scale(.5)';
+                            p1.style.transform = 'translate(-20px,32px) ' +
+                                'rotate(320deg) scale(.5)';
+                            p6.style.transform = 'translate(20px,26px) ' +
+                                'rotate(0deg) scale(.5)';
+                            p5.style.transform = 'translate(-55px,30px) ' +
+                                'rotate(-30deg) scale(.5)';
+                            p3.style.transform = 'translate(55px,20px) ' +
+                                'rotate(50deg) scale(.5)';
 
                         }
                     }, 5000);

@@ -1,8 +1,10 @@
 Highcharts.chart('container', {
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
         breaks: [{
             from: 5.5,
             to: 7.5
@@ -16,16 +18,17 @@ Highcharts.chart('container', {
                     return;
                 }
 
-                var axis = this,
+                const axis = this,
                     brokenAxis = axis.brokenAxis,
                     chart = axis.chart,
-                    breakLine = brokenAxis.breakLine,
                     breakPoint = brokenAxis.breakArray[0],
                     pos = breakPoint.to,
                     path = axis.getPlotLinePath({
                         value: pos,
                         width: 2
                     });
+
+                let breakLine = brokenAxis.breakLine;
 
                 if (!breakLine) {
                     breakLine = brokenAxis.breakLine = chart.renderer.path(path)
@@ -46,7 +49,14 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5,
+            106.4, 129.2,
+            144.0, 176.0,
+            135.6, 148.5,
+            216.4, 194.1,
+            95.6, 54.4
+        ]
     }]
 
 });

@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json'
+        'https://www.highcharts.com/samples/data/us-capitals.json'
     ).then(response => response.json());
 
     data.forEach(p => {
@@ -61,7 +61,9 @@
             },
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{point.capital}, {point.parentState}. Population {point.population}. Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
+                    valueDescriptionFormat: '{point.capital}, ' +
+                        '{point.parentState}. Population {point.population}. ' +
+                        'Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
                 }
             },
             name: 'State capital cities',

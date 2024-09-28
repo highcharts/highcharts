@@ -1,8 +1,8 @@
 // Prepare the data
-var data = [],
-    n = 50000,
-    i;
-for (i = 0; i < n; i += 1) {
+const data = [],
+    n = 50000;
+
+for (let i = 0; i < n; i += 1) {
     data.push([
         Math.pow(Math.random(), 2) * 100,
         Math.pow(Math.random(), 2) * 100,
@@ -18,7 +18,9 @@ console.time('bubble');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     xAxis: {
@@ -37,7 +39,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text: 'Bubble chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
 
     legend: {

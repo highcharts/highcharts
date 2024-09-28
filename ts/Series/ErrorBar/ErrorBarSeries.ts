@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -48,7 +48,6 @@ const {
  * @name Highcharts.seriesTypes.errorbar
  *
  * @augments Highcharts.Series
- *
  */
 class ErrorBarSeries extends BoxPlotSeries {
 
@@ -69,9 +68,9 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
-    public data: Array<ErrorBarPoint> = void 0 as any;
-    public options: ErrorBarSeriesOptions = void 0 as any;
-    public points: Array<ErrorBarPoint> = void 0 as any;
+    public data!: Array<ErrorBarPoint>;
+    public options!: ErrorBarSeriesOptions;
+    public points!: Array<ErrorBarPoint>;
 
     /* *
      *
@@ -80,40 +79,42 @@ class ErrorBarSeries extends BoxPlotSeries {
      * */
 
     public getColumnMetrics(): ColumnMetricsObject {
+        const series = this;
+
         // Get the width and X offset, either on top of the linked series
         // column or standalone
         return (
-            (this.linkedParent && this.linkedParent.columnMetrics) ||
-            ColumnSeries.prototype.getColumnMetrics.call(this)
+            (series.linkedParent && series.linkedParent.columnMetrics) ||
+            ColumnSeries.prototype.getColumnMetrics.call(series)
         );
     }
 
     public drawDataLabels(): void {
-        const valKey = this.pointValKey;
+        const series = this,
+            valKey = series.pointValKey;
 
         if (AreaRangeSeries) {
-            AreaRangeSeries.prototype.drawDataLabels.call(this);
+            AreaRangeSeries.prototype.drawDataLabels.call(series);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            this.data.forEach(function (point: ErrorBarPoint): void {
+            for (const point of series.points) {
                 point.y = (point as any)[valKey];
-            });
+            }
         }
     }
 
     public toYData(point: ErrorBarPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.low, point.high];
     }
 
 }
 
 addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
-    this.points.forEach((point): void => {
+    for (const point of this.points) {
         point.plotLow = point.plotY;
-    });
+    }
 }, { order: 0 });
-
 
 /* *
  *
@@ -130,9 +131,8 @@ interface ErrorBarSeries extends BoxPlotSeries {
 }
 
 extend(ErrorBarSeries.prototype, {
-    // pointClass: ErrorBarPoint, // just a declaration
-    pointArrayMap: ['low', 'high'], // array point configs are mapped to this
-    pointValKey: 'high', // defines the top of the tracker
+    pointArrayMap: ['low', 'high'], // Array point configs are mapped to this
+    pointValKey: 'high', // Defines the top of the tracker
     doQuartiles: false
 });
 

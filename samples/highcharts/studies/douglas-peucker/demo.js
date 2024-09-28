@@ -3,23 +3,25 @@ function simplifyPath(data, epsilon) {
         if (data.length <= 2) {
             return [data[0]];
         }
-        var result = [],
+        let result = [],
             dmax = 0,
             index = 0,
-            start = data[0],
-            end = data[data.length - 1],
             point,
-            i,
             d;
 
+        const start = data[0],
+            end = data[data.length - 1];
+
+
         // recurring factors
-        var m = (end.y - start.y) / (end.x - start.x),
+        const m = (end.y - start.y) / (end.x - start.x),
             b = start.y - (m * start.x);
 
         // Find furthest point
-        for (i = 1; i <= data.length - 2; i++) {
+        for (let i = 1; i <= data.length - 2; i++) {
             point = data[i];
-            d = Math.abs(point.y - (m * point.x) - b) / Math.sqrt(Math.pow(m, 2) + 1);
+            d = Math.abs(point.y - (m * point.x) - b) /
+                 Math.sqrt(Math.pow(m, 2) + 1);
             if (d > dmax) {
                 dmax = d;
                 index = i;
@@ -27,28 +29,33 @@ function simplifyPath(data, epsilon) {
         }
         // Evaluate
         if (dmax >= epsilon) {
-            result = result.concat(douglasPecker(data.slice(0, index + 1), epsilon));
-            result = result.concat(douglasPecker(data.slice(index + 1, data.length), epsilon));
+            result = result.concat(
+                douglasPecker(data.slice(0, index + 1), epsilon)
+            );
+            result = result.concat(
+                douglasPecker(data.slice(index + 1, data.length), epsilon)
+            );
         } else {
             result = [start];
         }
         return result;
     }
     // CALL RDP Function
-    var arr = douglasPecker(data, epsilon);
+    const arr = douglasPecker(data, epsilon);
     arr.push(data[data.length - 1]);
     return arr;
 }
 
 
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+    const arr = [];
+
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i++) {
+
+    for (let i = 0; i < n; i++) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -72,10 +79,15 @@ function getData(n) {
 }
 
 
-var rawData = getData(500000),
+const rawData = getData(500000),
     simplifiedData = simplifyPath(rawData, 3);
 
-console.log('Raw data length:', rawData.length, 'Simplifid data length:', simplifiedData.length);
+console.log(
+    'Raw data length:',
+    rawData.length,
+    'Simplifid data length:',
+    simplifiedData.length
+);
 rawData.length = 0; // clear memory
 
 console.time('Highcharts.Chart');
@@ -86,7 +98,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The points are filtered through the Douglas Peucker algorithm<br>View console for benchmarks'
+        text: 'The points are filtered through the Douglas Peucker ' +
+            'algorithm<br>View console for benchmarks'
     },
 
     series: [{

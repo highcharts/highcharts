@@ -1,0 +1,612 @@
+/* ibm-plex-sans-100 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 100;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-100.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-200 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 200;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-300 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 300;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-regular - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-500 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 500;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-600 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 600;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* ibm-plex-sans-700 - latin */
+@font-face {
+    font-display: swap;
+    font-family: "IBM Plex Sans";
+    font-style: normal;
+    font-weight: 700;
+    src: url("https://www.highcharts.com/samples/graphics/cyber-monday/fonts/ibm-plex-sans-v19-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body,
+#demo-content {
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 !important;
+}
+
+#demo-content {
+    background-color: transparent;
+    height: 400px;
+    max-height: 400px;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+#stop {
+    position: absolute;
+    top: 270px;
+    z-index: 1000;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    display: none;
+}
+
+.top-bar {
+    box-shadow: none;
+}
+
+body {
+    background-color: transparent;
+    height: 100%;
+}
+
+.highcharts-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#container {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    width: 100% !important;
+    top: 0;
+}
+
+#countdown2 {
+    opacity: 0;
+}
+
+.particles image {
+    transform: scale(0.7, 0.7) translateY(-40px);
+    transform-origin: center;
+}
+
+.homepage #content {
+    height: unset;
+    display: inline-grid;
+    grid-template-columns: 54% 46%;
+    grid-auto-rows: max-content;
+    justify-items: center;
+    padding-right: 0;
+    width: 100%;
+}
+
+.homepage {
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    display: flex;
+}
+
+.homepage #content #cyber {
+    grid-column: 1 / 1;
+    flex-direction: row;
+    grid-row: 1;
+    justify-self: self-end;
+    align-self: center;
+    display: none;
+}
+
+.homepage #content #week #date span,
+.homepage #content #date-below span {
+    text-align: left;
+    font-family: monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: white;
+    line-height: 14px;
+}
+
+.homepage #content #week {
+    grid-column: 2 / 2;
+    flex-direction: column;
+    grid-row: 1;
+    justify-self: self-start;
+    align-self: center;
+    padding-left: 4px;
+    display: none;
+}
+
+.homepage #content #week #date {
+    display: none;
+    padding-top: 8px;
+}
+
+.homepage #content #week #date span {
+    display: block;
+}
+
+.homepage #content #date-below {
+    /* display: block; */
+    grid-column: 1 / 3;
+    grid-row: 2;
+    justify-self: center;
+    display: none;
+}
+
+.homepage #content #date-below span {
+    display: inline-block;
+}
+
+.homepage #content h1 {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    color: #fff;
+    text-align: center;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    align-self: center;
+    display: none;
+}
+
+.highcharts-point {
+    fill: transparent;
+}
+
+.homepage #content h1 span {
+    color: #6ee7b7;
+}
+
+.homepage #content #countdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    grid-column: 1 / 3;
+    grid-row: 4;
+
+    /* width: 90%; */
+    width: 100%;
+
+    /* gap: 6px; */
+    gap: 0;
+
+    /* padding-left: 16px; */
+    padding-left: 0;
+}
+
+.homepage #content img {
+    max-height: 30px;
+    min-height: 30px;
+}
+
+/* particles */
+.highcharts-series-7 image {
+    filter: saturate(2);
+    opacity: 1;
+    transition: all 500ms;
+}
+
+/* gauges */
+
+.highcharts-pane {
+    stroke: #6ee7b7;
+    stroke-width: 0;
+    fill-opacity: 0.8;
+}
+
+.homepage #content #countdown .gauge {
+    border: 0 solid #6ee7b7;
+    width: 75px;
+    height: 40px;
+}
+
+/* data labels */
+
+.homepage #content #countdown .highcharts-data-label .time {
+    width: 22px;
+    text-align: right;
+}
+
+.homepage #content #countdown .highcharts-data-label .time div {
+    /* font-size: 1.4rem; */
+    color: #6ee7b7;
+    font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: -10px;
+    margin-left: 0;
+    transform: translateX(-20px);
+}
+
+/* caption */
+.highcharts-caption {
+    font-size: 0.9em !important;
+    font-weight: normal;
+    fill: #e3e3e8 !important;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    transform: translate(12px, 11px);
+    font-family: monospace;
+}
+
+.highcharts-pane {
+    fill: transparent;
+}
+
+.highcharts-label-box.highcharts-data-label-box {
+    stroke: transparent;
+    fill: transparent;
+}
+
+.highcharts-label-box.highcharts-data-label-box {
+    stroke: transparent;
+}
+
+@media screen  and (prefers-reduced-motion: reduce) {
+    #stop {
+        visibility: hidden;
+    }
+}
+
+@media screen  and (min-width: 301px) {
+    .highcharts-point {
+        fill: #6ee7b7;
+    }
+
+    .highcharts-pane {
+        stroke-width: 1;
+    }
+
+    .homepage #content #countdown #hours.gauge {
+        margin-left: unset;
+    }
+
+    #stop {
+        display: block;
+    }
+
+    .homepage {
+        height: 435px;
+    }
+
+    .homepage #content {
+        height: 250px;
+    }
+
+    .homepage #content #cyber {
+        display: flex;
+    }
+
+    .homepage #content #week {
+        display: flex;
+    }
+
+    .homepage #content #date-below {
+        display: block;
+    }
+
+    .highcharts-point {
+        fill: #6ee7b7;
+    }
+
+    .homepage #content #countdown {
+        width: 90%;
+        gap: 6px;
+        padding-left: 16px;
+    }
+
+    .homepage #content #countdown .gauge {
+        border: 0;
+        width: 80px;
+        height: 80px;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time {
+        width: 80px;
+        text-align: center;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time div {
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-left: 0;
+        transform: unset;
+    }
+
+    .homepage #content h1 {
+        display: block;
+    }
+
+    .highcharts-caption {
+        transform: none;
+        font-size: 0.5rem !important;
+    }
+}
+
+@media screen  and (min-width: 360px) {
+    .homepage #content {
+        grid-template-columns: 54% 46%;
+        grid-auto-rows: max-content;
+        justify-content: center;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time div {
+        font-size: 1.6rem;
+        margin-top: 1px;
+    }
+
+    .homepage {
+        margin-right: 0;
+        margin-left: 0;
+    }
+}
+
+/* for homepage only */
+@media screen and (min-width: 480px) {
+    .homepage {
+        margin-left: 20px;
+    }
+
+    .homepage #content {
+        grid-template-columns: 48% 52%;
+        grid-template-rows: 40px 50px auto;
+        justify-content: center;
+
+        /* padding: 0 24px 0 36px; */
+    }
+
+    .homepage #content #week {
+        grid-column: 2 / 2;
+        flex-direction: row;
+        grid-row: 1;
+        justify-self: self-start;
+        align-self: center;
+        padding-left: 0;
+    }
+
+    .homepage #content #week #date {
+        display: block;
+
+        /* padding-left: 0px;
+            margin-top: 5px; */
+    }
+
+    .homepage #content #week #date span {
+        display: block;
+    }
+
+    .homepage #content #date-below {
+        display: none;
+    }
+
+    .homepage #content #cyber {
+        margin-bottom: 2px;
+    }
+
+    .homepage #content #week img {
+        max-height: 34px;
+        min-height: 34px;
+    }
+
+    .homepage #content #cyber img {
+        max-height: 36px;
+        min-height: 36px;
+    }
+
+    .homepage #content h1 {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        letter-spacing: 3px;
+        font-size: 14px;
+    }
+
+    .homepage #content #countdown {
+        grid-column: 1 / 3;
+        grid-row: 3;
+        margin-top: 0;
+        width: 95%;
+        padding-left: 0;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.2rem;
+        margin-top: -8px;
+    }
+
+    .homepage #content #countdown .gauge {
+        border: 0;
+        width: 100px;
+        height: 100px;
+    }
+
+    /* caption */
+    .highcharts-caption {
+        font-size: 0.6em !important;
+
+        /* transform: translateY(5px); */
+    }
+
+    #stop {
+        top: 290px;
+    }
+}
+
+@media screen  and (min-width: 576px) {
+    .homepage #content {
+        /* grid-template-columns: 170px 170px; */
+        grid-template-columns: 48% 52%;
+        grid-template-rows: 40px 50px auto;
+        justify-content: center;
+    }
+
+    .homepage #content h1 {
+        letter-spacing: 10px;
+    }
+
+    .homepage #content img {
+        max-height: 40px;
+        min-height: 40px;
+    }
+
+    .homepage #content #week #date {
+        margin-top: 0;
+    }
+
+    .homepage #content #countdown .gauge {
+        border: 0;
+        width: 120px;
+        height: 120px;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.5rem;
+        margin-top: 3px;
+    }
+
+    .homepage #content #week img {
+        max-height: 38px;
+        min-height: 38px;
+    }
+
+    .homepage #content #cyber img {
+        max-height: 40px;
+        min-height: 40px;
+    }
+
+    #stop {
+        top: 310px;
+    }
+}
+
+/* for homepage only */
+@media screen  and (min-width: 680px) {
+    .homepage #content #countdown {
+        min-width: 600px;
+    }
+
+    .homepage #content #countdown .gauge {
+        border: 0;
+        width: 130px;
+        height: 130px;
+    }
+
+    .homepage #content #countdown .highcharts-data-label .time div {
+        font-size: 2.8rem;
+        margin-top: -6px;
+    }
+
+    .highcharts-caption {
+        transform: none;
+        font-size: 0.7rem !important;
+    }
+}
+
+@media screen  and (min-width: 768px) {
+    .highcharts-pane {
+        stroke: #6ee7b7;
+    }
+
+    #container {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .highcharts-data-label .time div {
+        font-size: 2.6rem;
+    }
+
+    .homepage #content #countdown .gauge {
+        border: 0;
+        width: 145px;
+        height: 145px;
+    }
+
+    #stop {
+        top: 320px;
+    }
+}
+
+@media screen  and (min-width: 992px) {
+    #demo-content {
+        height: 400px;
+        max-height: 400px;
+    }
+
+    #container {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .highcharts-caption {
+        font-size: 0.6em !important;
+    }
+}
+
+@media screen  and (min-width: 1200px) {
+    .highcharts-caption {
+        font-size: 0.6em !important;
+    }
+}
+
+@media screen  and (min-width: 1400px) {
+    .highcharts-caption {
+        font-size: 0.6em !important;
+    }
+}

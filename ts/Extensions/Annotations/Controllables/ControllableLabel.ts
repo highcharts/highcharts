@@ -27,7 +27,7 @@ import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
 
 import Controllable from './Controllable.js';
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
@@ -54,14 +54,6 @@ interface ControllableAlignObject extends AlignObject {
     height?: number;
     width?: number;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -231,11 +223,8 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
-            const svgRendererProto = SVGRendererClass.prototype;
-
-            svgRendererProto.symbols.connector = symbolConnector;
-        }
+        const symbols = SVGRendererClass.prototype.symbols;
+        symbols.connector = symbolConnector;
 
     }
 
@@ -418,10 +407,6 @@ class ControllableLabel extends Controllable {
                 .shadow(options.shadow);
         }
 
-        if (options.className) {
-            this.graphic.addClass(options.className);
-        }
-
         this.graphic.labelrank = (options as any).labelrank;
 
         super.render();
@@ -476,6 +461,7 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
     ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
@@ -522,7 +508,8 @@ class ControllableLabel extends Controllable {
                     {
                         chart,
                         distance: pick(itemOptions.distance, 16),
-                        getPlayingField: tooltip.getPlayingField
+                        getPlayingField: tooltip.getPlayingField,
+                        pointer: tooltip.pointer
                     },
                     width,
                     height,

@@ -48,7 +48,8 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     assert.notOk(
         series.points[2].dataLabel,
-        '#16084: dataLabel should be disabled');
+        '#16084: dataLabel should be disabled'
+    );
 
     series.points[2].update({
         dataLabels: {
@@ -84,7 +85,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     assert.notEqual(firstDL.width, oldWidth, 'Data label\'s new width is set.');
 
-    var connector = series.points[0].connector,
+    var connector = firstDL.connector,
         connectorWidth = connector.strokeWidth(),
         connectorColor = connector.attr('stroke');
 

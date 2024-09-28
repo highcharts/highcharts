@@ -1,4 +1,4 @@
-var data = [
+const data = [
     ['eu', 0],
     ['oc', 1],
     ['af', 2],

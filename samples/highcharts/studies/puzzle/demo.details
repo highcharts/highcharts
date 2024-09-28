@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Map puzzle study
  authors:
    - Torstein Hønsi
  requiresManualTesting: true

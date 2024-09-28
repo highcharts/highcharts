@@ -47,4 +47,4 @@ Simple example
 
 _See below the simple live example of a Gantt chart_
 
-<iframe src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/gantt/gantt/simple-gantt-chart/embedded/result,js/" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
+<iframe src=https://www.highcharts.com/samples/embed/gantt/gantt/simple-gantt-chart id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>

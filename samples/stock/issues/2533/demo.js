@@ -1,6 +1,7 @@
 Highcharts.stockChart('container', {
     title: {
-        text: 'In Highcharts Stock <= 1.3.9 the first point was not visible as the group start was outside the dataMin'
+        text: 'In Highcharts Stock <= 1.3.9 the first point was not visible ' +
+            'as the group start was outside the dataMin'
     },
 
 
@@ -10,7 +11,8 @@ Highcharts.stockChart('container', {
 
     series: [{
         data: [
-            [1223596800001, -5.8], // 10 Oct 2008 00:00:01 GMT. No issue if the timestamp is 1223596800000 (10 Oct 2008 00:00:00 GMT)
+            [1223596800001, -5.8], // 10 Oct 2008 00:00:01 GMT. No issue if
+            // the timestamp is 1223596800000 (10 Oct 2008 00:00:00 GMT)
             [1230858000000, -4.1],
             [1230944400000, -0.5],
             [1231030800000, -8.9],

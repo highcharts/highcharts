@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -37,7 +37,7 @@ namespace GridTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: [
             '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
             '#FF9655', '#FFF263', '#6AF9C4'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@ import type SplinePointOptions from '../Spline/SplinePointOptions';
  * */
 
 export interface AreaSplinePointOptions extends SplinePointOptions {
-    // nothing to add for know
+    // Nothing to add for know
 }
 
 /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * A pie chart is a circular graphic which is divided into slices to
  * illustrate numerical proportion.
  *
- * @sample highcharts/demo/pie-basic/
+ * @sample highcharts/demo/pie-chart/
  *         Pie chart
  *
  * @extends      plotOptions.line
@@ -93,13 +93,14 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      * event information. The default action is to toggle the visibility of
      * the point. This can be prevented by calling `event.preventDefault()`.
      *
-     * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
-     *         Confirm toggle visibility
+     *  **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @type      {Highcharts.PointLegendItemClickCallbackFunction}
-     * @since     1.2.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.pie.point.events.legendItemClick
+     * @deprecated 11.4.4
+     * @type       {Highcharts.PointLegendItemClickCallbackFunction}
+     * @since      1.2.0
+     * @product    highcharts highmaps
+     * @apioption  plotOptions.pie.point.events.legendItemClick
      */
 
     /**
@@ -153,7 +154,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    colorByPoint: true, // always true for pies
+    colorByPoint: true, // Always true for pies
 
     /**
      * A series specific or series type specific color set to use instead
@@ -196,8 +197,6 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @product   highcharts highmaps
          * @apioption plotOptions.pie.dataLabels.alignTo
          */
-
-        allowOverlap: true,
 
         /**
          * The color of the line connecting the data label to the pie slice.
@@ -435,8 +434,8 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
     ignoreHiddenPoint: true,
 
     /**
-     * @ignore-option
-     *
+     * @default   true
+     * @extends   plotOptions.series.inactiveOtherPoints
      * @private
      */
     inactiveOtherPoints: true,
@@ -477,7 +476,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    marker: null as any, // point options are specified in the base options
+    marker: null as any, // Point options are specified in the base options
 
     /**
      * The minimum size for a pie in response to auto margins. The pie will
@@ -737,7 +736,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
  * @apioption series.pie.events
  */
 
-''; // placeholder for transpiled doclets above
+''; // Placeholder for transpiled doclets above
 
 /* *
  *

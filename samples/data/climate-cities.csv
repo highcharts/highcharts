@@ -1,0 +1,31 @@
+city,country,elevation,lat,lat2,lon,lon2,csv
+Bangkok,Kingdom of Thailand,1,13.75,13.75,100.49,100.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/13.75_100.49.csv
+Buenos Aires,Argentine Republic,10,-34.60,-34.75,-58.38,-58.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-34.6_-58.38.csv
+Cairo,Arab Republic of Egypt,22,30.04,30.25,31.24,31.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/30.03_31.23.csv
+Caracas,Bolivarian Republic of Venezuela,909,10.48,10.25,-66.90,-66.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/10.48_-66.9.csv
+Dakar,Republic of Senegal,37,14.69,14.75,-17.45,-17.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/14.69_-17.45.csv
+Dublin,Republic of Ireland,8,53.35,53.25,-6.26,-6.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/53.35_-6.26.csv
+Grytviken,South Georgia and the South Sandwich Islands,17,-54.28,-54.25,-36.51,-36.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/-54.28_-36.51.csv
+Helsinki,Republic of Finland,25,60.17,60.25,24.94,24.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/60.17_24.94.csv
+Honolulu,United States of America,6,21.31,21.25,-157.86,-157.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/21.31_-157.86.csv
+Jakarta,Republic of Indonesia,3,-6.16,-6.25,106.83,106.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/-6.16_106.83.csv
+Johannesburg,Republic of South Africa,1753,-26.20,-26.25,28.05,28.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-26.2_28.05.csv
+Kathmandu,Federal Democratic Republic of Nepal,1298,27.72,27.75,85.32,85.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/27.72_85.32.csv
+Kinshasa,Democratic Republic of the Congo,240,-4.33,-4.25,15.32,15.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-4.33_15.32.csv
+Lagos,Federal Republic of Nigeria,41,6.46,6.25,3.38,3.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/6.46_3.38.csv
+Lima,Republic of Peru,107,-12.06,-12.25,-77.04,-77.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-12.06_-77.04.csv
+Los Angeles,United States of America,93,34.05,34.25,-118.25,-118.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/34.05_-118.25.csv
+Madrid,Kingdom of Spain,667,40.42,40.25,-3.70,-3.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/40.42_-3.7.csv
+Mexico City,United Mexican States,2216,19.43,19.25,-99.13,-99.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/19.43_-99.13.csv
+Mumbai,Republic of India,14,19.08,19.25,72.88,72.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/19.08_72.88.csv
+New York,United States of America,10,40.71,40.75,-74.01,-74.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/40.71_-74.01.csv
+Odesa,Ukraine,40,46.49,46.25,30.74,30.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/46.49_30.74.csv
+Port aux Français,French Republic,16,-49.35,-49.25,70.22,70.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-49.35_70.22.csv
+Port Moresby,Independent State of Papua New Guinea,39,-9.48,-9.25,147.15,147.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-9.48_147.15.csv
+Reykjavík,Iceland,12,64.15,64.25,-21.94,-21.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/64.15_-21.94.csv
+São Paulo,Federative Republic of Brazil,760,-23.55,-23.75,-46.63,-46.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/-23.55_-46.63.csv
+Sydney,Commonwealth of Australia,35,-33.87,-33.75,151.21,151.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-33.87_151.21.csv
+Tokyo,Japan,17,35.69,35.75,139.69,139.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/35.69_139.69.csv
+Ulaanbaatar,Mongolia,1350,47.92,47.75,106.92,106.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/47.92_106.92.csv
+Vancouver,Canada,76,49.26,49.25,-123.11,-123.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/49.26_-123.11.csv
+Xining,People's Republic of China,2275,36.62,36.75,101.78,101.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/36.62_101.78.csv

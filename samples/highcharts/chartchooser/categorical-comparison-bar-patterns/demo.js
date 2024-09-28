@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'bar',
-        zoomType: 'y'
+        zooming: {
+            type: 'y'
+        }
     },
     title: {
         text: 'Total organic area 2012 and 2018'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -35,7 +35,7 @@ const { find } = U;
  * layer for keyboard navigation, and defines a map of keyCodes to handler
  * functions.
  *
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @sample highcharts/accessibility/custom-component
  *         Custom accessibility component
@@ -95,8 +95,6 @@ class KeyboardNavigationHandler {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.
@@ -191,4 +189,4 @@ export default KeyboardNavigationHandler;
  * @type {Function|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

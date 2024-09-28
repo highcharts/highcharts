@@ -1,0 +1,6 @@
+---
+ name: Chart constructor for Gantt
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...

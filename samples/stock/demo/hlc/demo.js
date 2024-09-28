@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+    ).then(response => response.json());
 
     // create the chart
     Highcharts.stockChart('container', {
@@ -18,9 +23,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             data: data,
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}. High: {point.high}, low: {point.low}, close: {point.close}.'
+                    valueDescriptionFormat: '{xDescription}. High: ' +
+                        '{point.high}, low: {point.low}, close: {point.close}.'
                 }
             }
         }]
     });
-});
+})();

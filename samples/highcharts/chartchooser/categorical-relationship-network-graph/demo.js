@@ -1,5 +1,5 @@
 /* eslint-disable default-case */
-var dirDist50 = '#E8544E',
+const dirDist50 = '#E8544E',
     dirDist10 = '#FFD265',
     dirDistLess10 = '#2AA775';
 
@@ -15,7 +15,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            var info = '';
+            let info = '';
             switch (this.color) {
             case dirDist50:
                 console.log(dirDist50);

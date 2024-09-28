@@ -5,9 +5,15 @@
  *
  * Marker clusters module for Highcharts
  *
- * (c) 2010-2021 Wojciech Chmiel
+ * (c) 2010-2024 Wojciech Chmiel
  *
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/MarkerClusters.js';
+import Highcharts from '../../Core/Globals.js';
+import MarkerClusters from '../../Extensions/MarkerClusters/MarkerClusters.js';
+import MarkerClusterSymbols from '../../Extensions/MarkerClusters/MarkerClusterSymbols.js';
+const G: AnyRecord = Highcharts;
+MarkerClusters.compose(G.Axis, G.Chart, G.defaultOptions, G.Series);
+MarkerClusterSymbols.compose(G.SVGRenderer);
+export default Highcharts;

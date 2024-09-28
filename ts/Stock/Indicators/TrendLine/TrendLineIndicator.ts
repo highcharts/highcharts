@@ -74,7 +74,7 @@ class TrendLineIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
@@ -92,9 +92,9 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<TrendLinePoint> = void 0 as any;
-    public options: TrendLineOptions = void 0 as any;
-    public points: Array<TrendLinePoint> = void 0 as any;
+    public data!: Array<TrendLinePoint>;
+    public options!: TrendLineOptions;
+    public points!: Array<TrendLinePoint>;
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -107,48 +107,54 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        const xVal: Array<number> = (series.xData as any),
+        const orgXVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = [],
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            xValLength: number = xVal.length,
-            index: number = (params.index as any);
+            index: number = params.index;
 
-        let sumX = (xValLength - 1) * xValLength / 2,
-            sumY = 0,
-            sumXY = 0,
-            sumX2 =
-                ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
-            alpha: number,
-            i: number,
-            y: number;
+        let numerator = 0,
+            denominator = 0,
+            xValSum = 0,
+            yValSum = 0,
+            counter = 0;
 
-        // Get sums:
-        for (i = 0; i < xValLength; i++) {
-            y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
-            sumY += y;
-            sumXY += i * y;
+        // Create an array of consecutive xValues, (don't remove duplicates)
+        for (let i = 0; i < orgXVal.length; i++) {
+            if (i === 0 || orgXVal[i] !== orgXVal[i - 1]) {
+                counter++;
+            }
+            xVal.push(counter);
         }
 
-        // Get slope and offset:
-        alpha = (xValLength * sumXY - sumX * sumY) /
-            (xValLength * sumX2 - sumX * sumX);
-
-        if (isNaN(alpha)) {
-            alpha = 0;
+        for (let i = 0; i < xVal.length; i++) {
+            xValSum += xVal[i];
+            yValSum += isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
         }
 
-        const beta = (sumY - alpha * sumX) / xValLength;
+        const meanX = xValSum / xVal.length,
+            meanY = yValSum / yVal.length;
+
+        for (let i = 0; i < xVal.length; i++) {
+            const y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
+            numerator += (xVal[i] - meanX) * (y - meanY);
+            denominator += Math.pow(xVal[i] - meanX, 2);
+        }
 
         // Calculate linear regression:
-        for (i = 0; i < xValLength; i++) {
-            y = alpha * i + beta;
+        for (let i = 0; i < xVal.length; i++) {
+            // Check if the xVal is already used
+            if (orgXVal[i] === xData[xData.length - 1]) {
+                continue;
+            }
+            const x = orgXVal[i],
+                y = meanY + (numerator / denominator) * (xVal[i] - meanX);
 
-            // Prepare arrays required for getValues() method
-            LR[i] = [xVal[i], y];
-            xData[i] = xVal[i];
-            yData[i] = y;
+            LR.push([x, y]);
+            xData.push(x);
+            yData.push(y);
         }
 
         return {
@@ -168,13 +174,13 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof TrendLinePoint;
 }
 
 extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
-    nameComponents: (false as any)
+    nameComponents: void 0
 });
 
 /* *
@@ -218,4 +224,4 @@ export default TrendLineIndicator;
  * @apioption series.trendline
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

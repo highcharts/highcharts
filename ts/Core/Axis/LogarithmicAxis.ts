@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -66,19 +66,9 @@ namespace LogarithmicAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Provides logarithmic support for axes.
@@ -88,10 +78,10 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('logarithmic')) {
             AxisClass.keepProps.push('logarithmic');
 
-            addEvent(AxisClass, 'init', onInit);
+            addEvent(AxisClass, 'afterSetType', onAfterSetType);
             addEvent(AxisClass, 'afterInit', onAfterInit);
         }
 
@@ -101,23 +91,15 @@ namespace LogarithmicAxis {
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['options'] }
+    function onAfterSetType(
+        this: Axis
     ): void {
-        const axis = this;
-        const options = e.userOptions;
-
-        let logarithmic = axis.logarithmic;
-
-        if (options.type !== 'logarithmic') {
-            axis.logarithmic = void 0;
+        if (this.type !== 'logarithmic') {
+            this.logarithmic = void 0;
         } else {
-            if (!logarithmic) {
-                logarithmic = axis.logarithmic = new Additions(
-                    axis as Composition
-                );
-            }
+            this.logarithmic ??= new Additions(
+                this as Composition
+            );
         }
     }
 
@@ -130,7 +112,7 @@ namespace LogarithmicAxis {
         const axis = this as Composition;
         const log = axis.logarithmic;
 
-        // extend logarithmic axis
+        // Extend logarithmic axis
         if (log) {
             axis.lin2val = function (num: number): number {
                 return log.lin2log(num);

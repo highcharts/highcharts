@@ -9,6 +9,7 @@
 /js
 /build
 /code
+/vendor
 /cypress
 /errors/errors.json
 /errors/errors.xml
@@ -26,6 +27,7 @@
 /test/last-run.json
 /test/visual-test-results.json
 /test/pr-review-*.json
+/test/cypress/dashboards/cypress/snapshots/
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt

@@ -1,6 +1,6 @@
 console.time('load');
 
-var data = {
+const data = {
     vessels: [{
         name: 'TS1_PS',
         utilized: 0,
@@ -52194,12 +52194,12 @@ var data = {
     }]
 };
 
-var series = [];
+const series = [];
 
 data.vessels.forEach(function (vessel, i) {
-    var seriesData = vessel.trips.reduce(function (acc, cur) {
-        var startTime = cur.start;
-        var points = [];
+    const seriesData = vessel.trips.reduce(function (acc, cur) {
+        let startTime = cur.start;
+        const points = [];
         cur.voyages.forEach(function (voyage) {
             if (voyage.loadDuration) {
                 voyage.loadDuration *= 1000 * 60 * 60;
@@ -52241,7 +52241,9 @@ data.vessels.forEach(function (vessel, i) {
 
 Highcharts.ganttChart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     yAxis: {
@@ -52251,8 +52253,7 @@ Highcharts.ganttChart('container', {
 
     plotOptions: {
         series: {
-            grouping: false,
-            turboThreshold: 0
+            grouping: false
         }
     },
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,6 @@
 import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
-import type { AnnotationPointType } from './AnnotationSeries';
 import type {
     ControllableLabelType,
     ControllableShapeType
@@ -109,14 +108,28 @@ abstract class EventEmitter {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
-                        emitter.chart.pointer.normalize(e),
+                        emitter.chart.pointer?.normalize(e),
                         emitter.target
                     );
                 }
             };
 
             if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
-                emitter.graphic.on(type, eventHandler);
+                addEvent(
+                    emitter.graphic.element,
+                    type,
+                    eventHandler,
+                    { passive: false }
+                );
+
+                if (emitter.graphic.div) {
+                    addEvent(
+                        emitter.graphic.div,
+                        type,
+                        eventHandler,
+                        { passive: false }
+                    );
+                }
             } else {
                 addEvent(emitter, type, eventHandler, { passive: false });
             }
@@ -305,9 +318,14 @@ abstract class EventEmitter {
         }
 
         const emitter = this,
-            pointer = emitter.chart.pointer;
+            pointer = emitter.chart.pointer,
+            // Using experimental property on event object to check if event was
+            // created by touch on screen on hybrid device (#18122)
+            firesTouchEvents = (
+                (e as any)?.sourceCapabilities?.firesTouchEvents
+            ) || false;
 
-        e = pointer.normalize(e);
+        e = pointer?.normalize(e) || e;
 
         let prevChartX = e.chartX,
             prevChartY = e.chartY;
@@ -316,11 +334,11 @@ abstract class EventEmitter {
         emitter.chart.hasDraggedAnnotation = true;
         emitter.removeDrag = addEvent(
             doc,
-            isTouchDevice ? 'touchmove' : 'mousemove',
+            isTouchDevice || firesTouchEvents ? 'touchmove' : 'mousemove',
             function (e: AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
-                e = pointer.normalize(e);
+                e = pointer?.normalize(e) || e;
                 e.prevChartX = prevChartX;
                 e.prevChartY = prevChartY;
 
@@ -329,12 +347,12 @@ abstract class EventEmitter {
                 prevChartX = e.chartX;
                 prevChartY = e.chartY;
             },
-            isTouchDevice ? { passive: false } : void 0
+            isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
         emitter.removeMouseUp = addEvent(
             doc,
-            isTouchDevice ? 'touchend' : 'mouseup',
-            function (e: AnnotationEventObject): void {
+            isTouchDevice || firesTouchEvents ? 'touchend' : 'mouseup',
+            function (): void {
                 // Sometimes the target is the annotation and sometimes its the
                 // controllable
                 const annotation = pick(
@@ -347,33 +365,26 @@ abstract class EventEmitter {
                 }
 
                 emitter.cancelClick = emitter.hasDragged;
-                emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
-                // ControlPoints vs Annotation:
-                fireEvent(pick(
-                    annotation, // #15952
-                    emitter
-                ), 'afterUpdate');
-                emitter.onMouseUp(e);
+                if (emitter.hasDragged) {
+                    // ControlPoints vs Annotation:
+                    fireEvent(pick(
+                        annotation, // #15952
+                        emitter
+                    ), 'afterUpdate');
+                }
+                emitter.hasDragged = false;
+                emitter.onMouseUp();
             },
-            isTouchDevice ? { passive: false } : void 0
+            isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
     }
 
     /**
      * Mouse up handler.
      */
-    public onMouseUp(
-        _e: AnnotationEventObject
-    ): void {
-        const chart = this.chart,
-            annotation = this.target as Annotation || this,
-            annotationsOptions = chart.options.annotations,
-            index = chart.annotations.indexOf(annotation);
-
+    public onMouseUp(): void {
         this.removeDocEvents();
-
-        annotationsOptions[index] = annotation.options;
     }
 
     abstract redraw(animation?: boolean): void;

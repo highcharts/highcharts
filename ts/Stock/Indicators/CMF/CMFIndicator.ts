@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -79,10 +79,10 @@ class CMFIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * indicator calculation.
              */
             volumeSeriesID: 'volume'
         }
@@ -94,12 +94,12 @@ class CMFIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<CMFPoint> = void 0 as any;
-    public options: CMFOptions = void 0 as any;
-    public points: Array<CMFPoint> = void 0 as any;
-    public volumeSeries: LineSeries = void 0 as any;
-    public linkedParent: LineSeries = void 0 as any;
-    public yData: Array<Array<number>> = void 0 as any;
+    public data!: Array<CMFPoint>;
+    public options!: CMFOptions;
+    public points!: Array<CMFPoint>;
+    public volumeSeries!: LineSeries;
+    public linkedParent!: LineSeries;
+    public yData!: Array<Array<number>>;
     public nameBase: string = 'Chaikin Money Flow';
 
     /* *
@@ -175,7 +175,8 @@ class CMFIndicator extends SMAIndicator {
             series.xData as number[],
             series.yData,
             (this.volumeSeries.yData as any),
-            (params.period as any)
+            (params.period as any
+            )
         );
     }
 
@@ -371,4 +372,4 @@ export default CMFIndicator;
  * @apioption series.cmf
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

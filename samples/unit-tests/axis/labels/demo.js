@@ -374,6 +374,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         },
         xAxis: {
             labels: {
+                padding: 1,
                 autoRotation: [-45]
             }
         }
@@ -382,8 +383,77 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
     assert.deepEqual(
         xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
         [-45, -45, -45, -45, -45, -45, -45, -45, -45],
-        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+        'step = 1 and default autoRotation: all ticks should be labeled and ' +
+        'rotated (#14226)'
     );
+
+    chart.update({
+        chart: {
+            marginRight: undefined,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        xAxis: {
+            categories: [
+                '00',
+                '06',
+                '07',
+                '08',
+                '09',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+                '16',
+                '17',
+                '18',
+                '19',
+                '20',
+                '21',
+                '22'
+            ],
+            labels: {
+                autoRotation: [-90],
+                style: {
+                    fontSize: '11px'
+                },
+                step: 0
+            }
+        },
+        yAxis: {
+            labels: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            }
+        },
+        series: [
+            {
+                type: 'area',
+                data: [2, 3, 2, 3, 2, 2, 3, 2, 3, 2, 2, 3, 2, 3, 2, 3, 2]
+            }
+        ]
+    }, true, true);
+
+    for (let i = 0; i < 3; i++) {
+        chart.update({
+            chart: {
+                width: 180 + 20 * i
+            }
+        });
+
+        assert.ok(
+            xAxis.tickPositions.filter(
+                pos => xAxis.ticks[pos].label.element.innerHTML
+            ).length,
+            `Labels should not disappear when autoRotation set and
+                label.height > label.width (#19857)`
+        );
+    }
 });
 
 QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
@@ -702,13 +772,15 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'it would be a great improvement if you could actually ' +
+                        'it would be a great improvement if you could ' +
+                        'actually ' +
                             'delete the image and replace it with another. ' +
                             'For example',
                         1
                     ],
                     [
-                        'this seems like a great feature and would like to see ' +
+                        'this seems like a great feature and would like to ' +
+                        'see ' +
                             'more choices',
                         1
                     ],
@@ -718,8 +790,10 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'there needs to be a paint brush option or some way to ' +
-                            'edit the colors of the icons within the text frames. ' +
+                        'there needs to be a paint brush option or some way ' +
+                        'to ' +
+                            'edit the colors of the icons within the text ' +
+                            'frames. ' +
                             ' Other than that',
                         1
                     ],
@@ -1201,15 +1275,15 @@ QUnit.test('Long labels and ellipsis', function (assert) {
         xAxis: {
             categories: [
                 'cgi-bin/php?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63' +
-                    '%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3' +
-                    'D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%' +
-                    '61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66' +
-                    '%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%6' +
-                    '2%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%' +
-                    '70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%6' +
-                    '9%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%' +
-                    '64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72' +
-                    '%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E',
+                '%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3' +
+                'D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%' +
+                '61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66' +
+                '%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%6' +
+                '2%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%' +
+                '70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%6' +
+                '9%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%' +
+                '64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72' +
+                '%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E',
                 'phpadmin/scripts/setup.php',
                 'w00tw00t.at.blackhats.romanian.anti-sec:)',
                 'cgi-bin/env.cgi',
@@ -1223,15 +1297,15 @@ QUnit.test('Long labels and ellipsis', function (assert) {
                 'SQlite/main.php',
                 'SQLiteManager/main.php',
                 'cgi-bin/php5?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
-                    '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
-                    '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
-                    '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
-                    '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
-                    'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
-                    '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
-                    '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
-                    '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
-                    '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
                     '0+%2D%6E',
                 'cgi-bin/bash',
                 'cgi-bin/contact.cgi',
@@ -1241,38 +1315,38 @@ QUnit.test('Long labels and ellipsis', function (assert) {
                 'cgi-bin/recent.cgi',
                 'cgi-bin/tools/tools.pl',
                 'cgi-bin/php-cgi?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%' +
-                    '6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%6' +
-                    '4%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D' +
-                    '%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%' +
-                    '65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%6' +
-                    '5%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75' +
-                    '%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70' +
-                    '%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%' +
-                    '65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%7' +
-                    '2%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3' +
-                    'D%30+%2D%6E',
+                '6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%6' +
+                '4%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D' +
+                '%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%' +
+                '65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%6' +
+                '5%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75' +
+                '%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70' +
+                '%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%' +
+                '65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%7' +
+                '2%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3' +
+                'D%30+%2D%6E',
                 'cgi-bin/php.cgi?%2D%64+%61%6C%6C%6F%77%5F%' +
-                    '75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%6' +
-                    '6%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69' +
-                    '%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%' +
-                    '69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+' +
-                    '%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%6' +
-                    '5+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C' +
-                    '%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%' +
-                    '2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64' +
-                    '+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%7' +
-                    '3%5F%65%6E%76%3D%30+%2D%6E',
+                '75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%6' +
+                '6%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69' +
+                '%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%' +
+                '69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+' +
+                '%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%6' +
+                '5+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C' +
+                '%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%' +
+                '2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64' +
+                '+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%7' +
+                '3%5F%65%6E%76%3D%30+%2D%6E',
                 'cgi-bin/php4?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
-                    '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
-                    '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
-                    '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
-                    '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
-                    'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
-                    '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
-                    '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
-                    '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
-                    '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
-                    '0+%2D%6E',
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '0+%2D%6E',
                 'scripts/setup.php'
             ],
             title: {
@@ -1590,7 +1664,7 @@ QUnit.test('Labels text height (#3891)', function (assert) {
 // Highcharts 3.0.10, Issue #2806
 // Unable to see all labels on the bar charts
 QUnit.test('Column pointrange (#2806)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -1649,6 +1723,70 @@ QUnit.test('Column pointrange (#2806)', function (assert) {
         chart.xAxis[0].labelGroup.element.childNodes.length,
         4,
         'There should be 4 labels on the xAxis.'
+    );
+
+    chart.update({
+        xAxis: {
+            categories: void 0
+        },
+        plotOptions: {
+            column: {
+                stacking: false
+            }
+        }
+    }, false);
+
+    chart.series[1].remove(false);
+    chart.series[0].remove(false);
+
+    chart.addSeries({
+        data: [{
+            x: 0,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 1,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 2,
+            y: 1
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        1,
+        `pointRange should be calculated properly for multiple series with
+        single points(#17791).`
+    );
+
+    chart.xAxis[0].update({
+        type: 'datetime'
+    }, false);
+
+    chart.series[0].setData([{
+        x: 1640995200000,
+        y: 1
+    }], false);
+    chart.series[1].setData([{
+        x: 1672531200000,
+        y: 1
+    }], false);
+    chart.series[2].setData([{
+        x: 1704067200000,
+        y: 1
+    }]);
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        31536000000,
+        `pointRange should be calculated properly for multiple series with
+        single datetime points(#17791).`
     );
 });
 

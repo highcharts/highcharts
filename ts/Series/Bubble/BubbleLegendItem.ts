@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -24,7 +24,7 @@ import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type {
     LegendItemObject,
     LegendItem
@@ -36,7 +36,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -121,15 +121,15 @@ class BubbleLegendItem {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public legend: Legend = void 0 as any;
-    public maxLabel: BBoxObject = void 0 as any;
-    public movementX: number = void 0 as any;
-    public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
-    public selected: undefined = void 0 as any;
-    public visible: boolean = void 0 as any;
-    public symbols: Record<string, Array<SVGElement>> = void 0 as any;
-    public options: BubbleLegendItem.Options = void 0 as any;
+    public chart!: Chart;
+    public legend!: Legend;
+    public maxLabel!: BBoxObject;
+    public movementX!: number;
+    public ranges!: Array<BubbleLegendItem.RangesOptions>;
+    public selected!: undefined;
+    public visible!: boolean;
+    public symbols!: Record<string, Array<SVGElement>>;
+    public options!: BubbleLegendItem.Options;
 
     /* *
      *
@@ -176,8 +176,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const chart = this.chart,
-            itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = pick(legend.options.itemDistance, 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =
@@ -186,7 +185,7 @@ class BubbleLegendItem {
 
         let connectorSpace;
 
-        // Do not create bubbleLegend now if ranges or ranges valeus are not
+        // Do not create bubbleLegend now if ranges or ranges values are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
             (legend.options.bubbleLegend as any).autoRanges = true;
@@ -350,7 +349,8 @@ class BubbleLegendItem {
         }
         // Nesting SVG groups to enable handleOverflow
         legendItem.symbol = renderer.g('bubble-legend');
-        legendItem.label = renderer.g('bubble-legend-item');
+        legendItem.label = renderer.g('bubble-legend-item')
+            .css(this.legend.itemStyle || {});
 
         // To enable default 'hideOverlappingLabels' method
         legendItem.symbol.translateX = 0;
@@ -407,7 +407,7 @@ class BubbleLegendItem {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0; // do not use connector
+            connectorLength = 0; // Do not use connector
             options.connectorDistance = 0;
             (range.labelAttribs as any).align = 'center';
         }
@@ -659,7 +659,7 @@ class BubbleLegendItem {
         let calculatedSize,
             maxSize = bubbleSeries.options.maxSize;
 
-        // Calculate prediceted max size of bubble
+        // Calculate predicted max size of bubble
         if (floating || !(/%$/.test(maxSize as any))) {
             calculatedSize = maxPxSize;
 
@@ -711,7 +711,8 @@ class BubbleLegendItem {
             bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
-        if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
+        if (
+            Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
             1
         ) {
             this.updateRanges(
@@ -751,7 +752,7 @@ namespace BubbleLegendItem {
         allowOverlap?: boolean;
         className?: string;
         format?: string;
-        formatter?: FormatUtilities.FormatterCallback<FormatterContextObject>;
+        formatter?: Templating.FormatterCallback<FormatterContextObject>;
         style?: CSSObject;
         x?: number;
         y?: number;
@@ -820,4 +821,4 @@ export default BubbleLegendItem;
  * @type {number}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

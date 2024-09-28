@@ -1,0 +1,48 @@
+#container {
+    min-width: 320px;
+    max-height: 480px;
+}
+
+/* styles for testing */
+body {
+    color: white;
+
+    /* margin-top: -80px; */
+}
+
+.btn-small {
+    white-space: nowrap;
+}
+
+#message {
+    height: unset;
+}
+
+.fake {
+    position: relative;
+    background: linear-gradient(180deg, #201836 0%, #46465c 100%);
+}
+
+/* for the dashboard chart */
+
+.highcharts-root image {
+    transition: all 2s;
+    opacity: 1;
+    transform-origin: center;
+}
+
+.highcharts-root image {
+    transform: translate(-135px, 185px)  scale(3, 2);
+    opacity: 0.8;
+}
+
+.highcharts-root image.move {
+    transform: translate(-1535px, 185px)  scale(3, 3);
+    opacity: 0;
+}
+
+@media screen  and (min-width: 992px) {
+    .highcharts-root image.move {
+        transform: translate(-435px, 185px)  scale(3, 4);
+    }
+}

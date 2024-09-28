@@ -1,5 +1,5 @@
 (function (H) {
-    var defaultOptions = H.getOptions(),
+    const defaultOptions = H.getOptions(),
         extendClass = H.extendClass,
         merge = H.merge,
         seriesTypes = H.seriesTypes;
@@ -33,14 +33,18 @@
         }
     }, {
         getPointSpline: function (points, point, i) {
-            var ret = ['L', point.plotX, point.plotY],
-                center,
-                last = points[i - 1],
+            let ret = ['L', point.plotX, point.plotY],
+                center;
+
+            const last = points[i - 1],
                 gravity = this.options.gravity,
                 invGravity = 1 - gravity;
 
             if (point && last) {
-                center = this.xAxis.center || [(point.plotX + last.plotX) / 2, this.yAxis.len];
+                center = this.xAxis.center || [
+                    (point.plotX +
+                     last.plotX) / 2, this.yAxis.len
+                ];
                 ret = [
                     'C',
                     last.plotX * invGravity + center[0] * gravity,
@@ -72,7 +76,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['person', 'family', 'family_dwelling', 'dwelling', 'workplace', 'municipality'],
+        categories: [
+            'person', 'family', 'family_dwelling', 'dwelling', 'workplace',
+            'municipality'
+        ],
         min: 0,
         max: 6,
         gridLineWidth: 0,

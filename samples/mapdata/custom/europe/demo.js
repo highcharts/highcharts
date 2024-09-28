@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/europe.topo.json">Europe</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/europe.topo.json">Europe</a>'
         },
 
         mapNavigation: {

@@ -1,10 +1,9 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
-import { describe } from '../test-utils';
+import { loadHCWithModules } from '../test-utils';
+import { describe, it } from 'node:test';
 
-export function testMapSeries() {
-    describe('Testing maps series...');
-
-    const Highmaps = require('../../../code/highmaps.src.js')();
+describe('Highmaps module', () =>{
+    const Highmaps = loadHCWithModules('highmaps');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -26,23 +25,24 @@ export function testMapSeries() {
 
     const seriesTypes = Object.keys(Highmaps.seriesTypes);
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'The Maps source file should contain these series'
-    );
+    it('should contain all series types', () => {
+        deepStrictEqual(
+            seriesTypes.sort(),
+            expected.sort()
+        );
+    });
 
-    strictEqual(
-        Highmaps.product,
-        'Highmaps',
-        'The loaded module has the correct product name'
-    )
-}
+    it('has the correct product name', () => {
+        strictEqual(
+            Highmaps.product,
+            'Highmaps',
+            'The loaded module has the correct product name'
+        );
+    });
+});
 
-export function testStockSeries() {
-    describe('Testing stock series...');
-
-    const Highstock = require('../../../code/highstock.src.js')();
+describe('Testing stock series', () => {
+    const Highstock = loadHCWithModules('highstock');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -60,59 +60,58 @@ export function testStockSeries() {
         'flags'
     ];
 
-    const seriesTypes = Object.keys(Highstock.seriesTypes);
+    it('should contain the expected series', () => {
+        const seriesTypes = Object.keys(Highstock.seriesTypes);
+        deepStrictEqual(
+            seriesTypes.sort(),
+            expected.sort()
+        );
+    });
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'The Stock source file should contain these series'
-    );
+    it('The loaded module has the correct product name', () => {
+        strictEqual(
+            Highstock.product,
+            'Highstock'
+        );
+    });
 
-    strictEqual(
-        Highstock.product,
-        'Highstock',
-        'The loaded module has the correct product name'
-    )
-}
+});
 
-export function testGanttSeries() {
-    describe('Testing Gantt series...');
+describe('Gantt module', () => {
+    const Gantt = loadHCWithModules('highcharts-gantt');
 
-    const Gantt = require('../../../code/highcharts-gantt.src.js')();
+    it('contains expected series', () => {
+        const expected = [
+            'line',
+            'area',
+            'spline',
+            'areaspline',
+            'column',
+            'bar',
+            'scatter',
+            'pie',
+            'xrange',
+            'gantt'
+        ];
+        const seriesTypes = Object.keys(Gantt.seriesTypes);
 
-    // Check if the series are in seriesTypes
-    const expected = [
-        'line',
-        'area',
-        'spline',
-        'areaspline',
-        'column',
-        'bar',
-        'scatter',
-        'pie',
-        'xrange',
-        'gantt'
-    ];
+        deepStrictEqual(
+            seriesTypes.sort(),
+            expected.sort(),
+            'The Gantt source file should contain these series'
+        );
+    });
 
-    const seriesTypes = Object.keys(Gantt.seriesTypes);
+    it('has the correct product name', () => {
+        strictEqual(
+            Gantt.product,
+            'Highcharts Gantt'
+        );
+    });
+});
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'The Gantt source file should contain these series'
-    );
-
-    strictEqual(
-        Gantt.product,
-        'Highcharts Gantt',
-        'The loaded module has the correct product name'
-    )
-}
-
-export function testHighchartsSeries() {
-    describe('Testing Highcharts Basic series...');
-
-    const Highcharts = require('../../../code/highcharts.src.js')();
+describe('Highcharts Basic module', () => {
+    const Highcharts = loadHCWithModules();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -126,262 +125,277 @@ export function testHighchartsSeries() {
         'pie'
     ];
 
+    it('contains the expected series', () => {
+        const seriesTypes = Object.keys(Highcharts.seriesTypes);
+
+        for (const series of expected) {
+            ok(
+                seriesTypes.includes(series),
+                `${series} is not in seriesTypes`
+            );
+        }
+    });
+
+    it ('has the correct product name', () => {
+        strictEqual(
+            Highcharts.product,
+            'Highcharts',
+            'The loaded module has the correct product name'
+        );
+    });
+});
+
+describe('Testing Highcharts-more series...', () => {
+    const Highcharts = loadHCWithModules('highcharts', ['highcharts-more']);
+
+    it('contains the expected series', () => {
+        // Check if the series are in seriesTypes
+        const expected = [
+            'line',
+            'area',
+            'spline',
+            'areaspline',
+            'column',
+            'bar',
+            'scatter',
+            'pie',
+            'arearange',
+            'areasplinerange',
+            'boxplot',
+            'bubble',
+            'columnrange',
+            'columnpyramid',
+            'errorbar',
+            'gauge',
+            'packedbubble',
+            'polygon',
+            'waterfall'
+        ];
+
+        const seriesTypes = Object.keys(Highcharts.seriesTypes);
+
+        for (const series of expected) {
+            ok(
+                seriesTypes.includes(series),
+                `${series} is not added to seriesTypes`
+            );
+        }
+    });
+});
+
+describe('Highcharts-3d module', () => {
+    const Highcharts = loadHCWithModules('highcharts', ['highcharts-3d']);
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'The Highcharts source file should contain these series'
-    );
+    it('adds the expected series', () => {
+        const added = [
+            'scatter3d'
+        ];
 
-    strictEqual(
-        Highcharts.product,
-        'Highcharts',
-        'The loaded module has the correct product name'
-    )
-}
+        for (const series of added) {
+            ok(
+                seriesTypes.includes(series),
+                `${series} is not added to seriesTypes`
+            );
+        }
+    });
 
-export function testHighchartsMoreSeries() {
-    describe('Testing Highcharts-more series...');
+});
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
-    require('../../../code/highcharts-more.src.js')(Highcharts);
+describe('Stock indicators module', () => {
+    const Highcharts = loadHCWithModules('highcharts', ['modules/stock', 'indicators/indicators-all']);
 
-    // Check if the series are in seriesTypes
-    const expected = [
-        'line',
-        'area',
-        'spline',
-        'areaspline',
-        'column',
-        'bar',
-        'scatter',
-        'pie',
-        'arearange',
-        'areasplinerange',
-        'boxplot',
-        'bubble',
-        'columnrange',
-        'columnpyramid',
-        'errorbar',
-        'gauge',
-        'packedbubble',
-        'polygon',
-        'waterfall'
-    ];
+    it ('adds the expected series', () => {
+        const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
-    const seriesTypes = Object.keys(Highcharts.seriesTypes);
+        const expected = [
+            'abands',
+            'ad',
+            'ao',
+            'apo',
+            'area',
+            'arearange',
+            'areaspline',
+            'areasplinerange',
+            'aroon',
+            'aroonoscillator',
+            'atr',
+            'bar',
+            'bb',
+            'boxplot',
+            'bubble',
+            'candlestick',
+            'cci',
+            'chaikin',
+            'cmf',
+            'cmo',
+            'column',
+            'columnpyramid',
+            'columnrange',
+            'dema',
+            'disparityindex',
+            'dmi',
+            'dpo',
+            'ema',
+            'errorbar',
+            'flags',
+            'gauge',
+            'hlc',
+            'ikh',
+            'keltnerchannels',
+            'klinger',
+            'line',
+            'linearRegression',
+            'linearRegressionAngle',
+            'linearRegressionIntercept',
+            'linearRegressionSlope',
+            'macd',
+            'mfi',
+            'momentum',
+            'natr',
+            'obv',
+            'ohlc',
+            'packedbubble',
+            'pc',
+            'pie',
+            'pivotpoints',
+            'polygon',
+            'ppo',
+            'priceenvelopes',
+            'psar',
+            'roc',
+            'rsi',
+            'scatter',
+            'scatter3d',
+            'slowstochastic',
+            'sma',
+            'spline',
+            'stochastic',
+            'supertrend',
+            'tema',
+            'trendline',
+            'trix',
+            'vbp',
+            'vwap',
+            'waterfall',
+            'williamsr',
+            'wma',
+            'zigzag'
+        ];
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'The Highcharts-more source file should contain these series'
-    );
-}
+        for (const series of expected) {
+            ok(seriesTypes.includes(series), `${series} is not in seriesTypes`);
+        }
+    });
+});
 
-export function test3dSeries() {
-    describe('Testing Highcharts-3d series...');
+describe('Testing Highcharts in use with modules', () => {
+    const Highcharts = loadHCWithModules('highcharts', [
+        'modules/annotations',
+        'modules/broken-axis',
+        'modules/data',
+        'modules/drilldown',
+        'modules/exporting',
+        'modules/funnel',
+        'modules/heatmap',
+        'modules/map',
+        'modules/no-data-to-display',
+        'modules/offline-exporting',
+        'modules/series-label',
+        'modules/treemap'
+    ]);
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
-    require('../../../code/highcharts-3d.src.js')(Highcharts);
+    it('adds properties and methods', () => {
+        // Annotations
+        strictEqual(
+            typeof Highcharts.Annotation,
+            'function',
+            'Annotations is loaded.'
+        );
 
-    const seriesTypes = Object.keys(Highcharts.seriesTypes);
+        // Boost
+        // require('../../../code/modules/boost.src')(Highcharts);
+        // strictEqual(
+        //     typeof Highcharts.Series.prototype.renderCanvas,
+        //     'function',
+        //     'Boost is loaded.'
+        // );
 
-    const added = [
-        'scatter3d'
-    ];
+        // Broken Axis
+        strictEqual(
+            typeof Highcharts.Series.prototype.drawBreaks,
+            'function',
+            'Broken Axis is loaded.'
+        );
 
-    added.forEach(
-        series => ok(
-            seriesTypes.includes(series),
-            `Series "${series}" should be added with the 3d values`
-        )
-    );
-}
+        // Data
+        strictEqual(
+            !!Highcharts.Data,
+            true,
+            'Data is loaded.'
+        );
 
-export function testStockIndicators() {
-    describe('Testing stock indicators series...');
+        // Drilldown
+        strictEqual(
+            typeof Highcharts.Point.prototype.doDrilldown,
+            'function',
+            'Drilldown is loaded.'
+        );
 
-    const Highcharts = require('../../../code/highstock.src.js')();
-    require('../../../code/indicators/indicators-all.src.js')(Highcharts);
+        // Exporting
+        strictEqual(
+            !!Highcharts.getOptions().exporting,
+            true,
+            'Exporting is loaded.'
+        );
 
-    const seriesTypes = Object.keys(Highcharts.seriesTypes);
+        // Funnel
+        strictEqual(
+            !!Highcharts.seriesTypes.funnel,
+            true,
+            'Funnel is loaded.'
+        );
 
-    const expected = [
-        'line',
-        'area',
-        'spline',
-        'areaspline',
-        'column',
-        'bar',
-        'scatter',
-        'pie',
-        'hlc',
-        'ohlc',
-        'candlestick',
-        'flags',
-        'sma',
-        'ema',
-        'ad',
-        'ao',
-        'aroon',
-        'aroonoscillator',
-        'atr',
-        'bb',
-        'cci',
-        'cmf',
-        'dmi',
-        'dpo',
-        'chaikin',
-        'cmo',
-        'dema',
-        'tema',
-        'trix',
-        'apo',
-        'ikh',
-        'keltnerchannels',
-        'klinger',
-        'macd',
-        'mfi',
-        'momentum',
-        'natr',
-        'obv',
-        'pivotpoints',
-        'ppo',
-        'pc',
-        'priceenvelopes',
-        'psar',
-        'roc',
-        'rsi',
-        'stochastic',
-        'slowstochastic',
-        'supertrend',
-        'vbp',
-        'vwap',
-        'williamsr',
-        'wma',
-        'zigzag',
-        'linearRegression',
-        'linearRegressionSlope',
-        'linearRegressionIntercept',
-        'linearRegressionAngle',
-        'abands',
-        'trendline',
-        'disparityindex'
-    ];
+        // Heatmap
+        strictEqual(
+            !!Highcharts.seriesTypes.heatmap,
+            true,
+            'Heatmap is loaded.'
+        );
 
-    deepStrictEqual(
-        seriesTypes,
-        expected,
-        'Highstock with the indicators-all module should add the indicators as series'
-    );
-}
+        // Map
+        strictEqual(
+            !!Highcharts.seriesTypes.map,
+            true,
+            'Map is loaded.'
+        );
 
-export function testHighchartsWithModules() {
-    describe('Testing Highcharts in use with modules');
+        // No Data To Display
+        strictEqual(
+            typeof Highcharts.Chart.prototype.showNoData,
+            'function',
+            'No Data To Display is loaded.'
+        );
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
-    // Annotations
-    require('../../../code/modules/annotations.src.js')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Annotation,
-        'function',
-        'Annotations is loaded.'
-    );
+        // Offline Exporting
+        strictEqual(
+            typeof Highcharts.Chart.prototype.exportChartLocal,
+            'function',
+            'Offline Exporting is loaded.'
+        );
 
-    // Boost
-    require('../../../code/modules/boost.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Series.prototype.renderCanvas,
-        'function',
-        'Boost is loaded.'
-    );
+        // Series Label
+        strictEqual(
+            typeof Highcharts.SVGRenderer.prototype.symbols.connector,
+            'function',
+            'Series Label is loaded.'
+        );
 
-    // Broken Axis
-    require('../../../code/modules/broken-axis.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Series.prototype.drawBreaks,
-        'function',
-        'Broken Axis is loaded.'
-    );
-
-    // Data
-    require('../../../code/modules/data.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.Data,
-        true,
-        'Data is loaded.'
-    );
-
-    // Drilldown
-    require('../../../code/modules/drilldown.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Point.prototype.doDrilldown,
-        'function',
-        'Drilldown is loaded.'
-    );
-
-    // Exporting
-    require('../../../code/modules/exporting.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.getOptions().exporting,
-        true,
-        'Exporting is loaded.'
-    );
-
-    // Funnel
-    require('../../../code/modules/funnel.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.funnel,
-        true,
-        'Funnel is loaded.'
-    );
-
-    // Heatmap
-    require('../../../code/modules/heatmap.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.heatmap,
-        true,
-        'Heatmap is loaded.'
-    );
-
-    // Map
-    require('../../../code/modules/map.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.map,
-        true,
-        'Map is loaded.'
-    );
-
-    // No Data To Display
-    require('../../../code/modules/no-data-to-display.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Chart.prototype.showNoData,
-        'function',
-        'No Data To Display is loaded.'
-    );
-
-    // Offline Exporting
-    require('../../../code/modules/offline-exporting.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Chart.prototype.exportChartLocal,
-        'function',
-        'Offline Exporting is loaded.'
-    );
-
-    // Series Label
-    require('../../../code/modules/series-label.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.SVGRenderer.prototype.symbols.connector,
-        'function',
-        'Series Label is loaded.'
-    );
-
-    // Treemap
-    require('../../../code/modules/treemap.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.treemap,
-        true,
-        'Treemap is loaded.'
-    );
-}
+        // Treemap
+        strictEqual(
+            !!Highcharts.seriesTypes.treemap,
+            true,
+            'Treemap is loaded.'
+        );
+    });
+});

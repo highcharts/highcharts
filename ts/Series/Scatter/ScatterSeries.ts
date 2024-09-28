@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -62,11 +62,11 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    public data: Array<ScatterPoint> = void 0 as any;
+    public data!: Array<ScatterPoint>;
 
-    public options: ScatterSeriesOptions = void 0 as any;
+    public options!: ScatterSeriesOptions;
 
-    public points: Array<ScatterPoint> = void 0 as any;
+    public points!: Array<ScatterPoint>;
 
     /* *
      *
@@ -97,30 +97,27 @@ class ScatterSeries extends LineSeries {
 
         if (jitter) {
             this.points.forEach(function (point, i): void {
-                ['x', 'y'].forEach(function (dim, j): void {
-                    let axis,
-                        plotProp = 'plot' + dim.toUpperCase(),
-                        min,
-                        max,
-                        translatedJitter;
-                    if ((jitter as any)[dim] && !point.isNull) {
-                        axis = (series as any)[dim + 'Axis'];
-                        translatedJitter =
-                            (jitter as any)[dim] * axis.transA;
-                        if (axis && !axis.isLog) {
+                (['x', 'y'] as ['x', 'y']).forEach(function (dim, j): void {
+                    if (jitter[dim] && !point.isNull) {
+                        const plotProp: 'plotX'|'plotY' =
+                                `plot${dim.toUpperCase() as 'X'|'Y'}`,
+                            axis = series[`${dim}Axis`],
+                            translatedJitter = (jitter as any)[dim] *
+                                axis.transA;
+                        if (axis && !axis.logarithmic) {
 
                             // Identify the outer bounds of the jitter range
-                            min = Math.max(
-                                0,
-                                (point as any)[plotProp] - translatedJitter
-                            );
-                            max = Math.min(
-                                axis.len,
-                                (point as any)[plotProp] + translatedJitter
-                            );
+                            const min = Math.max(
+                                    0,
+                                    (point[plotProp] || 0) - translatedJitter
+                                ),
+                                max = Math.min(
+                                    axis.len,
+                                    (point[plotProp] || 0) + translatedJitter
+                                );
 
                             // Find a random position within this range
-                            (point as any)[plotProp] = min +
+                            point[plotProp] = min +
                                 (max - min) * unrandom(i + j * len);
 
                             // Update clientX for the tooltip k-d-tree
@@ -157,16 +154,13 @@ class ScatterSeries extends LineSeries {
 
 interface ScatterSeries {
     pointClass: typeof ScatterPoint;
-    takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false // #2342
-
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
 /* *

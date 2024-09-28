@@ -2,6 +2,12 @@
  * Copyright (C) Highsoft AS
  */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 const gulp = require('gulp');
 
 /* *
@@ -28,7 +34,7 @@ const developerPackageJson = `{
     "name": "highcharts",
     "repository": "https://github.com/highcharts/highcharts.git",
     "types": "highcharts.src.d.ts",
-    "version": "10.0.0+local"
+    "version": "11.0.0+local"
 }\n`;
 
 /* *
@@ -43,13 +49,16 @@ const developerPackageJson = `{
  * @return {Promise<void>}
  * Promise to keep
  */
-function task() {
+function scriptsCode() {
 
     const codeTool = require('../code');
     const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
     const verbose = process.argv.includes('--verbose');
+
+    const buildTool = require('../build');
+
 
     return new Promise((resolve, reject) => {
 
@@ -71,13 +80,26 @@ function task() {
 
                     fs.writeFileSync(
                         filePath,
-                        codeTool.processSrcJSFile(fs.readFileSync(filePath))
+                        codeTool.processSrcJSFile(
+                            fs.readFileSync(filePath).toString()
+                        )
                     );
                 });
 
             fs.writeFileSync('code/package.json', developerPackageJson);
 
             logLib.success('Processed code sources');
+
+            fsLib.getFilePaths('code/es-modules', true).forEach(filePath => {
+                const content = fs.readFileSync(filePath).toString();
+
+                if (content) {
+                    fs.writeFileSync(
+                        filePath,
+                        buildTool.replaceMeta(content)
+                    );
+                }
+            });
 
             resolve();
 
@@ -91,4 +113,4 @@ function task() {
     });
 }
 
-gulp.task('scripts-code', task);
+gulp.task('scripts-code', scriptsCode);

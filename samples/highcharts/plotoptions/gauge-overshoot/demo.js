@@ -119,11 +119,10 @@ Highcharts.chart('container', {
 function (chart) {
     if (!chart.renderer.forExport) {
         setInterval(function () {
-            var point = chart.series[0].points[0],
-                newVal,
+            const point = chart.series[0].points[0],
                 inc = Math.round((Math.random() - 0.5) * 100);
+            let newVal = point.y + inc;
 
-            newVal = point.y + inc;
             if (newVal < -100 || newVal > 100) {
                 newVal = point.y - inc;
             }

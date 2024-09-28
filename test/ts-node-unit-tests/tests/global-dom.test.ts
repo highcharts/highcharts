@@ -1,30 +1,22 @@
-import { describe } from '../test-utils';
-import { JSDOM } from 'jsdom';
-import { strictEqual } from 'assert';
+import { loadHCWithModules } from '../test-utils';
+import { describe, it } from 'node:test';
+import { strictEqual } from 'node:assert';
 
-export function testDOMDependencies() {
-    describe('Testing DOM dependencies...');
-    const dom = new JSDOM(
-        `<!doctype html>
-        <html>
-            <body>
-                <div id="container"></div>
-            </body>
-        </html>`
-    );
-    const Highcharts = require('../../../code/highcharts.src.js')(dom.window);
-    Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3],
-            dataLabels: {
-                enabled: true
-            }
-        }]
-    }, (chart) => {
+describe('Testing DOM dependencies', () => {
+    it('Chart should have a series without "Node is not defined" error', () => {
+        const Highcharts = loadHCWithModules();
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [1, 2, 3],
+                dataLabels: {
+                    enabled: true
+                }
+            }]
+        });
+
         strictEqual(
             chart.series.length,
-            1,
-            'Chart should have a series without "Node is not defined" error.'
+            1
         );
     });
-}
+});

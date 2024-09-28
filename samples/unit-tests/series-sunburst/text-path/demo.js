@@ -82,13 +82,13 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[0].dataLabels[0].textPath),
+        Highcharts.defined(points[0].dataLabels[0].text.textPath),
         false,
         'Text path should not exist for the center label'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[7].dataLabels[0].textPath),
+        Highcharts.defined(points[7].dataLabels[0].text.textPath),
         true,
         'Text path should exist for this data label'
     );
@@ -110,13 +110,24 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     }
 
     assert.strictEqual(
-        points[2].dlOptions.textPath.enabled,
-        false,
-        'Center label has changed after drilldown and should have textPath disabled'
+        chart.container
+            .querySelectorAll(
+                '.highcharts-breadcrumbs-group .highcharts-breadcrumbs-button'
+            )
+            .length,
+        3,
+        'There should be three breadcrumbs items'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPath),
+        points[2].dlOptions.textPath.enabled,
+        false,
+        'Center label has changed after drilldown and should have textPath ' +
+        'disabled'
+    );
+
+    assert.strictEqual(
+        Highcharts.defined(points[2].dataLabels[0].text.textPath),
         false,
         'Text path should not exist for the center label'
     );
@@ -137,11 +148,12 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     assert.strictEqual(
         points[2].dlOptions.textPath.enabled,
         true,
-        'Point have moved to initial position - is not a center point, so textPath should be enabled'
+        'Point have moved to initial position - is not a center point, so ' +
+        'textPath should be enabled'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPath),
+        Highcharts.defined(points[2].dataLabels[0].text.textPath),
         true,
         'Text path should exist for this data label'
     );

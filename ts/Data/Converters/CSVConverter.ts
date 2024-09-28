@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,7 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
+import type { BeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -278,7 +279,7 @@ class CSVConverter extends DataConverter {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                    headers[i] = headers[i].trim().replace(/^["']|["']$/g, '');
                 }
 
                 converter.headers = headers;
@@ -297,9 +298,10 @@ class CSVConverter extends DataConverter {
                 }
             }
 
-            if (dataTypes.length &&
+            if (
+                dataTypes.length &&
                 dataTypes[0].length &&
-                dataTypes[0][1] === 'date' && // format is a string date
+                dataTypes[0][1] === 'date' && // Format is a string date
                 !converter.options.dateFormat
             ) {
                 converter.deduceDateFormat(
@@ -358,16 +360,12 @@ class CSVConverter extends DataConverter {
 
         let i = 0,
             c = '',
-            cl = '',
-            cn = '',
             token: (number|string) = '',
             actualColumn = 0,
             column = 0;
 
         const read = (j: number): void => {
             c = columnStr[j];
-            cl = columnStr[j - 1];
-            cn = columnStr[j + 1];
         };
 
         const pushType = (type: string): void => {
@@ -440,7 +438,11 @@ class CSVConverter extends DataConverter {
 
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
-                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substring(i))) {
+                if (
+                    !/^#[A-F\d]{3,3}|[A-F\d]{6,6}/i.test(
+                        columnStr.substring(i)
+                    )
+                ) {
                     // The rest of the row is a comment
                     push();
                     return;
@@ -452,13 +454,11 @@ class CSVConverter extends DataConverter {
                 read(++i);
 
                 while (i < columnStr.length) {
-                    if (c === '"' && cl !== '"' && cn !== '"') {
+                    if (c === '"') {
                         break;
                     }
 
-                    if (c !== '"' || (c === '"' && cl !== '"')) {
-                        token += c;
-                    }
+                    token += c;
 
                     read(++i);
                 }
@@ -616,13 +616,6 @@ namespace CSVConverter {
      * */
 
     /**
-     * Interface for the BeforeParse callback function
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -638,12 +631,12 @@ namespace CSVConverter {
      * Options that are not compatible with ClassJSON
      */
     export interface SpecialOptions {
-        beforeParse?: DataBeforeParseCallbackFunction;
+        beforeParse?: BeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
 
     /**
-     * Avaliable options of the CSVConverter.
+     * Available options of the CSVConverter.
      */
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 

@@ -5,7 +5,8 @@ $(function () {
             width: 316
         },
         title: {
-            text: 'Highcharts <= 3.0.9, data labels on John series disappeared incertain sizes'
+            text: 'Highcharts <= 3.0.9, data labels on John series ' +
+                'disappeared incertain sizes'
         },
         xAxis: {
             categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']

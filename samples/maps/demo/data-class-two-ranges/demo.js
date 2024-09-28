@@ -18,7 +18,7 @@
              * a pie chart showing the details for each state.
              */
             function pointClick() {
-                var row = this.options.row,
+                const row = this.options.row,
                     $div = $('<div></div>')
                         .dialog({
                             title: this.name,
@@ -36,6 +36,10 @@
                     title: {
                         text: null
                     },
+                    legend: {
+                        enabled: true,
+                        reversed: true
+                    },
                     series: [{
                         name: 'Votes',
                         data: [{
@@ -48,16 +52,17 @@
                             y: parseInt(columns[2][row], 10)
                         }],
                         dataLabels: {
-                            format: '<b>{point.name}</b> {point.percentage:.1f}%'
-                        }
+                            format: '{point.percentage:.1f}%'
+                        },
+                        showInLegend: true
                     }]
                 });
             }
 
             // Make the columns easier to read
 
-            var keys = columns[0],
-                names = columns[1],
+            let keys = columns[0];
+            const names = columns[1],
                 percent = columns[7],
                 // Build the chart options
                 options = {
@@ -148,7 +153,7 @@
             });
             mapData.objects.default.geometries.forEach(function (geometry) {
                 if (geometry.properties['postal-code']) {
-                    var postalCode = geometry.properties['postal-code'],
+                    const postalCode = geometry.properties['postal-code'],
                         i = $.inArray(postalCode, keys);
                     options.series[0].data.push(Highcharts.extend({
                         value: parseFloat(percent[i]),
@@ -164,10 +169,12 @@
         },
 
         error: function () {
-            $('#container').html('<div class="loading">' +
+            $('#container').html(
+                '<div class="loading">' +
                 '<i class="icon-frown icon-large"></i> ' +
                 '<p>Error loading data from Google Spreadsheets</p>' +
-                '</div>');
+                '</div>'
+            );
         }
     });
 

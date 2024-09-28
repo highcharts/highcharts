@@ -1,5 +1,5 @@
 function generateDisconnectedGraphs(length) {
-    var data = [];
+    const data = [];
 
     // Some noisy data
     while (length--) {

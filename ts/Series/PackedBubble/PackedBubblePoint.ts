@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -65,7 +65,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public dataLabelOnNull?: boolean;
 
-    public degree: number = NaN;
+    public degree!: number;
 
     public dispX?: number;
 
@@ -75,7 +75,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public isParentNode?: boolean;
 
-    public mass: number = NaN;
+    public mass!: number;
 
     public neighbours?: number;
 
@@ -83,17 +83,17 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public prevY?: number;
 
-    public radius: number = NaN;
+    public radius!: number;
 
     public removed?: boolean;
 
-    public options: PackedBubblePointOptions = void 0 as any;
+    public options!: PackedBubblePointOptions;
 
-    public series: PackedBubbleSeries = void 0 as any;
+    public series!: PackedBubbleSeries;
 
     public seriesIndex?: number;
 
-    public value: (number|null) = null;
+    public value?: (number|null);
 
     /* *
      *
@@ -109,17 +109,17 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
      * @private
      */
     public destroy(): void {
-        if (this.series.layout) {
+        if (this.series?.layout) {
             this.series.layout.removeElementFromCollection(
-                this, this.series.layout.nodes
+                this,
+                this.series.layout.nodes as Array<PackedBubblePoint>
             );
         }
         return Point.prototype.destroy.apply(this, arguments as any);
     }
 
     public firePointEvent(): void {
-        const point = this,
-            series = this.series,
+        const series = this.series,
             seriesOptions = series.options;
 
         if (this.isParentNode && seriesOptions.parentNode) {
@@ -163,7 +163,6 @@ interface PackedBubblePoint extends NetworkgraphPoint {
     linksFrom: Array<NetworkgraphPoint>;
     linksTo: Array<NetworkgraphPoint>;
     toNode: NetworkgraphPoint;
-    init: NetworkgraphPoint['init'];
     isValid: NetworkgraphPoint['isValid'];
     remove: BubblePointType['remove'];
 }

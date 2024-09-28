@@ -389,7 +389,7 @@
 }
 
 .highed-errorbar {
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
     width: 40%;
     margin-left: auto;
@@ -458,7 +458,7 @@
 }
 
 .highed-dimmer {
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
     width: 100%;
     height: 100%;
@@ -485,7 +485,7 @@
     top: 50%;
     left: -20000px;
     transform: translate(-50%, -50%);
-    opacity: 0%;
+    opacity: 0;
     border: 1px solid #666;
     pointer-events: none;
     transition: 0.2s ease all;
@@ -724,7 +724,7 @@
 }
 
 .highed-tab-control .tab-body {
-    opacity: 0%;
+    opacity: 0;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -1049,7 +1049,7 @@
     font-family: "Open Sans", sans-serif;
     font-weight: 200;
     color: #242424;
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
 }
 
@@ -1250,7 +1250,7 @@
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    opacity: 100%;
+    opacity: 1;
     transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;
@@ -1340,7 +1340,7 @@
 .highed-step-body {
     pointer-events: none;
     display: none;
-    opacity: 0%;
+    opacity: 0;
     position: absolute;
     left: 0;
     top: 0;
@@ -1528,7 +1528,7 @@
     z-index: 10010;
     width: 200px;
     height: 280px;
-    opacity: 0%;
+    opacity: 0;
     left: -20000px;
     padding: 5px;
     pointer-events: none;
@@ -1800,7 +1800,7 @@
 }
 
 .highed-field-array-remove {
-    opacity: 0%;
+    opacity: 0;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -1816,7 +1816,7 @@
 }
 
 .highed-field-error {
-    opacity: 0%;
+    opacity: 0;
     display: none;
     background: #a55;
     color: #fafafa;
@@ -2053,7 +2053,7 @@ a.highed-imp-pasted-button {
     position: fixed;
     z-index: 10011;
     pointer-events: none;
-    opacity: 0%;
+    opacity: 0;
 }
 
 .highed-tooltip {
@@ -2341,7 +2341,7 @@ a.highed-imp-pasted-button {
     background: #eaf1fd;
     color: #242424;
     z-index: 200000000;
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
     left: -2000px;
     box-sizing: border-box !important;
@@ -2576,7 +2576,7 @@ a.highed-imp-pasted-button {
     color: #111;
     border: 1px solid #ccc;
     left: -20000px;
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
     max-height: 200px;
     overflow-y: auto;
@@ -2992,7 +2992,7 @@ a.highed-imp-pasted-button {
     text-align: center;
     font-size: 16px;
     padding: 20px;
-    opacity: 0%;
+    opacity: 0;
     pointer-events: none;
 }
 
@@ -3441,7 +3441,7 @@ col.no-transition {
     width: 78%;
     height: 100% !important;
     display: inline-block;
-    opacity: 0%;
+    opacity: 0;
     border: 1px solid #e8e8e8;
     color: #afafaf;
     background: #fff;
@@ -3797,7 +3797,7 @@ col.no-transition {
 }
 
 .highed-simple-toolbox-body {
-    opacity: 100%;
+    opacity: 1;
     margin-right: 0;
     width: 100%;
 }
@@ -4700,7 +4700,7 @@ highed-vsplitter,
 }
 
 .highed-simple-toolbox-body {
-    opacity: 100%;
+    opacity: 1;
     margin-right: 10px;
     width: 95%;
     margin-left: 10px;
@@ -4985,7 +4985,7 @@ highed-vsplitter,
     width: 78%;
     height: 100% !important;
     display: inline-block;
-    opacity: 0%;
+    opacity: 0;
     border: 0 solid #e8e8e8;
     color: red;
     background: #46465c;

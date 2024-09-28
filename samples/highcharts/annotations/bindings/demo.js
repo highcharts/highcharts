@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     navigation: {
-        // Informs chart about the HTML elements responsible for adding annotations etc.
+        // Informs chart about the HTML elements responsible for adding
+        // annotations etc.
         bindingsClassName: 'tools-container'
     },
     series: [{

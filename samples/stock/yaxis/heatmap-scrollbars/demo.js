@@ -10,7 +10,9 @@ Highcharts.chart('container', {
     },
     chart: {
         type: 'heatmap',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     xAxis: {
         min: Date.UTC(2015, 4, 1),

@@ -54,7 +54,7 @@ Specifies the method that is used to generate the connector path. Highcharts pro
     }
 
 
-<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/coloraxis-with-pie/embedded/result/ allow="fullscreen"></iframe>
+<iframe width="100%" height="550" style="null" src=https://www.highcharts.com/samples/embed/highcharts/coloraxis/coloraxis-with-pie allow="fullscreen"></iframe>
 
 **straight:**
 

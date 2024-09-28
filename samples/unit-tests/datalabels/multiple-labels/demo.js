@@ -4,18 +4,23 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
             series: [
                 {
                     type: 'xrange',
                     name: 'Project 1',
                     dataLabels: [
                         {
-                            enabled: true,
                             format: 'Left label',
                             align: 'left'
                         },
                         {
-                            enabled: true,
                             format: 'Right label',
                             align: 'right'
                         }
@@ -73,6 +78,12 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         correct,
         true,
         'Appropriate tooltip appears when hovering both point\'s data labels.'
+    );
+
+    assert.ok(
+        point.dataLabels[0] && point.dataLabels[0].element &&
+            point.dataLabels[1] && point.dataLabels[1].element,
+        'Both data labels should be rendered when enabled in plotOptions.'
     );
 
     assert.strictEqual(
@@ -168,13 +179,15 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     result = checkLabelsVisibility(chart, 'hide');
     assert.ok(
         result,
-        'All data labels should be hidden when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be hidden when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     result = checkLabelsVisibility(chart, 'show');
     assert.ok(
         result,
-        'All data labels should be visible when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be visible when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     chart.yAxis[0].update({
@@ -191,5 +204,45 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     assert.ok(
         result,
         'All data labels should be visible when chart is inverted (#12370).'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: true
+        }, {
+            enabled: false
+        }]
+    });
+
+    assert.ok(
+        true,
+        'There shouldn\'t be any error in the browser console (#17589).'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabels[1],
+        void 0,
+        'Second data label should be disabled (#17589}.'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: false
+        }, {
+            enabled: true
+        }]
+    });
+
+    assert.ok(
+        true,
+        'There shouldn\'t be any error in the browser console (#19457).'
+    );
+
+    assert.strictEqual(
+        chart.options.series[0].dataLabels.filter(({ enabled }) =>
+            enabled
+        ).length,
+        chart.series[0].points[0].dataLabels.length,
+        'Only the second point\'s data label should be rendered (#19457).'
     );
 });

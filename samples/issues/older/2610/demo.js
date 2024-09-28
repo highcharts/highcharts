@@ -4,7 +4,8 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Highcharts <= 3.0.9: minRange and single column caused 1px columns on top of each other'
+            text: 'Highcharts <= 3.0.9: minRange and single column caused ' +
+                '1px columns on top of each other'
         },
         xAxis: {
             type: 'datetime',

@@ -1,0 +1,28 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sankey.js"></script>
+<script src="https://code.highcharts.com/modules/organization.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="outer-container">
+
+    <span class="input-group">
+        <button class="node-alignment" data-value="top">Align Top</button>
+        <button class="node-alignment" data-value="center">Align Center</button>
+        <button class="node-alignment" data-value="bottom">Align Bottom</button>
+    </span>
+
+    <div id="container"></div>
+
+    <span class="input-group">
+        <button class="type" data-value="sankey">Sankey</button>
+        <button class="type" data-value="organization">Organization</button>
+    </span>
+
+    <span class="input-group">
+      <input type="checkbox" id="inverted" />
+      <label for="inverted">Inverted Chart</label>
+    </span>
+
+</div>
+

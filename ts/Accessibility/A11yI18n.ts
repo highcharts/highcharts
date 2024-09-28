@@ -2,7 +2,7 @@
  *
  *  Accessibility module - internationalization support
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -22,9 +22,8 @@
 import type Time from '../Core/Time';
 
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
-
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
@@ -39,7 +38,7 @@ const {
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike extends A11yI18nComposition.ChartComposition {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -79,38 +78,26 @@ namespace A11yI18nComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
-    export function compose<T extends typeof Chart>(
-        ChartClass: T
-    ): (T&ChartComposition) {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.langFormat) {
             chartProto.langFormat = langFormat;
         }
 
-        return ChartClass as (T&ChartComposition);
     }
 
     /**
-     * i18n utility function.  Format a single array or plural statement in a
+     * I18n utility function.  Format a single array or plural statement in a
      * format string.  If the statement is not an array or plural statement,
      * returns the statement within brackets.  Invalid array statements return
      * an empty string.
@@ -291,6 +278,8 @@ namespace A11yI18nComposition {
      * @param {Highcharts.Chart} chart
      * A `Chart` instance with a time object and numberFormatter, passed on to
      * format().
+     *
+     * @deprecated
      *
      * @return {string}
      * The formatted string.

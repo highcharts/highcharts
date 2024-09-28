@@ -1,17 +1,19 @@
-var nav = Highcharts.win.navigator,
+const nav = Highcharts.win.navigator,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     containerEl = document.getElementById('container'),
     parentEl = containerEl.parentNode;
 
 function addText(text) {
-    var heading = document.createElement('h2');
+    const heading = document.createElement('h2');
     heading.innerHTML = text;
     parentEl.appendChild(heading);
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isMSBrowser ||
-        options.type === 'application/pdf') {
+    if (
+        options.type !== 'image/svg+xml' && isMSBrowser ||
+        options.type === 'application/pdf'
+    ) {
         addText(options.type + ' fell back on purpose');
     } else {
         throw 'Should not have to fall back for this combination. ' +
@@ -50,8 +52,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{

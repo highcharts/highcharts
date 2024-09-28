@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,9 @@ const {
 
 /* eslint-disable require-jsdoc, valid-jsdoc */
 
+/**
+ *
+ */
 function arc(
     cx: number,
     cy: number,
@@ -48,14 +51,18 @@ function arc(
         const start = options.start || 0,
             rx = pick(options.r, w),
             ry = pick(options.r, h || w),
-            proximity = 0.001,
+            // Subtract a small number to prevent cos and sin of start and end
+            // from becoming equal on 360 arcs (#1561). The size of the circle
+            // affects the constant, therefore the division by `rx`. If the
+            // proximity is too small, the arc disappears. If it is too great, a
+            // gap appears. This can be seen in the animation of the official
+            // bubble demo (#20586).
+            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
             fullCircle = (
                 Math.abs((options.end || 0) - start - 2 * Math.PI) <
                 proximity
             ),
-            // Substract a small number to prevent cos and sin of start
-            // and end from becoming equal on 360 arcs (related: #1561)
-            end = (options.end || 0) - proximity,
+            end = (options.end || 0) - (fullCircle ? proximity : 0),
             innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
             cosStart = Math.cos(start),
@@ -69,12 +76,12 @@ function arc(
             );
 
         let arcSegment: SVGPath.Arc = [
-            'A', // arcTo
-            rx, // x radius
-            ry, // y radius
-            0, // slanting
-            longArc, // long or short arc
-            pick(options.clockwise, 1), // clockwise
+            'A', // ArcTo
+            rx, // X radius
+            ry, // Y radius
+            0, // Slanting
+            longArc, // Long or short arc
+            pick(options.clockwise, 1), // Clockwise
             cx + rx * cosEnd,
             cy + ry * sinEnd
         ];
@@ -90,11 +97,11 @@ function arc(
 
         if (defined(innerRadius)) {
             arcSegment = [
-                'A', // arcTo
-                innerRadius, // x radius
-                innerRadius, // y radius
-                0, // slanting
-                longArc, // long or short arc
+                'A', // ArcTo
+                innerRadius, // X radius
+                innerRadius, // Y radius
+                0, // Slanting
+                longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
                 cx + innerRadius * cosStart,
@@ -152,8 +159,13 @@ function callout(
         return path;
     }
 
+    // Do not render a connector, if anchor starts inside the label
+    if (anchorX < w && anchorX > 0 && anchorY < h && anchorY > 0) {
+        return path;
+    }
+
     // Anchor on right side
-    if (x + anchorX >= w) {
+    if (x + anchorX > w - safeDistance) {
 
         // Chevron
         if (
@@ -171,18 +183,31 @@ function callout(
 
         // Simple connector
         } else {
-            path.splice(
-                3,
-                1,
-                ['L', x + w, h / 2],
-                ['L', anchorX, anchorY],
-                ['L', x + w, h / 2],
-                ['L', x + w, y + h - r]
-            );
+            if (anchorX < w) { // Corner connector
+                const isTopCorner = anchorY < y + safeDistance,
+                    cornerY = isTopCorner ? y : y + h,
+                    sliceStart = isTopCorner ? 2 : 5;
+
+                path.splice(
+                    sliceStart,
+                    0,
+                    ['L', anchorX, anchorY],
+                    ['L', x + w - r, cornerY]
+                );
+            } else { // Side connector
+                path.splice(
+                    3,
+                    1,
+                    ['L', x + w, h / 2],
+                    ['L', anchorX, anchorY],
+                    ['L', x + w, h / 2],
+                    ['L', x + w, y + h - r]
+                );
+            }
         }
 
     // Anchor on left side
-    } else if (x + anchorX <= 0) {
+    } else if (x + anchorX < safeDistance) {
 
         // Chevron
         if (
@@ -200,21 +225,32 @@ function callout(
 
         // Simple connector
         } else {
-            path.splice(
-                7,
-                1,
-                ['L', x, h / 2],
-                ['L', anchorX, anchorY],
-                ['L', x, h / 2],
-                ['L', x, y + r]
-            );
+            if (anchorX > 0) { // Corner connector
+                const isTopCorner = anchorY < y + safeDistance,
+                    cornerY = isTopCorner ? y : y + h,
+                    sliceStart = isTopCorner ? 1 : 6;
+
+                path.splice(
+                    sliceStart,
+                    0,
+                    ['L', anchorX, anchorY],
+                    ['L', x + r, cornerY]
+                );
+            } else { // Side connector
+                path.splice(
+                    7,
+                    1,
+                    ['L', x, h / 2],
+                    ['L', anchorX, anchorY],
+                    ['L', x, h / 2],
+                    ['L', x, y + r]
+                );
+            }
         }
 
-    } else if ( // replace bottom
-        anchorY &&
+    } else if ( // Replace bottom
         anchorY > h &&
-        anchorX > x + safeDistance &&
-        anchorX < x + w - safeDistance
+        anchorX < w - safeDistance
     ) {
         path.splice(
             5,
@@ -225,11 +261,9 @@ function callout(
             ['L', x + r, y + h]
         );
 
-    } else if ( // replace top
-        anchorY &&
+    } else if ( // Replace top
         anchorY < 0 &&
-        anchorX > x + safeDistance &&
-        anchorX < x + w - safeDistance
+        anchorX > safeDistance
     ) {
         path.splice(
             1,
@@ -244,6 +278,9 @@ function callout(
     return path;
 }
 
+/**
+ *
+ */
 function circle(
     x: number,
     y: number,
@@ -258,6 +295,9 @@ function circle(
     });
 }
 
+/**
+ *
+ */
 function diamond(
     x: number,
     y: number,
@@ -274,6 +314,9 @@ function diamond(
 }
 
 // #15291
+/**
+ *
+ */
 function rect(
     x: number,
     y: number,
@@ -293,6 +336,9 @@ function rect(
     ];
 }
 
+/**
+ *
+ */
 function roundedRect(
     x: number,
     y: number,
@@ -303,18 +349,21 @@ function roundedRect(
     const r = options?.r || 0;
     return [
         ['M', x + r, y],
-        ['L', x + w - r, y], // top side
-        ['A', r, r, 0, 0, 1, x + w, y + r], // top-right corner
-        ['L', x + w, y + h - r], // right side
-        ['A', r, r, 0, 0, 1, x + w - r, y + h], // bottom-right corner
-        ['L', x + r, y + h], // bottom side
-        ['A', r, r, 0, 0, 1, x, y + h - r], // bottom-left corner
-        ['L', x, y + r], // left side
+        ['L', x + w - r, y], // Top side
+        ['A', r, r, 0, 0, 1, x + w, y + r], // Top-right corner
+        ['L', x + w, y + h - r], // Right side
+        ['A', r, r, 0, 0, 1, x + w - r, y + h], // Bottom-right corner
+        ['L', x + r, y + h], // Bottom side
+        ['A', r, r, 0, 0, 1, x, y + h - r], // Bottom-left corner
+        ['L', x, y + r], // Left side
         ['A', r, r, 0, 0, 1, x + r, y],
-        ['Z'] // top-left corner
+        ['Z'] // Top-left corner
     ];
 }
 
+/**
+ *
+ */
 function triangle(
     x: number,
     y: number,
@@ -329,6 +378,9 @@ function triangle(
     ];
 }
 
+/**
+ *
+ */
 function triangleDown(
     x: number,
     y: number,

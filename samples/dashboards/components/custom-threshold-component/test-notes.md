@@ -1,0 +1,1 @@
+1. Change the `threshold` value with the slider and see if components are rendered according to the label name.

@@ -242,7 +242,8 @@ QUnit.test('Box with nested ems (#5932)', function (assert) {
 
     var label = ren
         .label(
-            'This is line 1<br><span style="font-size: 2em">This is line 2</span>',
+            'This is line 1<br><span style="font-size: 2em">This is line ' +
+            '2</span>',
             10,
             10
         )
@@ -475,7 +476,8 @@ QUnit.test('Labels with useHTML', assert => {
 
     const lbl = ren
         .label(
-            'This is a long text that requires the label to wrap into multiple lines',
+            'This is a long text that requires the label to wrap into ' +
+            'multiple lines',
             10,
             19,
             null,
@@ -520,6 +522,53 @@ QUnit.test('Labels with useHTML', assert => {
         'hidden',
         'Visibility should be set on parent group div'
     );
+
+
+    const html = ren.label('Rotated', 100, 100, true)
+        .attr({
+            rotation: 45
+        })
+        .css({
+            color: 'red'
+        })
+        .add();
+    const svg = ren.label('Rotated', 100, 100)
+        .attr({
+            rotation: 45
+        })
+        .css({
+            color: 'green'
+        })
+        .add();
+
+    ['x', 'y', 'width', 'height'].forEach(key => {
+        assert.close(
+            html.getBBox().x,
+            svg.getBBox().x,
+            1,
+            `Rotated HTML/SVG labels should have close bounding box ${key}`
+        );
+    });
+
+    html.attr({
+        rotationOriginX: 50,
+        rotationOriginY: 50
+    });
+
+    svg.attr({
+        rotationOriginX: 50,
+        rotationOriginY: 50
+    });
+
+    ['x', 'y', 'width', 'height'].forEach(key => {
+        assert.close(
+            html.getBBox().x,
+            svg.getBBox().x,
+            1,
+            'Rotated HTML/SVG labels with origin should have close bounding ' +
+            `box ${key}`
+        );
+    });
 });
 
 QUnit.test('Change of label alignment after add (#4652)', function (assert) {
@@ -621,9 +670,21 @@ QUnit.test('Label padding', assert => {
             'Padding should increase width by 20'
         );
     });
+
+    label.attr({
+        height: 100
+    });
+
+    assert.strictEqual(
+        label.getBBox().height,
+        100,
+        'Height should be updated'
+    );
 });
 
-QUnit.test('#14858: Callout missing line when anchorX within width and no room for chevron', assert => {
+QUnit.test('Label callout tests', assert => {
+    // #14858: Callout missing line when anchorX within width and no room
+    // for chevron
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
         600,
@@ -654,4 +715,32 @@ QUnit.test('#14858: Callout missing line when anchorX within width and no room f
             'Anchor line should have rendered'
         );
     });
+
+    // #19505: Label missed connector on certain positions, when chevron was not
+    // rendered.
+
+    const x = 250,
+        y = 50;
+
+    const customLabel = ren.label(
+        'Label',
+        x,
+        y,
+        'callout',
+        x + 1, // leave at +1 for testing
+        y + 100
+    )
+        .attr({
+            fill: 'rgba(0, 0, 0, 0.25)',
+            zIndex: 6,
+            stroke: 'red'
+        })
+        .add();
+
+    assert.strictEqual(
+        customLabel.element.getBBox().height,
+        100,
+        'Callout label should always have a connector when chevron is not ' +
+        'displayed, #19505.'
+    );
 });

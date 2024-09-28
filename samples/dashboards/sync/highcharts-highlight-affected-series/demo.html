@@ -1,0 +1,31 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+
+<div class="inputs">
+    <span>Affected Series Id: </span>
+
+    <input type="radio" class="option" name="series-id" id="radio-null" data-value="" checked>
+    <label for="radio-null">null</label> /
+
+    <input type="radio" class="option" name="series-id" id="radio-2020" data-value="Y2020">
+    <label for="radio-2020">Y2020</label> /
+
+    <input type="radio" class="option" name="series-id" id="radio-2021" data-value="Y2021">
+    <label for="radio-2021">Y2021</label> /
+
+    <input type="radio" class="option" name="series-id" id="radio-2022" data-value="Y2022">
+    <label for="radio-2022">Y2022</label>
+</div>
+
+<div id="container"></div>
+
+<pre id="csv">
+Name,Y2020,Y2021,Y2022
+Jet fuel,59,24,58
+Duty-free diesel,83,79,88
+Petrol,65,72,75
+Diesel,228,240,250
+Gas oil,184,167,176
+</pre>

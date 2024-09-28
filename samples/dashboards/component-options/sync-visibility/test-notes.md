@@ -1,0 +1,2 @@
+1. Click on the legend item for the "Vitamin A" series on second chart. It should not effect other charts.
+2. Click on the legend item for the "Vitamin A" series on third chart. Series on the pie should not be visible.

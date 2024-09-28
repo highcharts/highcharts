@@ -1,0 +1,6 @@
+---
+ name: Highcharts demo
+ authors:
+   - Torstein Hønsi, Markus Knutson Barstad
+ js_wrap: b
+...

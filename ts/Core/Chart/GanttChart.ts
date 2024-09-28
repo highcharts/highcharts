@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -27,15 +27,14 @@ import type Options from '../Options';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
-const { getOptions } = D;
+const { defaultOptions } = D;
+import { Palette } from '../Color/Palettes.js';
 import U from '../Utilities.js';
 const {
     isArray,
     merge,
     splat
 } = U;
-
-import '../../Series/Gantt/GanttSeries.js';
 
 /* *
  *
@@ -65,6 +64,13 @@ declare module '../Options' {
  * @extends Highcharts.Chart
  */
 class GanttChart extends Chart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Initializes the chart. The constructor's arguments are passed on
      * directly.
@@ -75,7 +81,7 @@ class GanttChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -86,8 +92,7 @@ class GanttChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        const defaultOptions = getOptions(),
-            xAxisOptions = userOptions.xAxis,
+        const xAxisOptions = userOptions.xAxis,
             yAxisOptions = userOptions.yAxis;
 
         let defaultLinkedTo: number;
@@ -102,7 +107,7 @@ class GanttChart extends Chart {
                     type: 'gantt'
                 },
                 title: {
-                    text: null as any
+                    text: ''
                 },
                 legend: {
                     enabled: false
@@ -116,7 +121,7 @@ class GanttChart extends Chart {
                 }
             } as Options,
 
-            userOptions, // user's options
+            userOptions, // User's options
 
             // forced options
             {
@@ -127,66 +132,84 @@ class GanttChart extends Chart {
         userOptions.xAxis = xAxisOptions;
         userOptions.yAxis = yAxisOptions;
 
-        // apply X axis options to both single and multi x axes
-        // If user hasn't defined axes as array, make it into an array and add a
-        // second axis by default.
+        // Apply X axis options to both single and multi x axes If user hasn't
+        // defined axes as array, make it into an array and add a second axis by
+        // default.
         options.xAxis = (
             !isArray(userOptions.xAxis) ?
                 [userOptions.xAxis || {}, {}] :
                 userOptions.xAxis
-        ).map(function (
+        ).map((
             xAxisOptions,
             i
-        ): DeepPartial<AxisOptions> {
+        ): DeepPartial<AxisOptions> => {
             if (i === 1) { // Second xAxis
                 defaultLinkedTo = 0;
             }
             return merge(
-                defaultOptions.xAxis,
-                { // defaults
+                // Defaults
+                {
                     grid: {
+                        borderColor: Palette.neutralColor20,
                         enabled: true
                     },
-                    opposite: true,
+                    opposite: defaultOptions.xAxis?.opposite ??
+                        xAxisOptions.opposite ??
+                        true,
                     linkedTo: defaultLinkedTo
                 },
-                xAxisOptions, // user options
-                { // forced options
+                // User options
+                xAxisOptions,
+                // Forced options
+                {
                     type: 'datetime'
                 }
             );
         });
 
-        // apply Y axis options to both single and multi y axes
-        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
-            yAxisOptions: YAxisOptions
-        ): YAxisOptions {
-            return merge(
-                defaultOptions.yAxis, // #3802
-                { // defaults
-                    grid: {
-                        enabled: true
-                    },
+        // Apply Y axis options to both single and multi y axes
+        options.yAxis = (splat(userOptions.yAxis || {})).map((
+            yAxisOptions
+        ): DeepPartial<YAxisOptions> => merge(
+            // Defaults
+            {
+                grid: {
+                    borderColor: Palette.neutralColor20,
+                    enabled: true
+                },
 
-                    staticScale: 50,
+                staticScale: 50,
 
-                    reversed: true,
+                reversed: true,
 
-                    // Set default type treegrid, but only if 'categories' is
-                    // undefined
-                    type: yAxisOptions.categories ?
-                        yAxisOptions.type : 'treegrid'
-                } as YAxisOptions,
-                yAxisOptions // user options
-            );
-        });
+                // Set default type treegrid, but only if 'categories' is
+                // undefined
+                type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+
+            },
+            // User options
+            yAxisOptions
+        ));
         super.init(options, callback);
     }
 }
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace GanttChart {
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable jsdoc/check-param-names */
+
     /**
      * The factory function for creating new gantt charts. Creates a new {@link
      * Highcharts.GanttChart|GanttChart} object with different default options
@@ -212,7 +235,7 @@ namespace GanttChart {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
@@ -227,6 +250,15 @@ namespace GanttChart {
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);
     }
+
+    /* eslint-enable jsdoc/check-param-names */
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GanttChart;

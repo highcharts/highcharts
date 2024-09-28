@@ -1,16 +1,35 @@
-var regionList = ['Africa', 'Arab World', 'Central Europe and the Baltics', 'East Asia & Pacific (all income levels)', 'East Asia & Pacific (developing only)', 'Europe & Central Asia (all income levels)', 'Europe & Central Asia (developing only)', 'European Union', 'Latin America & Caribbean (all income levels)', 'Latin America & Caribbean (developing only)', 'Least developed countries: UN classification', 'Middle East & North Africa (all income levels)', 'Middle East & North Africa (developing only)', 'North America', 'South Asia', 'Sub-Saharan Africa (all income levels)', 'Sub-Saharan Africa (developing only)', 'Sub-Saharan Africa (excluding high income)'];
-var incomeList = ['High income', 'High income: OECD', 'High income: nonOECD', 'Low income', 'Middle income', 'Lower middle income', 'Upper middle income', 'Low & middle income', 'OECD members'];
-var worldList = ['World', 'world', 'WLD'];
+const regionList = [
+    'Africa', 'Arab World', 'Central Europe and the Baltics',
+    'East Asia & Pacific (all income levels)',
+    'East Asia & Pacific (developing only)',
+    'Europe & Central Asia (all income levels)',
+    'Europe & Central Asia (developing only)', 'European Union',
+    'Latin America & Caribbean (all income levels)',
+    'Latin America & Caribbean (developing only)',
+    'Least developed countries: UN classification',
+    'Middle East & North Africa (all income levels)',
+    'Middle East & North Africa (developing only)', 'North America',
+    'South Asia', 'Sub-Saharan Africa (all income levels)',
+    'Sub-Saharan Africa (developing only)',
+    'Sub-Saharan Africa (excluding high income)'
+];
+const incomeList = [
+    'High income', 'High income: OECD', 'High income: nonOECD', 'Low income',
+    'Middle income', 'Lower middle income', 'Upper middle income',
+    'Low & middle income', 'OECD members'
+];
+const worldList = ['World', 'world', 'WLD'];
 
 // Settings
-var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank2.json';
+const url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank2.json';
 
-var arrayRegion = [],
+const arrayRegion = [],
     arrayIncome = [],
     arrayCountry = [],
     arrayWorld = [],
-    YearList = [],
-    CountryName,
+    YearList = [];
+
+let CountryName,
     IncomeName,
     RegionName,
     indicatorName;
@@ -40,7 +59,9 @@ fetch(url).then(function (response) {
                 arrayIncome.push(null);
             }
         } else if (worldList.indexOf(data.country.value) !== -1) {
-            // fill the Year list array. NB. We choose the World serie to do so, as this serie is the most likely to be complete (i.e. the one with the less missing values)
+            // fill the Year list array. NB. We choose the World serie to do
+            // so, as this serie is the most likely to be complete (i.e. the
+            // one with the less missing values)
             YearList.push(data.date);
             // store Indictor Label
             indicatorName = data.indicator.value;
@@ -63,7 +84,10 @@ fetch(url).then(function (response) {
         chart: {
             type: 'spline'
         },
-        colors: ['#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef', '#f4bb90'],
+        colors: [
+            '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef',
+            '#f4bb90'
+        ],
         title: {
             text: indicatorName
         },
@@ -71,7 +95,8 @@ fetch(url).then(function (response) {
             text: 'Source: World Bank Data'
         },
         xAxis: {
-            categories: YearList.reverse() // .reverse() to have the min year on the left
+            categories: YearList.reverse() // .reverse() to have the min
+            // year on the left
         },
         plotOptions: {
             series: {
@@ -82,7 +107,8 @@ fetch(url).then(function (response) {
         },
         tooltip: {
             valueDecimals: 2,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}%</b><br/>'
         },
         series: [{
             name: CountryName,

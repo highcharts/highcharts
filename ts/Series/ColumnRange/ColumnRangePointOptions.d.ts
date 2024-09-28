@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@ import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
  * */
 
 interface ColumnRangePointOptions extends AreaRangePointOptions {
-    // nothing to add
+    // Nothing to add
 }
 
 /* *

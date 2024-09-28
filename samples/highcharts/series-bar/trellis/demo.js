@@ -1,4 +1,4 @@
-var charts = [],
+const charts = [],
     containers = document.querySelectorAll('#trellis td'),
     datasets = [{
         name: 'Erik',

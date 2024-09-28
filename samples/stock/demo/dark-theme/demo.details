@@ -1,0 +1,12 @@
+---
+name: Dark themed Stock chart
+authors:
+  - Mateusz Bernacik
+js_wrap: b
+new_until: 2024-05-23
+tags:
+  - Highcharts Stock demo
+categories:
+  - Designs:
+      priority: 1
+...

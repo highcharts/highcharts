@@ -1,6 +1,6 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Unemployment rates in engineering and ICT subjects, 2021',
+        text: 'Unemployment rates in engineering and ICT subjects, 2023',
         align: 'left'
     },
     subtitle: {
@@ -24,15 +24,20 @@ const chart = Highcharts.chart('container', {
         '#23e274'
     ],
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
     series: [{
         type: 'column',
         name: 'Unemployed',
         borderRadius: 5,
         colorByPoint: true,
-        data: [5412, 4977, 4730, 4437, 3947, 3707, 4143, 3609,
-            3311, 3072, 2899, 2887],
+        data: [
+            2396, 2434, 2491, 2602, 2536, 2618, 2928, 2899,
+            2780, 2853, 2923, 2999
+        ],
         showInLegend: false
     }]
 });

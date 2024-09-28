@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,8 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type CSVConnectorOptions from './CSVConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -48,11 +50,12 @@ class CSVConnector extends DataConnector {
      *
      * */
 
-    protected static readonly defaultOptions: CSVConnector.Options = {
+    protected static readonly defaultOptions: CSVConnectorOptions = {
         csv: '',
         csvURL: '',
         enablePolling: false,
-        dataRefreshRate: 1
+        dataRefreshRate: 1,
+        firstRowAsNames: true
     };
 
     /* *
@@ -94,22 +97,12 @@ class CSVConnector extends DataConnector {
      * Options related to the handling of the CSV DataConnector,
      * i.e. source, fetching, polling
      */
-    public readonly options: CSVConnector.Options;
+    public readonly options: CSVConnectorOptions;
 
     /**
      * The attached parser, which can be replaced in the constructor
      */
     public readonly converter: CSVConverter;
-
-    /**
-     * The URL to fetch if the source is external
-     */
-    private liveDataURL?: string;
-
-    /**
-     * The current timeout ID if polling is enabled
-     */
-    private liveDataTimeout?: number;
 
     /* *
      *
@@ -132,76 +125,54 @@ class CSVConnector extends DataConnector {
             table = connector.table,
             {
                 csv,
-                csvURL
+                csvURL,
+                dataModifier
             } = connector.options;
 
-        if (csv) {
-            // If already loaded, clear the current rows
-            table.deleteRows();
-            connector.emit<CSVConnector.Event>({
-                type: 'load',
-                csv,
-                detail: eventDetail,
-                table
+        connector.emit<CSVConnector.Event>({
+            type: 'load',
+            csv,
+            detail: eventDetail,
+            table
+        });
+
+
+        return Promise
+            .resolve(
+                csvURL ?
+                    fetch(csvURL).then(
+                        (response): Promise<string> => response.text()
+                    ) :
+                    csv || ''
+            )
+            .then((csv): Promise<string> => {
+                if (csv) {
+                    // If already loaded, clear the current rows
+                    table.deleteColumns();
+                    converter.parse({ csv });
+                    table.setColumns(converter.getTable().getColumns());
+                }
+                return connector
+                    .setModifierOptions(dataModifier)
+                    .then((): string => csv);
+            })
+            .then((csv): this => {
+                connector.emit<CSVConnector.Event>({
+                    type: 'afterLoad',
+                    csv,
+                    detail: eventDetail,
+                    table
+                });
+                return connector;
+            })['catch']((error): never => {
+                connector.emit<CSVConnector.Event>({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table
+                });
+                throw error;
             });
-            converter.parse({ csv });
-            table.setColumns(converter.getTable().getColumns());
-            connector.emit<CSVConnector.Event>({
-                type: 'afterLoad',
-                csv,
-                detail: eventDetail,
-                table
-            });
-        } else if (csvURL) {
-            // Clear the table
-            connector.table.deleteColumns();
-
-            connector.emit<CSVConnector.Event>({
-                type: 'load',
-                detail: eventDetail,
-                table: connector.table
-            });
-
-            return fetch(csvURL || '')
-                .then((response): Promise<void> => response.text().then(
-                    (csv): void => {
-                        connector.converter.parse({ csv });
-
-                        // On inital fetch we need to set the columns
-                        connector.table.setColumns(
-                            connector.converter.getTable().getColumns()
-                        );
-
-                        connector.emit<CSVConnector.Event>({
-                            type: 'afterLoad',
-                            csv,
-                            detail: eventDetail,
-                            table: connector.table
-                        });
-                    }
-                ))['catch']((error): Promise<void> => {
-                    connector.emit<CSVConnector.Event>({
-                        type: 'loadError',
-                        detail: eventDetail,
-                        error,
-                        table: connector.table
-                    });
-
-                    return Promise.reject(error);
-                })
-                .then((): this =>
-                    connector
-                );
-        } else {
-            connector.emit<CSVConnector.Event>({
-                type: 'loadError',
-                detail: eventDetail,
-                error: 'Unable to load: no CSV string or URL was provided',
-                table
-            });
-        }
-
-        return Promise.resolve(connector);
     }
 
 }
@@ -229,13 +200,6 @@ namespace CSVConnector {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * @todo move this to the dataparser?
-     */
-    export interface DataBeforeParseCallbackFunction {
-        (csv: string): string;
-    }
-
-    /**
      * The event object that is provided on errors within CSVConnector.
      */
     export interface ErrorEvent extends DataConnector.ErrorEvent {
@@ -250,19 +214,12 @@ namespace CSVConnector {
     }
 
     /**
-     * Options of the CSVConnector.
-     */
-    export interface Options extends DataConnector.Options {
-        csv: string;
-        csvURL: string;
-        enablePolling: boolean;
-        dataRefreshRate: number;
-    }
-
-    /**
      * Available options for constructor and converter of the CSVConnector.
      */
-    export type UserOptions = (Partial<Options>&CSVConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<CSVConnectorOptions>&
+        CSVConverter.UserOptions
+    );
 
 }
 

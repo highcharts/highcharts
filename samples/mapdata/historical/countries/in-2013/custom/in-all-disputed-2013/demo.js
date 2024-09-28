@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/in-2013/custom/in-all-disputed-2013.topo.json">India with disputed territories (2013)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/in-2013/custom/in-all-disputed-2013.topo.json">India with disputed territories (2013)</a>'
         },
 
         mapNavigation: {

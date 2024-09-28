@@ -7,8 +7,7 @@
     // Instantiate the map
     Highcharts.mapChart('container', {
         chart: {
-            map: topology,
-            borderWidth: 1
+            map: topology
         },
 
         title: {
@@ -17,7 +16,8 @@
         },
 
         subtitle: {
-            text: 'Demo of drawing all areas in the map, only highlighting partial data',
+            text: 'Demo of drawing all areas in the map, only highlighting ' +
+                'partial data',
             align: 'left'
         },
 
@@ -44,11 +44,8 @@
             dataLabels: {
                 enabled: true,
                 color: '#FFFFFF',
-                formatter: function () {
-                    if (this.point.value) {
-                        return this.point.name;
-                    }
-                }
+                format: '{point.name}',
+                nullFormat: ''
             },
             tooltip: {
                 headerFormat: '',

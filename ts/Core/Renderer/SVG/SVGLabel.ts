@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -93,8 +93,7 @@ class SVGLabel extends SVGElement {
         baseline?: boolean,
         className?: string
     ) {
-        super();
-        this.init(renderer, 'g');
+        super(renderer, 'g');
 
         this.textStr = str;
         this.x = x;
@@ -154,6 +153,7 @@ class SVGLabel extends SVGElement {
     public paddingRightSetter = this.paddingSetter;
     public text: SVGElement;
     public textStr: string;
+    public doUpdate = false;
     public x: number;
 
     /* *
@@ -259,7 +259,7 @@ class SVGLabel extends SVGElement {
         if (value) {
             this.needsBox = true;
         }
-        // for animation getter (#6776)
+        // For animation getter (#6776)
         this.fill = value;
         this.boxAttr(key, value);
     }
@@ -267,33 +267,71 @@ class SVGLabel extends SVGElement {
     /*
      * Return the bounding box of the box, not the group.
      */
-    public getBBox(): BBoxObject {
+    public getBBox(reload?: boolean, rot?: number): BBoxObject {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
-        const padding = this.padding;
-        const paddingLeft = pick(this.paddingLeft, padding);
-        return {
-            width: this.width,
-            height: this.height,
-            x: this.bBox.x - paddingLeft,
-            y: this.bBox.y - padding
+        const {
+                padding,
+                height = 0,
+                translateX = 0,
+                translateY = 0,
+                width = 0
+            } = this,
+            paddingLeft = pick(this.paddingLeft, padding),
+            rotation = rot ?? (this.rotation || 0);
+
+        let bBox: BBoxObject = {
+            width,
+            height,
+            x: translateX + this.bBox.x - paddingLeft,
+            y: translateY + this.bBox.y - padding + this.baselineOffset
         };
+
+        if (rotation) {
+            bBox = this.getRotatedBox(bBox, rotation);
+        }
+
+        return bBox;
     }
 
     private getCrispAdjust(): number {
-        return this.renderer.styledMode && this.box ?
-            this.box.strokeWidth() % 2 / 2 :
-            (
-                this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0
-            ) % 2 / 2;
+        return (
+            this.renderer.styledMode && this.box ?
+                this.box.strokeWidth() :
+                (
+                    this['stroke-width'] ?
+                        parseInt(this['stroke-width'], 10) :
+                        0
+                )
+        ) % 2 / 2;
     }
 
     public heightSetter(value: number): void {
         this.heightSetting = value;
+        this.doUpdate = true;
+    }
+
+
+    /**
+     * This method is executed in the end of `attr()`, after setting all
+     * attributes in the hash. In can be used to efficiently consolidate
+     * multiple attributes in one SVG property -- e.g., translate, rotate and
+     * scale are merged in one "transform" attribute in the SVG node.
+     * Also updating height or width should trigger update of the box size.
+     *
+     * @private
+     * @function Highcharts.SVGLabel#afterSetters
+     */
+    public afterSetters(): void {
+        super.afterSetters();
+        if (this.doUpdate) {
+            this.updateBoxSize();
+            this.doUpdate = false;
+        }
     }
 
     /*
@@ -341,7 +379,7 @@ class SVGLabel extends SVGElement {
         value: ColorType,
         key: string
     ): void {
-        // for animation getter (#6776)
+        // For animation getter (#6776)
         this.stroke = value;
         this.boxAttr(key, value);
     }
@@ -367,6 +405,8 @@ class SVGLabel extends SVGElement {
             this.text.attr({ text });
         }
         this.updateTextPadding();
+
+        this.reAlign();
     }
 
     /*
@@ -379,7 +419,7 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #12163 when fontweight: bold, recalculate bBox without cache
             // #3295 && 3514 box failure when string equals 0
             bBox = this.bBox = (
                 ((
@@ -387,7 +427,7 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.heightSetting) ||
                     this.textAlign
                 ) && defined(text.textStr)) ?
-                    text.getBBox() :
+                    text.getBBox(void 0, 0) :
                     SVGLabel.emptyBBox
             );
 
@@ -466,7 +506,7 @@ class SVGLabel extends SVGElement {
 
             let textX = pick(this.paddingLeft, this.padding);
 
-            // compensate for alignment
+            // Compensate for alignment
             if (
                 defined(this.widthSetting) &&
                 this.bBox &&
@@ -477,7 +517,7 @@ class SVGLabel extends SVGElement {
                 ] * (this.widthSetting - this.bBox.width);
             }
 
-            // update if anything changed
+            // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr('x', textX);
                 // #8159 - prevent misplaced data labels in treemap
@@ -490,15 +530,16 @@ class SVGLabel extends SVGElement {
                 }
             }
 
-            // record current values
+            // Record current values
             text.x = textX;
             text.y = textY;
         }
     }
 
     public widthSetter(value: (number|string)): void {
-        // width:auto => null
+        // `width:auto` => null
         this.widthSetting = isNumber(value) ? value : void 0;
+        this.doUpdate = true;
     }
 
     public getPaddedWidth(): number {
@@ -513,7 +554,7 @@ class SVGLabel extends SVGElement {
     }
 
     public xSetter(value: number): void {
-        this.x = value; // for animation getter
+        this.x = value; // For animation getter
         if (this.alignFactor) {
             value -= this.alignFactor * this.getPaddedWidth();
 

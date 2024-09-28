@@ -106,7 +106,8 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        'Extremes are set corectly after removing first and last visible points.'
+        'Extremes are set corectly after removing first and last visible ' +
+        'points.'
     );
 
     timeline.setData([
@@ -180,7 +181,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     var point = timeline.points[0],
         dataLabel = point.dataLabel,
-        connector = point.connector;
+        connector = dataLabel.connector;
 
     assert.strictEqual(
         !chart.isInsidePlot(dataLabel.x, dataLabel.y),
@@ -220,7 +221,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     point = timeline.points[3];
     dataLabel = point.dataLabel;
-    connector = point.connector;
+    connector = dataLabel.connector;
 
     assert.strictEqual(
         dataLabel.opacity,

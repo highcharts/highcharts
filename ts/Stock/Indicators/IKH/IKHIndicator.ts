@@ -41,6 +41,7 @@ const {
     extend,
     isArray,
     isNumber,
+    getClosestDistance,
     merge,
     objectEach
 } = U;
@@ -91,36 +92,6 @@ function highlowLevel(
         high: maxHigh(arr),
         low: minLow(arr)
     };
-}
-
-/**
- * @private
- */
-function getClosestPointRange(axis: Axis): (number|undefined) {
-    let closestDataRange: number | undefined,
-        loopLength: number,
-        distance: number,
-        xData: Array<number>,
-        i: number;
-
-    axis.series.forEach(function (series): void {
-        if (series.xData) {
-            xData = series.xData;
-            loopLength = series.xIncrement ? 1 : xData.length - 1;
-
-            for (i = loopLength; i > 0; i--) {
-                distance = xData[i] - xData[i - 1];
-                if (
-                    typeof closestDataRange === 'undefined' ||
-                    distance < closestDataRange
-                ) {
-                    closestDataRange = distance;
-                }
-            }
-        }
-    });
-
-    return closestDataRange;
 }
 
 /**
@@ -246,7 +217,7 @@ class IKHIndicator extends SMAIndicator {
              * @excluding index
              */
             params: {
-                index: void 0, // unused index, do not inherit (#15362)
+                index: void 0, // Unused index, do not inherit (#15362)
                 period: 26,
                 /**
                  * The base period for Tenkan calculations.
@@ -548,8 +519,8 @@ class IKHIndicator extends SMAIndicator {
             // For span, we need an access to the next points, used in
             // getGraphPath()
             nextPoints: Array<Array<IKHPoint>> = [
-                [], // NextPoints color
-                [] // NextPoints negative color
+                [], // Next points color
+                [] // Next points negative color
             ];
 
         let pointsLength: number = mainLinePoints.length,
@@ -838,7 +809,9 @@ class IKHIndicator extends SMAIndicator {
             yVal: Array<Array<number>> = series.yData as any,
             xAxis: Axis = series.xAxis,
             yValLen: number = (yVal && yVal.length) || 0,
-            closestPointRange: number = getClosestPointRange(xAxis) as any,
+            closestPointRange: number = getClosestDistance(
+                xAxis.series.map((s): number[] => s.xData || [])
+            ) as any,
             IKH: Array<Array<number | undefined>> = [],
             xData: Array<number> = [];
 
@@ -1017,4 +990,4 @@ export default IKHIndicator;
  * @apioption series.ikh
  */
 
-(''); // add doclet above to transpiled file
+(''); // Add doclet above to transpiled file

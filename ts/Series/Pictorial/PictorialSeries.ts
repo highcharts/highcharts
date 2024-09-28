@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2024 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,7 @@
  * */
 
 import '../Column/ColumnSeries.js';
-import '../../Extensions/PatternFill.js';
+import PatternFill from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
 import type ColumnSeriesType from '../Column/ColumnSeries';
@@ -28,14 +28,17 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
 import PictorialUtilities from './PictorialUtilities.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
+PatternFill.compose(Chart, Series, SVGRenderer);
 const {
     animObject
 } = A;
@@ -88,29 +91,30 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * A pictorial chart uses vector images to represents the data.
-     * The shape of the data point is taken from the path parameter.
-     *
-     * @sample       {highcharts} highcharts/demo/pictorial/
-     *               Pictorial chart
-     *
-     * @extends      plotOptions.column
-     * @since 11.0.0
-     * @product      highcharts
-     * @excluding    allAreas, borderRadius,
-     *               centerInCategory, colorAxis, colorKey, connectEnds,
-     *               connectNulls, crisp, compare, compareBase, dataSorting,
-     *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
-     *               onPoint
-     * @requires     modules/pictorial
-     * @optionparent plotOptions.pictorial
-     */
-
-    public static defaultOptions: PictorialSeriesOptions =
-        merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: PictorialSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        /**
+         * A pictorial chart uses vector images to represents the data.
+         * The shape of the data point is taken from the path parameter.
+         *
+         * @sample       {highcharts} highcharts/demo/pictorial/
+         *               Pictorial chart
+         *
+         * @extends      plotOptions.column
+         * @since 11.0.0
+         * @product      highcharts
+         * @excluding    allAreas, borderRadius,
+         *               centerInCategory, colorAxis, colorKey, connectEnds,
+         *               connectNulls, crisp, compare, compareBase, dataSorting,
+         *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
+         *               onPoint
+         * @requires     modules/pictorial
+         * @optionparent plotOptions.pictorial
+         */
+        {
             borderWidth: 0
-        } as PictorialSeriesOptions);
+        } as PictorialSeriesOptions
+    );
 
     /* *
      *
@@ -118,13 +122,13 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    public paths: Array<PictorialPathOptions> = void 0 as any;
+    public paths!: Array<PictorialPathOptions>;
 
-    public data: Array<PictorialPoint> = void 0 as any;
+    public data!: Array<PictorialPoint>;
 
-    public options: PictorialSeriesOptions = void 0 as any;
+    public options!: PictorialSeriesOptions;
 
-    public points: Array<PictorialPoint> = void 0 as any;
+    public points!: Array<PictorialPoint>;
 
     /* *
      *
@@ -304,6 +308,9 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
+/**
+ *
+ */
 function renderStackShadow(
     stack: StackItem
 ): void {
@@ -314,7 +321,8 @@ function renderStackShadow(
             .filter((p): boolean => p.split(',').length > 1),
         allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
-            parseFloat(key.split(',')[0]));
+            parseFloat(key.split(',')[0])
+        );
 
     let seriesIndex = -1;
 
@@ -464,6 +472,9 @@ function renderStackShadow(
     }
 }
 
+/**
+ *
+ */
 function forEachStack(chart: Chart, callback: Function): void {
     if (chart.axes) {
         chart.axes.forEach(function (axis): void {
@@ -509,6 +520,9 @@ addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     }
 });
 
+/**
+ *
+ */
 function destroyAllStackShadows(chart: Chart): void {
     forEachStack(chart, function (stack: StackItem): void {
         if (stack.shadow && stack.shadowGroup) {
@@ -522,11 +536,11 @@ function destroyAllStackShadows(chart: Chart): void {
 }
 
 // This is a workaround due to no implementation of the animation drilldown.
-addEvent(Chart, 'afterDrilldown', function (e): void {
+addEvent(Chart, 'afterDrilldown', function (): void {
     destroyAllStackShadows(this);
 });
 
-addEvent(Chart, 'afterDrillUp', function (e): void {
+addEvent(Chart, 'afterDrillUp', function (): void {
     destroyAllStackShadows(this);
 });
 
@@ -643,7 +657,9 @@ export default PictorialSeries;
  */
 
 /**
- * The paths include options describing the point image.
+ * The paths include options describing the series image. For further details on
+ * preparing the SVG image, please refer to the [pictorial
+ * documentation](https://www.highcharts.com/docs/chart-and-series-types/pictorial).
  *
  * @declare   Highcharts.SeriesPictorialPathsOptionsObject
  * @type      {Array<*>}
@@ -651,7 +667,7 @@ export default PictorialSeries;
  * @sample    {highcharts} highcharts/demo/pictorial/
  *            Pictorial chart
  *
- * @since 11.0.0
+ * @since     11.0.0
  * @product   highcharts
  * @apioption series.pictorial.paths
  */
@@ -740,4 +756,4 @@ export default PictorialSeries;
  * @apioption yAxis.stackShadow.enabled
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

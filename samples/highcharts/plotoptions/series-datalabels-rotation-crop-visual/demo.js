@@ -1,10 +1,8 @@
 function getData() {
-    var x,
-        y,
-        data = [];
+    const data = [];
 
-    for (x = 0; x < 10; x++) {
-        for (y = 0; y < 10; y++) {
+    for (let x = 0; x < 10; x++) {
+        for (let y = 0; y < 10; y++) {
             data.push([x, y]);
         }
     }

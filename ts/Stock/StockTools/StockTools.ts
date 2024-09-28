@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2021 Paweł Fus
+ *  (c) 2009-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -82,7 +82,7 @@ export interface AxisPositions {
 }
 
 export interface NavigationBindingsResizerObject {
-    controlledAxis?: Record<string, Array<number>>;
+    controlledAxis?: Record<string, Array<string|number>>;
     enabled: boolean;
 }
 
@@ -90,14 +90,6 @@ export interface YAxisPositions {
     positions: Array<Record<string, number>>;
     allAxesHeight: number;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -111,26 +103,22 @@ const composedMembers: Array<unknown> = [];
 function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
+    const navigationProto = NavigationBindingsClass.prototype;
 
-    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
-        const navigationProto = NavigationBindingsClass.prototype;
-
+    if (!navigationProto.utils?.manageIndicators) {
         // Extends NavigationBindings to support indicators and resizers:
         navigationProto.getYAxisPositions = navigationGetYAxisPositions;
         navigationProto.getYAxisResizers = navigationGetYAxisResizers;
         navigationProto.recalculateYAxisPositions =
             navigationRecalculateYAxisPositions;
         navigationProto.resizeYAxes = navigationResizeYAxes;
-        navigationProto.utils = {
-            indicatorsWithAxes: STU.indicatorsWithAxes,
-            indicatorsWithVolume: STU.indicatorsWithVolume,
-            getAssignedAxis,
-            isPriceIndicatorEnabled,
-            manageIndicators: STU.manageIndicators
-        };
-    }
+        navigationProto.utils = navigationProto.utils || {};
+        navigationProto.utils.indicatorsWithAxes = STU.indicatorsWithAxes;
+        navigationProto.utils.indicatorsWithVolume = STU.indicatorsWithVolume;
+        navigationProto.utils.getAssignedAxis = getAssignedAxis;
+        navigationProto.utils.isPriceIndicatorEnabled = isPriceIndicatorEnabled;
+        navigationProto.utils.manageIndicators = STU.manageIndicators;
 
-    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {
@@ -189,12 +177,16 @@ function navigationGetYAxisPositions(
     }
 
     const positions = yAxes.map((yAxis, index): Record<string, number> => {
-        let height = correctFloat(isPercentage(yAxis.options.height) ?
-                parseFloat(yAxis.options.height as any) / 100 :
-                yAxis.height / plotHeight),
-            top = correctFloat(isPercentage(yAxis.options.top) ?
-                parseFloat(yAxis.options.top as any) / 100 :
-                (yAxis.top - yAxis.chart.plotTop) / plotHeight);
+        let height = correctFloat(
+                isPercentage(yAxis.options.height) ?
+                    parseFloat(yAxis.options.height as any) / 100 :
+                    yAxis.height / plotHeight
+            ),
+            top = correctFloat(
+                isPercentage(yAxis.options.top) ?
+                    parseFloat(yAxis.options.top as any) / 100 :
+                    (yAxis.top - yAxis.chart.plotTop) / plotHeight
+            );
 
         if (!removedHeight) {
             // New axis' height is NaN so we can check if
@@ -272,7 +264,7 @@ function navigationGetYAxisResizers(
                     next: [
                         pick(
                             nextYAxis.options.id,
-                            nextYAxis.options.index as any
+                            nextYAxis.index
                         )
                     ]
                 }
@@ -337,7 +329,7 @@ function navigationRecalculateYAxisPositions(
  * axes it is placed there. If not, current plot area is scaled
  * to make room for new axis.
  *
- * If axis is removed, the current plot area streaches to fit into 100%
+ * If axis is removed, the current plot area stretches to fit into 100%
  * of the plot area.
  *
  * @private
@@ -361,7 +353,7 @@ function navigationResizeYAxes(
         ),
         resizers = this.getYAxisResizers(yAxes);
 
-    // check if the axis is being either added or removed and
+    // Check if the axis is being either added or removed and
     // if the new indicator axis will fit under existing axes.
     // if so, there is no need to scale them.
     if (

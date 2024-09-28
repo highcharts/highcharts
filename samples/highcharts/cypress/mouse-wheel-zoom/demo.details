@@ -1,0 +1,6 @@
+---
+name: Highcharts mouse-wheel-zoom demo for cypress test
+authors:
+  - Jedrzej Ruta
+js_wrap: b
+...

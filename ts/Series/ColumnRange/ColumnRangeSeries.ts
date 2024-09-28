@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,8 +16,6 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -87,6 +85,8 @@ const columnRangeOptions: DeepPartial<ColumnRangeSeriesOptions> = {
 
     pointRange: null,
 
+    legendSymbol: 'rectangle',
+
     /** @ignore-option */
     marker: null as any,
 
@@ -125,7 +125,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public static defaultOptions: ColumnRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
-        columnRangeOptions
+        columnRangeOptions as ColumnRangeSeriesOptions
     );
 
     /* *
@@ -148,7 +148,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         return columnProto.translate.apply(this);
     }
 
-    // public crispCol(): BBoxObject {
+    // Public crispCol(): BBoxObject {
     //     return columnProto.crispCol.apply(this, arguments as any);
     // }
     // public drawPoints(): void {
@@ -163,7 +163,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public pointAttribs(): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
     }
-    // public adjustForMissingColumns(): number {
+    // Public adjustForMissingColumns(): number {
     //     return columnProto.adjustForMissingColumns.apply(this, arguments);
     // }
     // public animate(): void {
@@ -176,103 +176,106 @@ class ColumnRangeSeries extends AreaRangeSeries {
         return columnProto.translate3dShapes.apply(this, arguments as any);
     }
 
+    public afterColumnTranslate(): void {
+        /**
+         * Translate data points from raw values x and y to plotX and plotY
+         * @private
+         */
+        const yAxis = this.yAxis,
+            xAxis = this.xAxis,
+            startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
+            chart = this.chart,
+            isRadial = this.xAxis.isRadial,
+            safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999;
+
+        let height: number,
+            heightDifference: number,
+            start: number,
+            y: number;
+
+        // eslint-disable-next-line valid-jsdoc
+        /**
+         * Don't draw too far outside plot area (#6835)
+         * @private
+         */
+        function safeBounds(pixelPos: number): number {
+            return clamp(pixelPos, -safeDistance, safeDistance);
+        }
+
+        // Set plotLow and plotHigh
+        this.points.forEach((point): void => {
+            const shapeArgs = point.shapeArgs || {},
+                minPointLength = this.options.minPointLength,
+                plotY = point.plotY,
+                plotHigh = yAxis.translate(
+                    point.high, 0 as any, 1 as any, 0 as any, 1 as any
+                );
+
+            if (isNumber(plotHigh) && isNumber(plotY)) {
+                point.plotHigh = safeBounds(plotHigh);
+                point.plotLow = safeBounds(plotY);
+
+                // Adjust shape
+                y = point.plotHigh;
+                height = pick(
+                    (point as any).rectPlotY,
+                    point.plotY
+                ) - point.plotHigh;
+
+                // Adjust for minPointLength
+                if (Math.abs(height) < (minPointLength as any)) {
+                    heightDifference = ((minPointLength as any) - height);
+                    height += heightDifference;
+                    y -= heightDifference / 2;
+
+                // Adjust for negative ranges or reversed Y axis (#1457)
+                } else if (height < 0) {
+                    height *= -1;
+                    y -= height;
+                }
+
+                if (isRadial && this.polar) {
+
+                    start = point.barX + startAngleRad;
+                    point.shapeType = 'arc';
+                    point.shapeArgs = this.polar.arc(
+                        y + height,
+                        y,
+                        start,
+                        start + point.pointWidth
+                    );
+                } else {
+
+                    shapeArgs.height = height;
+                    shapeArgs.y = y;
+                    const { x = 0, width = 0 } = shapeArgs;
+                    // #17912, aligning column range points
+                    // merge if shapeArgs contains more properties e.g. for 3d
+                    point.shapeArgs = merge(
+                        point.shapeArgs,
+                        this.crispCol(x, y, width, height)
+                    );
+
+                    point.tooltipPos = chart.inverted ?
+                        [
+                            yAxis.len + yAxis.pos - chart.plotLeft - y -
+                                height / 2,
+                            xAxis.len + xAxis.pos - chart.plotTop - x -
+                                width / 2,
+                            height
+                        ] : [
+                            xAxis.left - chart.plotLeft + x + width / 2,
+                            yAxis.pos - chart.plotTop + y + height / 2,
+                            height
+                        ]; // Don't inherit from column tooltip position - #3372
+                }
+            }
+        });
+    }
 }
 
-
 addEvent(ColumnRangeSeries, 'afterColumnTranslate', function (): void {
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     * @private
-     */
-    const yAxis = this.yAxis,
-        xAxis = this.xAxis,
-        startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
-        chart = this.chart,
-        isRadial = this.xAxis.isRadial,
-        safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999;
-
-    let height: number,
-        heightDifference: number,
-        start: number,
-        plotHigh: number,
-        y: number;
-
-    // eslint-disable-next-line valid-jsdoc
-    /**
-     * Don't draw too far outside plot area (#6835)
-     * @private
-     */
-    function safeBounds(pixelPos: number): number {
-        return clamp(pixelPos, -safeDistance, safeDistance);
-    }
-
-    // Set plotLow and plotHigh
-    this.points.forEach((point): void => {
-        const shapeArgs = point.shapeArgs || {},
-            minPointLength = this.options.minPointLength,
-            plotY = point.plotY,
-            plotHigh = yAxis.translate(
-                point.high, 0 as any, 1 as any, 0 as any, 1 as any
-            );
-
-        if (isNumber(plotHigh) && isNumber(plotY)) {
-            point.plotHigh = safeBounds(plotHigh);
-            point.plotLow = safeBounds(plotY);
-
-            // adjust shape
-            y = point.plotHigh;
-            height = pick(
-                (point as any).rectPlotY,
-                point.plotY
-            ) - point.plotHigh;
-
-            // Adjust for minPointLength
-            if (Math.abs(height) < (minPointLength as any)) {
-                heightDifference = ((minPointLength as any) - height);
-                height += heightDifference;
-                y -= heightDifference / 2;
-
-            // Adjust for negative ranges or reversed Y axis (#1457)
-            } else if (height < 0) {
-                height *= -1;
-                y -= height;
-            }
-
-            if (isRadial && this.polar) {
-
-                start = point.barX + startAngleRad;
-                point.shapeType = 'arc';
-                point.shapeArgs = this.polar.arc(
-                    y + height,
-                    y,
-                    start,
-                    start + point.pointWidth
-                );
-            } else {
-
-                shapeArgs.height = height;
-                shapeArgs.y = y;
-                const { x = 0, width = 0 } = shapeArgs;
-                // #17912, aligning column range points
-                // merge if shapeArgs contains more properties e.g. for 3d
-                point.shapeArgs = merge(point.shapeArgs,
-                    this.crispCol(x, y, width, height));
-
-                point.tooltipPos = chart.inverted ?
-                    [
-                        yAxis.len + yAxis.pos - chart.plotLeft - y -
-                            height / 2,
-                        xAxis.len + xAxis.pos - chart.plotTop - x -
-                            width / 2,
-                        height
-                    ] : [
-                        xAxis.left - chart.plotLeft + x + width / 2,
-                        yAxis.pos - chart.plotTop + y + height / 2,
-                        height
-                    ]; // don't inherit from column tooltip position - #3372
-            }
-        }
-    });
+    ColumnRangeSeries.prototype.afterColumnTranslate.apply(this);
 }, { order: 5 });
 
 /* *
@@ -290,10 +293,6 @@ interface ColumnRangeSeries {
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints,
     getColumnMetrics: typeof columnProto.getColumnMetrics;
-    // pointAttribs: typeof columnProto.pointAttribs,
-    // polarArc: typeof columnProto.polarArc
-    // translate3dPoints: typeof columnProto.translate3dPoints,
-    // translate3dShapes: typeof columnProto.translate3dShapes
 }
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
@@ -307,10 +306,6 @@ extend(ColumnRangeSeries.prototype, {
     getSymbol: noop,
     drawTracker: columnProto.drawTracker,
     getColumnMetrics: columnProto.getColumnMetrics
-    // pointAttribs: columnProto.pointAttribs,
-    // polarArc: columnProto.polarArc
-    // translate3dPoints: columnProto.translate3dPoints,
-    // translate3dShapes: columnProto.translate3dShapes
 });
 
 /* *
@@ -430,4 +425,4 @@ export default ColumnRangeSeries;
  * @apioption series.columnrange.states.select
  */
 
-''; // adds doclets above into transpiled
+''; // Adds doclets above into transpiled

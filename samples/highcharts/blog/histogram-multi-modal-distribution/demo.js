@@ -173,21 +173,23 @@ Highcharts.setOptions({
     }
 });
 
-var chart,
-    binnedData,
-    rawData = [0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1,
-        0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4,
-        0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3,
-        0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2, 1.4, 1.5, 1.5, 1.3, 1.5,
-        1.3, 1.6, 1, 1.3, 1.4, 1, 1.5, 1, 1.4, 1.3, 1.4, 1.5, 1, 1.5, 1.1,
-        1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1, 1.1, 1, 1.2, 1.6,
-        1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1, 1.3, 1.2, 1.3,
-        1.3, 1.1, 1.3, 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5,
-        2, 1.9, 2.1, 2, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2, 2, 1.8,
-        2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2, 2.2, 1.5, 1.4, 2.3, 2.4,
-        1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2, 2.3, 1.8];
-binnedData = binData(rawData);
-chart = Highcharts.chart('container', {
+const rawData = [
+    0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1,
+    0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4,
+    0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3,
+    0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2, 1.4, 1.5, 1.5, 1.3, 1.5,
+    1.3, 1.6, 1, 1.3, 1.4, 1, 1.5, 1, 1.4, 1.3, 1.4, 1.5, 1, 1.5, 1.1,
+    1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1, 1.1, 1, 1.2, 1.6,
+    1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1, 1.3, 1.2, 1.3,
+    1.3, 1.1, 1.3, 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5,
+    2, 1.9, 2.1, 2, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2, 2, 1.8,
+    2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2, 2.2, 1.5, 1.4, 2.3, 2.4,
+    1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2, 2.3, 1.8
+];
+
+const binnedData = binData(rawData);
+
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column',
         margin: [60, 10, 40, 40]
@@ -241,19 +243,23 @@ chart.addSeries({
 //-------------------------------------------------------
 function binData(data) {
 
-    var hData = [], // the output array
-        size = data.length, // how many data points
-        bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+    const hData = [], // the output array
+        size = data.length; // how many data points
+
+    let bins = Math.round(Math.sqrt(size)); // determine how many bins we need
+
     bins = bins > 50 ? 50 : bins; // adjust if more than 50 cells
-    var max = Math.max.apply(null, data), // lowest data value
+
+    const max = Math.max.apply(null, data), // lowest data value
         min = Math.min.apply(null, data), // highest data value
         range = max - min, // total range of the data
-        width = range / bins, // size of the bins
-        binBottom, // place holders for the bounds of each bin
+        width = range / bins; // size of the bins
+
+    let binBottom, // place holders for the bounds of each bin
         binTop;
 
     // loop through the number of cells
-    for (var i = 0; i < bins; i++) {
+    for (let i = 0; i < bins; i++) {
 
         // set the upper and lower limits of the current cell
         binBottom = min + (i * width);
@@ -266,8 +272,8 @@ function binData(data) {
         }
 
         // loop through the data to see if it fits in this bin
-        for (var j = 0; j < size; j++) {
-            var x = data[j];
+        for (let j = 0; j < size; j++) {
+            const x = data[j];
 
             // adjust if it's the first pass
             binBottom = i === 0 && j === 0 ? binBottom -= 1 : binBottom;

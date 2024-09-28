@@ -155,7 +155,8 @@ QUnit.test('Series.update', function (assert) {
             high: config[2],
             low: config[3],
             close: config[4],
-            y: config[4] // let the closing value represent the data in single-value series
+            y: config[4] // let the closing value represent the data in
+            // single-value series
         })
     );
 

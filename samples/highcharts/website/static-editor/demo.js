@@ -9,6 +9,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-len */
+/* eslint-disable jsdoc/check-alignment */
 /** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
@@ -39,7 +40,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ////////////////////////////////////////////////////////////////////////////
 
 
-var highed = {
+const highed = {
     schemas: {},
     meta: {
         chartTemplates: {},
@@ -65,7 +66,7 @@ var highed = {
 
 
     download: function (filename, data, mime) {
-        var l = highed.dom.cr('a');
+        const l = highed.dom.cr('a');
         mime = mime || 'application/octet-stream';
         l.download = filename || 'unkown';
         l.href = 'data:' + mime + ',' + encodeURIComponent(data);
@@ -83,7 +84,7 @@ var highed = {
 
 
     ajax: function (p) {
-        var props = highed.merge(
+        const props = highed.merge(
                 {
                     url: false,
                     type: 'GET',
@@ -122,7 +123,7 @@ var highed = {
             if (r.readyState === 4 && r.status === 200) {
                 if (props.dataType === 'json') {
                     try {
-                        var json = JSON.parse(r.responseText);
+                        const json = JSON.parse(r.responseText);
                         if (highed.isFn(props.success)) {
                             props.success(json);
                         }
@@ -169,15 +170,14 @@ var highed = {
 
 
     uuid: function () {
-        var d = new Date().getTime(),
-            uuid;
+        let d = new Date().getTime();
 
         if (window.performance && typeof window.performance.now === 'function') {
             d += window.performance.now(); // use high-precision timer if available
         }
 
-        uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = ((d + Math.random() * 16) % 16) | 0;
+        const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            const r = ((d + Math.random() * 16) % 16) | 0;
             d = Math.floor(d / 16);
             return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
         });
@@ -186,7 +186,7 @@ var highed = {
 
 
     arrToObj: function (arr) {
-        var obj = {};
+        const obj = {};
 
         if ((!highed.isArr(arr) && !highed.isBasic(arr)) || arr === false) {
             return arr;
@@ -205,7 +205,7 @@ var highed = {
 
 
     uncamelize: function (str) {
-        var s = '';
+        let s = '';
 
         if (!str) {
             return str;
@@ -215,7 +215,7 @@ var highed = {
             return str;
         }
 
-        for (var i = 0; i < str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             if (str[i] === str[i].toUpperCase()) {
                 if (
                     (str[i + 1] && str[i + 1] === str[i + 1].toUpperCase()) ||
@@ -271,7 +271,7 @@ var highed = {
             hex += hex[hex.length - 1];
         }
 
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ?
             {
                 r: parseInt(result[1], 16),
@@ -287,8 +287,8 @@ var highed = {
 
 
     invertHexColor: function (hex) {
-        var rgb = highed.hexToRgb(hex),
-            res = 0;
+        const rgb = highed.hexToRgb(hex);
+        let res = 0;
 
         rgb.r = 255 - rgb.r;
         rgb.g = 255 - rgb.g;
@@ -302,7 +302,7 @@ var highed = {
     },
 
     getContrastedColor: function (hex) {
-        var rgb = highed.hexToRgb(hex),
+        const rgb = highed.hexToRgb(hex),
             avarage = (rgb.r + rgb.g + rgb.b) / 3;
 
         if (avarage > 150) {
@@ -318,7 +318,7 @@ var highed = {
 
 
     setAttr: function (obj, path, value, index) {
-        var current = obj;
+        let current = obj;
 
         if (!current) {
             return;
@@ -347,7 +347,7 @@ var highed = {
 
                     if (highed.isArr(current)) {
                         if (index > current.length - 1) {
-                            for (var j = current.length; j <= index; j++) {
+                            for (let j = current.length; j <= index; j++) {
                                 current.push({});
                             }
                         }
@@ -362,7 +362,7 @@ var highed = {
 
 
     getAttr: function (obj, path, index) {
-        var current = obj,
+        let current = obj,
             result;
 
         if (!current) {
@@ -505,7 +505,7 @@ var highed = {
 
 
     parseCSV: function (inData, delimiter) {
-        var isStr = highed.isStr,
+        const isStr = highed.isStr,
             isArr = highed.isArray,
             isNum = highed.isNum,
             csv = inData || '',
@@ -522,10 +522,10 @@ var highed = {
                 ',': 0,
                 ';': 0,
                 '\t': 0
-            },
-            rows;
+            };
+
         // The only thing CSV formats have in common..
-        rows = (csv || '').replace(/\r\n/g, '\n').split('\n');
+        const rows = (csv || '').replace(/\r\n/g, '\n').split('\n');
 
         // If there's no delimiter, look at the first few rows to guess it.
 
@@ -535,11 +535,11 @@ var highed = {
                     return true;
                 }
 
-                var inStr = false,
+                let inStr = false,
                     c, cn, cl,
                     token = '';
 
-                for (var j = 0; j < row.length; j++) {
+                for (let j = 0; j < row.length; j++) {
                     c = row[j];
                     cn = row[j + 1];
                     cl = row[j - 1];
@@ -595,12 +595,9 @@ var highed = {
         }
 
         rows.forEach(function (row, rowNumber) {
-            var cols = [],
-                inStr = false,
-                i = 0,
-                j,
+            const cols = [];
+            let inStr = false,
                 token = '',
-                guessedDel,
                 c,
                 cp,
                 cn;
@@ -619,7 +616,7 @@ var highed = {
                 token = '';
             }
 
-            for (i = 0; i < row.length; i++) {
+            for (let i = 0; i < row.length; i++) {
                 c = row[i];
                 cn = row[i + 1];
                 cp = row[i - 1];
@@ -660,8 +657,8 @@ var highed = {
         const newDataArr = [];
         dataSet.forEach(function (e) {
 
-            var rarr = [],
-                hasData = false;
+            const rarr = [];
+            let hasData = false;
 
             e.forEach(function (v) {
                 if (v) {
@@ -695,13 +692,9 @@ var highed = {
 
 // Stateful functions
 (function () {
-    var logLevels = ['error', 'warn', 'notice', 'verbose'],
-        currentLogLevel = 0,
+    const logLevels = ['error', 'warn', 'notice', 'verbose'],
         initQueue = [],
-        isReady = false,
         includedScripts = {},
-        isOnPhone = false,
-        isOnTablet = false,
         options = {
             codeMirrorTheme: 'neo',
             helpURL: 'https://www.highcharts.com/products/highcharts-editor',
@@ -721,6 +714,10 @@ var highed = {
             'https://code.highcharts.com/modules/data.js',
             'https://code.highcharts.com/modules/exporting.js'
         ];
+    let currentLogLevel = 0,
+        isReady = false,
+        isOnPhone = false,
+        isOnTablet = false;
 
     // /////////////////////////////////////////////////////////////////////////
 
@@ -778,7 +775,7 @@ var highed = {
     };
 
     highed.log = function (level) {
-        var things = Array.prototype.slice.call(arguments);
+        const things = Array.prototype.slice.call(arguments);
         things.splice(0, 1);
 
         if (level <= currentLogLevel) {
@@ -795,7 +792,7 @@ var highed = {
 
 
     highed.include = function (what, fn, asCSS) {
-        var n;
+        let n;
 
         if (!highed.isStr(what)) {
             return highed.isFn(fn) && fn();
@@ -852,7 +849,7 @@ var highed = {
     };
 
     function checkIfPhone() {
-        var check = false;
+        let check = false;
         (function (a) {
             if (
                 // eslint-disable-next-line max-len
@@ -871,7 +868,7 @@ var highed = {
     }
 
     function checkIfTabletDimensions() {
-        var userAgent =
+        const userAgent =
             navigator.userAgent.toLowerCase();
         // eslint-disable-next-line max-len
         return /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
@@ -935,8 +932,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 (function () {
-    var currentLang = highed.option('defaultLanguage'),
-        langTree = {};
+    let currentLang = highed.option('defaultLanguage');
+    const langTree = {};
 
 
     highed.getLocalizedStr = function (id) {
@@ -1351,13 +1348,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 highed.dom = {
 
     isVisible: function (node) {
-        var style = window.getComputedStyle(node);
+        const style = window.getComputedStyle(node);
         return style.display !== 'none';
     },
 
 
     ap: function (target) {
-        var children = Array.prototype.slice.call(arguments);
+        const children = Array.prototype.slice.call(arguments);
         children.splice(0, 1);
 
         target = highed.dom.get(target);
@@ -1437,7 +1434,7 @@ highed.dom = {
 
 
     cr: function (type, cssClass, innerHTML, id) {
-        var res = false;
+        let res = false;
 
         if (typeof type !== 'undefined') {
             res = document.createElement(type);
@@ -1478,7 +1475,7 @@ highed.dom = {
     },
 
     on: function (target, event, callback, context) {
-        var s = [];
+        const s = [];
 
         if (!target) {
             return function () {};
@@ -1549,7 +1546,7 @@ highed.dom = {
         if (node.tagName === 'SELECT') {
             if (node.selectedIndex >= 0) {
                 if (!highed.isNull(value)) {
-                    for (var i = 0; i < node.options.length; i++) {
+                    for (let i = 0; i < node.options.length; i++) {
                         if (node.options[i].id === value) {
                             node.selectedIndex = i;
                             break;
@@ -1589,11 +1586,11 @@ highed.dom = {
 
 
     pos: function (node, abs) {
-        var x = 0,
+        const x = 0,
             y = 0;
 
         if (abs) {
-            var b = node.getBoundingClientRect();
+            const b = node.getBoundingClientRect();
 
             return {
                 x: b.left + (window.scrollX || 0),
@@ -1645,12 +1642,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.events = function () {
-    var callbacks = {},
-        listenerCounter = 0;
+    const callbacks = {};
+    let listenerCounter = 0;
 
 
     function on(event, callback, context) {
-        var id = ++listenerCounter;
+        const id = ++listenerCounter;
 
         if (highed.isArr(callback)) {
             return callback.forEach(function (cb) {
@@ -1678,7 +1675,7 @@ highed.events = function () {
 
 
         emit: function (event) {
-            var args = Array.prototype.slice.call(arguments);
+            const args = Array.prototype.slice.call(arguments);
             args.splice(0, 1);
 
             if (typeof callbacks[event] !== 'undefined') {
@@ -1726,8 +1723,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @ignore
  */
 highed.ready(function () {
-    var uploader = highed.dom.cr('input'),
-        cb = false;
+    const uploader = highed.dom.cr('input');
+    let cb = false;
 
     uploader.type = 'file';
     uploader.accept = '.csv';
@@ -1740,7 +1737,7 @@ highed.ready(function () {
 
 
     highed.readLocalFile = function (props) {
-        var p = highed.merge(
+        const p = highed.merge(
             {
                 type: 'text',
                 multiple: false,
@@ -1757,7 +1754,7 @@ highed.ready(function () {
 
         cb = highed.dom.on(uploader, 'change', function () {
             function crReader(file) {
-                var reader = new FileReader();
+                const reader = new FileReader();
 
                 reader.onloadstart = function (evt) {
                     if (highed.isFn(p.progress)) {
@@ -1766,7 +1763,7 @@ highed.ready(function () {
                 };
 
                 reader.onload = function (event) {
-                    var data = reader.result;
+                    let data = reader.result;
 
                     if (p.type === 'json') {
                         try {
@@ -1790,7 +1787,7 @@ highed.ready(function () {
                 return reader;
             }
 
-            for (var i = 0; i < uploader.files.length; i++) {
+            for (let i = 0; i < uploader.files.length; i++) {
                 if (!p.type || p.type === 'text' || p.type === 'json') {
                     crReader(uploader.files[i]).readAsText(uploader.files[i]);
                 } else if (p.type === 'binary') {
@@ -1843,12 +1840,12 @@ highed.templates = {};
 
 (function () {
     /* Templates */
-    var templates = {},
-        mostPopularTemplates = {};
+    let templates = {};
+    const mostPopularTemplates = {};
 
 
     highed.templates.add = function (type, def) {
-        var properties = highed.merge(
+        const properties = highed.merge(
             {
                 title: '',
                 description: '',
@@ -2024,15 +2021,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // There be dragons here...
 (function () {
-    var hasTransformedAdvanced = false;
+    const hasTransformedAdvanced = false;
 
     function mergeAdv(superset, dest, src, trigger) {
-        var path = src.split('.'),
-            current = superset,
+        const path = src.split('.'),
             seriesNames = {
                 pie: true,
                 line: true
             };
+        let current = superset;
 
         // console.log(
         //     'extending',
@@ -2146,14 +2143,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     function transformAdv(input, onlyOnce) {
-        var res;
 
         if (onlyOnce && hasTransformedAdvanced) {
             return input;
         }
 
         function visit(node, pname) {
-            var children = (node.subtree = node.subtree || {});
+            const children = (node.subtree = node.subtree || {});
 
             node.meta = node.meta || {};
             // eslint-disable-next-line no-unused-expressions
@@ -2193,7 +2189,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         // console.time('tree transform');
-        res = visit(input);
+        const res = visit(input);
         // console.timeEnd('tree transform');
 
         return res;
@@ -2206,13 +2202,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 return;
             }
 
-            var t = stack.pop();
+            const t = stack.pop();
 
             if (Object.keys(t).length === 0) {
                 rewind(stack);
             } else {
                 Object.keys(t || {}).forEach(function (key) {
-                    var child = t[key];
+                    let child = t[key];
 
                     if (key[0] === '_') {
                         delete t[key];
@@ -2244,7 +2240,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     rewind(parentStack.concat([node]));
                 } else {
                     Object.keys(node).forEach(function (key) {
-                        var child = node[key];
+                        const child = node[key];
                         if (key[0] === '_') {
                             rewind(parentStack.concat([node]));
                         // eslint-disable-next-line max-len
@@ -2295,12 +2291,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function () {
     // Samples, keyed on ID
-    var samples = {};
+    const samples = {};
 
     highed.samples = {
 
         add: function (sample) {
-            var options = highed.merge(
+            const options = highed.merge(
                 {
                     title: 'Untitled Sample',
                     description: 'Untitled Sample',
@@ -2366,7 +2362,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function () {
     // Keyed on ID
-    var validators = {};
+    const validators = {};
 
     highed.validators = {
 
@@ -2414,7 +2410,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var token = false,
+    let token = false,
         url = highed.option('cloudAPIURL');
 
     // Set up namespace for the cloud API
@@ -2572,7 +2568,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var events = highed.events();
+    const events = highed.events();
     highed.on = events.on;
     highed.emit = events.emit;
 }());
@@ -2607,8 +2603,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function () {
 
     highed.showDimmer = function (fn, autohide, transparent, zIndex) {
-        var dimmer = highed.dom.cr('div', 'highed-dimmer'),
-            unbinder = false;
+        const dimmer = highed.dom.cr('div', 'highed-dimmer');
+        let unbinder = false;
 
         highed.dom.ap(document.body, dimmer);
 
@@ -2685,7 +2681,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.OverlayModal = function (contents, attributes) {
-    var container = highed.dom.cr('div', 'highed-overlay-modal '),
+    const container = highed.dom.cr('div', 'highed-overlay-modal '),
         events = highed.events(),
         properties = highed.merge(
             {
@@ -2699,8 +2695,8 @@ highed.OverlayModal = function (contents, attributes) {
                 cancelButton: false
             },
             attributes
-        ),
-        hideDimmer = false,
+        );
+    let hideDimmer = false,
         visible = false;
 
     if (properties.class) {
@@ -2852,7 +2848,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.HSplitter = function (parent, attributes) {
-    var properties = highed.merge(
+    const properties = highed.merge(
             {
                 leftWidth: 40,
                 noOverflow: false,
@@ -2882,8 +2878,7 @@ highed.HSplitter = function (parent, attributes) {
             'div',
             'highed-scrollbar highed-hsplitter-body ' + properties.rightClasses
         ),
-        resizeBar = highed.dom.cr('div', 'highed-hsplitter-resize-bar'),
-        mover;
+        resizeBar = highed.dom.cr('div', 'highed-hsplitter-resize-bar');
 
     if (properties.responsive) {
         left.className += ' highed-hsplitter-body-responsive';
@@ -2892,7 +2887,7 @@ highed.HSplitter = function (parent, attributes) {
     // /////////////////////////////////////////////////////////////////////////
 
     function updateSizeFromMover(x) {
-        var psize;
+        let psize;
 
         if (properties.allowResize && highed.dom.isVisible(right)) {
             psize = highed.dom.size(container);
@@ -2914,9 +2909,8 @@ highed.HSplitter = function (parent, attributes) {
 
 
     function resize(w, h) {
-        var s = highed.dom.size(parent),
-            st,
-            ps;
+        const s = highed.dom.size(parent);
+        let st;
 
         // Check if the right side is visible
         if (!highed.dom.isVisible(right)) {
@@ -2963,7 +2957,7 @@ highed.HSplitter = function (parent, attributes) {
         }
 
         // If we're at right max, we need to resize the left panel
-        ps = highed.dom.size(left);
+        const ps = highed.dom.size(left);
         if (ps.w === properties.leftMax) {
             highed.dom.style(right, {
                 width: s.w - properties.leftMax - 1 + 'px'
@@ -3059,7 +3053,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.VSplitter = function (parent, attributes) {
-    var properties = highed.merge(
+    const properties = highed.merge(
             {
                 topHeight: 40,
                 noOverflow: false
@@ -3076,7 +3070,7 @@ highed.VSplitter = function (parent, attributes) {
 
 
     function resize(w, h) {
-        var s = highed.dom.size(parent);
+        const s = highed.dom.size(parent);
 
         highed.dom.style(container, {
             height: '100%'
@@ -3183,15 +3177,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
-    var container = highed.dom.cr('div', 'highed-tab-control'),
+    const container = highed.dom.cr('div', 'highed-tab-control'),
         paneBar = highed.dom.cr('div', (!skipTabs ? 'tabs' : '')), // Quck fix for now, will change once design finalised.
         body = highed.dom.cr('div', 'body'),
         indicator = highed.dom.cr('div', 'indicator'),
         more = highed.dom.cr('div', (!skipTabs ? 'highed-tab-control-more fa fa-chevron-right' : '')),
         events = highed.events(),
-        selectedTab = false,
         tabs = [],
         ctx = highed.ContextMenu();
+
+    let selectedTab = false;
 
     // /////////////////////////////////////////////////////////////////////////
 
@@ -3215,11 +3210,11 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
 
 
     function resize(w, h) {
-        var cs = highed.dom.size(parent),
-            width = 0;
+        const cs = highed.dom.size(parent);
+        let width = 0;
 
         if (!skipTabs) {
-            var ps = highed.dom.size(paneBar);
+            const ps = highed.dom.size(paneBar);
         }
 
         highed.dom.style(container, {
@@ -3253,8 +3248,6 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
                 });
             }
         }
-
-
     }
 
 
@@ -3288,7 +3281,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
     }
 
     function updateVisibility() {
-        var c = tabs.filter(function (a) {
+        const c = tabs.filter(function (a) {
             return a.visible();
         }).length;
 
@@ -3318,10 +3311,10 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
      *    > body {domnode} - the tab body
      */
     function Tab(properties) {
-        var tevents = highed.events(),
+        const tevents = highed.events(),
             tab = highed.dom.cr('div', 'tab', properties.title),
-            tbody = highed.dom.cr('div', 'tab-body'),
-            visible = true,
+            tbody = highed.dom.cr('div', 'tab-body');
+        let visible = true,
             texports = {
                 selected: false
             };
@@ -3352,7 +3345,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
         }
 
         function focus() {
-            var tsize = highed.dom.size(tab),
+            const tsize = highed.dom.size(tab),
                 tpos = highed.dom.pos(tab);
             if (!visible) {
                 return;
@@ -3523,8 +3516,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, planCode) {
 
-    var createReset = function (resetTo, callback) {
-            var node = highed.dom.cr('div', 'highed-field-reset fa fa-undo');
+    const createReset = function (resetTo, callback) {
+            const node = highed.dom.cr('div', 'highed-field-reset fa fa-undo');
 
             if (resetTo === 'null') {
                 resetTo = null;
@@ -3540,7 +3533,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
         },
         fields = {
             string: function (val, callback) {
-                var input = highed.dom.cr('input', 'highed-field-input', '', fieldID),
+                const input = highed.dom.cr('input', 'highed-field-input', '', fieldID),
                     reset = createReset(properties.defaults || val || value, function (v) {
                         input.value = val = v;
                         tryCallback(callback, v);
@@ -3551,8 +3544,10 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                     e.cancelBubble = true;
                 });
 
-                if (typeof (val || value || '') === 'string' &&
-            (val || value || '').indexOf('\\u') > -1) {
+                if (
+                    typeof (val || value || '') === 'string' &&
+            (val || value || '').indexOf('\\u') > -1
+                ) {
                     input.value = decodeURIComponent(JSON.parse('"' + (val || value).replace(/\"/g, '\\"') + '"'));
                 } else {
                     input.value = (val || value);
@@ -3577,7 +3572,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 );
             },
             number: function (val, callback) {
-                var input = highed.dom.cr('input', 'highed-field-input', '', fieldID),
+                const input = highed.dom.cr('input', 'highed-field-input', '', fieldID),
                     reset = createReset(properties.defaults || val || value, function (v) {
                         input.value = val = v;
                         tryCallback(callback, parseFloat(v));
@@ -3608,7 +3603,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 );
             },
             range: function (val, callback) {
-                var slider = highed.Slider(false, {
+                const slider = highed.Slider(false, {
                     min: properties.custom.minValue,
                     max: properties.custom.maxValue,
                     step: properties.custom.step,
@@ -3623,7 +3618,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 return slider.container;
             },
             boolean: function (val, callback) {
-                var input = highed.dom.cr('input', '', '', fieldID),
+                const input = highed.dom.cr('input', '', '', fieldID),
                     reset = createReset(properties.defaults || val || value, function (v) {
                         input.checked = val = highed.toBool(v);
                         tryCallback(callback, val);
@@ -3648,9 +3643,9 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 );
             },
             color: function (val, callback) {
-                var box = highed.dom.cr('div', 'highed-field-colorpicker', '', fieldID),
-                    reset = highed.dom.cr('div', 'highed-field-reset fa fa-undo'),
-                    resetTo = val || value || properties.defaults;
+                const box = highed.dom.cr('div', 'highed-field-colorpicker', '', fieldID),
+                    reset = highed.dom.cr('div', 'highed-field-reset fa fa-undo');
+                let resetTo = val || value || properties.defaults;
 
 
                 if (resetTo === 'null') {
@@ -3726,14 +3721,14 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 return fields.string(val, callback);
             },
             json: function (val, callback) {
-                var textArea = highed.dom.cr(
+                let editor = false;
+                const textArea = highed.dom.cr(
                         'textarea',
                         'highed-field-input',
                         '',
                         fieldID
                     ),
                     errorBar = highed.dom.cr('div', 'highed-field-error'),
-                    editor = false,
                     updateIt = function (v) {
                         if (editor) {
                             editor.setValue(JSON.stringify(v, undefined, '\t'));
@@ -3787,7 +3782,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
                     updateIt(val || value || properties.defaults);
 
-                    var timeout = null;
+                    let timeout = null;
                     editor.on('change', function () {
                         clearTimeout(timeout);
                         timeout = setTimeout(function () {
@@ -3807,7 +3802,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 return parent;
             },
             cssobject: function (val, callback) {
-                var picker = highed.FontPicker(callback || fn, val || value),
+                const picker = highed.FontPicker(callback || fn, val || value),
                     reset = createReset(properties.defaults || val || value, function (v) {
                         val = v;
                         picker.set(val);
@@ -3822,7 +3817,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 );
             },
             options: function (val, callback) {
-                var ddown = highed.DropDown(),
+                const ddown = highed.DropDown(),
                     reset = createReset(properties.defaults, function (v) {
                         val = v;
                         ddown.selectById(val);
@@ -3854,7 +3849,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
             },
             object: function (val, callback) {
                 // Create a sub-table of options
-                var stable = highed.dom.cr(
+                const stable = highed.dom.cr(
                         'table',
                         'highed-customizer-table',
                         '',
@@ -3904,17 +3899,17 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
             },
 
             function: function (val, callback) {
-                var container = highed.dom.cr(
+                const container = highed.dom.cr(
                         'div',
                         'highed-field-container highed-field-code-container'
                     ),
                     field = highed.dom.cr('textarea', 'highed-field-code', '', fieldID),
-                    editor = false,
                     reset = createReset(properties.defaults || val || value, function (v) {
                         val = v;
                         updateIt(v);
                         callHome(v);
                     });
+                let editor = false;
 
                 function updateIt(v) {
                     if (highed.isFn(v)) {
@@ -3930,12 +3925,12 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 }
 
                 function callHome(v) {
-                    var args = [];
-                    var argStart = v.indexOf('(');
-                    var argEnd = v.substr(argStart + 1).indexOf(')');
-                    var body = '';
-                    var balance = 0;
-                    var parsing = false;
+                    let args = [];
+                    const argStart = v.indexOf('(');
+                    const argEnd = v.substr(argStart + 1).indexOf(')');
+                    let body = '';
+                    let balance = 0;
+                    let parsing = false;
 
                     try {
                         args = v
@@ -3947,7 +3942,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                             return b && b.length > 0 && b.indexOf('/*') === -1;
                         });
 
-                        for (var i = 0; i < v.length; i++) {
+                        for (let i = 0; i < v.length; i++) {
                             if (v[i] === '{') {
                                 balance++;
                                 parsing = true;
@@ -4006,12 +4001,12 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
             },
 
             array: function () {
-                var container = highed.dom.cr('div', '', '', fieldID),
+                const container = highed.dom.cr('div', '', '', fieldID),
                     add = highed.dom.cr('span', 'highed-field-array-add fa fa-plus', ''),
                     itemsNode = highed.dom.cr('div', 'highed-inline-blocks'),
                     items = {},
-                    itemCounter = 0,
                     itemTable = highed.dom.cr('table', 'highed-field-table');
+                let itemCounter = 0;
 
                 if (highed.isStr(value)) {
                     try {
@@ -4029,8 +4024,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 }
 
                 function addCompositeItem(val, suppressCallback) {
-                    var item,
-                        rem = highed.dom.cr('span', 'highed-icon fa fa-trash highed-trash-button'),
+                    const rem = highed.dom.cr('span', 'highed-icon fa fa-trash highed-trash-button'),
                         row = highed.dom.cr('div', 'color-row'), // tr
                         id = ++itemCounter;
 
@@ -4061,7 +4055,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                         value: val
                     };
 
-                    item = fields[properties.subType] ?
+                    const item = fields[properties.subType] ?
                         fields[properties.subType](
                             val || value[id] || properties.defaults,
                             processChange
@@ -4142,10 +4136,10 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 try {
                     properties.defaults = JSON.parse(properties.defaults);
                     Object.keys(properties.defaults).forEach(function (k) {
-                        var tp = 'string',
-                            def = properties.defaults[k],
-                            up = k.toUpperCase(),
+                        let tp = 'string',
                             vals;
+                        const def = properties.defaults[k],
+                            up = k.toUpperCase();
 
                         // This is hackish.
                         if (highed.isNum(def)) {
@@ -4238,12 +4232,12 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
     if (highed.onPhone()) {
         highed.dom.on(help, 'click', function () {
-            var hide = highed.Tooltip(0, 0, properties.tooltip || properties.tooltipText, true);
+            const hide = highed.Tooltip(0, 0, properties.tooltip || properties.tooltipText, true);
             highed.dom.on([help], 'mouseout', hide);
         });
     } else {
         highed.dom.on([help], 'mouseover', function (e) {
-            var hide = highed.Tooltip(
+            const hide = highed.Tooltip(
                 e.clientX + 20,
                 e.clientY,
                 properties.tooltip || properties.tooltipText
@@ -4262,7 +4256,8 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
     typeIndicator.className += ' highed-customize-type-' + type;
     const parent = highed.dom.cr('div', 'highed-customizer-table-parent', '', fieldID + '_container');
 
-    highed.dom.style(parent,
+    highed.dom.style(
+        parent,
         {
             width: (properties.width || 100) + '%'
         });
@@ -4283,8 +4278,10 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
         return highed.dom.ap(
             highed.dom.ap(
                 parent, // tr
-                highed.dom.ap(widgetTD,
-                    highed.dom.ap(fields[type] ? fields[type]() : fields.string(),
+                highed.dom.ap(
+                    widgetTD,
+                    highed.dom.ap(
+                        fields[type] ? fields[type]() : fields.string(),
                         highed.dom.ap(
                             titleCol,
                             highed.dom.cr('span', 'highed-customize-field-label', properties.title),
@@ -4350,24 +4347,24 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.List = function (parent, responsive, props, planCode) {
-    var container = highed.dom.cr('div', 'highed-list'),
+    const container = highed.dom.cr('div', 'highed-list'),
         compactIndicator = highed.dom.cr('div', 'highed-list-compact', 'compact'),
         ctx = highed.ContextMenu(),
-        selectedItem = false,
         events = highed.events(),
         items = [],
-        dropdowns = {},
         properties = props;
+    let dropdowns = {},
+        selectedItem = false;
 
     // /////////////////////////////////////////////////////////////////////////
 
 
     function addItem(item, children, chartPreview) {
 
-        var node = highed.dom.cr('a', 'item', item.title),
+        const node = highed.dom.cr('a', 'item', item.title),
             nodeArrow = highed.dom.cr('span', 'item-arrow', '<i class="fa fa-angle-right" aria-hidden="true"></i>'),
-            nodeChildren = highed.dom.cr('span', 'highed-list-suboptions', ''),
-            iexports = {};
+            nodeChildren = highed.dom.cr('span', 'highed-list-suboptions', '');
+        let iexports = {};
 
         highed.dom.style(nodeChildren, {
             display: 'none'
@@ -4380,7 +4377,7 @@ highed.List = function (parent, responsive, props, planCode) {
         });
 
         function shouldInclude(group) {
-            var doInclude = false;
+            let doInclude = false;
 
             if (Object.keys(properties.availableSettings || {}).length > 0) {
                 if (highed.isArr(group)) {
@@ -4410,7 +4407,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
 
         function applyFilter(detailIndex, filteredBy, filter) {
-            var selected = selectedItem, // list.selected(),
+            const selected = selectedItem, // list.selected(),
                 id = selected.id,
                 entry = highed.meta.optionsExtended.options[id];
 
@@ -4428,7 +4425,7 @@ highed.List = function (parent, responsive, props, planCode) {
         }
         // This function has mutated into a proper mess. Needs refactoring.
         function selectGroup(group, table, options, detailIndex, filteredBy, filter) {
-            var master,
+            let master,
                 vals,
                 doInclude = true,
                 container,
@@ -4443,8 +4440,10 @@ highed.List = function (parent, responsive, props, planCode) {
                 warning = highed.dom.cr('div', 'highed-customize-warning', 'You need to be on a paid plan for this to work in production');
                 doInclude = shouldInclude(group);
 
-                if (group.warning && group.warning.length > 0 &&
-          planCode && group.warning.indexOf(planCode) > -1) {
+                if (
+                    group.warning && group.warning.length > 0 &&
+          planCode && group.warning.indexOf(planCode) > -1
+                ) {
                     highed.dom.ap(table, highed.dom.ap(warningContainer, warning));
                 }
 
@@ -4662,7 +4661,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
             nodeArrow.innerHTML = '<i class="fa fa-angle-down" aria-hidden="true"></i>';
             nodeChildren.innerHTML = '';
-            var entry = highed.meta.optionsExtended.options[item.id];
+            const entry = highed.meta.optionsExtended.options[item.id];
             (entry || []).forEach(function (thing) {
                 selectGroup(thing);
             });
@@ -4724,7 +4723,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
 
     function resize() {
-        var ps = highed.dom.size(parent),
+        const ps = highed.dom.size(parent),
             cs = highed.dom.size(container);
 
         if (responsive && ps.h < 50 && ps.h !== 0 && ps.h) {
@@ -4879,7 +4878,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var container = highed.dom.cr(
+    const container = highed.dom.cr(
             'div',
             'highed-colorpicker highed-colorpicker-responsive'
         ),
@@ -4901,10 +4900,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     highed.pickColor = function (x, y, current, fn) {
-        var windowSize = highed.dom.size(document.body),
+        const windowSize = highed.dom.size(document.body),
             containerSize = highed.dom.size(container),
-            pickerSize = highed.dom.size(canvas),
-            binder = false,
+            pickerSize = highed.dom.size(canvas);
+        let binder = false,
             pbinder = false,
             cbinder = false,
             dbinder = false;
@@ -4914,11 +4913,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         /* Draws the color picker itself */
         function drawPicker() {
             // There's 14 hues per. color, 19 colors in total.
-            var x,
-                y,
-                tx = Math.floor(pickerSize.w / 14),
+            let x,
+                y;
+
+            const tx = Math.floor(pickerSize.w / 14),
                 ty = Math.floor(pickerSize.h / 19),
-                col = -1;
+                ol = -1;
 
             canvas.width = pickerSize.w;
             canvas.height = pickerSize.h;
@@ -4949,7 +4949,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         function rgbToHex(r, g, b) {
-            var res = '#' + ((r << 16) | (g << 8) | b).toString(16);
+            const res = '#' + ((r << 16) | (g << 8) | b).toString(16);
             if (res.length === 5) {
                 return res.replace('#', '#00');
             } if (res.length === 6) {
@@ -4959,7 +4959,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         function pickColor(e) {
-            var px = e.clientX || e.touches[0].clientX || 0,
+            const px = e.clientX || e.touches[0].clientX || 0,
                 py = e.clientY || e.touches[0].clientY || 0,
                 cp = highed.dom.pos(canvas),
                 id = ctx.getImageData(px - cp.x - x, py - cp.y - y, 1, 1).data,
@@ -5009,7 +5009,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 
         pbinder = highed.dom.on(canvas, ['mousedown', 'touchstart'], function (e) {
-            var mover = highed.dom.on(canvas, ['mousemove', 'touchmove'], pickColor),
+            const mover = highed.dom.on(canvas, ['mousemove', 'touchmove'], pickColor),
                 cancel = highed.dom.on(
                     document.body,
                     ['mouseup', 'touchend'],
@@ -5063,7 +5063,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.Toolbar = function (parent, attributes) {
-    var properties = highed.merge(
+    const properties = highed.merge(
             {
                 additionalCSS: []
             },
@@ -5082,7 +5082,7 @@ highed.Toolbar = function (parent, attributes) {
 
 
     function addIcon(icon, where) {
-        var i = highed.dom.cr('div', 'icon highed-icon fa ' + (icon.css || ''));
+        const i = highed.dom.cr('div', 'icon highed-icon fa ' + (icon.css || ''));
 
         highed.dom.on(i, 'click', function (e) {
             if (highed.isFn(icon.click)) {
@@ -5097,7 +5097,7 @@ highed.Toolbar = function (parent, attributes) {
 
 
     function addButton(icon, where) {
-        var i = highed.dom.cr(
+        const i = highed.dom.cr(
             'div',
             'highed-ok-button highed-toolbar-button',
             icon.title || ''
@@ -5172,7 +5172,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function () {
 
     highed.FontPicker = function (fn, style) {
-        var container = highed.dom.cr('div', 'highed-font-picker'),
+        const container = highed.dom.cr('div', 'highed-font-picker'),
             fontFamily = highed.DropDown(), // highed.dom.cr('select', 'font-family'),
             fontSize = highed.DropDown(null, 'highed-font-size'), // highed.dom.cr('select', 'font-size'),
             boldBtn = highed.PushButton(false, 'bold'),
@@ -5383,7 +5383,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // @format
 highed.PushButton = function (parent, icon, state) {
-    var button = highed.dom.cr('span', 'highed-pushbutton fa fa-' + icon),
+    const button = highed.dom.cr('span', 'highed-pushbutton fa fa-' + icon),
         events = highed.events();
 
     function updateCSS() {
@@ -5451,14 +5451,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.Tree = function (parent) {
-    var container = highed.dom.cr('div', 'highed-tree'),
-        selectedNode = false,
+    const container = highed.dom.cr('div', 'highed-tree'),
         events = highed.events(),
         expands = {},
         expandState = {},
         selectedID = false,
-        selectedPath = false,
-        attachedData = {},
         filters = {
             // Filter the series properties based on the series.type property
             series: {
@@ -5473,15 +5470,19 @@ highed.Tree = function (parent) {
             }
         };
 
+    let selectedPath = false,
+        selectedNode = false,
+        attachedData = {};
+
     // //////////////////////////////////////////////////////////////////////////
 
     function createNode(child, pnode, instancedData, productFilter, myIndex) {
 
-        var id =  (child.meta.ns ? child.meta.ns + '.' : '') +
+        const id =  (child.meta.ns ? child.meta.ns + '.' : '') +
     (!isNaN(myIndex) ? '[' + myIndex + '].' : '') +
     child.meta.name;
 
-        var node = highed.dom.cr(
+        const node = highed.dom.cr(
                 'div',
                 'node',
                 '',
@@ -5501,8 +5502,9 @@ highed.Tree = function (parent) {
         (child.meta.ns ? child.meta.ns + '.' : '') +
         (myIndex ? '[' + myIndex + '].' : '') +
         // (!isNaN(myIndex) ? '[' + myIndex + '].' : '') +
-        child.meta.name,
-            expanded = true;
+        child.meta.name;
+
+        let expanded = true;
 
         // child.meta.fullname = index;
         child.meta.fullname = (myIndex ? child.meta.name : index);
@@ -5603,7 +5605,7 @@ highed.Tree = function (parent) {
 
                 highed.dom.on(remIcon, 'click', function (e) {
                     if (confirm('Really delete the element? This cannot be undone!')) {
-                        var delIndex = false;
+                        let delIndex = false;
 
                         if (selectedNode === node) {
                             selectedNode.className = 'parent-title';
@@ -5658,7 +5660,7 @@ highed.Tree = function (parent) {
 
                 // eslint-disable-next-line no-inner-declarations
                 function addArrayElementToList(data, i) {
-                    var cat = {
+                    const cat = {
                             meta: {
                                 name: child.meta.name,
                                 title: child.meta.name + '[' + i + ']',
@@ -5683,7 +5685,7 @@ highed.Tree = function (parent) {
                 }
 
                 highed.dom.on(addIcon, 'click', function () {
-                    var newElement = {};
+                    const newElement = {};
 
                     highed.snackBar('Added new element to ' + child.meta.name);
                     child.data.push(newElement);
@@ -5741,7 +5743,7 @@ highed.Tree = function (parent) {
 
 
     function expandTo(id) {
-        var prev = '';
+        let prev = '';
 
         if (!id) {
             return;
@@ -5783,18 +5785,18 @@ highed.Tree = function (parent) {
 
         if (highed.isArr(tree.children)) {
             tree.children.forEach(function (child) {
-                var node, fstate;
+                let node, fstate;
 
                 if (tree.meta.fullname && filters[tree.meta.fullname]) {
 
                     if (child.meta && child.meta.validFor) {
 
-                        var customizedSeriesOption = productFilter.series;
+                        let customizedSeriesOption = productFilter.series;
                         if (myIndex) {
                             customizedSeriesOption = [customizedSeriesOption[myIndex]];
                         }
 
-                        var found = false;
+                        let found = false;
                         (customizedSeriesOption || []).forEach(function (serieOption) {
                             fstate = serieOption[filters[tree.meta.fullname].controller] || filters[tree.meta.fullname].default;
                             if (child.meta.validFor[fstate]) {
@@ -5905,25 +5907,27 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.ContextMenu = function (stuff) {
-    var container = highed.dom.cr(
+    const container = highed.dom.cr(
             'div',
             'highed-ctx-container-common highed-ctx-container'
         ),
-        closeBtn = highed.dom.cr('div', 'highed-ctx-close-button', 'Close'),
-        visible = false,
+        closeBtn = highed.dom.cr('div', 'highed-ctx-close-button', 'Close');
+
+    let visible = false,
         dimHide = false;
 
     // /////////////////////////////////////////////////////////////////////////
 
 
     function addEntry(entry) {
-        var item = highed.dom.cr(
+        const item = highed.dom.cr(
                 'div',
                 'highed-ctx-item highed-ctx-item-responsive',
                 entry.title
             ),
-            right = highed.dom.cr('div', 'highed-ctx-child-icon fa fa-angle-right'),
-            childCtx;
+            right = highed.dom.cr('div', 'highed-ctx-child-icon fa fa-angle-right');
+
+        let childCtx;
 
         if (entry === '-') {
             return highed.dom.ap(container, highed.dom.cr('div', 'highed-ctx-sep'));
@@ -5967,7 +5971,7 @@ highed.ContextMenu = function (stuff) {
 
 
     function show(x, y, noDimmer) {
-        var psize = highed.dom.size(document.body),
+        const psize = highed.dom.size(document.body),
             size = highed.dom.size(container);
 
         if (!noDimmer && visible) {
@@ -6023,7 +6027,7 @@ highed.ContextMenu = function (stuff) {
         }
 
         Object.keys(def).forEach(function (key) {
-            var entry = def[key];
+            const entry = def[key];
             addEntry(highed.merge({ title: key }, entry));
         });
     }
@@ -6078,7 +6082,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var dropdownItems = highed.dom.cr(
+    const dropdownItems = highed.dom.cr(
         'div',
         'highed-dropdown-items highed-dropdown-items-responsive'
     );
@@ -6089,11 +6093,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     highed.DropDown = function (parent, extraClasses, icons) {
-        var events = highed.events(),
+        const events = highed.events(),
             container = highed.dom.cr('div', 'highed-dropdown ' + extraClasses),
             body = highed.dom.cr('div', 'highed-dropdown-body'),
-            arrow = highed.dom.cr('div', 'highed-dropdown-arrow fa fa-caret-down'),
-            items = [],
+            arrow = highed.dom.cr('div', 'highed-dropdown-arrow fa fa-caret-down');
+
+        let items = [],
             selectedItem = false,
             expanded = false,
             catcher = false;
@@ -6177,7 +6182,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function expand(e) {
             buildDOM();
 
-            var pos = highed.dom.pos(container, true),
+            let pos = highed.dom.pos(container, true),
                 s = highed.dom.size(container);
 
             // Quick hack for IE...
@@ -6245,8 +6250,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 return false;
             }
 
-            var node = highed.dom.cr('div', 'highed-dropdown-item'),
-                id = highed.uuid(),
+            let id = highed.uuid();
+            const node = highed.dom.cr('div', 'highed-dropdown-item'),
                 index = items.length,
                 itemInstance = {
                     // The node
@@ -6462,8 +6467,8 @@ highed.Movable = function (
     min,
     doOffset
 ) {
-    var events = highed.events(),
-        moving = false;
+    const events = highed.events();
+    let moving = false;
 
     constrain = (constrain || 'XY').toUpperCase();
     target = highed.dom.get(target);
@@ -6473,13 +6478,13 @@ highed.Movable = function (
             //   if (moving) return;
 
             moving = true;
-            var cp = highed.dom.pos(target),
-                ps = highed.dom.size(parentNode || target.parentNode),
-                ns = highed.dom.size(target),
-                x = cp.x,
+            let x = cp.x,
                 y = cp.y,
                 offsetX = 0,
-                offsetY = 0,
+                offsetY = 0;
+            const cp = highed.dom.pos(target),
+                ps = highed.dom.size(parentNode || target.parentNode),
+                ns = highed.dom.size(target),
                 mover = highed.dom.on(
                     document.body,
                     ['mousemove', 'touchmove'],
@@ -6601,7 +6606,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.Slider = function (parent, attributes) {
-    var properties = highed.merge(
+    const properties = highed.merge(
             {
                 max: 100,
                 min: 1,
@@ -6612,7 +6617,6 @@ highed.Slider = function (parent, attributes) {
             attributes
         ),
         events = highed.events(),
-        value = properties.value || properties.resetTo,
         container = highed.dom.cr('div', 'highed-slider'),
         indicator = highed.dom.cr('div', 'highed-slider-indicator'),
         textIndicator = highed.dom.cr('div', 'highed-slider-text-indicator'),
@@ -6621,6 +6625,8 @@ highed.Slider = function (parent, attributes) {
 
         numberInput = highed.dom.cr('input', 'highed-slider-input'),
         mover = highed.Movable(indicator, 'x', true, sliderBackground);
+
+    let value = properties.value || properties.resetTo;
 
     numberInput.type = 'number';
     numberInput.value = value;
@@ -6641,8 +6647,8 @@ highed.Slider = function (parent, attributes) {
 
     // Calculate the indicator X
     function calcIndicator() {
-        var x = 0,
-            s = highed.dom.size(sliderBackground),
+        let x = 0;
+        const s = highed.dom.size(sliderBackground),
             ms = highed.dom.size(indicator);
 
         if (!highed.isNum(value) || !value) {
@@ -6677,7 +6683,7 @@ highed.Slider = function (parent, attributes) {
     }
 
     mover.on('Moving', function (x) {
-        var s = highed.dom.size(sliderBackground),
+        const s = highed.dom.size(sliderBackground),
             ms = highed.dom.size(indicator);
 
         // Set the value based on the new X
@@ -6797,7 +6803,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 function parseCSV(inData, delimiter) {
-    var isStr = highed.isStr,
+    const isStr = highed.isStr,
         isArr = highed.isArray,
         isNum = highed.isNum,
         csv = inData || '',
@@ -6826,13 +6832,13 @@ function parseCSV(inData, delimiter) {
                 return true;
             }
 
-            var inStr = false,
+            let inStr = false,
                 c,
                 cn,
                 cl,
                 token = '';
 
-            for (var j = 0; j < row.length; j++) {
+            for (let j = 0; j < row.length; j++) {
                 c = row[j];
                 cn = row[j + 1];
                 cl = row[j - 1];
@@ -6889,12 +6895,9 @@ function parseCSV(inData, delimiter) {
     }
 
     rows.forEach(function (row, rowNumber) {
-        var cols = [],
-            inStr = false,
-            i = 0,
-            j,
+        const cols = [];
+        let inStr = false,
             token = '',
-            guessedDel,
             c,
             cp,
             cn;
@@ -6914,7 +6917,7 @@ function parseCSV(inData, delimiter) {
             token = '';
         }
 
-        for (i = 0; i < row.length; i++) {
+        for (let i = 0; i < row.length; i++) {
             c = row[i];
             cn = row[i + 1];
             cp = row[i - 1];
@@ -6951,7 +6954,7 @@ function parseCSV(inData, delimiter) {
 
 
 highed.DataTable = function (parent, attributes) {
-    var properties = highed.merge(
+    const properties = highed.merge(
             {
                 checkable: true,
                 importer: {}
@@ -6961,9 +6964,11 @@ highed.DataTable = function (parent, attributes) {
         events = highed.events(),
         container = highed.dom.cr('div', 'highed-dtable-container'),
         frame = highed.dom.cr('div', 'highed-dtable-table-frame highed-scrollbar'),
-        movementBar = highed.dom.cr('div', 'highed-dtable-movement-bar', ''),
-        table = highed.dom.cr('table', 'highed-dtable-table'),
-        thead = highed.dom.cr('thead', 'highed-dtable-head'),
+        movementBar = highed.dom.cr('div', 'highed-dtable-movement-bar', '');
+
+    let table = highed.dom.cr('table', 'highed-dtable-table');
+
+    const thead = highed.dom.cr('thead', 'highed-dtable-head'),
         tbody = highed.dom.cr('tbody', 'highed-dtable-body'),
         tableTail = highed.dom.cr(
             'div',
@@ -7085,23 +7090,11 @@ highed.DataTable = function (parent, attributes) {
             'highed-import-button green padded',
             'Cancel'
         ),
-        detailValue = 0,
-        isInGSheetMode = false,
-        isInLiveDataMode = false,
-        mainInputCb = [],
-        rawCSV = false,
-        mainInputCloseCb = false,
-        toolbar,
         importModal = highed.OverlayModal(false, {
             minWidth: 600,
             minHeight: 600
         }),
         importer = highed.DataImporter(importModal.body, properties.importer),
-        rows = [],
-        gcolumns = [],
-        changeTimeout = false,
-        dataModal,
-        surpressChangeEvents = false,
         monthNumbers = {
             JAN: 1,
             FEB: 2,
@@ -7116,15 +7109,28 @@ highed.DataTable = function (parent, attributes) {
             NOV: 11,
             DEC: 12
         },
-        selectedRowIndex = 0,
-        keyValue = 'A',
-        tempKeyValue = 'A',
         // checkAll.type = 'checkbox',
         selectedFirstCell = [],
         selectedEndCell = [],
         selectedCopyFirstCell = [],
         selectedCopyEndCell = [],
-        lastSelectedCell = [null, null],
+        lastSelectedCell = [null, null];
+
+    let rows = [],
+        detailValue = 0,
+        isInGSheetMode = false,
+        isInLiveDataMode = false,
+        mainInputCb = [],
+        rawCSV = false,
+        mainInputCloseCb = false,
+        toolbar,
+        selectedRowIndex = 0,
+        keyValue = 'A',
+        tempKeyValue = 'A',
+        gcolumns = [],
+        changeTimeout = false,
+        dataModal,
+        surpressChangeEvents = false,
         allSelectedCells = [],
         allSelectedCopyCells = [],
         selectedHeaders = [],
@@ -7227,7 +7233,7 @@ highed.DataTable = function (parent, attributes) {
         padding: '8px'
     });
 
-    var mouseDown = false;
+    let mouseDown = false;
     document.body.onmousedown = function () {
         mouseDown = true;
     };
@@ -7269,7 +7275,7 @@ highed.DataTable = function (parent, attributes) {
             return highed.snackBar('The file is not a valid CSV file');
         }
 
-        var reader = new FileReader();
+        const reader = new FileReader();
 
         reader.onload = function (e) {
             clear();
@@ -7284,9 +7290,9 @@ highed.DataTable = function (parent, attributes) {
     frame.ondrop = function (e) {
         e.preventDefault();
 
-        var d = e.dataTransfer;
-        var f;
-        var i;
+        const d = e.dataTransfer;
+        let f;
+        let i;
 
         if (d.items) {
             for (i = 0; i < d.items.length; i++) {
@@ -7378,7 +7384,7 @@ highed.DataTable = function (parent, attributes) {
         mainInputCb.push(
             highed.dom.on(mainInput, 'keyup', function (e) {
                 // Super hack to allow pasting CSV into cells
-                var ps = highed.parseCSV(mainInput.value);
+                const ps = highed.parseCSV(mainInput.value);
                 if (ps.length > 1) { // TODO: Need to fix this...
                     if (
                         confirm(
@@ -7446,11 +7452,11 @@ highed.DataTable = function (parent, attributes) {
     // //////////////////////////////////////////////////////////////////////////
     function Column(row, colNumber, val, keyVal) {
 
-        var value = typeof val === 'undefined' || typeof val === 'object' || (val === 'null') ? null : val, // object check for ie11/edge
-            col = highed.dom.cr('td', 'highed-dtable-cell'),
-            colVal = highed.dom.cr('div', 'highed-dtable-col-val', value),
-            input = highed.dom.cr('input'),
+        let value = typeof val === 'undefined' || typeof val === 'object' || (val === 'null') ? null : val, // object check for ie11/edge
             exports = {};
+        const col = highed.dom.cr('td', 'highed-dtable-cell'),
+            colVal = highed.dom.cr('div', 'highed-dtable-col-val', value),
+            input = highed.dom.cr('input');
         function goLeft() {
             if (colNumber >= 1) {
                 row.columns[colNumber - 1].focus();
@@ -7570,7 +7576,7 @@ highed.DataTable = function (parent, attributes) {
                 col,
                 value,
                 function (val) {
-                    var changed = value !== val;
+                    const changed = value !== val;
                     value = checkNull(val) ? null : val;
                     colVal.innerHTML = value;
                     if (changed) {
@@ -7651,8 +7657,10 @@ highed.DataTable = function (parent, attributes) {
 
                 allSelectedCopyCells = [];
 
-            } else if (selectedFirstCell[0] === selectedEndCell[0] &&
-          selectedFirstCell[1] === selectedEndCell[1]) {
+            } else if (
+                selectedFirstCell[0] === selectedEndCell[0] &&
+          selectedFirstCell[1] === selectedEndCell[1]
+            ) {
             // Have not dragged anywhere else on the grid. So the user has just clicked on a cell.
 
                 lastSelectedCell[0] = colNumber;
@@ -7714,7 +7722,7 @@ highed.DataTable = function (parent, attributes) {
             value: getVal,
             destroy: destroy,
             addToDOM: addToDOM,
-            selectCell: selectCell,
+            selectrenderTo: selectCell,
             deleteContents: deleteContents,
             deselectCell: deselectCell,
             deselectCopyCell: deselectCopyCell,
@@ -7756,9 +7764,7 @@ highed.DataTable = function (parent, attributes) {
             return cell;
         });
 
-        var tempColValue,
-            lowCell,
-            highCell,
+        let tempColValue,
             cell;
 
         if (firstCell[0] <= endCell[0]) {
@@ -7769,12 +7775,12 @@ highed.DataTable = function (parent, attributes) {
             cell = firstCell;
         }
 
-        lowCell = (firstCell[1] > endCell[1] ? endCell : firstCell);
-        highCell = (firstCell[1] < endCell[1] ? endCell : firstCell);
+        const lowCell = (firstCell[1] > endCell[1] ? endCell : firstCell),
+            highCell = (firstCell[1] < endCell[1] ? endCell : firstCell);
 
 
         while (tempColValue <= cell[0]) {
-            for (var i = lowCell[1]; i <= highCell[1]; i++) {
+            for (let i = lowCell[1]; i <= highCell[1]; i++) {
                 if (rows[i]) {
                     rows[i].columns[tempColValue].selectCellToCopy();
                 }
@@ -7786,7 +7792,8 @@ highed.DataTable = function (parent, attributes) {
 
     function selectNewCells(firstCell, endCell) { // firstCell, endCell
 
-        if (firstCell.length === 0 || endCell.length === 0 ||   // Weird bug when opening the console and hovering over cells
+        if (
+            firstCell.length === 0 || endCell.length === 0 ||   // Weird bug when opening the console and hovering over cells
       (firstCell[0] === null || firstCell[1] === null)
         ) {
             return;
@@ -7801,9 +7808,7 @@ highed.DataTable = function (parent, attributes) {
             return cell;
         });
 
-        var tempColValue,
-            lowCell,
-            highCell,
+        let tempColValue,
             cell;
 
         if (firstCell[0] <= endCell[0]) {
@@ -7814,11 +7819,11 @@ highed.DataTable = function (parent, attributes) {
             cell = firstCell;
         }
 
-        lowCell = (firstCell[1] > endCell[1] ? endCell : firstCell);
-        highCell = (firstCell[1] < endCell[1] ? endCell : firstCell);
+        const lowCell = (firstCell[1] > endCell[1] ? endCell : firstCell),
+            highCell = (firstCell[1] < endCell[1] ? endCell : firstCell);
 
         while (tempColValue <= cell[0]) {
-            for (var i = lowCell[1]; i <= highCell[1]; i++) {
+            for (let i = lowCell[1]; i <= highCell[1]; i++) {
                 if (rows[i]) {
                     rows[i].columns[tempColValue].selectCell();
                 }
@@ -7830,11 +7835,12 @@ highed.DataTable = function (parent, attributes) {
     // //////////////////////////////////////////////////////////////////////////
 
     function Row(skipAdd) {
-        var columns = [],
+        const columns = [],
             row = highed.dom.cr('tr'),
             leftItem = highed.dom.cr('div', 'highed-dtable-left-bar-row', ''),
-            checker = highed.dom.cr('div', 'highed-dtable-row'),
-            checked = false,
+            checker = highed.dom.cr('div', 'highed-dtable-row');
+
+        let checked = false,
             didAddHTML = false,
             exports = {};
 
@@ -7863,13 +7869,13 @@ highed.DataTable = function (parent, attributes) {
         }
 
         function insertCol(where) {
-            var col = Column(exports, columns.length);
+            const col = Column(exports, columns.length);
             columns.splice(where, 0, col);
         }
 
         function select() {
 
-            var o = tbody.querySelector('.highed-dtable-body-selected-row');
+            const o = tbody.querySelector('.highed-dtable-body-selected-row');
             if (o) {
                 o.className = '';
             }
@@ -8003,12 +8009,12 @@ highed.DataTable = function (parent, attributes) {
             events.emit('InitLoaded');
         }, 10);
 
-        for (var i = 0; i < DEFAULT_ROW; i++) {
-            var r = Row(false, keyValue);
+        for (let i = 0; i < DEFAULT_ROW; i++) {
+            const r = Row(false, keyValue);
         }
 
         tempKeyValue = 'A';
-        for (var j = 0; j < DEFAULT_COLUMN; j++) {
+        for (let j = 0; j < DEFAULT_COLUMN; j++) {
             addCol('Column ' + (j + 1));
         }
         highed.dom.ap(colgroup, highed.dom.cr('col'));
@@ -8020,7 +8026,7 @@ highed.DataTable = function (parent, attributes) {
         colgroup.innerHTML = '';
         topColumnBar.innerHTML = '';
         topLetterBar.innerHTML = '';
-        var resetLetters = 'A';
+        let resetLetters = 'A';
 
         gcolumns.forEach(function (col, i) {
             col.colNumber = i;
@@ -8040,8 +8046,8 @@ highed.DataTable = function (parent, attributes) {
         if (key === 'Z' || key === 'z') {
             return String.fromCharCode(key.charCodeAt() - 25) + String.fromCharCode(key.charCodeAt() - 25);
         }
-        var lastChar = key.slice(-1);
-        var sub = key.slice(0, -1);
+        const lastChar = key.slice(-1);
+        const sub = key.slice(0, -1);
         if (lastChar === 'Z' || lastChar === 'z') {
             return getNextLetter(sub) + String.fromCharCode(lastChar.charCodeAt() - 25);
         }
@@ -8054,7 +8060,7 @@ highed.DataTable = function (parent, attributes) {
 
     function addCol(value, where) {
     // The header columns control the colgroup
-        var col = highed.dom.cr('col'),
+        const col = highed.dom.cr('col'),
             colNumber = gcolumns.length,
             header = highed.dom.cr('span', 'highed-dtable-top-bar-col'),
             letter = highed.dom.cr('span', 'highed-dtable-top-bar-letter'),
@@ -8148,8 +8154,9 @@ highed.DataTable = function (parent, attributes) {
                     }
                 }
             ]),
-            ox,
             keyCell = highed.dom.cr('span', 'highed-dtable-cell-value', keyValue);
+
+        let ox;
 
         // letter.innerHTML = keyValue;
         letter.value = highed.getLetterIndex(keyValue);
@@ -8232,8 +8239,8 @@ highed.DataTable = function (parent, attributes) {
         });
 
         function shuffleArray(arr, min, amount, moveTo) {
-            var x = arr.splice(min, amount);
-            var args = [moveTo, 0].concat(x);
+            const x = arr.splice(min, amount);
+            const args = [moveTo, 0].concat(x);
             Array.prototype.splice.apply(arr, args);
         }
 
@@ -8453,7 +8460,7 @@ highed.DataTable = function (parent, attributes) {
         direction = (direction || '').toUpperCase();
         // eslint-disable-next-line array-callback-return
         rows.sort(function (a, b) {
-            var ad = a.columns[column].value(),
+            let ad = a.columns[column].value(),
                 bd = b.columns[column].value();
 
             if ((highed.isNum(ad) && highed.isNum(bd)) || asMonths) {
@@ -8531,7 +8538,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     function addRow(supressChange, skipAdd) {
-        var r = Row(skipAdd);
+        const r = Row(skipAdd);
 
         gcolumns.forEach(function () {
             r.addCol();
@@ -8580,7 +8587,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     function resize() {
-        var ps = highed.dom.size(parent),
+        const ps = highed.dom.size(parent),
             hs = highed.dom.size(topBar);
         // tb = highed.dom.size(toolbar.container);
 
@@ -8602,11 +8609,11 @@ highed.DataTable = function (parent, attributes) {
 
     function getHeaderTextArr(quoteStrings, section) {
 
-        var columnNames = [];
+        const columnNames = [];
 
 
         function cleanData(data) {
-            var title = data && data.headerTitle.innerHTML.length ?
+            let title = data && data.headerTitle.innerHTML.length ?
                 data.headerTitle.innerHTML :
                 null;
 
@@ -8643,7 +8650,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     function toData(quoteStrings, includeHeaders, section) {
-        var data = [];
+        const data = [];
         if (includeHeaders) {
             data.push(getHeaderTextArr(quoteStrings, section));
         }
@@ -8667,8 +8674,8 @@ highed.DataTable = function (parent, attributes) {
         }
 
         rows.forEach(function (row) {
-            var rarr = [],
-                hasData = false;
+            const rarr = [];
+            let hasData = false;
 
             if (section) {
                 // Add in label data first
@@ -8680,7 +8687,7 @@ highed.DataTable = function (parent, attributes) {
                     return;
                 }
 
-                var v = col.value();
+                let v = col.value();
 
                 if (v) {
                     hasData = true;
@@ -8707,7 +8714,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     function toDataSeries(ignoreFirst) {
-        var res = {
+        const res = {
             categories: [],
             series: []
         };
@@ -8725,7 +8732,7 @@ highed.DataTable = function (parent, attributes) {
 
         rows.forEach(function (row, i) {
             row.columns.forEach(function (col, ci) {
-                var v = col.value();
+                let v = col.value();
 
                 if (!ci) {
                     if (v && highed.isStr(v) && Date.parse(v) !== NaN) {
@@ -8764,7 +8771,7 @@ highed.DataTable = function (parent, attributes) {
     }
 
     function loadRows(rows, done) {
-        var sanityCounts = {};
+        const sanityCounts = {};
         clear();
 
         if (rows.length > 1) {
@@ -8777,7 +8784,7 @@ highed.DataTable = function (parent, attributes) {
         // delimiter should be manually.
 
         rows.some(function (row, i) {
-            var count = row.length;
+            const count = row.length;
             sanityCounts[count] =
         typeof sanityCounts[count] === 'undefined' ? 0 : sanityCounts[count];
             ++sanityCounts[count];
@@ -8801,25 +8808,25 @@ highed.DataTable = function (parent, attributes) {
         setTimeout(function () {
 
             if (rows[0] && rows.length < DEFAULT_ROW) {
-                var counter = DEFAULT_ROW - rows.length,
+                const counter = DEFAULT_ROW - rows.length,
                     length = (rows[0].length > DEFAULT_COLUMN ? rows[0].length : DEFAULT_COLUMN);
 
                 rows.forEach(function (row) {
                     if (row.length < DEFAULT_COLUMN) {
                         const len = DEFAULT_COLUMN - row.length;
-                        for (var i = 0; i < len; i++) {
+                        for (let i = 0; i < len; i++) {
                             row.push(null);
                         }
                     }
                 });
 
-                for (var i = 0; i < counter; i++) {
+                for (let i = 0; i < counter; i++) {
                     rows.push(Array(length).fill(null, 0));
                 }
             }
 
             rows.forEach(function (cols, i) {
-                var row;
+                let row;
 
                 if (i) {
                     row = Row();
@@ -8883,7 +8890,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     function loadCSV(data, surpressEvents, updateAssignData, cb) {
-        var rows;
+        let rows;
         console.log(data);
 
         if (isInGSheetMode) {
@@ -8920,19 +8927,19 @@ highed.DataTable = function (parent, attributes) {
             }
 
             if (rows[0] && rows.length < DEFAULT_ROW) {
-                var counter = DEFAULT_ROW - rows.length,
+                const counter = DEFAULT_ROW - rows.length,
                     length = (rows[0].length > DEFAULT_COLUMN ? rows[0].length : DEFAULT_COLUMN);
 
                 rows.forEach(function (row) {
                     if (row.length < DEFAULT_COLUMN) {
                         const len = DEFAULT_COLUMN - row.length;
-                        for (var i = 0; i < len; i++) {
+                        for (let i = 0; i < len; i++) {
                             row.push(null);
                         }
                     }
                 });
 
-                for (var i = 0; i < counter; i++) {
+                for (let i = 0; i < counter; i++) {
                     rows.push(Array(length).fill(null, 0));
                 }
             }
@@ -9220,7 +9227,7 @@ highed.DataTable = function (parent, attributes) {
 
     highed.dom.on(gsheetLoadButton, 'click', function () {
 
-        var value = parseInt(gsheetRefreshTime.value, 10);
+        const value = parseInt(gsheetRefreshTime.value, 10);
         events.emit('LoadGSheet', {
             googleSpreadsheetKey: gsheetID.value,
             googleSpreadsheetWorksheet: gsheetWorksheetID.value || false,
@@ -9237,11 +9244,12 @@ highed.DataTable = function (parent, attributes) {
 
     highed.dom.on(weirdDataFix, 'click', function () {
     // Pop open a modal with the option of supplying a delimiter manually.
-        var dropdownParent = highed.dom.cr('div'),
+        const dropdownParent = highed.dom.cr('div'),
             dropdown = highed.DropDown(dropdownParent),
             okBtn = highed.dom.cr('button', 'highed-ok-button', 'Rerun Import'),
-            nevermindBtn = highed.dom.cr('button', 'highed-ok-button', 'Nevermind'),
-            selectedDelimiter;
+            nevermindBtn = highed.dom.cr('button', 'highed-ok-button', 'Nevermind');
+
+        let selectedDelimiter;
 
         weirdDataModal.body.innerHTML = '';
         weirdDataModal.show();
@@ -9516,7 +9524,7 @@ highed.DataTable = function (parent, attributes) {
     );
 
     function selectSwitchRowsColumns() {
-        var csvData = rowsToColumns(highed.parseCSV(toCSV()))
+        const csvData = rowsToColumns(highed.parseCSV(toCSV()))
             .map(function (cols) {
                 return cols.join(';');
             }).join('\n');
@@ -9528,7 +9536,7 @@ highed.DataTable = function (parent, attributes) {
     }
 
     function rowsToColumns(rows) {
-        var row,
+        let row,
             rowsLength,
             col,
             colsLength,
@@ -9564,7 +9572,7 @@ highed.DataTable = function (parent, attributes) {
         }
     }
     function colorHeader(values, color) {
-        var tempValue = values[0];
+        let tempValue = values[0];
         if (values.length > 0) {
             while (tempValue <= values[values.length - 1]) {
                 if (gcolumns[tempValue]) {
@@ -9590,7 +9598,7 @@ highed.DataTable = function (parent, attributes) {
     function colorCells(values, color) {
         if (values.length > 0) {
             rows.forEach(function (row) {
-                var tempValue = values[0];
+                let tempValue = values[0];
                 while (tempValue <= values[values.length - 1]) {
                     if (row.columns[tempValue]) {
                         highed.dom.style(row.columns[tempValue].element, {
@@ -9620,7 +9628,7 @@ highed.DataTable = function (parent, attributes) {
         if (previousValues && previousValues.length > 0) {
 
             rows.forEach(function (row) {
-                var tempValue = previousValues[0];
+                let tempValue = previousValues[0];
                 if (previousValues.length > 0) {
                     while (tempValue <= previousValues[previousValues.length - 1]) {
                         if (row.columns[tempValue]) {
@@ -9637,7 +9645,7 @@ highed.DataTable = function (parent, attributes) {
 
     function decolorHeader(previousValues) {
         if (previousValues && previousValues.length > 0) {
-            var tempValue = previousValues[0];
+            let tempValue = previousValues[0];
             if (previousValues.length > 0) {
                 while (tempValue <= previousValues[previousValues.length - 1]) {
                     if (gcolumns[tempValue]) {
@@ -9689,7 +9697,7 @@ highed.DataTable = function (parent, attributes) {
 
     function toggleUnwantedCells(values, toggle) {
 
-        var found = false;
+        let found = false;
 
         gcolumns.forEach(function (col, index) {
             if (!values.indexOf(index) === -1) {
@@ -9734,10 +9742,8 @@ highed.DataTable = function (parent, attributes) {
     // Getting kinda long, probably need to move this all out of here to createchartpage
     function createTableInputs(inputs, maxColSpan, extraClass) {
 
-        var table = highed.dom.cr('table', 'highed-createchartwizard-table'),
-            // eslint-disable-next-line no-redeclare
-            maxColSpan = maxColSpan,
-            currentColSpan = maxColSpan,
+        const table = highed.dom.cr('table', 'highed-createchartwizard-table');
+        let currentColSpan = maxColSpan,
             tr;
 
         inputs.forEach(function (input) {
@@ -9796,7 +9802,8 @@ highed.DataTable = function (parent, attributes) {
             inputs = [
                 { label: 'URL', placeholder: 'Spreadsheet ID', colspan: 2, linkedTo: liveDataInput },
                 { label: 'Refresh Time in Seconds', placeholder: 'Refresh time  (leave blank for no refresh)', colspan: 2, linkedTo: liveDataIntervalInput },
-                { label: 'Type', colspan: 2, linkedTo: liveDataTypeSelect, type: 'select' }],
+                { label: 'Type', colspan: 2, linkedTo: liveDataTypeSelect, type: 'select' }
+            ],
             table = createTableInputs(inputs, 2, 'highed-live-data'),
             importData = highed.dom.cr('button', 'highed-ok-button highed-import-button negative', 'Import Data'),
             cancel = createCancelBtn();
@@ -9814,13 +9821,17 @@ highed.DataTable = function (parent, attributes) {
             liveDataLoadButton.click();
             toNextPage();
         });
-        highed.dom.ap(container,
+        highed.dom.ap(
+            container,
             highed.dom.cr('div', 'highed-modal-title highed-help-toolbar', 'Import Live Data'),
-            highed.dom.ap(highed.dom.cr('div'),
+            highed.dom.ap(
+                highed.dom.cr('div'),
                 highed.dom.cr('div', 'highed-modal-text', 'Live data needs a url to your JSON data to reference.'),
-                highed.dom.cr('div', 'highed-modal-text', 'This means that the published chart always loads the latest version of your data.')),
+                highed.dom.cr('div', 'highed-modal-text', 'This means that the published chart always loads the latest version of your data.')
+            ),
             highed.dom.ap(highed.dom.cr('div', 'highed-table-container'), table),
-            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), importData, cancel));
+            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), importData, cancel)
+        );
 
         return container;
     }
@@ -9836,7 +9847,8 @@ highed.DataTable = function (parent, attributes) {
             { label: 'End Row', colspan: 2, linkedTo: gsheetEndRow },
             { label: 'Start Column', colspan: 2, linkedTo: gsheetStartCol },
             // eslint-disable-next-line no-sequences
-            { label: 'End Column', colspan: 2, linkedTo: gsheetEndCol }],
+            { label: 'End Column', colspan: 2, linkedTo: gsheetEndCol }
+        ],
         table = createTableInputs(inputs, 4),
         connectSheet = highed.dom.cr('button', 'highed-ok-button highed-import-button negative', 'Connect Sheet');
         cancel = createCancelBtn();
@@ -9851,14 +9863,18 @@ highed.DataTable = function (parent, attributes) {
             toNextPage();
         });
 
-        highed.dom.ap(container,
+        highed.dom.ap(
+            container,
             highed.dom.cr('div', 'highed-modal-title highed-help-toolbar', 'Connect Google Sheet'),
-            highed.dom.ap(highed.dom.cr('div'),
+            highed.dom.ap(
+                highed.dom.cr('div'),
                 highed.dom.cr('div', 'highed-modal-text', 'When using Google Spreadsheet, Highcharts references the sheet directly.'),
                 highed.dom.cr('div', 'highed-modal-text', 'This means that the published chart always loads the latest version of the sheet.'),
-                highed.dom.cr('div', 'highed-modal-text', 'For more information on how to set up your spreadsheet, visit the documentation.')),
+                highed.dom.cr('div', 'highed-modal-text', 'For more information on how to set up your spreadsheet, visit the documentation.')
+            ),
             highed.dom.ap(highed.dom.cr('div', 'highed-table-container'), table),
-            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), connectSheet, cancel));
+            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), connectSheet, cancel)
+        );
 
         return container;
     }
@@ -9877,14 +9893,16 @@ highed.DataTable = function (parent, attributes) {
             toNextPage();
         });
 
-        highed.dom.ap(container,
+        highed.dom.ap(
+            container,
             highed.dom.cr('div', 'highed-modal-title highed-help-toolbar', 'Cut And Paste Data'),
             highed.dom.ap(
                 highed.dom.cr('div'),
                 highed.dom.cr('div', 'highed-modal-text', 'Paste CSV into the below box, or upload a file. Click Import to import your data.')
             ),
             highed.dom.ap(highed.dom.cr('div'), input),
-            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), importData, cancel));
+            highed.dom.ap(highed.dom.cr('div', 'highed-button-container'), importData, cancel)
+        );
 
         return container;
     }
@@ -9894,7 +9912,7 @@ highed.DataTable = function (parent, attributes) {
             buttonsContainer = highed.dom.cr('div', 'highed-modal-buttons-container');
 
         highed.samples.each(function (sample) {
-            var data = sample.dataset.join('\n'),
+            const data = sample.dataset.join('\n'),
                 loadBtn = highed.dom.cr(
                     'button',
                     'highed-box-size highed-imp-button',
@@ -9929,7 +9947,7 @@ highed.DataTable = function (parent, attributes) {
     }
 
     function createSimpleDataTable(toNextPage, loading) {
-        var container = highed.dom.cr('div', 'highed-table-dropzone-container'),
+        const container = highed.dom.cr('div', 'highed-table-dropzone-container'),
             selectFile = highed.dom.cr('button', 'highed-ok-button highed-import-button', 'Select File'),
             buttonsContainer = highed.dom.cr('div'),
             modalContainer = highed.dom.cr('div', 'highed-table-modal'),
@@ -9938,10 +9956,12 @@ highed.DataTable = function (parent, attributes) {
             sampleDataContainer = createSampleData(toNextPage, loading);
         cutAndPasteContainer = createCutAndPasteContainer(toNextPage);
 
-        var buttons = [{ title: 'Connect Google Sheet', linkedTo: gSheetContainer },
+        const buttons = [
+            { title: 'Connect Google Sheet', linkedTo: gSheetContainer },
             { title: 'Import Live Data', linkedTo: liveContainer, height: 321 },
             { title: 'Cut and Paste Data', linkedTo: cutAndPasteContainer, height: 448, width: 518 },
-            { title: 'Load Sample Data', linkedTo: sampleDataContainer }];
+            { title: 'Load Sample Data', linkedTo: sampleDataContainer }
+        ];
 
         buttons.forEach(function (buttonProp) {
             const button = highed.dom.cr('button', 'highed-ok-button highed-import-button', buttonProp.title);
@@ -9983,9 +10003,9 @@ highed.DataTable = function (parent, attributes) {
         container.ondrop = function (e) {
             e.preventDefault();
 
-            var d = e.dataTransfer;
-            var f;
-            var i;
+            const d = e.dataTransfer;
+            let f;
+            let i;
 
             if (d.items) {
                 for (i = 0; i < d.items.length; i++) {
@@ -10011,7 +10031,8 @@ highed.DataTable = function (parent, attributes) {
             // toNextPage();
         };
 
-        highed.dom.ap(container,
+        highed.dom.ap(
+            container,
             highed.dom.ap(
                 highed.dom.cr('div', 'highed-table-dropzone'),
                 highed.dom.cr('div', 'highed-table-dropzone-title', 'Drop CSV files here'),
@@ -10102,7 +10123,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
-    var events = highed.events(),
+    const events = highed.events(),
         // Main properties
         properties = highed.merge(
             {
@@ -10162,8 +10183,10 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         ),
         addRowInput = highed.dom.cr('input', 'highed-field-input highed-add-row-input'),
         addRowBtn = highed.dom.cr('button', 'highed-import-button highed-ok-button highed-add-row-btn small', 'Add'),
-        addRowDiv = highed.dom.ap(highed.dom.cr('div', 'highed-dtable-extra-options'),
-            highed.dom.ap(highed.dom.cr('div', 'highed-add-row-container'),
+        addRowDiv = highed.dom.ap(
+            highed.dom.cr('div', 'highed-dtable-extra-options'),
+            highed.dom.ap(
+                highed.dom.cr('div', 'highed-add-row-container'),
                 highed.dom.cr('span', 'highed-add-row-text highed-hide-sm', 'Add Rows'),
                 addRowInput,
                 addRowBtn
@@ -10173,17 +10196,20 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         dataImportBtn = highed.dom.cr(
             'button',
             'highed-import-button highed-ok-button highed-sm-button',
-            'Import');
+            'Import'
+        );
     dataExportBtn = highed.dom.cr(
         'button',
         'highed-import-button highed-ok-button highed-hide-sm',
-        'Export Data');
+        'Export Data'
+    );
     // eslint-disable-next-line no-unused-expressions
     dataClearBtn = highed.dom.cr(
         'button',
         'highed-import-button highed-ok-button highed-sm-button',
         // eslint-disable-next-line no-sequences
-        highed.L('dgNewBtn')),
+        highed.L('dgNewBtn')
+    ),
     blacklist = [
         'candlestick',
         'bubble',
@@ -10197,7 +10223,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     highed.dom.on(addRowBtn, 'click', function (e) {
 
         assignDataPanel.getFieldsToHighlight(dataTable.removeAllCellsHighlight, true);
-        for (var i = 0; i < addRowInput.value; i++) {
+        for (let i = 0; i < addRowInput.value; i++) {
             dataTable.addRow();
         }
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
@@ -10251,7 +10277,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     }
 
     function afterResize(func) {
-        var timer;
+        let timer;
         return function (event) {
             if (timer) {
                 clearTimeout(timer);
@@ -10281,7 +10307,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     function expand() {
         // var bsize = highed.dom.size(bar);
 
-        var newWidth = props.widths.desktop;
+        let newWidth = props.widths.desktop;
         if (highed.onTablet() && props.widths.tablet) {
             newWidth = props.widths.tablet;
         } else if (highed.onPhone() && props.widths.phone) {
@@ -10310,7 +10336,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         events.emit('BeforeResize', newWidth);
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -10373,14 +10399,14 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         }, null, false, function () {
 
 
-            var chartOptions = chartPreview.options.getCustomized();
-            var assignDataOptions = assignDataPanel.getAllOptions();
+            const chartOptions = chartPreview.options.getCustomized();
+            const assignDataOptions = assignDataPanel.getAllOptions();
 
             if (chartOptions && chartOptions.series) {
                 if (chartOptions.series.length < assignDataOptions.length) {
-                    var optionsLength = chartOptions.series.length;
-                    var assignDataOptionsLength = assignDataOptions.length;
-                    var type;
+                    const optionsLength = chartOptions.series.length;
+                    const assignDataOptionsLength = assignDataOptions.length;
+                    let type;
 
                     if (chartOptions.series.length !== 0) {
                         type = chartOptions.series[chartOptions.series.length - 1].type;
@@ -10389,7 +10415,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
                         type = null;
                     }
 
-                    for (var i = optionsLength; i < assignDataOptionsLength; i++) {
+                    for (let i = optionsLength; i < assignDataOptionsLength; i++) {
                         chartPreview.options.addBlankSeries(i, type);
                     }
                 }
@@ -10405,12 +10431,12 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
 
             clearSeriesMapping();
 
-            var seriesIndex = [];
+            let seriesIndex = [];
             assignDataPanel.setAssignDataFields(newTemplate, dataTable.getColumnLength(), null, null, true);
             if (loadTemplateForEachSeries) {
                 const length = assignDataPanel.getAllOptions().length;
 
-                for (var i = 0; i < length; i++) {
+                for (let i = 0; i < length; i++) {
                     seriesIndex.push(i);
                     assignDataPanel.setAssignDataFields(newTemplate, dataTable.getColumnLength(), null, i, true, i + 1);
                 }
@@ -10459,7 +10485,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
 
     function clearSeriesMapping() {
 
-        var chartOptions = chartPreview.options.getCustomized();
+        const chartOptions = chartPreview.options.getCustomized();
         if (chartOptions.data && chartOptions.data.seriesMapping) {
             // Causes an issue when a user has added a assigndata input with seriesmapping, so just clear and it will add it in again later
             chartOptions.data.seriesMapping = null;
@@ -10469,16 +10495,16 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     }
     function setSeriesMapping(allOptions) {
 
-        var tempOption = [],
+        const tempOption = [],
             chartOptions = chartPreview.options.getCustomized(),
-            dataTableFields = dataTable.getDataFieldsUsed(),
-            hasLabels = false;
+            dataTableFields = dataTable.getDataFieldsUsed();
+        let hasLabels = false;
 
-        var dataValues  = allOptions.data,
+        const dataValues  = allOptions.data,
             series = allOptions.length;
 
-        for (var i = 0; i < series; i++) {
-            var serieOption = {};
+        for (let i = 0; i < series; i++) {
+            const serieOption = {};
             // eslint-disable-next-line no-loop-func
             Object.keys(allOptions[i]).forEach(function (key) {
                 const option = allOptions[i][key];
@@ -10532,8 +10558,8 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
 
     function redrawGrid(clearGridFirst) {
         if (clearGridFirst) {
-            var columns = [];
-            for (var i = 0; i < dataTable.getColumnLength(); i++) {
+            const columns = [];
+            for (let i = 0; i < dataTable.getColumnLength(); i++) {
                 columns.push(i);
             }
             dataTable.removeAllCellsHighlight(null, columns);
@@ -10574,8 +10600,8 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     assignDataPanel.on('GetLastType', function () {
-        var chartOptions = chartPreview.options.getCustomized();
-        var type = chartOptions.series[chartOptions.series.length - 1].type;
+        const chartOptions = chartPreview.options.getCustomized();
+        let type = chartOptions.series[chartOptions.series.length - 1].type;
 
         if (blacklist.includes(type)) {
             type = null;
@@ -10617,7 +10643,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     assignDataPanel.on('ToggleHideCells', (options, toggle) => {
-        var userActiveCells = Object.keys(options).filter(function (key) {
+        const userActiveCells = Object.keys(options).filter(function (key) {
             if (options[key].rawValue && options[key].rawValue.length > 0) {
                 return true;
             }
@@ -10701,8 +10727,8 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         assignDataPanel.setColumnLength(rowsLength);
         rowsLength -= 2;
 
-        var chartOptions = chartPreview.options.getCustomized();
-        var type = chartOptions.series[chartOptions.series.length - 1].type;
+        const chartOptions = chartPreview.options.getCustomized();
+        const type = chartOptions.series[chartOptions.series.length - 1].type;
 
         if (!blacklist.includes(type)) {
             assignDataPanel.addSeries(rowsLength, type);
@@ -10763,13 +10789,13 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     dataTable.on('ClearSeriesForImport', function () {
-        var options = chartPreview.options.getCustomized();
+        const options = chartPreview.options.getCustomized();
         options.series = [];
         assignDataPanel.restart();
     });
 
     dataTable.on('ClearSeries', function () {
-        var options = chartPreview.options.getCustomized();
+        const options = chartPreview.options.getCustomized();
         options.series = [];
     });
 
@@ -10881,7 +10907,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.SimpleDataPage = function (parent, assignDataParent, options, chartPreview, chartFrame, props) {
-    var events = highed.events(),
+    const events = highed.events(),
         // Main properties
         properties = highed.merge(
             {
@@ -10941,8 +10967,10 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         ),
         addRowInput = highed.dom.cr('input', 'highed-field-input highed-add-row-input'),
         addRowBtn = highed.dom.cr('button', 'highed-import-button highed-ok-button highed-add-row-btn small', 'Add'),
-        addRowDiv = highed.dom.ap(highed.dom.cr('div', 'highed-dtable-extra-options'),
-            highed.dom.ap(highed.dom.cr('div', 'highed-add-row-container'),
+        addRowDiv = highed.dom.ap(
+            highed.dom.cr('div', 'highed-dtable-extra-options'),
+            highed.dom.ap(
+                highed.dom.cr('div', 'highed-add-row-container'),
                 highed.dom.cr('span', 'highed-add-row-text highed-hide-sm', 'Add Rows'),
                 addRowInput,
                 addRowBtn
@@ -10952,16 +10980,19 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         dataImportBtn = highed.dom.cr(
             'button',
             'highed-import-button highed-ok-button highed-sm-button',
-            'Import');
+            'Import'
+        );
     dataExportBtn = highed.dom.cr(
         'button',
         'highed-import-button highed-ok-button highed-hide-sm',
-        'Export Data');
+        'Export Data'
+    );
     // eslint-disable-next-line no-unused-expressions
     dataClearBtn = highed.dom.cr(
         'button',
         'highed-import-button highed-ok-button highed-sm-button',
-        highed.L('dgNewBtn')),
+        highed.L('dgNewBtn')
+    ),
     blacklist = [
         'candlestick',
         'bubble',
@@ -10975,7 +11006,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     highed.dom.on(addRowBtn, 'click', function (e) {
 
         assignDataPanel.getFieldsToHighlight(dataTable.removeAllCellsHighlight, true);
-        for (var i = 0; i < addRowInput.value; i++) {
+        for (let i = 0; i < addRowInput.value; i++) {
             dataTable.addRow();
         }
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
@@ -11027,7 +11058,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     }
 
     function afterResize(func) {
-        var timer;
+        let timer;
         return function (event) {
             if (timer) {
                 clearTimeout(timer);
@@ -11056,7 +11087,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     function expand() {
         // var bsize = highed.dom.size(bar);
 
-        var newWidth = 100;
+        const newWidth = 100;
 
         if (!highed.onPhone()) {
         // (highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) - 10
@@ -11069,7 +11100,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         events.emit('BeforeResize', newWidth);
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -11131,14 +11162,14 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         }, null, false, function () {
 
 
-            var chartOptions = chartPreview.options.getCustomized();
-            var assignDataOptions = assignDataPanel.getAllOptions();
+            const chartOptions = chartPreview.options.getCustomized();
+            const assignDataOptions = assignDataPanel.getAllOptions();
 
             if (chartOptions && chartOptions.series) {
                 if (chartOptions.series.length < assignDataOptions.length) {
-                    var optionsLength = chartOptions.series.length;
-                    var assignDataOptionsLength = assignDataOptions.length;
-                    var type;
+                    const optionsLength = chartOptions.series.length;
+                    const assignDataOptionsLength = assignDataOptions.length;
+                    let type;
 
                     if (chartOptions.series.length !== 0) {
                         type = chartOptions.series[chartOptions.series.length - 1].type;
@@ -11147,7 +11178,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
                         type = null;
                     }
 
-                    for (var i = optionsLength; i < assignDataOptionsLength; i++) {
+                    for (let i = optionsLength; i < assignDataOptionsLength; i++) {
                         chartPreview.options.addBlankSeries(i, type);
                     }
                 }
@@ -11163,12 +11194,12 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
 
             clearSeriesMapping();
 
-            var seriesIndex = [];
+            let seriesIndex = [];
             assignDataPanel.setAssignDataFields(newTemplate, dataTable.getColumnLength(), null, null, true);
             if (loadTemplateForEachSeries) {
                 const length = assignDataPanel.getAllOptions().length;
 
-                for (var i = 0; i < length; i++) {
+                for (let i = 0; i < length; i++) {
                     seriesIndex.push(i);
                     assignDataPanel.setAssignDataFields(newTemplate, dataTable.getColumnLength(), null, i, true, i + 1);
                 }
@@ -11217,7 +11248,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
 
     function clearSeriesMapping() {
 
-        var chartOptions = chartPreview.options.getCustomized();
+        const chartOptions = chartPreview.options.getCustomized();
         if (chartOptions.data && chartOptions.data.seriesMapping) {
             // Causes an issue when a user has added a assigndata input with seriesmapping, so just clear and it will add it in again later
             chartOptions.data.seriesMapping = null;
@@ -11227,16 +11258,16 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     }
     function setSeriesMapping(allOptions) {
 
-        var tempOption = [],
+        const tempOption = [],
             chartOptions = chartPreview.options.getCustomized(),
-            dataTableFields = dataTable.getDataFieldsUsed(),
-            hasLabels = false;
+            dataTableFields = dataTable.getDataFieldsUsed();
+        let hasLabels = false;
 
-        var dataValues  = allOptions.data,
+        const dataValues  = allOptions.data,
             series = allOptions.length;
 
-        for (var i = 0; i < series; i++) {
-            var serieOption = {};
+        for (let i = 0; i < series; i++) {
+            const serieOption = {};
             // eslint-disable-next-line no-loop-func
             Object.keys(allOptions[i]).forEach(function (key) {
                 const option = allOptions[i][key];
@@ -11290,8 +11321,8 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
 
     function redrawGrid(clearGridFirst) {
         if (clearGridFirst) {
-            var columns = [];
-            for (var i = 0; i < dataTable.getColumnLength(); i++) {
+            const columns = [];
+            for (let i = 0; i < dataTable.getColumnLength(); i++) {
                 columns.push(i);
             }
             dataTable.removeAllCellsHighlight(null, columns);
@@ -11330,8 +11361,8 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     assignDataPanel.on('GetLastType', function () {
-        var chartOptions = chartPreview.options.getCustomized();
-        var type = chartOptions.series[chartOptions.series.length - 1];
+        const chartOptions = chartPreview.options.getCustomized();
+        let type = chartOptions.series[chartOptions.series.length - 1];
 
         if (type) {
             type = type.type;
@@ -11377,7 +11408,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     assignDataPanel.on('ToggleHideCells', function (options, toggle) {
-        var userActiveCells = Object.keys(options).filter(function (key) {
+        const userActiveCells = Object.keys(options).filter(function (key) {
             if (options[key].rawValue && options[key].rawValue.length > 0) {
                 return true;
             }
@@ -11461,8 +11492,8 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         assignDataPanel.setColumnLength(rowsLength);
         rowsLength -= 2;
 
-        var chartOptions = chartPreview.options.getCustomized();
-        var type = chartOptions.series[chartOptions.series.length - 1].type;
+        const chartOptions = chartPreview.options.getCustomized();
+        const type = chartOptions.series[chartOptions.series.length - 1].type;
 
         if (!blacklist.includes(type)) {
             assignDataPanel.addSeries(rowsLength, type);
@@ -11522,13 +11553,13 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     dataTable.on('ClearSeriesForImport', function () {
-        var options = chartPreview.options.getCustomized();
+        const options = chartPreview.options.getCustomized();
         options.series = [];
         assignDataPanel.restart();
     });
 
     dataTable.on('ClearSeries', function () {
-        var options = chartPreview.options.getCustomized();
+        const options = chartPreview.options.getCustomized();
         options.series = [];
     });
 
@@ -11637,7 +11668,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.CreateChartPage = function (parent, userOptions, props) {
-    var events = highed.events(),
+    const events = highed.events(),
         builtInOptions = [
             {
                 id: 1,
@@ -11689,7 +11720,6 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             'highed-toolbox-body highed-box-size highed-transition'
         ),
         listContainer = highed.dom.cr('div', 'highed-toolbox-createchart-list'),
-        isVisible = false,
         customizerContainer = highed.dom.cr('div', 'highed-toolbox-customise'),
         titleContainer = highed.dom.cr('div', 'highed-toolbox-title'),
         templateContainer = highed.dom.cr('div', 'highed-toolbox-template'),
@@ -11697,16 +11727,18 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         // toolbox = highed.Toolbox(userContents),
         options = [];
 
+    let isVisible = false;
+
     function init(dataPage, templatePage, customizePage) {
 
-        var counter = 1;
+        let counter = 1;
         toolbox = highed.Toolbox(userContents);
         builtInOptions.forEach(function (option, index) {
             if (option.permission && userOptions.indexOf(option.permission) === -1) {
                 return;
             }
 
-            var o = toolbox.addEntry({
+            const o = toolbox.addEntry({
                 title: option.title,
                 number: counter, // option.id,
                 onClick: manualSelection,
@@ -11741,7 +11773,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
     function createTitleSection() {
 
-        var titleInput = highed.dom.cr('input', 'highed-imp-input'),
+        const titleInput = highed.dom.cr('input', 'highed-imp-input'),
             subtitleInput = highed.dom.cr('input', 'highed-imp-input'),
             nextButton = highed.dom.cr(
                 'button',
@@ -11773,7 +11805,8 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             events.emit('SimpleCreateChartDone', true);
         });
 
-        highed.dom.ap(titleContainer,
+        highed.dom.ap(
+            titleContainer,
             highed.dom.cr(
                 'table'
             ),
@@ -11809,7 +11842,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
     function createImportDataSection(dataPage) {
 
-        var nextButton = highed.dom.cr(
+        const nextButton = highed.dom.cr(
                 'button',
                 'highed-ok-button highed-import-button negative',
                 'No thanks, I will enter my data manually'
@@ -11841,8 +11874,10 @@ highed.CreateChartPage = function (parent, userOptions, props) {
                 options[3].expand();
             }
         });
-        highed.dom.ap(dataTableContainer,
-            highed.dom.ap(dataTableDropzoneContainer,
+        highed.dom.ap(
+            dataTableContainer,
+            highed.dom.ap(
+                dataTableDropzoneContainer,
                 highed.dom.ap(
                     highed.dom.cr('div', 'highed-toolbox-button-container'),
                     loader,
@@ -11854,7 +11889,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
     function createTemplateSection(templatePage) {
 
-        var nextButton = highed.dom.cr(
+        const nextButton = highed.dom.cr(
                 'button',
                 'highed-ok-button highed-import-button negative',
                 'Choose A Template Later'
@@ -11881,8 +11916,10 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             options[1].expand();
         });
 
-        highed.dom.ap(templateContainer,
-            highed.dom.ap(highed.dom.cr('div', 'highed-toolbox-template-body'),
+        highed.dom.ap(
+            templateContainer,
+            highed.dom.ap(
+                highed.dom.cr('div', 'highed-toolbox-template-body'),
                 highed.dom.ap(
                     highed.dom.cr('div', 'highed-toolbox-text'),
                     highed.dom.cr('div', 'highed-toolbox-template-text', 'Pick a basic starter template. You can change it later.'),
@@ -11903,7 +11940,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
     function createCustomizeSection() {
 
-        var nextButton = highed.dom.cr(
+        const nextButton = highed.dom.cr(
             'button',
             'highed-ok-button highed-import-button negative',
             'Customize Your Chart'
@@ -11914,7 +11951,8 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             events.emit('SimpleCreateChartDone');
         });
 
-        highed.dom.ap(customizerContainer,
+        highed.dom.ap(
+            customizerContainer,
             highed.dom.cr('div', 'highed-toolbox-customize-header', 'You\'re Done!'),
             highed.dom.ap(
                 highed.dom.cr('div', 'highed-toolbox-button-container'),
@@ -11944,7 +11982,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
     function expand() {
         // var bsize = highed.dom.size(bar);
 
-        var newWidth = props.widths.desktop;
+        let newWidth = props.widths.desktop;
         if (highed.onTablet() && props.widths.tablet) {
             newWidth = props.widths.tablet;
         } else if (highed.onPhone() && props.widths.phone) {
@@ -11964,7 +12002,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         events.emit('BeforeResize', newWidth);
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -12074,14 +12112,23 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.CustomizePage = function (parent, options, chartPreview, chartFrame, props, chartContainer, planCode) {
-    var events = highed.events(),
+    let width,
+        chartWidth = 68,
+        iconClass,
+        helpModal,
+        customizer,
+        customizeTitle,
+        annotationContainer,
+        activeAnnotation = null,
+        isVisible = false,
+        autoAppearanceTab = true;
+    const events = highed.events(),
         // Main properties
         container = highed.dom.cr(
             'div',
             'highed-transition highed-toolbox highed-box-size'
         ),
         title = highed.dom.cr('div', 'highed-toolbox-body-title'),
-        customizeTitle,
         contents = highed.dom.cr(
             'div',
             'highed-box-size highed-toolbox-inner-body'
@@ -12094,22 +12141,15 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             'div',
             'highed-toolbox-help highed-icon fa fa-question-circle'
         ),
-        width,
-        chartWidth = 68,
-        iconClass,
-        autoAppearanceTab = true,
         icon = highed.dom.cr('div', iconClass),
-        helpModal,
+
         // Data table
         customizerContainer = highed.dom.cr('div', 'highed-box-size highed-fill'),
-        customizer,
         body = highed.dom.cr(
             'div',
             'highed-toolbox-body highed-box-size highed-transition'
         ),
         iconsContainer = highed.dom.cr('div', 'highed-icons-container'),
-        annotationContainer,
-        activeAnnotation = null,
         annotationOptions = [{
             tooltip: 'Add Circle',
             icon: 'circle',
@@ -12181,10 +12221,10 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             }
         ],
 
-        isVisible = false,
         searchAdvancedOptions = highed.SearchAdvancedOptions(parent),
         resolutionSettings = highed.dom.cr('span', 'highed-resolution-settings'),
         phoneIcon = highed.dom.cr('span', '', '<i class="fa fa-mobile" aria-hidden="true"></i>');
+
     tabletIcon = highed.dom.cr('span', '', '<i class="fa fa-tablet" aria-hidden="true"></i>'),
     tabletIcon = highed.dom.cr('span', '', '<i class="fa fa-tablet" aria-hidden="true"></i>'),
     stretchToFitIcon = highed.dom.cr('span', '', '<i class="fa fa-laptop" aria-hidden="true"></i>'),
@@ -12283,7 +12323,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
     addTextModalTypeOptions.forEach(function (option) {
 
-        var container = highed.dom.cr('div', 'highed-annotation-modal-container ' + (addTextModalTypeValue === option.value ? ' active' : '')),
+        const container = highed.dom.cr('div', 'highed-annotation-modal-container ' + (addTextModalTypeValue === option.value ? ' active' : '')),
             icon = highed.dom.cr('div', 'highed-modal-icon fa fa-' + option.icon),
             text = highed.dom.cr('div', 'highed-modal-text', option.text);
         option.element = container;
@@ -12325,7 +12365,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
     }
 
-    var timeout = null;
+    let timeout = null;
     highed.dom.on(addTextModalColorInput, 'change', function (e) {
         clearTimeout(timeout);
         timeout = setTimeout(function () {
@@ -12346,8 +12386,10 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         });
     });
 
-    highed.dom.ap(overlayAddTextModal.body,
-        highed.dom.ap(addTextModalContainer,
+    highed.dom.ap(
+        overlayAddTextModal.body,
+        highed.dom.ap(
+            addTextModalContainer,
             addTextModalHeader,
             addTextModalInput,
             highed.dom.cr('div', 'highed-add-text-label', 'Type:'),
@@ -12355,7 +12397,8 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             highed.dom.cr('div', 'highed-add-text-label', 'Color:'),
             // colorDropdownParent,
             highed.dom.ap(addTextModalColorContainer, box, addTextModalColorInput),
-            highed.dom.ap(addTextModalBtnContainer,
+            highed.dom.ap(
+                addTextModalBtnContainer,
                 addTextModalSubmit,
                 addTextModalCancel
             )
@@ -12395,7 +12438,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
         customizer.on('AdvancedBuilt', function () {
 
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 size = {
                     w: bsize.w,
                     h: (window.innerHeight ||
@@ -12458,7 +12501,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             });
         }
 
-        var annotationButton = highed.dom.cr('span', 'highed-template-tooltip annotation-buttons ' + (usingSafari() ? ' usingsafari ' : ''), '<i class="fa fa-commenting" aria-hidden="true"></i><span class="highed-tooltip-text">Annotations</span>');
+        const annotationButton = highed.dom.cr('span', 'highed-template-tooltip annotation-buttons ' + (usingSafari() ? ' usingsafari ' : ''), '<i class="fa fa-commenting" aria-hidden="true"></i><span class="highed-tooltip-text">Annotations</span>');
 
         highed.dom.on(annotationButton, 'click', function () {
             if (annotationContainer.classList.contains('active')) {
@@ -12475,14 +12518,14 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             highed.dom.ap(annotationContainer, annotationButton);
 
             annotationOptions.forEach(function (option) {
-                var btn = highed.dom.cr('span', 'highed-template-tooltip annotation-buttons ' + (usingSafari() ? ' usingsafari ' : ''), '<i class="fa fa-' + option.icon + '" aria-hidden="true"></i><span class="highed-tooltip-text">' + option.tooltip + '</span>');
+                const btn = highed.dom.cr('span', 'highed-template-tooltip annotation-buttons ' + (usingSafari() ? ' usingsafari ' : ''), '<i class="fa fa-' + option.icon + '" aria-hidden="true"></i><span class="highed-tooltip-text">' + option.tooltip + '</span>');
                 if (option.onClick || !option.draggable) {
                     highed.dom.on(btn, 'click', function () {
 
                         if (option.onClick) {
                             option.onClick();
                         } else {
-                            var isAnnotating = !(option.element.className.indexOf('active') > -1);
+                            const isAnnotating = !(option.element.className.indexOf('active') > -1);
 
                             annotationOptions.forEach(function (o) {
                                 o.element.classList.remove('active');
@@ -12562,7 +12605,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
     }
 
     function afterResize(func) {
-        var timer;
+        let timer;
         return function (event) {
             if (timer) {
                 clearTimeout(timer);
@@ -12586,9 +12629,11 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             if (fn) {
                 fn();
             }
-            resizeChart(((window.innerHeight ||
+            resizeChart(
+                ((window.innerHeight ||
         document.documentElement.clientHeight ||
-        document.body.clientHeight) - highed.dom.pos(body, true).y) - 16);
+        document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+            );
         }, 200);
     }
 
@@ -12597,9 +12642,11 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             expand();
             setTimeout(function () {
 
-                resizeChart((((window.innerHeight ||
+                resizeChart((
+                    ((window.innerHeight ||
           document.documentElement.clientHeight ||
-          document.body.clientHeight) - highed.dom.pos(body, true).y) - 16));
+          document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+                ));
             }, 500);
             // expand();
         }
@@ -12655,16 +12702,18 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         searchAdvancedOptions.hide();
 
         expand();
-        resizeChart(((window.innerHeight ||
+        resizeChart(
+            ((window.innerHeight ||
       document.documentElement.clientHeight ||
-      document.body.clientHeight) - highed.dom.pos(body, true).y) - 16);
+      document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+        );
 
         setTimeout(customizer.showSimpleEditor, 200);
     });
 
     function expand() {
 
-        var newWidth = width; // props.width;
+        const newWidth = width; // props.width;
 
         highed.dom.style(body, {
             width: 100 + '%',
@@ -12676,9 +12725,9 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             const windowWidth = highed.dom.size(parent).w;
             const percentage = ((100 - chartWidth) / 100);
 
-            var styles =  window.getComputedStyle(chartFrame);
-            var containerStyles =  window.getComputedStyle(container);
-            var chartMargin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight),
+            const styles =  window.getComputedStyle(chartFrame);
+            const containerStyles =  window.getComputedStyle(container);
+            const chartMargin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight),
                 containerMargin = parseFloat(containerStyles.marginLeft) + parseFloat(containerStyles.marginRight);
 
             highed.dom.style(container, {
@@ -12689,7 +12738,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         events.emit('BeforeResize', newWidth);
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -12717,9 +12766,11 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             display: 'block'
         });
         expand();
-        resizeChart(((window.innerHeight ||
+        resizeChart(
+            ((window.innerHeight ||
       document.documentElement.clientHeight ||
-      document.body.clientHeight) - highed.dom.pos(body, true).y) - 16);
+      document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+        );
         isVisible = true;
         highed.dom.style(resolutionSettings, {
             display: 'block'
@@ -12814,7 +12865,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             resWidth.value = '';
             resizeChart();
         } else {
-            var s = highed.dom.size(chartFrame);
+            const s = highed.dom.size(chartFrame);
 
             // highed.dom.style(chartFrame, {
             //   paddingLeft: (s.w / 2) - (w / 2) + 'px',
@@ -12931,7 +12982,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.Toolbox = function (parent, attr) {
-    var events = highed.events(),
+    const events = highed.events(),
         container = highed.dom.cr(
             'div',
             'highed-transition highed-toolbox highed-wizard highed-box-size'
@@ -12941,9 +12992,6 @@ highed.Toolbox = function (parent, attr) {
             'div',
             'highed-toolbox-body highed-toolbox-body-no-border highed-box-size highed-transition highed-wizard-body'
         ),
-        activeTimeout,
-        expanded = false,
-        activeItem = false,
         properties = highed.merge(
             {
                 animate: true
@@ -12951,8 +12999,12 @@ highed.Toolbox = function (parent, attr) {
             attr
         );
 
+    let activeTimeout,
+        expanded = false,
+        activeItem = false;
+
     function addEntry(def) {
-        var props = highed.merge(
+        const props = highed.merge(
                 {
                     number: 0,
                     title: 'Title Missing'
@@ -12971,9 +13023,10 @@ highed.Toolbox = function (parent, attr) {
             ),
             iconClass = 'highed-toolbox-list-item-container',
             icon = highed.dom.cr('div', iconClass),
-            resizeTimeout,
-            exports = {},
             circle = highed.dom.cr('div', 'highed-toolbox-list-circle', props.number);
+
+        let resizeTimeout,
+            exports = {};
 
         highed.dom.on(circle, 'click', function () {
             props.onClick(props.number);
@@ -12987,7 +13040,7 @@ highed.Toolbox = function (parent, attr) {
         });
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -13003,9 +13056,9 @@ highed.Toolbox = function (parent, attr) {
         }
 
         function expand() {
-            var bsize = highed.dom.size(bar);
+            const bsize = highed.dom.size(bar);
 
-            var newWidth = props.width;
+            const newWidth = props.width;
 
             if (expanded && activeItem === exports) {
                 return;
@@ -13038,7 +13091,7 @@ highed.Toolbox = function (parent, attr) {
             expanded = true;
 
             setTimeout(function () {
-                var height = resizeBody().h;
+                const height = resizeBody().h;
 
                 events.emit('Expanded', exports, newWidth);
                 entryEvents.emit('Expanded', newWidth, height - 20);
@@ -13055,7 +13108,7 @@ highed.Toolbox = function (parent, attr) {
         }
 
         function collapse() {
-            var newWidth = highed.dom.size(bar).w;
+            const newWidth = highed.dom.size(bar).w;
 
             if (expanded) {
                 highed.dom.style(body, {
@@ -13099,7 +13152,7 @@ highed.Toolbox = function (parent, attr) {
             resizeTimeout = setTimeout(function () {
                 highed.dom.style(body, { height: '' });
                 if (expanded) {
-                    var height = resizeBody().h;
+                    const height = resizeBody().h;
                     entryEvents.emit('Expanded', highed.dom.size(bar), height - 20);
                 }
             }, 100);
@@ -13119,7 +13172,7 @@ highed.Toolbox = function (parent, attr) {
     }
 
     function width() {
-        var bodySize = highed.dom.size(body),
+        const bodySize = highed.dom.size(body),
             barSize = highed.dom.size(bar);
 
         return bodySize.w + barSize.w;
@@ -13168,7 +13221,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.OptionsPanel = function (parent, attr) {
-    var events = highed.events(),
+    const events = highed.events(),
         container = highed.dom.cr(
             'div',
             'highed-transition highed-optionspanel highed-box-size'
@@ -13177,8 +13230,9 @@ highed.OptionsPanel = function (parent, attr) {
             'div',
             'highed-box-size highed-transition'
         ),
-        prev,
-        options = {},
+        options = {};
+
+    let prev,
         currentOption = null;
 
     highed.dom.ap(parent, highed.dom.ap(container, highed.dom.ap(body, highed.dom.cr('div', '', 'Workspace View:'))));
@@ -13188,7 +13242,7 @@ highed.OptionsPanel = function (parent, attr) {
     }
 
     function addOption(option, id) {
-        var btn = highed.dom.cr(
+        const btn = highed.dom.cr(
             'a',
             'highed-optionspanel-button ' + (id === 'data' ? 'active' : ''),
             option.text + '&nbsp;<i class="fa fa-' + option.icon + '"></i>'
@@ -13268,53 +13322,54 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
-    var defaultOptions = {
-            labels: {
-                name: 'Categories',
-                desc: 'Choose a column for the category types. Can be names or a date.',
-                default: 'A',
-                value: 'A',
-                rawValue: [0],
-                previousValue: null,
-                linkedTo: 'x',
-                mandatory: true,
-                colors: {
-                    light: 'rgba(66, 200, 192, 0.2)',
-                    dark: 'rgb(66, 200, 192)'
-                }
-            },
-            values: {
-                name: 'Values',
-                desc: 'Enter column with the values you want to chart.',
-                default: 'B',
-                linkedTo: 'y',
-                isData: true,
-                value: 'B',
-                rawValue: [1],
-                previousValue: null,
-                mandatory: true,
-                colors: {
-                    light: 'rgba(145, 151, 229, 0.2)',
-                    dark: 'rgb(145, 151, 229)'
-                }
-            },
-            label: {
-                name: 'Label',
-                desc: 'The name of the point as shown in the legend, tooltip, data label etc.',
-                default: '',
-                value: '',
-                rawValue: null,
-                previousValue: null,
-                mandatory: false,
-                linkedTo: 'label',
-                colors: {
-                    light: 'rgba(229, 145, 145, 0.2)',
-                    dark: 'rgb(229, 145, 145)'
-                },
-                noNulls: true
+    const defaultOptions = {
+        labels: {
+            name: 'Categories',
+            desc: 'Choose a column for the category types. Can be names or a date.',
+            default: 'A',
+            value: 'A',
+            rawValue: [0],
+            previousValue: null,
+            linkedTo: 'x',
+            mandatory: true,
+            colors: {
+                light: 'rgba(66, 200, 192, 0.2)',
+                dark: 'rgb(66, 200, 192)'
             }
         },
-        options = [],
+        values: {
+            name: 'Values',
+            desc: 'Enter column with the values you want to chart.',
+            default: 'B',
+            linkedTo: 'y',
+            isData: true,
+            value: 'B',
+            rawValue: [1],
+            previousValue: null,
+            mandatory: true,
+            colors: {
+                light: 'rgba(145, 151, 229, 0.2)',
+                dark: 'rgb(145, 151, 229)'
+            }
+        },
+        label: {
+            name: 'Label',
+            desc: 'The name of the point as shown in the legend, tooltip, data label etc.',
+            default: '',
+            value: '',
+            rawValue: null,
+            previousValue: null,
+            mandatory: false,
+            linkedTo: 'label',
+            colors: {
+                light: 'rgba(229, 145, 145, 0.2)',
+                dark: 'rgb(229, 145, 145)'
+            },
+            noNulls: true
+        }
+    };
+
+    let options = [],
         toggled = false,
         columnLength = 0,
         index = 0,
@@ -13322,7 +13377,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         showCells = false,
         disabled = false;
 
-    var events = highed.events(),
+    const events = highed.events(),
         container = highed.dom.cr(
             'div',
             'highed-transition highed-assigndatapanel highed-box-size ' + extraClass
@@ -13335,7 +13390,8 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         headerToggle = highed.dom.cr('span', '', '<i class="fa fa-chevron-down highed-assigndatapanel-toggle" aria-hidden="true"></i>'),
         header = highed.dom.ap(
             highed.dom.cr('div', 'highed-assigndatapanel-header-container'),
-            highed.dom.ap(highed.dom.cr('h3', 'highed-assigndatapanel-header', 'Assign columns for this chart'), headerToggle)),
+            highed.dom.ap(highed.dom.cr('h3', 'highed-assigndatapanel-header', 'Assign columns for this chart'), headerToggle)
+        ),
         labels = highed.dom.cr('div', 'highed-assigndatapanel-data-options'),
         selectContainer = highed.dom.cr('div', 'highed-assigndatapanel-select-container'),
         changeSeriesTypeContainer = highed.dom.cr('div', 'highed-assigndatapanel-change-series-type'),
@@ -13375,10 +13431,10 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
     function getAssignDataFields() {
 
-        var all = [];
+        const all = [];
 
         options.forEach(function (option) {
-            var arr = {};
+            const arr = {};
             Object.keys(option).forEach(function (key) {
                 if (option[key].value === '' || option[key].value === null) {
                     return;
@@ -13422,7 +13478,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     }
 
     function getMergedLabelAndData() {
-        var arr = {},
+        const arr = {},
             extraColumns = [],
             values = [];
 
@@ -13450,9 +13506,9 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     }
 
     function getAllMergedLabelAndData() {
-        var seriesValues = [];
+        const seriesValues = [];
         options.forEach(function (serie, i) {
-            var arr = {},
+            const arr = {},
                 extraColumns = [],
                 values = [];
             Object.keys(serie).forEach(function (optionKeys) {
@@ -13497,9 +13553,9 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     function processField(input, overrideCheck, cb) {
 
         input.value = input.value.toUpperCase();
-        var newOptions = [];
+        let newOptions = [];
 
-        var previousValues = [],
+        let previousValues = [],
             values = [];
 
         if (!overrideCheck) {
@@ -13536,7 +13592,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             return;
         }
         Object.keys(options[index]).forEach(function (key) {
-            var input = options[index][key];
+            const input = options[index][key];
             processField(input, overrideCheck, cb);
         });
         if (!disabled && !dontEmit) {
@@ -13564,7 +13620,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             seriesTypeSelect.sliceList(length + 1);
             resetDOM();
         } else {
-            for (var i = options.length - 1; i < length; i++) {
+            for (let i = options.length - 1; i < length; i++) {
                 addSerie(type);
             }
         }
@@ -13588,7 +13644,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     }
 
     function addSerie(seriesType, redrawDOM, skipSelect) {
-        var type = seriesType;
+        let type = seriesType;
         if (!type) {
             type = 'line';
         }
@@ -13703,8 +13759,8 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             return;
         }
         columnLength = maxColumns;
-        var seriesType = getSeriesType(data, 0, aggregatedOptions),
-            previousValues = null;
+        const seriesType = getSeriesType(data, 0, aggregatedOptions);
+        let previousValues = null;
 
         seriesTypeSelect.updateByIndex(seriesIndex || index, {
             title: 'Series ' + ((seriesIndex || index) + 1) + ' - ' + capitalizeFirstLetter(seriesType)
@@ -13758,12 +13814,12 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             } else {
                 // Probably a legacy chart, change values to equal rest of chart
 
-                var length = maxColumns - 1;
+                let length = maxColumns - 1;
                 if (data && data.options && data.options.series) {
                     length = data.options.series.length;
                 }
 
-                for (var i = 1; i < length; i++) {
+                for (let i = 1; i < length; i++) {
                     const seriesType = getSeriesType(data, i, aggregatedOptions);
                     if (!options[i]) {
                         addSerie(seriesType, null, true);
@@ -13795,7 +13851,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
     function valuesMatch(newValue, objectKey) {
 
-        var found = false;
+        let found = false;
         // eslint-disable-next-line no-unused-expressions
         values = [],
         values2 = [];
@@ -13824,17 +13880,16 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
     function generateInputs(option, key) {
 
-        var labelInput,
-            valueContainer = highed.dom.cr('div', 'highed-assigndatapanel-input-container');
+        const valueContainer = highed.dom.cr('div', 'highed-assigndatapanel-input-container'),
+            labelInput = highed.DropDown(valueContainer, 'highed-assigndata-dropdown');
 
-        labelInput = highed.DropDown(valueContainer, 'highed-assigndata-dropdown');
         if (!option.mandatory) {
             labelInput.addItem({
                 id: '',
                 title: ''
             });
         }
-        for (var i = 0; i < columnLength; i++) {
+        for (let i = 0; i < columnLength; i++) {
             labelInput.addItem({
                 id: getLetterFromIndex(i),
                 title: getLetterFromIndex(i)
@@ -13879,7 +13934,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             // liveDataTypeSelect.selectById(detailValue || 'json');
         });
 
-        var colors = option.colors || generateColors();
+        const colors = option.colors || generateColors();
         option.colors = colors;
 
         labelInput.value = option.value;
@@ -13890,12 +13945,16 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             border: '1px solid ' + option.colors.dark
         });
 
-        var label = highed.dom.ap(highed.dom.cr('div', 'highed-assigndatapanel-data-option'),
+        const label = highed.dom.ap(
+            highed.dom.cr('div', 'highed-assigndatapanel-data-option'),
             colorDiv,
-            highed.dom.ap(highed.dom.cr('p', '', option.name + ':'),
-                highed.dom.cr('span', 'highed-assigndatapanel-data-mandatory', option.mandatory ? '*' : '')),
+            highed.dom.ap(
+                highed.dom.cr('p', '', option.name + ':'),
+                highed.dom.cr('span', 'highed-assigndatapanel-data-mandatory', option.mandatory ? '*' : '')
+            ),
             valueContainer,
-            highed.dom.cr('div', 'highed-assigndatapanel-data-desc', option.desc));
+            highed.dom.cr('div', 'highed-assigndatapanel-data-desc', option.desc)
+        );
 
         highed.dom.ap(inputContainer, label);
     }
@@ -13904,7 +13963,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         inputContainer.innerHTML = '';
         if (options[index]) {
             Object.keys(options[index]).forEach(function (key) {
-                var option = options[index][key];
+                const option = options[index][key];
                 generateInputs(option, key);
             });
         }
@@ -13974,7 +14033,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
                 events.emit('AssignDataChanged');
             }, 1000);
 
-            for (var i = index; i < options.length; i++) {
+            for (let i = index; i < options.length; i++) {
                 seriesTypeSelect.updateByIndex(i, {
                     title: 'Series ' + (i + 1) + ' -' + allSeries[i].title().split('-')[1]
                 }, i);
@@ -14086,33 +14145,35 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
-    var events = highed.events(),
+    let width,
+        chartWidth = '68%',
+        iconClass,
+        customizeTitle,
+        isVisible = false;
+
+    const events = highed.events(),
         // Main properties
         container = highed.dom.cr(
             'div',
             'highed-transition highed-toolbox highed-box-size'
         ),
         title = highed.dom.cr('div', 'highed-toolbox-body-title'),
-        customizeTitle,
         contents = highed.dom.cr(
             'div',
             'highed-box-size highed-toolbox-inner-body'
         ),
+        icon = highed.dom.cr('div', iconClass),
         userContents = highed.dom.cr(
             'div',
             'highed-box-size highed-toolbox-user-contents highed-toolbox-defaultpage'
         ),
-        width,
-        chartWidth = '68%',
-        iconClass,
-        icon = highed.dom.cr('div', iconClass),
+
         // Data table
         iconsContainer = highed.dom.cr('div', 'highed-icons-container'),
         body = highed.dom.cr(
             'div',
             'highed-toolbox-body highed-box-size highed-transition'
-        ),
-        isVisible = false;
+        );
 
     function init() {
 
@@ -14143,7 +14204,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
 
 
     function afterResize(func) {
-        var timer;
+        let timer;
         return function (event) {
             if (timer) {
                 clearTimeout(timer);
@@ -14156,9 +14217,11 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
         if (isVisible) {
             expand();
             setTimeout(function () {
-                resizeChart((((window.innerHeight ||
+                resizeChart((
+                    ((window.innerHeight ||
           document.documentElement.clientHeight ||
-          document.body.clientHeight) - highed.dom.pos(body, true).y) - 16));
+          document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+                ));
             }, 1000);
             // expand();
         }
@@ -14176,7 +14239,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
 
     function expand() {
 
-        var newWidth = width; // props.width;
+        const newWidth = width; // props.width;
 
         highed.dom.style(body, {
             width: 100 + '%',
@@ -14188,9 +14251,9 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
             const percentage = ((100 - 68) / 100);
 
 
-            var styles =  window.getComputedStyle(chartFrame);
-            var containerStyles =  window.getComputedStyle(container);
-            var chartMargin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight),
+            const styles =  window.getComputedStyle(chartFrame);
+            const containerStyles =  window.getComputedStyle(container);
+            const chartMargin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight),
                 containerMargin = parseFloat(containerStyles.marginLeft) + parseFloat(containerStyles.marginRight);
 
             highed.dom.style(container, {
@@ -14202,7 +14265,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
         // expanded = true;
 
         function resizeBody() {
-            var bsize = highed.dom.size(body),
+            const bsize = highed.dom.size(body),
                 tsize = highed.dom.size(title),
                 size = {
                     w: bsize.w,
@@ -14237,9 +14300,11 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
 
         expand();
         setTimeout(function () {
-            resizeChart(((window.innerHeight ||
+            resizeChart(
+                ((window.innerHeight ||
         document.documentElement.clientHeight ||
-        document.body.clientHeight) - highed.dom.pos(body, true).y) - 16);
+        document.body.clientHeight) - highed.dom.pos(body, true).y) - 16
+            );
         }, 200);
 
         isVisible = true;
@@ -14340,21 +14405,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 highed.SearchAdvancedOptions = function (parent, attr) {
 
-    var timeout = null,
-        advancedOptions = null,
-        filters = {
+    let timeout = null,
+        advancedOptions = null;
+
+    const filters = {
         // Filter the series properties based on the series.type property
-            series: {
-                controller: 'type',
-                state: false,
-                default: 'line'
-            },
-            plotOptions: {
-                controller: 'type',
-                state: false,
-                default: 'line'
-            }
-        };
+        series: {
+            controller: 'type',
+            state: false,
+            default: 'line'
+        },
+        plotOptions: {
+            controller: 'type',
+            state: false,
+            default: 'line'
+        }
+    };
 
     function resize(w, h) {
 
@@ -14371,7 +14437,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
     });*/
     }
 
-    var events = highed.events(),
+    const events = highed.events(),
         container = highed.dom.cr(
             'div',
             'highed-transition highed-assigndatapanel highed-searchadvancedoptions highed-box-size'
@@ -14384,7 +14450,8 @@ highed.SearchAdvancedOptions = function (parent, attr) {
         header = highed.dom.ap(
             highed.dom.cr('div', 'highed-searchadvancedoptions-header-container'),
             highed.dom.cr('h3', 'highed-searchadvancedoptions-header', 'Search'),
-            highed.dom.cr('p', 'highed-searchadvancedoptions-header-desc')),
+            highed.dom.cr('p', 'highed-searchadvancedoptions-header-desc')
+        ),
         labels = highed.dom.cr('div', 'highed-searchadvancedoptions-data-options'),
         searchResultContainer = highed.dom.cr('div', 'highed-searchadvancedoptions-results'),
         inputContainer = highed.dom.cr('div', 'highed-searchadvancedoptions-inputs-container'),
@@ -14392,16 +14459,17 @@ highed.SearchAdvancedOptions = function (parent, attr) {
         loading = highed.dom.cr(
             'div',
             'highed-customizer-adv-loader highed-searchadvancedoptions-loading',
-            '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Loading');
+            '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Loading'
+        );
 
     highed.dom.style(loading, {
         opacity: 0
     });
-    var searchResults = [];
+    let searchResults = [];
 
 
     function compareValues(str, queryArr) {
-        var foundCount = 0;
+        let foundCount = 0;
 
         queryArr.forEach(function (q) {
             if (str.indexOf(q) > -1) {
@@ -14417,8 +14485,8 @@ highed.SearchAdvancedOptions = function (parent, attr) {
         if (parent && parent.meta.fullname && filters[parent.meta.fullname]) {
             if (node.meta && node.meta.validFor) {
 
-                var customizedSeriesOption = advancedOptions.series;
-                var found = false;
+                const customizedSeriesOption = advancedOptions.series;
+                let found = false;
                 customizedSeriesOption.forEach(function (serieOption) {
                     fstate = serieOption[filters[parent.meta.fullname].controller] || filters[parent.meta.fullname].default;
                     if (node.meta.validFor[fstate]) {
@@ -14440,11 +14508,12 @@ highed.SearchAdvancedOptions = function (parent, attr) {
 
             if (Object.keys(node.meta.types)[0] === 'function' || (
                 node.meta.products &&
-        Object.keys(node.meta.products) > 0)) {
+        Object.keys(node.meta.products) > 0)
+            ) {
                 return;
             }
 
-            var foundCount = compareValues(highed.uncamelize(node.meta.name).toLowerCase(), str);
+            let foundCount = compareValues(highed.uncamelize(node.meta.name).toLowerCase(), str);
             foundCount += compareValues(highed.uncamelize(node.meta.ns).toLowerCase(), str);
             if (node.meta.description) {
                 foundCount += compareValues(highed.uncamelize(node.meta.description).toLowerCase(), str);
@@ -14531,13 +14600,13 @@ highed.SearchAdvancedOptions = function (parent, attr) {
 
                 const parents = result.parents,
                     time = 500;
-                var link = '';
+                let link = '';
 
-                for (var i = 0; i < parents.length; i++) {
+                for (let i = 0; i < parents.length; i++) {
                     // eslint-disable-next-line no-loop-func
                     setTimeout(function (parent) {
                         link += (link !== '' ? '.' : '') + firstToLowerCase(parent).replace(' ', '');
-                        var element = document.getElementById(link);
+                        const element = document.getElementById(link);
                         if (element) {
                             element.click();
                         }
@@ -14545,7 +14614,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
                 }
 
                 setTimeout(function (parent) {
-                    var input = document.getElementById(parent.rawName + '_container');
+                    let input = document.getElementById(parent.rawName + '_container');
                     if (input) {
                         input.scrollIntoView({
                             block: 'end'
@@ -14615,8 +14684,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.HelpModal = function (items) {
-    var active = false,
-        nav = highed.dom.cr('div', 'highed-help-nav'),
+    let active = false;
+    const nav = highed.dom.cr('div', 'highed-help-nav'),
         body = highed.dom.cr('div'),
         counter = highed.dom.cr('div', 'highed-help-counter'),
         modal = highed.OverlayModal(false, {
@@ -14625,7 +14694,7 @@ highed.HelpModal = function (items) {
         });
 
     items.forEach(function (item, i) {
-        var container = highed.dom.cr('div'),
+        const container = highed.dom.cr('div'),
             heading = highed.dom.cr('div', 'highed-modal-title highed-help-toolbar', item.title),
             gif = highed.dom.cr('div', 'highed-help-gif'),
             desc = highed.dom.cr('div', 'highed-scrollbar highed-help-desc'),
@@ -16426,7 +16495,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.DefaultContextMenu = function (chartPreview) {
-    var events = highed.events(),
+    const events = highed.events(),
         cmenu = highed.ContextMenu([
             {
                 title: highed.getLocalizedStr('previewChart'),
@@ -16569,7 +16638,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
-    var properties = highed.merge(
+    let allOptions,
+        flatOptions = {},
+        chartOptions = {},
+        highlighted = false,
+        codeMirrorBox = false,
+        previewCodeMirror = false;
+
+    const properties = highed.merge(
             {
                 noAdvanced: false,
                 noCustomCode: false,
@@ -16601,9 +16677,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
             'textarea',
             'highed-custom-code highed-box-size highed-stretch'
         ),
-        previewCodeMirror = false,
         splitter = highed.dom.cr('div', 'highed-box-simple-container'),
-        allOptions,
         /*
     splitter = highed.HSplitter(simpleTab.body, {
       leftWidth: 100,
@@ -16618,18 +16692,14 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         }),
         advBody = advSplitter.right,
         advTree = highed.Tree(advSplitter.left),
-        flatOptions = {},
-        chartOptions = {},
         customCodeSplitter = highed.VSplitter(customCodeTab.body, {
             topHeight: 90
         }),
         customCodeDebug = highed.dom.cr('pre', 'highed-custom-debug'),
-        codeMirrorBox = false,
         customCodeBox = highed.dom.cr(
             'textarea',
             'highed-custom-code highed-box-size highed-stretch'
-        ),
-        highlighted = false;
+        );
 
     // If we're on mobile, completely disable the advanced view
     if (highed.onPhone()) {
@@ -16652,7 +16722,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     });
 
     outputPreviewTab.on('Focus', function () {
-        var prev = chartPreview.options.getPreview();
+        const prev = chartPreview.options.getPreview();
 
         if (!previewCodeMirror && typeof window.CodeMirror !== 'undefined') {
             previewCodeMirror = CodeMirror.fromTextArea(previewEditor, {
@@ -16674,7 +16744,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     });
 
     function loadCustomCode() {
-        var code;
+        let code;
 
         if (chartPreview) {
             code = chartPreview.getCustomCode() || '';
@@ -16700,7 +16770,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
             if (chartPreview) {
 
                 chartPreview.on('LoadCustomCode', function (options) {
-                    var code;
+                    let code;
 
                     if (chartPreview) {
                         code = chartPreview.getCustomCode() || '';
@@ -16730,7 +16800,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
             }
         }
 
-        var timeout = null;
+        let timeout = null;
 
         if (typeof window.CodeMirror !== 'undefined') {
             codeMirrorBox = CodeMirror.fromTextArea(customCodeBox, {
@@ -16757,15 +16827,14 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
 
 
     function resize(w, h) {
-        var bsize, lsize;
         tabs.resize(w, h);
-        bsize = tabs.barSize();
+        const bsize = tabs.barSize();
 
         list.resize(w, h - bsize.h);
         // splitter.resize(w, h - bsize.h - 10);
 
         // The customize body needs to have a min-height of the list height
-        lsize = highed.dom.size(list.container);
+        const lsize = highed.dom.size(list.container);
 
         highed.dom.style(body, {
             minHeight: lsize.h + 'px'
@@ -16790,7 +16859,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     }
 
     function shouldInclude(group) {
-        var doInclude = false;
+        let doInclude = false;
 
         if (Object.keys(properties.availableSettings || {}).length > 0) {
             if (highed.isArr(group)) {
@@ -16874,7 +16943,8 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
                 title: highed.L(key)
             },
             highed.meta.optionsExtended.options[key],
-            chartPreview);
+            chartPreview
+            );
         });
         /*
     list.addItem({
@@ -16895,7 +16965,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
             return;
         }
 
-        var p = highed.dom.pos(n);
+        const p = highed.dom.pos(n);
 
         if (!simpleTab.selected) {
             simpleTab.focus();
@@ -16909,7 +16979,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
 
         // Draw a dot where the item was clicked
 
-        var attention = highed.dom.cr('div', 'highed-attention');
+        let attention = highed.dom.cr('div', 'highed-attention');
         highed.dom.style(attention, {
             width: '10px',
             height: '10px',
@@ -16920,9 +16990,9 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         highed.dom.ap(document.body, attention);
 
         // Animate it to the corresponding element
-        var pos = Highcharts.offset(n);
+        const pos = Highcharts.offset(n);
 
-        var bgColor = n.style.backgroundColor;
+        const bgColor = n.style.backgroundColor;
 
         highed.dom.style(attention, {
             width: n.clientWidth + 'px',
@@ -16956,7 +17026,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
 
     function highlightField(id, x, y) {
         if (id.indexOf('-') >= 0) {
-            var n = advSplitter.left.querySelector(
+            const n = advSplitter.left.querySelector(
                 '#' + id.substr(0, id.indexOf('-'))
             );
 
@@ -16973,7 +17043,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
 
 
     function focus(thing, x, y) {
-        var n;
+        let n;
         list.select(thing.tab);
         list.selectDropdown(thing.dropdown);
 
@@ -16992,7 +17062,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     });
 
     list.on('Select', function (id) {
-        var entry = highed.meta.optionsExtended.options[id];
+        const entry = highed.meta.optionsExtended.options[id];
         body.innerHTML = '';
         entry.forEach(function (thing) {
             // selectGroup(thing);
@@ -17002,8 +17072,8 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     });
 
     function buildAdvTree(item, selected, instancedData, filter, propFilter) {
-        var table = highed.dom.cr('table', 'highed-customizer-table'),
-            componentCount = 0;
+        const table = highed.dom.cr('table', 'highed-customizer-table');
+        let componentCount = 0;
 
         advBody.innerHTML = '';
 
@@ -17218,7 +17288,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var webImports = {};
+    const webImports = {};
 
     highed.plugins.import = {
 
@@ -17255,7 +17325,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     highed.DataImporter = function (parent, attributes) {
-        var events = highed.events(),
+        const events = highed.events(),
             properties = highed.merge(
                 {
                     options: ['csv', 'plugins', 'samples', 'export'],
@@ -17373,7 +17443,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 }
 
                 function buildBody() {
-                    var options = webImports[name],
+                    const options = webImports[name],
                         url = highed.dom.cr('input', 'highed-imp-input-stretch'),
                         urlTitle = highed.dom.cr('div', '', 'URL'),
                         importBtn = highed.dom.cr(
@@ -17499,7 +17569,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             samplesTab.innerHTML = '';
 
             highed.samples.each(function (sample) {
-                var data = sample.dataset.join('\n'),
+                const data = sample.dataset.join('\n'),
                     loadBtn = highed.dom.cr(
                         'button',
                         'highed-box-size highed-imp-button',
@@ -17540,7 +17610,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         function processJSONImport(jsonString) {
-            var json = jsonString;
+            let json = jsonString;
             if (highed.isStr(json)) {
                 try {
                     json = JSON.parse(jsonString);
@@ -17555,11 +17625,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
         function resize(w, h) {
-            var bsize,
-                ps = highed.dom.size(parent);
-
+            const ps = highed.dom.size(parent);
             tabs.resize(w || ps.w, h || ps.h);
-            bsize = tabs.barSize();
+            const bsize = tabs.barSize();
             webSplitter.resize(w || ps.w, (h || ps.h) - bsize.h - 20);
             webList.resize(w || ps.w, (h || ps.h) - bsize.h);
 
@@ -17577,7 +17645,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         function addImportTab(tabOptions) {
-            var newTab = tabs.createTab({ title: tabOptions.name || 'Features' });
+            const newTab = tabs.createTab({ title: tabOptions.name || 'Features' });
 
             if (highed.isFn(tabOptions.create)) {
                 tabOptions.create(newTab.body);
@@ -17603,7 +17671,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         );
 
 
-        var exporter = highed.Exporter(exportTab.body);
+        const exporter = highed.Exporter(exportTab.body);
         exporter.resize(null, 300);
 
         highed.dom.ap(
@@ -17763,7 +17831,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var exportPlugins = {};
+    const exportPlugins = {};
 
     highed.plugins.export = {
 
@@ -17794,7 +17862,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     highed.Exporter = function (parent, attributes) {
-        var // splitter = highed.HSplitter(parent, {leftWidth: 50, noOverflow: true}),
+        let currentChartPreview = false,
+            hasBuiltPlugins = false,
+            activePlugin = false,
+            hasBeenVisible = false;
+        const // splitter = highed.HSplitter(parent, {leftWidth: 50, noOverflow: true}),
             properties = highed.merge(
                 {
                     options: 'svg html json plugins',
@@ -17824,12 +17896,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 'textarea',
                 'highed-imp-pastearea highed-scrollbar'
             ),
-            currentChartPreview = false,
-            hasBuiltPlugins = false,
-            hasBeenVisible = false,
             pluginData = {},
-            activePlugins = {},
-            activePlugin = false;
+            activePlugins = {};
 
         properties.options = highed.arrToObj(properties.options);
         properties.plugins = highed.arrToObj(properties.plugins);
@@ -17865,7 +17933,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             hasBuiltPlugins = true;
 
             Object.keys(exportPlugins).forEach(function (name) {
-                var options = exportPlugins[name];
+                const options = exportPlugins[name];
 
                 pluginData[name] = { options: {} };
 
@@ -17874,7 +17942,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 }
 
                 function buildBody() {
-                    var container = highed.dom.cr('div', 'highed-plugin-details'),
+                    const container = highed.dom.cr('div', 'highed-plugin-details'),
                         executeBtn = highed.dom.cr(
                             'button',
                             'highed-imp-button',
@@ -17989,7 +18057,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
         function init(chartData, chartHTML, chartSVG, chartPreview) {
-            var title = '_export';
+            let title = '_export';
 
             if (chartData.title && chartData.title.text) {
                 title = chartData.title.text.replace(/\s/g, '_') + title;
@@ -18041,11 +18109,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
         function resize(w, h) {
-            var bsize;
-
             // splitter.resize(w, h);
             tctrl.resize(w, h);
-            bsize = tctrl.barSize();
+            const bsize = tctrl.barSize();
 
             pluginSplitter.resize(w, h - bsize.h - 20);
             pluginList.resize(w, h - bsize.h);
@@ -18127,7 +18193,31 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 highed.ChartPreview = function (parent, attributes) {
-    var properties = highed.merge(
+
+    let themeOptions = {},
+        templateOptions = [],
+        themeCustomCode = '',
+        themeMeta = {},
+        customizedOptions = {},
+        exports = {},
+        customCode = '',
+        customCodeStr = '',
+        lastLoadedCSV = false,
+        lastLoadedSheet = false,
+        lastLoadedLiveData = false,
+        throttleTimeout = false,
+        chart = false,
+        preExpandSize = false,
+        dataTableCSV = null,
+        assignDataFields = null,
+        templateSettings = {},
+        expanded = false,
+        constr = ['Chart'],
+        isAnnotating = false,
+        annotationType = false,
+        chartPlugins = {};
+
+    const properties = highed.merge(
             {
                 defaultChartOptions: {
                     chart: {
@@ -18151,16 +18241,9 @@ highed.ChartPreview = function (parent, attributes) {
             attributes
         ),
         events = highed.events(),
-        customizedOptions = {},
         aggregatedOptions = {},
         flatOptions = {},
-        templateOptions = [],
         chartOptions = {},
-        themeOptions = {},
-        themeCustomCode = '',
-        themeMeta = {},
-        exports = {},
-        chartPlugins = {},
         customCodeDefault = [
             '/*',
             '// Sample of extending options:',
@@ -18184,23 +18267,10 @@ highed.ChartPreview = function (parent, attributes) {
             '});',
             '*/'
         ].join('\n'),
-        customCode = '',
-        customCodeStr = '',
-        lastLoadedCSV = false,
-        lastLoadedSheet = false,
-        lastLoadedLiveData = false,
-        throttleTimeout = false,
-        chart = false,
-        preExpandSize = false,
-        dataTableCSV = null,
-        assignDataFields = null,
-        templateSettings = {},
         toggleButton = highed.dom.cr(
             'div',
             'highed-icon highed-chart-preview-expand fa fa-external-link-square'
         ),
-        expanded = false,
-        constr = ['Chart'],
         wysiwyg = {
             'g.highcharts-legend': { tab: 'Legend', dropdown: 'General', id: 'legend--enabled' },
             'text.highcharts-title': { tab: 'Chart',  dropdown: 'Title', id: 'title--text' },
@@ -18224,9 +18294,7 @@ highed.ChartPreview = function (parent, attributes) {
             },
             '.highcharts-series': { tab: 'Data series', id: 'series' },
             'g.highcharts-tooltip': { tab: 'Chart', dropdown: 'Tooltip', id: 'tooltip--enabled' }
-        },
-        isAnnotating = false,
-        annotationType = false;
+        };
 
     // /////////////////////////////////////////////////////////////////////////
 
@@ -18286,7 +18354,7 @@ highed.ChartPreview = function (parent, attributes) {
     }
 
     function addShape(chart, type, x, y) {
-        var options = {
+        const options = {
             id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
             type: type,
             point: {
@@ -18309,14 +18377,7 @@ highed.ChartPreview = function (parent, attributes) {
         }
 
 
-        var annotation = chart.addAnnotation({
-            id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
-            shapes: [options],
-            type: type
-        });
-
-        // eslint-disable-next-line no-redeclare
-        var annotation = chart.addAnnotation({
+        const annotation = chart.addAnnotation({
             id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
             shapes: [options],
             type: type
@@ -18331,7 +18392,6 @@ highed.ChartPreview = function (parent, attributes) {
 
     /* Init the chart */
     function init(options, pnode, noAnimation) {
-        var i;
 
         // We want to work on a copy..
         options = options || aggregatedOptions;
@@ -18371,9 +18431,9 @@ highed.ChartPreview = function (parent, attributes) {
 
 
         if (chart && chart.annotations) {
-            var annotations = chart.annotations || [];
+            const annotations = chart.annotations || [];
             // eslint-disable-next-line no-redeclare
-            for (var i = annotations.length - 1; i > -1; --i) {
+            for (let i = annotations.length - 1; i > -1; --i) {
                 if (annotations[i].options) {
                     chart.removeAnnotation(annotations[i].options.id);
                 }
@@ -18423,12 +18483,12 @@ highed.ChartPreview = function (parent, attributes) {
             function setupAnnotationEvents(eventName, type) {
                 Highcharts.wrap(Highcharts.Annotation.prototype, eventName, function (proceed, shapeOptions) {
                     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-                    var annotation = this[type][this[type].length - 1];
+                    const annotation = this[type][this[type].length - 1];
 
                     (annotation.element).addEventListener('click', function (e) {
                         highed.dom.nodefault(e);
                         if (isAnnotating && annotationType === 'delete') {
-                            var optionIndex = customizedOptions.annotations.findIndex(function (element) {
+                            const optionIndex = customizedOptions.annotations.findIndex(function (element) {
                                 return element.id === annotation.options.id;
                             });
 
@@ -18481,7 +18541,7 @@ highed.ChartPreview = function (parent, attributes) {
                 }
 
                 if (chart.activeAnnotationOptions && (isAnnotating && annotationType === 'drag')) {
-                    var s = chart.pointer.normalize(e),
+                    const s = chart.pointer.normalize(e),
                         prevOptions = chart.activeAnnotationOptions,
                         prevAnn = chart.activeAnnotation;
 
@@ -18492,7 +18552,7 @@ highed.ChartPreview = function (parent, attributes) {
                         chart.removeAnnotation(prevAnn.id);
                     }
 
-                    var newAnnotation;
+                    let newAnnotation;
                     if (chart.annotationType === 'shapes') {
                         newAnnotation = chart.addAnnotation({
                             id: prevOptions.id,
@@ -18692,7 +18752,7 @@ highed.ChartPreview = function (parent, attributes) {
 
         // templateOptions = templateOptions || {};
         templateOptions = templateOptions || [];
-        var aggregatedTemplate = {};
+        let aggregatedTemplate = {};
 
 
         // Merge fest
@@ -18786,7 +18846,7 @@ highed.ChartPreview = function (parent, attributes) {
         aggregatedOptions.series = [];
         if (highed.isArr(customizedOptions.series)) {
             customizedOptions.series.forEach(function (obj, i) {
-                var mergeTarget = {};
+                let mergeTarget = {};
 
                 if (themeOptions && highed.isArr(themeOptions.series)) {
                     if (i < themeOptions.series.length) {
@@ -18966,14 +19026,14 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function loadCSVData(data, emitLoadSignal, bypassClearSeries, cb) {
-        var mergedExisting = false,
-            seriesClones = [];
+        let mergedExisting = false;
+        const seriesClones = [];
+
         if (!data || !data.csv) {
             if (highed.isStr(data)) {
                 data = {
-                    csv: data,
+                    csv: data
                     // itemDelimiter: ';',
-                    firstRowAsNames: true
                 };
             } else {
                 return highed.log(1, 'chart load csv: data.csv is required');
@@ -18984,7 +19044,7 @@ highed.ChartPreview = function (parent, attributes) {
         lastLoadedSheet = false;
         lastLoadedLiveData = false;
         gc(function (chart) {
-            var axis;
+            let axis;
 
             // highed.setAttr(customizedOptions, 'series', []);
             // highed.setAttr(aggregatedOptions, 'series', []);
@@ -19107,12 +19167,12 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function loadProject(projectData) {
-        var hasData = false,
-            htmlEntities = {
-                '&amp;': '&',
-                '&lt;': '<',
-                '&gt;': '>'
-            };
+        let hasData = false;
+        const htmlEntities = {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>'
+        };
 
         highed.emit('UIAction', 'LoadProject');
 
@@ -19233,8 +19293,8 @@ highed.ChartPreview = function (parent, attributes) {
                 }
 
                 if (projectData.settings.dataProvider.googleSpreadsheet) {
-                    var provider = projectData.settings.dataProvider;
-                    var sheet = provider.googleSpreadsheet;
+                    const provider = projectData.settings.dataProvider,
+                        sheet = provider.googleSpreadsheet;
 
                     if (customizedOptions.data) {
                         sheet.startRow =
@@ -19262,8 +19322,8 @@ highed.ChartPreview = function (parent, attributes) {
                     hasData = true;
                 } else if (projectData.settings.dataProvider.liveData) {
                     // eslint-disable-next-line no-redeclare
-                    var provider = projectData.settings.dataProvider;
-                    var live = provider.liveData;
+                    const provider = projectData.settings.dataProvider,
+                        live = provider.liveData;
 
                     loadLiveData(provider.liveData);
                 } else if (projectData.settings.dataProvider.csv) {
@@ -19316,7 +19376,7 @@ highed.ChartPreview = function (parent, attributes) {
 
         // The sheet will be loaded async, so we should listen to the load event.
         gc(function (chart) {
-            var found = Highcharts.addEvent(chart, 'load', function () {
+            const found = Highcharts.addEvent(chart, 'load', function () {
                 loadSeriesFromDataSource();
                 found();
             });
@@ -19325,7 +19385,7 @@ highed.ChartPreview = function (parent, attributes) {
     }
 
     function loadGSpreadsheet(options) {
-        var key;
+        let key;
 
         lastLoadedCSV = false;
         lastLoadedSheet = options;
@@ -19356,7 +19416,7 @@ highed.ChartPreview = function (parent, attributes) {
         emitChange();
         // The sheet will be loaded async, so we should listen to the load event.
         gc(function (chart) {
-            var found = Highcharts.addEvent(chart, 'load', function () {
+            const found = Highcharts.addEvent(chart, 'load', function () {
                 loadSeriesFromDataSource();
                 // loadSeries();
                 found();
@@ -19390,7 +19450,7 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function toProject() {
-        var loadedCSVRaw = false,
+        let loadedCSVRaw = false,
             gsheet = lastLoadedSheet,
             livedata = lastLoadedLiveData,
             themeData = false,
@@ -19423,7 +19483,8 @@ highed.ChartPreview = function (parent, attributes) {
             assignDataFields = false;
         }
 
-        if (chart &&
+        if (
+            chart &&
         chart.options &&
         chart.options.data &&
         chart.options.data.url
@@ -19568,7 +19629,7 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function getPlugins() {
-        var arr = [];
+        const arr = [];
 
         Object.keys(chartPlugins).filter(function (key) {
             chartPlugins[key].forEach(function (object) {
@@ -19594,7 +19655,7 @@ highed.ChartPreview = function (parent, attributes) {
             });
         }
 
-        var doEmitHeightChange = false,
+        let doEmitHeightChange = false,
             doEmitWidthChange = false;
 
         // Temp. hack to deal with actual sizing
@@ -19729,9 +19790,8 @@ highed.ChartPreview = function (parent, attributes) {
 
 
     function getEmbeddableJSON(noCustomCode) {
-        var r;
         updateAggregated(noCustomCode);
-        r = getCleanOptions(highed.merge({}, aggregatedOptions));
+        const r = getCleanOptions(highed.merge({}, aggregatedOptions));
 
         // This should be part of the series
         if (!highed.isNull(r.data)) {
@@ -19744,7 +19804,7 @@ highed.ChartPreview = function (parent, attributes) {
 
         if (r && highed.isArr(r.series)) {
             r.series = r.series.map(function (s) {
-                var cloned = highed.merge({}, s);
+                const cloned = highed.merge({}, s);
                 delete s.data;
                 return s;
             });
@@ -19788,7 +19848,8 @@ highed.ChartPreview = function (parent, attributes) {
 
     function getEmbeddableJavaScript(id) {
         return gc(function (chart) {
-            var cdnIncludes = [
+            let cdnIncludesArr = [];
+            const cdnIncludes = [
                     'https://code.highcharts.com/stock/highstock.js',
                     'https://code.highcharts.com/highcharts-more.js',
                     'https://code.highcharts.com/highcharts-3d.js',
@@ -19799,7 +19860,6 @@ highed.ChartPreview = function (parent, attributes) {
                     'https://code.highcharts.com/modules/accessibility.js',
                     'https://code.highcharts.com/modules/solid-gauge.js'
                 ],
-                cdnIncludesArr = [],
                 title =
           chart.options && chart.options.title ?
               chart.options.title.text || 'untitled chart' :
@@ -19928,7 +19988,7 @@ highed.ChartPreview = function (parent, attributes) {
     }
 
     function getCodePreview() {
-        var options = getEmbeddableJSON(true);
+        const options = getEmbeddableJSON(true);
 
         if (highed.isFn(customCode) && customCodeStr) {
             customCode(options);
@@ -19940,7 +20000,7 @@ highed.ChartPreview = function (parent, attributes) {
 
     function getEmbeddableHTML(placehold) {
         return gc(function (chart) {
-            var id = 'highcharts-' + highed.uuid();
+            const id = 'highcharts-' + highed.uuid();
             return (
                 '\n' +
         [
@@ -20054,7 +20114,7 @@ highed.ChartPreview = function (parent, attributes) {
     }
 
     function setCustomCode(newCode, errFn, skipEmit) {
-        var fn;
+        let fn;
 
         if (!newCode) {
             customCode = false;
@@ -20085,9 +20145,11 @@ highed.ChartPreview = function (parent, attributes) {
         if (!skipEmit) {
             updateAggregated();
 
-            if (!customizedOptions.data || (customizedOptions &&
+            if (
+                !customizedOptions.data || (customizedOptions &&
          customizedOptions.data &&
-         !customizedOptions.data.googleSpreadsheetKey)) {
+         !customizedOptions.data.googleSpreadsheetKey)
+            ) {
                 init(aggregatedOptions);
             }
 
@@ -20109,7 +20171,7 @@ highed.ChartPreview = function (parent, attributes) {
             if (!customizedOptions.annotations) {
                 customizedOptions.annotations = [];
             }
-            var annotation = chart.addAnnotation({
+            const annotation = chart.addAnnotation({
                 id: 'label_' + customizedOptions.annotations.length,
                 labels: [{
                     id: 'label_' + customizedOptions.annotations.length,
@@ -20171,7 +20233,7 @@ highed.ChartPreview = function (parent, attributes) {
     }
 
     function addAnnotation(e) {
-        var xValue = chart.xAxis[0].toValue(e.chartX),
+        const xValue = chart.xAxis[0].toValue(e.chartX),
             yValue = chart.yAxis[0].toValue(e.chartY);
 
 
@@ -20296,7 +20358,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var modal = highed.OverlayModal(false, {
+    const modal = highed.OverlayModal(false, {
         showOnInit: false,
         zIndex: 11000,
         width: 300,
@@ -20342,7 +20404,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // @format
 
 (function () {
-    var flatOptions = {};
+    const flatOptions = {};
 
     function dive(tree) {
         if (tree) {
@@ -20366,7 +20428,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     highed.SimpleCustomizer = function (parent, attributes) {
-        var events = highed.events(),
+        const events = highed.events(),
             container = highed.dom.cr('div', 'highed-simple-customizer'),
             table = highed.dom.cr('table', 'highed-customizer-table'),
             properties = highed.merge(
@@ -20393,7 +20455,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             table.innerHTML = '';
 
             properties.availableSettings.forEach(function (name) {
-                var group = highed.merge(
+                const group = highed.merge(
                     {
                         text: name.replace(/\-/g, ' '),
                         id: name,
@@ -20450,7 +20512,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
         function focus(thing, x, y) {
-            var id = thing.id;
+            const id = thing.id;
             if (id.indexOf('-') >= 0) {
                 highlightNode(table.querySelector('#' + id));
             }
@@ -20506,7 +20568,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function () {
     function createTeamDropDown(target) {
-        var dropdown = highed.DropDown(target);
+        const dropdown = highed.DropDown(target);
 
         function refresh() {
             dropdown.clear();
@@ -20528,9 +20590,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             dropdown: dropdown
         };
     }
+    let chartPreview = false,
+        activeTeam,
+        loginForm = false,
+        activeChart;
 
-    var chartPreview = false,
-        modal = highed.OverlayModal(document.body, {
+    const modal = highed.OverlayModal(document.body, {
             // eslint-disable-line no-undef
             showOnInit: false,
             width: '90%',
@@ -20541,8 +20606,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         charts = highed.dom.cr('div', 'highed-cloud-chart-container'),
         teams = createTeamDropDown(mainContainer),
         pageNavigation = highed.dom.cr('div', 'highed-cloud-paging'),
-        activeTeam,
-        activeChart,
         saveNewModal = highed.OverlayModal(document.body, {
             // eslint-disable-line no-undef
             showOnInt: false,
@@ -20553,8 +20616,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         saveNewTeamsContainer = highed.dom.cr('div'),
         saveNewTeams = createTeamDropDown(saveNewTeamsContainer),
         saveNewName = highed.dom.cr('input', 'highed-field-input'),
-        saveNewBtn = highed.dom.cr('button', 'highed-ok-button', 'Save to cloud'),
-        loginForm = false;
+        saveNewBtn = highed.dom.cr('button', 'highed-ok-button', 'Save to cloud');
 
     highed.dom.ap(
         saveNewModal.body,
@@ -20594,7 +20656,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     });
 
     function addChart(chart) {
-        var container = highed.dom.cr('div', 'highed-cloud-chart'),
+        const container = highed.dom.cr('div', 'highed-cloud-chart'),
             thumbnail = highed.dom.cr('div', 'highed-cloud-thumbnail');
 
         highed.dom.ap(
@@ -20647,10 +20709,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 pageNavigation.innerHTML = '';
 
                 if (full.pageCount > 1) {
-                    for (var i = 1; i <= full.pageCount; i++) {
+                    for (let i = 1; i <= full.pageCount; i++) {
                         // eslint-disable-next-line no-loop-func
                         (function (pageIndex) {
-                            var item = highed.dom.cr('span', 'highed-cloud-paging-item', i);
+                            const item = highed.dom.cr('span', 'highed-cloud-paging-item', i);
 
                             if (pageIndex === page) {
                                 item.className += ' selected';
@@ -20712,12 +20774,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 
     function createLoginForm() {
-        var body = highed.dom.cr('div', 'highed-cloud-login-container'),
+        let loginCallback = false;
+        const body = highed.dom.cr('div', 'highed-cloud-login-container'),
             username = highed.dom.cr('input', 'highed-cloud-input'),
             password = highed.dom.cr('input', 'highed-cloud-input'),
             btn = highed.dom.cr('button', 'highed-ok-button', 'LOGIN'),
             notice = highed.dom.cr('div', 'highed-cloud-login-error'),
-            loginCallback = false,
             modal = highed.OverlayModal(false, {
                 height: 300,
                 width: 250,
@@ -20815,7 +20877,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 highed.DrawerEditor = function (parent, options, planCode) {
-    var events = highed.events(),
+    let lastSetWidth = false,
+        fixedSize = false,
+        defaultPage,
+        suppressWarning = false;
+
+    const events = highed.events(),
         // Main properties
         properties = highed.merge(
             {
@@ -20859,8 +20926,6 @@ highed.DrawerEditor = function (parent, options, planCode) {
             'highed-errorbar-body highed-scrollbar',
             'Oh noes! something is very wrong!'
         ),
-        lastSetWidth = false,
-        fixedSize = false,
         splitter = highed.VSplitter(parent, {
             topHeight: properties.useHeader ? '60px' : '0px',
             noOverflow: true
@@ -20977,7 +21042,6 @@ highed.DrawerEditor = function (parent, options, planCode) {
             'div',
             'highed-optionspanel-buttons highed-optionspanel-res highed-box-size highed-transition'
         ),
-        defaultPage,
         panel = highed.OptionsPanel(workspaceBody),
         toolbar = highed.Toolbar(splitter.top),
         // Chart preview
@@ -20998,7 +21062,6 @@ highed.DrawerEditor = function (parent, options, planCode) {
         chartPreview = highed.ChartPreview(chartContainer, {
             defaultChartOptions: properties.defaultChartOptions
         }),
-        suppressWarning = false,
         dataTableContainer = highed.dom.cr('div', 'highed-box-size highed-fill'),
         customizePage = highed.CustomizePage(
             splitter.bottom,
@@ -21026,6 +21089,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
             highedChartContainer,
             builtInOptions.data
         );
+
     createChartPage = highed.CreateChartPage(
         splitter.bottom,
         properties.features,
@@ -21060,7 +21124,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
             title: highed.L('saveProject'),
             css: 'fa-floppy-o',
             click: function () {
-                var name;
+                let name;
 
                 if (chartPreview.options.full.title) {
                     name = chartPreview.options.full.title.text;
@@ -21157,7 +21221,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
      * Call this after changing properties.features to update the options.
      */
     function createFeatures() {
-        var addedOptions = {};
+        const addedOptions = {};
         panel.clearOptions();
 
         properties.features = highed.isArr(properties.features) ?
@@ -21213,7 +21277,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
             }
 
 
-            var func = function (prev, newOption) {
+            const func = function (prev, newOption) {
                 prev.hide();
                 newOption.page.show();
                 panel.setDefault(newOption.page);
@@ -21340,7 +21404,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
 
     function resizeChart(newWidth) {
-        var psize = highed.dom.size(splitter.bottom);
+        const psize = highed.dom.size(splitter.bottom);
 
         lastSetWidth = newWidth;
 
@@ -21373,7 +21437,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
             resWidth.value = '';
             resizeChart(lastSetWidth);
         } else {
-            var s = highed.dom.size(highedChartContainer);
+            const s = highed.dom.size(highedChartContainer);
 
             // highed.dom.style(chartFrame, {
             //   paddingLeft: (s.w / 2) - (w / 2) + 'px',
@@ -21549,8 +21613,8 @@ highed.DrawerEditor = function (parent, options, planCode) {
     chartPreview.on('Error', function (e) {
         if (e && e.code && highed.highchartsErrors[e.code]) {
 
-            var item = highed.highchartsErrors[e.code],
-                url = '';
+            const item = highed.highchartsErrors[e.code];
+            let url = '';
 
             if (e.url >= 0) {
                 url =
@@ -21619,7 +21683,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
     function setToActualSize() {
         resWidth.disabled = resHeight.disabled = 'disabled';
         chartPreview.getHighchartsInstance(function (chart) {
-            var w, h;
+            let w, h;
 
             if (!chart || !chart.options || !chart.options.chart) {
                 h = 400;
@@ -21709,7 +21773,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 highed.Editor = highed.DrawerEditor;
 
 (function () {
-    var instanceCount = 0,
+    const instanceCount = 0,
         installedPlugins = {},
         activePlugins = {},
         pluginEvents = highed.events(),
@@ -21719,7 +21783,7 @@ highed.Editor = highed.DrawerEditor;
 
 
     function install(name, definition) {
-        var properties = highed.merge(
+        const properties = highed.merge(
             {
                 meta: {
                     version: 'unknown',
@@ -21744,7 +21808,7 @@ highed.Editor = highed.DrawerEditor;
     }
 
     function use(name, options) {
-        var plugin = installedPlugins[name],
+        const plugin = installedPlugins[name],
             filteredOptions = {};
 
         console.error('Warning: editor plugins are no longer supported.');
@@ -21756,7 +21820,7 @@ highed.Editor = highed.DrawerEditor;
 
             // Verify options
             Object.keys(plugin.options).forEach(function (key) {
-                var option = plugin.options[key];
+                const option = plugin.options[key];
                 if (highed.isBasic(option) || highed.isArr(option)) {
                     highed.log(
                         2,

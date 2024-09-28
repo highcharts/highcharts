@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,8 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierEvent from './DataModifierEvent';
+import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { DataModifierTypes } from './DataModifierType';
 
@@ -40,7 +42,6 @@ const {
 /**
  * Abstract class to provide an interface for modifying a table.
  *
- * @private
  */
 abstract class DataModifier implements DataEvent.Emitter {
 
@@ -53,7 +54,7 @@ abstract class DataModifier implements DataEvent.Emitter {
     /**
      * Modifier options.
      */
-    public abstract readonly options: DataModifier.Options;
+    public abstract readonly options: DataModifierOptions;
 
     /* *
      *
@@ -83,7 +84,7 @@ abstract class DataModifier implements DataEvent.Emitter {
         const modifier = this;
         const execute = (): void => {
             modifier.modifyTable(dataTable);
-            modifier.emit<DataModifier.Event>({
+            modifier.emit<DataModifierEvent>({
                 type: 'afterBenchmarkIteration'
             });
         };
@@ -99,7 +100,7 @@ abstract class DataModifier implements DataEvent.Emitter {
 
         modifier.on('afterBenchmarkIteration', (): void => {
             if (results.length === iterations) {
-                modifier.emit<DataModifier.Event>({
+                modifier.emit<DataModifierEvent>({
                     type: 'afterBenchmark',
                     results
                 });
@@ -165,7 +166,7 @@ abstract class DataModifier implements DataEvent.Emitter {
             try {
                 resolve(modifier.modifyTable(table, eventDetail));
             } catch (e) {
-                modifier.emit<DataModifier.Event>({
+                modifier.emit<DataModifierEvent>({
                     type: 'error',
                     detail: eventDetail,
                     table
@@ -199,10 +200,12 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyCell<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }
@@ -228,9 +231,11 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyColumns<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         columns: DataTable.ColumnCollection,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }
@@ -256,9 +261,11 @@ abstract class DataModifier implements DataEvent.Emitter {
      */
     public modifyRows<T extends DataTable>(
         table: T,
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
         eventDetail?: DataEvent.Detail
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): T {
         return this.modifyTable(table);
     }
@@ -310,7 +317,6 @@ abstract class DataModifier implements DataEvent.Emitter {
 
 /**
  * Additionally provided types for modifier events and options.
- * @private
  */
 namespace DataModifier {
 
@@ -321,66 +327,10 @@ namespace DataModifier {
      * */
 
     /**
-     * Class constructor of modifiers.
-     *
-     * @param {DeepPartial<Options>} [options]
-     * Options to configure the modifier.
-     */
-    export interface ClassConstructor {
-        new(options?: DeepPartial<Options>): DataModifier;
-    }
-
-    /**
-     * Benchmark event with additional event information.
-     */
-    export interface BenchmarkEvent extends DataEvent {
-        readonly type: (
-            'afterBenchmark'|
-            'afterBenchmarkIteration'
-        );
-        readonly results?: Array<number>;
-    }
-
-    /**
      * Benchmark options.
      */
     export interface BenchmarkOptions {
         iterations: number;
-    }
-
-    /**
-     * Error event with additional event information.
-     */
-    export interface ErrorEvent extends DataEvent{
-        readonly type: (
-            'error'
-        );
-        readonly table: DataTable;
-    }
-
-    /**
-     * Event information.
-     */
-    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
-
-    /**
-     * Modify event with additional event information.
-     */
-    export interface ModifyEvent extends DataEvent {
-        readonly type: (
-            'modify'|'afterModify'
-        );
-        readonly table: DataTable;
-    }
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options {
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: keyof DataModifierTypes;
     }
 
     /* *

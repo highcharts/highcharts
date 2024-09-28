@@ -9,7 +9,8 @@ Highcharts.chart('container', {
         text: 'Inverted Polar Chart'
     },
     subtitle: {
-        text: 'Showing <em>circle</em> and <em>polygon</em> grid line interpolation'
+        text: 'Showing <em>circle</em> and <em>polygon</em> grid line ' +
+            'interpolation'
     },
     pane: [{
         size: '60%',

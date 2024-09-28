@@ -1,17 +1,18 @@
 /**
- * A Highcharts plugin to display the tooltip in a separate container outside the chart's
- * bounding box, so that it can utilize all space available in the page.
+ * A Highcharts plugin to display the tooltip in a separate container outside
+ * the chart 's bounding box, so that it can utilize all space available in the
+ * page.
  */
 (function (H) {
 
-    var offset = 6;
+    const offset = 6;
 
     H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
 
-        var chart = this.chart,
+        const chart = this.chart,
             options = this.options,
-            chartRenderer = chart.renderer,
-            container;
+            chartRenderer = chart.renderer;
+        let container;
 
         if (!this.label) {
 
@@ -46,8 +47,7 @@
         H.Tooltip.prototype,
         'getPosition',
         function (proceed, boxWidth, boxHeight, point) {
-            var chart = this.chart,
-                pos,
+            const chart = this.chart,
                 doc = H.doc,
                 documentElement = doc.documentElement,
                 plusWidth = documentElement.clientWidth - chart.chartWidth,
@@ -74,7 +74,7 @@
             };
 
             // Compute the tooltip position
-            pos = proceed.call(this, boxWidth, boxHeight, point);
+            const pos = proceed.call(this, boxWidth, boxHeight, point);
 
             // Reset chart reference
             this.chart = chart;
@@ -88,7 +88,7 @@
      * to the core function, except the anchorX and anchorY arguments to move().
      */
     H.Tooltip.prototype.updatePosition = function (point) {
-        var chart = this.chart,
+        const chart = this.chart,
             label = this.label,
             pos = (this.options.positioner || this.getPosition).call(
                 this,
@@ -99,7 +99,8 @@
 
         // Set the renderer size dynamically to prevent document size to change
         this.renderer.setSize(
-            label.width + (this.options.borderWidth || 0) + this.distance + offset,
+            label.width + (this.options.borderWidth || 0) +
+                 this.distance + offset,
             label.height + this.distance + offset,
             false
         );

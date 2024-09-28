@@ -7,14 +7,14 @@ A waterfall chart is a form of data visualization that helps in determining the 
 
 ### Defining the points
 
-Defining the points in a waterfall is pretty straight forward. Each point is accumulated on top of the next, or substracted from the sum if it is negative. The most intuitive way of defining a series is to give each point a name and an Y value, and set [xAxis.type](https://api.highcharts.com/highcharts/xAxis.type) to _"category"_. A live demo can be seen at [www.highcharts.com/demo/waterfall](https://highcharts.com/demo/waterfall).
+Defining the points in a waterfall is pretty straight forward. Each point is accumulated on top of the next, or subtracted from the sum if it is negative. The most intuitive way of defining a series is to give each point a name and an Y value, and set [xAxis.type](https://api.highcharts.com/highcharts/xAxis.type) to _"category"_. A live demo can be seen at [www.highcharts.com/demo/waterfall](https://highcharts.com/demo/waterfall).
 
 Furthermore, a waterfall series has two kinds of automatically computed columns. These points don't have an Y value, only a flag that specifies their type:
 
 *   `isIntermediateSum`   
-    When this property is true, the points acts as a summary column for the values added or substracted since the last intermediate sum.
+    When this property is true, the points acts as a summary column for the values added or subtracted since the last intermediate sum.
 *   `isSum`  
-    When this preperty is true, the point display the total sum across the entire series.
+    When this property is true, the point display the total sum across the entire series.
 
 Sample code:
 

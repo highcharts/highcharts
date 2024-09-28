@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
@@ -22,7 +22,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -41,7 +41,7 @@ namespace HighContrastLightTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: [
             '#265FB5',
             '#222',

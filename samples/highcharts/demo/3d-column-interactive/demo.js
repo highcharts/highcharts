@@ -12,8 +12,7 @@ const chart = new Highcharts.Chart({
         }
     },
     xAxis: {
-        categories: ['Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
-            'Volkswagen', 'Polestar', 'Kia', 'Nissan']
+        type: 'category'
     },
     yAxis: {
         title: {
@@ -25,7 +24,7 @@ const chart = new Highcharts.Chart({
         pointFormat: 'Cars sold: {point.y}'
     },
     title: {
-        text: 'Sold passenger cars in Norway by brand, January 2021',
+        text: 'Sold passenger cars in Norway by brand, May 2024',
         align: 'left'
     },
     subtitle: {
@@ -43,19 +42,38 @@ const chart = new Highcharts.Chart({
         }
     },
     series: [{
-        data: [1318, 1073, 1060, 813, 775, 745, 537, 444, 416, 395],
+        data: [
+            ['Toyota', 1795],
+            ['Volkswagen', 1242],
+            ['Volvo', 1074],
+            ['Tesla', 832],
+            ['Hyundai', 593],
+            ['MG', 509],
+            ['Skoda', 471],
+            ['BMW', 442],
+            ['Ford', 385],
+            ['Nissan', 371]
+        ],
         colorByPoint: true
     }]
 });
 
 function showValues() {
-    document.getElementById('alpha-value').innerHTML = chart.options.chart.options3d.alpha;
-    document.getElementById('beta-value').innerHTML = chart.options.chart.options3d.beta;
-    document.getElementById('depth-value').innerHTML = chart.options.chart.options3d.depth;
+    document.getElementById(
+        'alpha-value'
+    ).innerHTML = chart.options.chart.options3d.alpha;
+    document.getElementById(
+        'beta-value'
+    ).innerHTML = chart.options.chart.options3d.beta;
+    document.getElementById(
+        'depth-value'
+    ).innerHTML = chart.options.chart.options3d.depth;
 }
 
 // Activate the sliders
-document.querySelectorAll('#sliders input').forEach(input => input.addEventListener('input', e => {
+document.querySelectorAll(
+    '#sliders input'
+).forEach(input => input.addEventListener('input', e => {
     chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
     showValues();
     chart.redraw(false);

@@ -1,11 +1,10 @@
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+    const arr = [];
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+    for (let i = 0; i < n; i = i + 1) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -29,22 +28,21 @@ function getData(n) {
 }
 
 function getSeries(n, s) {
-    var i = 0,
-        r = [];
+    let i = 0;
+    const r = [];
 
     for (; i < s; i++) {
         r.push({
             data: getData(n),
             lineWidth: 2,
-            boostThreshold: 1,
-            turboThreshold: 1
+            boostThreshold: 1
         });
     }
 
     return r;
 }
 
-var n = 1000,
+const n = 1000,
     s = 600,
     series = getSeries(n, s);
 
@@ -53,11 +51,14 @@ console.time('line');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     legend: {

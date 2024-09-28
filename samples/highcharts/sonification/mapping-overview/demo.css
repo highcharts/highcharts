@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #block {
     max-width: 900px;
     min-width: 320px;
@@ -65,8 +69,8 @@ input {
     border: none;
     border-radius: 7px;
     text-decoration: none;
-    background: #0059DD;
-    color: #ffffff;
+    background: #0059dd;
+    color: #fff;
     cursor: pointer;
 }
 

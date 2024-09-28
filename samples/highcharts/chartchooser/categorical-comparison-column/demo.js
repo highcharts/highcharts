@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'column',
-        zoomType: 'y'
+        zooming: {
+            type: 'y'
+        }
     },
     title: {
         text: 'Top 10 countries in wheat exportation (2019)'

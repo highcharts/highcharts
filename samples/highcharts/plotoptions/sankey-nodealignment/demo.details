@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

@@ -12,14 +12,20 @@ Highcharts.ganttChart('container', {
                     text: 'Tasks',
                     rotation: 45,
                     y: -15,
-                    x: -15
+                    x: -15,
+                    style: {
+                        width: '100px'
+                    }
                 }
             }, {
                 title: {
                     text: 'Assignee',
                     rotation: 45,
                     y: -15,
-                    x: -15
+                    x: -15,
+                    style: {
+                        width: '100px'
+                    }
                 },
                 labels: {
                     format: '{point.assignee}'
@@ -29,15 +35,14 @@ Highcharts.ganttChart('container', {
                     text: 'Duration',
                     rotation: 45,
                     y: -15,
-                    x: -15
+                    x: -15,
+                    style: {
+                        width: '100px'
+                    }
                 },
                 labels: {
-                    formatter: function () {
-                        var point = this.point,
-                            days = (1000 * 60 * 60 * 24),
-                            number = (point.end - point.start) / days;
-                        return Math.round(number * 100) / 100;
-                    }
+                    format: '{(divide (subtract point.end point.start) ' +
+                        '86400000):.0f}'
                 }
             }]
         }

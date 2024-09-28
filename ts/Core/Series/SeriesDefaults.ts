@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,10 +18,7 @@
 
 import type Point from './Point';
 import type Series from './Series';
-import type {
-    PlotOptionsOf,
-    SeriesOptions
-} from './SeriesOptions';
+import type { PlotOptionsOf } from './SeriesOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -37,7 +34,7 @@ import { Palette } from '../Color/Palettes.js';
  * @optionparent plotOptions.series
  */
 const seriesDefaults: PlotOptionsOf<Series> = {
-    // base series options
+    // Base series options
 
     /**
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
@@ -63,7 +60,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @product highcharts highstock
      */
-    lineWidth: 1,
+    lineWidth: 2,
 
     /**
      * For some series, there is a limit that shuts down animation
@@ -200,6 +197,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * chart's legend and tooltip.
      *
      * @sample {highcharts} highcharts/css/point-series-classname
+     *         Series and point class name
      *
      * @type      {string}
      * @since     5.0.0
@@ -429,6 +427,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default   true
      * @apioption plotOptions.series.enableMouseTracking
      */
+    enableMouseTracking: true,
 
     /**
      * Whether to use the Y extremes of the total chart width or only the
@@ -441,6 +440,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     4.1.6
      * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
+     */
+
+    /**
+     * Highlight only the hovered point and fade the remaining points.
+     *
+     * Scatter-type series require enabling the 'inactive' marker state and
+     * adjusting opacity. Note that this approach could affect performance
+     * with large datasets.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-inactiveotherpoints-enabled/
+     *         Chart with inactiveOtherPoints option enabled.
+     *
+     * @type      {boolean}
+     * @default   false
+     * @apioption plotOptions.series.inactiveOtherPoints
      */
 
     /**
@@ -536,6 +550,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
+     */
+
+    /**
+     * Same as
+     * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+     * but for an individual series. Overrides the chart wide configuration.
+     *
+     * @type      {Function}
+     * @since 11.1.0
+     * @apioption plotOptions.series.pointDescriptionFormat
      */
 
     /**
@@ -945,12 +969,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * is to toggle the visibility of the series. This can be prevented
      * by returning `false` or calling `event.preventDefault()`.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-events-legenditemclick/
-     *         Confirm hiding and showing
+     * **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @type      {Highcharts.SeriesLegendItemClickCallbackFunction}
-     * @context   Highcharts.Series
-     * @apioption plotOptions.series.events.legendItemClick
+     * @type       {Highcharts.SeriesLegendItemClickCallbackFunction}
+     * @deprecated 11.4.4
+     * @context    Highcharts.Series
+     * @apioption  plotOptions.series.events.legendItemClick
      */
 
     /**
@@ -1538,6 +1563,22 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         align: 'center',
 
         /**
+         * Alignment method for data labels. If set to `plotEdges`, the labels
+         * are aligned within the plot area in the direction of the y-axis. So
+         * in a regular column chart, the labels are aligned vertically
+         * according to the `verticalAlign` setting. In a bar chart, which is
+         * inverted, the labels are aligned horizontally according to the
+         * `align` setting. Applies to cartesian series only.
+         *
+         * @sample {highcharts} highcharts/series-bar/datalabels-alignto/
+         *         Align to plot edges
+         *
+         * @type      {string}
+         * @since 11.4.2
+         * @apioption plotOptions.series.dataLabels.alignTo
+         */
+
+        /**
          * Whether to allow data labels to overlap. To make the labels less
          * sensitive for overlapping, the
          * [dataLabels.padding](#plotOptions.series.dataLabels.padding)
@@ -1711,10 +1752,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`,
-         * `==`, and `===`.
+         * `==`, `===`, `!=` and `!==`.
          *
          * @type       {string}
-         * @validvalue [">", "<", ">=", "<=", "==", "==="]
+         * @validvalue [">", "<", ">=", "<=", "==", "===", "!=", "!=="]
          * @apioption  plotOptions.series.dataLabels.filter.operator
          */
 
@@ -1743,6 +1784,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
          *         Add a unit
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format-subexpression/
+         *         Complex logic in the format string
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value in the data label
          *
@@ -2181,8 +2224,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @product   highcharts highstock
              */
             marker: {
-                // lineWidth: base + 1,
-                // radius: base + 1
+                // `lineWidth: base + 1`,
+                // `radius: base + 1`
             },
 
             /**
@@ -2347,15 +2390,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * When a series contains a data array that is longer than this, only
-     * one dimensional arrays of numbers, or two dimensional arrays with
-     * x and y values are allowed. Also, only the first point is tested,
-     * and the rest are assumed to be the same format. This saves expensive
-     * data checking and indexing in long series. Set it to `0` disable.
+     * When a series contains a `data` array that is longer than this, the
+     * Series class looks for data configurations of plain numbers or arrays of
+     * numbers. The first and last valid points are checked. If found, the rest
+     * of the data is assumed to be the same. This saves expensive data checking
+     * and indexing in long series, and makes data-heavy charts render faster.
+     *
+     * Set it to `0` disable.
      *
      * Note:
-     * In boost mode turbo threshold is forced. Only array of numbers or
-     * two dimensional arrays are allowed.
+     * - In boost mode turbo threshold is forced. Only array of numbers or two
+     *   dimensional arrays are allowed.
+     * - In version 11.4.3 and earlier, if object configurations were passed
+     *   beyond the turbo threshold, a warning was logged in the console and the
+     *   data series didn't render.
      *
      * @since   2.2
      * @product highcharts highstock gantt
@@ -2490,6 +2538,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * What type of legend symbol to render for this series. Can be one of
+     * `areaMarker`, `lineMarker` or `rectangle`.
+     *
+     * @validvalue ["areaMarker", "lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     *
+     * @type      {string}
+     * @default   rectangle
+     * @since     11.0.1
+     * @apioption plotOptions.series.legendSymbol
+     */
+
+    /**
      * Determines whether the series should look for the nearest point
      * in both dimensions or just the x-dimension when hovering the series.
      * Defaults to `'xy'` for scatter series and `'x'` for most other
@@ -2512,15 +2575,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @private
      */
     findNearestPointBy: 'x'
-
-    /**
-     * What type of legend symbol to render for this series.
-     *
-     * @validvalue ["lineMarker", "rectangle"]
-     *
-     * @sample {highcharts} highcharts/series/legend-symbol/
-     *         Change the legend symbol
-     */
 
 };
 

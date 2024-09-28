@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -153,9 +153,9 @@ const navigation: NavigationOptions = {
                 this: NavigationBindings,
                 e: PointerEvent
             ): Annotation|void {
-                const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis),
+                const coords = this.chart.pointer?.getCoordinates(e),
+                    coordsX = coords && getAssignedAxis(coords.xAxis),
+                    coordsY = coords && getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 // Exit if clicked out of axes area
@@ -173,8 +173,8 @@ const navigation: NavigationOptions = {
                                 point: {
                                     x: coordsX.value,
                                     y: coordsY.value,
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index
                                 },
                                 r: 5
                             }]
@@ -247,9 +247,9 @@ const navigation: NavigationOptions = {
                 this: NavigationBindings,
                 e: PointerEvent
             ): Annotation|void {
-                const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis),
+                const coords = this.chart.pointer?.getCoordinates(e),
+                    coordsX = coords && getAssignedAxis(coords.xAxis),
+                    coordsY = coords && getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 if (!coordsX || !coordsY) {
@@ -264,8 +264,8 @@ const navigation: NavigationOptions = {
                             shapes: [
                                 {
                                     type: 'ellipse',
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index,
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index,
                                     points: [{
                                         x: coordsX.value,
                                         y: coordsY.value
@@ -346,9 +346,9 @@ const navigation: NavigationOptions = {
                 this: NavigationBindings,
                 e: PointerEvent
             ): Annotation|void {
-                const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis);
+                const coords = this.chart.pointer?.getCoordinates(e),
+                    coordsX = coords && getAssignedAxis(coords.xAxis),
+                    coordsY = coords && getAssignedAxis(coords.yAxis);
 
                 // Exit if clicked out of axes area
                 if (!coordsX || !coordsY) {
@@ -357,8 +357,8 @@ const navigation: NavigationOptions = {
 
                 const x = coordsX.value,
                     y = coordsY.value,
-                    xAxis = coordsX.axis.options.index,
-                    yAxis = coordsY.axis.options.index,
+                    xAxis = coordsX.axis.index,
+                    yAxis = coordsY.axis.index,
                     navigation = this.chart.options.navigation;
 
                 return this.chart.addAnnotation(
@@ -398,9 +398,9 @@ const navigation: NavigationOptions = {
                             (shapes && shapes[0] && shapes[0].points) ||
                             []
                         ) as Array<MockPointOptions>,
-                        coords = this.chart.pointer.getCoordinates(e),
-                        coordsX = getAssignedAxis(coords.xAxis),
-                        coordsY = getAssignedAxis(coords.yAxis);
+                        coords = this.chart.pointer?.getCoordinates(e),
+                        coordsX = coords && getAssignedAxis(coords.xAxis),
+                        coordsY = coords && getAssignedAxis(coords.yAxis);
 
                     if (coordsX && coordsY) {
                         const x = coordsX.value,
@@ -437,9 +437,9 @@ const navigation: NavigationOptions = {
                 this: NavigationBindings,
                 e: PointerEvent
             ): Annotation|void {
-                const coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis),
+                const coords = this.chart.pointer?.getCoordinates(e),
+                    coordsX = coords && getAssignedAxis(coords.xAxis),
+                    coordsY = coords && getAssignedAxis(coords.yAxis),
                     navigation = this.chart.options.navigation;
 
                 // Exit if clicked out of axes area
@@ -453,17 +453,17 @@ const navigation: NavigationOptions = {
                             langKey: 'label',
                             type: 'basicAnnotation',
                             labelOptions: {
-                                format: '{y:.2f}'
+                                format: '{y:.2f}',
+                                overflow: 'none',
+                                crop: true
                             },
                             labels: [{
                                 point: {
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index,
+                                    xAxis: coordsX.axis.index,
+                                    yAxis: coordsY.axis.index,
                                     x: coordsX.value,
                                     y: coordsY.value
-                                },
-                                overflow: 'none',
-                                crop: true
+                                }
                             }]
                         },
                         navigation

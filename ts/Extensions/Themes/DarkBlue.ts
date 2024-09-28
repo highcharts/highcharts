@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -37,9 +37,11 @@ namespace DarkBlueTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
-        colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
-            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
+            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
+        ],
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
@@ -95,7 +97,6 @@ namespace DarkBlueTheme {
                 }
             },
             lineColor: '#A0A0A0',
-            minorTickInterval: null,
             tickColor: '#A0A0A0',
             tickWidth: 1,
             title: {
@@ -175,7 +176,7 @@ namespace DarkBlueTheme {
             }
         },
 
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: {

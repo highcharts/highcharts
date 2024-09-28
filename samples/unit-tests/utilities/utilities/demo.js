@@ -1,11 +1,10 @@
 /* eslint func-style:0, object-curly-spacing: 0 */
 (function () {
+    console.time('Utils test time');
     var dateFormat = Highcharts.dateFormat,
         extend = Highcharts.extend,
-        format = Highcharts.format,
         numberFormat = Highcharts.numberFormat,
         pInt = Highcharts.pInt,
-        setOptions = Highcharts.setOptions,
         splat = Highcharts.splat;
 
     /**
@@ -25,6 +24,87 @@
 
         return count;
     }
+
+    QUnit.test('diffObjects', assert => {
+
+        // eslint-disable-next-line no-underscore-dangle
+        const diffObjects = Highcharts.diffObjects;
+
+        let result;
+
+        //---
+        result = diffObjects({
+            type: 'apples'
+        }, {
+            type: 'oranges'
+        });
+        assert.deepEqual(
+            result,
+            { type: 'apples' },
+            'New prop should be returned by default'
+        );
+
+        //---
+        result = diffObjects(
+            {
+                type: 'apples'
+            }, {
+                type: 'oranges'
+            },
+            true
+        );
+        assert.deepEqual(
+            result,
+            { type: 'oranges' },
+            'Older prop should be returned by option'
+        );
+
+
+        //---
+        result = diffObjects({
+            type: undefined
+        }, {
+            type: 'apples'
+        });
+        assert.deepEqual(
+            result,
+            { type: undefined },
+            'New, undefined properties should be _in_ the result, but ' +
+            'undefined (#10525)'
+        );
+
+        //---
+        result = diffObjects({
+            node: document.getElementById('container')
+        }, {
+        });
+        assert.strictEqual(
+            result.node.getAttribute('id'),
+            document.getElementById('container').getAttribute('id'),
+            'DOM nodes should be copied by reference, not deep copied'
+        );
+
+        //---
+        result = diffObjects({
+            chart: {
+                style: {
+                    fontSize: '8px'
+                }
+            }
+        }, {
+            chart: {
+                style: {
+                    fontSize: '8px'
+                }
+            }
+        });
+        assert.deepEqual(
+            result,
+            {},
+            'Equal nested objects should be removed'
+        );
+
+    });
 
     QUnit.test('Extend', function (assert) {
         var empty = {};
@@ -61,38 +141,6 @@
             4,
             countMembers(result)
         );
-    });
-
-    QUnit.test('Merge', assert => {
-
-        // test filtering of __proto__
-        const objProto = JSON.parse(`{
-            "__proto__": {
-                "pollutedByProto": true
-            }
-        }`);
-        Highcharts.merge({}, objProto);
-        assert.strictEqual(
-            typeof pollutedByProto, // eslint-disable-line no-undef
-            'undefined',
-            'The prototype (and window) should not be polluted through merge'
-        );
-
-        // test filtering of constructor
-        const objConstructor = JSON.parse(`{
-            "constructor": {
-                "prototype": {
-                    "pollutedByConstructor": true
-                }
-            }
-        }`);
-        Highcharts.merge({}, objConstructor);
-        assert.strictEqual(
-            typeof {}.pollutedByConstructor, // eslint-disable-line no-undef
-            'undefined',
-            'The prototype (and window) should not be polluted through merge'
-        );
-
     });
 
     QUnit.test('PInt', function (assert) {
@@ -258,7 +306,8 @@
     /**
      * Tests that destroyObjectProperties calls the destroy method on properties
      * before delete.
-     * /
+     */
+    /*
     QUnit.test('DestroyObjectProperties', function (assert) {
         var testObject = {}, // Test object with the properties to destroy
             destroyCount = 0; // Number of destroy calls made
@@ -427,179 +476,6 @@
         );
     });
 
-    QUnit.test('Format', function (assert) {
-        // Arrange
-        var point = {
-            key: 'January',
-            value: Math.PI,
-            long: 12345.6789,
-            date: Date.UTC(2012, 0, 1),
-            deep: {
-                deeper: 123
-            },
-            dom: {
-                string: 'Hello',
-                container: document.getElementById('container'),
-                doc: document,
-                win: window
-            },
-            fn: function () {
-                return 'Hello';
-            },
-            proto: new Date()
-        };
-
-        assertEquals(
-            assert,
-            'Basic replacement',
-            Math.PI,
-            format('{point.value}', { point: point })
-        );
-
-        assertEquals(
-            assert,
-            'Replacement with two decimals',
-            '3.14',
-            format('{point.value:.2f}', { point: point })
-        );
-
-        // localized thousands separator and decimal point
-        setOptions({
-            lang: {
-                decimalPoint: ',',
-                thousandsSep: ' '
-            }
-        });
-        assertEquals(
-            assert,
-            'Localized format',
-            '12 345,68',
-            format('{point.long:,.2f}', { point: point })
-        );
-
-        // default thousands separator and decimal point
-        setOptions({
-            lang: {
-                decimalPoint: '.',
-                thousandsSep: ','
-            }
-        });
-        assertEquals(
-            assert,
-            'Thousands separator format',
-            '12,345.68',
-            format('{point.long:,.2f}', { point: point })
-        );
-
-        // Date format with colon
-        assertEquals(
-            assert,
-            'Date format with colon',
-            '00:00:00',
-            format('{point.date:%H:%M:%S}', { point: point })
-        );
-
-        // Deep access
-        assertEquals(
-            assert,
-            'Deep access format',
-            '123',
-            format('{point.deep.deeper}', { point: point })
-        );
-
-        // Shallow access
-        assertEquals(
-            assert,
-            'Shallow access format',
-            '123',
-            format('{value}', { value: 123 })
-        );
-
-        // Formatted shallow access
-        assertEquals(
-            assert,
-            'Shallow access format with decimals',
-            '123.00',
-            format('{value:.2f}', { value: 123 })
-        );
-
-        // Six decimals by default
-        assertEquals(
-            assert,
-            'Keep decimals by default',
-            '12345.567',
-            format('{value:f}', { value: 12345.567 })
-        );
-
-        // Complicated string format
-        assertEquals(
-            assert,
-            'Complex string format',
-            'Key: January, value: 3.14, date: 2012-01-01.',
-            format(
-                'Key: {point.key}, value: {point.value:.2f}, date: ' +
-                '{point.date:%Y-%m-%d}.',
-                { point: point }
-            )
-        );
-
-        assert.strictEqual(
-            Highcharts.format('{point.y}', {}),
-            '',
-            'Do not choke on undefined objects (node-export-server#31)'
-        );
-
-        assert.strictEqual(
-            format('{point.dom.string}', { point }),
-            'Hello',
-            'Primitive type verified'
-        );
-
-        assert.strictEqual(
-            format('{point.dom.container}', { point }),
-            '',
-            'DOM nodes should not be accessible through format strings'
-        );
-
-        assert.strictEqual(
-            format('{point.dom.container.ownerDocument.referrer}', { point }),
-            '',
-            'DOM properties should not be accessible through format strings'
-        );
-
-        assert.strictEqual(
-            format('{point.dom.doc}', { point }),
-            '',
-            'The document should not be accessible through format strings'
-        );
-
-        assert.strictEqual(
-            format('{point.dom.win}', { point }),
-            '',
-            'The window/global should not be accessible through format strings'
-        );
-
-        assert.strictEqual(
-            format('{point.fn}', { point }),
-            '',
-            'Functions should not be accessible through format strings'
-        );
-
-        assert.strictEqual(
-            format('{point.proto.__proto__}', { point }),
-            '',
-            'Prototypes should not be accessible through format strings'
-        );
-
-        // Reset
-        setOptions({
-            lang: {
-                decimalPoint: '.',
-                thousandsSep: ' '
-            }
-        });
-    });
-
     /**
      * Test date formatting
      */
@@ -635,7 +511,8 @@
             dateFormat(
                 '%Y-%m-%d',
                 new Date(
-                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'
+                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight ' +
+                    'Time)'
                 )
             )
         );
@@ -1046,7 +923,8 @@
         assert.strictEqual(
             result,
             7,
-            'initialValue = 1 - should return sum of values in array plus intialValue.'
+            'initialValue = 1 - should return sum of values in array plus ' +
+            'intialValue.'
         );
 
         assert.deepEqual(
@@ -1068,4 +946,6 @@
             Object.keys({ foo: 'bar' })
         );
     });
+
+    console.timeEnd('Utils test time');
 }());

@@ -17,7 +17,7 @@ if (typeof CustomEvent !== 'function') {
 // will fire immediately after loading each module. Thus allowing mutation of
 // members before they are loaded into subsequent modules.
 window.addEventListener('HighchartsModuleLoaded', function(e) {
-    if (e.detail.path === 'Core/FormatUtilities.js') {
+    if (e.detail.path === 'Core/Templating.js') {
         // The original function
         const numberFormat = e.detail.module.numberFormat;
 

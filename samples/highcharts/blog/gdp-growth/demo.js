@@ -1,11 +1,13 @@
 fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2d63d6eef882260cb6/samples/data/worldbank-norway.json').then(function (response) {
     return response.json();
 }).then(function (result) {
+
     // set some variable to host data
-    var arrayString = [],
+    const arrayString = [],
         yearList = [],
-        arrayFinal = [],
-        countryName,
+        arrayFinal = [];
+
+    let countryName,
         indicatorName;
 
     result[1].forEach(function (data) {
@@ -19,8 +21,8 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
         arrayString.push(data.value);
     });
 
-    // querry send string that we need to convert into numbers
-    for (var i = 0; i < arrayString.length; i++) {
+    // query send string that we need to convert into numbers
+    for (let i = 0; i < arrayString.length; i++) {
         if (arrayString[i] !== null) {
             arrayFinal.push(parseFloat(arrayString[i]));
         } else {
@@ -36,7 +38,8 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
         },
         tooltip: {
             valueDecimals: 2,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}%</b><br/>'
         },
         plotOptions: {
             series: {
@@ -49,7 +52,8 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c55c2f39d531b227dc239d2
             text: 'Source: World Bank Data'
         },
         xAxis: {
-            categories: yearList.reverse() // .reverse() to have the min year on the left
+            categories: yearList.reverse() // .reverse() to have the min
+            // year on the left
         },
         series: [{
             name: countryName,

@@ -1,6 +1,6 @@
 (function (H) {
     H.addEvent(H.Chart, 'load', function (e) {
-        var chart = e.target;
+        const chart = e.target;
         H.addEvent(chart.container, 'click', function (e) {
             e = chart.pointer.normalize(e);
             console.log('Clicked chart at ' + e.chartX + ', ' + e.chartY);
@@ -14,7 +14,9 @@
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -26,11 +28,21 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5,
+            106.4, 129.2,
+            144.0, 176.0,
+            135.6, 148.5,
+            216.4, 194.1,
+            95.6, 54.4
+        ]
     }]
 
 });

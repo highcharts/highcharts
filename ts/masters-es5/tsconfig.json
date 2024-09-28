@@ -11,10 +11,17 @@
         "lib": [
             "DOM",
             "ES5",
-            "ES2015.Promise"
+            "ES2017.Object",
+            "ES2015.Promise",
+            "ES2016.Array.Include",
+            "ES2015.Core"
         ]
     },
-    "exclude": [],
+    "exclude": [
+        "../Dashboards/**/*.ts",
+        "../masters-dashboards/**/*.ts",
+        "../masters-datagrid/**/*.ts"
+    ],
     "include": [
         "../**/*.ts"
     ]

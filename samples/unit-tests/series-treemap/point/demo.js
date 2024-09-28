@@ -26,14 +26,18 @@ QUnit.test('Treemap', assert => {
                             {
                                 id: 'A',
                                 name:
-                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                    'Ana are mere si peremgfdjgj fddifjhdfi ' +
+                                    'oidgjhodgj dtjhod kngfjgiodfjhoi ' +
+                                    'fofijhofo hjohjod ogfjho jgfk f hgf hfg',
                                 value: 6,
                                 color: 'red'
                             },
                             {
                                 id: 'B',
                                 name:
-                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                    'Ana are mere si peremgfdjgj fddifjhdfi ' +
+                                    'oidgjhodgj dtjhod kngfjgiodfjhoi ' +
+                                    'fofijhofo hjohjod ogfjho jgfk f hgf hfg',
                                 value: 6,
                                 color: 'blue'
                             },
@@ -50,7 +54,8 @@ QUnit.test('Treemap', assert => {
                     text: null
                 }
             },
-            // Create chart1 with width calculated from the container and default height of 400px
+            // Create chart1 with width calculated from the container and
+            // default height of 400px
             chart1 = Highcharts.chart(container1, defaultOptions),
             // Create chart2 with width of 470px and height of 400px
             chart2 = Highcharts.chart(
@@ -81,11 +86,13 @@ QUnit.test('Treemap', assert => {
                 true,
                 'Property ' +
                     prop +
-                    ' of chart has the same behaviour after a resize as with a first render'
+                    ' of chart has the same behaviour after a resize as with ' +
+                    'a first render'
             );
         });
 
-        // This failed since #8160. A more robust solution would be to clip or ellipsis
+        // This failed since #8160. A more robust solution would be to clip
+        // or ellipsis
         // long words in the buildText function itself.
         /*
         var dataLabel1,
@@ -107,13 +114,17 @@ QUnit.test('Treemap', assert => {
                     dataLabel1[prop],
                     dataLabel2[prop],
                     0.01,
-                    'Property ' + prop + ' of point ' + i + ' has the same behaviour after a resize as with a first render'
+                    'Property ' + prop + ' of point ' + i +
+                    ' has the same behaviour after a resize as with a ' +
+                    'first render'
                 );
                 assert.close(
                     bounding1[prop],
                     bounding2[prop],
                     0.01,
-                    'Property ' + prop + ' of point ' + i + ' bounding has the same behaviour after a resize as with a first render'
+                    'Property ' + prop + ' of point ' + i +
+                    ' bounding has the same behaviour after a resize as with ' +
+                    'a first render'
                 );
             });
         });
@@ -132,7 +143,8 @@ QUnit.test('Treemap', assert => {
                         prop +
                         ' of point ' +
                         i +
-                        ' should have the same behaviour after a resize as with a first render'
+                        ' should have the same behaviour after a resize as ' +
+                        'with a first render'
                 );
                 assert.strictEqual(
                     point1[prop] === point2[prop],
@@ -141,7 +153,8 @@ QUnit.test('Treemap', assert => {
                         prop +
                         ' of point ' +
                         i +
-                        ' bounding should have the same behaviour after a resize as with a first render'
+                        ' bounding should have the same behaviour after a ' +
+                        'resize as with a first render'
                 );
             });
         });

@@ -1,4 +1,5 @@
-// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar's color opacity not comes to 1 after drillup
+// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar's color opacity
+// not comes to 1 after drillup
 QUnit.test(
     'Drilling up left one column semi-opaque (#4667)',
     function (assert) {
@@ -196,7 +197,10 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
 
     var breadcrumbsGroup = chart.breadcrumbs.group;
 
-    assert.notEqual(chart.drillUpButton, undefined, 'Drill up button is not undefined');
+    assert.notEqual(
+        chart.drillUpButton, undefined, 'Drill up button is not ' +
+        'undefined'
+    );
 
     controller.moveTo(
         breadcrumbsGroup.translateX + 10,
@@ -366,9 +370,34 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
 QUnit.test(
     'Drilldown on the chart with category axis and cropThreshold set, #16135.',
     function (assert) {
+        let redraws = 0,
+            drillupall = 0;
+
         const chart = Highcharts.chart('container', {
             chart: {
-                type: 'column'
+                type: 'column',
+                events: {
+                    drillupall: function () {
+                        drillupall++;
+
+                        assert.strictEqual(
+                            redraws,
+                            2,
+                            `After drilldown and drillup there should be only
+                            two redraws events called (#20876).`
+                        );
+
+                        assert.strictEqual(
+                            drillupall,
+                            1,
+                            `After drilldown and drillup there should be only
+                            one drillupall event called (#20876).`
+                        );
+                    },
+                    redraw: function () {
+                        redraws++;
+                    }
+                }
             },
             xAxis: {
                 type: 'category'
@@ -390,20 +419,18 @@ QUnit.test(
                 ]
             }],
             drilldown: {
-                drilldown: {
-                    breadcrumbs: {
-                        showFullPath: false
-                    },
-                    series: [{
-                        data: [
-                            ['x-0', 1],
-                            ['x-1', 2],
-                            ['x-2', 3]
-                        ],
-                        name: 'DrillSeries',
-                        id: 'DrillSeries'
-                    }]
-                }
+                breadcrumbs: {
+                    showFullPath: false
+                },
+                series: [{
+                    data: [
+                        ['x-0', 1],
+                        ['x-1', 2],
+                        ['x-2', 3]
+                    ],
+                    name: 'DrillSeries',
+                    id: 'DrillSeries'
+                }]
             }
         });
 
@@ -455,6 +482,9 @@ QUnit.test(
             assertPassed = false;
         }
 
-        assert.ok(assertPassed, 'It should not update the length of udefined ddDupes.');
+        assert.ok(
+            assertPassed, 'It should not update the length of udefined ' +
+            'ddDupes.'
+        );
     }
 );

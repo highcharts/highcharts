@@ -1,16 +1,15 @@
-var n = 120,
+const n = 120,
     s = 600,
     pointStart = Date.UTC(2017, 0, 1),
     pointInterval = 24 * 36e5;
 
 function getData(n) {
-    var arr = [],
-        i,
-        a,
+    const arr = [];
+    let a,
         b,
         c,
         spike;
-    for (i = 0; i < n; i = i + 1) {
+    for (let i = 0; i < n; i = i + 1) {
         if (i % 100 === 0) {
             a = 2 * Math.random();
         }
@@ -34,10 +33,9 @@ function getData(n) {
 }
 
 function getSeries(n, s) {
-    var i = 0,
-        r = [];
+    const r = [];
 
-    for (; i < s; i++) {
+    for (let i = 0; i < s; i++) {
         r.push({
             data: getData(n),
             dataGrouping: {
@@ -45,7 +43,6 @@ function getSeries(n, s) {
             },
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true
         });
     }
@@ -53,18 +50,21 @@ function getSeries(n, s) {
     return r;
 }
 
-var series = getSeries(n, s);
+const series = getSeries(n, s);
 
 
 console.time('line');
 Highcharts.stockChart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     navigator: {

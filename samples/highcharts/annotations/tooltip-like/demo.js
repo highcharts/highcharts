@@ -10,7 +10,10 @@ Highcharts.chart('container', {
 
     series: [{
         keys: ['y', 'id'],
-        data: [[29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'], [176.0, '5']]
+        data: [
+            [29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'],
+            [176.0, '5']
+        ]
     }],
 
     tooltip: {
@@ -32,9 +35,9 @@ Highcharts.chart('container', {
             point: '5'
         }],
         labelOptions: {
-            format: '' +
-                '<span style="font-size: 10px">{point.x}</span><br/>' /* header */ +
-                '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>' /* body */,
+            format: '<span style="font-size: 10px">{point.x}</span><br/>' +
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}</b><br/>',
 
             backgroundColor: Highcharts.color('#f7f7f7').setOpacity(0.85).get(),
             borderWidth: 1,

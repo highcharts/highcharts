@@ -154,6 +154,24 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     // End of #16277 testing, start other tests
 
+    VBPIndicator.update({
+        params: {
+            ranges: 6
+        }
+    });
+
+    assert.strictEqual(
+        VBPIndicator.volumeDataArray.length,
+        6,
+        'VBP params should be updated after update(), #17007.'
+    );
+
+    VBPIndicator.update({
+        params: {
+            ranges: 12
+        }
+    });
+
     function round(array) {
         return array.map(function (value) {
             return value === null ? null : Number(value.toFixed(2));
@@ -213,7 +231,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             626460184,
             506662835
         ],
-        'volumeDataArray is correct after add two points on the base and the volume series.'
+        'volumeDataArray is correct after add two points on the base and the ' +
+        'volume series.'
     );
 
     base.data[base.data.length - 1].remove(false);
@@ -235,7 +254,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             626460184,
             506662835
         ],
-        'volumeDataArray is correct after point remove on the base and the volume series.'
+        'volumeDataArray is correct after point remove on the base and the ' +
+        'volume series.'
     );
 
     chart.series[0].points[14].update({
@@ -344,4 +364,93 @@ QUnit.test('VBP series errors.', function (assert) {
         to the indicator does not contain any data.`
     );
 
+});
+
+QUnit.test('YAxis extremes with VBP series.', function (assert) {
+    const data = [[
+            1631539800000,
+            150.63,
+            151.42,
+            148.75,
+            149.55
+        ], [
+            1631626200000,
+            150.35,
+            151.07,
+            146.91,
+            148.12
+        ], [
+            1631712600000,
+            148.56,
+            149.44,
+            146.37,
+            149.03
+        ], [
+            1631799000000,
+            148.44,
+            148.97,
+            147.22,
+            148.79
+        ], [
+            1631885400000,
+            148.82,
+            148.82,
+            145.76,
+            146.06
+        ]],
+        volume = [[
+            1631539800000,
+            102404300
+        ], [
+            1631626200000,
+            109296300
+        ], [
+            1631712600000,
+            83281300
+        ], [
+            1631799000000,
+            68034100
+        ], [
+            1631885400000,
+            129868800
+        ]];
+
+
+    const chart = Highcharts.stockChart('container', {
+        yAxis: [{
+            height: '60%'
+        }, {
+            top: '65%',
+            height: '35%',
+            offset: 0
+        }],
+        series: [{
+            type: 'candlestick',
+            id: 'AAPL',
+            name: 'AAPL',
+            data: data
+        }, {
+            type: 'column',
+            id: 'volume',
+            name: 'Volume',
+            data: volume,
+            yAxis: 1
+        }, {
+            type: 'vbp',
+            linkedTo: 'AAPL',
+            showInLegend: true,
+            compare: 'percent'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        144,
+        'YAxis min should remain unnaffected after adding VBP to chart, #16686.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        152,
+        'YAxis max should remain unnaffected after adding VBP to chart, #16686.'
+    );
 });

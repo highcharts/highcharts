@@ -9,7 +9,8 @@ QUnit.test('Drill down on points and categories', function (assert) {
         },
         subtitle: {
             text:
-                'Click columns to drill down to single series. Click categories to drill down both.'
+                'Click columns to drill down to single series. Click ' +
+                'categories to drill down both.'
         },
         xAxis: {
             type: 'category'

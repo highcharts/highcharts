@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,10 +17,17 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
+import type { SymbolTypeRegistry } from '../Core/Renderer/SVG/SymbolType';
 
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
+/* *
+ *
+ *  Variables
+ *
+ * */
+
+let symbols: SymbolTypeRegistry;
 
 /* *
  *
@@ -28,8 +35,9 @@ const { prototype: { symbols } } = SVGRenderer;
  *
  * */
 
-/* eslint-disable require-jsdoc, valid-jsdoc */
-
+/**
+ *
+ */
 function bottomButton(
     x: number,
     y: number,
@@ -45,6 +53,22 @@ function bottomButton(
     return symbols.roundedRect(x, y, w, h, options);
 }
 
+/**
+ *
+ */
+function compose(
+    SVGRendererClass: typeof SVGRenderer
+): void {
+
+    symbols = SVGRendererClass.prototype.symbols;
+    symbols.bottombutton = bottomButton;
+    symbols.topbutton = topButton;
+
+}
+
+/**
+ *
+ */
 function topButton(
     x: number,
     y: number,
@@ -74,13 +98,14 @@ declare module '../Core/Renderer/SVG/SymbolType' {
     }
 }
 
-symbols.bottombutton = bottomButton;
-symbols.topbutton = topButton;
-
 /* *
  *
  *  Default Export
  *
  * */
 
-export default symbols;
+const MapSymbols = {
+    compose
+};
+
+export default MapSymbols;

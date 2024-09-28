@@ -7,7 +7,7 @@
     Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
         // Initialize the chart
-        var chart = Highcharts.mapChart('container', {
+        const chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Set random data'
@@ -36,7 +36,9 @@
         });
 
         // Activate the button
-        document.getElementById('setdata').addEventListener('click', function () {
+        document.getElementById(
+            'setdata'
+        ).addEventListener('click', function () {
             data.forEach(function (p) {
                 p.value = Math.round(Math.random() * 1000);
             });

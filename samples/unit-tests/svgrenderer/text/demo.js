@@ -115,7 +115,8 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
     var text = renderer
         .text(
-            'The quick <span style="color:brown">brown</span> fox jumps <em>over</em> the lazy dog',
+            'The quick <span style="color:brown">brown</span> fox jumps <em>' +
+            'over</em> the lazy dog',
             100,
             40
         )
@@ -178,14 +179,16 @@ QUnit.module('whiteSpace: "nowrap"', hooks => {
         assert.strictEqual(
             text.element.innerHTML,
             'single_word',
-            'should not use tspan when whiteSpace equals "nowrap", and text equals "single_word".'
+            'should not use tspan when whiteSpace equals "nowrap", and text ' +
+            'equals "single_word".'
         );
 
         text.attr({ text: 'two words' });
         assert.strictEqual(
             text.element.innerHTML,
             'two words',
-            'should not use tspan when whiteSpace equals "nowrap", and text equals "two words".'
+            'should not use tspan when whiteSpace equals "nowrap", and text ' +
+            'equals "two words".'
         );
     });
 
@@ -244,7 +247,10 @@ QUnit.test('titleSetter', function (assert) {
             .add();
 
     assert.strictEqual(
-        text.element.getElementsByTagName('title')[0].textContent, // Ideally there should be a titleGetter. text.attr('title')
+        text.element.getElementsByTagName(
+            'title'
+        )[0].textContent, // Ideally there should be a
+        // titleGetter. text.attr('title')
         str.replace('<br>', ''),
         'Text element has a correct title. #5211'
     );
@@ -252,7 +258,10 @@ QUnit.test('titleSetter', function (assert) {
     // Update the title tag with a shorter text
     text.attr('title', newTitle);
     assert.strictEqual(
-        text.element.getElementsByTagName('title')[0].textContent, // Ideally there should be a titleGetter. text.attr('title')
+        text.element.getElementsByTagName(
+            'title'
+        )[0].textContent, // Ideally there should be a
+        // titleGetter. text.attr('title')
         newTitle,
         'Text element title has been updated. #5211'
     );
@@ -422,12 +431,14 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         assert.strictEqual(
             lab.element.getAttribute('dy'),
             null,
-            'First line shouldn\'t have dy (#6144) - visually the red text fits in the green box.'
+            'First line shouldn\'t have dy (#6144) - visually the red text ' +
+            'fits in the green box.'
         );
 
         const txt = renderer
             .text(
-                '<span><span>FirstLine</span><br/>SecondLine</span><br/>ThirdLine',
+                '<span><span>FirstLine</span><br/>SecondLine</span><br/>' +
+                'ThirdLine',
                 20,
                 100
             )
@@ -508,7 +519,8 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.style.width,
             '100px',
-            'The style width should be preserved after running .css with unrelated props (#8994)'
+            'The style width should be preserved after running .css with ' +
+            'unrelated props (#8994)'
         );
 
         text.css({
@@ -559,7 +571,8 @@ QUnit.test('HTML', function (assert) {
         text.css({ width: '600px' });
         assert.ok(
             text.getBBox().width < 500,
-            'When not overflowing, the bounding box should not extend to the CSS width (#16261)'
+            'When not overflowing, the bounding box should not extend to the ' +
+            'CSS width (#16261)'
         );
 
 
@@ -580,7 +593,8 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.querySelector('tspan').getAttribute('x'),
             '10',
-            '#16062: tspan breaks should have correct x when exporting useHTML=true text with allowHTML=false'
+            '#16062: tspan breaks should have correct x when exporting ' +
+            'useHTML=true text with allowHTML=false'
         );
     } finally {
         renderer.destroy();
@@ -633,7 +647,8 @@ QUnit.test('Attributes', function (assert) {
 
         var text = renderer
             .text(
-                'The quick brown fox jumps <span class="red">over</span> the lazy dog',
+                'The quick brown fox jumps <span class="red">over</span> the ' +
+                'lazy dog',
                 20,
                 20
             )
@@ -647,7 +662,8 @@ QUnit.test('Attributes', function (assert) {
 
         text = renderer
             .text(
-                'The quick brown fox jumps <span class=\'red\'>over</span> the lazy dog',
+                'The quick brown fox jumps <span class=\'red\'>over</span>' +
+                ' the lazy dog',
                 20,
                 20
             )
@@ -767,7 +783,8 @@ QUnit.test('Adding new text style (#3501)', function (assert) {
 
         txt.attr({
             text:
-                'After running .css once, the new text does not respect box width'
+                'After running .css once, the new text does not respect box ' +
+                'width'
         });
 
         var rectWidth = rect.element.getBBox().width,
@@ -871,11 +888,12 @@ QUnit.test('textPath', assert => {
 
     const text = ren
         .text('Hello path', 20, 20)
-        .setTextPath(path, {})
-        .add();
+        .add()
+        .setTextPath(path, {});
 
     const textPathHref = text.element.querySelector('textPath')
         .getAttribute('href');
+
     assert.ok(
         textPathHref,
         'A `textPath` element should be present'

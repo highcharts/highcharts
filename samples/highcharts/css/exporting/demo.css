@@ -1,10 +1,14 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 #container {
     height: 300px;
     margin: 0 auto;
     margin-top: 1em;
     max-width: 800px;
+}
+
+.controls {
+    padding: 10px;
 }
 
 .highcharts-column-series rect {

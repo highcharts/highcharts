@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     id: '0.0',
     parent: '',
     name: 'The World'
@@ -279,7 +279,8 @@ var data = [{
 {
     id: 'Af.4',
     parent: '1.3',
-    name: 'Hong Kong Special Administrative Region of the People\'s Republic of China'
+    name: 'Hong Kong Special Administrative Region of the People\'s ' +
+        'Republic of China'
 },
 {
     parent: 'Af.4',
@@ -324,7 +325,8 @@ var data = [{
 {
     id: 'Af.7',
     parent: '1.3',
-    name: 'Macao Special Administrative Region of the People\'s Republic of China'
+    name:
+        'Macao Special Administrative Region of the People\'s Republic of China'
 },
 {
     parent: 'Af.7',
@@ -803,7 +805,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Top 100 cities ranked by the number of international visitors - 2017'
+        text: 'Top 100 cities ranked by the number of international visitors ' +
+            '- 2017'
     },
     subtitle: {
         text: 'Euromonitor Rank - Source <a href="https://en.wikipedia.org/wiki/List_of_cities_by_international_visitors">Wikipedia</a>'

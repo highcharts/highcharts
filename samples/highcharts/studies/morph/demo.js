@@ -8,7 +8,6 @@
         Series,
         seriesTypes,
         SVGElement,
-        Tick,
         wrap
     } = H;
 
@@ -16,10 +15,12 @@
 
     // Morph an SVG element into a different type of element
     Highcharts.SVGElement.prototype.morph = function () {
-        // Return the point that is closest to an imaginary point directly above the
+        // Return the point that is closest to an imaginary point directly
+        // above the
         // shape. To avoid rotation when morphing.
         const alignToTopPoint = (points, bBox) => {
-            // Find the point that is closest to an imaginary point directly above
+            // Find the point that is closest to an imaginary point directly
+            // above
             // the bBox.
             const topPoint = {
                 x: bBox.x + bBox.width / 2,
@@ -77,8 +78,7 @@
 
         // Add a temporary morpher path element next to this element
         setTimeout(() => {
-            const morpher = new Morpher();
-            morpher.init(this.renderer, 'path');
+            const morpher = new Morpher(this.renderer, 'path');
             morpher
                 .attr({
                     d: getPath(morphFrom),
@@ -216,7 +216,7 @@
 
 // /////////////////////////////////////////////////////////////////////////////
 
-const chart = Highcharts.chart('chart-container', {
+const chart = Highcharts.chart('container', {
     chart: {
         animation: {
             duration: 1000

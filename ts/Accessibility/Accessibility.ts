@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -46,11 +46,12 @@ const {
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
-import FocusBorder from './FocusBorder.js';
+import FocusBorderComposition from './FocusBorder.js';
 import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './Components/LegendComponent.js';
 import MenuComponent from './Components/MenuComponent.js';
+import NavigatorComponent from './Components/NavigatorComponent.js';
 import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
 import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
@@ -89,7 +90,7 @@ declare module '../Core/Chart/ChartLike' {
  * The Accessibility class
  *
  * @private
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @class
  * @name Highcharts.Accessibility
@@ -119,10 +120,10 @@ class Accessibility {
      *
      * */
 
-    public chart: Accessibility.ChartComposition = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
-    public keyboardNavigation: KeyboardNavigation = void 0 as any;
-    public proxyProvider: ProxyProvider = void 0 as any;
+    public chart!: Accessibility.ChartComposition;
+    public components!: Accessibility.ComponentsObject;
+    public keyboardNavigation!: KeyboardNavigation;
+    public proxyProvider!: ProxyProvider;
     public zombie?: boolean; // Zombie object on old browsers
 
 
@@ -131,8 +132,6 @@ class Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -181,7 +180,8 @@ class Accessibility {
             chartMenu: new MenuComponent(),
             rangeSelector: new RangeSelectorComponent(),
             series: new SeriesComponent(),
-            zoom: new ZoomComponent()
+            zoom: new ZoomComponent(),
+            navigator: new NavigatorComponent()
         };
 
         if (a11yOptions.customComponents) {
@@ -254,9 +254,13 @@ class Accessibility {
         this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
+        // Should only be applied once, and not if explicitly disabled
         if (
-            !chart.highContrastModeActive && // Only do this once
-            whcm.isHighContrastModeActive()
+            !chart.highContrastModeActive &&
+            a11yOptions.highContrastMode !== false && (
+                whcm.isHighContrastModeActive() ||
+                a11yOptions.highContrastMode === true
+            )
         ) {
             whcm.setHighContrastTheme(chart);
         }
@@ -344,6 +348,7 @@ namespace Accessibility {
         rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
         zoom: ZoomComponent;
+        navigator: NavigatorComponent;
     }
 
     export declare class ChartComposition extends Chart {
@@ -374,8 +379,6 @@ namespace Accessibility {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const i18nFormat = A11yI18n.i18nFormat;
 
     /* *
@@ -383,8 +386,6 @@ namespace Accessibility {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroy with chart.
@@ -458,7 +459,9 @@ namespace Accessibility {
         this: ChartComposition
     ): void {
         let a11y = this.accessibility;
-        const accessibilityOptions = this.options.accessibility;
+        const accessibilityOptions = this.options.accessibility,
+            svg = this.renderer.boxWrapper.element,
+            title = this.title;
 
         if (accessibilityOptions && accessibilityOptions.enabled) {
             if (a11y && !a11y.zombie) {
@@ -468,6 +471,10 @@ namespace Accessibility {
                 if (a11y && !a11y.zombie) {
                     a11y.update();
                 }
+                // If a11y has been disabled, and is now enabled
+                if (svg.getAttribute('role') === 'img') {
+                    svg.removeAttribute('role');
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -476,8 +483,20 @@ namespace Accessibility {
             }
             delete this.accessibility;
         } else {
-            // Just hide container
-            this.renderTo.setAttribute('aria-hidden', true);
+            // If a11y has been disabled dynamically or is disabled
+            this.renderTo.setAttribute('role', 'img');
+            this.renderTo.setAttribute('aria-hidden', false);
+            this.renderTo.setAttribute('aria-label', (
+                (title && title.element.textContent) || ''
+            ).replace(/</g, '&lt;'));
+            svg.setAttribute('aria-hidden', true);
+            const description =
+                document.getElementsByClassName('highcharts-description')[0];
+
+            if (description) {
+                description.setAttribute('aria-hidden', false);
+                description.classList.remove('highcharts-linked-description');
+            }
         }
     }
 
@@ -492,23 +511,24 @@ namespace Accessibility {
         SVGElementClass: typeof SVGElement,
         RangeSelectorClass?: typeof RangeSelector
     ): void {
-        // ordered:
+
+        // Ordered:
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
         LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
-        // RangeSelector
         A11yI18n.compose(ChartClass);
-        FocusBorder.compose(ChartClass, SVGElementClass);
+        FocusBorderComposition.compose(ChartClass, SVGElementClass);
 
+        // RangeSelector
         if (RangeSelectorClass) {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype;
+        const chartProto = ChartClass.prototype;
 
+        if (!chartProto.updateA11yEnabled) {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
 
             addEvent(
@@ -550,17 +570,13 @@ namespace Accessibility {
                     }
                 );
             });
-        }
 
-        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
                 pointOnUpdate
             );
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,7 @@ import type GradientColor from './GradientColor';
  * */
 
 export interface ColorLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export type ColorType = ColorTypeRegistry[keyof ColorTypeRegistry];

@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Helsinki Average Monthly Temperature',
         align: 'left',
@@ -90,8 +90,10 @@ var chart = Highcharts.chart('container', {
             width: 3
         }],
         crosshair: true,
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
-            'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
+            'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     legend: {

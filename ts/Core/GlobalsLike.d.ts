@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,24 +26,22 @@ import type Time from './Time';
  *
  * */
 
-type InternalHighcharts = typeof Highcharts;
-
 /**
  * Helper interface to add property types to `Globals`.
  *
  * Use the `declare module 'GlobalsLike'` pattern to overload the interface in
  * this definition file.
  */
-export interface GlobalsLike extends InternalHighcharts {
+export interface GlobalsLike {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
+    readonly composed: Array<unknown>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;
-    readonly hasTouch: boolean;
     readonly isChrome: boolean;
     readonly isFirefox: boolean;
     readonly isMS: boolean;

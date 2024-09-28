@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,11 +21,14 @@ import type Chart from '../Chart/Chart.js';
 import type StackingAxis from './Stacking/StackingAxis';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    objectEach
+    objectEach,
+    pushUnique
 } = U;
 
 /* *
@@ -46,16 +49,16 @@ declare module '../../Core/Axis/AxisType' {
     }
 }
 
-/**
- * @private
- */
 interface WaterfallAxis extends StackingAxis {
     waterfall: WaterfallAxis.Composition;
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
 namespace WaterfallAxis {
 
     /* *
@@ -85,16 +88,93 @@ namespace WaterfallAxis {
 
     /* *
      *
-     *  Classes
+     *  Functions
      *
      * */
 
     /**
      * @private
      */
-    export class Composition {
+    export function compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
 
-        /* eslint-disable no-invalid-this, valid-jsdoc */
+        if (pushUnique(composed, 'Axis.Waterfall')) {
+            addEvent(AxisClass, 'init', onAxisInit);
+            addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
+            addEvent(AxisClass, 'afterRender', onAxisAfterRender);
+
+            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+        }
+
+    }
+
+    /**
+     * @private
+     */
+    function onAxisAfterBuildStacks(this: Axis): void {
+        const axis = this as WaterfallAxis,
+            stacks = axis.waterfall.stacks;
+
+        if (stacks) {
+            stacks.changed = false;
+            delete stacks.alreadyChanged;
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onAxisAfterRender(this: Axis): void {
+        const axis = this as WaterfallAxis,
+            stackLabelOptions = axis.options.stackLabels;
+
+        if (
+            stackLabelOptions && stackLabelOptions.enabled &&
+            axis.waterfall.stacks
+        ) {
+            axis.waterfall.renderStackTotals();
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onAxisInit(this: Axis): void {
+        const axis = this;
+
+        if (!axis.waterfall) {
+            axis.waterfall = new Composition(axis as WaterfallAxis);
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onChartBeforeRedraw(this: Chart): void {
+        const axes = this.axes as Array<WaterfallAxis>,
+            series = this.series;
+
+        for (const serie of series) {
+            if (serie.options.stacking) {
+                for (const axis of axes) {
+                    if (!axis.isXAxis) {
+                        axis.waterfall.stacks.changed = true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    /* *
+     *
+     *  Classes
+     *
+     * */
+
+    export class Composition {
 
         /* *
          *
@@ -102,9 +182,6 @@ namespace WaterfallAxis {
          *
          * */
 
-        /**
-         * @private
-         */
         public constructor(axis: WaterfallAxis) {
             this.axis = axis;
             this.stacks = {
@@ -153,11 +230,11 @@ namespace WaterfallAxis {
 
             // Render each waterfall stack total
             if (stackTotalGroup) {
-                objectEach(waterfallStacks, function (type): void {
-                    objectEach(type, function (
+                objectEach(waterfallStacks, (type): void => {
+                    objectEach(type, (
                         stackItem: StacksItemObject,
                         key: string
-                    ): void {
+                    ): void => {
                         dummyStackItem.total = stackItem.stackTotal;
                         dummyStackItem.x = +key;
                         if (stackItem.label) {
@@ -178,84 +255,6 @@ namespace WaterfallAxis {
 
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-    /**
-     * @private
-     */
-    export function compose(
-        AxisClass: typeof Axis,
-        ChartClass: typeof Chart
-    ): void {
-
-        addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
-        addEvent(AxisClass, 'afterRender', onAfterRender);
-        addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
-
-    }
-    /**
-     * @private
-     */
-    function onAfterBuildStacks(this: Axis): void {
-        const axis = this as WaterfallAxis;
-        const stacks = axis.waterfall.stacks;
-
-        if (stacks) {
-            stacks.changed = false;
-            delete stacks.alreadyChanged;
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onAfterRender(this: Axis): void {
-        const axis = this as WaterfallAxis;
-        const stackLabelOptions = axis.options.stackLabels;
-
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
-            axis.waterfall.renderStackTotals();
-        }
-    }
-
-
-    /**
-     * @private
-     */
-    function onBeforeRedraw(this: Chart): void {
-        let axes = this.axes as Array<WaterfallAxis>,
-            series = this.series,
-            i = series.length;
-
-        while (i--) {
-            if (series[i].options.stacking) {
-                axes.forEach(function (axis: WaterfallAxis): void {
-                    if (!axis.isXAxis) {
-                        axis.waterfall.stacks.changed = true;
-                    }
-                });
-                i = 0;
-            }
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onInit(this: Axis): void {
-        const axis = this;
-
-        if (!axis.waterfall) {
-            axis.waterfall = new Composition(axis as WaterfallAxis);
-        }
-    }
 }
 
 /* *

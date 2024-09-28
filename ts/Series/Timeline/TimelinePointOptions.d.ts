@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -28,10 +28,42 @@ import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
  * */
 
 export interface TimelinePointOptions extends LinePointOptions {
+
     dataLabels?: TimelineDataLabelOptions;
+
+    /**
+     * The description of event. This description will be shown in tooltip.
+     *
+     * @product highcharts
+     */
+    description?: string;
+
     isNull?: boolean;
+
+    /**
+     * The label of event.
+     *
+     * @product highcharts
+     */
+    label?: string;
+
+    /**
+     * The name of event.
+     *
+     * @product highcharts
+     */
+    name?: string;
+
     radius?: number;
+
     visible?: boolean;
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TimelinePointOptions;

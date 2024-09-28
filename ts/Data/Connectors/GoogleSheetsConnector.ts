@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,7 @@
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sophie Bremer
+ *  - Jomar Hønsi
  *
  * */
 
@@ -23,9 +24,10 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import DataConnector from './DataConnector.js';
-import DataTable from '../DataTable.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -88,10 +90,9 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * */
 
-    protected static readonly defaultOptions: GoogleSheetsConnector.Options = {
+    protected static readonly defaultOptions: GoogleSheetsConnectorOptions = {
         googleAPIKey: '',
         googleSpreadsheetKey: '',
-        worksheet: 1,
         enablePolling: false,
         dataRefreshRate: 2,
         firstRowAsNames: true
@@ -127,7 +128,7 @@ class GoogleSheetsConnector extends DataConnector {
      *
      * */
 
-    public readonly options: GoogleSheetsConnector.Options;
+    public readonly options: GoogleSheetsConnectorOptions;
 
     /**
      * The attached converter, which can be replaced in the constructor
@@ -151,7 +152,10 @@ class GoogleSheetsConnector extends DataConnector {
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
         const connector = this,
+            converter = connector.converter,
+            table = connector.table,
             {
+                dataModifier,
                 dataRefreshRate,
                 enablePolling,
                 firstRowAsNames,
@@ -164,64 +168,69 @@ class GoogleSheetsConnector extends DataConnector {
                 connector.options
             );
 
-        // If already loaded, clear the current table
-        connector.table.deleteColumns();
-
         connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: connector.table,
+            table,
             url
         });
 
+        if (!URL.canParse(url)) {
+            throw new Error('Invalid URL: ' + url);
+        }
+
         return fetch(url)
-            .then((response): Promise<void> => response
-                .json()
-                .then((json): void => {
+            .then((
+                response
+            ): Promise<GoogleSheetsConverter.GoogleSpreadsheetJSON> => (
+                response.json()
+            ))
+            .then((json): Promise<this> => {
 
-                    if (isGoogleError(json)) {
-                        throw new Error(json.error.message);
-                    }
+                if (isGoogleError(json)) {
+                    throw new Error(json.error.message);
+                }
 
-                    connector.converter.parse({
-                        firstRowAsNames,
-                        json:
-                            json as GoogleSheetsConverter.GoogleSpreadsheetJSON
-                    });
+                converter.parse({
+                    firstRowAsNames,
+                    json
+                });
 
-                    connector.table.setColumns(
-                        connector.converter.getTable().getColumns()
+                // If already loaded, clear the current table
+                table.deleteColumns();
+                table.setColumns(
+                    converter.getTable().getColumns()
+                );
+
+                return connector.setModifierOptions(dataModifier);
+            })
+            .then((): this => {
+                connector.emit<GoogleSheetsConnector.Event>({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table,
+                    url
+                });
+
+                // Polling
+                if (enablePolling) {
+                    setTimeout(
+                        (): Promise<this> => connector.load(),
+                        Math.max(dataRefreshRate || 0, 1) * 1000
                     );
+                }
 
-                    connector.emit<GoogleSheetsConnector.Event>({
-                        type: 'afterLoad',
-                        detail: eventDetail,
-                        table: connector.table,
-                        url
-                    });
-
-                    // Polling
-                    if (enablePolling) {
-                        setTimeout(
-                            (): Promise<this> => connector.load(),
-                            Math.max(dataRefreshRate || 0, 1) * 1000
-                        );
-                    }
-                })
-            )['catch']((error): Promise<void> => {
+                return connector;
+            })['catch']((error): never => {
                 connector.emit<GoogleSheetsConnector.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table: connector.table
+                    table
                 });
-                return Promise.reject(error);
-            })
-            .then((): this =>
-                connector
-            );
+                throw error;
+            });
     }
-
 }
 
 /* *
@@ -238,7 +247,7 @@ namespace GoogleSheetsConnector {
      *
      * */
 
-    export type Event = (ErrorEvent|LoadEvent);
+    export type Event = (ErrorEvent | LoadEvent);
 
     export type ErrorEvent = DataConnector.ErrorEvent;
 
@@ -251,28 +260,13 @@ namespace GoogleSheetsConnector {
     }
 
     /**
-     * Options of the GoogleSheetsConnector.
-     */
-    export interface Options extends DataConnector.Options {
-        dataRefreshRate: number;
-        enablePolling: boolean;
-        endColumn?: number;
-        endRow?: number;
-        firstRowAsNames: boolean;
-        googleAPIKey: string;
-        googleSpreadsheetKey: string;
-        googleSpreadsheetRange?: string;
-        startColumn?: number;
-        startRow?: number;
-        worksheet?: number;
-    }
-
-    /**
      * Available options for constructor and converter of the
      * GoogleSheetsConnector.
      */
-    export type UserOptions =
-        (Partial<Options>&GoogleSheetsConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<GoogleSheetsConnectorOptions> &
+        GoogleSheetsConverter.UserOptions
+    );
 
     /* *
      *
@@ -295,26 +289,26 @@ namespace GoogleSheetsConnector {
     export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
-        options: Partial<(FetchURLOptions&Options)> = {}
+        options: Partial<(FetchURLOptions & GoogleSheetsConnectorOptions)> = {}
     ): string {
-        return (
-            `https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/` +
-            (
-                options.onlyColumnNames ?
-                    'A1:Z1' :
-                    buildQueryRange(options)
-            ) +
-            '?alt=json' +
-            (
-                options.onlyColumnNames ?
-                    '' :
-                    '&dateTimeRenderOption=FORMATTED_STRING' +
-                    '&majorDimension=COLUMNS' +
-                    '&valueRenderOption=UNFORMATTED_VALUE'
-            ) +
-            '&prettyPrint=false' +
-            `&key=${apiKey}`
-        );
+        const url = new URL(`https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/`);
+
+        const range = options.onlyColumnNames ?
+            'A1:Z1' : buildQueryRange(options);
+        url.pathname += range;
+
+        const searchParams = url.searchParams;
+        searchParams.set('alt', 'json');
+
+        if (!options.onlyColumnNames) {
+            searchParams.set('dateTimeRenderOption', 'FORMATTED_STRING');
+            searchParams.set('majorDimension', 'COLUMNS');
+            searchParams.set('valueRenderOption', 'UNFORMATTED_VALUE');
+        }
+        searchParams.set('prettyPrint', 'false');
+        searchParams.set('key', apiKey);
+
+        return url.href;
     }
 
     /**
@@ -322,7 +316,7 @@ namespace GoogleSheetsConnector {
      * @private
      */
     export function buildQueryRange(
-        options: Partial<Options> = {}
+        options: Partial<GoogleSheetsConnectorOptions> = {}
     ): string {
         const {
             endColumn,
@@ -344,7 +338,6 @@ namespace GoogleSheetsConnector {
             )
         );
     }
-
 }
 
 /* *

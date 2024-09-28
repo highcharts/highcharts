@@ -28,7 +28,7 @@ export interface ROCOptions extends SMAOptions {
 }
 
 export interface ROCParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

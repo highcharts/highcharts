@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Class representing an Instrument with mappable parameters for sonification.
  *
@@ -98,7 +98,9 @@ class SonificationInstrument {
         this.createNodesFromCapabilities(extend({
             pan: true
         } as SonificationInstrumentCapabilitiesOptions,
-        options.capabilities || {}));
+        options.capabilities || {}
+        )
+        );
 
         this.connectCapabilityNodes(this.volumeNode, this.masterVolNode);
         this.synthPatch = new SynthPatch(
@@ -119,7 +121,8 @@ class SonificationInstrument {
      */
     setMasterVolume(volume: number): void {
         this.masterVolNode.gain.setTargetAtTime(
-            volume, 0, SonificationInstrument.rampTime);
+            volume, 0, SonificationInstrument.rampTime
+        );
     }
 
 
@@ -143,7 +146,8 @@ class SonificationInstrument {
 
         if (defined(freq)) {
             this.synthPatch.playFreqAtTime(
-                time, freq, mergedParams.noteDuration);
+                time, freq, mergedParams.noteDuration
+            );
         }
         if (
             defined(mergedParams.tremoloDepth) ||
@@ -163,15 +167,19 @@ class SonificationInstrument {
             defined(mergedParams.lowpassFreq) ||
             defined(mergedParams.lowpassResonance)
         ) {
-            this.setFilterAtTime('lowpass', time,
-                mergedParams.lowpassFreq, mergedParams.lowpassResonance);
+            this.setFilterAtTime(
+                'lowpass', time,
+                mergedParams.lowpassFreq, mergedParams.lowpassResonance
+            );
         }
         if (
             defined(mergedParams.highpassFreq) ||
             defined(mergedParams.highpassResonance)
         ) {
-            this.setFilterAtTime('highpass', time,
-                mergedParams.highpassFreq, mergedParams.highpassResonance);
+            this.setFilterAtTime(
+                'highpass', time,
+                mergedParams.highpassFreq, mergedParams.highpassResonance
+            );
         }
     }
 
@@ -233,7 +241,8 @@ class SonificationInstrument {
         if (this.panNode) {
             this.panNode.pan.setTargetAtTime(
                 pan, time + this.audioContext.currentTime,
-                SonificationInstrument.rampTime);
+                SonificationInstrument.rampTime
+            );
         }
     }
 
@@ -253,11 +262,13 @@ class SonificationInstrument {
         if (node) {
             if (defined(resonance)) {
                 node.Q.setTargetAtTime(
-                    resonance, audioTime, SonificationInstrument.rampTime);
+                    resonance, audioTime, SonificationInstrument.rampTime
+                );
             }
             if (defined(frequency)) {
                 node.frequency.setTargetAtTime(
-                    frequency, audioTime, SonificationInstrument.rampTime);
+                    frequency, audioTime, SonificationInstrument.rampTime
+                );
             }
         }
     }
@@ -271,7 +282,8 @@ class SonificationInstrument {
         if (this.volumeNode) {
             this.volumeNode.gain.setTargetAtTime(
                 volume, time + this.audioContext.currentTime,
-                SonificationInstrument.rampTime);
+                SonificationInstrument.rampTime
+            );
         }
     }
 
@@ -286,11 +298,13 @@ class SonificationInstrument {
         const audioTime = this.audioContext.currentTime + time;
         if (this.tremoloDepth && defined(depth)) {
             this.tremoloDepth.gain.setTargetAtTime(
-                depth, audioTime, SonificationInstrument.rampTime);
+                depth, audioTime, SonificationInstrument.rampTime
+            );
         }
         if (this.tremoloOsc && defined(speed)) {
             this.tremoloOsc.frequency.setTargetAtTime(
-                15 * speed, audioTime, SonificationInstrument.rampTime);
+                15 * speed, audioTime, SonificationInstrument.rampTime
+            );
         }
     }
 
@@ -354,7 +368,6 @@ class SonificationInstrument {
      * @private
      */
     static noteStringToC0Distance(note: string): number {
-        // eslint-disable-next-line require-unicode-regexp
         const match = note.match(/^([a-g][#b]?)([0-8])$/i),
             semitone = match ? match[1] : 'a',
             wholetone = semitone[0].toLowerCase(),

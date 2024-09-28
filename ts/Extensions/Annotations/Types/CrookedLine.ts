@@ -102,6 +102,7 @@ class CrookedLine extends Annotation {
             shape = this.initShape(
                 merge(typeOptions.line, {
                     type: 'path',
+                    className: 'highcharts-crooked-lines',
                     points: this.points.map((_point, i): Function => (
                         function (
                             target: Controllable
@@ -213,8 +214,8 @@ CrookedLine.prototype.defaultOptions = merge(
                     xy = MockPoint.pointToPixels(target.points[this.index]);
 
                 return {
-                    x: xy.x - graphic.width / 2,
-                    y: xy.y - graphic.height / 2
+                    x: xy.x - (graphic.width || 0) / 2,
+                    y: xy.y - (graphic.height || 0) / 2
                 };
             },
 

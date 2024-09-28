@@ -5,7 +5,11 @@ Highcharts.chart('container-line', {
     },
 
     caption: {
-        text: 'Commonly used desktop and laptop screen readers from January 2009 to July 2015 as reported in the Webaim Survey. JAWS remains the most used screen reader, but is steadily declining. ZoomText and WindowEyes are both displaying large growth from 2014 to 2015.'
+        text: 'Commonly used desktop and laptop screen readers from January ' +
+            '2009 to July 2015 as reported in the Webaim Survey. JAWS ' +
+            'remains the most used screen reader, but is steadily declining. ' +
+            'ZoomText and WindowEyes are both displaying large growth from ' +
+            '2014 to 2015.'
     },
 
     legend: {
@@ -31,7 +35,10 @@ Highcharts.chart('container-line', {
         title: {
             text: 'Time'
         },
-        categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
+        categories: [
+            'January 2009', 'December 2010', 'May 2012', 'January 2014',
+            'July 2015'
+        ]
     },
 
     tooltip: {
@@ -84,11 +91,10 @@ Highcharts.chart('container-line', {
 
 // Make monochrome colors and set them as default for all pies
 Highcharts.getOptions().plotOptions.pie.colors = (function () {
-    var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
+    const colors = [],
+        base = Highcharts.getOptions().colors[0];
 
-    for (i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 10; i += 1) {
         // Start out with a darkened base color (negative brighten), and end
         // up with a much brighter color
         colors.push(Highcharts.color(base).brighten((i - 3) / 10).get());
@@ -102,7 +108,11 @@ Highcharts.chart('container-pie', {
     },
 
     caption: {
-        text: 'Most commonly used desktop and laptop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
+        text: 'Most commonly used desktop and laptop screen readers in July ' +
+            '2015 as reported in the Webaim Survey. Shown as percentage of ' +
+            'respondents. JAWS is by far the most used screen reader, with ' +
+            '30% of respondents using it. ZoomText and Window-Eyes follow, ' +
+            'each with around 20% usage.'
     },
 
     title: {
@@ -181,7 +191,10 @@ Highcharts.chart('container-column', {
     },
 
     caption: {
-        text: 'Disability types of the survey respondents. Blindness and low vision are by far the most common, with 64% and 38.7% of respondents respectively. Note that some respondents reported multiple disabilities.'
+        text: 'Disability types of the survey respondents. Blindness and low ' +
+            'vision are by far the most common, with 64% and 38.7% of ' +
+            'respondents respectively. Note that some respondents reported ' +
+            'multiple disabilities.'
     },
 
     title: {
@@ -203,11 +216,15 @@ Highcharts.chart('container-column', {
 
     tooltip: {
         headerFormat: '',
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {point.category}: <b>{point.y}</b>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{point.category}: <b>{point.y}</b>'
     },
 
     xAxis: {
-        categories: ['Blindness', 'Low Vision/Visually-Impaired', 'Cognitive', 'Deafness/Hard-of-Hearing', 'Motor', 'Other']
+        categories: [
+            'Blindness', 'Low Vision/Visually-Impaired', 'Cognitive',
+            'Deafness/Hard-of-Hearing', 'Motor', 'Other'
+        ]
     },
 
     series: [{
@@ -234,7 +251,10 @@ Highcharts.chart('container-pie-3d', {
     },
 
     caption: {
-        text: 'Respondents\' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time.'
+        text: 'Respondents\' current level of employment. The results ' +
+            'clearly reflect the significant unemployment and ' +
+            'underemployment of individuals with disabilities, with only ' +
+            '40.7% of respondents being employed full time.'
     },
 
     title: {

@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         text: 'Highcharts multi-series drilldown'
     },
     subtitle: {
-        text: 'Click columns to drill down to single series. Click categories to drill down both.'
+        text: 'Click columns to drill down to single series. Click ' +
+            'categories to drill down both.'
     },
     xAxis: {
         type: 'category'

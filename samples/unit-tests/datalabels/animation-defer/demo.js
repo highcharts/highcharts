@@ -89,7 +89,8 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                 assert.strictEqual(
                     dlOpacity === 0,
                     true,
-                    'Animate should not be started - dataLabels should be invisible'
+                    'Animate should not be started - dataLabels should be ' +
+                    'invisible'
                 );
             }, 150);
 

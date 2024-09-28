@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for the range selector.
  *
@@ -24,16 +24,16 @@ import type Accessibility from '../Accessibility';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../Utils/Announcer.js';
+import Chart from '../../Core/Chart/Chart.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
     getAxisRangeDescription
 } = ChartUtilities;
-import Announcer from '../Utils/Announcer.js';
-import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -46,8 +46,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 
 /**
@@ -92,7 +90,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
 
     public removeDropdownKeydownHandler?: Function;
 
@@ -450,7 +448,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             // Tab-press with dropdown focused does not propagate to chart
             // automatically, so we manually catch and handle it when relevant.
-            this.removeDropdownKeydownHandler = addEvent(dropdown, 'keydown',
+            this.removeDropdownKeydownHandler = addEvent(
+                dropdown, 'keydown',
                 (e: KeyboardEvent): void => {
                     const isTab = (e.which || e.keyCode) === this.keyCodes.tab,
                         a11y = chart.accessibility;
@@ -630,21 +629,9 @@ namespace RangeSelectorComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -703,18 +690,15 @@ namespace RangeSelectorComponent {
         ChartClass: typeof Chart,
         RangeSelectorClass: typeof RangeSelector
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.highlightRangeSelectorButton) {
             chartProto.highlightRangeSelectorButton = (
                 chartHighlightRangeSelectorButton
             );
-        }
 
-        if (U.pushUnique(composedMembers, RangeSelectorClass)) {
             addEvent(
-                RangeSelector,
+                RangeSelectorClass,
                 'afterBtnClick',
                 rangeSelectorAfterBtnClick
             );

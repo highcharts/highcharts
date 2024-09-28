@@ -320,7 +320,8 @@
                     connection = connectionFromPoint(point),
                     graphic = connection.graphics,
                     // Check only the start marker, because both start and end
-                    // markers should be placed using the same logic. If end marker
+                    // markers should be placed using the same logic. If end
+                    // marker
                     // starts acting up, add another pair of asserts for that as
                     // well
                     markerBox = graphic.start.getBBox(),
@@ -338,7 +339,8 @@
                 } else if (point.options.connect === 'top') {
                     markerCenter.y += 4;
                 }
-                // Horizontal alignment modifies marker x, so expect an x modification
+                // Horizontal alignment modifies marker x, so expect an x
+                // modification
                 if (align === 'left') {
                     xMod = -mod;
                 } else if (align === 'right') {
@@ -347,7 +349,8 @@
                     xMod = markerCenter.x - pointCenter.x;
                 }
 
-                // Vertical alignment modifies marker y, so expect a y modification
+                // Vertical alignment modifies marker y, so expect a y
+                // modification
                 if (verticalAlign === 'top') {
                     yMod = -mod + 1;
                 } else if (verticalAlign === 'bottom') {
@@ -498,7 +501,8 @@
                     577.5,
                     25.5
                 ],
-                'should not switch direction when waypoint equals start or end. #10329.'
+                'should not switch direction when waypoint equals start or ' +
+                'end. #10329.'
             );
         });
     });

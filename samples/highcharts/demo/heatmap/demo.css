@@ -5,6 +5,10 @@
     margin: 1em auto;
 }
 
+.highcharts-description {
+    margin: 10px;
+}
+
 .highcharts-data-table table {
     font-family: Verdana, sans-serif;
     border-collapse: collapse;

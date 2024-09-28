@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Paweł Dalek
+ *  (c) 2010-2024 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
@@ -22,6 +22,7 @@ import type AxisType from '../../../Core/Axis/AxisType';
 import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -45,7 +46,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     arrayMax,
@@ -234,16 +234,16 @@ class VBPIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<VBPPoint> = void 0 as any;
-    public negWidths: Array<number> = void 0 as any;
-    public options: VBPOptions = void 0 as any;
-    public points: Array<VBPPoint> = void 0 as any;
-    public posWidths: Array<number> = void 0 as any;
-    public priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = void 0 as any;
-    public rangeStep: number = void 0 as any;
-    public volumeDataArray: Array<number> = void 0 as any;
-    public zoneStarts: Array<number> = void 0 as any;
-    public zoneLinesSVG?: SVGElement = void 0 as any;
+    public data!: Array<VBPPoint>;
+    public negWidths!: Array<number>;
+    public options!: VBPOptions;
+    public points!: Array<VBPPoint>;
+    public posWidths!: Array<number>;
+    public priceZones!: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
+    public rangeStep!: number;
+    public volumeDataArray!: Array<number>;
+    public zoneStarts!: Array<number>;
+    public zoneLinesSVG?: SVGElement;
 
     /* *
      *
@@ -252,15 +252,20 @@ class VBPIndicator extends SMAIndicator {
      * */
 
     public init(
-        chart: Chart
+        chart: Chart,
+        options: VBPOptions
     ): VBPIndicator {
         const indicator = this;
+
+        // Series.update() sends data that is not necessary as everything is
+        // calculated in getValues(), #17007
+        delete options.data;
 
         super.init.apply(indicator, arguments);
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             function (): void {
                 // Protection for a case where the indicator is being updated,
@@ -471,10 +476,14 @@ class VBPIndicator extends SMAIndicator {
             maxVolume = arrayMax(volumeDataArray);
             primalBarWidth = chart.plotWidth / 2;
             chartPlotTop = chart.plotTop;
-            barHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
-            oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
+            barHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
+            oldBarHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
 
             if (pointPadding) {
                 barHeightP = abs(barHeight * (1 - 2 * pointPadding));
@@ -520,10 +529,32 @@ class VBPIndicator extends SMAIndicator {
                     chart,
                     yAxis,
                     indicator.zoneStarts,
-                    (zoneLinesOptions.styles as any)
+                    (zoneLinesOptions.styles as any
+                    )
                 );
             }
         }
+    }
+
+    public getExtremes(): DataExtremesObject {
+        const prevCompare = this.options.compare,
+            prevCumulative = this.options.cumulative;
+        let ret: DataExtremesObject;
+
+        // Temporarily disable cumulative and compare while getting the extremes
+        if (this.options.compare) {
+            this.options.compare = void 0;
+            ret = super.getExtremes();
+            this.options.compare = prevCompare;
+        } else if (this.options.cumulative) {
+            this.options.cumulative = false;
+            ret = super.getExtremes();
+            this.options.cumulative = prevCumulative;
+        } else {
+            ret = super.getExtremes();
+        }
+
+        return ret;
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
@@ -614,7 +645,7 @@ class VBPIndicator extends SMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
-    // Specifing where each zone should start ans end
+    // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
         xValues: Array<number>,
@@ -717,7 +748,7 @@ class VBPIndicator extends SMAIndicator {
         // Checks if each point has a corresponding volume value
         if (abs(baseSeriesLength - volumeSeriesLength)) {
             // If the first point don't have volume, add 0 value at the
-            // beggining of the volume array
+            // beginning of the volume array
             if (xValues[0] !== volumeXData[0]) {
                 volumeYData.unshift(0);
             }
@@ -796,7 +827,7 @@ class VBPIndicator extends SMAIndicator {
         return priceZones;
     }
 
-    // Function responsoble for drawing additional lines indicating zones
+    // Function responsible for drawing additional lines indicating zones
     public drawZones(
         chart: Chart,
         yAxis: AxisType,
@@ -941,4 +972,4 @@ export default VBPIndicator;
  * @apioption series.vbp
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

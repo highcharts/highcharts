@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Jakub Januchta
+ js_wrap: b
+...

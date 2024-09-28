@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,8 +18,6 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
@@ -31,7 +29,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
- * Scrollbars can  also be applied to other types of axes.
+ * Scrollbars can also be applied to other types of axes.
  *
  * Another approach to scrollable charts is the [chart.scrollablePlotArea](
  * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
@@ -224,7 +222,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBackgroundColor: 'none',
+    trackBackgroundColor: 'rgba(255, 255, 255, 0.001)', // #18922
 
     /**
      * The color of the border of the scrollbar track.

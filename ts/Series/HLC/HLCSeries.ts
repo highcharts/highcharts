@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Pawel Lysy
+ *  (c) 2010-2024 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -30,6 +30,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
+    crisp,
     extend,
     merge
 } = U;
@@ -68,13 +69,13 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<HLCPoint> = void 0 as any;
+    public data!: Array<HLCPoint>;
 
-    public options: HLCSeriesOptions = void 0 as any;
+    public options!: HLCSeriesOptions;
 
-    public points: Array<HLCPoint> = void 0 as any;
+    public points!: Array<HLCPoint>;
 
-    public yData: Array<Array<number>> = void 0 as any;
+    public yData!: Array<Array<number>>;
 
     /* *
      *
@@ -120,25 +121,22 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
     protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
-        // crisp vector coordinates
+        // Crisp vector coordinates
         const strokeWidth = graphic.strokeWidth(),
             series = point.series,
-            crispCorr = (strokeWidth % 2) / 2,
             // #2596:
-            crispX = Math.round(point.plotX as any) - crispCorr,
+            crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
-        let plotClose = point.plotClose;
-
-        // the vertical stem
+        // The vertical stem
         const path: SVGPath = [
             ['M', crispX, Math.round(point.yBottom as any)],
             ['L', crispX, Math.round(point.plotHigh as any)]
         ];
 
-        // close
+        // Close
         if (point.close !== null) {
-            plotClose = Math.round(point.plotClose) + crispCorr;
+            const plotClose = crisp(point.plotClose, strokeWidth);
             path.push(
                 ['M', crispX, plotClose],
                 ['L', crispX + halfWidth, plotClose]
@@ -178,7 +176,7 @@ class HLCSeries extends ColumnSeries {
                 ); // #3897
             }
 
-            // crisp vector coordinates
+            // Crisp vector coordinates
             path = series.getPointPath(point, graphic);
             graphic[!graphic ? 'attr' : 'animate']({ d: path })
                 .addClass(point.getClassName(), true);
@@ -224,7 +222,7 @@ class HLCSeries extends ColumnSeries {
     }
 
     public toYData(point: HLCPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.high, point.low, point.close];
     }
 

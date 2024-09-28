@@ -27,7 +27,8 @@ QUnit.test(
         assert.strictEqual(
             points[1].dataLabel.attr('y') > points[2].dataLabel.attr('y'),
             true,
-            'Point\'s y=0 dataLabel is placed below point\'s dataLabel with y=0.1.'
+            'Point\'s y=0 dataLabel is placed below point\'s dataLabel ' +
+            'with y=0.1.'
         );
     }
 );

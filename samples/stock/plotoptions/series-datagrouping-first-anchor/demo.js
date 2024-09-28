@@ -1,5 +1,5 @@
-var hour = 3600 * 1000;
-var data = [
+const hour = 3600 * 1000;
+const data = [
     [0.2 * hour, 1], // first group
     [1 * hour, 2], // first group
     [1.3 * hour, 2], // first group
@@ -25,22 +25,26 @@ Highcharts.stockChart('container', {
         plotLines: [{
             value: 0.2 * hour,
             label: {
-                text: 'First point in group'
+                text: 'First point in group',
+                y: 40
             }
         }, {
             value: 1.3 * hour,
             label: {
-                text: 'Last point in group'
+                text: 'Last point in group',
+                y: 40
             }
         }, {
             value: 10.3 * hour,
             label: {
-                text: 'First point in group'
+                text: 'First point in group',
+                y: 40
             }
         }, {
             value: 11.7 * hour,
             label: {
-                text: 'Last point in group'
+                text: 'Last point in group',
+                y: 40
             }
         }],
         plotBands: [{

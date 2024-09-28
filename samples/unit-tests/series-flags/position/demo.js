@@ -1,7 +1,7 @@
-QUnit.test('Flags on inverted chart', function (assert) {
+QUnit.test('Flags on the chart', function (assert) {
     var chart = new Highcharts.Chart('container', {
         chart: {
-            inverted: true
+            type: 'spline'
         },
         series: [
             {
@@ -21,6 +21,9 @@ QUnit.test('Flags on inverted chart', function (assert) {
                 onSeries: 'main',
                 data: [
                     {
+                        x: 1.75
+                    },
+                    {
                         x: 3
                     }
                 ]
@@ -28,16 +31,30 @@ QUnit.test('Flags on inverted chart', function (assert) {
         ]
     });
 
+    assert.close(
+        chart.series[2].points[0].y,
+        29.14,
+        0.5,
+        'Flag properly placed on the spline series curve (#19264)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true,
+            type: 'line'
+        }
+    });
+
     assert.strictEqual(
         chart.series[1].points[0].plotX,
         0,
-        'Flag properly placed on xAxis (#4960)'
+        'Flag properly placed on xAxis of the inverted chart (#4960)'
     );
 
     assert.strictEqual(
-        chart.series[2].points[0].plotX,
+        chart.series[2].points[1].plotX,
         chart.yAxis[0].toPixels(chart.series[0].points[3].y, true),
-        'Flag properly placed on xAxis (#4960)'
+        'Flag properly placed on xAxis of the inverted chart (#4960)'
     );
 });
 

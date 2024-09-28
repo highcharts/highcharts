@@ -1,28 +1,18 @@
 QUnit.test('Series shadows', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    shadow: {
-                        color: 'red',
-                        width: 10,
-                        offsetX: 40,
-                        offsetY: -20,
-                        opacity: 0.05
-                    },
-                    data: [29, 71, 106, 129, 144]
-                }
-            ]
-        }),
-        attributes = [
-            'stroke="blue"',
-            'stroke-opacity="0.2"',
-            'transform="translate(0, 20)'
-        ],
-        defaultAttributes = [
-            'stroke="#000000"',
-            'stroke-opacity="0.15"',
-            'transform="translate(1, 1)'
-        ];
+        series: [
+            {
+                shadow: {
+                    color: 'red',
+                    width: 10,
+                    offsetX: 40,
+                    offsetY: -20,
+                    opacity: 0.05
+                },
+                data: [29, 71, 106, 129, 144]
+            }
+        ]
+    });
 
     chart.series[0].update({
         shadow: {
@@ -44,14 +34,23 @@ QUnit.test('Series shadows', function (assert) {
         'Shadows amount should be updated (#12091)'
     );
 
+    assert.ok(
+        chart.series[0].graph.attr('filter').indexOf('userspaceonuse') !== -1,
+        `Shadow should have 'filterUnits: userSpaceOnUse' attribute
+        with line series (#19093)`
+    );
+
     chart.series[0].update({
         shadow: true
     });
 
     assert.strictEqual(
         chart.series[0].graph.attr('filter'),
-        'url(#drop-shadow)',
-        'Shadows should be updated when old options defined as object and new as boolean (#12091).'
+        `url(#highcharts-drop-shadow-${
+            chart.index
+        }-filterunits-userspaceonuse)`,
+        'Shadows should be updated when old options defined as object and ' +
+        'new as boolean (#12091, #19093).'
     );
 
     chart = Highcharts.chart('container', {
@@ -66,12 +65,6 @@ QUnit.test('Series shadows', function (assert) {
         ]
     });
 
-    attributes = [
-        'stroke="red"',
-        'stroke-opacity="0.3"',
-        'transform="translate(10, 5)'
-    ];
-
     chart.series[0].update({
         shadow: {
             width: 20,
@@ -84,6 +77,19 @@ QUnit.test('Series shadows', function (assert) {
 
     assert.ok(
         chart.series[0].graph.attr('filter').indexOf('red') !== -1,
-        'Shadows should be updated when old options defined as boolean and new as object (#12091).'
+        'Shadows should be updated when old options defined as boolean and ' +
+        'new as object (#12091).'
+    );
+
+    chart.series[0].update({
+        type: 'column'
+    });
+
+    const firstColumn = chart.series[0].points[0];
+
+    assert.ok(
+        firstColumn.graphic.attr('filter').indexOf('userpacense') === -1,
+        `Shadow shouldn't have 'filterUnits: userSpaceOnUse' on other types
+        of series (#19093)`
     );
 });

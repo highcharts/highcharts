@@ -75,7 +75,7 @@ function edgePoint(
             // Distance between the two first lines in pixels
             deltaX = points.length > 1 ?
                 points[1].plotX - points[0].plotX : 0,
-            // firstLine.x + fibb * offset
+            // `firstLine.x + fibb * offset`
             x = xAxis.toValue(
                 points[0].plotX + plotLeftOrTop + fibonacciIndex * deltaX
             );
@@ -139,7 +139,7 @@ class FibonacciTimeZones extends CrookedLine {
                     edgePoint(0, 1, correctedFibb)
                 ];
 
-            // Calculate fibbonacci
+            // Calculate fibonacci
             nextFibb = fibb + nextFibb;
             fibb = nextFibb - fibb;
 
@@ -153,10 +153,11 @@ class FibonacciTimeZones extends CrookedLine {
                     this.options.typeOptions.line,
                     {
                         type: 'path',
-                        points: points
+                        points: points,
+                        className: 'highcharts-fibonacci-timezones-lines'
                     }
                 ),
-                i // shape's index. Can be found in annotation.shapes[i].index
+                i // Shape's index. Can be found in annotation.shapes[i].index
             );
         }
     }
@@ -193,15 +194,33 @@ interface FibonacciTimeZones {
 
 FibonacciTimeZones.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
+    /**
+     * The Fibonacci Time Zones annotation.
+     *
+     * @sample highcharts/annotations-advanced/fibonacci-time-zones/
+     *         Fibonacci Time Zones
+     *
+     * @extends      annotations.crookedLine
+     * @since        9.3.0
+     * @product      highstock
+     * @optionparent annotations.fibonacciTimeZones
+     */
     {
         typeOptions: {
+            /**
+             * @exclude   y
+             * @since     9.3.0
+             * @product   highstock
+             * @apioption annotations.fibonacciTimeZones.typeOptions.points
+             */
+
             // Options for showing in popup edit
             line: {
                 /**
                  * The color of the lines.
                  *
                  * @type      {string}
-                 * @since 9.3.0
+                 * @since     9.3.0
                  * @default   'rgba(0, 0, 0, 0.75)'
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.stroke
                  */
@@ -210,7 +229,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                  * The width of the lines.
                  *
                  * @type      {number}
-                 * @since 9.3.0
+                 * @since     9.3.0
                  * @default   1
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.strokeWidth
                  */
@@ -240,8 +259,8 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                     }
 
                     return {
-                        x: plotLeft + x - graphic.width / 2,
-                        y: plotTop + y - graphic.height / 2
+                        x: plotLeft + x - (graphic.width || 0) / 2,
+                        y: plotTop + y - (graphic.height || 0) / 2
                     };
                 },
                 events: {
@@ -309,30 +328,3 @@ Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
  * */
 
 export default FibonacciTimeZones;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * The Fibonacci Time Zones annotation.
- *
- * @sample highcharts/annotations-advanced/fibonacci-time-zones/
- *         Fibonacci Time Zones
- *
- * @extends   annotations.crookedLine
- * @since 9.3.0
- * @product   highstock
- * @apioption annotations.fibonacciTimeZones
- */
-
-/**
- * @exclude   y
- * @since 9.3.0
- * @product   highstock
- * @apioption annotations.fibonacciTimeZones.typeOptions.points
- */
-
-(''); // keeps doclets above in transpiled file

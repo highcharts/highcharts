@@ -79,7 +79,7 @@ You can also test your knowledge on the TypeScript
 - type union: `(number|string)`
 - utility types: `ReadOnly<Array<string>>`; see
   ([handbook](https://www.typescriptlang.org/docs/handbook/utility-types.html))
-- Make use of parantheses around type lists. (`Array<(number|null|string)>`)
+- Make use of parentheses around type lists. (`Array<(number|null|string)>`)
 - Do not use `any` type in new code as it is only used for the migration phase
 - Add paragraphs around conditional types `(A extends B ? C : D)`, type lists
   `(A|B)`, and type unions `(A&B)`.
@@ -142,6 +142,8 @@ TypeScript sources yet. Instead they are based exclusively on the JSDoc doclets
 in the sources. As a consequence, types in sources and doclets share only a few
 similarities. Public interfaces for example have to be defined twice, once in
 TypeScript and a second time as JSDoclets.
+
+[More about the Doclets](./DOCLETS.md).
 
 
 

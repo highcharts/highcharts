@@ -53,7 +53,8 @@ Highcharts.chart('container', {
             custom: {
                 height: 'up to 10.000km',
                 info:
-        'This is the upper limit of our atmosphere.<br> It extends from the top of the thermosphere up to 10,000 km (6,200 mi).'
+        'This is the upper limit of our atmosphere.<br> It extends from the ' +
+        'top of the thermosphere up to 10,000 km (6,200 mi).'
             }
         },
         {
@@ -62,7 +63,10 @@ Highcharts.chart('container', {
             custom: {
                 height: '48km',
                 info:
-        '<b>The ionosphere</b> is an abundant layer of electrons and ionized atoms and molecules <br> that stretches from about 48 kilometers (30 miles) above <br>  the surface to the edge of space at about 965 km (600 mi)'
+        '<b>The ionosphere</b> is an abundant layer of electrons and ionized ' +
+        'atoms and molecules <br> that stretches from about 48 kilometers ' +
+        '(30 miles) above <br>  the surface to the edge of space at about ' +
+        '965 km (600 mi)'
             }
         },
         {
@@ -71,7 +75,8 @@ Highcharts.chart('container', {
             custom: {
                 height: '600km',
                 info:
-        '<b>The thermosphere</b>  starts just above the mesosphere <br>  and extends to 600 kilometers (372 miles) high'
+        '<b>The thermosphere</b>  starts just above the mesosphere <br>  and ' +
+        'extends to 600 kilometers (372 miles) high'
             }
         },
         {
@@ -80,7 +85,8 @@ Highcharts.chart('container', {
             custom: {
                 height: '85m',
                 info:
-        '<b>The mesosphere</b>  starts just above the stratosphere <br>  and extends to 85 kilometers (53 miles) high'
+        '<b>The mesosphere</b>  starts just above the stratosphere <br>  and ' +
+        'extends to 85 kilometers (53 miles) high'
             }
         },
         {
@@ -89,7 +95,8 @@ Highcharts.chart('container', {
             custom: {
                 height: '50km',
                 info:
-        '<b>The stratosphere</b>  starts just above the troposphere <br>  and extends to 50 kilometers (31 miles) high'
+        '<b>The stratosphere</b>  starts just above the troposphere <br>  ' +
+        'and extends to 50 kilometers (31 miles) high'
             }
         },
         {
@@ -97,8 +104,8 @@ Highcharts.chart('container', {
             data: [1],
             custom: {
                 height: '8 to 14.5km',
-                info:
-        '<b>The troposphere </b>starts at the Earth\'s surface <br>  and extends 8 to 14.5 kilometers high (5 to 9 miles)'
+                info: '<b>The troposphere </b>starts at the Earth\'s surface ' +
+                    '<br>  and extends 8 to 14.5 kilometers high (5 to 9 miles)'
             }
         }
     ]

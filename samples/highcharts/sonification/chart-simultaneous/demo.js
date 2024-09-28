@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Series sonified simultaneously',
         align: 'left',
@@ -20,7 +20,7 @@ var chart = Highcharts.chart('container', {
         duration: 4000,
         events: {
             onEnd: function (e) {
-                var s = e.chart.sonification;
+                const s = e.chart.sonification;
                 s.playNote('vibraphone', { note: 'G4' });
                 s.playNote('vibraphone', { note: 'C4', pan: -1 });
                 s.playNote('vibraphone', { note: 'E4', pan: 0 }, 200);
@@ -56,8 +56,8 @@ var chart = Highcharts.chart('container', {
         },
         // Generate some data for series 1
         data: (function () {
-            var data = [];
-            for (var i = 0; i < 100; ++i) {
+            const data = [];
+            for (let i = 0; i < 100; ++i) {
                 data.push(Math.sin(i / 30) * 5);
             }
             return data;
@@ -73,8 +73,8 @@ var chart = Highcharts.chart('container', {
         },
         // Generate some data for series 2
         data: (function () {
-            var data = [];
-            for (var i = 0; i < 100; ++i) {
+            const data = [];
+            for (let i = 0; i < 100; ++i) {
                 data.push(Math.sin((i + 30) / 20) * 6);
             }
             return data;

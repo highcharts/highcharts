@@ -1,7 +1,7 @@
 (function () {
     /**
-     * Check that the arrays are one to one, so all operators correspond to other
-     * operators and numbers align to numbers.
+     * Check that the arrays are one to one, so all operators correspond to
+     * other operators and numbers align to numbers.
      */
     function isOneToOne(out) {
         var start = out[0],

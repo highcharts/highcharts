@@ -1,5 +1,5 @@
 const startYear = 1960,
-    endYear = 2018,
+    endYear = 2022,
     btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     nbr = 20;
@@ -52,7 +52,11 @@ let dataset, chart;
                 (point.dataLabels || []).forEach(
                     label =>
                         (label.attr = function (hash) {
-                            if (hash && hash.text !== undefined) {
+                            if (
+                                hash &&
+                                hash.text !== undefined &&
+                                chart.isResizing === 0
+                            ) {
                                 const text = hash.text;
 
                                 delete hash.text;
@@ -125,7 +129,7 @@ function getSubtitle() {
             floating: true,
             align: 'right',
             verticalAlign: 'middle',
-            y: -20,
+            y: -80,
             x: -100
         },
 
@@ -201,8 +205,8 @@ function getSubtitle() {
 })();
 
 /*
- * Pause the timeline, either when the range is ended, or when clicking the pause button.
- * Pausing stops the timer and resets the button to play mode.
+ * Pause the timeline, either when the range is ended, or when clicking the
+ * pause button. Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
     button.title = 'play';

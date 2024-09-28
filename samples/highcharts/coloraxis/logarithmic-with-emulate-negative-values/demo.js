@@ -43,12 +43,15 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Logarithmic color axis with custom conversion allows negative values'
+        text: 'Logarithmic color axis with custom conversion allows negative ' +
+            'values'
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     colorAxis: {

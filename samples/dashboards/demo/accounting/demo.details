@@ -1,0 +1,12 @@
+---
+name: Accounting
+authors:
+  - Dawid Dragula
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General:
+       priority: 1
+use_png_thumbnail: true
+...

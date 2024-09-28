@@ -5,7 +5,7 @@
  *
  * Advanced Highcharts Stock tools
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2024 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -14,5 +14,6 @@
 import Highcharts from '../../Core/Globals.js';
 import Fullscreen from '../../Extensions/Exporting/Fullscreen.js';
 const G: AnyRecord = Highcharts;
-G.Fullscreen = Fullscreen;
-Fullscreen.compose(G.Chart);
+G.Fullscreen = G.Fullscreen || Fullscreen;
+G.Fullscreen.compose(G.Chart);
+export default Highcharts;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,7 +34,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
-declare module './Chart/ChartLike'{
+declare module './ChartLike'{
     interface ChartLike {
         marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
@@ -89,6 +89,7 @@ export interface ChartOptions {
     alignThresholds?: boolean;
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
+    axisLayoutRuns?: number;
     backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
@@ -109,7 +110,7 @@ export interface ChartOptions {
     marginRight?: number;
     marginTop?: number;
     numberFormatter?: NumberFormatterCallbackFunction;
-    panKey?: string;
+    panKey?: 'ctrl'|'shift';
     panning?: ChartPanningOptions;
     pinchType?: string;
     plotBackgroundColor?: ColorType;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,6 +18,7 @@
 
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -59,9 +60,11 @@ class LollipopPoint extends Point {
      *
      * */
 
-    public options: LollipopPointOptions = void 0 as any;
-    public series: LollipopSeries = void 0 as any;
-    public plotX: number = void 0 as any;
+    public connector?: SVGElement;
+    public options!: LollipopPointOptions;
+    public series!: LollipopSeries;
+    public plotX!: number;
+    public pointWidth!: number;
 }
 
 /* *

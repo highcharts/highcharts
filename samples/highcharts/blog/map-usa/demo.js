@@ -1,7 +1,7 @@
 // Prepare demo data
 // Data is joined to map using value of 'hc-key' property by default.
 // See API docs for 'joinBy' for more info on linking data and map.
-var data = [
+const data = [
     ['us-ma', 0],
     ['us-wa', 1],
     ['us-ca', 2],
@@ -95,7 +95,10 @@ Highcharts.mapChart('container', {
     }, {
         name: 'Separators',
         type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
+        data: Highcharts.geojson(
+            Highcharts.maps['countries/us/us-all'],
+            'mapline'
+        ),
         color: 'silver',
         showInLegend: false,
         enableMouseTracking: false

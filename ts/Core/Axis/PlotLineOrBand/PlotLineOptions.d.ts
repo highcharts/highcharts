@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@ import type {
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../../Renderer/CSSObject';
 import type DashStyleValue from '../../Renderer/DashStyleValue';
-import type FormatUtilities from '../../FormatUtilities';
+import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
 
 /* *
@@ -32,8 +32,9 @@ import type PlotLineOrBand from './PlotLineOrBand';
 
 export interface PlotLineLabelOptions {
     align?: AlignValue;
+    className?: string;
     clip?: boolean;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;

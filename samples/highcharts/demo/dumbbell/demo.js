@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     name: 'Austria',
     low: 70.1,
     high: 81.3

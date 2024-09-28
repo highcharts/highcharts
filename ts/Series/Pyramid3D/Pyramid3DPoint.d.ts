@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -26,6 +26,7 @@ import type Pyramid3DSeries from './Pyramid3DSeries';
  *  Class
  *
  * */
+
 declare class Pyramid3DPoint extends Funnel3DPoint {
     options: Pyramid3DPointOptions;
     series: Pyramid3DSeries;

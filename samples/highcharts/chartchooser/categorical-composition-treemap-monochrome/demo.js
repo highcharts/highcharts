@@ -2,10 +2,16 @@ Highcharts.chart('container', {
     accessibility: {
         screenReaderSection: {
             beforeChartFormat:
-        '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+        '<{headingTagName}>{chartTitle}</{headingTagName}><div>' +
+        '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+        '{chartLongdesc}</div>'
         },
         description:
-      'Tree map detailing the areas of Canadian regions and provinces. The treemap chart makes it clear that Canada is composed of four main regions: Northern Canada, Atlantic Canada, Central Canada, and Western Canada. Each region is composed of many provinces and territories.'
+      'Tree map detailing the areas of Canadian regions and provinces. The ' +
+      'treemap chart makes it clear that Canada is composed of four main ' +
+      'regions: Northern Canada, Atlantic Canada, Central Canada, and ' +
+      'Western Canada. Each region is composed of many provinces and ' +
+      'territories.'
     },
     series: [
         {

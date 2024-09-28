@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .highcharts-figure {
     max-width: 900px;
     min-width: 320px;
@@ -34,6 +38,10 @@
 @media (max-width: 530px) {
     #sonify {
         position: static;
-        margin-bottom: 10px;
+        margin: 10px;
     }
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-ak-all-2019.topo.json">Akershus (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-ak-all-2019.topo.json">Akershus (2019)</a>'
         },
 
         mapNavigation: {

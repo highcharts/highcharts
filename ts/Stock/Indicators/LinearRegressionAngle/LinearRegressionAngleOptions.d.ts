@@ -22,7 +22,7 @@ import type LinearRegressionOptions from
  * */
 
 export interface LinearRegressionAngleOptions extends LinearRegressionOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

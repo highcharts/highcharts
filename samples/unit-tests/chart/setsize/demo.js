@@ -2,9 +2,15 @@ QUnit.test('setSize parameters', function (assert) {
     document.getElementById('container').style.height = '400px';
     document.getElementById('container').style.width = '600px';
 
-    var chart = Highcharts.chart('container', {
+    let redrawCounter = 0;
+    const chart = Highcharts.chart('container', {
         chart: {
-            animation: false
+            animation: false,
+            events: {
+                redraw() {
+                    redrawCounter++;
+                }
+            }
         },
         series: [
             {
@@ -17,6 +23,13 @@ QUnit.test('setSize parameters', function (assert) {
     assert.strictEqual(chart.chartWidth, 600, 'Initial width');
 
     assert.strictEqual(chart.chartHeight, 400, 'Initial height');
+
+    chart.setSize(undefined, 400);
+    assert.strictEqual(
+        redrawCounter,
+        0,
+        'Chart should not be redrawn when computed size does not change'
+    );
 
     // Missing first parameter
     chart.setSize(undefined, 300);
@@ -62,9 +75,14 @@ QUnit.test('setSize parameters', function (assert) {
 
     // Test that it responds to reflow
     $('#container').width(700);
+    chart.isResizing = 0;
     chart.reflow();
 
-    assert.strictEqual(chart.chartWidth, 700, 'Width');
+    assert.strictEqual(
+        chart.chartWidth,
+        700,
+        'Chart width should respond to reflow'
+    );
 
     assert.strictEqual(chart.chartHeight, 400, 'Height');
 });
@@ -151,12 +169,23 @@ QUnit.test(
                 title: {
                     useHTML: true,
                     text:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum.'
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing ' +
+                        'elit. Morbi vel elit at nulla mollis dictum vel vel ' +
+                        'lectus. Aenean blandit scelerisque nunc. Quisque ' +
+                        'blandit ligula bibendum enim consectetur, et ' +
+                        'dignissim eros volutpat. Lorem ipsum dolor sit amet,' +
+                        ' consectetur adipiscing elit. Pellentesque molestie ' +
+                        'mauris sed nibh pulvinar, sed commodo metus ' +
+                        'sodales. Mauris congue quam ultrices suscipit dictum.'
                 },
                 subtitle: {
                     useHTML: true,
                     text:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat.'
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing ' +
+                        'elit. Morbi vel elit at nulla mollis dictum vel vel ' +
+                        'lectus. Aenean blandit scelerisque nunc. Quisque ' +
+                        'blandit ligula bibendum enim consectetur, et ' +
+                        'dignissim eros volutpat.'
                 },
 
                 series: [
@@ -185,7 +214,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Columns were cut by cliprect, when resizing chart during initial animation.',
+    'Columns were cut by cliprect, when resizing chart during initial ' +
+    'animation.',
     function (assert) {
         // Hijack animation
         var clock = TestUtilities.lolexInstall();
@@ -236,7 +266,10 @@ QUnit.test(
                 chart.setSize(700, 450);
 
                 assert.strictEqual(
-                    Number(chart.sharedClips[chart.series[1].sharedClipKey].attr('width')),
+                    Number(
+                        chart.sharedClips[chart.series[1].sharedClipKey]
+                            .attr('width')
+                    ),
                     chart.series[1].xAxis.len,
                     'Correct clipbox width.'
                 );
@@ -321,13 +354,17 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
     );
 });
 
-// Highcharts 3.0.10, Issue #2857
-// Pie chart resize doesn't always work propery when you have long titles that wrap
+// Highcharts 3.0.10, Issue #2857. Pie chart resize doesn't always work propery
+// when you have long titles that wrap.
 QUnit.test('Title resize (#2857)', function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
                 text:
-                    'Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014'
+                    'Browser market shares at a specific website, 2014 ' +
+                    'Browser market shares at a specific website, 2014 ' +
+                    'Browser market shares at a specific website, 2014 ' +
+                    'Browser market shares at a specific website, 2014 ' +
+                    'Browser market shares at a specific website, 2014'
             },
             series: [
                 {

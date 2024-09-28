@@ -36,7 +36,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     correctFloat,
@@ -112,12 +111,12 @@ class SupertrendIndicator extends SMAIndicator {
      */
     public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Supertrend indicator series points.
+         * Parameters used in calculation of Supertrend indicator series points.
          *
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * Multiplier for Supertrend Indicator.
              */
@@ -191,13 +190,13 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<SupertrendPoint> = void 0 as any;
+    public data!: Array<SupertrendPoint>;
 
-    public linkedParent: SupertrendLinkedParentObject = void 0 as any;
+    public linkedParent!: SupertrendLinkedParentObject;
 
-    public options: SupertrendOptions = void 0 as any;
+    public options!: SupertrendOptions;
 
-    public points: Array<SupertrendPoint> = void 0 as any;
+    public points!: Array<SupertrendPoint>;
 
     /* *
      *
@@ -212,7 +211,7 @@ class SupertrendIndicator extends SMAIndicator {
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             (): void => {
                 // Protection for a case where the indicator is being updated,
@@ -258,7 +257,7 @@ class SupertrendIndicator extends SMAIndicator {
             },
 
             // Sorted supertrend points array
-            groupedPoitns: SupertrendGroupedPointsObject = {
+            groupedPoints: SupertrendGroupedPointsObject = {
                 top: [], // Rising trend line points
                 bottom: [], // Falling trend line points
                 intersect: [] // Change trend line points
@@ -308,7 +307,7 @@ class SupertrendIndicator extends SMAIndicator {
             // Used when particular point color is set
             pointColor: ColorType,
 
-            // Temporary points that fill groupedPoitns array
+            // Temporary points that fill groupedPoints array
             newPoint: SupertrendPoint,
             newNextPoint: SupertrendPoint,
 
@@ -411,7 +410,7 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.fallingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.top.push(newPoint);
+                    groupedPoints.top.push(newPoint);
 
                 } else if (
                     point.y < mainPoint.close &&
@@ -421,14 +420,14 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.risingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.bottom.push(newPoint);
+                    groupedPoints.bottom.push(newPoint);
 
                 } else {
-                    groupedPoitns.intersect.push(newPoint);
-                    groupedPoitns.intersect.push(newNextPoint);
+                    groupedPoints.intersect.push(newPoint);
+                    groupedPoints.intersect.push(newNextPoint);
 
                     // Additional null point to make a gap in line
-                    groupedPoitns.intersect.push(merge(newNextPoint, {
+                    groupedPoints.intersect.push(merge(newNextPoint, {
                         isNull: true
                     }));
 
@@ -444,8 +443,8 @@ class SupertrendIndicator extends SMAIndicator {
                             pointColor || indicOptions.risingTrendColor ||
                             indicOptions.color
                         );
-                        groupedPoitns.top.push(newPoint);
-                        groupedPoitns.top.push(merge(newNextPoint, {
+                        groupedPoints.top.push(newPoint);
+                        groupedPoints.top.push(merge(newNextPoint, {
                             isNull: true
                         }));
                     } else if (
@@ -460,8 +459,8 @@ class SupertrendIndicator extends SMAIndicator {
                             pointColor || indicOptions.fallingTrendColor ||
                             indicOptions.color
                         );
-                        groupedPoitns.bottom.push(newPoint);
-                        groupedPoitns.bottom.push(merge(newNextPoint, {
+                        groupedPoints.bottom.push(newPoint);
+                        groupedPoints.bottom.push(merge(newNextPoint, {
                             isNull: true
                         }));
                     }
@@ -472,19 +471,20 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.fallingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.top.push(newPoint);
+                    groupedPoints.top.push(newPoint);
                 } else {
                     point.color = (
                         pointColor || indicOptions.risingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.bottom.push(newPoint);
+                    groupedPoints.bottom.push(newPoint);
                 }
             }
         }
 
         // Generate lines:
-        objectEach(groupedPoitns,
+        objectEach(
+            groupedPoints,
             function (values, lineName): void {
                 indicator.points = values;
                 indicator.options = merge(
@@ -571,7 +571,7 @@ class SupertrendIndicator extends SMAIndicator {
             supertrend: (number|undefined),
             prevFinalUp: number,
             prevFinalDown: number,
-            prevST: (number|undefined), // previous Supertrend
+            prevST: (number|undefined), // Previous Supertrend
             prevY: Array<number>,
             y: Array<number>,
             i: number;
@@ -623,7 +623,8 @@ class SupertrendIndicator extends SMAIndicator {
                 finalDown[i] = prevFinalDown;
             }
 
-            if (prevST === prevFinalUp && y[close] < finalUp[i] ||
+            if (
+                prevST === prevFinalUp && y[close] < finalUp[i] ||
                 prevST === prevFinalDown && y[close] < finalDown[i]
             ) {
                 supertrend = finalUp[i];
@@ -709,4 +710,4 @@ export default SupertrendIndicator;
  * @apioption series.supertrend
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

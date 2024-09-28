@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,11 +23,16 @@
 export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
+ * Contains all possible options of the modifier registry.
+ */
+export type DataModifierTypeOptions = DataModifierType['prototype']['options'];
+
+/**
  * Describes the modifier registry as a record object with key and class
  * constructor.
  */
 export interface DataModifierTypes {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

@@ -271,7 +271,8 @@ QUnit.module('setRootNode', () => {
             assert.strictEqual(
                 eventArguments.series === series,
                 true,
-                'expect eventArguments.series to reference context of setRootNode call.'
+                'expect eventArguments.series to reference context of ' +
+                'setRootNode call.'
             );
             assert.strictEqual(
                 eventArguments.trigger,
@@ -420,6 +421,7 @@ QUnit.test('Traversing single top node', assert => {
     assert.strictEqual(
         chart.get('2_0').graphic.parentGroup.element.className.baseVal,
         chart.get('2_1').graphic.parentGroup.element.className.baseVal,
-        'The ephemeral 2_1 node should be in the same group as the 2_0 node (#12286)'
+        'The ephemeral 2_1 node should be in the same group as the 2_0 node ' +
+        '(#12286)'
     );
 });

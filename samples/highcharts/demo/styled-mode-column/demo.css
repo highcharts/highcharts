@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 .highcharts-figure,
 .highcharts-data-table table {
@@ -72,4 +72,8 @@
 
 .highcharts-axis.highcharts-color-1 text {
     fill: #90ed7d;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -12,13 +12,18 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Swedish top 10 professions dominated by women (16-64 years) in 2017'
+        text: 'Swedish top 10 professions dominated by women (16-64 years) ' +
+            'in 2017'
     },
     subtitle: {
         text: 'Source: <a href="https://www.scb.se/">Swedish National Statistics</a>'
     },
     xAxis: {
-        categories: ['Preschool teacher', 'Home care nurse', 'Nurse', 'Nanny', 'Nurse practitioner', 'Finance Assistant', 'Accountant', 'Nurse assistant', 'Office assistant/secretary'],
+        categories: [
+            'Preschool teacher', 'Home care nurse', 'Nurse', 'Nanny',
+            'Nurse practitioner', 'Finance Assistant', 'Accountant',
+            'Nurse assistant', 'Office assistant/secretary'
+        ],
         accessibility: {
             description: 'Profession'
         }

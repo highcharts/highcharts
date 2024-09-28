@@ -1,5 +1,10 @@
-// Notice that the dataset has missing data
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json', function (data) {
+(async () => {
+
+    // Notice that the dataset has missing data
+    // Data taken from https://seklima.met.no/
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d2270f7c/samples/data/temp-range.json'
+    ).then(response => response.json());
 
     Highcharts.stockChart('container', {
 
@@ -25,4 +30,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
 
     });
-});
+
+})();

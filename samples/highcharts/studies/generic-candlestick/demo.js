@@ -1,7 +1,7 @@
 (function () {
 
     // create shortcuts
-    var HC = Highcharts,
+    const HC = Highcharts,
         defaultOptions = HC.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
         seriesTypes = HC.seriesTypes,
@@ -9,8 +9,9 @@
         extendClass = HC.extendClass,
         Point = HC.Point,
         ColumnSeries = seriesTypes.column,
-        UNDEFINED,
         mathRound = Math.round;
+
+    let UNDEFINED;
 
     // 1 - Set default options
     defaultPlotOptions.genericcandlestick = merge(defaultPlotOptions.column, {
@@ -26,20 +27,24 @@
     });
 
     // 2- Create the GenericCandlestickPoint object
-    var GenericCandlestickPoint = extendClass(Point, {
+    class GenericCandlestickPoint extends Point {
         /**
-         * Apply the options containing the x and multiple y-values.
-         * This is called on point init or from point.update. Extends base Point by adding
-         * multiple y-values.
+         * Apply the options containing the x and multiple y-values. This is
+         * called on point init or from point.update. Extends base Point by
+         * adding multiple y-values.
          *
          * @param {Object} options
          */
-        applyOptions: function (options) {
-            var point = this,
-                series = point.series,
-                i = 0;
+        applyOptions(options) {
+            const point = this,
+                series = point.series;
 
-            if (typeof options === 'object' && typeof options.length !== 'number') {
+            let i = 0;
+
+            if (
+                typeof options ===
+                'object' && typeof options.length !== 'number'
+            ) {
                 // TODO implement object input support?
                 throw new Error('Object input not yet supported');
             } else if (options.length) { // array
@@ -53,20 +58,24 @@
                     i++;
                 }
 
-                var yValues = [];
+                const yValues = [];
                 while (i < options.length) {
                     yValues.push(options[i]);
                     i++;
                 }
-                // It is appropriate to sort the y-values as each value-pair is a subset of a larger value-pair in candlestick charts
+                // It is appropriate to sort the y-values as each value-pair is
+                // a subset of a larger value-pair in candlestick charts
                 yValues.sort(function (a, b) {
                     return a - b;
                 });
                 point.yValues = yValues;
 
-                // Treats high/low as the value-pair with the largest value range, open/close with the second largest value range
-                // TODO open/high/low/close should be removed, but all kinds of functionality depend on these fields
-                // These fields are being used somewhere in Highcharts to achieve data grouping and in calucation of yBottom
+                // Treats high/low as the value-pair with the largest value
+                // range, open/close with the second largest value range TODO
+                // open/high/low/close should be removed, but all kinds of
+                // functionality depend on these fields These fields are being
+                // used somewhere in Highcharts to achieve data grouping and in
+                // calucation of yBottom
                 point.open = yValues[yValues.length - 2];
                 point.high = yValues[yValues.length - 1];
                 point.low = yValues[0];
@@ -74,8 +83,9 @@
             }
 
             /*
-             * If no x is set by now, get auto incremented value. All points must have an
-             * x value, however the y value can be null to create a gap in the series
+             * If no x is set by now, get auto incremented value. All points
+             * must have an x value, however the y value can be null to create a
+             * gap in the series
              */
             point.y = point.yValues[point.yValues.length - 1];
             if (point.x === UNDEFINED && series) {
@@ -83,50 +93,53 @@
             }
             point.options = options;
             return point;
-        },
+        }
 
         /**
          * A generic tooltip formatter for multiple Y-values per point
          */
-        tooltipFormatter: function () {
-            var point = this,
+        tooltipFormatter() {
+            const point = this,
                 series = point.series,
                 yValueLabels = series.options.yValueLabels,
                 yValues = point.yValues;
 
-            var tooltipHtml = '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
+            let tooltipHtml = '<span style="color:' + series.color +
+                ';font-weight:bold">' + (point.name || series.name) +
+                '</span><br/>';
 
-            for (var i = 0; i < yValueLabels.length; i++) {
+            for (let i = 0; i < yValueLabels.length; i++) {
                 tooltipHtml += yValueLabels[i] + ': ' + yValues[i] + '<br />';
             }
 
             return tooltipHtml;
-        },
+        }
 
         /**
          * Return a plain array for speedy calculation
          */
-        toYData: function () {
+        toYData() {
             return this.yValues;
         }
 
-    });
+    }
 
     // 3 - Create the GenericCandlestickSeries object
-    var GenericCandlestickSeries = extendClass(ColumnSeries, {
+    const GenericCandlestickSeries = extendClass(ColumnSeries, {
         type: 'genericcandlestick',
         pointClass: GenericCandlestickPoint,
 
         /**
          * One-to-one mapping from options to SVG attributes
          */
-        pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+        pointAttrToOptions: {
             fill: 'color',
             stroke: 'lineColor',
             'stroke-width': 'lineWidth'
         },
 
-        toYData: function (point) { // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
+        toYData: function (point) {
             return [point.open, point.high, point.low, point.close];
         },
 
@@ -135,15 +148,15 @@
          * Translate data points from raw values x and y to plotX and plotY
          */
         translate: function () {
-            var series = this,
+            const series = this,
                 yAxis = series.yAxis;
 
             seriesTypes.column.prototype.translate.apply(series);
 
             // do the translation
             series.points.forEach(function (point) {
-                var plotYValues = [];
-                for (var i = 0; i < point.yValues.length; i++) {
+                const plotYValues = [];
+                for (let i = 0; i < point.yValues.length; i++) {
                     plotYValues.push(
                         yAxis.translate(point.yValues[i], 0, 1, 0, 1)
                     );
@@ -156,10 +169,11 @@
          * Draw the data points
          */
         drawPoints: function () {
-            var series = this,
+            const series = this,
                 points = series.points,
-                chart = series.chart,
-                pointAttr,
+                chart = series.chart;
+
+            let pointAttr,
                 topBox,
                 bottomBox,
                 crispCorr,
@@ -169,7 +183,7 @@
                 halfWidth;
 
             points.forEach(function (point) {
-                var boxpath,
+                let boxpath,
                     numberOfBoxes,
                     boxes;
                 graphic = point.graphic;
@@ -186,7 +200,7 @@
                     // create path for boxes
                     numberOfBoxes = point.plotYValues.length / 2 - 1;
                     boxes = [];
-                    for (var i = 0; i < numberOfBoxes; i++) {
+                    for (let i = 0; i < numberOfBoxes; i++) {
                         bottomBox = mathRound(point.plotYValues[i + 1]) +
                             crispCorr;
                         topBox = mathRound(
@@ -235,7 +249,7 @@
                         graphic.path.animate({
                             d: path
                         });
-                        for (i = 0; i < boxes.length; i++) {
+                        for (let i = 0; i < boxes.length; i++) {
                             graphic['path' + i].animate({
                                 d: boxes[i]
                             });
@@ -246,7 +260,7 @@
                         graphic.path = chart.renderer.path(path)
                             .attr(pointAttr)
                             .add(graphic);
-                        for (i = 0; i < boxes.length; i++) {
+                        for (let i = 0; i < boxes.length; i++) {
                             graphic['path' + i] = chart.renderer.path(boxes[i])
                                 .attr(pointAttr)
                                 .add(graphic);

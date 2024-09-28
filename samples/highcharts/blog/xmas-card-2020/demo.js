@@ -68,7 +68,7 @@ const sdInstruments = [{
 
 // Utility function that highlights a point
 function highlightPoint(event, point) {
-    var chart = point.series.chart,
+    const chart = point.series.chart,
         hasVisibleSeries = chart.series.some(function (series) {
             return series.visible;
         });
@@ -95,7 +95,8 @@ itemChart = Highcharts.chart('container', {
             load: function () {
                 itemChart = this;
                 chartToChange = itemChart.series.findIndex(
-                    series => series.options.type === 'item');
+                    series => series.options.type === 'item'
+                );
 
                 $('#item1').attr('value', chartToChange);
                 $('#item2').attr('value', chartToChange + 1);
@@ -401,7 +402,8 @@ itemChart = Highcharts.chart('container', {
             { x: 3.7, y: 2 },
             { x: 8, y: 1.2 },
             { x: 9.78, y: 2 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
@@ -433,7 +435,8 @@ itemChart = Highcharts.chart('container', {
             { x: 4.17, y: 1.92 },
             { x: 8, y: 1.2 },
             { x: 10, y: 1.86 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
@@ -457,7 +460,8 @@ itemChart = Highcharts.chart('container', {
             { x: 4.5, y: 1.3 },
             { x: 8.13, y: 0.76 },
             { x: 9.9, y: 1.78 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
@@ -1155,11 +1159,11 @@ const soundChart = Highcharts.chart('soundContainer', {
                 events: {
                     click: function () {
                         // Sonify all points at this x value
-                        var targetX = this.x,
+                        const targetX = this.x,
                             chart = this.series.chart;
                         chart.series.forEach(function (series) {
                             // Map instruments to the options for this series
-                            var instruments = series.options.id === 'sd' ?
+                            const instruments = series.options.id === 'sd' ?
                                 sdInstruments : nyInstruments;
                             // See if we have a point with the targetX
                             series.points.some(function (point) {
@@ -1539,8 +1543,10 @@ document.getElementById('speed').onchange = function () {
 // Add sonification button handlers
 document.getElementById('play').onclick = function () {
     openCard();
-    if (!soundChart.sonification.timeline ||
-        soundChart.sonification.timeline.atStart()) {
+    if (
+        !soundChart.sonification.timeline ||
+        soundChart.sonification.timeline.atStart()
+    ) {
         soundChart.sonify({
             duration: 5000 / document.getElementById('speed').value,
             order: 'simultaneous',

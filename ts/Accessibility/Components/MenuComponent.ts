@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -26,9 +26,7 @@ import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
-const {
-    attr
-} = U;
+const { attr } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -50,8 +48,6 @@ const {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
 
 
 /**
@@ -174,7 +170,7 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute(
+            this.exportButtonProxy.innerElement.setAttribute(
                 'aria-expanded',
                 stateStr
             );
@@ -200,7 +196,7 @@ class MenuComponent extends AccessibilityComponent {
         ) {
             if (focusEl.focusBorder) {
                 chart.setFocusToElement(
-                    focusEl, this.exportButtonProxy.buttonElement
+                    focusEl, this.exportButtonProxy.innerElement
                 );
             } else if (a11y) {
                 a11y.keyboardNavigation.tabindexContainer.focus();
@@ -221,6 +217,7 @@ class MenuComponent extends AccessibilityComponent {
             this.exportButtonProxy = proxyProvider.addProxyElement(
                 'chartMenu',
                 { click: buttonEl },
+                'button',
                 {
                     'aria-label': chart.langFormat(
                         'accessibility.exporting.menuButtonLabel',
@@ -243,7 +240,7 @@ class MenuComponent extends AccessibilityComponent {
     public createProxyGroup(): void {
         const chart = this.chart;
         if (chart && this.proxyProvider) {
-            this.proxyProvider.addGroup('chartMenu', 'div');
+            this.proxyProvider.addGroup('chartMenu');
         }
     }
 
@@ -260,8 +257,10 @@ class MenuComponent extends AccessibilityComponent {
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach((item): void => {
                 if (item) {
-                    if (item.tagName === 'LI' &&
-                        !(item.children && item.children.length)) {
+                    if (
+                        item.tagName === 'LI' &&
+                        !(item.children && item.children.length)
+                    ) {
                         item.setAttribute('tabindex', -1);
                     } else {
                         item.setAttribute('aria-hidden', 'true');
@@ -341,7 +340,7 @@ class MenuComponent extends AccessibilityComponent {
                 const proxy = component.exportButtonProxy;
                 const svgEl = component.chart.exportingGroup;
                 if (proxy && svgEl) {
-                    chart.setFocusToElement(svgEl, proxy.buttonElement);
+                    chart.setFocusToElement(svgEl, proxy.innerElement);
                 }
             },
 
@@ -488,21 +487,9 @@ namespace MenuComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -511,10 +498,9 @@ namespace MenuComponent {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = Chart.prototype as ChartComposition;
-
+        if (!chartProto.hideExportMenu) {
             chartProto.hideExportMenu = chartHideExportMenu;
             chartProto.highlightExportItem = chartHighlightExportItem;
             chartProto.highlightLastExportItem = chartHighlightLastExportItem;

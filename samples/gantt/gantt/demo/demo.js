@@ -1,5 +1,5 @@
-var today = new Date(),
-    day = 1000 * 60 * 60 * 24;
+let today = new Date();
+const day = 1000 * 60 * 60 * 24;
 
 // Set to 00:00:00:000 today
 today.setUTCHours(0);

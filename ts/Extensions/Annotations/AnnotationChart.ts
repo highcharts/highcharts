@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -58,14 +58,6 @@ declare class AnnotationChart extends Chart {
     initAnnotation(userOptions: AnnotationOptions): Annotation;
     removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -205,7 +197,7 @@ function chartCallback(
                         label.points.forEach((points): void => {
                             const annotationX = points.x,
                                 xAxisIndex = points.series.xAxis ?
-                                    points.series.xAxis.options.index :
+                                    points.series.xAxis.index :
                                     -1;
                             let wasAdded = false;
 
@@ -398,11 +390,12 @@ namespace AnnotationChart {
         ChartClass: typeof Chart,
         PointerClass: typeof Pointer
     ): void {
+        const chartProto = ChartClass.prototype as AnnotationChart;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (!chartProto.addAnnotation) {
+            const pointerProto = PointerClass.prototype;
+
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
-
-            const chartProto = ChartClass.prototype as AnnotationChart;
 
             chartProto.addAnnotation = chartAddAnnotation;
             chartProto.callbacks.push(chartCallback);
@@ -425,10 +418,6 @@ namespace AnnotationChart {
 
                 return annotation;
             };
-        }
-
-        if (U.pushUnique(composedMembers, PointerClass)) {
-            const pointerProto = PointerClass.prototype;
 
             wrap(
                 pointerProto,

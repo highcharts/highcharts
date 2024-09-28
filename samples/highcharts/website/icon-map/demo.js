@@ -23,7 +23,7 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mapLoaded = false;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const maps = {
     chart: {
         animation: {
@@ -43,14 +43,22 @@ const maps = {
             load: function () {
                 const chart = this;
 
-                const mapPointPoint = document.querySelector('.map-point-point');
-                const mapPointTop = document.getElementsByClassName('map-point-top')[1];
-                const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
+                const mapPointPoint = document.querySelector(
+                    '.map-point-point'
+                );
+                const mapPointTop = document.getElementsByClassName(
+                    'map-point-top'
+                )[1];
+                const mapPointCenter = document.getElementsByClassName(
+                    'map-point-center'
+                )[1];
                 const leftSide =  document.querySelector('.left');
                 const rightSide =  document.querySelector('.right');
                 const top =  document.querySelector('.top');
                 const bottom =  document.querySelector('.bottom');
-                const background = document.getElementsByClassName('highcharts-plot-background')[0];
+                const background = document.getElementsByClassName(
+                    'highcharts-plot-background'
+                )[0];
 
                 const finalHide = function () {
                     [].forEach.call(
@@ -579,98 +587,111 @@ const maps = {
     ]
 };
 
-
 const finalMap = function () {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
-        function (data) {
-            // Assign id's
-            data.forEach(function (p) {
-                p.id = p.code;
-            });
-            // Initialize the chart
-            Highcharts.mapChart('maps', {
-                chart: {
-                    styledMode: true,
-                    animation: {
+    (async () => {
 
-                        duration: 1000
+        // Load the dataset
+        const data = await fetch(
+            'https://www.highcharts.com/samples/data/world-population-density.json'
+        ).then(response => response.json());
 
-                    },
-                    events: {
-                        load: function () {
-                            const mapSeries = document.querySelector('.highcharts-map-series');
-                            const title = document.querySelector('.highcharts-title');
-                            const subtitle = document.querySelector('.highcharts-subtitle');
+        // Assign id's
+        data.forEach(function (p) {
+            p.id = p.code;
+        });
+
+        // Initialize the chart
+        Highcharts.mapChart('maps', {
+            chart: {
+                styledMode: true,
+                animation: {
+
+                    duration: 1000
+
+                },
+                events: {
+                    load: function () {
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
+                        const title = document.querySelector(
+                            '.highcharts-title'
+                        );
+                        const subtitle = document.querySelector(
+                            '.highcharts-subtitle'
+                        );
+                        mapSeries.style.opacity = 0;
+                        setTimeout(function () {
                             mapSeries.style.opacity = 0;
-                            setTimeout(function () {
-                                mapSeries.style.opacity = 0;
-                                title.classList.add('fade-in');
-                                subtitle.classList.add('fade-in');
-                            }, 200);
+                            title.classList.add('fade-in');
+                            subtitle.classList.add('fade-in');
+                        }, 200);
 
-                            setTimeout(function () {
-                                mapSeries.classList.add('fade-in');
-                            }, 500);
+                        setTimeout(function () {
+                            mapSeries.classList.add('fade-in');
+                        }, 500);
 
 
-                            setTimeout(function () {
-                                mapLoaded  = true;
-                            }, 2000);
-                        },
-                        redraw: function () {
-                            const mapSeries = document.querySelector('.highcharts-map-series');
-                            if (mapLoaded) {
-                                mapSeries.classList.add('show');
-                            }
+                        setTimeout(function () {
+                            mapLoaded  = true;
+                        }, 2000);
+                    },
+                    redraw: function () {
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
+                        if (mapLoaded) {
+                            mapSeries.classList.add('show');
                         }
                     }
-                },
-                credits: {
-                    enabled: false
-                },
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: 'World Population Density',
+                style: {
+                    fontFamily: 'IBM Plex Sans',
+                    color: '#fff'
+                }
+            },
+            exporting: {
+                enabled: false
+            },
+            legend: {
                 title: {
-                    text: 'World Population Density',
-                    style: {
-                        fontFamily: 'IBM Plex Sans',
-                        color: '#fff'
-                    }
+                    text: 'Population density per km²'
                 },
-                exporting: {
-                    enabled: false
-                },
-                legend: {
-                    title: {
-                        text: 'Population density per km²'
-                    },
-                    labelStyle: {
-                        color: '#fff'
+                labelStyle: {
+                    color: '#fff'
 
-                    },
-                    floating: true,
-                    y: 20
                 },
-                colorAxis: {
-                    min: 1,
-                    max: 1000,
-                    type: 'logarithmic',
-                    maxColor: '#4455f2'
-                },
-                mapNavigation: {
-                    enabled: true,
-                    buttonOptions: {
-                        verticalAlign: 'bottom',
-                        x: 5
-                    }
-                },
-                // mapView: {
-                //     center: [4100, 8280], // In terms of pre-projected units
-                //     zoom: 0.1
-                // },
-                tooltip: {
-                    useHTML: true,
-                    distance: -15,
-                    formatter: function () {
-                        const htmlString =
+                floating: true,
+                y: 20
+            },
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic',
+                maxColor: '#4455f2'
+            },
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom',
+                    x: 5
+                }
+            },
+            // mapView: {
+            //     center: [4100, 8280], // In terms of pre-projected units
+            //     zoom: 0.1
+            // },
+            tooltip: {
+                useHTML: true,
+                distance: -15,
+                formatter: function () {
+                    const htmlString =
                         `<div class="tip-grid">
                         <div class="tip-content">
                             <div class="dot"></div>${this.point.name}
@@ -678,55 +699,55 @@ const finalMap = function () {
                         <i class="fas fa-caret-down tip-point"></i>
                         </div>
                         `;
-                        return htmlString;
-                    },
-                    valueSuffix: '/km²'
+                    return htmlString;
                 },
-                series: [{
-                    data: data,
-                    mapData: Highcharts.maps['custom/world-highres'],
-                    joinBy: ['iso-a2', 'code'],
-                    name: 'Population density',
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    events: {
-                        click: function (e) {
-                            e.point.zoomTo();
+                valueSuffix: '/km²'
+            },
+            series: [{
+                data: data,
+                mapData: Highcharts.maps['custom/world-highres'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                allowPointSelect: true,
+                cursor: 'pointer',
+                events: {
+                    click: function (e) {
+                        e.point.zoomTo();
+                    }
+                }
+
+            }],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 400
+                    },
+                    chartOptions: {
+                        subtitle: {
+                            text: ''
+                        },
+                        chart: {
+                            margin: [40, 1, 65, 0]
                         }
                     }
-
-                }],
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 400
-                        },
-                        chartOptions: {
-                            subtitle: {
-                                text: ''
-                            },
-                            chart: {
-                                margin: [40, 1, 65, 0]
-                            }
-                        }
+                },
+                {
+                    condition: {
+                        minWidth: 401
                     },
-                    {
-                        condition: {
-                            minWidth: 401
+                    chartOptions: {
+                        subtitle: {
+                            text: 'Click a country to zoom to it.'
                         },
-                        chartOptions: {
-                            subtitle: {
-                                text: 'Click a country to zoom to it.'
-                            },
-                            chart: {
-                                margin: [60, 1, 65, 0]
-                            }
-
+                        chart: {
+                            margin: [60, 1, 65, 0]
                         }
-                    }]
-                }
-            });
+
+                    }
+                }]
+            }
         });
+    })();
 };
 
 document.addEventListener('DOMContentLoaded', function () {

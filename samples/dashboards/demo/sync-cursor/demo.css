@@ -1,0 +1,40 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+h2,
+h3 {
+    text-align: center;
+}
+
+#csv {
+    display: none;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #top-left,
+    #top-right {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #top-left,
+    #top-right {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #top-left,
+    #top-right {
+        flex: 1 1 100%;
+    }
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

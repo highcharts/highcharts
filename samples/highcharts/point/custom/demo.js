@@ -39,7 +39,9 @@ Highcharts.chart('container', {
         point: {
             descriptionFormatter: function (point) {
                 return (
-                    point.options.custom.value + ' ' + point.series.options.custom.gender + 's have been named ' + point.name + '. ' +
+                    point.options.custom.value +
+                    ' ' + point.series.options.custom.gender +
+                    's have been named ' + point.name + '. ' +
                     'This ranks on place #' + point.options.custom.rank + '.'
                 );
             }
@@ -50,7 +52,8 @@ Highcharts.chart('container', {
         headerFormat: '',
         pointFormat: (
             '{point.name}<br />' +
-            '{point.options.custom.value} {series.options.custom.gender}s (rank #{point.options.custom.rank})'
+            '{point.options.custom.value} {series.options.custom.gender}s ' +
+            '(rank #{point.options.custom.rank})'
         )
     },
 
@@ -60,7 +63,10 @@ Highcharts.chart('container', {
                 enabled: true,
                 sortKey: 'custom.rank'
             },
-            keys: ['name', 'custom.value', 'y', 'custom.rank'], // 4th data position as custom property
+            keys: [
+                'name', 'custom.value', 'y', 'custom.rank'
+            ], // 4th data
+            // position as custom property
             stacking: 'normal'
         }
     },

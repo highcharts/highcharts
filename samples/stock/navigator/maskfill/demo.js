@@ -1,15 +1,22 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    navigator: {
-        maskFill: 'rgba(180, 198, 220, 0.75)'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    rangeSelector: {
-        selected: 1
-    },
+    Highcharts.stockChart('container', {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        navigator: {
+            maskFill: 'rgba(180, 198, 220, 0.75)'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

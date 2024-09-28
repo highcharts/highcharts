@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@ import type SizeObject from './SizeObject';
 
 /* *
  *
- *  Declatations
+ *  Declarations
  *
  * */
 
@@ -28,6 +28,7 @@ export interface BBoxObject extends PositionObject, SizeObject {
     width: number;
     x: number;
     y: number;
+    polygon?: [number, number][]
 }
 
 /* *

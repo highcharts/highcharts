@@ -145,7 +145,8 @@
         },
 
         tooltip: {
-            headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{point.key}:<br/>',
             pointFormat: 'Temperature: <b>{point.custom.label}</b>'
         },
 
@@ -171,7 +172,8 @@
             },
             dataLabels: {
                 crop: true,
-                format: '<span>{key}</span><br><span>{point.custom.label}</span>'
+                format: '<span>{key}</span><br><span>' +
+                    '{point.custom.label}</span>'
             },
             accessibility: {
                 point: {

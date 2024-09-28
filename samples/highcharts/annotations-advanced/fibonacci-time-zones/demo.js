@@ -1,20 +1,13 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+(async () => {
+
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
     const length = data.length;
-    // The control point's visibility
-    let cpVisibility = true;
 
     // Create the chart
-    Highcharts.stockChart('container', {
-
-        chart: {
-            events: {
-                load: function () {
-                    this.annotations.forEach(function (annotation) {
-                        annotation.setControlPointsVisibility(true);
-                    });
-                }
-            }
-        },
+    const chart = Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1
@@ -30,18 +23,15 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
 
         annotations: [{
             type: 'fibonacciTimeZones',
+            controlPointOptions: {
+                visible: true
+            },
             typeOptions: {
                 points: [{
                     x: data[length - 60][0]
                 }, {
                     x: data[length - 59][0]
                 }]
-            },
-            events: {
-                click: function () {
-                    cpVisibility = !cpVisibility;
-                    this.setControlPointsVisibility(cpVisibility);
-                }
             }
         }],
 
@@ -58,4 +48,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         }]
 
     });
-});
+
+    const applyColors = document.getElementById('applyColors');
+
+    applyColors.onclick = function () {
+        chart.annotations[0].update({
+            typeOptions: {
+                line: {
+                    fill: '#06d001',
+                    stroke: '#06d001',
+                    strokeWidth: 2
+                }
+            }
+        });
+    };
+})();

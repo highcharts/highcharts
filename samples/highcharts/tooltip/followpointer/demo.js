@@ -18,7 +18,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '',
-        pointFormat: 'tooltip.followPointer: <b>{series.tooltipOptions.followPointer}</b>'
+        pointFormat: 'tooltip.followPointer: <b>' +
+            '{series.tooltipOptions.followPointer}</b>'
     },
 
     series: [{

@@ -68,8 +68,6 @@ interface MarkerSetterFunction {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 const markerEndSetter = createMarkerSetter('marker-end');
 
 const markerStartSetter = createMarkerSetter('marker-start');
@@ -102,7 +100,7 @@ function onChartAfterGetContainer(
 ): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    // objectEach(this.options.defs, function (def): void {
+    ///  objectEach(this.options.defs, function (def): void {
     //     const attributes = def.attributes;
     //     if (
     //         def.tagName === 'marker' &&
@@ -212,13 +210,10 @@ class ControllablePath extends Controllable {
         ChartClass: typeof Chart,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const svgRendererProto = SVGRendererClass.prototype;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (!svgRendererProto.addMarker) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
-        }
-
-        if (U.pushUnique(composedMembers, SVGRendererClass)) {
-            const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.addMarker = svgRendererAddMarker;
         }
@@ -318,10 +313,6 @@ class ControllablePath extends Controllable {
             .attr(attrs)
             .add(parent);
 
-        if (options.className) {
-            this.graphic.addClass(options.className);
-        }
-
         this.tracker = this.annotation.chart.renderer
             .path([['M', 0, 0]])
             .addClass('highcharts-tracker-line')
@@ -384,8 +375,8 @@ class ControllablePath extends Controllable {
         const setMarker = function (
             markerType: ('markerEnd'|'markerStart')
         ): void {
-            let markerId = itemOptions[markerType],
-                def,
+            const markerId = itemOptions[markerType];
+            let def,
                 predefinedMarker,
                 key,
                 marker;

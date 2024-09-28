@@ -1,24 +1,31 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    xAxis: {
-        type: 'datetime',
-        dateTimeLabelFormats: {
-            second: '%Y-%m-%d<br/>%H:%M:%S',
-            minute: '%Y-%m-%d<br/>%H:%M',
-            hour: '%Y-%m-%d<br/>%H:%M',
-            day: '%Y<br/>%m-%d',
-            week: '%Y<br/>%m-%d',
-            month: '%Y-%m',
-            year: '%Y'
-        }
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    rangeSelector: {
-        selected: 1
-    },
+    Highcharts.stockChart('container', {
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                second: '%Y-%m-%d<br/>%H:%M:%S',
+                minute: '%Y-%m-%d<br/>%H:%M',
+                hour: '%Y-%m-%d<br/>%H:%M',
+                day: '%Y<br/>%m-%d',
+                week: '%Y<br/>%m-%d',
+                month: '%Y-%m',
+                year: '%Y'
+            }
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

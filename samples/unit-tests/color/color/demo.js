@@ -2,7 +2,8 @@ QUnit.test('Compatibility', function (assert) {
     assert.strictEqual(
         Highcharts.color('#ff0000').get('rgba'),
         'rgba(255,0,0,1)',
-        'Backwards compatibility - the Color class should work without the "new" keyword'
+        'Backwards compatibility - the Color class should work without the ' +
+        '"new" keyword'
     );
 });
 
@@ -68,7 +69,8 @@ QUnit.test('Interpolate colors', function (assert) {
                 0.5
             )
         ),
-        '{"radialGradient":{"cx":0.5,"cy":0.3,"r":0.7},"stops":[[0,"#FFFF00"],[1,"#00FFFF"]]}',
+        '{"radialGradient":{"cx":0.5,"cy":0.3,"r":0.7},"stops":[[0,' +
+        '"#FFFF00"],[1,"#00FFFF"]]}',
         'Gradients'
     );
     assert.equal(color().tweenTo(color(), 0.5), 'none', 'Undefined colors');

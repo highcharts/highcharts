@@ -3,7 +3,7 @@
  * @module highcharts/themes/grid-light
  * @requires highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import GridLightTheme from '../../Extensions/Themes/GridLight.js';
 H.theme = GridLightTheme.options;
 GridLightTheme.apply();
+export default H;

@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         text: 'Highcharts Sankey Diagram'
     },
     subtitle: {
-        text: 'Dense data. Node padding should shrink and data labels not overlap.'
+        text: 'Dense data. Node padding should shrink and data labels not ' +
+            'overlap.'
     },
     series: [{
         type: 'sankey',

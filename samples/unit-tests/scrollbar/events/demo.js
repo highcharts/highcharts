@@ -145,7 +145,7 @@ QUnit.test('Scrollbar.liveRedraw option', function (assert) {
     );
 });
 
-QUnit.test('#14193: Scrollbar touch', assert => {
+QUnit.test('Scrollbar events', assert => {
     const { hasTouch, isTouchDevice } = Highcharts;
     Highcharts.hasTouch = Highcharts.isTouchDevice = true;
 
@@ -215,8 +215,34 @@ QUnit.test('#14193: Scrollbar touch', assert => {
         [bar.translateX + 100, bar.translateY + 5]
     );
 
-    assert.ok(axis.min > min, 'Extremes should have changed');
+    assert.ok(axis.min > min, 'Extremes should have changed (#14193)');
 
     Highcharts.hasTouch = hasTouch;
     Highcharts.isTouchDevice = isTouchDevice;
+
+    // #18922, scrollbar track did not catch click events
+    controller.click(bar.translateX + 5, bar.translateY + 5);
+    assert.ok(
+        axis.min === min, 'Extremes should change on track click ' +
+        '(#18922'
+    );
+
+    // #17977, scrollbar should not animate if global animation is disabled
+    const scrollbar = axis.scrollbar;
+
+    chart.update({
+        chart: {
+            animation: false
+        }
+    });
+    controller.click(
+        bar.translateX + bar.getBBox().width - 10,
+        bar.translateY + 5
+    );
+    assert.strictEqual(
+        scrollbar.scrollbarGroup.translateX,
+        scrollbar.width - scrollbar.scrollbar.attr('width'),
+        `Scrollbar should not animate if the global animation is disabled
+        (#17977)`
+    );
 });

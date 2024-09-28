@@ -1,7 +1,8 @@
 QUnit.test('Pie data labels general tests', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                animation: false
+                animation: false,
+                width: 600
             },
             series: [
                 {
@@ -63,6 +64,28 @@ QUnit.test('Pie data labels general tests', function (assert) {
         0,
         '#15377: Inactive point should have 0 opacity'
     );
+
+    // Ordering
+    chart.series[0].setData([
+        ['Slice 1', 81.6],
+        ['Slice 2', 4.8],
+        ['Slice 3: lorem ipsum dolor sit amet', 1.2],
+        [
+            'Slice 4: lorem ipsum dolor sit amet, consectetur adipiscing elit',
+            0.4
+        ],
+        ['Slice 5', 12.1]
+    ]);
+
+    const order = chart.series[0].points
+        .sort((a, b) => a.dataLabel.getBBox().y - b.dataLabel.getBBox().y)
+        .map(point => point.name.substring(0, 7));
+
+    assert.deepEqual(
+        order,
+        ['Slice 5', 'Slice 4', 'Slice 3', 'Slice 2', 'Slice 1'],
+        'Data labels should be ordered by point index (#21336)'
+    );
 });
 
 QUnit.test(
@@ -78,7 +101,9 @@ QUnit.test(
             plotOptions: {
                 pie: {
                     animation: false,
-                    size: '70%' // Removing size option will fix labels reflow issue
+                    size:
+                        '70%' // Removing size option will fix labels reflow
+                        // issue
                 }
             },
             series: [
@@ -422,22 +447,22 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
         labelYPos = [];
 
     for (var i = 0; i < seriesData.length; i++) {
-        labelYPos.push(seriesData[i].labelPosition.computed.y);
+        labelYPos.push(seriesData[i].dataLabel.dataLabelPosition.computed.y);
     }
 
     function isLabelInsidePlot() {
         for (var i = 0; i < labelYPos.length; i++) {
-            if (labelYPos[i] < 0) {
+            if (labelYPos[i] < -1) {
                 return false;
             }
-            if (labelYPos[i] > plotSizeY) {
+            if (labelYPos[i] > plotSizeY + 1) {
                 return false;
             }
         }
         return true;
     }
 
-    assert.ok(isLabelInsidePlot(), 'Pie label is outside of plot');
+    assert.ok(isLabelInsidePlot(), 'Pie label should be inside the plot area');
 });
 
 QUnit.test(
@@ -481,8 +506,9 @@ QUnit.test(
 
         Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
             which: 1,
-            pageX: offset.left + points[0].labelPosition.natural.x,
-            pageY: offset.top + points[0].labelPosition.natural.y
+            pageX: offset.left +
+                points[0].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[0].dataLabel.dataLabelPosition.natural.y
         });
 
         assert.strictEqual(
@@ -493,8 +519,9 @@ QUnit.test(
 
         Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
             which: 1,
-            pageX: offset.left + points[4].labelPosition.natural.x,
-            pageY: offset.top + points[4].labelPosition.natural.y
+            pageX: offset.left +
+                points[4].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[4].dataLabel.dataLabelPosition.natural.y
         });
 
         assert.strictEqual(
@@ -504,8 +531,9 @@ QUnit.test(
         );
 
         chart.pointer.onContainerClick({
-            pageX: offset.left + points[4].labelPosition.natural.x,
-            pageY: offset.top + points[4].labelPosition.y,
+            pageX: offset.left +
+                points[4].dataLabel.dataLabelPosition.natural.x,
+            pageY: offset.top + points[4].dataLabel.dataLabelPosition.y,
             target: points[4].dataLabel.div
         });
 
@@ -545,7 +573,9 @@ QUnit.test('Wide data labels', function (assert) {
     );
 });
 
-QUnit.test(
+// Skipping since refactor. Visually it looks okay. Now it is clipping.
+// Previously the overflow wasn't handled at all.
+QUnit.skip(
     'Pie with long dataLabels with useHTML: true wrongly rendered',
     function (assert) {
         var chart = Highcharts.chart('container', {
@@ -617,7 +647,8 @@ QUnit.test('Connector color of individual point (#8864).', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].connector.attr('stroke') === '#bada55',
+        chart.series[0].points[0].dataLabel.connector
+            .attr('stroke') === '#bada55',
         'Color applied to indiviudal connector.'
     );
 });

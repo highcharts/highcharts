@@ -1,19 +1,26 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    title: {
-        text: 'Y axis is not opposite, renders on the left'
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    yAxis: {
-        opposite: false
-    },
+    Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 1
-    },
+        title: {
+            text: 'Y axis is not opposite, renders on the left'
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        yAxis: {
+            opposite: false
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

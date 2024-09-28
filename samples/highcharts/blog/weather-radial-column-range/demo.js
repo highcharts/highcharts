@@ -21,7 +21,9 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         headerFormat: '<small>{point.x:%d %B, %Y}</small>',
-        pointFormat: '<table>\n  <tr>\n    <th>low</th>\n    <td>{point.low}</td>\n  </tr>\n  <tr>\n    <th>high</th>\n    <td>{point.high}</td>\n  </tr>\n</table>'
+        pointFormat: '<table>\n  <tr>\n    <th>low</th>\n    <td>' +
+            '{point.low}</td>\n  </tr>\n  <tr>\n    <th>high</th>\n    <td>' +
+            '{point.high}</td>\n  </tr>\n</table>'
     },
     xAxis: {
         type: 'datetime',

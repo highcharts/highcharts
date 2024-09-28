@@ -15,12 +15,11 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
         getState = function (button) {
             return button.state;
         },
-        buttonOptions = RangeSelector.prototype.defaultButtons.map(function (
-            rangeOptions
-        ) {
-            RangeSelector.prototype.computeButtonRange(rangeOptions);
-            return rangeOptions;
-        }),
+        buttonOptions = Highcharts.defaultOptions.rangeSelector.buttons.map(
+            rangeOptions => {
+                RangeSelector.prototype.computeButtonRange(rangeOptions);
+                return rangeOptions;
+            }),
         buttons = buttonOptions.map(createButton),
         rangeSelector = {
             buttons: buttons,
@@ -37,6 +36,9 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
                     }
                 ],
                 time: new Highcharts.Time()
+            },
+            setSelected: function (selected) {
+                this.options.selected = this.selected = selected;
             },
             getYTDExtremes: RangeSelector.prototype.getYTDExtremes,
             options: {

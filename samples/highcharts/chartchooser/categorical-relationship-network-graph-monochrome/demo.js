@@ -1,5 +1,5 @@
 /* eslint-disable default-case */
-var dirDist50 = 'rgba(20, 20, 20, .4)',
+const dirDist50 = 'rgba(20, 20, 20, .4)',
     dirDist10 = 'rgba(120, 120, 120, .4)',
     dirDistLess10 = 'rgba(200, 200, 200, .4)';
 
@@ -16,7 +16,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         formatter: function () {
-            var info = '';
+            let info = '';
             switch (this.color) {
             case dirDist50:
                 console.log(dirDist50);

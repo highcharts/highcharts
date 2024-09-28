@@ -23,11 +23,15 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ArcDiagramPoint from './ArcDiagramPoint.js';
+import ArcDiagramSeriesDefaults from './ArcDiagramSeriesDefaults.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
 const {
@@ -37,6 +41,7 @@ const {
     }
 } = SeriesRegistry;
 const {
+    crisp,
     extend,
     merge,
     pick,
@@ -58,147 +63,14 @@ const {
  */
 class ArcDiagramSeries extends SankeySeries {
 
-    /**
-     *  Arc diagram series is a chart drawing style in which
-     *  the vertices of the chart are positioned along a line
-     *  on the Euclidean plane and the edges are drawn as a semicircle
-     *  in one of the two half-planes delimited by the line,
-     *  or as smooth curves formed by sequences of semicircles.
+    /* *
      *
-     * @sample highcharts/demo/arc-diagram/
-     *         Arc Diagram
+     *  Static Properties
      *
-     * @extends      plotOptions.sankey
-     * @since 10.0.0
-     * @product      highcharts
-     * @requires     modules/arc-diagram
-     * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
-     *               dataSorting, dragDrop, getExtremesFromAll, nodePadding,
-     *               centerInCategory, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, relativeXValue, softThreshold,
-     *               stack, stacking, step, xAxis, yAxis
-     * @optionparent plotOptions.arcdiagram
-     */
-    public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
+     * */
 
-        /**
-         * The option to center links rather than position them one after
-         * another
-         *
-         * @type    {boolean}
-         * @since 10.0.0
-         * @default false
-         * @product highcharts
-         */
-        centeredLinks: false,
-
-        /**
-         * The radius of the link arc. If not set, series renders a semi-circle
-         * between the nodes, except when overflowing the edge of the plot area,
-         * in which case an arc touching the edge is rendered. If `linkRadius`
-         * is set, an arc extending to the given value is rendered.
-         *
-         * @type    {number}
-         * @since 10.0.0
-         * @default undefined
-         * @product highcharts
-         * @apioption series.arcdiagram.linkRadius
-         */
-
-        /**
-         * The offset of an arc diagram nodes column in relation to the
-         * `plotArea`. The offset equal to 50% places nodes in the center of a
-         * chart. By default the series is placed so that the biggest node is
-         * touching the bottom border of the `plotArea`.
-         *
-         * @type    {string}
-         * @since 10.0.0
-         * @default '100%'
-         * @product highcharts
-         * @apioption series.arcdiagram.offset
-         */
-        offset: '100%',
-
-        /**
-         * The global link weight. If not set, width is calculated per link,
-         * depending on the weight value.
-         *
-         * @type    {number}
-         * @since 10.0.0
-         * @default undefined
-         * @product highcharts
-         * @apioption series.arcdiagram.linkWeight
-         */
-
-        /**
-         * Whether nodes with different values should have the same size. If set
-         * to true, all nodes are calculated based on the `nodePadding` and
-         * current `plotArea`. It is possible to override it using the
-         * `marker.radius` option.
-         *
-         * @type    {boolean}
-         * @since 10.0.0
-         * @default false
-         * @product highcharts
-         */
-        equalNodes: false,
-        /**
-         * Whether the series should be placed on the other side of the
-         * `plotArea`.
-         *
-         * @type    {boolean}
-         * @since 10.0.0
-         * @default false
-         * @product highcharts
-         */
-        reversed: false,
-        /**
-         * Options for the data labels appearing on top of the nodes and links.
-         * For arc diagram charts, data labels are visible for the nodes by
-         * default, but hidden for links. This is controlled by modifying the
-         * `nodeFormat`, and the `format` that applies to links and is an empty
-         * string by default.
-         *
-         * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
-         *
-         * @private
-         */
-        dataLabels: {
-            /**
-             * Options for a _link_ label text which should follow link
-             * connection. Border and background are disabled for a label that
-             * follows a path.
-             *
-             * **Note:** Only SVG-based renderer supports this option. Setting
-             * `useHTML` to true will disable this option.
-             *
-             * @extends plotOptions.networkgraph.dataLabels.linkTextPath
-             * @since 10.0.0
-             */
-            linkTextPath: {
-                /**
-                 * @type    {Highcharts.SVGAttributes}
-                 * @default {"startOffset":"25%"}
-                 */
-                attributes: {
-                    /**
-                     * @ignore-option
-                     */
-                    startOffset: '25%'
-                }
-            }
-        },
-        /**
-         * @extends   plotOptions.series.marker
-         * @excluding enabled, enabledThreshold, height, width
-         */
-        marker: {
-            symbol: 'circle',
-            fillOpacity: 1,
-            lineWidth: 0,
-            states: {}
-        }
-    } as ArcDiagramSeriesOptions);
+    public static defaultOptions =
+        merge(SankeySeries.defaultOptions, ArcDiagramSeriesDefaults);
 
     /* *
      *
@@ -206,15 +78,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<ArcDiagramPoint> = void 0 as any;
+    public data!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramSeriesOptions = void 0 as any;
+    public options!: ArcDiagramSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
-    public nodes: Array<ArcDiagramPoint> = void 0 as any;
+    public nodes!: Array<ArcDiagramPoint>;
 
-    public points: Array<ArcDiagramPoint> = void 0 as any;
+    public points!: Array<ArcDiagramPoint>;
 
     /* *
      *
@@ -230,7 +102,7 @@ class ArcDiagramSeries extends SankeySeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
-            // column needs casting, to much methods required at the same time
+            // Column needs casting, to much methods required at the same time
             column = SankeyColumnComposition.compose([] as Array<ArcDiagramPoint>, series);
 
         column.sankeyColumn.maxLength = chart.inverted ?
@@ -271,7 +143,10 @@ class ArcDiagramSeries extends SankeySeries {
                 while (i--) {
                     radius = (column[i].getSum()) * factor * scale;
 
-                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
+                    const plotArea = Math.min(
+                        chart.plotHeight,
+                        chart.plotWidth
+                    );
 
                     if (radius > plotArea) {
                         scale = Math.min(plotArea / radius, scale);
@@ -305,9 +180,7 @@ class ArcDiagramSeries extends SankeySeries {
             node: ArcDiagramPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const equalNodes = node.series.options.equalNodes;
-            let offset = column.sankeyColumn.additionalSpace || 0,
-                totalNodeOffset,
+            const equalNodes = node.series.options.equalNodes,
                 nodePadding = series.nodePadding,
                 maxRadius = Math.min(
                     chart.plotWidth,
@@ -315,6 +188,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (column.sankeyColumn.maxLength || 0) /
                         series.nodes.length - nodePadding
                 );
+            let offset = column.sankeyColumn.additionalSpace || 0,
+                totalNodeOffset;
 
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum() *
@@ -373,7 +248,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (point.weight || 0) *
                     translationFactor *
                     fromNode.scale,
-                    (series.options.minLinkWidth || 0)
+                    (series.options.minLinkWidth || 0
+                    )
                 )),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
@@ -403,8 +279,7 @@ class ArcDiagramSeries extends SankeySeries {
             toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
-            bottom = nodeTop,
-            linkWidth = linkWeight;
+            bottom = nodeTop;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -413,7 +288,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
-            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -515,18 +389,15 @@ class ArcDiagramSeries extends SankeySeries {
                     sum * translationFactor,
                     this.options.minLinkWidth || 0
                 ),
-            crisp = Math.round(
-                options.marker &&
-                options.marker.lineWidth || 0
-            ) % 2 / 2,
+            lineWidth = options.marker?.lineWidth || 0,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeLeft = Math.floor(pick(
+            fromNodeLeft = crisp(pick(
                 nodeOffset && nodeOffset.absoluteLeft,
                 (
                     (column.sankeyColumn.left(translationFactor) || 0) +
                     (nodeOffset && nodeOffset.relativeLeft || 0)
                 )
-            )) + crisp,
+            ), lineWidth),
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,
@@ -536,10 +407,11 @@ class ArcDiagramSeries extends SankeySeries {
                         chart.inverted ?
                             chart.plotWidth : chart.plotHeight
                     ) - (
-                        Math.floor(
+                        crisp(
                             this.colDistance * (node.column || 0) +
-                            (markerOptions.lineWidth || 0) / 2
-                        ) + crisp +
+                                (markerOptions.lineWidth || 0) / 2,
+                            lineWidth
+                        ) +
                         (column.sankeyColumn.scale || 0) *
                         (column.sankeyColumn.maxRadius || 0) / 2
                     )
@@ -632,10 +504,11 @@ class ArcDiagramSeries extends SankeySeries {
 
     public pointAttribs(
         point?: ArcDiagramPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs
+            const { ...attrs } = Series.prototype.pointAttribs
                 .apply(this, arguments);
             return attrs;
         }
@@ -688,98 +561,3 @@ SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
  * */
 
 export default ArcDiagramSeries;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * An `arcdiagram` series. If the [type](#series.arcdiagram.type)
- * option is not specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.arcdiagram
- * @exclude   dataSorting, boostThreshold, boostBlending, curveFactor,
- *            connectEnds, connectNulls, colorAxis, colorKey, dataSorting,
- *            dragDrop, getExtremesFromAll, nodePadding, centerInCategory,
- *            pointInterval, pointIntervalUnit, pointPlacement,
- *            pointStart, relativeXValue, softThreshold, stack,
- *            stacking, step, xAxis, yAxis
- * @product   highcharts
- * @requires  modules/sankey
- * @requires  modules/arc-diagram
- * @apioption series.arcdiagram
- */
-
-/**
- * @extends   plotOptions.series.marker
- * @excluding enabled, enabledThreshold, height, radius, width
- * @apioption series.arcdiagram.marker
- */
-/**
- * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
- * @product   highcharts
- * @apioption series.arcdiagram.data.dataLabels
- */
-
-/**
- * A collection of options for the individual nodes. The nodes in an arc diagram
- * are auto-generated instances of `Highcharts.Point`, but options can be
- * applied here and linked by the `id`.
- *
- * @extends   series.sankey.nodes
- * @type      {Array<*>}
- * @product   highcharts
- * @excluding column, level
- * @apioption series.arcdiagram.nodes
- */
-
-/**
- * Individual data label for each node. The options are the same as the ones for
- * [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
- *
- * @type
- * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
- *
- * @apioption series.arcdiagram.nodes.dataLabels
- */
-
-/**
- * Individual data label for each node. The options are the same as the ones for
- * [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
- *
- * @type
- * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
- *
- */
-
-/**
- * An array of data points for the series. For the `arcdiagram` series type,
- * points can be given in the following way:
- *
- * An array of objects with named values. The following snippet shows only a few
- * settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         from: 'Category1',
- *         to: 'Category2',
- *         weight: 2
- *     }, {
- *         from: 'Category1',
- *         to: 'Category3',
- *         weight: 5
- *     }]
- *  ```
- *
- * @type      {Array<*>}
- * @extends   series.sankey.data
- * @product   highcharts
- * @excluding outgoing, dataLabels
- * @apioption series.arcdiagram.data
- */
-
-''; // adds doclets above to the transpiled file

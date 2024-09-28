@@ -16,8 +16,8 @@
  * indicators.
  */
 (function (Highcharts) {
-    var draw = (function () {
-        var isFn = function (x) {
+    const draw = (function () {
+        const isFn = function (x) {
             return typeof x === 'function';
         };
 
@@ -28,10 +28,12 @@
          * @param  {Object} params Parameters.
          * @return {undefined} Returns undefined.
          */
-        var draw = function draw(params) {
-            var point = this,
-                graphic = point.graphic,
-                animate = params.animate,
+        const draw = function draw(params) {
+            const point = this;
+
+            let graphic = point.graphic;
+
+            const animate = params.animate,
                 attr = params.attr,
                 onComplete = params.onComplete,
                 css = params.css || {},
@@ -61,9 +63,9 @@
         return draw;
     }());
 
-    var renderHeatIndicators = (function (Highcharts, draw) {
+    const renderHeatIndicators = (function (Highcharts, draw) {
 
-        var extend = Highcharts.extend,
+        const extend = Highcharts.extend,
             isFunction = function (x) {
                 return typeof x === 'function';
             },
@@ -71,7 +73,7 @@
             merge = Highcharts.merge,
             objectEach = Highcharts.objectEach;
 
-        var defaultOptions = {
+        const defaultOptions = {
             color: {
                 linearGradient: {
                     x1: 0,
@@ -86,15 +88,15 @@
             }
         };
 
-        var HeatIndicator = function (params) {
-            var indicator = this;
+        const HeatIndicator = function (params) {
+            const indicator = this;
             indicator.init(params);
             return indicator;
         };
 
         HeatIndicator.prototype = {
             destroy: function () {
-                var indicator = this;
+                const indicator = this;
 
                 if (indicator.graphic) {
                     indicator.graphic = indicator.graphic.destroy();
@@ -112,7 +114,7 @@
                 return 'highcharts-heat-indicator';
             },
             init: function (params) {
-                var indicator = this;
+                const indicator = this;
 
                 // Set properties on the indicator.
                 extend(indicator, {
@@ -129,7 +131,7 @@
                 return indicator;
             },
             render: function () {
-                var indicator = this,
+                const indicator = this,
                     metrics = indicator.metrics,
                     xAxis = indicator.xAxis,
                     yAxis = indicator.yAxis,
@@ -178,7 +180,7 @@
                 });
             },
             shouldDraw: function () {
-                var indicator = this,
+                const indicator = this,
                     options = indicator.options || {},
                     filter = options.filter,
                     start = indicator.start,
@@ -195,14 +197,14 @@
                 );
             },
             update: function (params) {
-                var indicator = this;
+                const indicator = this;
                 extend(indicator, params);
                 this.render();
             }
         };
 
-        var calculateSeriesIdleTime = function (series) {
-            var points = series.points
+        const calculateSeriesIdleTime = function (series) {
+            const points = series.points
                     .slice() // Make a copy before sorting.
                     .sort(function (a, b) {
                         return b.start - a.start;
@@ -210,14 +212,14 @@
                 xAxis = series.xAxis,
                 min = xAxis.min,
                 firstPoint = points[points.length - 1].start,
-                totalIdle = firstPoint > min ? firstPoint - min : 0,
                 max = xAxis.max;
+            let totalIdle = firstPoint > min ? firstPoint - min : 0;
 
             points.reduce((next, current) => {
-                var start = current.end,
+                const start = current.end,
                     end = next ? next.start : max,
-                    idle = (start < end) ? end - start : 0,
-                    visibleIdle = Math.min(end, max) - Math.max(start, min);
+                    idle = (start < end) ? end - start : 0;
+                let visibleIdle = Math.min(end, max) - Math.max(start, min);
                 visibleIdle = visibleIdle > 0 ? visibleIdle : 0;
                 current.idle = idle;
                 totalIdle += visibleIdle;
@@ -226,8 +228,9 @@
             series.idle = totalIdle;
         };
 
-        var renderHeatIndicators = function (series) {
-            var options = series.options && series.options.heatIndicator || {};
+        const renderHeatIndicators = function (series) {
+            const options = series.options &&
+                 series.options.heatIndicator || {};
 
             // TODO Several modules are dependent upon this, it should be added
             // as a dependency somehow.
@@ -235,7 +238,7 @@
 
             series.points.forEach(point => {
                 // Get existing indicator from point, or create a new one.
-                var heatIndicator = point.heatIndicator || new HeatIndicator({
+                const heatIndicator = point.heatIndicator || new HeatIndicator({
                     group: series.group,
                     metrics: series.columnMetrics,
                     xAxis: series.xAxis,
@@ -259,28 +262,28 @@
         return renderHeatIndicators;
     }(Highcharts, draw));
 
-    var renderEPRIndicators = (function (Highcharts, draw) {
+    const renderEPRIndicators = (function (Highcharts, draw) {
 
-        var objectEach = Highcharts.objectEach,
+        const objectEach = Highcharts.objectEach,
             extend = Highcharts.extend,
             isNumber = Highcharts.isNumber,
             merge = Highcharts.merge;
 
-        var defaultOptions = {
+        const defaultOptions = {
             color: 'rgb(255, 0, 0)',
             lineWidth: 1,
             dashstyle: 'dash'
         };
 
-        var EPRIndicator = function (params) {
-            var indicator = this;
+        const EPRIndicator = function (params) {
+            const indicator = this;
             indicator.init(params);
             return indicator;
         };
 
         EPRIndicator.prototype = {
             destroy: function () {
-                var indicator = this;
+                const indicator = this;
 
                 if (indicator.graphic) {
                     indicator.graphic = indicator.graphic.destroy();
@@ -298,7 +301,7 @@
                 return 'highcharts-eap-indicator';
             },
             init: function (params) {
-                var indicator = this;
+                const indicator = this;
 
                 // Set properties on the indicator.
                 extend(indicator, {
@@ -315,7 +318,7 @@
                 return indicator;
             },
             render: function () {
-                var indicator = this,
+                const indicator = this,
                     renderer = indicator.renderer,
                     metrics = indicator.metrics,
                     options = indicator.options,
@@ -355,7 +358,7 @@
                 });
             },
             shouldDraw: function () {
-                var indicator = this,
+                const indicator = this,
                     x = indicator.x,
                     y = indicator.y;
 
@@ -364,15 +367,15 @@
                 );
             },
             update: function (params) {
-                var indicator = this;
+                const indicator = this;
                 extend(indicator, params);
                 this.render();
             }
         };
 
-        var renderEPRIndicators = function (series) {
+        const renderEPRIndicators = function (series) {
             series.points.forEach(point => {
-                var options = point.options && point.options.indicator || {},
+                const options = point.options && point.options.indicator || {},
                     // point.options.indicator is copied to point.indicator, so
                     // we use point.indicatorObj instead.
                     indicator = point.indicatorObj || new EPRIndicator({
@@ -396,10 +399,10 @@
     }(Highcharts, draw));
 
     (function (Highcharts, renderHeatIndicators, renderEPRIndicators) {
-        var Series = Highcharts.Series;
+        const Series = Highcharts.Series;
         // Add heat indicator functionality to Highcharts Series.
         Highcharts.addEvent(Series, 'afterRender', function () {
-            var series = this;
+            const series = this;
             renderEPRIndicators(series);
             renderHeatIndicators(series);
         });
@@ -414,23 +417,22 @@
 /**
  * Variables
  */
-var today = +Date.now(),
+const today = +Date.now(),
     minutes = 60 * 1000,
     hours = 60 * minutes,
     days = 24 * hours,
     dateFormat = function (date) {
-        var format = '%e. %b';
+        const format = '%e. %b';
         return Highcharts.dateFormat(format, date);
     },
     find = Highcharts.find,
     xAxisMin = today - (10 * days),
-    xAxisMax = xAxisMin + 90 * days,
-    data;
+    xAxisMax = xAxisMin + 90 * days;
 
 /**
  * The data used in this visualization.
  */
-data = {
+const data = {
     // The different events in a lap of a journey.
     events: {
         loading: {
@@ -446,7 +448,7 @@ data = {
         voyage: {
             color: '#558139',
             tooltipFormatter: function (point) {
-                var indicator = point.indicator;
+                const indicator = point.indicator;
                 return [
                     '<b>Voyage</b><br/>',
                     'Start: (' + point.startLocation + ') ' +
@@ -573,18 +575,17 @@ data = {
 /**
  * Creates a point in a lap.
  */
-var getPoint = function (params) {
-    var start = params.start,
+const getPoint = function (params) {
+    const start = params.start,
         tripName = params.tripName,
         type = params.type,
         vessel = params.vessel,
         duration = params.duration,
         voyage = params.voyage,
-        indicator,
         earliestPossibleReturn = params.epr,
         end = start + duration;
 
-    indicator = (
+    const indicator = (
         (
             Highcharts.isNumber(earliestPossibleReturn) &&
             start < earliestPossibleReturn &&
@@ -619,9 +620,9 @@ var getPoint = function (params) {
 /**
  * Creates a set of points based on a lap. These points are grouped together.
  */
-var getGroupFromTrip = function (trip, vessel, y) {
+const getGroupFromTrip = function (trip, vessel, y) {
     return trip.laps.reduce(function (group, voyage) {
-        var points = [];
+        const points = [];
 
         if (voyage.loadDuration) {
             points.push(getPoint({
@@ -671,11 +672,11 @@ var getGroupFromTrip = function (trip, vessel, y) {
 /**
  * Parses the data and creates all the series of the chart.
  */
-var getSeriesFromInformation = function (info) {
-    var vessels = info.vessels;
+const getSeriesFromInformation = function (info) {
+    const vessels = info.vessels;
     return vessels.map(function (vessel, i) {
-        var data = vessel.journeys.reduce(function (result, trip) {
-            var group = getGroupFromTrip(trip, vessel, i);
+        const data = vessel.journeys.reduce(function (result, trip) {
+            const group = getGroupFromTrip(trip, vessel, i);
             return result.concat(group.points);
         }, []);
 
@@ -691,11 +692,12 @@ var getSeriesFromInformation = function (info) {
 /**
  * Modify event to handle modifying other points in group when resizing
  */
-var customResize = function (e, chart) {
-    var newPoints = e.newPoints,
+const customResize = function (e, chart) {
+    const newPoints = e.newPoints,
         defined = Highcharts.defined,
-        objectEach = Highcharts.objectEach,
-        start,
+        objectEach = Highcharts.objectEach;
+
+    let start,
         end,
         diff,
         resizePoint;
@@ -709,7 +711,7 @@ var customResize = function (e, chart) {
                 defined(end) && end - resizePoint.options.end;
 
         objectEach(e.origin.points, function (pointOrigin) {
-            var point = pointOrigin.point;
+            const point = pointOrigin.point;
             if (
                 point.id !== e.newPointId && (
                     defined(start) && point.end <= resizePoint.options.start ||
@@ -731,11 +733,13 @@ var customResize = function (e, chart) {
 /**
  * Check if new points collide with existing ones
  */
-var newPointsColliding = function (newPoints, chart) {
-    var pick = Highcharts.pick,
+const newPointsColliding = function (newPoints, chart) {
+    let y,
+        collidePoint;
+
+    const pick = Highcharts.pick,
         inArray = Highcharts.inArray,
         groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
-        y,
         minX = Object.keys(newPoints).reduce((acc, id) => {
             y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
             return Math.min(
@@ -750,8 +754,6 @@ var newPointsColliding = function (newPoints, chart) {
             );
         }, -Infinity),
         newSeries = chart.get(y),
-        i,
-        collidePoint,
         pointOverlaps = function (point) {
             return point.end >= minX && point.start <= minX ||
                 point.start <= maxX && point.end >= maxX ||
@@ -760,7 +762,7 @@ var newPointsColliding = function (newPoints, chart) {
         };
 
     if (newSeries) {
-        i = newSeries.points ? newSeries.points.length : 0;
+        let i = newSeries.points ? newSeries.points.length : 0;
         while (i--) {
             collidePoint = newSeries.points[i];
             if (
@@ -777,8 +779,8 @@ var newPointsColliding = function (newPoints, chart) {
 /**
  * Add collision detection on move/resize
  */
-var customDrag = function (e) {
-    var series = this.series,
+const customDrag = function (e) {
+    const series = this.series,
         chart = series.chart;
 
     // Handle the resize
@@ -798,8 +800,8 @@ var customDrag = function (e) {
  * Implement custom drop. Do normal update, but move points between series when
  * changing their y value.
  */
-var customDrop = function (e) {
-    var newPoints = e.newPoints,
+const customDrop = function (e) {
+    const newPoints = e.newPoints,
         chart = this.series.chart,
         defined = Highcharts.defined,
         objectEach = Highcharts.objectEach;
@@ -814,10 +816,10 @@ var customDrop = function (e) {
 
     // Update the points
     objectEach(newPoints, function (update) {
-        var newValues = update.newValues,
-            oldPoint = update.point,
-            newSeries = defined(newValues.y) ?
-                chart.get(newValues.y) : oldPoint.series;
+        let newValues = update.newValues,
+            oldPoint = update.point;
+        const newSeries = defined(newValues.y) ?
+            chart.get(newValues.y) : oldPoint.series;
 
         // Destroy any old heat indicator objects
         if (oldPoint.heatIndicator) {
@@ -859,7 +861,7 @@ var customDrop = function (e) {
 /**
  * Custom formatter for data labels which are left aligned.
  */
-var leftLabelFormatter = function () {
+const leftLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return this.point.startLocation;
     }
@@ -868,7 +870,7 @@ var leftLabelFormatter = function () {
 /**
  * Custom formatter for data labels which are center aligned.
  */
-var centerLabelFormatter = function () {
+const centerLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return ' ' + this.point.name + ' ';
     }
@@ -877,7 +879,7 @@ var centerLabelFormatter = function () {
 /**
  * Custom formatter for data labels which are right aligned.
  */
-var rightLabelFormatter = function () {
+const rightLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return this.point.endLocation;
     }
@@ -886,8 +888,8 @@ var rightLabelFormatter = function () {
 /**
  * Custom formatter for axis labels displaying the series name.
  */
-var gridColumnFormatterSeriesName = function () {
-    var chart = this.chart,
+const gridColumnFormatterSeriesName = function () {
+    const chart = this.chart,
         series = chart.get(this.value);
     return series.name;
 };
@@ -895,8 +897,8 @@ var gridColumnFormatterSeriesName = function () {
 /**
  * Creates a category label and formats it based on the value.
  */
-var getCategoryFromIdleTime = function (utilized, idle) {
-    var thresholds = {
+const getCategoryFromIdleTime = function (utilized, idle) {
+    const thresholds = {
             25: 'bad',
             50: 'ok',
             75: 'good',
@@ -918,8 +920,8 @@ var getCategoryFromIdleTime = function (utilized, idle) {
  * Custom formatter for axis labels displaying the vessels number of idle days,
  * and its percentage of utilized time.
  */
-var gridColumnFormatterSeriesIdle = function () {
-    var chart = this.chart,
+const gridColumnFormatterSeriesIdle = function () {
+    const chart = this.chart,
         series = chart.get(this.value),
         xAxis = series.xAxis,
         total = xAxis.max - xAxis.min,
@@ -933,8 +935,8 @@ var gridColumnFormatterSeriesIdle = function () {
 /**
  * Custom formatter for the tooltip.
  */
-var tooltipFormatter = function () {
-    var point = this.point,
+const tooltipFormatter = function () {
+    const point = this.point,
         trip = point.trip,
         series = point.series,
         formatter = data.events[point.type].tooltipFormatter;
@@ -963,7 +965,7 @@ Highcharts.ganttChart('container', {
             heatIndicator: {
                 enabled: true,
                 filter: function (indicator) {
-                    var start = indicator.start,
+                    const start = indicator.start,
                         end = indicator.end,
                         idleTime = end - start;
                     return idleTime > (10 * days);

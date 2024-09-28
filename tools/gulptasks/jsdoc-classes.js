@@ -17,7 +17,7 @@ const SOURCE_GLOBS = [
     'js/Core/Animation/*.js',
     'js/Core/Axis/Axis.js',
     'js/Core/Axis/Color/ColorAxis.js',
-    'js/Core/Axis/PlotLineOrBand/PlotLineOrBand.js',
+    'js/Core/Axis/PlotLineOrBand/PlotLineOrBandAxis.js',
     'js/Core/Axis/Tick.js',
     'js/Core/Axis/TreeGrid/TreeGridAxis.js',
     'js/Core/Axis/TreeGrid/TreeGridTick.js',
@@ -51,25 +51,29 @@ const SOURCE_GLOBS = [
     'js/Extensions/Data.js',
     'js/Extensions/DataGrouping/DataGrouping.js',
     'js/Extensions/DataGrouping/DataGroupingSeriesComposition.js',
-    'js/Extensions/DraggablePoints.js',
-    'js/Extensions/Drilldown.js',
+    'js/Extensions/DraggablePoints/DraggablePoints.js',
+    'js/Extensions/Drilldown/Drilldown.js',
     'js/Extensions/ExportData/ExportData.js',
     'js/Extensions/Exporting/Exporting.js',
     'js/Extensions/Exporting/Fullscreen.js',
-    'js/Extensions/GeoJSON.js',
-    'js/Extensions/MarkerClusters.js',
+    'js/Extensions/MarkerClusters/MarkerClusters.js',
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
     'js/Extensions/SeriesLabel/SeriesLabel.js',
+    'js/Maps/GeoJSONComposition.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
+    'js/Series/AreaRange/AreaRangePoint.js',
     'js/Series/AreaRange/AreaRangeSeries.js',
     'js/Series/Column/ColumnSeries.js',
     'js/Series/Networkgraph/NetworkgraphSeries.js',
     'js/Series/Organization/OrganizationSeries.js',
     'js/Series/PackedBubble/PackedBubbleSeries.js',
+    'js/Series/Pie/PieSeries.js',
     'js/Series/Sankey/SankeySeries.js',
-    'js/Series/Timeline/TimelineSeries.js'
+    'js/Series/Timeline/TimelineSeries.js',
+    'js/Series/GeoHeatmap/GeoHeatmapSeries.js',
+    'js/Stock/Navigator/StandaloneNavigator.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
@@ -94,7 +98,7 @@ const TEMPLATE_DIRECTORY = Path.join(
 function jsDocClasses() {
 
     const gulpJSDoc = require('gulp-jsdoc3');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 

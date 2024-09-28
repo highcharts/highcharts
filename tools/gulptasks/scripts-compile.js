@@ -3,108 +3,119 @@
  */
 
 const gulp = require('gulp');
-const {
-    Worker, parentPort, workerData
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-} = require('worker_threads');
-const os = require('os');
-const argv = require('yargs').argv;
 
-const SOURCE_DIRECTORY = 'code';
-
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
 /**
- * Split an array into multiple new arrays/chuncks
+ * Creates minified versions of `.src.js` bundles in `/code` folder.
  *
- * @param {Array} arr to split
- * @param {Number} numParts to split array in
- * @return {Array} Array of arrays/chunks
+ * @param {Array<string>} [filePaths]
+ * Optional list of files to compile.
+ *
+ * @param {object} [config]
+ * Configuration object.
+ *
+ * @param {string} [product]
+ * Product name.
+ *
+ * @return {Promise}
+ * Promise to keep
  */
-function chunk(arr, numParts) {
-    const result = [];
-    for (let p = 0; p < numParts; p++) {
-        result[p] = [];
+function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
+    const fs = require('fs'),
+        fsLib = require('../libs/fs'),
+        logLib = require('../libs/log'),
+        path = require('path'),
+        swc = require('@swc/core'),
+        argv = require('yargs').argv;
+    let esModulesFolder,
+        targetFolder;
+
+    if (product === 'highcharts') {
+        esModulesFolder = '/es-modules/';
+        targetFolder = 'code';
+    } else if (product === 'dashboards') {
+        esModulesFolder = config.esModulesFolder;
+        targetFolder = config.bundleTargetFolder;
+    } else if (product === 'datagrid') {
+        esModulesFolder = config.esModulesFolderDataGrid;
+        targetFolder = config.bundleTargetFolderDataGrid;
     }
 
-    for (let i = arr.length - 1; i >= 0; i--) {
-        const arrIndex = Math.floor(i % numParts);
-        result[arrIndex].push(arr[i]);
-    }
-    return result;
-}
+    filePaths = filePaths instanceof Array ?
+        filePaths :
+        typeof argv.files === 'string' ?
+            argv.files
+                .split(',')
+                .map(filePath => path.join(targetFolder, filePath)) :
+            fsLib.getFilePaths(targetFolder, true);
 
-/**
- * Compile the JS files in the /code folder
- *
- * @return {Promise<void>}
- *         Promise to keep
- */
-async function task() {
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    let promiseChain1 = Promise.resolve(),
+        promiseChain2 = Promise.resolve();
 
-    const fileBatches = [];
+    for (
+        let i = 0,
+            iEnd = filePaths.length,
+            inputPath,
+            promise;
+        i < iEnd;
+        ++i
+    ) {
+        inputPath = filePaths[i];
 
-    if (workerData) {
-        const compileTool = require('../compile');
+        if (inputPath.includes(esModulesFolder) || !inputPath.endsWith('.src.js')) {
+            continue;
+        }
 
-        fileBatches.push(
-            compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'))
-        );
+        const outputPath = inputPath.replace('.src.js', '.js'),
+            outputMapPath = outputPath + '.map';
 
-        parentPort.postMessage({ done: true });
+        // Compile file, https://swc.rs/docs/usage/core
+        const code = fs.readFileSync(inputPath, 'utf-8');
+        promise = swc.minify(code, {
+            compress: {
+                // hoist_funs: true
+            },
+            mangle: true,
+            sourceMap: true
+        })
 
-        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
-    } else {
-        logLib.warn('Warning: This task may take a few minutes.');
-
-        const files = (
-            (argv.files) ?
-                argv.files.split(',') :
-                fsLib
-                    .getFilePaths(SOURCE_DIRECTORY, true)
-                    .filter(path => (
-                        path.endsWith('.src.js') &&
-                        !path.includes('es-modules')
-                    ))
-                    .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
-        );
-
-        const numThreads = argv.numThreads ?
-            argv.numThreads :
-            Math.min(
-                files.length,
-                Math.max(2, os.cpus().length - 2)
-            );
-        const batches = chunk(files, numThreads);
-
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
-        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
-
-        batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
-
-                const worker = new Worker(
-                    __filename,
-                    { workerData: { files: batch, batchNum: (index + 1) } }
+            .then(result => {
+                // Write compiled file
+                fs.writeFileSync(
+                    outputPath,
+                    result.code.replace('@license ', '')
                 );
-                worker.on('message', resolve);
-                worker.on('error', reject);
-                worker.on('exit', code => {
-                    if (code !== 0) {
-                        reject(new Error(`Worker stopped with exit code ${code}`));
-                    }
-                });
 
-            }));
-        });
+                // Write source map
+                fs.writeFileSync(outputMapPath, result.map);
+
+                logLib.success(
+                    `Compiled ${inputPath} => ${outputPath}`,
+                    `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+                );
+
+                return result;
+            });
+
+        if (i % 2 || argv.CI) {
+            promiseChain1 = promiseChain1.then(() => promise);
+        } else {
+            promiseChain2 = promiseChain2.then(() => promise);
+        }
     }
 
-    return Promise.all(fileBatches);
+    // not too many in parallel because of IO
+    return Promise.all([
+        promiseChain1,
+        promiseChain2
+    ]);
 }
 
-gulp.task('scripts-compile', task);
+gulp.task('scripts-compile', scriptsCompile);
 
-if (workerData) {
-    task();
-}
+module.exports = scriptsCompile;

@@ -143,11 +143,14 @@ QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
     });
 });
 
-QUnit.test('Crosshair with snap false (#5066)', function (assert) {
+QUnit.test('Crosshair with snap false', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {
             crosshair: {
-                snap: false
+                snap: false,
+                label: {
+                    enabled: true
+                }
             }
         },
 
@@ -179,18 +182,23 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     });
 
     var controller = new TestController(chart);
-    controller.mouseMove(100, 100);
+    controller.mouseMove(500, 100);
 
     assert.strictEqual(
         chart.xAxis[0].cross.element.nodeName,
         'path',
-        'X axis has cross'
+        'X axis should have crosshair (#5066)'
     );
 
     assert.strictEqual(
         chart.yAxis[0].cross.element.nodeName,
         'path',
-        'Y axis has cross'
+        'Y axis should have crosshair (#5066)'
+    );
+
+    assert.ok(
+        chart.xAxis[0].crossLabel.x > 300,
+        'X axis cross label should be on the right side of the chart (#20856)'
     );
 
     chart.renderTo.style.position = 'static';

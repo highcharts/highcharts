@@ -2,14 +2,16 @@ Installation with ES6 modules
 =============================
 
 Our product packages are available as ES6-compatible modules since
-Highcharts v6.1. Some core files can also be loaded directly as ES6 modules
-since Highcharts v9.2. The latter allows you to make use of tree shaking to only
+Highcharts v6.1. Core files can also be loaded directly as ES modules since
+Highcharts v11.3. The latter allows you to make use of tree shaking to only
 load or bundle what is needed and reduce download and package sizes.
 
+**Note:** If you code with TypeScript, please take a look at our
+[TypeScript article](../advanced-chart-features/highcharts-typescript-declarations)
+for details about ESM bundling and type adjustments.
 
 
-Including a product package (ES6 module)
-----------------------------------------
+## Including a product package (ES6 module)
 
 For debugging and development purposes you can load core files directly in your
 browser page and make use of tree shaking. Please note that this results in a
@@ -27,8 +29,8 @@ production.
     </script>
 ```
 
-Creating a custom bundle (ES6 module)
--------------------------------------
+
+## Creating a custom bundle (ES6 module)
 
 The advantage of core files over packages is, that only the required features
 are loaded. This reduces the total download size. We can create a bundle of all
@@ -94,9 +96,7 @@ mySeries.init(myChart, { data: [1, 2, 3] });
 ```
 
 
-
-Optional functionality via compositions
----------------------------------------
+## Optional functionality via compositions
 
 Unlike packages the core files do not provide all functionality out of the box.
 You can find details about optional functionality in the source code of product
@@ -130,8 +130,7 @@ Do as below to activate data labels for example.
 
 
 
-Advantage of tree shaking
--------------------------
+## Advantage of tree shaking
 
 Tree shaking, by loading core files directly, helps to reduce the size of files
 to download and reduces the size of your project. It is especially useful when
@@ -147,13 +146,124 @@ examples.
 
 
 
-Troubleshooting
----------------
+## Troubleshooting
 
 If your project fails because of missing Highcharts code, a compose call
 might be necessary after loading one of the module files. Consult the source
 code of our product packages in `highcharts/es-modules/masters` for details.
 
-*Note:* Highcharts extensions and more advanced series might not be ready yet
-for ES6 module loading. In this case you have to use one of the product
-packages.
+
+
+## Dynamic imports from CDN
+
+Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
+without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
+```html
+<script type="module">
+    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+    import 'https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js';
+
+    Highcharts.chart('container', {
+        ...
+    });
+</script>
+```
+The following example shows dynamic import with lazy-loading:
+```js
+const loadHighchartsAndCreateChart = async () => {
+    const { default: Highcharts } =
+        await import('https://code.highcharts.com/es-modules/masters/highcharts.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/highcharts-more.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js');
+    await import('https://code.highcharts.com/es-modules/masters/modules/export-data.src.js');
+
+    Highcharts.chart('container', { /* options */ });
+};
+```
+View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/);
+
+
+
+## Load Highcharts as a transpiled ES6/UMD module
+
+Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
+*The following examples assume you have used npm to install Highcharts; see [installation with npm](https://highcharts.com/docs/getting-started/install-from-npm) for more details.*
+
+
+### Babel
+```js
+import Highcharts from 'highcharts';
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
+// import Highcharts from 'highcharts/highstock';
+
+// Load the exporting module.
+import Exporting from 'highcharts/modules/exporting';
+// Initialize exporting module. (CommonJS only)
+Exporting(Highcharts);
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+
+
+### TypeScript + UMD
+
+```js
+import Highcharts from 'highcharts';
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
+// import Highcharts from 'highcharts/highstock';
+
+// Load the exporting module.
+import Exporting from 'highcharts/modules/exporting';
+// Initialize exporting module. (CommonJS only)
+if(typeof Exporting === 'function') {
+    Exporting(Highcharts);
+}
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "umd",
+    "moduleResolution": "node"
+  }
+}
+```
+
+
+### TypeScript + ESM from CDN
+```js
+// Load modules the ES6 way
+import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es6",
+    "paths": {
+      "https://code.highcharts.com/es-modules/masters/*.src.js": [
+        "node_modules/highcharts/*.src"
+      ]
+    }
+  }
+}
+```

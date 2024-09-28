@@ -1,0 +1,9 @@
+---
+name: Map with locator
+js_wrap: b
+use_png_thumbnail: true
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
+...

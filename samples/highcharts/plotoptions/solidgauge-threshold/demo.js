@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
 
     chart: {
         type: 'solidgauge'
@@ -96,7 +96,7 @@ var chart = Highcharts.chart('container', {
 
 // Bring life to the dial
 setInterval(function () {
-    var point,
+    let point,
         newVal;
 
     if (chart) {

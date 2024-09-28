@@ -1,6 +1,8 @@
 /*!*
  *
  *  Copyright (c) Highsoft AS. All rights reserved.
+ * 
+ *  Transpile with `npx gulp scripts && npx gulp jsdoc-dts && npx tsc -b test`.
  *
  *!*/
 
@@ -171,7 +173,6 @@ class TestController {
         }
 
         this.chart = chart;
-        this.mouseEnterStack = [];
         this.positionX = 0;
         this.positionY = 0;
         this.relatedTarget = null;
@@ -186,8 +187,6 @@ class TestController {
      * */
 
     private chart: Highcharts.Chart;
-
-    private mouseEnterStack: Array<Element>;
 
     private positionX: number;
     
@@ -281,6 +280,24 @@ class TestController {
         Object.keys(extra).forEach(function (key) {
             (evt as any)[key] = extra[key];
         });
+
+        // Extend each touch with pageX and pageY after chart offset corrections
+        if ((evt as any).touches) {
+            const twoFingers = (evt as any).touches.length === 2;
+            (evt as any).touches.forEach(
+                (touch: { pageX: number; pageY: number; }, i: any) =>
+                {
+                    if (twoFingers) {
+                        const sign = i ? 1 : -1;
+                        touch.pageX += 11 * sign;
+                        touch.pageY += 11 * sign;
+                    } else {
+                        touch.pageX = extra.pageX;
+                        touch.pageY = extra.pageY;
+                    }
+                }
+            );
+        }
 
         return evt;
     }
@@ -615,6 +632,40 @@ class TestController {
     }
 
     /**
+     * Triggers mouse wheel event on the chart.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     *
+     * @param extra
+     * Extra properties for the event arguments for the scroll deltas.
+     * For only `deltaY`, use number primitive.
+     *
+     * @param debug
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
+     */
+    public mouseWheel (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ): void {
+        // If extra is a number, convert it to object as deltaY
+        if (typeof extra === 'number') {
+            extra = {
+                deltaY: extra
+            };
+        }
+        this.setPosition(chartX, chartY);
+        this.triggerEvent('wheel', chartX, chartY, extra, debug);
+    }
+
+    /**
      * Move the cursor from current position to a new one. Fire a series of
      * mousemoves, also mouseout and mouseover if new targets are found.
      *
@@ -813,11 +864,11 @@ class TestController {
             };
 
             if (i === 0) {
-                this.touchStart(chartX, chartY, undefined, extra, debug);
+                this.touchStart(movePoint1[0], movePoint1[1], undefined, extra, debug);
             }
-            this.touchMove(chartX, chartY, undefined, extra, debug);
+            this.touchMove(movePoint1[0], movePoint1[1], undefined, extra, debug);
             if (i === ie) {
-                this.touchEnd(chartX, chartY, undefined, extra, debug);
+                this.touchEnd(movePoint1[0], movePoint1[1], undefined, extra, debug);
             }
         }
     }

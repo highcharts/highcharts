@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,9 +23,10 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions';
+import type Types from '../../Shared/Types';
 
 import DataConnector from './DataConnector.js';
-import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
@@ -39,7 +40,7 @@ const { merge } = U;
  * */
 
 /**
- * Class that handles creating a dataconnector from an HTML table.
+ * Class that handles creating a data connector from an HTML table.
  *
  * @private
  */
@@ -51,7 +52,7 @@ class HTMLTableConnector extends DataConnector {
      *
      * */
 
-    protected static readonly defaultOptions: HTMLTableConnector.Options = {
+    protected static readonly defaultOptions: HTMLTableConnectorOptions = {
         table: ''
     };
 
@@ -88,7 +89,7 @@ class HTMLTableConnector extends DataConnector {
      * Options for the HTMLTable dataconnector
      * @todo this should not include parsing options
      */
-    public readonly options: HTMLTableConnector.Options;
+    public readonly options: HTMLTableConnectorOptions;
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -116,19 +117,21 @@ class HTMLTableConnector extends DataConnector {
     public load(
         eventDetail?: DataEvent.Detail
     ): Promise<this> {
-        const connector = this;
-
-        // If already loaded, clear the current rows
-        connector.table.deleteColumns();
+        const connector = this,
+            converter = connector.converter,
+            table = connector.table,
+            {
+                dataModifier,
+                table: tableHTML
+            } = connector.options;
 
         connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: connector.table,
+            table,
             tableElement: connector.tableElement
         });
 
-        const { table: tableHTML } = connector.options;
 
         let tableElement: (HTMLElement|null);
 
@@ -150,27 +153,32 @@ class HTMLTableConnector extends DataConnector {
                 type: 'loadError',
                 detail: eventDetail,
                 error,
-                table: connector.table
+                table
             });
 
             return Promise.reject(new Error(error));
         }
 
-        connector.converter.parse(
+        converter.parse(
             merge({ tableElement: connector.tableElement }, connector.options),
             eventDetail
         );
 
-        connector.table.setColumns(connector.converter.getTable().getColumns());
+        // If already loaded, clear the current rows
+        table.deleteColumns();
+        table.setColumns(converter.getTable().getColumns());
 
-        connector.emit<HTMLTableConnector.Event>({
-            type: 'afterLoad',
-            detail: eventDetail,
-            table: connector.table,
-            tableElement: connector.tableElement
-        });
-
-        return Promise.resolve(this);
+        return connector
+            .setModifierOptions(dataModifier)
+            .then((): this => {
+                connector.emit<HTMLTableConnector.Event>({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table,
+                    tableElement: connector.tableElement
+                });
+                return connector;
+            });
     }
 
 }
@@ -223,17 +231,13 @@ namespace HTMLTableConnector {
     }
 
     /**
-     * Options of the HTMLTableConnector.
-     */
-    export interface Options extends DataConnector.Options {
-        table: (string|HTMLElement);
-    }
-
-    /**
      * Available options for constructor and converter of the
      * HTMLTableConnector.
      */
-    export type UserOptions = (Partial<Options>&HTMLTableConverter.UserOptions);
+    export type UserOptions = (
+        Types.DeepPartial<HTMLTableConnectorOptions>&
+        HTMLTableConverter.UserOptions
+    );
 
 }
 

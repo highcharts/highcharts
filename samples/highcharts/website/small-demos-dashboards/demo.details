@@ -1,0 +1,8 @@
+---
+name: Small Dashboard Demos
+authors:
+  - Nancy Dillon
+js_wrap: b
+skipTest: true
+
+...

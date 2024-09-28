@@ -8,7 +8,8 @@ QUnit.test('Drill down on single point is not allowed', function (assert) {
         },
         subtitle: {
             text:
-                'The <em>allowPointDrilldown</em> option makes point clicks drill to the whole category'
+                'The <em>allowPointDrilldown</em> option makes point clicks ' +
+                'drill to the whole category'
         },
         xAxis: {
             type: 'category'

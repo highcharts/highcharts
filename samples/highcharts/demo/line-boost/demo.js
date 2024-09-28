@@ -1,6 +1,6 @@
 function getData(n) {
-    var arr = [],
-        i,
+    const arr = [];
+    let i,
         x,
         a,
         b,
@@ -32,7 +32,7 @@ function getData(n) {
     }
     return arr;
 }
-var n = 500000,
+const n = 500000,
     data = getData(n);
 
 
@@ -40,20 +40,27 @@ console.time('line');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
-        text: 'Highcharts drawing ' + n + ' points'
+        text: 'Highcharts drawing ' + n + ' points',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Using the Boost module'
+        text: 'Using the Boost module',
+        align: 'left'
     },
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>' +
+                '{yAxisDescription}</div>'
         }
     },
 

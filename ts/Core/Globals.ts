@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -132,6 +133,7 @@ declare global {
     }
 
     interface Window {
+        chrome?: unknown;
         /** @deprecated */
         opera?: unknown;
         /** @deprecated */
@@ -141,6 +143,7 @@ declare global {
     }
 
     interface GlobalOptions {
+        buttonTheme: ButtonThemeObject;
         /** @deprecated */
         canvasToolsURL?: string;
         /** @deprecated */
@@ -165,7 +168,6 @@ declare global {
         }
 
     }
-
 }
 
 /* *
@@ -203,7 +205,7 @@ namespace Globals {
             ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
-        isChrome = userAgent.indexOf('Chrome') !== -1,
+        isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
         isSafari = !isChrome && userAgent.indexOf('Safari') !== -1,
@@ -212,9 +214,8 @@ namespace Globals {
         deg2rad = Math.PI * 2 / 360,
         hasBidiBug = (
             isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // Issue #38
         ),
-        hasTouch = !!win.TouchEvent,
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
@@ -253,6 +254,13 @@ namespace Globals {
      * @type {Array<Highcharts.Chart|undefined>}
      */
     export const charts: GlobalsLike['charts'] = [];
+
+    /**
+     * A shared registry between all bundles to keep track of applied
+     * compositions.
+     * @private
+     */
+    export const composed: Array<string> = [];
 
     /**
      * A hook for defining additional date format specifiers. New
@@ -316,4 +324,4 @@ export default Globals as unknown as GlobalsLike;
  * @type {Highcharts.Options}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

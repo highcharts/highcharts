@@ -2,8 +2,10 @@ Math.easeInQuint =  function (pos) {
     return Math.pow(pos, 5);
 };
 /* STUFF FOR DONUT CHART*/
-const gases = ['Carbon Dioxide', 'Nitrogen', 'Oxygen', 'Argon', 'Methane',
-    'Sodium', 'Hydrogen', 'Helium', 'Other'];
+const gases = [
+    'Carbon Dioxide', 'Nitrogen', 'Oxygen', 'Argon', 'Methane',
+    'Sodium', 'Hydrogen', 'Helium', 'Other'
+];
 
 const planets = [
     'Sun',
@@ -200,7 +202,7 @@ const network = Highcharts.chart('network', {
         enabled: true,
         outside: true,
         formatter: function () {
-            var info = '';
+            let info = '';
             switch (this.color) {
             case dirDist50:
                 info = 'is an airport <b>more than 50</b> direct distinations';
@@ -354,7 +356,9 @@ const network = Highcharts.chart('network', {
 const scatter = Highcharts.chart('scatter', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         animation: {
             duration: 500,
             easing: 'easeInQuint'

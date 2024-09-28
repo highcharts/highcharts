@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,20 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * */
 
 export interface Scatter3DPointOptions extends ScatterPointOptions {
+
+    /**
+     * The z value for each data point.
+     *
+     * @product highcharts
+     */
     z?: number;
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Scatter3DPointOptions;

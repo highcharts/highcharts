@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -74,7 +74,7 @@ export interface NavigationOptions {
     iconsURL?: string;
 }
 
-interface PopupOptions {
+export interface PopupOptions {
     [key: string]: (string | IndicatorAliases | undefined);
     indicatorAliases?: IndicatorAliases;
 }

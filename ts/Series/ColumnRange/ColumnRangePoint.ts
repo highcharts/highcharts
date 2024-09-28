@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -56,9 +56,9 @@ class ColumnRangePoint extends AreaRangePoint {
      *
      * */
 
-    public options: ColumnRangePointOptions = void 0 as any;
+    public options!: ColumnRangePointOptions;
 
-    public series: ColumnRangeSeries = void 0 as any;
+    public series!: ColumnRangeSeries;
 
     /* *
      *

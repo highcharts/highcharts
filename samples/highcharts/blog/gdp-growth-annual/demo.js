@@ -1,15 +1,15 @@
-var lenght = 20;
-var url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank.json';
+const lenght = 20;
+const url = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank.json';
 
 
-var arrayString = [],
+const arrayString = [],
     date = [],
     array1 = [],
     array2 = [],
     array3 = [],
     array4 = [];
 
-var indicatorName,
+let indicatorName,
     countryName1,
     countryName2,
     countryName3,
@@ -46,7 +46,7 @@ fetch(url).then(function (response) {
 
     });
     // querry send string that we need to convert into numbers
-    for (var i = 0; i < arrayString.length; i++) {
+    for (let i = 0; i < arrayString.length; i++) {
 
         if (i < lenght) {
 
@@ -91,7 +91,10 @@ fetch(url).then(function (response) {
         chart: {
             type: 'spline'
         },
-        colors: ['#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef', '#f4bb90'],
+        colors: [
+            '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef',
+            '#f4bb90'
+        ],
         title: {
             text: indicatorName
         },
@@ -106,11 +109,13 @@ fetch(url).then(function (response) {
             }
         },
         xAxis: {
-            categories: date.reverse() // .reverse() to have the min year on the left
+            categories: date.reverse() // .reverse() to have the min year on
+            // the left
         },
         tooltip: {
             valueDecimals: 2,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}%</b><br/>'
         },
 
         series: [{

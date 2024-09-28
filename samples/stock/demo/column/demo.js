@@ -1,4 +1,8 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-v.json', function (data) {
+(async () => {
+
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-v.json'
+    ).then(response => response.json());
 
     // create the chart
     Highcharts.stockChart('container', {
@@ -29,4 +33,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-v.json', function
             }
         }]
     });
-});
+})();

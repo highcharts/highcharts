@@ -48,4 +48,15 @@ QUnit.test('3D line series', function (assert) {
         path,
         'Graph should not change after toggle (#7477)'
     );
+
+    // #20032, SVG error in 3d area
+    chart.series[0].update({
+        type: 'area'
+    });
+
+    assert.strictEqual(
+        chart.container.querySelector('svg').innerHTML.indexOf('d="L '),
+        -1,
+        'The generated SVG should not contain paths starting with line segment'
+    );
 });

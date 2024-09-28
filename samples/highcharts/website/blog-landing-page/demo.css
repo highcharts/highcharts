@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 /* temperature graph */
 .highcharts-point {
     stroke: white;
@@ -37,12 +41,12 @@
     border: 1px solid #ebebeb;
     border-radius: 4px;
     filter: grayscale(1);
-    opacity: 100%;
+    opacity: 1;
 }
 
 #container .gridChart:hover {
     filter: grayscale(0);
-    opacity: 100%;
+    opacity: 1;
 }
 
 @media (min-width: 768px) {

@@ -200,7 +200,8 @@ QUnit.test(
         chart.series[1].update({});
 
         testNumberOfPoints(
-            'After setData (ohlc format): number of Chande points should be equal' +
+            'After setData (ohlc format): number of Chande points should be ' +
+            'equal' +
             ' to number of main series points plus period.'
         );
 

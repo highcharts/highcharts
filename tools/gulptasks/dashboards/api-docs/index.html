@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Highcharts Dashboards API Reference</title>
+<meta name="date" content="2023-02-23">
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+<script type="text/javascript" src="api.js"></script>
+<link rel="apple-touch-icon" sizes="57x57" href="./images/apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="114x114" href="./images/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="72x72" href="./images/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="144x144" href="./images/apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="60x60" href="./images/apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="120x120" href="./images/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="76x76" href="./images/apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="152x152" href="./images/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" href="./images/favicon-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="./images/favicon-160x160.png" sizes="160x160">
+<link rel="icon" type="image/png" href="./images/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="./images/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="./images/favicon-32x32.png" sizes="32x32">
+<meta property="og:description" content="Interactive charts for your web pages.">
+<meta property="og:determiner" content="">
+<meta property="og:image" content="https://api.highcharts.com/highcharts/mstile-310x310.png">
+<meta property="og:site_name" content="Highcharts">
+<meta property="og:title" content="Highcharts Dashboards API Reference">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://api.highcharts.com/dashboards/">
+<meta name="searchboost" content="9700">
+<meta name="searchtitle" content="Dashboards API Overview">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@highcharts">
+<meta name="twitter:site" content="@highcharts">
+</head>
+
+<body>
+
+     <div class="headerMain">
+            <div class="row row-1">
+                <div id="sidebar-link" class="cell sidebar-link">
+                    <a href="#"><i class="fa fa-bars" aria-hidden="true" target="_parent"></i></a>
+                </div>
+                <div id="highcharts-logo" class="cell">
+                    <a href="http://www.highcharts.com" title="Highcharts Home Page" target="_parent">
+                        <img alt="Highcharts Home Page" src="highcharts.svg" border="0">
+                    </a>
+                </div>
+                <div id="page-title" class="cell">
+                    <h1>Dashboards API Reference</h1>
+                </div>
+            </div>
+            <div class="row row-2">
+                    <div id="product-selector" class="menu" expanded="false">
+                        <a href="#" class="dropdown-link">Highcharts Dashboards <i class="fa fa-chevron-down" aria-hidden="true" ></i></a>
+                        <div class="dropdown-menu">
+                            <ul>
+                                <li class="product">
+                                    <a id="highcharts-link" href="../highcharts/">Highcharts Core</a>
+                                </li>
+                                <li class="product">
+                                    <a id="highstock-link" href="../highstock/">Highcharts Stock</a>
+                                </li>
+                                <li class="product">
+                                    <a id="highmaps-link" href="../highmaps/">Highcharts Maps</a>
+                                </li>
+                                <li class="product">
+                                    <a id="gantt-link" href="../gantt/">Highcharts Gantt</a>
+                                </li>
+                                <li class="separator"></li>
+                                <li class="product highlighted">
+                                    <a id="dashboards-link" href="../dashboards/">Highcharts Dashboards</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+     <script>
+        var state = '',
+            hasChildren = true,
+            product = 'Highcharts';
+        hapi.initializeDropdowns('.menu', '.dropdown-link', '.body');
+    </script>
+
+</div>
+<div class="mainContainerWrapper">
+    <script>
+        (function(){
+            var iframe = document.createElement('iframe');
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('height', '850');
+            iframe.setAttribute('src', (
+                location.hash.length > 1 ?
+                    'typedoc/' + location.hash
+                        .substring(1)
+                        .replace('%23', '#')
+                        .replace(/(#)|$/, '.html$1') :
+                    'typedoc/index.html'
+            ));
+            iframe.style.boxSizing = 'border-box';
+            iframe.style.height = '100vh';
+            iframe.style.paddingTop = '112px';
+            iframe.setAttribute('width', '100%');
+            iframe.onload = function (e) {
+                var iframeWindow = e.target.contentWindow,
+                    hash = iframeWindow.location.href
+                        .split('/typedoc/')[1]
+                        .replace('.html', '')
+                        .replace('%23', '#');
+
+                if (hash !== 'index') {
+                    history.replaceState(null, null, '#' + hash);
+                }
+
+                links = iframeWindow.document.body.getElementsByTagName('a');
+
+                for (let i = 0, iEnd = links.length; i < iEnd; ++i) {
+                    if (links[i].href?.indexOf('jsfiddle') !== -1) {
+                        links[i].setAttribute('target', '_blank');
+                    }
+                }
+
+                iframeWindow.onhashchange = function (e) {
+                    var subhash = iframeWindow.location.hash;
+
+                    history.replaceState(
+                        null,
+                        null,
+                        '#' + hash.split('#')[0] + (subhash ? subhash : '')
+                    );
+                };
+            };
+            document.body.appendChild(iframe);
+        }());
+    </script>
+</div>
+</body>
+</html>

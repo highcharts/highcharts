@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'area',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'ETH-BTC Market Depth'
@@ -58,7 +60,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="font-size=10px;">Price: {point.key}</span><br/>',
+        headerFormat: '<span style="font-size=10px;">Price: ' +
+            '{point.key}</span><br/>',
         valueDecimals: 2
     },
     series: [{

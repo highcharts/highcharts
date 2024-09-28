@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2021 Torstein Honsi
+ *  (c) 2019-2024 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -26,11 +26,17 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  * */
 
 export interface ItemPointOptions extends PiePointOptions {
-    marker: ItemPointMarkerOptions;
+    marker?: ItemPointMarkerOptions;
 }
 
 export interface ItemPointMarkerOptions extends PointMarkerOptions {
-    radius: undefined;
+    radius?: undefined;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ItemPointOptions;

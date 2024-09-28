@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -49,14 +49,6 @@ declare module '../../Core/Axis/AxisLike' {
 export interface PostProcessDataEvent {
     hasExtremesChanged?: boolean;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
 
 /* *
  *
@@ -115,13 +107,15 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    const axisProto = AxisClass.prototype;
+
+    if (!axisProto.applyGrouping) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.
         addEvent(AxisClass, 'postProcessData', applyGrouping);
 
-        extend(AxisClass.prototype, {
+        extend(axisProto, {
             applyGrouping,
             getGroupPixelWidth,
             setDataGrouping
@@ -185,8 +179,8 @@ function getGroupPixelWidth(
 
 
 /**
- * When resetting the scale reset the hasProccessed flag to avoid taking
- * previous data grouping of neighbour series into accound when determining
+ * When resetting the scale reset the hasProcessed flag to avoid taking
+ * previous data grouping of neighbour series into account when determining
  * group pixel width (#2692).
  * @private
  */
@@ -240,7 +234,7 @@ function setDataGrouping(
             }, false);
         }
 
-    // Axis not yet instanciated, alter series options
+    // Axis not yet instantiated, alter series options
     } else {
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
@@ -252,7 +246,7 @@ function setDataGrouping(
         });
     }
 
-    // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
+    // Clear ordinal slope, so we won't accidentally use the old one (#7827)
     if (axis.ordinal) {
         axis.ordinal.slope = void 0;
     }

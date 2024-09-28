@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,10 +21,13 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
 import type { DataConnectorTypes } from './DataConnectorType';
+import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
+import type DataEvent from '../DataEvent';
+import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
 import DataConverter from '../Converters/DataConverter.js';
+import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -81,17 +84,21 @@ abstract class DataConnector implements DataEvent.Emitter {
     /**
      * Metadata to describe the connector and the content of columns.
      */
-    public metadata: DataConnector.Metadata;
+    public readonly metadata: Metadata;
+
+    private _polling?: number;
 
     /**
      * Poll timer ID, if active.
      */
-    public polling?: number;
+    public get polling(): boolean {
+        return !!this.polling;
+    }
 
     /**
      * Table managed by this DataConnector instance.
      */
-    public table: DataTable;
+    public readonly table: DataTable;
 
     /* *
      *
@@ -110,7 +117,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public describeColumn(
         name: string,
-        columnMeta: DataConnector.MetaColumn
+        columnMeta: MetaColumn
     ): void {
         const connector = this,
             columns = connector.metadata.columns;
@@ -125,7 +132,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Pairs of column names and MetaColumn objects.
      */
     public describeColumns(
-        columns: Record<string, DataConnector.MetaColumn>
+        columns: Record<string, MetaColumn>
     ): void {
         const connector = this,
             columnNames = Object.keys(columns);
@@ -158,6 +165,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Order of columns.
      */
     public getColumnOrder(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
         const connector = this,
@@ -172,7 +180,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the columns of the the dataTable,
+     * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
      * @param {boolean} [usePresentationOrder]
@@ -249,8 +257,25 @@ abstract class DataConnector implements DataEvent.Emitter {
         }
     }
 
+    public setModifierOptions(
+        modifierOptions?: DataModifierTypeOptions
+    ): Promise<this> {
+        const ModifierClass = (
+            modifierOptions &&
+            DataModifier.types[modifierOptions.type]
+        );
+
+        return this.table
+            .setModifier(
+                ModifierClass ?
+                    new ModifierClass(modifierOptions as AnyRecord) :
+                    void 0
+            )
+            .then((): this => this);
+    }
+
     /**
-     * Starts polling new data after the specific timespan in milliseconds.
+     * Starts polling new data after the specific time span in milliseconds.
      *
      * @param {number} refreshTime
      * Refresh time in milliseconds between polls.
@@ -260,22 +285,24 @@ abstract class DataConnector implements DataEvent.Emitter {
     ): void {
         const connector = this;
 
-        window.clearTimeout(connector.polling);
+        window.clearTimeout(connector._polling);
 
-        connector.polling = window.setTimeout((): Promise<void> => connector
-            .load()['catch'](
-                (error): void => connector.emit<DataConnector.ErrorEvent>({
-                    type: 'loadError',
-                    error,
-                    table: connector.table
+        connector._polling = window.setTimeout(
+            (): Promise<void> => connector
+                .load()['catch'](
+                    (error): void => connector.emit<DataConnector.ErrorEvent>({
+                        type: 'loadError',
+                        error,
+                        table: connector.table
+                    })
+                )
+                .then((): void => {
+                    if (connector._polling) {
+                        connector.startPolling(refreshTime);
+                    }
                 })
-            )
-            .then((): void => {
-                if (connector.polling) {
-                    connector.startPolling(refreshTime);
-                }
-            })
-        , refreshTime);
+            , refreshTime
+        );
     }
 
     /**
@@ -284,9 +311,9 @@ abstract class DataConnector implements DataEvent.Emitter {
     public stopPolling(): void {
         const connector = this;
 
-        window.clearTimeout(connector.polling);
+        window.clearTimeout(connector._polling);
 
-        delete connector.polling;
+        delete connector._polling;
     }
 
     /**
@@ -298,7 +325,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @return {DataConnector.MetaColumn|undefined}
      * Returns a MetaColumn object if found.
      */
-    public whatIs(name: string): (DataConnector.MetaColumn | undefined) {
+    public whatIs(name: string): (MetaColumn | undefined) {
         return this.metadata.columns[name];
     }
 
@@ -341,35 +368,9 @@ namespace DataConnector {
     }
 
     /**
-     * Metadata entry containing the name of the column and a metadata object.
-     */
-    export interface MetaColumn {
-        dataType?: string;
-        // validator: Function;
-        defaultValue?: (boolean|null|number|string);
-        index?: number;
-        title?: string;
-    }
-
-    /**
-     * Metadata
-     */
-    export interface Metadata {
-        columns: Record<string, MetaColumn>;
-    }
-
-    /**
      * Option of the DataConnector.
      */
-    export interface Options {
-        dataTable?: DataTable.Options;
-        metadata?: Metadata;
-    }
-
-    /**
-     * Option of the DataConnector.
-     */
-    export type UserOptions = Partial<Options>;
+    export type UserOptions = Partial<DataConnectorOptions>;
 
     /* *
      *

@@ -157,11 +157,11 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ABandsPoint> = void 0 as any;
+    public data!: Array<ABandsPoint>;
 
-    public options: ABandsOptions = void 0 as any;
+    public options!: ABandsOptions;
 
-    public points: Array<ABandsPoint> = void 0 as any;
+    public points!: Array<ABandsPoint>;
 
     /* *
      *
@@ -191,7 +191,7 @@ class ABandsIndicator extends SMAIndicator {
             high = 1,
             xData: Array<number> = [],
             yData: Array<Array<number>> = [];
-            // middle line, top line and bottom line
+            // Middle line, top line and bottom line
         let ML: number,
             TL: number,
             BL: number,
@@ -329,4 +329,4 @@ export default ABandsIndicator;
  * @apioption series.abands
  */
 
-''; // to include the above in jsdoc
+''; // To include the above in jsdoc

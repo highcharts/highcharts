@@ -17,6 +17,73 @@ const COPY_DIRECTORIES = [
 
 const TARGET_DIRECTORY = 'code';
 
+const highchartsConfig = {
+    sources: COPY_DIRECTORIES,
+    target: TARGET_DIRECTORY,
+    replacePath: '',
+    exclude: [
+        'dashboards/',
+        'datagrid/',
+        'dashboards-icons/'
+    ]
+};
+
+const dashboardsConfig = {
+    sources: [
+        'css/dashboards/',
+        'gfx/dashboards-icons/'
+    ],
+    target: TARGET_DIRECTORY + '/dashboards',
+    replacePath: 'dashboards/',
+    exclude: []
+};
+
+const datagridConfig = {
+    sources: 'css/datagrid/',
+    target: TARGET_DIRECTORY + '/datagrid',
+    replacePath: 'datagrid/',
+    exclude: []
+};
+
+function handleConfig(config) {
+    const defaultConfig = {
+        sources: [], // Directories to copy over
+        target: 'code', // Directory to copy to
+        exclude: [], // Files and directories to exclude. Uses strubg.include()
+        replacePath: '' // String to replace from the path of the original file when copying
+    };
+
+    // Ensure sources is an array
+    if (typeof config.sources === 'string') {
+        config.sources = [config.sources];
+    }
+
+    // Merge the defaultConfig with the provided config
+    return { ...defaultConfig, ...config };
+}
+
+function copyCSS(config) {
+    const fslib = require('../libs/fs');
+    const path = require('path');
+
+    config = handleConfig(config);
+
+    config.sources.forEach(
+        copyPath => fslib.copyAllFiles(
+            copyPath,
+            path.join(
+                config.target,
+                config.replacePath ?
+                    copyPath.replace(config.replacePath, '') :
+                    copyPath
+            ),
+            true,
+            fileName => !config.exclude
+                .some(name => fileName.includes(name))
+        )
+    );
+}
+
 /* *
  *
  *  Tasks
@@ -26,31 +93,38 @@ const TARGET_DIRECTORY = 'code';
 /**
  * Creates CSS files
  *
+ * @param  {object} argv
+ *         Command line arguments
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
-
-    const fslib = require('./lib/fs');
-    const log = require('./lib/log');
-    const path = require('path');
+function scriptCSS(argv) {
+    const log = require('../libs/log');
 
     return new Promise(resolve => {
+        log.message(`Generating css for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
-        log.message('Generating css ...');
+        if (argv.dashboards) {
+            copyCSS(dashboardsConfig);
+            copyCSS(datagridConfig);
+        } else {
+            copyCSS(highchartsConfig);
+        }
 
-        COPY_DIRECTORIES.forEach(
-            copyPath => fslib.copyAllFiles(
-                copyPath,
-                path.join(TARGET_DIRECTORY, copyPath),
-                true
-            )
-        );
-
-        log.success('Copied CSS');
+        log.success(`Copied ${argv.dashboards ? 'dashboards' : 'highcharts'} CSS`);
 
         resolve();
     });
 }
 
-gulp.task('scripts-css', task);
+scriptCSS.description = 'Creates CSS files for given product';
+scriptCSS.flags = {
+    '--dashboards': 'Creates CSS files for dashboards'
+};
+
+gulp.task('scripts-css', () => scriptCSS(require('yargs').argv));
+
+module.exports = {
+    scriptCSS
+};

@@ -95,6 +95,7 @@ Highcharts.setOptions({
     drilldown: {
         animation: false
     }
+
 });
 // Save default functions from the default options, as they are not stringified
 // to JSON
@@ -114,7 +115,7 @@ function handleDefaultOptionsFunctions(save) {
             } else if (save && typeof value === 'function') {
                 defaultOptionsFunctions[path + '.' + key] = value;
 
-            } else if ( // restore
+            } else if ( // restore
                 !save &&
                 typeof value === 'function'
             ) {
@@ -129,33 +130,8 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-
-/*
-// Override Highcharts and jQuery ajax functions to load from local
-function ajax(proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
-    };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
-    } else {
-        console.log('@ajax: Loading over network', attr.url);
-        attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
-            success.call(this, data);
-        };
-        return proceed.call(this, attr);
-    }
-}
-Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
-Highcharts.wrap(Highcharts, 'ajax', ajax);
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-*/
+Highcharts.radialDefaultOptionsRaw =
+    JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -246,6 +222,10 @@ function resetDefaultOptions(testName) {
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
     Highcharts.setOptions(defaultOptionsRaw);
+
+    // Restore radial axis defaults
+    Highcharts.RadialAxis.radialDefaultOptions =
+        JSON.parse(Highcharts.radialDefaultOptionsRaw);
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options
@@ -357,11 +337,39 @@ if (window.QUnit) {
         });
     };
 
+    window.setHCStyles = function (chart){
+        const styleElementID = 'test-hc-styles';
+        let styleElement = document.getElementById(styleElementID);
+
+        if (!chart.styledMode) {
+            styleElement?.remove();
+            return;
+        }
+
+        // TODO: Investigate unit-tests/boost/heatmap-styled-mode
+        if (chart.boosted) return;
+
+        if (
+            !styleElement &&
+            'highchartsCSS' in window
+        ) {
+            styleElement = document.createElement('style');
+            styleElement.id = styleElementID;
+
+            styleElement.appendChild(
+                document.createTextNode(window.highchartsCSS)
+            );
+
+            document.head.append(styleElement);
+        }
+    };
+
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {
                 console.log('Start "' + test.test.testName + '"');
             }
+
             currentTests.push(test.test.testName);
 
             // Reset container size that some tests may have modified
@@ -372,6 +380,9 @@ if (window.QUnit) {
             containerStyle.left = '8';
             containerStyle.top = '8';
             containerStyle.zIndex = '9999';
+
+            // Save prototypes
+            replaceProtos();
 
             // Reset randomizer
             Math.randomCursor = 0;
@@ -402,6 +413,9 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            // Restore prototypes
+            replaceProtos();
 
             var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
             if (defaultOptions !== Highcharts.defaultOptionsRaw) {
@@ -474,7 +488,6 @@ if (window.QUnit) {
             }
             Highcharts.addEvent = origAddEvent;
 
-
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
@@ -506,23 +519,22 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0]
     ) {
         var points = chart.series[0].nodes || // Network graphs, sankey etc
-            chart.series[0].points;
+                chart.series[0].points || [],
+            i = points.length;
 
-        if (points) {
-            for (var i = 0; i < points.length; i++) {
-                if (
-                    points[i] &&
-                    !points[i].isNull &&
-                    !( // Map point with no extent, like Aruba
-                        points[i].shapeArgs &&
-                        points[i].shapeArgs.d &&
-                        points[i].shapeArgs.d.length === 0
-                    ) &&
-                    typeof points[i].onMouseOver === 'function'
-                ) {
-                    points[i].onMouseOver();
-                    break;
-                }
+        while (i--) {
+            if (
+                points[i] &&
+                !points[i].isNull &&
+                !( // Map point with no extent, like Aruba
+                    points[i].shapeArgs &&
+                    points[i].shapeArgs.d &&
+                    points[i].shapeArgs.d.length === 0
+                ) &&
+                typeof points[i].onMouseOver === 'function'
+            ) {
+                points[i].onMouseOver();
+                break;
             }
         }
     }
@@ -761,6 +773,70 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 resolve(diff);
             })
     });
+}
+
+function replaceProtos() {
+    if (Highcharts.protoReplacements) {
+        var snaps = Highcharts.protoReplacements,
+            iKeys = Object.keys(snaps),
+            jKeys,
+            source,
+            target;
+
+        if (VERBOSE) {
+            console.log('- restore protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            source = snaps[iKey];
+            target = Highcharts[iKey].prototype;
+            jKeys = Object.keys(source);
+            for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                jKey = jKeys[j];
+                target[jKey] = source[jKey];
+                delete source[jKey];
+            }
+        }
+
+        delete Highcharts.protoReplacements;
+    } else {
+        var snaps = {},
+            iKeys = Object.keys(Highcharts),
+            jKeys,
+            source,
+            target;
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            if (
+                typeof Highcharts[iKey] === 'function' &&
+                Highcharts[iKey].prototype // skip arrow functions
+            ) {
+                source = Highcharts[iKey].prototype;
+                target = {};
+                jKeys = Object.keys(source);
+                for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                    jKey = jKeys[j];
+                    if (
+                        typeof source[jKey] !== 'object' &&
+                        source[jKey]
+                    ) {
+                        target[jKey] = source[jKey];
+                    }
+                }
+                if (Object.keys(target).length) {
+                    snaps[iKey] = target;
+                }
+            }
+        }
+
+        if (VERBOSE) {
+            console.log('Protect protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        Highcharts.protoReplacements = snaps;
+    }
 }
 
 // De-randomize Math.random in tests

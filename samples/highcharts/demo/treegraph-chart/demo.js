@@ -1,7 +1,8 @@
 Highcharts.chart('container', {
     chart: {
         spacingBottom: 30,
-        marginRight: 120
+        marginRight: 120,
+        height: 1200
     },
     title: {
         text: 'Phylogenetic language tree'

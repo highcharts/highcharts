@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -16,7 +16,6 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
@@ -40,7 +39,7 @@ import { Palette } from '../../Core/Color/Palettes';
  * @extends      plotOptions.treemap
  * @excluding    layoutAlgorithm, dashStyle, linecap, lineWidth,
  *               negativeColor, threshold, zones, zoneAxis, colorAxis,
- *               colorKey, compare, dataGrouping, endAgle, gapSize, gapUnit,
+ *               colorKey, compare, dataGrouping, endAngle, gapSize, gapUnit,
  *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *               minSize, navigatorOptions, pointRange, allowTraversingTree,
  *               alternateStartingDirection, borderRadius, breadcrumbs,
@@ -50,8 +49,8 @@ import { Palette } from '../../Core/Color/Palettes';
  *
  * @product      highcharts
  * @since 10.3.0
- * @requires     modules/treemap.js
- * @requires     modules/treegraph.js
+ * @requires     modules/treemap
+ * @requires     modules/treegraph
  * @optionparent plotOptions.treegraph
  */
 const TreegraphSeriesDefaults = {
@@ -178,6 +177,16 @@ const TreegraphSeriesDefaults = {
         }
     },
     /**
+     * Whether the treegraph series should fill the entire plot area in the X
+     * axis direction, even when there are collapsed points.
+     *
+     * @sample  highcharts/series-treegraph/fillspace
+     *          Fill space demonstrated
+     *
+     * @product highcharts
+     */
+    fillSpace: false,
+    /**
      * @extends plotOptions.series.tooltip
      */
     tooltip: {
@@ -242,7 +251,45 @@ const TreegraphSeriesDefaults = {
         style: {
             textOverflow: 'none'
         }
-    }
+    },
+    /**
+     * The distance between nodes in a tree graph in the longitudinal direction.
+     * The longitudinal direction means the direction that the chart flows - in
+     * a horizontal chart the distance is horizontal, in an inverted chart
+     * (vertical), the distance is vertical.
+     *
+     * If a number is given, it denotes pixels. If a percentage string is given,
+     * the distance is a percentage of the rendered node width. A `nodeDistance`
+     * of `100%` will render equal widths for the nodes and the gaps between
+     * them.
+     *
+     * This option applies only when the `nodeWidth` option is `auto`, making
+     * the node width respond to the number of columns.
+     *
+     * @since 11.4.0
+     * @sample highcharts/series-treegraph/node-distance
+     *         Node distance of 100% means equal to node width
+     * @type   {number|string}
+     */
+    nodeDistance: 30,
+
+    /**
+     * The pixel width of each node in a, or the height in case the chart is
+     * inverted. For tree graphs, the node width is only applied if the marker
+     * symbol is `rect`, otherwise the `marker` sizing options apply.
+     *
+     * Can be a number or a percentage string, or `auto`. If `auto`, the nodes
+     * are sized to fill up the plot area in the longitudinal direction,
+     * regardless of the number of levels.
+     *
+     * @since 11.4.0
+     * @see    [treegraph.nodeDistance](#nodeDistance)
+     * @sample highcharts/series-treegraph/node-distance
+     *         Node width is auto and combined with node distance
+     *
+     * @type {number|string}
+     */
+    nodeWidth: void 0
 } as TreegraphSeriesOptions;
 
 /* *

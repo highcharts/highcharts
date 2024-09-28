@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/themes/sand-signika.css";
+@import url("https://code.highcharts.com/css/themes/sand-signika.css");
 
 #container {
     height: 400px;

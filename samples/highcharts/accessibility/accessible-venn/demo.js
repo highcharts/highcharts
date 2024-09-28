@@ -1,4 +1,6 @@
-const colors =  ['#8085ef', '#8bf0b6', '#569ba3', '#30426b', 'rgba(255,255,255,0.1)'];
+const colors =  [
+    '#8085ef', '#8bf0b6', '#569ba3', '#30426b', 'rgba(255,255,255,0.1)'
+];
 Highcharts.setOptions({
     colors: colors
 });
@@ -13,7 +15,7 @@ const getByClass = function (className) {
 const getEl = function (id) {
     return document.getElementById(id);
 };
-var nextMouseOver = null;
+let nextMouseOver = null;
 
 const chart = Highcharts.chart('container', {
     lang: {
@@ -29,8 +31,10 @@ const chart = Highcharts.chart('container', {
             }
         },
         screenReaderSection: {
-            beforeChartFormat: '<p>A venn diagram showing 4 major benefits of designing for accessibility, ' +
-                'and how they combine together to form the selling point of accessibility.</p>'
+            beforeChartFormat: '<p>A venn diagram showing 4 major benefits ' +
+                'of designing for accessibility, ' +
+                'and how they combine together to form the selling point of ' +
+                'accessibility.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -83,12 +87,14 @@ const chart = Highcharts.chart('container', {
                             e.classList.remove('over');
                         });
 
-                        var mq = window.matchMedia('(max-width: 480px)');
-                        var caption = getEl('dyncaption');
-                        var label = getEl(category);
+                        const mq = window.matchMedia('(max-width: 480px)');
+                        const caption = getEl('dyncaption');
+                        const label = getEl(category);
                         if (mq.matches) {
                             caption.className = 'visible content-' + category;
-                            getEl('caption-content').innerHTML = label.innerHTML;
+                            getEl(
+                                'caption-content'
+                            ).innerHTML = label.innerHTML;
                         } else {
                             caption.classList.remove('visible');
                             label.classList.add('over');
@@ -104,18 +110,27 @@ const chart = Highcharts.chart('container', {
             sets: ['2'],
             value: 5,
             accessibility: {
-                description: 'Drive Innovation - Accessibility features in products and services often solve unanticipated problems for all users.'
+                description: 'Drive Innovation - Accessibility features in ' +
+                    'products and services often solve unanticipated ' +
+                    'problems for all users.'
             },
             name: 'innovation',
             color: Highcharts.getOptions().colors[0],
             dataLabels: {
-                format: '<div id="innovation"  class="data-label"><h4 class="open">Drive Innovation</h4><p class="info">Accessibility features in products and services often solve unanticipated problems for all users.</p><i id="innovation-icon"></i><h4 class="closed">Drive Innovation</h4></div>'
+                format: '<div id="innovation"  class="data-label"><h4 ' +
+                    'class="open">Drive Innovation</h4><p class="info">' +
+                    'Accessibility features in products and services often ' +
+                    'solve unanticipated problems for all users.</p><i ' +
+                    'id="innovation-icon"></i><h4 class="closed">Drive ' +
+                    'Innovation</h4></div>'
             }
         }, {
             sets: ['3'],
             value: 5,
             accessibility: {
-                description: 'Enhance your brand - Accessible content will not only enhance customer loyalty and brand awareness, but also improve organic search results.'
+                description: 'Enhance your brand - Accessible content will ' +
+                    'not only enhance customer loyalty and brand awareness, ' +
+                    'but also improve organic search results.'
             },
             name: 'brand',
             color: Highcharts.getOptions().colors[1],
@@ -123,7 +138,11 @@ const chart = Highcharts.chart('container', {
             dataLabels: {
                 y: 110,
                 x: -30,
-                format: '<div id="brand" class="data-label"><h4>Enhance your brand</h4><i id="brand-icon" ></i><p  class="info">Accessible content will not only enhance customer loyalty and brand awareness, but also improve organic search results.</p></div>'
+                format: '<div id="brand" class="data-label"><h4>Enhance your ' +
+                    'brand</h4><i id="brand-icon" ></i><p  class="info">' +
+                    'Accessible content will not only enhance customer ' +
+                    'loyalty and brand awareness, but also improve organic ' +
+                    'search results.</p></div>'
             }
         }, {
             sets: ['4'],
@@ -131,26 +150,38 @@ const chart = Highcharts.chart('container', {
             name: 'reach',
             color: Highcharts.getOptions().colors[2],
             accessibility: {
-                description: 'Extend Market Reach - Reach the 1.3 billion people world-wide who are affected by a visual impairment with accessible content.'
+                description: 'Extend Market Reach - Reach the 1.3 billion ' +
+                    'people world-wide who are affected by a visual ' +
+                    'impairment with accessible content.'
             },
             dataLabels: {
                 y: 0,
                 x: 0,
                 zIndex: 10,
-                format: '<div id="reach" class="data-label"><i id="reach-icon" ></i><h4 >Extend Market Reach</h4><p  class="info">Reach the <b>1.3 billion people</b> world-wide who are affected by a visual impairment with accessible content.</p></div>'
+                format: '<div id="reach" class="data-label"><i ' +
+                    'id="reach-icon" ></i><h4 >Extend Market Reach</h4><p  ' +
+                    'class="info">Reach the <b>1.3 billion people</b> ' +
+                    'world-wide who are affected by a visual impairment with ' +
+                    'accessible content.</p></div>'
             }
         }, {
             sets: ['5'],
             value: 5,
             name: 'legal',
             accessibility: {
-                description: 'Minimize Legal Risk - You or your customer might be facing a lawsuit if your software products are not accessible.'
+                description: 'Minimize Legal Risk - You or your customer ' +
+                    'might be facing a lawsuit if your software products are ' +
+                    'not accessible.'
             },
             color: Highcharts.getOptions().colors[3],
             dataLabels: {
                 y: 5,
                 x: -10,
-                format: '<div id="legal" class="data-label"><i id="legal-icon"></i><h4 >Minimize Legal Risk</h4><p class="info">You or your customer might be facing a lawsuit if your software products are not accessible.</p> </div>'
+                format: '<div id="legal" class="data-label"><i ' +
+                    'id="legal-icon"></i><h4 >Minimize Legal Risk</h4><p ' +
+                    'class="info">You or your customer might be facing a ' +
+                    'lawsuit if your software products are not ' +
+                    'accessible.</p> </div>'
             }
         }, {
             sets: ['4', '5'],

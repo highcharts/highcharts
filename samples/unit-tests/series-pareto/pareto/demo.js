@@ -145,13 +145,15 @@ QUnit.test(
         assert.deepEqual(
             chart.series[2].points.length,
             chart.series[0].points.length,
-            'Number of points in pareto series should be equal amount of point in assigned series'
+            'Number of points in pareto series should be equal amount of ' +
+            'point in assigned series'
         );
     }
 );
 
 QUnit.test(
-    'Pareto did not refreshing the data, when baseSeries data was updated with less than two points.',
+    'Pareto did not refreshing the data, when baseSeries data was updated ' +
+    'with less than two points.',
     function (assert) {
         var chart = Highcharts.chart('container', {
             series: [
@@ -172,7 +174,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].points.length,
             chart.series[1].points.length,
-            'Pareto have the same amount of points like its baseSeries after update.'
+            'Pareto have the same amount of points like its baseSeries after ' +
+            'update.'
         );
     }
 );

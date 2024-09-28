@@ -36,6 +36,11 @@ function generateHTML() {
             name: 'highcharts-gantt',
             changelogId: 'hg-changelog',
             offset: 'hg-'
+        }, {
+            header: 'Highcharts Dashboards',
+            name: 'highcharts-dashboards',
+            changelogId: 'hd-changelog',
+            offset: 'hd-'
         }];
 
         var changelog = {
@@ -107,7 +112,8 @@ function generateHTML() {
                 <a href="#highcharts">Highcharts</a>,
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
-                <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
+                <a href="#highcharts-gantt">Highcharts Gantt</a>,
+                <a href="#highcharts-dashboards">Highcharts Dashboards</a>. Go to the
                 <a href="download">Download</a> page to get the latest version.</p>`
             );
         }
@@ -119,10 +125,18 @@ function generateHTML() {
                 </div>
                 <div class="changelog-container">`);
         }
-        function makeDownloadLinks(version, name) {
+        function getBaseURL(name) {
+            if (name === 'highcharts-dashboards') {
+                return 'https://code.highcharts.com/dashboards/zips/';
+            }
+
+            return 'https://code.highcharts.com/zips/';
+        }
+        function gerURLPath(version, name) {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
-                'highcharts-maps': 'Highmaps'
+                'highcharts-maps': 'Highmaps',
+                'highcharts-dashboards': 'Highcharts-Dashboards'
             };
             if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
                 return name
@@ -137,7 +151,7 @@ function generateHTML() {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
                 const name = changelog.header.name;
-                const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
+                const downloadLink = getBaseURL(name) + gerURLPath(version, name) + '-' + version + '.zip';
 
                 return (
                     `<h3 class="release-header">
@@ -159,7 +173,7 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
+                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
                     <div id="upgrade-notes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
@@ -178,7 +192,7 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"class="card-header">
                     <h4 class="card-title" aria-label="Bug Fixes ${id} v${version}">
-                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
+                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
                     </h4>
                     </div>
                     <div id="bug-fixes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">

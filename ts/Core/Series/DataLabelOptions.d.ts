@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,11 +19,13 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -31,7 +33,9 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
-export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
+export type DataLabelFilterOperatorValue = (
+    '>'|'<'|'>='|'<='|'=='|'==='|'!='|'!=='
+);
 
 export interface TextPathAttributes extends SVGAttributes {
     startOffset?: string;
@@ -52,26 +56,29 @@ export interface DataLabelFormatterCallback {
 export interface DataLabelOptions {
     animation?: (boolean|Partial<AnimationOptions>);
     align?: AlignValue;
+    alignTo?: 'connectors'|'plotEdges';
     allowOverlap?: boolean;
     backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
     borderWidth?: number;
     className?: string;
-    color?: ColorType;
+    color?: ColorString;
     crop?: boolean;
     defer?: boolean;
+    distance?: number|string;
     enabled?: boolean;
     filter?: DataLabelFilterOptions;
     format?: string;
     formatter?: DataLabelFormatterCallback;
     inside?: boolean;
+    labelrank?: number;
     nullFormat?: (boolean|string);
     overflow?: DataLabelOverflowValue;
     padding?: number;
     rotation?: number;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
-    shape?: string;
+    shape?: keyof SymbolTypeRegistry;
     style?: CSSObject;
     textPath?: DataLabelTextPathOptions;
     useHTML?: boolean;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -33,6 +33,7 @@ import type {
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
@@ -50,7 +51,6 @@ import ControlPoint from './ControlPoint.js';
 import ControlTarget from './ControlTarget.js';
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
-import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
@@ -82,7 +82,7 @@ declare module '../../Core/Options'{
  * */
 
 /**
- * Hide or show annotaiton attached to points.
+ * Hide or show annotation attached to points.
  * @private
  */
 function adjustVisibility(
@@ -116,23 +116,19 @@ function getLabelsAndShapesOptions(
     (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach((
         name
     ): void => {
-        const someBaseOptions = baseOptions[name];
+        const someBaseOptions = baseOptions[name],
+            newOptionsValue = newOptions[name];
+
+        type ControllableOptions = (
+            ControllableLabelOptions|
+            ControllableShapeOptions
+        );
 
         if (someBaseOptions) {
-            if (newOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (
-                            ControllableLabelOptions|
-                            ControllableShapeOptions
-                        ),
-                        i: number
-                    ): (
-                        ControllableLabelOptions|
-                        ControllableShapeOptions
-                        ) {
-                        return merge(someBaseOptions[i], basicOptions);
-                    }
+            if (newOptionsValue) {
+                mergedOptions[name] = splat(newOptionsValue).map(
+                    (basicOptions, i): ControllableOptions =>
+                        merge(someBaseOptions[i], basicOptions)
                 ) as any;
             } else {
                 mergedOptions[name] = baseOptions[name] as any;
@@ -153,6 +149,8 @@ function getLabelsAndShapesOptions(
  * An annotation class which serves as a container for items like labels or
  * shapes. Created items are positioned on the chart either by linking them to
  * existing points or created mock points
+ *
+ * @requires modules/annotations
  *
  * @class
  * @name Highcharts.Annotation
@@ -184,6 +182,8 @@ class Annotation extends EventEmitter implements ControlTarget {
      * An object uses for mapping between a shape type and a constructor.
      * To add a new shape type extend this object with type name as a key
      * and a constructor as its value.
+     *
+     * @private
      */
     public static readonly shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
@@ -209,14 +209,15 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public static compose(
         ChartClass: typeof Chart,
+        NavigationBindingsClass: typeof NavigationBindings,
         PointerClass: typeof Pointer,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         AnnotationChart.compose(Annotation, ChartClass, PointerClass);
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
-        NavigationBindings.compose(Annotation, ChartClass);
-        PopupComposition.compose(NavigationBindings, PointerClass);
+        NavigationBindingsClass.compose(Annotation, ChartClass);
+        PopupComposition.compose(NavigationBindingsClass, PointerClass);
     }
 
     /* *
@@ -343,17 +344,17 @@ class Annotation extends EventEmitter implements ControlTarget {
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
-    public animationConfig: Partial<AnimationOptions> = void 0 as any;
-    public graphic: SVGElement = void 0 as any;
-    public group: SVGElement = void 0 as any;
+    public animationConfig!: Partial<AnimationOptions>;
+    public graphic!: SVGElement;
+    public group!: SVGElement;
     public index: number;
     public isUpdating?: boolean;
-    public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
+    public labelCollector!: Chart.LabelCollectorFunction;
     public labels: Array<ControllableLabelType>;
-    public labelsGroup: SVGElement = void 0 as any;
+    public labelsGroup!: SVGElement;
     public options: AnnotationOptions;
     public shapes: Array<ControllableShapeType>;
-    public shapesGroup: SVGElement = void 0 as any;
+    public shapesGroup!: SVGElement;
     public userOptions: AnnotationOptions;
 
     /* *
@@ -440,7 +441,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     public destroyItem(
         item: ControllableType
     ): void {
-        // erase from shapes or labels array
+        // Erase from shapes or labels array
         erase((this as any)[item.itemType + 's'], item);
         item.destroy();
     }
@@ -538,7 +539,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * Initialisation of a single shape
      * @private
      * @param {Object} shapeOptions
-     * a confg object for a single shape
+     * a config object for a single shape
      * @param {number} index
      * annotation may have many shapes, this is the shape's index saved in
      * shapes.index.
@@ -625,9 +626,8 @@ class Annotation extends EventEmitter implements ControlTarget {
     ): void {
         let i = items.length;
 
-        // needs a backward loop
-        // labels/shapes array might be modified
-        // due to destruction of the item
+        // Needs a backward loop. Labels/shapes array might be modified due to
+        // destruction of the item
         while (i--) {
             this.redrawItem(items[i], animation);
         }
@@ -638,7 +638,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @private
      */
     public remove(): void {
-        // Let chart.update() remove annoations on demand
+        // Let chart.update() remove annotations on demand
         return this.chart.removeAnnotation(this);
     }
 
@@ -670,7 +670,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.labelsGroup = renderer
             .g('annotation-labels')
             .attr({
-                // hideOverlappingLabels requires translation
+                // `hideOverlappingLabels` requires translation
                 translateX: 0,
                 translateY: 0
             })
@@ -868,12 +868,12 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.destroy();
         this.initProperties(chart, options);
         this.init(chart, options);
-        // Update options in chart options, used in exporting (#9767):
-        chart.options.annotations[userOptionsIndex] = options;
+        // Update options in chart options, used in exporting (#9767, #21507):
+        chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
         if (pick(redraw, true)) {
-            chart.redraw();
+            chart.drawAnnotations();
         }
 
         fireEvent(this, 'afterUpdate');
@@ -968,4 +968,4 @@ export default Annotation;
  *     } Highcharts.AnnotationShapePointOptions
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

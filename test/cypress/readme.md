@@ -27,6 +27,6 @@ The Cypress docs has a good [article](https://docs.cypress.io/guides/references/
 
 ## Running tests locally
 
-Requires `highcharts-utils` to be running (`npx highcharts-utils` should do the trick). Cypress can then be run in the CLI using `npx cypress run`. Run `npx cypress info` to get a list of available browsers.
+Requires `highcharts-utils` to be running (`npx highcharts-utils` should do the trick). Cypress can then be run in the CLI using `npx cypress run`. Run `npx cypress info` to get a list of available browsers. To run a specific test, use the `--spec` parameter, like `npx cypress run --spec "test/cypress/integration/Highcharts/mouse-wheel-zoom/zoom-chart.cy.js"`.
 
 For good amount of helpful debugging functionality you can also use the GUI with `npx cypress open`.
