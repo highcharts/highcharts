@@ -18,7 +18,11 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf, SeriesStepOptionsObject, SeriesStepType, SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    PlotOptionsOf,
+    SeriesStepType,
+    SeriesZonesOptions
+} from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';

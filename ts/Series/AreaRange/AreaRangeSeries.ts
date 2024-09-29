@@ -288,12 +288,12 @@ class AreaRangeSeries extends AreaSeries {
             connectNulls = options.connectNulls,
             stepOption = typeof options.step === 'object' ?
                 options.step :
-                { type: options.step, risers: true };
+                { type: options.step, risers: true },
+            step = options.step;
 
         let i,
             point: AreaRangePoint,
-            pointShim: any,
-            step = options.step;
+            pointShim: any;
 
         points = points || this.points;
 
