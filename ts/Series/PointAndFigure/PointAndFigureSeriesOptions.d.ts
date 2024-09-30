@@ -14,6 +14,7 @@
  *
  * */
 
+import { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 /* *
@@ -24,8 +25,14 @@ import ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 
 interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
+    boxSize?: number|string;
+    reversalAmount?: number;
+    pointPadding?: number;
+    markerUp?: PnfPointMarkerOptions;
+}
 
-
+interface PnfPointMarkerOptions extends PointMarkerOptions {
+    markerUp?: PointMarkerOptions;
 }
 
 
