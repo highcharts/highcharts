@@ -426,6 +426,10 @@ QUnit.test(
             TestUtilities.lolexRunAndUninstall(clock);
         } finally {
             TestUtilities.lolexUninstall(clock);
+
+            // Clear cache for other tests
+            delete africa.objects.default['hc-decoded-geojson'];
+            delete world.objects.default['hc-decoded-geojson'];
         }
     }
 );
