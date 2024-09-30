@@ -153,8 +153,6 @@ class SidebarPopup extends BaseForm {
             this.iconsURL,
             this.hide.bind(this)
         );
-
-
     }
 
     /* *

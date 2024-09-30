@@ -92,9 +92,6 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true
-        },
-        sidebar: {
-            sticky: true
         }
     },
     components: [{
