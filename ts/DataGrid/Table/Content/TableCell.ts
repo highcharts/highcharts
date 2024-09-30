@@ -108,13 +108,19 @@ class TableCell extends Cell {
             this.onDblClick(e as MouseEvent);
         };
         const focusHandler = (): void => {
-            this.row.viewport.focusCursor = [
+            const vp = this.row.viewport;
+            vp.tbodyElement.setAttribute('tabindex', '-1');
+
+            vp.focusCursor = [
                 this.row.index,
                 this.column.index
             ];
         };
         const blurHandler = (): void => {
-            delete this.row.viewport.focusCursor;
+            const vp = this.row.viewport;
+            vp.tbodyElement.setAttribute('tabindex', '0');
+
+            delete vp.focusCursor;
         };
 
         this.htmlElement.addEventListener('mouseover', mouseOverHandler);

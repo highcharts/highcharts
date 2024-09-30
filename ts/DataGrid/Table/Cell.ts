@@ -167,6 +167,7 @@ abstract class Cell {
 
         if (dir) {
             e.preventDefault();
+            e.stopPropagation();
 
             const localRowIndex = (row as TableRow).index === void 0 ? -1 : (
                 (row as TableRow).index - vp.rows[0].index
