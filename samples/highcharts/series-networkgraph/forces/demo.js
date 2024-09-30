@@ -8,7 +8,6 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         networkgraph: {
-            turboThreshold: 0,
             keys: ['from', 'to', 'color']
         }
     },

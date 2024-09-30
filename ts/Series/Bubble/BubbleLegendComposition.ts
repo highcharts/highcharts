@@ -137,14 +137,10 @@ function chartDrawChartBox(
  *
  * @param {Highcharts.Legend} LegendClass
  * Core legend class to use with Bubble series.
- *
- * @param {Highcharts.Series} SeriesClass
- * Core series class to use with Bubble series.
  */
 function compose(
     ChartClass: typeof Chart,
-    LegendClass: typeof Legend,
-    SeriesClass: typeof Series
+    LegendClass: typeof Legend
 ): void {
 
     if (pushUnique(composed, 'Series.BubbleLegend')) {
@@ -159,7 +155,7 @@ function compose(
 
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
 
-        addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
+        addEvent(LegendClass, 'itemClick', onLegendItemClick);
     }
 
 }
@@ -280,16 +276,16 @@ function onLegendAfterGetAllItems(
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
-function onSeriesLegendItemClick(this: Series, e: any): void | boolean {
+function onLegendItemClick(this: Legend, e: any): void | boolean {
     // #14080 don't fire this code if click function is prevented
     if (e.defaultPrevented) {
         return false;
     }
 
-    const series = this,
-        chart = series.chart,
-        visible = series.visible,
-        legend = series.chart.legend;
+    const legend = this,
+        series = e.legendItem,
+        chart = legend.chart,
+        visible = series.visible;
     let status;
 
     if (legend && legend.bubbleLegend) {

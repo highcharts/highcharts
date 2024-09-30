@@ -45,7 +45,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: 2016
+            pointStart: 2018
         },
         column: {
             stacking: 'normal',
@@ -55,19 +55,19 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'South Korea',
-        data: [563, 567, 590, 582, 571],
+        data: [590, 582, 571, 606, 625],
         stack: 'Asia'
     }, {
         name: 'Germany',
-        data: [650, 654, 643, 612, 572],
+        data: [643, 612, 572, 588, 578],
         stack: 'Europe'
     }, {
         name: 'Saudi Arabia',
-        data: [368, 378, 378, 367, 363],
+        data: [378, 367, 363, 408, 433],
         stack: 'Asia'
     }, {
         name: 'France',
-        data: [564, 562, 582, 571, 533],
+        data: [582, 571, 533, 555, 473],
         stack: 'Europe'
     }]
 });

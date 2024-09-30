@@ -2,7 +2,7 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1485682/samples/data/btc-historical.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f56a420/samples/data/btc-historical.json'
     ).then(response => response.json());
 
     // Create the chart

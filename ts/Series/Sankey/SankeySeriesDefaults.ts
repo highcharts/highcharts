@@ -227,7 +227,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *         Sankey diagram with gradients and explanation
      *
      * @type      {('from'|'gradient'|'to')}
-     * @since     @next
+     * @since     11.2.0
      */
     linkColorMode: 'from',
 

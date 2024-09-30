@@ -8,7 +8,7 @@ describe('Edit Mode options', () => {
         cy.toggleEditMode();
         cy.get('#dashboard-col-0').click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell').children().should('have.length', 2);
-        cy.get('.highcharts-dashboards-edit-toolbar-row').children().should('have.length', 2);
+        cy.get('.highcharts-dashboards-edit-toolbar-row').children().should('have.length', 1);
         cy.get('.highcharts-dashboards-edit-resize-snap').should('not.exist');
     });
 });

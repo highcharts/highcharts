@@ -44,6 +44,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    crisp,
     defined,
     extend,
     find,
@@ -298,8 +299,7 @@ class XRangeSeries extends ColumnSeries {
 
         const length = Math.abs((plotX2 as any) - (plotX as any)),
             inverted = this.chart.inverted,
-            borderWidth = pick(options.borderWidth, 1),
-            crisper = borderWidth % 2 / 2;
+            borderWidth = pick(options.borderWidth, 1);
 
         let widthDifference,
             partialFill: (
@@ -350,8 +350,8 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
-        const x = Math.floor(Math.min(plotX, plotX2)) + crisper,
-            x2 = Math.floor(Math.max(plotX, plotX2)) + crisper,
+        const x = crisp(Math.min(plotX, plotX2), borderWidth),
+            x2 = crisp(Math.max(plotX, plotX2), borderWidth),
             width = x2 - x;
 
         const r = Math.min(
@@ -365,7 +365,7 @@ class XRangeSeries extends ColumnSeries {
 
         const shapeArgs = {
             x,
-            y: Math.floor((point.plotY as any) + yOffset) + crisper,
+            y: crisp((point.plotY || 0) + yOffset, borderWidth),
             width,
             height: pointHeight,
             r

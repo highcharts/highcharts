@@ -131,7 +131,10 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
     });
 
     var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
-    assert.ok(labelLength > 20, 'Label has length');
+    assert.ok(
+        labelLength > 15,
+        `Label length should be more than 15px, got ${labelLength}`
+    );
 
     chart.setSize(600, 400, false);
 

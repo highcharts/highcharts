@@ -1362,11 +1362,24 @@ class WGLRenderer {
             }
 
             if (chart.styledMode) {
-                fillColor = (
-                    s.series.markerGroup &&
-                    s.series.markerGroup.getStyle('fill')
-                );
-
+                if (
+                    s.series.markerGroup === s.series.chart.boost?.markerGroup
+                ) {
+                    // Create a temporary markerGroup to get the fill color
+                    delete s.series.markerGroup;
+                    s.series.markerGroup = s.series.plotGroup(
+                        'markerGroup',
+                        'markers',
+                        'visible',
+                        1,
+                        chart.seriesGroup
+                    ).addClass('highcharts-tracker');
+                    fillColor = s.series.markerGroup.getStyle('fill');
+                    s.series.markerGroup.destroy();
+                    s.series.markerGroup = s.series.chart.boost?.markerGroup;
+                } else {
+                    fillColor = s.series.markerGroup?.getStyle('fill');
+                }
             } else {
                 fillColor =
                     (
@@ -1391,15 +1404,6 @@ class WGLRenderer {
 
             if (!settings.useAlpha) {
                 scolor[3] = 1.0;
-            }
-
-            // This is very much temporary
-            if (
-                s.drawMode === 'LINES' &&
-                settings.useAlpha &&
-                (scolor[3] as any) < 1
-            ) {
-                (scolor[3] as any) /= 10;
             }
 
             // Blending

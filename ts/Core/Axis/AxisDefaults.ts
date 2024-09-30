@@ -1028,6 +1028,7 @@ namespace AxisDefaults {
              * The pixel padding for axis labels, to ensure white space between
              * them. Defaults to 4 for horizontal axes, 1 for vertical.
              *
+             * @type      {number}
              * @default   undefined
              * @product   highcharts gantt
              * @apioption xAxis.labels.padding
@@ -2110,9 +2111,10 @@ namespace AxisDefaults {
          *         Logarithmic with extension to emulate negative values
          *
          * @type    {Highcharts.AxisTypeValue}
+         * @default linear
          * @product highcharts gantt
+         * @apioption xAxis.type
          */
-        type: 'linear',
 
         /**
          * If there are multiple axes on the same side of the chart, the pixel
@@ -2140,8 +2142,9 @@ namespace AxisDefaults {
          *
          * @since     4.2.7
          * @product   highcharts gantt
+         * @type      {boolean}
+         * @default   true
          */
-        uniqueNames: true,
 
         /**
          * Datetime axis only. An array determining what time intervals the

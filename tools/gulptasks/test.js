@@ -41,7 +41,7 @@ function checkJSWrap() {
 
     const fs = require('fs');
     const glob = require('glob');
-    const logLib = require('../libs/log');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -57,11 +57,11 @@ function checkJSWrap() {
                 fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                logLib.failure('js_wrap not found:', detailsFile);
+                LogLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            logLib.failure('File not found:', detailsFile);
+            LogLib.failure('File not found:', detailsFile);
             errors++;
         }
     });
@@ -94,14 +94,16 @@ function checkDemosConsistency() {
     });
 
     const glob = require('glob');
-    const logLib = require('../libs/log');
+    const FSLib = require('../libs/fs.js');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
 
     glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details'
+        FSLib.path(process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details', true)
     ).forEach(detailsFile => {
+        detailsFile = FSLib.path(detailsFile, true);
 
         if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
             try {
@@ -115,32 +117,32 @@ function checkDemosConsistency() {
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
                 if (!name || /High.*demo/.test(name)) {
-                    logLib.failure('no name set, or default name used:', detailsFile);
+                    LogLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
 
                 if (!demoCategories || !demoCategories.length) {
-                    logLib.failure('no categories found:', detailsFile);
+                    LogLib.failure('no categories found:', detailsFile);
                     errors++;
                 } else {
                     if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                        logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                        LogLib.failure('one or more categories are missing from demo-config:', detailsFile);
                         errors++;
                     }
                 }
 
                 if (!demoTags || !demoTags.length) {
-                    logLib.failure('no tags found:', detailsFile);
+                    LogLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
                     if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
+                        LogLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
 
             } catch (e) {
-                logLib.failure('File not found:', detailsFile);
+                LogLib.failure('File not found:', detailsFile);
                 errors++;
             }
 
@@ -152,13 +154,13 @@ function checkDemosConsistency() {
 
                 if (typeof details === 'object') {
                     if (details.categories) {
-                        logLib.failure(
+                        LogLib.failure(
                             'categories should not be used in demo.details outside demo folder',
                             detailsFile
                         );
                         errors++;
                     } else if (details.tags) {
-                        logLib.failure(
+                        LogLib.failure(
                             'tags should not be used in demo.details outside demo folder',
                             detailsFile
                         );

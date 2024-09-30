@@ -1,4 +1,12 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container {
     height: 300px;
     width: 500px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

@@ -76,6 +76,7 @@
     "code/modules/flowmap.src.js",
     "code/modules/export-data.src.js",
     "code/modules/navigator.src.js",
+    "code/modules/textpath.src.js",
     "code/indicators/indicators-all.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",

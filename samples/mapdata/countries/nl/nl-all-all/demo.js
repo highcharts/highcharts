@@ -179,7 +179,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-all-all.topo.json">The Netherlands, admin2</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-all-all.topo.json">The Netherlands, admin2</a>'
         },
 
         mapNavigation: {

@@ -291,7 +291,7 @@ class HighchartsComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        super.resize(width, height);
+        this.resizeDynamicContent(width, height);
 
         while (this.innerResizeTimeouts.length) {
             const timeoutID = this.innerResizeTimeouts.pop();
@@ -672,10 +672,9 @@ class HighchartsComponent extends Component {
                     );
                 }
                 return new Factory(this.chartContainer, this.chartOptions);
-            } catch {
+            } catch (e) {
                 throw new Error(
-                    'The Highcharts component is misconfigured: `' +
-                    this.cell.id + '`'
+                    `The Highcharts component in cell '${this.cell.id}' is misconfigured. \n____________\n${e}`
                 );
             }
         }

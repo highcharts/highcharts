@@ -44,17 +44,17 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import MapViewDefaults from './MapViewDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
+import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
+const { pointInPolygon } = GeometryUtilities;
 const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
-const {
-    boundsFromPath,
-    pointInPolygon
-} = MU;
+const { boundsFromPath } = MU;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    crisp,
     fireEvent,
     isArray,
     isNumber,
@@ -776,7 +776,7 @@ class MapView {
      *
      * @function Highcharts.MapView#recommendMapView
      *
-     * @since @next
+     * @since 11.4.0
      *
      * @param {Highcharts.Chart} chart
      *        Chart object
@@ -1597,7 +1597,7 @@ class MapViewInset extends MapView {
                 });
             }
 
-            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2,
+            const strokeWidth = this.border.strokeWidth(),
                 field = (
                     options.relativeTo === 'mapBoundingBox' &&
                     mapView.getMapBBox()
@@ -1619,8 +1619,8 @@ class MapViewInset extends MapView {
                                 field.y
                             );
                         }
-                        x = Math.floor(x) + crisp;
-                        y = Math.floor(y) + crisp;
+                        x = crisp(x, strokeWidth);
+                        y = crisp(y, strokeWidth);
                         d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
                         return d;
                     }, d)

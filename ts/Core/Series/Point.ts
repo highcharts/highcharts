@@ -45,6 +45,7 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
+    crisp,
     erase,
     extend,
     fireEvent,
@@ -70,7 +71,7 @@ declare module './PointLike' {
     interface PointLike {
         className?: string;
         events?: PointEventsOptions;
-        hasImportedEvents?: boolean;
+        importedUserEvent?: Function;
         selected?: boolean;
         selectedStaging?: boolean;
         state?: string;
@@ -114,6 +115,7 @@ class Point {
     public category!: (number|string);
     public color?: ColorType;
     public colorIndex?: number;
+    public cumulativeSum?: number;
     public dataLabels?: Array<SVGElement|SVGLabel>;
     public destroyed?: boolean;
     public formatPrefix: string = 'point';
@@ -350,11 +352,7 @@ class Point {
             point.x = series.xAxis.nameToX(point);
         }
         if (typeof point.x === 'undefined' && series) {
-            if (typeof x === 'undefined') {
-                point.x = series.autoIncrement();
-            } else {
-                point.x = x;
-            }
+            point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
@@ -1318,18 +1316,25 @@ class Point {
                     .indexOf(userEvent) === -1
             )
         ) {
-            addEvent(point, eventType, userEvent);
-            point.hasImportedEvents = true;
+            // While updating the existing callback event the old one should be
+            // removed
+            point.importedUserEvent?.();
+
+            point.importedUserEvent = addEvent(point, eventType, userEvent);
+            if (point.hcEvents) {
+                point.hcEvents[eventType].userEvent = true;
+            }
         } else if (
-            point.hasImportedEvents &&
+            point.importedUserEvent &&
             !userEvent &&
-            point.hcEvents?.[eventType]
+            point.hcEvents?.[eventType] &&
+            point.hcEvents?.[eventType].userEvent
         ) {
             removeEvent(point, eventType);
             delete point.hcEvents[eventType];
 
             if (!Object.keys(point.hcEvents)) {
-                point.hasImportedEvents = false;
+                delete point.importedUserEvent;
             }
         }
     }
@@ -1615,7 +1620,7 @@ class Point {
         const pos = this.pos();
 
         return pos ? this.series.chart.renderer.symbols.circle(
-            Math.floor(pos[0]) - size,
+            crisp(pos[0], 1) - size,
             pos[1] - size,
             size * 2,
             size * 2
@@ -1632,7 +1637,10 @@ class Point {
 
 interface Point extends PointLike {
     // Merge extensions with point class
-    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    hcEvents?: Record<
+    string,
+    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+    >;
 }
 
 /* *

@@ -49,9 +49,10 @@ const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
 const {
     addEvent,
+    isArray,
+    splat,
     find,
     fireEvent,
-    isArray,
     isObject,
     isString,
     merge,
@@ -212,8 +213,7 @@ function getTreeGridFromData(
     const categories: Array<string> = [],
         collapsedNodes: Array<GridNode> = [],
         mapOfIdToNode: Record<string, TreeGridNode> = {},
-        uniqueNamesEnabled = typeof uniqueNames === 'boolean' ?
-            uniqueNames : false;
+        uniqueNamesEnabled = uniqueNames || false;
 
     let mapOfPosToGridNode: Record<string, GridNode> = {},
         posIterator = -1;
@@ -395,13 +395,13 @@ function onBeforeRender(
     const chart = e.target,
         axes = chart.axes;
 
-    (axes.filter(function (axis): boolean {
-        return axis.options.type === 'treegrid';
-    }) as Array<TreeGridAxisComposition>).forEach(
+    (axes.filter(
+        (axis): boolean => axis.type === 'treegrid'
+    ) as Array<TreeGridAxisComposition>).forEach(
         function (axis: TreeGridAxisComposition): void {
             const options = axis.options || {},
                 labelOptions = options.labels,
-                uniqueNames = options.uniqueNames,
+                uniqueNames = axis.uniqueNames,
                 max = options.max,
                 // Check whether any of series is rendering for the first
                 // time, visibility has changed, or its data is dirty, and
@@ -423,20 +423,44 @@ function onBeforeRender(
                 treeGrid: TreeGridObject;
 
             if (isDirty) {
+
+                const seriesHasPrimitivePoints: boolean[] = [];
+
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
+                    const seriesData = (s.options.data || []),
+                        firstPoint = seriesData[0],
+                        // Check if the first point is a simple array of values.
+                        // If so we assume that this is the case for all points.
+                        foundPrimitivePoint = (
+                            Array.isArray(firstPoint) &&
+                                !(firstPoint as any).find(
+                                    (value: any): boolean => (
+                                        typeof value === 'object'
+                                    )
+                                )
+                        );
+
+                    seriesHasPrimitivePoints.push(foundPrimitivePoint);
+
                     if (s.visible) {
                         // Push all data to array
-                        (s.options.data || []).forEach(function (
+                        seriesData.forEach(function (
                             data
                         ): void {
-                            // For using keys - rebuild the data structure
-                            if (s.options.keys && s.options.keys.length) {
+
+                            // For using keys, or when using primitive points,
+                            // rebuild the data structure
+                            if (
+                                foundPrimitivePoint ||
+                                 (s.options.keys && s.options.keys.length)
+                            ) {
                                 data = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, data);
                                 s.pointClass.setGanttPointAliases(data);
                             }
+
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
@@ -446,7 +470,6 @@ function onBeforeRender(
                                 arr.push(data as PointOptions);
                             }
                         });
-
                         // Increment series index
                         if (uniqueNames === true) {
                             numberOfSeries++;
@@ -454,7 +477,6 @@ function onBeforeRender(
                     }
                     return arr;
                 }, [] as Array<PointOptions>);
-
                 // If max is higher than set data - add a
                 // dummy data to render categories #10779
                 if (max && data.length < max) {
@@ -466,7 +488,6 @@ function onBeforeRender(
                         });
                     }
                 }
-
                 // `setScale` is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
@@ -474,7 +495,6 @@ function onBeforeRender(
                     uniqueNames || false,
                     (uniqueNames === true) ? numberOfSeries : 1
                 );
-
                 // Assign values to the axis.
                 axis.categories = treeGrid.categories;
                 axis.treeGrid.mapOfPosToGridNode = (
@@ -484,7 +504,7 @@ function onBeforeRender(
                 axis.treeGrid.tree = treeGrid.tree;
 
                 // Update yData now that we have calculated the y values
-                axis.series.forEach(function (series): void {
+                axis.series.forEach(function (series, index): void {
                     const axisData = (
                         series.options.data || []
                     ).map(function (
@@ -492,18 +512,22 @@ function onBeforeRender(
                     ): (PointOptions|PointShortOptions) {
 
                         if (
-                            isArray(d) &&
-                            series.options.keys &&
-                            series.options.keys.length
+                            seriesHasPrimitivePoints[index] ||
+                            (
+                                isArray(d) &&
+                                series.options.keys &&
+                                series.options.keys.length
+                            )
                         ) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
                             data.forEach(function (
                                 point: GanttPointOptions
                             ): void {
+                                const toArray = splat(d);
                                 if (
-                                    (d as any).indexOf(point.x) >= 0 &&
-                                    (d as any).indexOf(point.x2) >= 0
+                                    toArray.indexOf(point.x || 0) >= 0 &&
+                                        toArray.indexOf(point.x2 || 0) >= 0
                                 ) {
                                     d = point;
                                 }
@@ -511,27 +535,23 @@ function onBeforeRender(
                         }
                         return isObject(d, true) ? merge(d) : d;
                     });
-
-                    // Avoid destroying points when series is not visible
+                        // Avoid destroying points when series is not visible
                     if (series.visible) {
                         series.setData(axisData, false);
                     }
                 });
-
                 // Calculate the label options for each level in the tree.
                 axis.treeGrid.mapOptionsToLevel =
-                    getLevelOptions({
-                        defaults: labelOptions,
-                        from: 1,
-                        levels: labelOptions && labelOptions.levels,
-                        to: axis.treeGrid.tree && axis.treeGrid.tree.height
-                    });
-
+                        getLevelOptions({
+                            defaults: labelOptions,
+                            from: 1,
+                            levels: labelOptions && labelOptions.levels,
+                            to: axis.treeGrid.tree && axis.treeGrid.tree.height
+                        });
                 // Setting initial collapsed nodes
                 if (e.type === 'beforeRender') {
                     axis.treeGrid.collapsedNodes = treeGrid.collapsedNodes;
                 }
-
             }
         }
     );
@@ -556,7 +576,7 @@ function wrapGenerateTick(
 ): void {
     const axis = this,
         mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
-        isTreeGrid = axis.options.type === 'treegrid',
+        isTreeGrid = axis.type === 'treegrid',
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
@@ -792,7 +812,7 @@ function wrapSetTickInterval(
         linkedParent = typeof options.linkedTo === 'number' ?
             this.chart[axis.coll]?.[options.linkedTo] :
             void 0,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
         axis.min = pick(axis.userMin, options.min, axis.dataMin);
@@ -843,8 +863,7 @@ function wrapRedraw(
     proceed: Function
 ): void {
     const axis = this,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid';
+        isTreeGrid = this.type === 'treegrid';
 
     if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos): void {

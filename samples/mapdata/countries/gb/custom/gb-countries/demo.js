@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gb/custom/gb-countries.topo.json">United Kingdom countries</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gb/custom/gb-countries.topo.json">United Kingdom countries</a>'
         },
 
         mapNavigation: {

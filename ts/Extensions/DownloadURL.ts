@@ -25,6 +25,8 @@ const {
     win: { document: doc }
 } = H;
 
+import RegexLimits from './RegexLimits.js';
+
 /* *
  *
  *  Declarations
@@ -85,7 +87,7 @@ function dataURLtoBlob(
 ): (string|undefined) {
     const parts = dataURL
         .replace(/filename=.*;/, '')
-        .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+        .match(/data:([^;]*)(;base64)?,([A-Z+\d\/]+)/i);
 
 
     if (
@@ -141,6 +143,10 @@ function downloadURL(
     }
 
     dataURL = '' + dataURL;
+
+    if (nav.userAgent.length > RegexLimits.shortLimit) {
+        throw new Error('Input too long');
+    }
 
     const // Some browsers have limitations for data URL lengths. Try to convert
         // to Blob or fall back. Edge always needs that blob.

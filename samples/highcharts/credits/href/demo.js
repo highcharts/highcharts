@@ -2,7 +2,7 @@ Highcharts.chart('container', {
 
     credits: {
         text: 'Example.com',
-        href: 'http://www.example.com'
+        href: 'https://www.example.com'
     },
 
     xAxis: {

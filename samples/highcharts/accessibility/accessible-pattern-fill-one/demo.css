@@ -1,9 +1,14 @@
-.container {
-    max-width: 800px;
-    height: 400px;
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 360px;
+    max-width: 820px;
     margin: 1em auto;
 }
 
 .highcharts-description {
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+    margin: 10px;
 }

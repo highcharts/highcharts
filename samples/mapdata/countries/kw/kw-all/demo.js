@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kw/kw-all.topo.json">Kuwait</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kw/kw-all.topo.json">Kuwait</a>'
         },
 
         mapNavigation: {

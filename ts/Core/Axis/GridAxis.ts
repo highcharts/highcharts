@@ -305,7 +305,7 @@ function getMaxLabelDimensions(
 
     // For tree grid, add indentation
     if (
-        this.options.type === 'treegrid' &&
+        this.type === 'treegrid' &&
         this.treeGrid &&
         this.treeGrid.mapOfPosToGridNode
     ) {
@@ -535,7 +535,7 @@ function onAfterRender(this: Axis): void {
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
                     tickLength = (axis.tickSize('tick') || [1])[0],
-                    distance = (tickLength - 1) * ((
+                    distance = tickLength * ((
                         axis.side === GridAxisSide.top ||
                         axis.side === GridAxisSide.left
                     ) ? -1 : 1);
@@ -737,7 +737,7 @@ function onAfterSetAxisTranslation(this: Axis): void {
             // Don't trim ticks which not in min/max range but
             // they are still in the min/max plus tickInterval.
             if (
-                this.options.type !== 'treegrid' &&
+                this.type !== 'treegrid' &&
                 axis.grid &&
                 axis.grid.columns
             ) {

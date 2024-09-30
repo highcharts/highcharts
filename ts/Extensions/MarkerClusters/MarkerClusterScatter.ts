@@ -81,11 +81,10 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
     ): Record<string, MarkerClusterSplitDataArray> {
         const series = this,
             grid: Record<string, MarkerClusterSplitDataArray> = {},
-            gridOffset = this.getGridOffset();
+            gridOffset = series.getGridOffset(),
+            scaledGridSize = series.getScaledGridSize(options);
 
         let x, y, gridX, gridY, key, i;
-
-        const scaledGridSize = series.getScaledGridSize(options);
 
         for (i = 0; i < dataX.length; i++) {
             const p = valuesToPixels(series, { x: dataX[i], y: dataY[i] });
@@ -93,11 +92,9 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             y = p.y - gridOffset.plotTop;
             gridX = Math.floor(x / scaledGridSize);
             gridY = Math.floor(y / scaledGridSize);
-            key = gridY + '-' + gridX;
+            key = gridY + ':' + gridX;
 
-            if (!grid[key]) {
-                grid[key] = [];
-            }
+            grid[key] ??= [];
 
             grid[key].push({
                 dataIndex: dataIndexes[i],
@@ -300,12 +297,10 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
 
             series.baseClusters = null;
         } else {
-            if (!series.baseClusters) {
-                series.baseClusters = {
-                    clusters: series.markerClusterInfo.clusters,
-                    noise: series.markerClusterInfo.noise
-                };
-            }
+            series.baseClusters ??= {
+                clusters: series.markerClusterInfo.clusters,
+                noise: series.markerClusterInfo.noise
+            };
 
             for (const cluster of series.baseClusters.clusters) {
                 cluster.pointsOutside = [];
@@ -320,16 +315,9 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                         Math.pow(dataPointPx.y - clusterPx.y, 2)
                     );
 
-                    if (
-                        cluster.clusterZone &&
-                        cluster.clusterZone.marker &&
-                        cluster.clusterZone.marker.radius
-                    ) {
+                    if (cluster.clusterZone?.marker?.radius) {
                         radius = cluster.clusterZone.marker.radius;
-                    } else if (
-                        clusterMarkerOptions &&
-                        clusterMarkerOptions.radius
-                    ) {
+                    } else if (clusterMarkerOptions?.radius) {
                         radius = clusterMarkerOptions.radius;
                     } else {
                         radius = clusterDefaults.marker.radius;
@@ -374,16 +362,15 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
  *
  * */
 
-let baseGeneratePoints: ScatterSeries['generatePoints'];
+let baseGeneratePoints: ScatterSeries['generatePoints'],
 
-/**
- * Points that ids are included in the oldPointsStateId array are hidden before
- * animation. Other ones are destroyed.
- * @private
- */
-let oldPointsStateId: Array<string> = [];
-
-let stateIdCounter = 0;
+    /**
+     * Points that ids are included in the oldPointsStateId array are hidden
+     * before animation. Other ones are destroyed.
+     * @private
+     */
+    oldPointsStateId: Array<string> = [],
+    stateIdCounter = 0;
 
 /* *
  *
@@ -423,12 +410,13 @@ function compose(
             scatterProto.destroyClusteredData
         );
 
-        (highchartsDefaultOptions.plotOptions || {}).series = merge(
-            (highchartsDefaultOptions.plotOptions || {}).series,
-            MarkerClusterDefaults
-        );
+        if (highchartsDefaultOptions.plotOptions) {
+            highchartsDefaultOptions.plotOptions.series = merge(
+                highchartsDefaultOptions.plotOptions.series,
+                MarkerClusterDefaults
+            );
+        }
     }
-
 }
 
 /**
@@ -436,17 +424,10 @@ function compose(
  * @private
  */
 function destroyOldPoints(
-    oldState:
-    (Record<string, MarkerClusterPointsState>|undefined)
+    oldState: Record<string, MarkerClusterPointsState>
 ): void {
-    if (oldState) {
-        let state;
-        for (const key of Object.keys(oldState)) {
-            state = oldState[key];
-            if (state.point && state.point.destroy) {
-                state.point.destroy();
-            }
-        }
+    for (const key of Object.keys(oldState)) {
+        oldState[key].point?.destroy?.();
     }
 }
 
@@ -456,16 +437,10 @@ function destroyOldPoints(
  */
 function fadeInElement(
     elem: SVGElement,
-    opacity?: number,
+    opacity: number,
     animation?: (boolean|Partial<AnimationOptions>)
 ): void {
-    elem
-        .attr({
-            opacity: opacity
-        })
-        .animate({
-            opacity: 1
-        }, animation);
+    elem.attr({ opacity }).animate({ opacity: 1 }, animation);
 }
 
 /**
@@ -483,9 +458,7 @@ function fadeInNewPointAndDestoryOld(
 
     // Destroy old animated points.
     for (const p of oldPoints) {
-        if (p.point && p.point.destroy) {
-            p.point.destroy();
-        }
+        p.point?.destroy?.();
     }
 }
 
@@ -495,7 +468,7 @@ function fadeInNewPointAndDestoryOld(
  */
 function fadeInStatePoint(
     stateObj: MarkerClusterPointsState,
-    opacity?: number,
+    opacity: number,
     animation?: (boolean|Partial<AnimationOptions>),
     fadeinGraphic?: boolean,
     fadeinDataLabel?: boolean
@@ -608,12 +581,9 @@ function onPointDrillToCluster(
     ): void {
         const point = e.point || e.target,
             series = point.series,
-            xAxis = point.series.xAxis,
-            yAxis = point.series.yAxis,
-            chart = point.series.chart,
+            { xAxis, yAxis, chart } = series,
             { inverted, mapView, pointer } = chart,
-            clusterOptions = series.options.cluster,
-            drillToCluster = (clusterOptions || {}).drillToCluster;
+            drillToCluster = series.options.cluster?.drillToCluster;
 
         if (drillToCluster && point.clusteredData) {
             const sortedDataX = point.clusteredData
@@ -702,12 +672,11 @@ function seriesAnimateClusterPoint(
     const series = this,
         chart = series.chart,
         mapView = chart.mapView,
-        clusterOptions = series.options.cluster,
-        animation = animObject((clusterOptions || {}).animation),
+        animation = animObject(series.options.cluster?.animation),
         animDuration = animation.duration || 500,
-        pointsState = (series.markerClusterInfo || {}).pointsState,
-        newState = (pointsState || {}).newState,
-        oldState = (pointsState || {}).oldState,
+        pointsState = series.markerClusterInfo?.pointsState,
+        newState = pointsState?.newState,
+        oldState = pointsState?.oldState,
         oldPoints: Array<MarkerClusterPointsState> = [];
 
     let parentId,
@@ -728,27 +697,23 @@ function seriesAnimateClusterPoint(
 
         // Point has one ancestor.
         if (newPointObj.parentsId.length === 1) {
-            parentId = (newState || {})[clusterObj.stateId].parentsId[0];
+            parentId = newState?.[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
             // If old and new positions are the same do not animate.
             if (
-                newPointObj.point &&
-                newPointObj.point.graphic &&
-                oldPointObj &&
-                oldPointObj.point &&
-                oldPointObj.point.plotX &&
+                newPointObj.point?.graphic &&
+                oldPointObj.point?.plotX &&
                 oldPointObj.point.plotY &&
-                oldPointObj.point.plotX !== newPointObj.point.plotX &&
-                oldPointObj.point.plotY !== newPointObj.point.plotY
+                (
+                    oldPointObj.point.plotX !== newPointObj.point.plotX ||
+                    oldPointObj.point.plotY !== newPointObj.point.plotY
+                )
             ) {
                 newPointBBox = newPointObj.point.graphic.getBBox();
 
                 // Marker image does not have the offset (#14342).
-                offset = (
-                    newPointObj.point.graphic &&
-                    newPointObj.point.graphic.isImg
-                ) ?
+                offset = newPointObj.point.graphic?.isImg ?
                     0 : newPointBBox.width / 2;
 
                 newPointObj.point.graphic.attr({
@@ -763,17 +728,13 @@ function seriesAnimateClusterPoint(
                     isCbHandled = true;
 
                     // Destroy old point.
-                    if (oldPointObj.point && oldPointObj.point.destroy) {
-                        oldPointObj.point.destroy();
-                    }
+                    oldPointObj.point?.destroy?.();
                 });
 
                 // Data label animation.
                 if (
-                    newPointObj.point.dataLabel &&
-                    newPointObj.point.dataLabel.alignAttr &&
-                    oldPointObj.point.dataLabel &&
-                    oldPointObj.point.dataLabel.alignAttr
+                    newPointObj.point.dataLabel?.alignAttr &&
+                    oldPointObj.point.dataLabel?.alignAttr
                 ) {
                     newPointObj.point.dataLabel.attr({
                         x: oldPointObj.point.dataLabel.alignAttr.x,
@@ -803,14 +764,11 @@ function seriesAnimateClusterPoint(
             hideStatePoint(newPointObj, true, true);
 
             newPointObj.parentsId.forEach(function (elem): void {
-                if (oldState && oldState[elem]) {
+                if (oldState?.[elem]) {
                     oldPointObj = oldState[elem];
                     oldPoints.push(oldPointObj);
 
-                    if (
-                        oldPointObj.point &&
-                        oldPointObj.point.graphic
-                    ) {
+                    if (oldPointObj.point?.graphic) {
                         isOldPointGrahic = true;
                         oldPointObj.point.graphic.show();
                         oldPointObj.point.graphic.animate({
@@ -827,9 +785,7 @@ function seriesAnimateClusterPoint(
                         if (
                             oldPointObj.point.dataLabel &&
                             oldPointObj.point.dataLabel.y !== -9999 &&
-                            newPointObj.point &&
-                            newPointObj.point.dataLabel &&
-                            newPointObj.point.dataLabel.alignAttr
+                            newPointObj.point?.dataLabel?.alignAttr
                         ) {
                             oldPointObj.point.dataLabel.show();
                             oldPointObj.point.dataLabel.animate({
@@ -869,15 +825,9 @@ function seriesAnimateClusterPoint(
 function seriesDestroyClusteredData(
     this: ScatterSeries
 ): void {
-    const clusteredSeriesData = this.markerClusterSeriesData;
-
     // Clear previous groups.
-    (clusteredSeriesData || []).forEach(function (
-        point: (Point | null)
-    ): void {
-        if (point && point.destroy) {
-            point.destroy();
-        }
+    this.markerClusterSeriesData?.forEach((point: Point | null): void => {
+        point?.destroy?.();
     });
 
     this.markerClusterSeriesData = null;
@@ -891,10 +841,8 @@ function seriesGeneratePoints(
     this: ScatterSeries
 ): void {
     const series = this,
-        chart = series.chart,
+        { chart, xData, yData } = series,
         mapView = chart.mapView,
-        xData = series.xData,
-        yData = series.yData,
         clusterOptions = series.options.cluster,
         realExtremes = series.getRealExtremes(),
         visibleXData = [],
@@ -916,18 +864,15 @@ function seriesGeneratePoints(
         clusteredData,
         groupedData,
         layoutAlgOptions,
-        point,
-        i;
+        point;
 
     // For map point series, we need to resolve lon, lat and geometry options
     // and project them on the plane in order to get x and y. In the regular
     // series flow, this is not done until the `translate` method because the
     // resulting [x, y] position depends on inset positions in the MapView.
     if (mapView && series.is('mappoint') && xData && yData) {
-        (
-            (series as unknown as MapPointSeries).options.data || []
-        ).forEach((p, i): void => {
-            const xy = (series as unknown as MapPointSeries).projectPoint(p);
+        (series as MapPointSeries).options.data?.forEach((p, i): void => {
+            const xy = (series as MapPointSeries).projectPoint(p);
             if (xy) {
                 xData[i] = xy.x;
                 yData[i] = xy.y;
@@ -936,12 +881,9 @@ function seriesGeneratePoints(
     }
 
     if (
-        clusterOptions &&
-        clusterOptions.enabled &&
-        xData &&
-        xData.length &&
-        yData &&
-        yData.length &&
+        clusterOptions?.enabled &&
+        xData?.length &&
+        yData?.length &&
         !chart.polar
     ) {
         type = clusterOptions.layoutAlgorithm.type;
@@ -971,9 +913,8 @@ function seriesGeneratePoints(
         cropDataOffsetX = Math.abs(p1.x - p2.x);
         cropDataOffsetY = Math.abs(p1.y - p2.y);
 
-
         // Get only visible data.
-        for (i = 0; i < xData.length; i++) {
+        for (let i = 0; i < xData.length; i++) {
             if (!series.dataMaxX) {
                 if (
                     !defined(seriesMaxX) ||
@@ -1037,9 +978,7 @@ function seriesGeneratePoints(
                     series.markerClusterAlgorithms.grid;
             }
         } else {
-            algorithm = function (): boolean {
-                return false;
-            };
+            algorithm = (): false => false;
         }
 
         groupedData = algorithm.call(
@@ -1057,9 +996,7 @@ function seriesGeneratePoints(
         // When animation is enabled get old points state.
         if (
             clusterOptions.animation &&
-            series.markerClusterInfo &&
-            series.markerClusterInfo.pointsState &&
-            series.markerClusterInfo.pointsState.oldState
+            series.markerClusterInfo?.pointsState?.oldState
         ) {
             // Destroy old points.
             destroyOldPoints(series.markerClusterInfo.pointsState.oldState);
@@ -1086,9 +1023,7 @@ function seriesGeneratePoints(
 
         if (clusteredData && series.markerClusterInfo) {
             // Mark cluster points. Safe point reference in the cluster object.
-            (series.markerClusterInfo.clusters || []).forEach(function (
-                cluster: ClusterAndNoiseObject
-            ): void {
+            series.markerClusterInfo.clusters?.forEach((cluster): void => {
                 point = series.points[cluster.index];
                 point.isCluster = true;
                 point.clusteredData = cluster.data;
@@ -1100,9 +1035,7 @@ function seriesGeneratePoints(
             });
 
             // Safe point reference in the noise object.
-            (series.markerClusterInfo.noise || []).forEach(function (
-                noise: ClusterAndNoiseObject
-            ): void {
+            series.markerClusterInfo.noise?.forEach((noise): void => {
                 noise.point = series.points[noise.index];
             });
 
@@ -1190,9 +1123,7 @@ function seriesGetClusteredData(
         clusterTempPos,
         zoneOptions,
         clusterZone,
-        clusterZoneClassName,
-        i,
-        k;
+        clusterZoneClassName;
 
     // Check if groupedData is valid when user uses a custom algorithm.
     if (
@@ -1209,7 +1140,7 @@ function seriesGetClusteredData(
         return false;
     }
 
-    for (k in groupedData) {
+    for (const k in groupedData) {
         if (groupedData[k].length >= minimumClusterSize) {
 
             points = groupedData[k];
@@ -1218,7 +1149,7 @@ function seriesGetClusteredData(
 
             // Get zone options for cluster.
             if (options.zones) {
-                for (i = 0; i < options.zones.length; i++) {
+                for (let i = 0; i < options.zones.length; i++) {
                     if (
                         pointsLen >= options.zones[i].from &&
                         pointsLen <= options.zones[i].to
@@ -1260,7 +1191,7 @@ function seriesGetClusteredData(
                 };
             }
 
-            for (i = 0; i < pointsLen; i++) {
+            for (let i = 0; i < pointsLen; i++) {
                 points[i].parentStateId = stateId;
             }
 
@@ -1268,11 +1199,11 @@ function seriesGetClusteredData(
                 x: clusterPos.x,
                 y: clusterPos.y,
                 id: k,
-                stateId: stateId,
-                index: index,
+                stateId,
+                index,
                 data: points,
-                clusterZone: clusterZone,
-                clusterZoneClassName: clusterZoneClassName
+                clusterZone,
+                clusterZoneClassName
             });
 
             groupedXData.push(clusterPos.x);
@@ -1290,7 +1221,7 @@ function seriesGetClusteredData(
 
             // Save cluster data points options.
             if (series.options.data && series.options.data.length) {
-                for (i = 0; i < pointsLen; i++) {
+                for (let i = 0; i < pointsLen; i++) {
                     if (isObject(series.options.data[points[i].dataIndex])) {
                         points[i].options =
                             series.options.data[points[i].dataIndex];
@@ -1301,13 +1232,12 @@ function seriesGetClusteredData(
             index++;
             zoneOptions = null;
         } else {
-            for (i = 0; i < groupedData[k].length; i++) {
+            for (let i = 0; i < groupedData[k].length; i++) {
                 // Points not belonging to any cluster.
                 point = groupedData[k][i];
                 stateId = getStateId();
                 pointOptions = null;
-                pointUserOptions =
-                    ((series.options || {}).data || [])[point.dataIndex];
+                pointUserOptions = series.options?.data?.[point.dataIndex];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 
@@ -1317,8 +1247,8 @@ function seriesGetClusteredData(
                     x: point.x,
                     y: point.y,
                     id: k,
-                    stateId: stateId,
-                    index: index,
+                    stateId,
+                    index,
                     data: groupedData[k]
                 });
 
@@ -1346,11 +1276,11 @@ function seriesGetClusteredData(
     }
 
     return {
-        clusters: clusters,
-        noise: noise,
-        groupedXData: groupedXData,
-        groupedYData: groupedYData,
-        groupMap: groupMap
+        clusters,
+        noise,
+        groupedXData,
+        groupedYData,
+        groupMap
     };
 }
 
@@ -1359,9 +1289,7 @@ function seriesGetGridOffset(
     this: ScatterSeries
 ): Record<string, number> {
     const series = this,
-        chart = series.chart,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis;
+        { chart, xAxis, yAxis } = series;
 
     let plotLeft = 0,
         plotTop = 0;
@@ -1403,9 +1331,7 @@ function seriesGetPointsState(
     oldPointsStateId = [];
 
     // Build points state structure.
-    clusteredData.clusters.forEach(function (
-        cluster: ClusterAndNoiseObject
-    ): void {
+    clusteredData.clusters.forEach((cluster): void => {
         state[cluster.stateId] = {
             x: cluster.x,
             y: cluster.y,
@@ -1415,9 +1341,7 @@ function seriesGetPointsState(
         };
     });
 
-    clusteredData.noise.forEach(function (
-        noise: ClusterAndNoiseObject
-    ): void {
+    clusteredData.noise.forEach((noise): void => {
         state[noise.stateId] = {
             x: noise.x,
             y: noise.y,
@@ -1436,12 +1360,9 @@ function seriesGetPointsState(
         oldState = oldDataStateArr[i];
 
         if (
-            newState &&
-            oldState &&
-            newState.parentStateId &&
-            oldState.parentStateId &&
-            state[newState.parentStateId] &&
-            state[newState.parentStateId].parentsId.indexOf(
+            newState?.parentStateId &&
+            oldState?.parentStateId &&
+            state[newState.parentStateId]?.parentsId.indexOf(
                 oldState.parentStateId
             ) === -1
         ) {
@@ -1493,7 +1414,7 @@ function seriesGetScaledGridSize(
 ): number {
     const series = this,
         xAxis = series.xAxis,
-        mapView = this.chart.mapView,
+        mapView = series.chart.mapView,
         processedGridSize = options.processedGridSize ||
             clusterDefaults.layoutAlgorithm.gridSize;
 
@@ -1543,17 +1464,13 @@ function seriesGetScaledGridSize(
 function seriesHideClusteredData(
     this: ScatterSeries
 ): void {
-    const series = this,
-        clusteredSeriesData = this.markerClusterSeriesData,
-        oldState =
-            ((series.markerClusterInfo || {}).pointsState || {}).oldState || {},
+    const clusteredSeriesData = this.markerClusterSeriesData,
+        oldState = this.markerClusterInfo?.pointsState?.oldState,
         oldPointsId = oldPointsStateId.map((elem): string =>
-            (oldState[elem].point || {}).id || ''
+            oldState?.[elem].point?.id || ''
         );
 
-    (clusteredSeriesData || []).forEach(function (
-        point: (Point | null)
-    ): void {
+    clusteredSeriesData?.forEach((point): void => {
         // If an old point is used in animation hide it, otherwise destroy.
         if (
             point &&
@@ -1567,9 +1484,7 @@ function seriesHideClusteredData(
                 point.dataLabel.hide();
             }
         } else {
-            if (point && point.destroy) {
-                point.destroy();
-            }
+            point?.destroy?.();
         }
     });
 }
@@ -1581,16 +1496,13 @@ function seriesHideClusteredData(
 function seriesIsValidGroupedDataObject(
     groupedData: Record<string, MarkerClusterSplitDataArray>
 ): boolean {
-    let result = false,
-        i;
+    let result = false;
 
     if (!isObject(groupedData)) {
         return false;
     }
 
-    objectEach(groupedData, function (
-        elem: MarkerClusterSplitDataArray
-    ): void {
+    objectEach(groupedData, (elem): void => {
         result = true;
 
         if (!isArray(elem) || !elem.length) {
@@ -1598,7 +1510,7 @@ function seriesIsValidGroupedDataObject(
             return;
         }
 
-        for (i = 0; i < elem.length; i++) {
+        for (let i = 0; i < elem.length; i++) {
             if (!isObject(elem[i]) || (!elem[i].x || !elem[i].y)) {
                 result = false;
                 return;
@@ -1615,7 +1527,7 @@ function seriesPreventClusterCollisions(
     props: MarkerClusterPreventCollisionObject
 ): PositionObject {
     const series = this,
-        [gridY, gridX] = props.key.split('-').map(parseFloat),
+        [gridY, gridX] = props.key.split(':').map(parseFloat),
         gridSize = props.gridSize,
         groupedData = props.groupedData,
         defaultRadius = props.defaultRadius,
@@ -1624,9 +1536,8 @@ function seriesPreventClusterCollisions(
         gridYPx = gridY * gridSize,
         propsPx = valuesToPixels(series, props),
         gridsToCheckCollision = [],
-        clusterMarkerOptions =
-            (series.options.cluster || {}).marker,
-        zoneOptions = (series.options.cluster || {}).zones,
+        clusterMarkerOptions = series.options.cluster?.marker,
+        zoneOptions = series.options.cluster?.zones,
         gridOffset = series.getGridOffset();
 
     let xPixel = propsPx.x,
@@ -1639,7 +1550,6 @@ function seriesPreventClusterCollisions(
         signY,
         cornerGridX,
         cornerGridY,
-        i,
         j,
         itemX,
         itemY,
@@ -1651,7 +1561,7 @@ function seriesPreventClusterCollisions(
     xPixel -= gridOffset.plotLeft;
     yPixel -= gridOffset.plotTop;
 
-    for (i = 1; i < 5; i++) {
+    for (let i = 1; i < 5; i++) {
         signX = i % 2 ? -1 : 1;
         signY = i < 3 ? -1 : 1;
 
@@ -1663,9 +1573,9 @@ function seriesPreventClusterCollisions(
         );
 
         keys = [
-            cornerGridY + '-' + cornerGridX,
-            cornerGridY + '-' + gridX,
-            gridY + '-' + cornerGridX
+            cornerGridY + ':' + cornerGridX,
+            cornerGridY + ':' + gridX,
+            gridY + ':' + cornerGridX
         ];
 
         for (j = 0; j < keys.length; j++) {
@@ -1697,26 +1607,22 @@ function seriesPreventClusterCollisions(
             nextXPixel = pos.x - gridOffset.plotLeft;
             nextYPixel = pos.y - gridOffset.plotTop;
 
-            [itemY, itemX] = item.split('-').map(parseFloat);
+            [itemY, itemX] = item.split(':').map(parseFloat);
 
             if (zoneOptions) {
                 pointsLen = groupedData[item].length;
 
-                for (i = 0; i < zoneOptions.length; i++) {
+                for (let i = 0; i < zoneOptions.length; i++) {
                     if (
                         pointsLen >= zoneOptions[i].from &&
                         pointsLen <= zoneOptions[i].to
                     ) {
-                        if (defined((zoneOptions[i].marker || {}).radius)) {
+                        if (defined(zoneOptions[i].marker?.radius)) {
                             radius = zoneOptions[i].marker.radius || 0;
-                        } else if (
-                            clusterMarkerOptions &&
-                            clusterMarkerOptions.radius
-                        ) {
+                        } else if (clusterMarkerOptions?.radius) {
                             radius = clusterMarkerOptions.radius;
                         } else {
-                            radius =
-                                clusterDefaults.marker.radius;
+                            radius = clusterDefaults.marker.radius;
                         }
                     }
                 }
@@ -1725,8 +1631,7 @@ function seriesPreventClusterCollisions(
             if (
                 groupedData[item].length > 1 &&
                 radius === 0 &&
-                clusterMarkerOptions &&
-                clusterMarkerOptions.radius
+                clusterMarkerOptions?.radius
             ) {
                 radius = clusterMarkerOptions.radius;
             } else if (groupedData[item].length === 1) {

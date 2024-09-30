@@ -16,6 +16,12 @@ Dashboards.board('container', {
             }
         }]
     },
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true
+        }
+    },
     components: [{
         type: 'KPI',
         renderTo: 'kpi-vitamin-a',
@@ -201,6 +207,11 @@ Dashboards.board('container', {
         sync: {
             highlight: true,
             visibility: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);
