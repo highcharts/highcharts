@@ -603,7 +603,7 @@ class Axis {
             {
                 labels: {
                     autoRotation: [-45],
-                    padding: 4
+                    padding: 3
                 },
                 margin: 15
             } :
@@ -3045,7 +3045,7 @@ class Axis {
             return tick.slotWidth;
         }
 
-        if (horiz && labelOptions.step < 2) {
+        if (horiz && labelOptions.step < 2 && !this.isRadial) {
             if (labelOptions.rotation) { // #4415
                 return 0;
             }
@@ -3095,14 +3095,13 @@ class Axis {
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = labelStyleOptions.textOverflow;
+            lineClampOption = labelStyleOptions.lineClamp;
 
         let commonWidth: number,
-            commonTextOverflow: string,
-            maxLabelLength = 0,
-            label,
-            i,
-            pos;
+            lineClamp = lineClampOption ?? (Math.floor(
+                this.len / (tickPositions.length * labelMetrics.h)
+            ) || 1),
+            maxLabelLength = 0;
 
         // Set rotation option unless it is "auto", like in gauges
         if (!isString(labelOptions.rotation)) {
@@ -3148,41 +3147,6 @@ class Axis {
         } else if (slotWidth) {
             // For word-wrap or ellipsis
             commonWidth = innerWidth;
-
-            if (!textOverflowOption) {
-                commonTextOverflow = 'clip';
-
-                // On vertical axis, only allow word wrap if there is room
-                // for more lines.
-                i = tickPositions.length;
-                while (!horiz && i--) {
-                    pos = tickPositions[i];
-                    label = ticks[pos].label;
-                    if (label) {
-                        // Reset ellipsis in order to get the correct
-                        // bounding box (#4070)
-                        if (
-                            label.styles.textOverflow === 'ellipsis'
-                        ) {
-                            label.css({ textOverflow: 'clip' });
-
-                        // Set the correct width in order to read
-                        // the bounding box height (#4678, #5034)
-                        } else if (label.textPxLength > slotWidth) {
-                            label.css({ width: slotWidth + 'px' });
-                        }
-
-                        if (
-                            label.getBBox().height > (
-                                this.len / tickPositions.length -
-                                (labelMetrics.h - labelMetrics.f)
-                            )
-                        ) {
-                            label.specificTextOverflow = 'ellipsis';
-                        }
-                    }
-                }
-            }
         }
 
 
@@ -3193,8 +3157,8 @@ class Axis {
                     (chart.chartHeight as any) * 0.33 :
                     maxLabelLength
             );
-            if (!textOverflowOption) {
-                commonTextOverflow = 'ellipsis';
+            if (!lineClampOption) {
+                lineClamp = 1;
             }
         }
 
@@ -3231,21 +3195,16 @@ class Axis {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth + 'px';
-                    if (!textOverflowOption) {
-                        css.textOverflow = (
-                            label.specificTextOverflow ||
-                            commonTextOverflow
-                        );
-                    }
-                    label.css(css);
+                    label.css(extend(css, {
+                        width: `${commonWidth}px`,
+                        lineClamp
+                    }));
 
                 // Reset previously shortened label (#8210)
                 } else if (label.styles.width && !css.width && !widthOption) {
-                    label.css({ width: null as any });
+                    label.css({ width: 'auto' });
                 }
 
-                delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
             }
         }, this);

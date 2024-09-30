@@ -2459,6 +2459,11 @@ export default Utilities;
  * @name Highcharts.CSSObject#height
  * @type {number|undefined}
  *//**
+ * The maximum number of lines. If lines are cropped away, an ellipsis will be
+ * added.
+ * @name Highcharts.CSSObject#lineClamp
+ * @type {number|undefined}
+ *//**
  * Width of the element border.
  * @name Highcharts.CSSObject#lineWidth
  * @type {number|undefined}
