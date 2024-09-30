@@ -170,7 +170,6 @@ QUnit.test(
     function (assert) {
         Highcharts.setOptions({
             time: {
-                useUTC: true,
                 getTimezoneOffset: undefined
             }
         });
