@@ -98,8 +98,16 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
         }
     });
 
+    const getValues = series => (
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('top')[i],
+            series.getColumn('middle')[i],
+            series.getColumn('bottom')[i]
+        ])
+    );
+
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [15302, 15057, 14813],
             [15302, 15058, 14815],
@@ -129,7 +137,7 @@ QUnit.test('Test BB-algorithm on data updates.', function (assert) {
     chart.series[0].points[27].remove();
 
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [15302, 15057, 14813],
             [15302, 15058, 14815],

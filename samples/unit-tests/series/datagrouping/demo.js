@@ -394,7 +394,7 @@
         });
 
         assert.strictEqual(
-            chart.series[0].processedXData.join(','),
+            chart.series[0].getColumn('x', true).join(','),
             '80,85,90',
             'Preserve X positions for shoulder points' // keyword: cropShoulder
         );
@@ -649,8 +649,9 @@
         expectedMax = chart.xAxis[0].max;
         panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
 
-        assert.ok(
-            chart.xAxis[0].getExtremes().max !== expectedMax,
+        assert.notEqual(
+            chart.xAxis[0].getExtremes().max,
+            expectedMax,
             'DataGrouping should not prevent panning to the LEFT (#12099)'
         );
 
@@ -686,7 +687,7 @@
         });
 
         assert.strictEqual(
-            chart.series[0].yData[0],
+            chart.series[0].getColumn('y')[0],
             1000,
             'Correct yData (#8544).'
         );
@@ -1022,10 +1023,11 @@
             chart.xAxis[0].ordinal.getExtendedPositions();
             assert.ok(
                 chart.xAxis[0].ordinal.index[
-                    Object.keys(chart.xAxis[0].ordinal.index)[1]],
+                    Object.keys(chart.xAxis[0].ordinal.index)[1]
+                ],
                 `After updating data grouping units to an equally spaced
-             (like weeks), the ordinal positions should be recalculated-
-             allows panning.`
+                (like weeks), the ordinal positions should be recalculated-
+                allows panning.`
             );
         });
 
@@ -1054,7 +1056,7 @@
 
         // Grouping each series when the only one requires that, #6765.
         assert.strictEqual(
-            chart.series[0].processedXData.length,
+            chart.series[0].getColumn('x', true).length,
             2,
             `Even if the first series doesn't require grouping,
         It should be grouped the same as the second one is.
@@ -1117,5 +1119,6 @@
                 `After zooming to a point where groupinng is no longer needed,
                 it should not be applied.`
             );
-        });
+        }
+    );
 })();

@@ -1153,9 +1153,9 @@ namespace AxisDefaults {
             zIndex: 7,
 
             /**
-             * CSS styles for the label. Use `whiteSpace: 'nowrap'` to prevent
-             * wrapping of category labels. Use `textOverflow: 'none'` to
-             * prevent ellipsis (dots).
+             * CSS styles for the label. Use `lineClamp` to control wrapping of
+             * category labels. Use `textOverflow: 'none'` to prevent ellipsis
+             * (dots).
              *
              * In styled mode, the labels are styled with the
              * `.highcharts-axis-labels` class.
@@ -1171,7 +1171,9 @@ namespace AxisDefaults {
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '0.8em'
+                fontSize: '0.8em',
+                /** @internal */
+                textOverflow: 'ellipsis'
             }
         },
 
@@ -2085,8 +2087,8 @@ namespace AxisDefaults {
             /**
              * CSS styles for the title. If the title text is longer than the
              * axis length, it will wrap to multiple lines by default. This can
-             * be customized by setting `textOverflow: 'ellipsis'`, by
-             * setting a specific `width` or by setting `whiteSpace: 'nowrap'`.
+             * be customized by setting the `lineClamp` property, by setting a
+             * specific `width` or by setting `whiteSpace: 'nowrap'`.
              *
              * In styled mode, the stroke width is given in the
              * `.highcharts-axis-title` class.

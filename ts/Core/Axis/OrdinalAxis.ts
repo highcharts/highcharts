@@ -20,9 +20,11 @@ import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
@@ -54,7 +56,7 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -110,7 +112,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -458,7 +460,7 @@ namespace OrdinalAxis {
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions && positions.length) {
+        if (positions?.length) {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
@@ -941,6 +943,9 @@ namespace OrdinalAxis {
                 let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
+
+                    const xData = series.getColumn('x', true);
+
                     uniqueOrdinalPositions = [];
 
                     // For an axis with multiple series, check if the distance
@@ -948,14 +953,13 @@ namespace OrdinalAxis {
                     if (
                         i > 0 &&
                         series.options.id !== 'highcharts-navigator-series' &&
-                        series.processedXData.length > 1
+                        xData.length > 1
                     ) {
-                        adjustOrdinalExtremesPoints =
-                            distanceBetweenPoint !== series.processedXData[1] -
-                                series.processedXData[0];
+                        adjustOrdinalExtremesPoints = (
+                            distanceBetweenPoint !== xData[1] - xData[0]
+                        );
                     }
-                    distanceBetweenPoint =
-                        series.processedXData[1] - series.processedXData[0];
+                    distanceBetweenPoint = xData[1] - xData[0];
 
                     if (series.boosted) {
                         isBoosted = series.boosted;
@@ -971,9 +975,7 @@ namespace OrdinalAxis {
 
                         // Concatenate the processed X data into the existing
                         // positions, or the empty array
-                        ordinalPositions = ordinalPositions.concat(
-                            series.processedXData as any
-                        );
+                        ordinalPositions = ordinalPositions.concat(xData);
 
                         len = ordinalPositions.length;
 
@@ -1201,7 +1203,7 @@ namespace OrdinalAxis {
          * it will be regenerated the next time a panning operation starts.
          * @private
          */
-        public getExtendedPositions(withOverscroll: boolean = true): Array<number> {
+        public getExtendedPositions(withOverscroll: boolean = true): Array<number>|undefined {
             const ordinal = this,
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
@@ -1261,21 +1263,26 @@ namespace OrdinalAxis {
                 axis.series.forEach(function (series): void {
                     fakeSeries = {
                         xAxis: fakeAxis,
-                        xData: (series.xData as any).slice(),
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
+                        getColumn: Series.prototype.getColumn,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping,
                         reserveSpace: Series.prototype.reserveSpace,
                         visible: series.visible
                     } as any;
 
-                    if (withOverscroll) {
-                        fakeSeries.xData = (fakeSeries.xData as any).concat(
-                            ordinal.getOverscrollPositions()
-                        );
-                    }
+                    const xData = series.getColumn('x').concat(
+                        withOverscroll ?
+                            ordinal.getOverscrollPositions() :
+                            []
+                    );
+                    fakeSeries.dataTable = new DataTableCore({
+                        columns: {
+                            x: xData
+                        }
+                    });
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
@@ -1326,7 +1333,9 @@ namespace OrdinalAxis {
                 }
 
                 // Cache it
-                ordinalIndex[key] = fakeAxis.ordinal.positions as any;
+                if (fakeAxis.ordinal.positions) {
+                    ordinalIndex[key] = fakeAxis.ordinal.positions;
+                }
             }
             return ordinalIndex[key];
         }
@@ -1360,8 +1369,8 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                processedXData = series.processedXData,
-                len = (processedXData as any).length,
+                processedXData = series.getColumn('x', true),
+                len = processedXData.length,
                 distances = [];
             let median,
                 i,
@@ -1375,8 +1384,8 @@ namespace OrdinalAxis {
                 // Register all the distances in an array
                 for (i = 0; i < len - 1; i++) {
                     distances[i] = (
-                        (processedXData as any)[i + 1] -
-                        (processedXData as any)[i]
+                        processedXData[i + 1] -
+                        processedXData[i]
                     );
                 }
 
@@ -1388,8 +1397,8 @@ namespace OrdinalAxis {
 
                 // Compensate for series that don't extend through the entire
                 // axis extent. #1675.
-                xMin = Math.max(xMin, (processedXData as any)[0]);
-                xMax = Math.min(xMax, (processedXData as any)[len - 1]);
+                xMin = Math.max(xMin, processedXData[0]);
+                xMax = Math.min(xMax, processedXData[len - 1]);
 
                 ordinal.groupIntervalFactor = groupIntervalFactor =
                     (len * median) / (xMax - xMin);

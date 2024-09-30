@@ -248,11 +248,9 @@ class RangeSelector {
         let dataMin = unionExtremes.dataMin,
             dataMax = unionExtremes.dataMax,
             newMin,
-            newMax = baseAxis && Math.round(
-                Math.min(
-                    baseAxis.max as any, pick(dataMax, baseAxis.max as any)
-                )
-            ), // #1568
+            newMax = isNumber(baseAxis?.max) ? Math.round(
+                Math.min(baseAxis.max, dataMax ?? baseAxis.max)
+            ) : void 0, // #1568
             baseXAxisOptions: DeepPartial<AxisOptions>,
             range = rangeOptions._range,
             rangeMin: (number|undefined),
@@ -304,9 +302,11 @@ class RangeSelector {
 
         // Fixed times like minutes, hours, days
         } else if (range) {
-            newMin = Math.max(newMax - range, dataMin as any);
-            newMax = Math.min(newMin + range, dataMax as any);
-            addOffsetMin = false;
+            if (isNumber(newMax)) {
+                newMin = Math.max(newMax - range, dataMin as any);
+                newMax = Math.min(newMin + range, dataMax as any);
+                addOffsetMin = false;
+            }
 
         } else if (type === 'ytd') {
 
@@ -319,15 +319,17 @@ class RangeSelector {
                 // the chart is rendered, we have access to the xData array
                 // (#942).
                 if (
-                    typeof dataMax === 'undefined' ||
-                    typeof dataMin === 'undefined'
+                    baseAxis.hasData() && (
+                        !isNumber(dataMax) ||
+                        !isNumber(dataMin)
+                    )
                 ) {
                     dataMin = Number.MAX_VALUE;
-                    dataMax = Number.MIN_VALUE;
+                    dataMax = -Number.MAX_VALUE;
                     chart.series.forEach((series): void => {
                         // Reassign it to the last item
-                        const xData = series.xData;
-                        if (xData) {
+                        const xData = series.getColumn('x');
+                        if (xData.length) {
                             dataMin = Math.min(xData[0], dataMin as any);
                             dataMax = Math.max(
                                 xData[xData.length - 1],
@@ -337,13 +339,15 @@ class RangeSelector {
                     });
                     redraw = false;
                 }
-                ytdExtremes = rangeSelector.getYTDExtremes(
-                    dataMax,
-                    dataMin
-                );
-                newMin = rangeMin = ytdExtremes.min;
-                newMax = ytdExtremes.max;
 
+                if (isNumber(dataMax) && isNumber(dataMin)) {
+                    ytdExtremes = rangeSelector.getYTDExtremes(
+                        dataMax,
+                        dataMin
+                    );
+                    newMin = rangeMin = ytdExtremes.min;
+                    newMax = ytdExtremes.max;
+                }
             // "ytd" is pre-selected. We don't yet have access to processed
             // point and extremes data (things like pointStart and pointInterval
             // are missing), so we delay the process (#942)
@@ -395,7 +399,7 @@ class RangeSelector {
                 xAxis.options.min = baseXAxisOptions.min;
                 axisRangeUpdateEvent(); // Remove event
             });
-        } else {
+        } else if (isNumber(newMin) && isNumber(newMax)) {
             // Existing axis object. Set extremes after render time.
             baseAxis.setExtremes(
                 newMin,

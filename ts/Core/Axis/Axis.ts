@@ -46,6 +46,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -602,7 +603,7 @@ class Axis {
             {
                 labels: {
                     autoRotation: [-45],
-                    padding: 4
+                    padding: 3
                 },
                 margin: 15
             } :
@@ -756,8 +757,8 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData;
-                        if (xData && xData.length) {
+                        xData = series.getColumn('x');
+                        if (xData.length) {
                             xData = axis.logarithmic ?
                                 xData.filter((x): boolean => x > 0) :
                                 xData;
@@ -1307,11 +1308,12 @@ class Axis {
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[] =>
+                    axis.series.map((s): number[]|TypedArray => {
+                        const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
-                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
-                    )
+                        return s.xIncrement ? xData.slice(0, 2) : xData;
+                    })
                 ) || 0;
 
                 minRange = Math.min(
@@ -1390,10 +1392,11 @@ class Axis {
         } else {
             const singleXs: number[] = [];
             this.series.forEach(function (series): void {
-                const seriesClosest = series.closestPointRange;
+                const seriesClosest = series.closestPointRange,
+                    xData = series.getColumn('x');
 
-                if (series.xData?.length === 1) {
-                    singleXs.push(series.xData[0]);
+                if (xData.length === 1) {
+                    singleXs.push(xData[0]);
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
@@ -1503,19 +1506,19 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (
-                            axis.max as any), (series.xData as any).length - 1
+                        axis.max || 0, series.dataTable.rowCount - 1
                     );
 
                     series.processData();
                     series.generatePoints();
                 }
 
-                series.data.forEach(function (
-                    point: Point,
+                const xData = series.getColumn('x').slice();
+                series.data.forEach((
+                    point,
                     i: number
-                ): void { // #9487
-                    let x;
+                ): void => { // #9487
+                    let x = xData[i];
 
                     if (
                         point?.options &&
@@ -1523,11 +1526,11 @@ class Axis {
                     ) {
                         x = axis.nameToX(point);
                         if (typeof x !== 'undefined' && x !== point.x) {
-                            point.x = x;
-                            (series.xData as any)[i] = x;
+                            xData[i] = point.x = x;
                         }
                     }
                 });
+                series.dataTable.setColumn('x', xData);
             });
         }
     }
@@ -3056,7 +3059,7 @@ class Axis {
             return tick.slotWidth;
         }
 
-        if (horiz && labelOptions.step < 2) {
+        if (horiz && labelOptions.step < 2 && !this.isRadial) {
             if (labelOptions.rotation) { // #4415
                 return 0;
             }
@@ -3106,14 +3109,13 @@ class Axis {
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = labelStyleOptions.textOverflow;
+            lineClampOption = labelStyleOptions.lineClamp;
 
         let commonWidth: number,
-            commonTextOverflow: string,
-            maxLabelLength = 0,
-            label,
-            i,
-            pos;
+            lineClamp = lineClampOption ?? (Math.floor(
+                this.len / (tickPositions.length * labelMetrics.h)
+            ) || 1),
+            maxLabelLength = 0;
 
         // Set rotation option unless it is "auto", like in gauges
         if (!isString(labelOptions.rotation)) {
@@ -3159,41 +3161,6 @@ class Axis {
         } else if (slotWidth) {
             // For word-wrap or ellipsis
             commonWidth = innerWidth;
-
-            if (!textOverflowOption) {
-                commonTextOverflow = 'clip';
-
-                // On vertical axis, only allow word wrap if there is room
-                // for more lines.
-                i = tickPositions.length;
-                while (!horiz && i--) {
-                    pos = tickPositions[i];
-                    label = ticks[pos].label;
-                    if (label) {
-                        // Reset ellipsis in order to get the correct
-                        // bounding box (#4070)
-                        if (
-                            label.styles.textOverflow === 'ellipsis'
-                        ) {
-                            label.css({ textOverflow: 'clip' });
-
-                        // Set the correct width in order to read
-                        // the bounding box height (#4678, #5034)
-                        } else if (label.textPxLength > slotWidth) {
-                            label.css({ width: slotWidth + 'px' });
-                        }
-
-                        if (
-                            label.getBBox().height > (
-                                this.len / tickPositions.length -
-                                (labelMetrics.h - labelMetrics.f)
-                            )
-                        ) {
-                            label.specificTextOverflow = 'ellipsis';
-                        }
-                    }
-                }
-            }
         }
 
 
@@ -3204,8 +3171,8 @@ class Axis {
                     (chart.chartHeight as any) * 0.33 :
                     maxLabelLength
             );
-            if (!textOverflowOption) {
-                commonTextOverflow = 'ellipsis';
+            if (!lineClampOption) {
+                lineClamp = 1;
             }
         }
 
@@ -3242,21 +3209,16 @@ class Axis {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth + 'px';
-                    if (!textOverflowOption) {
-                        css.textOverflow = (
-                            label.specificTextOverflow ||
-                            commonTextOverflow
-                        );
-                    }
-                    label.css(css);
+                    label.css(extend(css, {
+                        width: `${commonWidth}px`,
+                        lineClamp
+                    }));
 
                 // Reset previously shortened label (#8210)
                 } else if (label.styles.width && !css.width && !widthOption) {
-                    label.css({ width: null as any });
+                    label.css({ width: 'auto' });
                 }
 
-                delete label.specificTextOverflow;
                 tick.rotation = attr.rotation;
             }
         }, this);

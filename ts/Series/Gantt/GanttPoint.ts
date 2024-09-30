@@ -26,8 +26,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     xrange: { prototype: { pointClass: XRangePoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { pick } = U;
 
 /* *
  *
@@ -47,25 +45,17 @@ class GanttPoint extends XRangePoint {
      * @private
      */
     public static setGanttPointAliases(
-        point: (GanttPoint|GanttPointOptions),
+        options: (GanttPoint|GanttPointOptions),
         chart: Chart
     ): void {
-
-        /**
-         * Add a value to options if the value exists.
-         * @private
-         */
-        function addIfExists(prop: string, val: unknown): void {
-            if (typeof val !== 'undefined') {
-                (point as any)[prop] = val;
-            }
-        }
-
-        addIfExists('x', chart.time.parse(point.start ?? point.x));
-        addIfExists('x2', chart.time.parse(point.end ?? point.x2));
-        addIfExists(
-            'partialFill', pick(point.completed, point.partialFill)
+        options.x = options.start = chart.time.parse(
+            options.start ?? options.x
         );
+        options.x2 = options.end = chart.time.parse(
+            options.end ?? options.x2
+        );
+        (options as any).partialFill = options.completed =
+            options.completed ?? options.partialFill;
     }
 
     /* *

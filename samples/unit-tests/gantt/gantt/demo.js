@@ -773,13 +773,13 @@
         });
 
         assert.strictEqual(
-            chart.series[0].processedXData[0] !== undefined,
+            chart.series[0].getColumn('x', true)[0] !== undefined,
             true,
             'The processedXData should be applied by using the keys feature ' +
             '#13768'
         );
         assert.strictEqual(
-            chart.series[0].processedYData[0] !== undefined,
+            chart.series[0].getColumn('y', true)[0] !== undefined,
             true,
             'The processedYData should be applied by using the keys feature ' +
             '#13768'
@@ -866,6 +866,28 @@
                 chart.rangeSelector.buttonGroup
                     .element.closest('.highcharts-fixed'),
                 'rangeSelector is a part of fixed elements.'
+            );
+        });
+
+    QUnit.test(
+        'Gantt using array-based points, #17738',
+        function (assert) {
+            const chart = Highcharts.ganttChart('container', {
+                series: [
+                    {
+                        data: [
+                            [Date.UTC(2014, 10, 20), Date.UTC(2014, 10, 25)],
+                            [Date.UTC(2014, 10, 21), Date.UTC(2014, 10, 26)],
+                            [Date.UTC(2014, 10, 23), Date.UTC(2014, 10, 29)]
+                        ]
+                    }
+                ]
+            });
+
+            assert.strictEqual(
+                chart.series[0].yAxis.tickPositions.length,
+                3,
+                'Array-based points are loaded into the chart'
             );
         });
 }());

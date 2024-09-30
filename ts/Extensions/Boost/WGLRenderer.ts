@@ -198,9 +198,13 @@ class WGLRenderer {
         if (series.boosted) {
             isStacked = !!series.options.stacking;
             xData = (
-                series.xData ||
+                (
+                    series.getColumn('x').length ?
+                        series.getColumn('x') :
+                        void 0
+                ) ||
                 (series.options as any).xData ||
-                series.processedXData
+                series.getColumn('x', true)
             );
             s = (isStacked ? series.data : (xData || series.options.data))
                 .length;
@@ -391,14 +395,15 @@ class WGLRenderer {
             yExtremes = series.yAxis.getExtremes(),
             yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
             yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
-            xData =
-                series.xData || (options as any).xData || series.processedXData,
-            yData =
-                series.yData || (options as any).yData || series.processedYData,
+            xData = (
+                series.getColumn('x').length ? series.getColumn('x') : void 0
+            ) || (options as any).xData || series.getColumn('x', true),
+            yData = (
+                series.getColumn('y').length ? series.getColumn('y') : void 0
+            ) || (options as any).yData || series.getColumn('y', true),
             zData = (
-                series.zData || (options as any).zData ||
-                (series as any).processedZData
-            ),
+                series.getColumn('z').length ? series.getColumn('z') : void 0
+            ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -443,7 +448,7 @@ class WGLRenderer {
             i = -1,
             px: number = false as any,
             nx: number = false as any,
-            low: (number|undefined),
+            low: number|undefined|null,
             nextInside = false,
             prevInside = false,
             pcolor: Color.RGBA = false as any,
@@ -800,7 +805,7 @@ class WGLRenderer {
 
             } else {
                 x = d as any;
-                y = yData[i];
+                y = yData?.[i];
 
                 if (sdata[i + 1]) {
                     nx = sdata[i + 1];
@@ -841,8 +846,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = (y as any)[0];
-                y = (y as any)[1];
+                low = series.getColumn('low', true)?.[i];
+                y = series.getColumn('high', true)?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;
@@ -1008,7 +1013,7 @@ class WGLRenderer {
             }
 
             if (drawAsBar) {
-                minVal = low;
+                minVal = low || 0;
 
                 if ((low as any) === false || typeof low === 'undefined') {
                     if (y < 0) {

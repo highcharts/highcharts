@@ -74,8 +74,16 @@ QUnit.test('Test Keltner Channels indicator.', function (assert) {
         color: 'green'
     });
 
+    const getValues = series => (
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('top')[i],
+            series.getColumn('middle')[i],
+            series.getColumn('bottom')[i]
+        ])
+    );
+
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [230.09, 220.92, 211.76],
             [230.6, 221.04, 211.48],
@@ -125,7 +133,7 @@ QUnit.test('Test Keltner Channels indicator.', function (assert) {
     chart.series[0].points[30].remove();
 
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [230.09, 220.92, 211.76],
             [230.6, 221.04, 211.48],

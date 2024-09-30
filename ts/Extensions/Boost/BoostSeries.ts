@@ -31,6 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -587,7 +588,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>,
+    arr: Array<unknown>|TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -740,12 +741,12 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
+        dataLength = series.dataTable.modified.rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
@@ -767,7 +768,7 @@ function hasExtremes(
  */
 const getSeriesBoosting = (
     series: BoostSeriesComposition,
-    data?: Array<(PointOptions|PointShortOptions)>
+    data?: Array<(PointOptions|PointShortOptions)>|TypedArray
 ): boolean => {
     // Check if will be grouped.
     if (series.forceCrop) {
@@ -873,14 +874,16 @@ function getPoint(
     }
 
     const xData = (
-            series.xData ||
+            (series.getColumn('x').length ? series.getColumn('x') : void 0) ||
             seriesOptions.xData ||
-            series.processedXData ||
+            series.getColumn('x', true) ||
             false
         ),
         point = new PointClass(
             series as BoostSeriesComposition,
-            (series.options.data || [])[boostPoint.i],
+            (
+                isArray(series.options.data) ? series.options.data : []
+            )[boostPoint.i],
             xData ? xData[boostPoint.i] : void 0
         ) as BoostPointComposition;
 
@@ -931,12 +934,11 @@ function scatterProcessData(
 
     const boostThreshold = options.boostThreshold || 0,
         cropThreshold = options.cropThreshold,
-        data = options.data || series.data,
-        xData = series.xData as Array<number>,
+        xData = series.getColumn('x'),
         xExtremes = xAxis.getExtremes(),
         xMax = xExtremes.max ?? Number.MAX_VALUE,
         xMin = xExtremes.min ?? -Number.MAX_VALUE,
-        yData = series.yData as Array<number>,
+        yData = series.getColumn('y'),
         yExtremes = yAxis.getExtremes(),
         yMax = yExtremes.max ?? Number.MAX_VALUE,
         yMin = yExtremes.min ?? -Number.MAX_VALUE;
@@ -951,25 +953,30 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
-        series.processedXData ??= xData;
-        series.processedYData ??= yData;
+        series.dataTable.modified.setColumns({
+            x: xData,
+            y: yData
+        });
         return true;
     }
 
     // Without thresholds just assign data
+    const dataLength = series.dataTable.rowCount;
     if (
         !boostThreshold ||
-        data.length < boostThreshold ||
+        dataLength < boostThreshold ||
         (
             cropThreshold &&
             !series.forceCrop &&
             !series.getExtremesFromAll &&
             !options.getExtremesFromAll &&
-            data.length < cropThreshold
+            dataLength < cropThreshold
         )
     ) {
-        series.processedXData = xData;
-        series.processedYData = yData;
+        series.dataTable.modified.setColumns({
+            x: xData,
+            y: yData
+        });
         return true;
     }
 
@@ -985,12 +992,12 @@ function scatterProcessData(
         xDataMax = xData[0],
         xDataMin = xData[0],
         y: number,
-        yDataMax = yData[0],
-        yDataMin = yData[0];
+        yDataMax = yData?.[0],
+        yDataMin = yData?.[0];
 
     for (let i = 0, iEnd = xData.length; i < iEnd; ++i) {
         x = xData[i];
-        y = yData[i];
+        y = yData?.[i];
 
         if (
             x >= xMin && x <= xMax &&
@@ -1024,8 +1031,11 @@ function scatterProcessData(
     // Set properties as base processData
     series.cropped = cropped;
     series.cropStart = 0;
-    series.processedXData = processedXData; // For boosted points rendering
-    series.processedYData = processedYData;
+    // For boosted points rendering
+    series.dataTable.modified.setColumns({
+        x: processedXData,
+        y: processedYData
+    });
 
     if (!getSeriesBoosting(series, processedXData)) {
         series.processedData = processedData; // For un-boosted points rendering
@@ -1045,8 +1055,10 @@ function seriesRenderCanvas(this: Series): void {
         seriesBoost = this.boost,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
-        xData = options.xData || this.processedXData,
-        yData = options.yData || this.processedYData,
+        xData = options.xData || this.getColumn('x', true),
+        yData = options.yData || this.getColumn('y', true),
+        lowData = this.getColumn('low', true),
+        highData = this.getColumn('high', true),
         rawData = this.processedData || options.data,
         xExtremes = xAxis.getExtremes(),
         // Taking into account the offset of the min point #19497
@@ -1067,10 +1079,13 @@ function seriesRenderCanvas(this: Series): void {
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
-            this.xData ||
+            (
+                this.getColumn('x', true).length ?
+                    this.getColumn('x', true) :
+                    void 0
+            ) ||
             this.options.xData ||
-            this.processedXData ||
-            false
+            this.getColumn('x', true)
         ),
         lineWidth = pick(options.lineWidth, 1);
 
@@ -1257,7 +1272,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any;
+                y = yData?.[i] as any;
             }
 
             // Resolve low and high for range series
@@ -1265,8 +1280,9 @@ function seriesRenderCanvas(this: Series): void {
                 if (useRaw) {
                     y = (d as any).slice(1, 3);
                 }
-                low = (y as any)[0];
-                y = (y as any)[1];
+
+                low = lowData[i];
+                y = highData[i];
             } else if (isStacked) {
                 x = (d as any).x;
                 y = (d as any).stackY;
@@ -1364,7 +1380,9 @@ function seriesRenderCanvas(this: Series): void {
         }
 
         eachAsync(
-            isStacked ? this.data.slice(cropStart) : (xData || rawData),
+            isStacked ?
+                this.data.slice(cropStart) :
+                (xData || rawData),
             processPoint,
             doneProcessing
         );
@@ -1502,7 +1520,8 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure = this.options.data;
+    let dataToMeasure: (PointOptions|PointShortOptions)[]|TypedArray|undefined =
+        this.options.data;
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
@@ -1535,7 +1554,7 @@ function wrapSeriesProcessData(
             } else {
                 proceed.apply(series, [].slice.call(arguments, 1));
             }
-            dataToMeasure = series.processedXData;
+            dataToMeasure = series.getColumn('x', true);
         }
 
         // Set the isBoosting flag, second pass with processedXData to
@@ -1546,10 +1565,7 @@ function wrapSeriesProcessData(
         if (series.boosted) {
             // Force turbo-mode:
             let firstPoint;
-            if (
-                series.options.data &&
-                series.options.data.length
-            ) {
+            if (series.options.data?.length) {
                 firstPoint = series.getFirstValidPoint(
                     series.options.data
                 );

@@ -120,8 +120,16 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Initial number of MACD points is correct'
     );
 
+    const getValues = series => (
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('y')[i],
+            series.getColumn('signal')[i],
+            series.getColumn('MACD')[i]
+        ])
+    );
+
     assert.deepEqual(
-        chart.series[1].yData,
+        getValues(chart.series[1]),
         [
             [0, null, 8.275269503894606],
             [0, null, 7.703378381440018],
@@ -157,7 +165,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     lastPoint.update({ y: 434.31 });
 
     assert.strictEqual(
-        chart.series[1].MACDData.some(function (elem) {
+        chart.series[1].getColumn('MACD').some(function (elem) {
             return !Highcharts.isNumber(elem) || !Highcharts.defined(elem);
         }),
         false,
@@ -165,7 +173,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].signalData.some(function (elem) {
+        chart.series[1].getColumn('signal').some(function (elem) {
             return Highcharts.isArray(elem);
         }),
         false,
@@ -253,7 +261,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.xAxis[0].setExtremes();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        getValues(chart.series[1]),
         [
             [0, null, 6.660611645503252], // [histogram, signal, macd]
             [0, null, 7.677330740260004],
@@ -288,7 +296,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[27].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        getValues(chart.series[1]),
         [
             [0, null, 6.660611645503252], // [histogram, signal, macd]
             [0, null, 7.677330740260004],
