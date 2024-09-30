@@ -1181,19 +1181,6 @@ class Tooltip {
             scrollTop = 0
         } = chart.scrollablePlotArea?.scrollingContainer || {};
 
-        const {
-            left: rawChartLeft, top: rawChartTop
-        } = pointer.getChartPosition();
-
-        // Const {
-        //     left: chartLeft, top: chartTop
-        // } = pointer.getChartPosition();
-
-        const [chartLeft, chartTop] = [
-            rawChartLeft - 8,
-            rawChartTop - 8
-        ];
-
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If
         // outside is true it should be the whole viewport
@@ -1211,6 +1198,8 @@ class Tooltip {
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+
+        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1557,12 +1546,17 @@ class Tooltip {
         } = tooltip;
         if (outside && container && renderer) {
             // Set container size to fit the bounds
-            const { width, height, x, y } = tooltipLabel.getBBox();
+            const { width, height, x, y } = tooltipLabel.getBBox(),
+                containerRight = container.getBoundingClientRect().right;
             renderer.setSize(
                 width + x,
                 height + y,
                 false
             );
+
+            if (containerRight > bounds.right) {
+                container.style.left = -(containerRight - bounds.right) + 'px';
+            }
 
             // Position the tooltip container to the chart container
             if (chart.scrollablePlotArea) {
