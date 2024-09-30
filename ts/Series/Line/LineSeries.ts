@@ -612,7 +612,7 @@ export default LineSeries;
  * For datetime axes, a number value is the timestamp in milliseconds since
  * 1970, while a date string is parsed according to the [current time zone]
  * (https://api.highcharts.com/highcharts/time.timezone) of the
- * chart.
+ * chart. Date strings are supported since v12.
  *
  * @type      {number|string}
  * @product   highcharts highstock

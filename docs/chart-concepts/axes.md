@@ -183,7 +183,7 @@ If you would like to show zero and negative values on a logarithmic axis in High
 
 A datetime axis prints labels of round date values in appropriate intervals. Internally, a datetime axis is a linear numeric axis based on milliseconds since midnight Jan 1, 1970, as specified by the JavaScript Date object. Depending on the scale the datetime label will either be represented as time or a date.
 
-On datetime axes, all time settings may be given either as milliseconds, date strings, or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`. Date strings are parsed and assigned the current timezone as given in the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option, or to the timezone indicated in the time string itself.
+On datetime axes, all time settings may be given either as milliseconds, date strings (since v12), or Date objects. This includes options like `min` and `max`, arguments to `Axis.setExtremes`, as well as related options like `point.x` and `series.pointStart`. Date strings are parsed and assigned the current timezone as given in the chart-level [time.timezone](https://api.highcharts.com/highcharts/time.timezone) option, or to the timezone indicated in the time string itself.
 
 In Highcharts Stock the x-axis is always a datetime axis.
 
