@@ -23,7 +23,7 @@ const NVIDIAPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
             idType: 'MSID'
         }
     ],
-    currencyId: 'USD'
+    currencyId: 'EUR'
 });
 
 Promise.all([NVIDIAPriceConnector.load()]).then(() => {
