@@ -160,9 +160,9 @@ class LineSeries extends Series {
                 // The reason for the `else if` is that linecaps don't mix well
                 // with dashstyle. The gaps get partially filled by the
                 // linecap.
-                } else if (options.linecap !== 'square') {
+                } else if (options.linecap !== 'butt') {
                     attribs['stroke-linecap'] =
-                        attribs['stroke-linejoin'] = 'round';
+                        attribs['stroke-linejoin'] = options.linecap || 'round';
                 }
 
                 graph[verb](attribs)

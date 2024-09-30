@@ -30,6 +30,7 @@ Highcharts.chart('container', {
         },
         fillOpacity: 0.25,
         linecap: 'butt',
+        lineWidth: 3,
         data: [
             [
                 Date.UTC(2014, 9, 29),
