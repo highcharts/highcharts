@@ -283,10 +283,11 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * value of the box width. Set `0` to disable whiskers.
      *
      * It is also possible to define individual lengths for both top and bottom
-     * whiskers on each point.
+     * whiskers on each point through the `lowerWhiskerLength` and
+     * `upperWhiskerLength` options.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         True by default
+     *         Box plot styling
      *
      * @type {number|string}
      *
