@@ -95,9 +95,6 @@ class EditMode {
                 settings: {
                     enabled: true
                 },
-                sidebar: {
-                    sticky: false
-                },
                 toolbars: {
                     cell: {
                         enabled: true
@@ -1129,10 +1126,6 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
-        /**
-         * Options to configure the sidebar.
-         */
-        sidebar: SidebarOptions;
     }
 
     /**
@@ -1274,23 +1267,6 @@ namespace EditMode {
     export interface ContextPointer {
         isVisible: boolean;
         element: HTMLDOMElement;
-    }
-
-    /**
-     * Sidebar options
-     */
-    export interface SidebarOptions {
-        /**
-         * Whether the sidebar should be sticky when scrolling down or
-         * compontent is out of the view port.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/vertical}
-         *
-         * @default false
-         */
-        sticky?: boolean;
     }
 }
 

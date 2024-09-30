@@ -283,6 +283,4 @@ Dashboards.board('container', {
             }]
         }
     }]
-}, true).then(board => {
-    board.editMode.toggleEditMode();
-});
+}, true);

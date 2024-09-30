@@ -37,7 +37,6 @@ const {
     addEvent,
     createElement,
     fireEvent,
-    getStyle,
     merge
 } = U;
 
@@ -305,10 +304,6 @@ class SidebarPopup extends BaseForm {
     }
 
     public generateContent(context?: Cell | Row | CellHTML): void {
-
-        let sidebarWrapper: HTMLElement;
-        const isSticky = this.editMode.options.sidebar.sticky;
-
         // Reset
         this.container.innerHTML = AST.emptyHTML;
 
@@ -321,7 +316,7 @@ class SidebarPopup extends BaseForm {
         );
 
         // Render content wrapper
-        this.sidebarWrapper = sidebarWrapper = createElement(
+        this.sidebarWrapper = createElement(
             'div',
             {
                 className: EditGlobals.classNames.editSidebarWrapper
@@ -329,35 +324,6 @@ class SidebarPopup extends BaseForm {
             void 0,
             this.container
         );
-
-        const paddingTop =
-            (getStyle(this.container, 'padding-top') || 0) as number;
-        const offsetTop =
-            (this.container as HTMLElement).getBoundingClientRect().y;
-
-
-        if (isSticky) {
-            if (window.scrollY > offsetTop) {
-                sidebarWrapper.style.top = paddingTop + 'px'; // Stick
-                sidebarWrapper.style.position = 'fixed';
-            } else {
-                sidebarWrapper.style.position = 'static';
-            }
-
-            document.addEventListener('scroll', (): void => {
-                if (
-                    window.scrollY > offsetTop &&
-                    this.container.getBoundingClientRect().y < 0
-                ) {
-                    sidebarWrapper.style.top = paddingTop + 'px';
-                    sidebarWrapper.style.position = 'fixed';
-                } else {
-                    sidebarWrapper.style.top = offsetTop + 'px';
-                    sidebarWrapper.style.position = 'static';
-                }
-            });
-        }
-
 
         if (!context) {
             this.renderAddComponentsList();
@@ -371,7 +337,11 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordionMenu.renderContent(this.sidebarWrapper, component);
+            this.accordionMenu.renderContent(
+                this.sidebarWrapper,
+                component,
+                this.container
+            );
         }
     }
 

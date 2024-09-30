@@ -87,8 +87,15 @@ class AccordionMenu {
      *
      * @param component
      * The component to render the menu for.
+
+     * @param sidebarMainContainer
+     * The main container of the sidebar.
      */
-    public renderContent(container: HTMLElement, component: Component): void {
+    public renderContent(
+        container: HTMLElement,
+        component: Component,
+        sidebarMainContainer: HTMLElement
+    ): void {
         const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
@@ -138,7 +145,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.accordionMenuButtonsContainer
             },
             {},
-            container
+            sidebarMainContainer
         );
 
         EditRenderer.renderButton(
@@ -164,6 +171,7 @@ class AccordionMenu {
                 }
             }
         );
+        sidebarMainContainer.appendChild(buttonContainer);
     }
 
     /**
