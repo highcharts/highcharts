@@ -497,7 +497,10 @@ class Measure extends Annotation {
                 y: this.yAxisMax,
                 xAxis: xAxis,
                 yAxis: yAxis
-            }
+            },
+            {
+                command: 'Z'
+            } as MockPointOptions
         ];
     }
 
@@ -620,7 +623,7 @@ class Measure extends Annotation {
             extend<Partial<ControllableShapeOptions>>(
                 {
                     type: 'path',
-                    points: this.shapePointsOptions(),
+                    points: shapePoints,
                     className: 'highcharts-measure-background'
                 },
                 this.options.typeOptions.background
@@ -1179,6 +1182,7 @@ namespace Measure {
         xAxis: number;
         yAxis: number;
     }
+
 }
 
 /* *
