@@ -30,7 +30,7 @@ Highcharts.setOptions({
 const pointFormatter = function () {
     const series = this.series;
     return `<span style="color:{point.color}">\u25CF</span>
-    ${series.name}:<b>${weatherEventsMap[this.y]}</b><br/>`;
+    ${series.name}: <b>${weatherEventsMap[this.y]}</b><br/>`;
 };
 
 Dashboards.board('container', {
@@ -132,6 +132,9 @@ Dashboards.board('container', {
                 id: 'Mapped events',
                 enabled: false
             }]
+        },
+        sync: {
+            highlight: true
         }
     }, {
         connector: {
@@ -182,6 +185,9 @@ Dashboards.board('container', {
                     pointFormatter: pointFormatter
                 }
             }]
+        },
+        sync: {
+            highlight: true
         }
     }, {
         connector: {
@@ -231,6 +237,9 @@ Dashboards.board('container', {
                     pointFormatter: pointFormatter
                 }
             }]
+        },
+        sync: {
+            highlight: true
         }
     }, {
         connector: {
@@ -278,6 +287,9 @@ Dashboards.board('container', {
                     pointFormatter: pointFormatter
                 }
             }]
+        },
+        sync: {
+            highlight: true
         }
     }]
 }, true);
