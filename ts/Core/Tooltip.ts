@@ -537,7 +537,9 @@ class Tooltip {
                         setter.call(label, tooltip.distance);
                         label[i ? 'y' : 'x'] = value;
                         if (container) {
-                            container.style[i ? 'top' : 'left'] = `${value}px`;
+                            const dim = i ? 'top' : 'left';
+                            const offset = this.pointer.getChartPosition()[dim];
+                            container.style[dim] = `${value - offset}px`;
                         }
                     };
                 });
@@ -576,7 +578,7 @@ class Tooltip {
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
-                ) - 2 * distance :
+                ) - (2 * distance) - 2 :
                 chart.chartWidth,
             height: outside ?
                 Math.max(
@@ -640,8 +642,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ?
-                        scaleX(plotX + plotLeft) :
-                        scaleY(plotY + plotTop),
+                        chartPosition.left - distance +
+                            scaleX(plotX + plotLeft) :
+                        chartPosition.top - distance + scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -779,7 +782,6 @@ class Tooltip {
             swap();
         }
         run();
-
         return ret;
 
     }
@@ -1010,9 +1012,8 @@ class Tooltip {
         tooltip.followPointer = (
             !tooltip.split && point.series.tooltipOptions.followPointer
         );
-        const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
-            x = anchor[0],
-            y = anchor[1];
+        const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent);
+        const [x, y] = anchor;
 
         // Shared tooltip, array is sent over
         if (shared && tooltip.allowShared) {
@@ -1093,6 +1094,9 @@ class Tooltip {
                     // update the x position to prevent tooltip from flowing
                     // outside the viewport during animation (#21371)
                     if (this.outside) {
+                        // Const { left, top } = pointer.getChartPosition();
+                        // x -= left;
+                        // y -= top;
                         label.attr({
                             x: clamp(
                                 label.x || 0,
@@ -1178,9 +1182,12 @@ class Tooltip {
         } = chart.scrollablePlotArea?.scrollingContainer || {};
 
         const {
-            left: rawChartLeft,
-            top: rawChartTop
+            left: rawChartLeft, top: rawChartTop
         } = pointer.getChartPosition();
+
+        // Const {
+        //     left: chartLeft, top: chartTop
+        // } = pointer.getChartPosition();
 
         const [chartLeft, chartTop] = [
             rawChartLeft - 8,
