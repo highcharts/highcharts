@@ -43,6 +43,18 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     /**
+     * The corner radius of the border surrounding each node. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a relative size. For nodes this is relative to the node width.
+     *
+     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @default 3
+     * @product highcharts
+     * @since   11.0.0
+     * @apioption plotOptions.dependencywheel.borderRadius
+    */
+
+    /**
      * Distance between the data label and the center of the node.
      *
      * @type      {number}
@@ -103,18 +115,6 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
     center: [null, null],
 
     curveFactor: 0.6,
-
-    /**
-     * The corner radius of the border surrounding each node. A number
-     * signifies pixels. A percentage string, like for example `50%`, signifies
-     * a relative size. For nodes this is relative to the node width.
-     *
-     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
-     * @default 3
-     * @product highcharts
-     * @since   11.0.0
-    */
-    borderRadius: 3,
 
     /**
      * The start angle of the dependency wheel, in degrees where 0 is up.
