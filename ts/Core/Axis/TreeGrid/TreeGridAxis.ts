@@ -446,7 +446,7 @@ function onBeforeRender(
                     if (s.visible) {
                         // Push all data to array
                         seriesData.forEach(function (
-                            data
+                            pointOptions
                         ): void {
 
                             // For using keys, or when using primitive points,
@@ -455,19 +455,19 @@ function onBeforeRender(
                                 foundPrimitivePoint ||
                                  (s.options.keys && s.options.keys.length)
                             ) {
-                                data = s.pointClass.prototype
+                                pointOptions = s.pointClass.prototype
                                     .optionsToObject
-                                    .call({ series: s }, data);
-                                s.pointClass.setGanttPointAliases(data);
+                                    .call({ series: s }, pointOptions);
+                                s.pointClass.setGanttPointAliases(pointOptions);
                             }
 
-                            if (isObject(data, true)) {
+                            if (isObject(pointOptions, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
-                                (data as PointOptions).seriesIndex = (
+                                (pointOptions as PointOptions).seriesIndex = (
                                     numberOfSeries
                                 );
-                                arr.push(data as PointOptions);
+                                arr.push(pointOptions as PointOptions);
                             }
                         });
                         // Increment series index

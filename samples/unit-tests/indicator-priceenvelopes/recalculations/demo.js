@@ -79,8 +79,16 @@ QUnit.test(
             }
         });
 
+        const getValues = series => (
+            series.getColumn('x').map((x, i) => [
+                series.getColumn('top')[i],
+                series.getColumn('middle')[i],
+                series.getColumn('bottom')[i]
+            ])
+        );
+
         assert.deepEqual(
-            arrToPrecision(chart.series[1].yData),
+            arrToPrecision(getValues(chart.series[1])),
             arrToPrecision([
                 [13000 * 1.2, 13000, 13000 * 0.7],
                 [14000 * 1.2, 14000, 14000 * 0.7],
@@ -104,7 +112,7 @@ QUnit.test(
         chart.series[0].points[6].remove();
 
         assert.deepEqual(
-            arrToPrecision(chart.series[1].yData),
+            arrToPrecision(getValues(chart.series[1])),
             arrToPrecision([
                 [13000 * 1.2, 13000, 13000 * 0.7],
                 [14000 * 1.2, 14000, 14000 * 0.7]

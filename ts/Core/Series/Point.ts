@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -1037,7 +1038,8 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1076,9 +1078,13 @@ class Point {
                 }
             }
 
-            // Record changes in the parallel arrays
-            i = point.index as any;
-            series.updateParallelArrays(point, i);
+            // Record changes in the data table
+            i = point.index;
+            const row: DataTable.RowObject = {};
+            for (const key of dataColumnKeys) {
+                row[key] = (point as any)[key];
+            }
+            series.dataTable.setRow(row, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options

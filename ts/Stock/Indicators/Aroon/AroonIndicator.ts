@@ -19,6 +19,7 @@ import type {
     AroonParamsOptions
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -166,7 +167,7 @@ class AroonIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         const period = (params.period as any),

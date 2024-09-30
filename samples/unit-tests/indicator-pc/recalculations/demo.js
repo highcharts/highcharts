@@ -83,8 +83,18 @@ QUnit.test('Test Price Channel indicator.', function (assert) {
         color: 'green'
     });
 
+
+    const getValues = series => (
+
+        series.getColumn('x').map((x, i) => [
+            series.getColumn('top')[i],
+            series.getColumn('middle')[i],
+            series.getColumn('bottom')[i]
+        ])
+    );
+
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [192.65, 186.69, 180.73],
             [193.66, 188.1, 182.54],
@@ -143,7 +153,7 @@ QUnit.test('Test Price Channel indicator.', function (assert) {
     chart.series[0].points[39].remove();
 
     assert.deepEqual(
-        arrToPrecision(chart.series[1].yData),
+        arrToPrecision(getValues(chart.series[1])),
         [
             [192.65, 186.69, 180.73],
             [193.66, 188.1, 182.54],

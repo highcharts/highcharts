@@ -906,7 +906,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     public init(
@@ -1519,7 +1519,7 @@ extend(TreemapSeries.prototype, {
     getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
-    pointArrayMap: ['value'],
+    pointArrayMap: ['value', 'colorValue'],
     pointClass: TreemapPoint,
     NodeClass: TreemapNode,
     trackerGroups: ['group', 'dataLabelsGroup'],

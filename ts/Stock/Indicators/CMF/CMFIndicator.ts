@@ -25,6 +25,7 @@ import type {
     CMFParamsOptions
 } from './CMFOptions';
 import type CMFPoint from './CMFPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -128,9 +129,7 @@ class CMFIndicator extends SMAIndicator {
                     )
             ),
             isSeriesOHLC: (boolean|undefined) = (
-                series &&
-                series.yData &&
-                (series.yData as any)[0].length === 4
+                series?.pointArrayMap?.length === 4
             );
 
         /**
@@ -141,8 +140,8 @@ class CMFIndicator extends SMAIndicator {
         function isLengthValid(
             serie: LineSeries
         ): (boolean|undefined) {
-            return serie.xData &&
-                serie.xData.length >= (options.params as any).period;
+            return serie.dataTable.rowCount >=
+                (options.params as any).period;
         }
 
         return !!(
@@ -164,7 +163,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: CMFParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         if (!this.isValid()) {
@@ -174,7 +173,7 @@ class CMFIndicator extends SMAIndicator {
         return this.getMoneyFlow<TLinkedSeries>(
             series.xData as number[],
             series.yData,
-            (this.volumeSeries.yData as any),
+            this.volumeSeries.getColumn('y'),
             (params.period as any
             )
         );
@@ -200,7 +199,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
-        seriesYData: TLinkedSeries['yData'],
+        seriesYData: IndicatorLinkedSeriesLike['yData'],
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {

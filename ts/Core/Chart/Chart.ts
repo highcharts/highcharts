@@ -3741,7 +3741,9 @@ class Chart {
             ) {
                 for (const series of axis.series) {
                     const seriesExtremes = series.getExtremes(
-                        series.getProcessedData(true).yData, true
+                        series.getProcessedData(true).modified
+                            .getColumn('y') as Array<number> || [],
+                        true
                     );
 
                     allExtremes ??= {
