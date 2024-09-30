@@ -196,6 +196,11 @@ class SidebarPopup extends BaseForm {
      */
     private sidebarWrapper?: HTMLElement;
 
+    /**
+     * Content wrapper for the header.
+     */
+    private headerWrapper?: HTMLElement;
+
     /* *
      *
      *  Functions
@@ -307,6 +312,14 @@ class SidebarPopup extends BaseForm {
         // Reset
         this.container.innerHTML = AST.emptyHTML;
 
+        // Title
+        this.renderHeader(
+            context ?
+                this.editMode.lang.settings :
+                this.editMode.lang.addComponent,
+            ''
+        );
+
         // Render content wrapper
         this.sidebarWrapper = sidebarWrapper = createElement(
             'div',
@@ -322,7 +335,6 @@ class SidebarPopup extends BaseForm {
         const offsetTop =
             (this.container as HTMLElement).getBoundingClientRect().y;
 
-        sidebarWrapper.appendChild(this.closeButton);
 
         if (isSticky) {
             if (window.scrollY > offsetTop) {
@@ -346,13 +358,6 @@ class SidebarPopup extends BaseForm {
             });
         }
 
-        // Title
-        this.renderHeader(
-            context ?
-                this.editMode.lang.settings :
-                this.editMode.lang.addComponent,
-            ''
-        );
 
         if (!context) {
             this.renderAddComponentsList();
@@ -555,11 +560,23 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderHeader(title: string, iconURL: string): void {
-        if (!this.sidebarWrapper) {
+        if (!this.container) {
             return;
         }
 
-        const icon = EditRenderer.renderIcon(this.sidebarWrapper, {
+        const headerWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarHeader
+            },
+            {},
+            this.container
+        );
+        this.container.appendChild(headerWrapper);
+
+        this.headerWrapper = headerWrapper;
+
+        const icon = EditRenderer.renderIcon(this.headerWrapper, {
             icon: iconURL,
             className: EditGlobals.classNames.editSidebarTitle
         });
@@ -567,6 +584,8 @@ class SidebarPopup extends BaseForm {
         if (icon) {
             icon.textContent = title;
         }
+
+        this.headerWrapper?.appendChild(this.closeButton);
     }
 
     /**
