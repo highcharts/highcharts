@@ -702,6 +702,7 @@
     height: 100vh;
     padding: 20px;
     overflow: hidden;
+    box-shadow: var(--highcharts-neutral-color-80) 0 0 10px 0;
 }
 
 .highcharts-dashboards-edit-sidebar-right {
