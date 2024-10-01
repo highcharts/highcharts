@@ -457,7 +457,7 @@ class Tooltip {
                 // tooltip disappears, #19035.
                 css(container, {
                     position: 'absolute',
-                    top: '1px',
+                    top: `${tooltip.split ? 0 : 1}px`,
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
