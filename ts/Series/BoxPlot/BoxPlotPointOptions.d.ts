@@ -126,7 +126,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
     low?: BoxPlotPoint['low'];
 
     /**
-     * The length of a BoxPlot point's lower whisker.
+     * The length of a BoxPlot point's lower whisker. Overrides BoxPlot series'
+     * [lowerWhiskerLength](#boxplot.options.lowerWhiskerLength) and
+     * [whiskerLength](#boxplot.options.whiskerLength), as well as
+     * [lowerWhiskerLength](#boxplotPoint.options.whiskerLength)
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
@@ -167,7 +170,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
     q3?: BoxPlotPoint['q3'];
 
     /**
-     * The length of a BoxPlot point's upper whisker.
+     * The length of a BoxPlot point's upper whisker. Overrides BoxPlot series'
+     * [upperWhiskerLength](#boxplot.options.upperWhiskerLength) and
+     * [whiskerLength](#boxplot.options.whiskerLength), as well as
+     * [upperWhiskerLength](#boxplotPoint.options.whiskerLength)
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker length

@@ -101,7 +101,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     fillColor?: BoxPlotPoint['fillColor'];
 
     /**
-     * The length of a BoxPlot point's lower whisker.
+     * The length of a BoxPlot point's lower whisker. Overrides
+     * [whiskerLength](#boxplot.options.whiskerLength)
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring custom whisker length
@@ -250,7 +251,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     stemWidth?: BoxPlotPoint['stemWidth'];
 
     /**
-     * The length of a BoxPlot point's upper whisker.
+     * The length of a BoxPlot point's upper whisker. Overrides
+     * [whiskerLength](#boxplot.options.whiskerLength)
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring custom whisker length
