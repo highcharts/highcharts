@@ -135,7 +135,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
+    lowerWhiskerLength?: BoxPlotPoint['whiskerLength'];
 
     /**
      * The median for each data point. This is drawn as a line through the
@@ -176,7 +176,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
+    upperWhiskerLength?: BoxPlotPoint['whiskerLength'];
 
     /**
      * The length of the whiskers, the horizontal lines marking low and
@@ -196,10 +196,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    whiskerLength?: (
-        BoxPlotPoint['upperWhiskerLength'] |
-        BoxPlotPoint['lowerWhiskerLength']
-    );
+    whiskerLength?: BoxPlotPoint['whiskerLength'];
 }
 
 /* *
