@@ -552,10 +552,11 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            (
-                this.chart.scrollablePlotArea?.parentDiv ||
-                this.chart.container
-            ).appendChild(container);
+            // (
+            //     this.chart.scrollablePlotArea?.parentDiv ||
+            //     this.chart.container
+            // ).appendChild(container);
+            this.chart.container.appendChild(container);
         }
 
         return this.label;
@@ -1199,7 +1200,7 @@ class Tooltip {
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
 
-        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
+        const { left: chartLeft } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1548,6 +1549,7 @@ class Tooltip {
             // Set container size to fit the bounds
             const { width, height, x, y } = tooltipLabel.getBBox(),
                 containerRight = container.getBoundingClientRect().right;
+
             renderer.setSize(
                 width + x,
                 height + y,
@@ -1556,12 +1558,6 @@ class Tooltip {
 
             if (containerRight > bounds.right) {
                 container.style.left = -(containerRight - bounds.right) + 'px';
-            }
-
-            // Position the tooltip container to the chart container
-            if (chart.scrollablePlotArea) {
-                container.style.left = boxExtremes.left + 'px';
-                container.style.top = chartTop + 'px';
             }
         }
 
