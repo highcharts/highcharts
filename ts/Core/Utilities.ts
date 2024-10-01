@@ -2169,6 +2169,9 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
+const ucfirst = (s: unknown): string =>
+    (isString(s) ? s.substr(0, 1).toUpperCase() + s.substr(1) : String(s));
+
 // Register Highcharts as a plugin in jQuery
 if ((win as any).jQuery) {
 
@@ -2332,6 +2335,7 @@ const Utilities = {
     stableSort,
     syncTimeout,
     timeUnits,
+    ucfirst,
     uniqueKey,
     useSerialIds,
     wrap

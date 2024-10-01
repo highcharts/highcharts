@@ -59,8 +59,7 @@ const {
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
-    defaultOptions,
-    defaultTime
+    defaultOptions
 } = D;
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
@@ -432,7 +431,8 @@ class Chart {
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
             const options = merge(defaultOptions, userOptions), // Do the merge
-                optionsChart = options.chart;
+                optionsChart = options.chart,
+                renderTo = this.renderTo || optionsChart.renderTo;
 
             /**
              * The original options given to the constructor or a chart factory
@@ -451,6 +451,17 @@ class Chart {
              * @type {Highcharts.Options}
              */
             this.userOptions = extend<Partial<Options>>({}, userOptions);
+
+            if (!(
+                this.renderTo = (
+                    isString(renderTo) ?
+                        doc.getElementById(renderTo) :
+                        renderTo
+                ) as HTMLDOMElement
+            )) {
+                // Display an error if the renderTo is wrong
+                error(13, true, this);
+            }
 
             this.margin = [];
             this.spacing = [];
@@ -500,10 +511,17 @@ class Chart {
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
              */
-            this.time =
-                userOptions.time && Object.keys(userOptions.time).length ?
-                    new Time(userOptions.time) :
-                    H.time;
+            this.time = new Time(extend(
+                options.time || {},
+                {
+                    locale: (
+                        options.lang.locale ??
+                        (this.renderTo.closest('[lang]') as HTMLDOMElement|null)
+                            ?.lang
+                    )
+                }
+            ));
+            options.time = this.time.options;
 
             /**
              * Callback function to override the default function that formats
@@ -1524,25 +1542,10 @@ class Chart {
             options = chart.options,
             optionsChart = options.chart,
             indexAttrName = 'data-highcharts-chart',
-            containerId = uniqueKey();
-
-        let containerStyle: (CSSObject|undefined),
+            containerId = uniqueKey(),
             renderTo = chart.renderTo;
 
-        if (!renderTo) {
-            chart.renderTo = renderTo =
-                optionsChart.renderTo as HTMLDOMElement;
-        }
-
-        if (isString(renderTo)) {
-            chart.renderTo = renderTo =
-                doc.getElementById(renderTo as any) as any;
-        }
-
-        // Display an error if the renderTo is wrong
-        if (!renderTo) {
-            error(13, true, chart);
-        }
+        let containerStyle: (CSSObject|undefined);
 
         // If the container already holds a chart, destroy it. The check for
         // hasRendered is there because web pages that are saved to disk from
@@ -3286,23 +3289,6 @@ class Chart {
             this.options.colors = options.colors;
         }
 
-        if (options.time) {
-            // Maintaining legacy global time. If the chart is instantiated
-            // first with global time, then updated with time options, we need
-            // to create a new Time instance to avoid mutating the global time
-            // (#10536).
-            if (this.time === defaultTime) {
-                this.time = new Time(options.time);
-            }
-
-            // If we're updating, the time class is different from other chart
-            // classes (chart.legend, chart.tooltip etc) in that it doesn't know
-            // about the chart. The other chart[something].update functions also
-            // set the chart.options[something]. For the time class however we
-            // need to update the chart options separately. #14230.
-            merge(true, chart.options.time, options.time);
-        }
-
         // Some option structures correspond one-to-one to chart objects that
         // have update methods, for example
         // options.credits => chart.credits
@@ -3660,7 +3646,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted } = this;
+            { inverted, time } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined,
@@ -3773,9 +3759,12 @@ class Chart {
                     allExtremes || {}
                 ),
 
+                optionsMin = time.parse(options.min),
+                optionsMax = time.parse(options.max),
+
                 // For boosted chart where data extremes are skipped
-                safeDataMin = dataMin ?? options.min,
-                safeDataMax = dataMax ?? options.max,
+                safeDataMin = dataMin ?? optionsMin,
+                safeDataMax = dataMax ?? optionsMax,
 
                 range = newMax - newMin,
                 padRange = axis.categories ? 0 : Math.min(
@@ -3783,10 +3772,10 @@ class Chart {
                     safeDataMax - safeDataMin
                 ),
                 paddedMin = safeDataMin - padRange * (
-                    defined(options.min) ? 0 : options.minPadding
+                    defined(optionsMin) ? 0 : options.minPadding
                 ),
                 paddedMax = safeDataMax + padRange * (
-                    defined(options.max) ? 0 : options.maxPadding
+                    defined(optionsMax) ? 0 : options.maxPadding
                 ),
 
                 // We're allowed to zoom outside the data extremes if we're
@@ -3798,12 +3787,12 @@ class Chart {
 
                 // Calculate the floor and the ceiling
                 floor = Math.min(
-                    options.min ?? paddedMin,
+                    optionsMin ?? paddedMin,
                     paddedMin,
                     allowZoomOutside ? min : paddedMin
                 ),
                 ceiling = Math.max(
-                    options.max ?? paddedMax,
+                    optionsMax ?? paddedMax,
                     paddedMax,
                     allowZoomOutside ? max : paddedMax
                 );

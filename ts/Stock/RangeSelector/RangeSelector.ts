@@ -51,11 +51,10 @@ const {
     extend,
     fireEvent,
     isNumber,
+    isString,
     merge,
     objectEach,
-    pad,
     pick,
-    pInt,
     splat
 } = U;
 
@@ -101,17 +100,29 @@ declare module './RangeSelectorOptions' {
  * @private
  * @function preferredInputType
  */
-function preferredInputType(format: string): string {
-    const ms = format.indexOf('%L') !== -1;
+function preferredInputType(format: Time.DateTimeFormat): string {
+    const ms = isString(format) ?
+        format.indexOf('%L') !== -1 :
+        // Implemented but not typed as of 2024
+        format.fractionalSecondDigits;
 
     if (ms) {
         return 'text';
     }
 
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
-    const time = ['H', 'k', 'I', 'l', 'M', 'S']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
+    const date = isString(format) ?
+        ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        format.dateStyle || format.day || format.month || format.year;
+
+    const time = isString(format) ?
+        ['H', 'k', 'I', 'l', 'M', 'S']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        format.timeStyle || format.hour || format.minute || format.second;
 
     if (date && time) {
         return 'datetime-local';
@@ -332,8 +343,7 @@ class RangeSelector {
                 if (isNumber(dataMax) && isNumber(dataMin)) {
                     ytdExtremes = rangeSelector.getYTDExtremes(
                         dataMax,
-                        dataMin,
-                        chart.time.useUTC
+                        dataMin
                     );
                     newMin = rangeMin = ytdExtremes.min;
                     newMax = ytdExtremes.max;
@@ -527,8 +537,7 @@ class RangeSelector {
             dataMax = unionExtremes.dataMax,
             ytdExtremes = rangeSelector.getYTDExtremes(
                 dataMax as any,
-                dataMin as any,
-                chart.time.useUTC
+                dataMin as any
             ),
             ytdMin = ytdExtremes.min,
             ytdMax = ytdExtremes.max,
@@ -752,7 +761,7 @@ class RangeSelector {
             return (
                 (input.type === 'text' && options.inputDateParser) ||
                 this.defaultInputDateParser
-            )(input.value, time.useUTC, time);
+            )(input.value, time.timezone === 'UTC', time);
         }
         return 0;
     }
@@ -911,40 +920,7 @@ class RangeSelector {
         useUTC: boolean,
         time?: Time
     ): number {
-        const hasTimezone = (str: string): boolean =>
-            str.length > 6 &&
-            (str.lastIndexOf('-') === str.length - 6 ||
-            str.lastIndexOf('+') === str.length - 6);
-
-        let input = inputDate.split('/').join('-').split(' ').join('T');
-        if (input.indexOf('T') === -1) {
-            input += 'T00:00';
-        }
-        if (useUTC) {
-            input += 'Z';
-        } else if (H.isSafari && !hasTimezone(input)) {
-            const offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? `+${pad(-offset)}:00` : `-${pad(offset)}:00`;
-        }
-        let date = Date.parse(input);
-
-        // If the value isn't parsed directly to a value by the
-        // browser's Date.parse method, try
-        // parsing it a different way
-        if (!isNumber(date)) {
-            const parts = inputDate.split('-');
-            date = Date.UTC(
-                pInt(parts[0]),
-                pInt(parts[1]) - 1,
-                pInt(parts[2])
-            );
-        }
-
-        if (time && useUTC && isNumber(date)) {
-            date += time.getTimezoneOffset(date);
-        }
-
-        return date;
+        return time?.parse(inputDate) || 0;
     }
 
     /**
@@ -1181,21 +1157,15 @@ class RangeSelector {
      */
     public getYTDExtremes(
         dataMax: number,
-        dataMin: number,
-        useUTC?: boolean
+        dataMin: number
     ): RangeSelector.RangeObject {
         const time = this.chart.time,
-            now = new time.Date(dataMax),
-            year = time.get('FullYear', now),
-            startOfYear = useUTC ?
-                time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
-                +new time.Date(year, 0, 1),
-            min = Math.max(dataMin, startOfYear),
-            ts = now.getTime();
+            year = time.toParts(dataMax)[0],
+            startOfYear = time.makeTime(year, 0);
 
         return {
-            max: Math.min(dataMax || ts, ts),
-            min
+            max: dataMax,
+            min: Math.max(dataMin, startOfYear)
         };
     }
 

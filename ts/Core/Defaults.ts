@@ -120,20 +120,33 @@ const defaultOptions: DefaultOptions = {
      * ```js
      * Highcharts.setOptions({
      *     lang: {
-     *         months: [
-     *             'Janvier', 'Février', 'Mars', 'Avril',
-     *             'Mai', 'Juin', 'Juillet', 'Août',
-     *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
-     *         ],
-     *         weekdays: [
-     *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
-     *             'Jeudi', 'Vendredi', 'Samedi'
-     *         ]
+     *         locale: 'fr'
      *     }
      * });
      * ```
      */
     lang: {
+
+        /**
+         * The browser locale to use for date formatting. The actual locale used
+         * for each chart is determined in three steps:
+         * 1. If this `lang.locale` option is specified, it is used.
+         * 2. Else, look for the closest ancestor HTML element with a `lang`
+         *    attribute, typically the `<html>` element.
+         * 3. If no 'lang' attribute is found, use the default browser locale.
+         *
+         * Use `en-GB`, British English, for approximate consistency with
+         * Highcharts v < 12.
+         *
+         * @sample highcharts/lang/locale/
+         *         Set the locale using the `lang.locale` option
+         * @sample highcharts/lang/locale-attribute/
+         *         Pick up the locale from the HTML `lang` attribute
+         *
+         * @since next
+         * @type {string|Array<string>}
+         */
+        locale: void 0,
 
         /**
          * The loading text that appears when the chart is set into the loading
@@ -143,46 +156,37 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`.
+         * in `Highcharts.dateFormat()`. Defaults to 'undefined',
+         * meaning the default month names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["January", "February", "March", "April", "May", "June",
-         *          "July", "August", "September", "October", "November",
-         *          "December"]
          */
-        months: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
-        ],
+        months: void 0,
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`.
+         * to the `%b` format in `Highcharts.dateFormat()`. Defaults to
+         * 'undefined', meaning the default short month names are used according
+         * to the `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
          */
-        shortMonths: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
+        shortMonths: void 0,
 
         /**
-         * An array containing the weekday names.
+         * An array containing the weekday names. Defaults to 'undefined',
+         * meaning the default weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-         *          "Friday", "Saturday"]
          */
-        weekdays: [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday'
-        ],
+        weekdays: void 0,
 
         /**
-         * Short week days, starting Sunday. If not specified, Highcharts uses
-         * the first three letters of the `lang.weekdays` option.
+         * Short week days, starting Sunday. Defaults to 'undefined', meaning
+         * the default short weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @sample highcharts/lang/shortweekdays/
          *         Finnish two-letter abbreviations
@@ -305,84 +309,6 @@ const defaultOptions: DefaultOptions = {
      */
     global: {
         /**
-         * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-         * Use the [libURL](#exporting.libURL) option to configure exporting._
-         *
-         * The URL to the additional file to lazy load for Android 2.x devices.
-         * These devices don't support SVG, so we download a helper file that
-         * contains [canvg](https://github.com/canvg/canvg), its dependency
-         * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-         * our site, you can install canvas-tools.js on your own server and
-         * change this option accordingly.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
-         * @product   highcharts highmaps
-         * @apioption global.canvasToolsURL
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.useUTC](#time.useUTC) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {boolean}
-         * @apioption global.useUTC
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.Date](#time.Date) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.Date
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-         * individual time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.getTimezoneOffset
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezone](#time.timezone) that supports individual time
-         * settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @product   highcharts highstock
-         * @apioption global.timezone
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-         * time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {number}
-         * @product   highcharts highstock
-         * @apioption global.timezoneOffset
-         */
-
-        /**
          * General theme for buttons. This applies to the zoom button, exporting
          * context menu, map navigation, range selector buttons and custom
          * buttons generated using the `SVGRenderer.button` function. However,
@@ -480,7 +406,7 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * // Apply time settings by instance
-     * let chart = Highcharts.chart('container', {
+     * const chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },
@@ -523,26 +449,6 @@ const defaultOptions: DefaultOptions = {
          * @product   highcharts highstock gantt
          */
         Date: void 0,
-        /**
-         * A callback to return the time zone offset for a given datetime. It
-         * takes the timestamp in terms of milliseconds since January 1 1970,
-         * and returns the timezone offset in minutes. This provides a hook
-         * for drawing time based charts in specific time zones using their
-         * local DST crossover dates, with the help of external libraries.
-         *
-         * This option is deprecated as of v11.4.1 and will be removed in a
-         * future release. Use the [time.timezone](#time.timezone) option
-         * instead.
-         *
-         * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
-         *         Use moment.js to draw Oslo time regardless of browser locale
-         *
-         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
-         * @since     4.1.0
-         * @deprecated 11.4.2
-         * @product   highcharts highstock gantt
-         */
-        getTimezoneOffset: void 0,
 
         /**
          * A named time zone. Supported time zone names rely on the browser
@@ -552,6 +458,12 @@ const defaultOptions: DefaultOptions = {
          * provides a warning and falls back to returning a 0 offset,
          * corresponding to the UTC time zone.
          *
+         * The time zone affects axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`.
+         *
+         * Setting `timezone` to `undefined` falls back to the default browser
+         * timezone setting.
+         *
          * Until v11.2.0, this option depended on moment.js.
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
@@ -560,7 +472,7 @@ const defaultOptions: DefaultOptions = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: void 0,
+        timezone: 'UTC',
 
         /**
          * The timezone offset in minutes. Positive values are west, negative
@@ -591,12 +503,20 @@ const defaultOptions: DefaultOptions = {
          * in real time or when correct Daylight Saving Time transitions are
          * required.
          *
+         * Setting `useUTC` to true is equivalent to setting `time.timezone` to
+         * `"UTC"`. Setting `useUTC` to false is equivalent to setting
+         * `time.timezone` to `undefined`.
+         *
+         * @see [time.timezone](#timezone)
+         *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default
          * @sample {highcharts} highcharts/time/useutc-false/
          *         False
+         *
+         * @deprecated
          */
-        useUTC: true
+        useUTC: void 0
     },
 
     chart: ChartDefaults,
@@ -2385,7 +2305,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/tooltip/xdateformat/
          *         A different format
          *
-         * @type      {string}
+         * @type      {string|Highcharts.DateTimeFormatOptions}
          * @product   highcharts highstock gantt
          * @apioption tooltip.xDateFormat
          */
@@ -2441,29 +2361,29 @@ const defaultOptions: DefaultOptions = {
          * For series on datetime axes, the date format in the tooltip's
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
-         * each unit. For an overview of the replacement codes, see
+         * each unit. For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
-         * @type    {Highcharts.Dictionary<string>}
+         * @type    {Highcharts.Dictionary<string|Highcharts.DateTimeFormatOptions>}
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /** @internal */
-            millisecond: '%A, %e %b, %H:%M:%S.%L',
+            millisecond: '%[AebHMSL]',
             /** @internal */
-            second: '%A, %e %b, %H:%M:%S',
+            second: '%[AebHMS]',
             /** @internal */
-            minute: '%A, %e %b, %H:%M',
+            minute: '%[AebHM]',
             /** @internal */
-            hour: '%A, %e %b, %H:%M',
+            hour: '%[AebHM]',
             /** @internal */
-            day: '%A, %e %b %Y',
+            day: '%[AebY]',
             /** @internal */
-            week: 'Week from %A, %e %b %Y',
+            week: 'Week from %[AebY]',
             /** @internal */
-            month: '%B %Y',
+            month: '%[BY]',
             /** @internal */
             year: '%Y'
         },
@@ -2599,7 +2519,7 @@ const defaultOptions: DefaultOptions = {
          * @type      {string}
          * @apioption tooltip.headerFormat
          */
-        headerFormat: '<span style="font-size: 0.8em">{point.key}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
 
         /**
          * The HTML of the null point's line in the tooltip. Works analogously
@@ -2901,7 +2821,6 @@ function getOptions(): DefaultOptions {
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
  *
- * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  *
  * @function Highcharts.setOptions
@@ -2921,26 +2840,13 @@ function setOptions(
     merge(true, defaultOptions, options);
 
     // Update the time object
-    if (options.time || options.global) {
-        if (H.time) {
-            H.time.update(merge(
-                defaultOptions.global,
-                defaultOptions.time,
-                options.global,
-                options.time
-            ));
-        } else {
-            /**
-             * Global `Time` object with default options. Since v6.0.5, time
-             * settings can be applied individually for each chart. If no
-             * individual settings apply, this `Time` object is shared by all
-             * instances.
-             *
-             * @name Highcharts.time
-             * @type {Highcharts.Time}
-             */
-            H.time = defaultTime;
-        }
+    if (options.time) {
+        defaultTime.update(defaultOptions.time);
+    }
+    if (options.lang && 'locale' in options.lang) {
+        defaultTime.update({
+            locale: options.lang.locale as string|Array<string>
+        });
     }
 
     return defaultOptions;

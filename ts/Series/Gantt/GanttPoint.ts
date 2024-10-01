@@ -20,6 +20,7 @@
 
 import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
+import type Chart from '../../Core/Chart/Chart';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -44,10 +45,15 @@ class GanttPoint extends XRangePoint {
      * @private
      */
     public static setGanttPointAliases(
-        options: (GanttPoint|GanttPointOptions)
+        options: (GanttPoint|GanttPointOptions),
+        chart: Chart
     ): void {
-        options.x = options.start = options.start ?? options.x;
-        options.x2 = options.end = options.end ?? options.x2;
+        options.x = options.start = chart.time.parse(
+            options.start ?? options.x
+        );
+        options.x2 = options.end = chart.time.parse(
+            options.end ?? options.x2
+        );
         (options as any).partialFill = options.completed =
             options.completed ?? options.partialFill;
     }
@@ -100,7 +106,9 @@ class GanttPoint extends XRangePoint {
     ): GanttPoint {
         const ganttPoint = super.applyOptions(options, x) as GanttPoint;
 
-        GanttPoint.setGanttPointAliases(ganttPoint);
+        GanttPoint.setGanttPointAliases(ganttPoint, ganttPoint.series.chart);
+
+        this.isNull = !this.isValid?.();
 
         return ganttPoint;
     }

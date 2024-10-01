@@ -329,6 +329,7 @@ function applyGrouping(
         xData = processedXData,
         plotSizeX = chart.plotSizeX,
         xAxis = series.xAxis,
+        extremes = xAxis.getExtremes(),
         ordinal = xAxis.options.ordinal,
         groupPixelWidth = series.groupPixelWidth;
 
@@ -340,7 +341,8 @@ function applyGrouping(
         groupPixelWidth &&
         xData &&
         table.rowCount &&
-        plotSizeX
+        plotSizeX &&
+        isNumber(extremes.min)
     ) {
         hasGroupedData = true;
 
@@ -348,8 +350,7 @@ function applyGrouping(
         series.isDirty = true;
         series.points = null as any; // #6709
 
-        const extremes = xAxis.getExtremes(),
-            xMin = extremes.min,
+        const xMin = extremes.min,
             xMax = extremes.max,
             groupIntervalFactor = (
                 ordinal &&
