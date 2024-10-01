@@ -101,6 +101,18 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     fillColor?: BoxPlotPoint['fillColor'];
 
     /**
+     * The length of a BoxPlot point's lower whisker.
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring custom whisker length
+     *
+     * @type {number|string}
+     *
+     * @product highcharts
+     */
+    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
+
+    /**
      * The color of the median line. If `undefined`, the general series
      * color applies.
      *
@@ -238,6 +250,18 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     stemWidth?: BoxPlotPoint['stemWidth'];
 
     /**
+     * The length of a BoxPlot point's upper whisker.
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring custom whisker length
+     *
+     * @type {number|string}
+     *
+     * @product highcharts
+     */
+    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
+
+    /**
      * The color of the whiskers, the horizontal lines marking low and high
      * values. When `undefined`, the general series color is used.
      *
@@ -282,12 +306,17 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * high values. It can be a numerical pixel value, or a percentage
      * value of the box width. Set `0` to disable whiskers.
      *
-     * It is also possible to define individual lengths for both top and bottom
-     * whiskers on each point through the `lowerWhiskerLength` and
-     * `upperWhiskerLength` options.
+     * Individual lengths for upper and lower whiskers can be defined on the
+     * boxplot series and on specific boxplot points. Whisker lengths defined
+     * on points override whisker lengths defined on a boxplot series.
+     *
+     * Superceded by [whiskerLength](#boxPlot.point.whiskerLength)
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker lengths
      *
      * @type {number|string}
      *
@@ -299,30 +328,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
         BoxPlotPoint['upperWhiskerLength'] |
         BoxPlotPoint['lowerWhiskerLength']
     );
-
-    /**
-     * The length of a BoxPlot point's upper whisker.
-     *
-     * @sample {highcharts} highcharts/series-boxplot/custom-whisker-length
-     *         Configuring custom whisker length
-     *
-     * @type {number|string}
-     *
-     * @product highcharts
-     */
-    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
-
-    /**
-     * The length of a BoxPlot point's lower whisker.
-     *
-     * @sample {highcharts} highcharts/series-boxplot/custom-whisker-length
-     *         Configuring custom whisker length
-     *
-     * @type {number|string}
-     *
-     * @product highcharts
-     */
-    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
 
     /**
      * The line width of the whiskers, the horizontal lines marking low and
