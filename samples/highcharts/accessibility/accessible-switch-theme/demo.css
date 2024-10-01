@@ -1,3 +1,7 @@
+figure {
+    margin: 0;
+}
+
 .btn1,
 .btn2 {
     display: inline-flex;
@@ -21,14 +25,13 @@ fieldset {
     width: 100%;
     height: 100%;
     margin-bottom: 15px;
-    float: left;
+    display: inline-block;
 }
 
 @media (min-width: 768px) {
     .container {
-        width: 50%;
+        width: 49%;
         height: 400px;
         margin-bottom: 15px;
-        float: left;
     }
 }

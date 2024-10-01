@@ -1,7 +1,12 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #outer-container {
     min-width: 300px;
     max-width: 1200px;
-    margin: 1em auto;
+    margin: 0 auto;
+    padding: 10px;
 }
 
 #outer-container .button-group {

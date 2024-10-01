@@ -187,6 +187,8 @@ class AccordionMenu {
         let currentLevel = this.changedOptions as Globals.AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
+        let currentDataGridOptionsLevel;
+        let currentOldDataGridOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -208,6 +210,34 @@ class AccordionMenu {
             }
 
             currentLevel = currentLevel[key];
+
+            if (key === 'dataGridOptions') {
+                const realDataGridOptions =
+                    (this.component as any).dataGrid?.options;
+
+                if (realDataGridOptions) {
+                    const oldOptionsBuffer =
+                        this.oldOptionsBuffer as Globals.AnyRecord;
+                    if (!oldOptionsBuffer.dataGridOptions) {
+                        oldOptionsBuffer.dataGridOptions = {};
+                    }
+                    currentOldDataGridOptionsBufferLevel =
+                        oldOptionsBuffer.dataGridOptions as Globals.AnyRecord;
+                    currentDataGridOptionsLevel = realDataGridOptions;
+                }
+            } else if (
+                currentDataGridOptionsLevel &&
+                currentOldDataGridOptionsBufferLevel
+            ) {
+                currentDataGridOptionsLevel = currentDataGridOptionsLevel[key];
+
+                if (currentOldDataGridOptionsBufferLevel[key] === void 0) {
+                    currentOldDataGridOptionsBufferLevel[key] = {};
+                }
+
+                currentOldDataGridOptionsBufferLevel =
+                    currentOldDataGridOptionsBufferLevel[key];
+            }
 
             if (key === 'chartOptions') {
                 const realChartOptions = (this.component as any).chart?.options;
