@@ -1,3 +1,14 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+#content {
+    height: 100px;
+    border: 1px solid black;
+    margin: 10px;
+    padding: 10px;
+}
+
 #container {
     width: 300px;
     height: 200px;

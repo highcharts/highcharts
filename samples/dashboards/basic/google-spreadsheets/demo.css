@@ -45,3 +45,7 @@ div#description {
     font-size: 1.2em;
     text-align: justify;
 }
+
+.highcharts-dashboards-component-content {
+    height: 300px;
+}

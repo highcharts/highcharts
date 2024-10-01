@@ -119,6 +119,11 @@ Dashboards.board('container', {
         type: 'DataGrid',
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);

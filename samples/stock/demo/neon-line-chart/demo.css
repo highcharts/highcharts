@@ -94,3 +94,7 @@
     fill: var(--bright-color);
     font-size: 1em;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

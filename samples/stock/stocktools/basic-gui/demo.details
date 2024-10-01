@@ -1,7 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Pawel Fus
- requiresManualTesting: true
- js_wrap: b
-...
