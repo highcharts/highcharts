@@ -24,3 +24,7 @@ label {
     max-width: 820px;
     margin: 1em auto;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .gridMap {
     float: left;
     border: 1px solid;

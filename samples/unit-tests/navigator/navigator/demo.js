@@ -1,5 +1,5 @@
 QUnit.test(
-    'Handles should not be overlapped by xAxis labels (#2908)',
+    'Navigator handles general tests',
     function (assert) {
         const chart = Highcharts.StockChart('container', {
             navigator: {
@@ -31,7 +31,7 @@ QUnit.test(
         assert.ok(
             chart.scroller.handles[0].zIndex >=
                 chart.scroller.xAxis.labelGroup.zIndex,
-            'Labels no overlap handles'
+            'Handles should not be overlapped by xAxis labels (#2908)'
         );
 
         assert.ok(
@@ -42,6 +42,23 @@ QUnit.test(
         assert.ok(
             chart.get('navigator-y-axis') !== undefined,
             'Navigator yAxis should be accessed by the default id.'
+        );
+
+        chart.update({
+            navigator: {
+                handles: {
+                    symbols: [
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    ]
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.navigator.handles[0].element.tagName,
+            'image',
+            'Navigator handles should be updated to images. (#21660)'
         );
     }
 );
@@ -369,6 +386,38 @@ QUnit.test('General Navigator tests', function (assert) {
         chart.xAxis[0].options.maxPadding,
         'Navigator should inherit the maxPadding property from the main axis.'
     );
+
+    // #21584
+    const start = +new Date();
+
+    const lineSeries = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, i])
+    };
+    const lineSeries2 = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, 2 * i])
+    };
+
+    const options = {
+        navigator: {
+            enabled: true
+        },
+        series: [lineSeries, lineSeries2]
+    };
+
+    chart = Highcharts.stockChart('container', options);
+
+    // Update the chart
+    options.series = [lineSeries];
+    options.navigator.enabled = false;
+    chart.update(options, true, true, false);
+    assert.ok(
+        true,
+        `Updating the chart with oneToOne should not throw an error in the
+        navigator, #21584.`);
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {

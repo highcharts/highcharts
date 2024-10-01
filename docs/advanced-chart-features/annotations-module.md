@@ -110,3 +110,7 @@ Defining markers for the path
 -----------------------------
 
 It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).
+
+## Build a custom UI
+
+The annotations module allows for flexible and easy addition of labels and shapes to your charts. To create a custom user interface that enhances this functionality, providing seamless user interaction, refer to the [Annotations GUI](https://www.highcharts.com/docs/advanced-chart-features/annotations-gui) page for detailed instructions.

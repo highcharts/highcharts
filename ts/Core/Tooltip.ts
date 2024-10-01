@@ -201,20 +201,20 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
      */
-    public bodyFormatter(items: Array<Point>): Array<string> {
-        return items.map(function (item): string {
-            const tooltipOptions = (item as any).series.tooltipOptions;
+    public bodyFormatter(
+        items: Array<Tooltip.FormatterContextObject>
+    ): Array<string> {
+        return items.map((item): string => {
+            const tooltipOptions = item.series.tooltipOptions,
+                point = item.point,
+                formatPrefix = point.formatPrefix || 'point';
 
             return (
-                (tooltipOptions as any)[
-                    ((item as any).point.formatPrefix || 'point') + 'Formatter'
-                ] ||
-                (item as any).point.tooltipFormatter
+                (tooltipOptions as any)[formatPrefix + 'Formatter'] ||
+                point.tooltipFormatter
             ).call(
-                (item as any).point,
-                tooltipOptions[
-                    ((item as any).point.formatPrefix || 'point') + 'Format'
-                ] || ''
+                point,
+                (tooltipOptions as any)[formatPrefix + 'Format'] || ''
             );
         });
     }
@@ -571,7 +571,7 @@ class Tooltip {
                     body.offsetWidth,
                     documentElement.offsetWidth,
                     documentElement.clientWidth
-                ) - 2 * distance :
+                ) - (2 * distance) - 2 :
                 chart.chartWidth,
             height: outside ?
                 Math.max(
@@ -1095,7 +1095,7 @@ class Tooltip {
                                 label.x || 0,
                                 0,
                                 this.getPlayingField().width -
-                                    (label.width || 0)
+                                (label.width || 0)
                             )
                         });
                     }
@@ -1781,7 +1781,8 @@ class Tooltip {
                 width,
                 height,
                 point
-            );
+            ),
+            doc = H.doc;
 
         let anchorX = (point.plotX || 0) + chart.plotLeft,
             anchorY = (point.plotY || 0) + chart.plotTop,
@@ -1801,7 +1802,13 @@ class Tooltip {
             pad = (options.borderWidth || 0) + 2 * distance + 2;
 
             renderer.setSize(
-                width + pad,
+                // Clamp width to keep tooltip in viewport (#21698)
+                // and subtract one since tooltip container has 'left: 1px;'
+                clamp(
+                    width + pad,
+                    0,
+                    doc.documentElement.clientWidth
+                ) - 1,
                 height + pad,
                 false
             );
