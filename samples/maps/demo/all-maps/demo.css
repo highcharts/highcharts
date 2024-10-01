@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #demo-wrapper {
     max-width: 1000px;
     margin: 10px auto;

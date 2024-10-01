@@ -1,6 +1,3 @@
-// eslint-disable-next-line no-underscore-dangle
-const U = Dashboards._modules['Core/Utilities.js'];
-
 Dashboards.board('container', {
     editMode: {
         enabled: true,
@@ -41,17 +38,18 @@ Dashboards.board('container', {
         }
     }]
 }, true).then(board => {
-    const editMode = board.editMode;
+    const editMode = board.editMode,
+        addEvent = Dashboards.addEvent;
 
-    U.addEvent(editMode, 'componentChanged', e => {
+    addEvent(editMode, 'componentChanged', e => {
         console.log('Component Changed', e);
     });
 
-    U.addEvent(editMode, 'componentChangesDiscarded', e => {
+    addEvent(editMode, 'componentChangesDiscarded', e => {
         console.log('Component Changes Discarded', e);
     });
 
-    U.addEvent(editMode, 'layoutChanged', e => {
+    addEvent(editMode, 'layoutChanged', e => {
         console.log('Layout Changed', e);
     });
 });

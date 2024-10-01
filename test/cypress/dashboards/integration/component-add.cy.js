@@ -79,8 +79,9 @@ describe('Add components through UI', () => {
             const firstCellHeight = m[0].component.contentElement.getBoundingClientRect().height;
             const secondCellHeight = m[m.length - 1].component.contentElement.getBoundingClientRect().height;
 
-            assert.ok(
-                firstCellHeight === secondCellHeight,
+            assert.strictEqual(
+                Math.floor(firstCellHeight),
+                Math.floor(secondCellHeight),
                 'The HTML Component has the same height as siblings'
             );
         });

@@ -1,0 +1,10 @@
+{
+    "range": "'Fruit consumption'!A1:T1468",
+    "majorDimension": "COLUMNS",
+    "values": [
+        ["", "Apples", "Oranges", "Pears", "Bananas"],
+        ["John", 10, 12, 1, 2],
+        ["Jane", 3, 4, 5, 7],
+        ["Joe", 8, 5, 2, 12]
+    ]
+}
