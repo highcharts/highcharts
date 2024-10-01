@@ -430,6 +430,8 @@ const AnnotationDefaults: AnnotationOptions = {
      * point can be either a point object or a point's id.
      *
      * @see [annotations.shapes.point](annotations.shapes.point.html)
+     * @sample {highcharts} highcharts/annotations/rectangle-shape
+     *      Rect defined by point and points
      *
      * @type      {Array<Highcharts.AnnotationShapePointOptions>}
      * @extends   annotations.labels.point
