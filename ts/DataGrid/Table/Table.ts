@@ -74,7 +74,7 @@ class Table {
     /**
      * The HTML element of the table head.
      */
-    public theadElement: HTMLElement;
+    public theadElement?: HTMLElement;
 
     /**
      * The HTML element of the table body.
@@ -176,7 +176,9 @@ class Table {
 
         this.renderCaption();
 
-        this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        if (dgOptions?.rendering?.header?.enabled) {
+            this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -212,8 +214,10 @@ class Table {
         this.loadColumns();
 
         // Load & render head
-        this.header = new TableHeader(this);
-        this.header.render();
+        if (this.dataGrid.options?.rendering?.header?.enabled) {
+            this.header = new TableHeader(this);
+            this.header.render();
+        }
 
         // TODO: Load & render footer
         // this.footer = new TableFooter(this);
@@ -264,10 +268,10 @@ class Table {
 
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             (this.dataGrid.container?.clientHeight || 0) -
-            this.theadElement.offsetHeight -
+            (this.theadElement?.offsetHeight || 0) -
             (this.captionElement?.offsetHeight || 0) -
-            borderWidth -
-            (this.dataGrid.credits?.getHeight() || 0)
+            (this.dataGrid.credits?.getHeight() || 0) -
+            borderWidth
         }px`;
 
         // Get the width of the rows.
