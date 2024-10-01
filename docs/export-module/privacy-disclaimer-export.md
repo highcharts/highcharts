@@ -3,7 +3,22 @@ Export server Terms of Use 
 
 These terms are about the export server running at [https://export.highcharts.com](https://export.highcharts.com). This server is used to export charts to images or PDF files.
 
-This service is based on fair usage policy. To this extent, rate limiting is in place. The rate limiting operates within windows of one minute, in which up to 10 requests can be made. This ensures that the service works well for everyone, even in times with heavy traffic.
+Fair Usage Policy
+------------------
+
+We are dedicated to providing excellent service to all our licence holders, and to ensure a fair experience we have established a Fair Usage Policy for our public export server.
+
+Our goal is uninterrupted, high-quality service for everyone. Excessive usage by a few users can negatively impact others, so we reserve the right to manage or restrict usage at our discretion, especially during peak times. While we do not set specific individual limits, we monitor overall system activity to maintain balance. If we detect usage significantly above normal levels, we may adjust or limit access to protect service performance at our discretion.
+
+**Important requirements**
+
+All requests **must include the HTTP referer and user-agent headers**; requests without these headers will be blocked. Providing correct header information helps us improve the service and allows us to reach out a hand if we identify ways to optimise your requests. 
+
+Please also note that repeatedly sending misconfigured requests to the server in short intervals may result in temporary blocking of your requests.
+
+For users with higher demands than our shared infrastructure can accommodate, we offer the option to [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). This allows you to handle greater workloads and customise the service to your needs without affecting others.
+
+Thank you for helping us maintain a reliable, high-quality service for everyone. If you have any questions or concerns about this policy, please feel free to contact us.
 
 Privacy Disclaimer
 ------------------

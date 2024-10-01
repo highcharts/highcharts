@@ -218,3 +218,47 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
         'Grid lines should not exceed navigator height, #20354'
     );
 });
+
+QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minHeight: 500
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[1].gridGroup.getBBox().height,
+        chart.yAxis[1].height,
+        'Grid lines should not exceed navigator height, #20354'
+    );
+});
+
+QUnit.test(
+    'Pointer events on points outside of plotArea, #21136', assert => {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'bar',
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseOver(60, 330, undefined, true);
+
+        assert.ok(
+            chart.tooltip.isHidden,
+            `Tooltip should be hidden when pointer appears on point outside of
+            visible plot area, #21136.`
+        );
+    }
+);
