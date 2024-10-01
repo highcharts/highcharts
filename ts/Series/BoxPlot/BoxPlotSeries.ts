@@ -92,7 +92,8 @@ class BoxPlotSeries extends ColumnSeries {
     public getWhiskerPair(
         halfWidth: number,
         stemX: number,
-        whiskerLength: number | string,
+        upperWhiskerLength: number | string,
+        lowerWhiskerLength: number | string,
         point: BoxPlotPoint
     ): SVGPath {
         const strokeWidth = point.whiskers.strokeWidth(),
@@ -101,7 +102,7 @@ class BoxPlotSeries extends ColumnSeries {
                     number |
                     string |
                     undefined
-                ) = whiskerLength,
+                ),
                 yPos: number
             ): SVGPath.Segment[] => {
                 const halfLen = (
@@ -135,11 +136,11 @@ class BoxPlotSeries extends ColumnSeries {
 
         return [
             ...getWhisker(
-                point.upperWhiskerLength,
+                upperWhiskerLength,
                 point.highPlot
             ),
             ...getWhisker(
-                point.lowerWhiskerLength,
+                lowerWhiskerLength,
                 point.lowPlot
             )
         ];
@@ -205,7 +206,11 @@ class BoxPlotSeries extends ColumnSeries {
                 stemAttr: SVGAttributes = {},
                 whiskersAttr: SVGAttributes = {},
                 medianAttr: SVGAttributes = {},
-                color = point.color || series.color;
+                color = point.color || series.color,
+                pointWhiskerLength = (
+                    point.options.whiskerLength ||
+                    whiskerLength
+                );
 
             if (typeof point.plotY !== 'undefined') {
 
@@ -259,7 +264,7 @@ class BoxPlotSeries extends ColumnSeries {
                     point.stem.attr(stemAttr);
 
                     // Whiskers attributes
-                    if (whiskerLength) {
+                    if (pointWhiskerLength) {
                         whiskersAttr.stroke = (
                             point.whiskerColor ||
                             options.whiskerColor ||
@@ -351,14 +356,21 @@ class BoxPlotSeries extends ColumnSeries {
                 }
 
                 // The whiskers
-                if (whiskerLength) {
-                    // Moved here as "const", refactoring of whiskerlength
-                    // triggered "no-loop-func" from eslint
+                if (pointWhiskerLength) {
                     const halfWidth = width / 2,
                         whiskers = this.getWhiskerPair(
                             halfWidth,
                             stemX,
-                            whiskerLength,
+                            (
+                                point.upperWhiskerLength ||
+                                options.upperWhiskerLength ||
+                                pointWhiskerLength
+                            ),
+                            (
+                                point.lowerWhiskerLength ||
+                                options.lowerWhiskerLength ||
+                                pointWhiskerLength
+                            ),
                             point
                         );
 
