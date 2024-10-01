@@ -185,8 +185,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * Individual lengths for upper and lower whiskers can be defined on the
      * boxplot series and on specific boxplot points. Whisker lengths defined
-     * on points take precedence over whisker lengths defined on a boxplot
-     * series.
+     * on points override whisker lengths defined on a boxplot series.
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
