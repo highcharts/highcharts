@@ -195,8 +195,8 @@ export interface AxisOptions {
     tickWidth?: number;
     title: AxisTitleOptions;
     top?: (number|string);
-    type: ('linear'|'logarithmic'|'datetime'|'category'|'treegrid');
-    uniqueNames: boolean;
+    type?: ('linear'|'logarithmic'|'datetime'|'category'|'treegrid');
+    uniqueNames?: boolean;
     visible: boolean;
     width?: (number|string);
     zIndex: number;

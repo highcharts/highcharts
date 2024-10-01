@@ -988,27 +988,38 @@ const createBoard = async () => {
             },
             type: 'DataGrid',
             dataGridOptions: {
-                editable: false,
-                columns: [{
-                    headerFormat: 'Celestial event',
-                    cellFormatter: function () {
-                        const str = this.value
-                            .replace(/([A-Z])/g, ' $1')
-                            .toLowerCase();
-                        return str.charAt(0).toUpperCase() + str.slice(1);
-                    }
+                credits: {
+                    enabled: false
                 },
-                {
-                    headerFormat: 'Time',
+                columns: [{
+                    id: '0',
+                    header: {
+                        format: 'Celestial event'
+                    },
+                    cells: {
+                        formatter: function () {
+                            const str = this.value
+                                .replace(/([A-Z])/g, ' $1')
+                                .toLowerCase();
+                            return str.charAt(0).toUpperCase() + str.slice(1);
+                        }
+                    }
+                }, {
+                    id: '1',
+                    header: {
+                        format: 'Time'
+                    },
                     // @todo Fix after #20444
                     // cellFormat: '{value:%H:%M}'
-                    cellFormatter: function () {
-                        try {
-                            return new Intl.DateTimeFormat('nn-NO', {
-                                timeStyle: 'short'
-                            }).format(this.value);
-                        } catch {
-                            return '-';
+                    cells: {
+                        formatter: function () {
+                            try {
+                                return new Intl.DateTimeFormat('nn-NO', {
+                                    timeStyle: 'short'
+                                }).format(this.value);
+                            } catch {
+                                return '-';
+                            }
                         }
                     }
                 }]

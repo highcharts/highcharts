@@ -255,7 +255,9 @@ Dashboards.board('container', {
             extremes: true
         },
         dataGridOptions: {
-            editable: false
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);

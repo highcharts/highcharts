@@ -16,7 +16,7 @@ figure {
 
 #legend {
     max-width: 1300px;
-    margin: 5px auto 40px;
+    margin: 5px 10px 40px;
     display: flex;
     gap: 15px;
     flex-direction: column;
@@ -114,4 +114,8 @@ figure {
 
 pre {
     display: none;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

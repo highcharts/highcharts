@@ -180,7 +180,6 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
         x = legend.group.translateX + legend.padding + 5,
         y = legend.group.translateY + legend.padding + 5;
 
-    controller.moveTo(x, y);
     controller.click(x, y);
 
     assert.strictEqual(
