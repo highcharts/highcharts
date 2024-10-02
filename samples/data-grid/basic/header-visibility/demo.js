@@ -10,7 +10,7 @@ const dg = DataGrid.dataGrid('container', {
     }
 });
 
-document.getElementById('toogle-header').addEventListener('click', () => {
+document.getElementById('toggle-header').addEventListener('click', () => {
     dg.update({
         rendering: {
             header: {
