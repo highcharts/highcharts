@@ -291,7 +291,8 @@
     flex-direction: column;
 }
 
-.highcharts-dashboards-component-title {
+.highcharts-dashboards-component-title,
+.highcharts-dashboards-component-caption {
     color: var(--highcharts-neutral-color-100);
     margin: 0.5em 10px;
 }
