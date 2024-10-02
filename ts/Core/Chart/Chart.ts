@@ -3598,7 +3598,7 @@ class Chart {
             this,
             'selection',
             { resetSelection: true },
-            (): void => this.transform({ reset: true, trigger: 'zoom' })
+            (): boolean => this.transform({ reset: true, trigger: 'zoom' })
         );
     }
 
@@ -3671,7 +3671,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#transform
      */
-    public transform(params: Chart.ChartTransformParams): void {
+    public transform(params: Chart.ChartTransformParams): boolean {
         const {
                 axes = this.axes,
                 event,
@@ -3681,88 +3681,16 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted } = this,
-            chart = this;
-
-        let displayButton: boolean|undefined,
-            isAnyAxisPanning: true|undefined;
+            { inverted } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
 
-        // Logic for non-cartesian series zooming and panning
-        if (
-            trigger === 'mousewheel' ||
-            trigger === 'zoom' ||
-            trigger === 'pan' ||
-            selection
-        ) {
-            chart.series.forEach((series): void => {
-                if (!series.isCartesian) {
-                    series.isDirty = true;
-                    chart.isDirtyBox = true;
-                    if (trigger === 'pan' && series.zoomBox) {
-                        series.zoomBox.panX = to.x || 0;
-                        series.zoomBox.panY = to.y || 0;
-                    } else {
-                        if (Object.keys(from).length) {
-                            const {
-                                width: toWidth = 1,
-                                height: toHeight = 1
-                            } = to;
+        fireEvent(this, 'transform', params);
 
-                            let {
-                                    x = 0,
-                                    y = 0,
-                                    width: fromWidth = 1,
-                                    height: fromHeight = 1
-                                } = from,
-                                scale = series.zoomBox?.scale || 1,
-                                width = (
-                                    series.zoomBox?.width ||
-                                    chart.plotSizeX ||
-                                    0
-                                ),
-                                height = (
-                                    series.zoomBox?.height ||
-                                    chart.plotSizeY ||
-                                    0
-                                );
-
-                            if (Object.keys(to).length) {
-                                width = width * (fromWidth / toWidth);
-                                height = height * (fromWidth / toHeight);
-
-                                scale =
-                                    Math.min(
-                                        (chart.plotSizeX || 0) / width,
-                                        (chart.plotSizeY || 0) / height
-                                    );
-                            } else {
-                                scale = Math.min(
-                                    (chart.plotSizeX || 0) / fromWidth,
-                                    (chart.plotSizeY || 0) / fromHeight
-                                );
-                                width = fromWidth;
-                                height = fromHeight;
-                                x = x + (width / 2);
-                                y = y + (height / 2);
-                            }
-
-                            series.zoomBox = {
-                                x, y, width, height, scale, panX: 0, panY: 0
-                            };
-
-                            if (scale < 1) {
-                                delete series.zoomBox;
-                            }
-                        } else {
-                            delete series.zoomBox;
-                        }
-                    }
-                }
-            });
-        }
+        let hasZoomed = params.hasZoomed || false,
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         for (const axis of axes) {
             const {
@@ -3969,6 +3897,8 @@ class Chart {
                             displayButton = true;
                         }
                     }
+
+                    hasZoomed = true;
                 }
 
                 if (event) {
@@ -3978,37 +3908,40 @@ class Chart {
             }
         }
 
-        if (selection) {
-            fireEvent(
-                this,
-                'selection',
-                selection,
-                // Run transform again, this time without the selection data
-                // so that the transform is applied.
-                (): void => {
-                    delete params.selection;
-                    params.trigger = 'zoom';
-                    this.transform(params);
+        if (hasZoomed) {
+            if (selection) {
+                fireEvent(
+                    this,
+                    'selection',
+                    selection,
+                    // Run transform again, this time without the selection data
+                    // so that the transform is applied.
+                    (): void => {
+                        delete params.selection;
+                        params.trigger = 'zoom';
+                        this.transform(params);
+                    }
+                );
+            } else {
+
+                // Show or hide the Reset zoom button, but not while panning
+                if (
+                    displayButton &&
+                    !isAnyAxisPanning &&
+                    !this.resetZoomButton
+                ) {
+                    this.showResetZoom();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
-            );
-        } else {
 
-            // Show or hide the Reset zoom button, but not while panning
-            if (
-                displayButton &&
-                !isAnyAxisPanning &&
-                !this.resetZoomButton
-            ) {
-                this.showResetZoom();
-            } else if (!displayButton && this.resetZoomButton) {
-                this.resetZoomButton = this.resetZoomButton.destroy();
+                this.redraw(
+                    trigger === 'zoom' &&
+                    (this.options.chart.animation ?? this.pointCount < 100)
+                );
             }
-
-            this.redraw(
-                trigger === 'zoom' &&
-                (this.options.chart.animation ?? this.pointCount < 100)
-            );
         }
+        return hasZoomed;
     }
 
 }
@@ -4151,6 +4084,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        hasZoomed?: boolean;
     }
 
     export interface CreateAxisOptionsObject {

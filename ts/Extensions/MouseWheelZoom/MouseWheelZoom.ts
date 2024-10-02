@@ -81,7 +81,7 @@ const zoomBy = function (
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
-): void {
+): boolean {
     const type = pick(
         options.type,
         chart.zooming.type,
@@ -97,7 +97,7 @@ const zoomBy = function (
         axes = chart.axes;
     }
 
-    chart.transform({
+    const hasZoomed = chart.transform({
         axes,
         // Create imaginary reference and target rectangles around the mouse
         // point that scales up or down with `howMuch`;
@@ -118,16 +118,20 @@ const zoomBy = function (
         trigger: 'mousewheel'
     });
 
-    if (defined(wheelTimer)) {
-        clearTimeout(wheelTimer);
+    if (hasZoomed) {
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
+
+        // Some time after the last mousewheel event, run drop. In case any of
+        // the affected axes had `startOnTick` or `endOnTick`, they will be
+        // re-adjusted now.
+        wheelTimer = setTimeout((): void => {
+            chart.pointer?.drop();
+        }, 400);
     }
 
-    // Some time after the last mousewheel event, run drop. In case any of
-    // the affected axes had `startOnTick` or `endOnTick`, they will be
-    // re-adjusted now.
-    wheelTimer = setTimeout((): void => {
-        chart.pointer?.drop();
-    }, 400);
+    return hasZoomed;
 };
 
 /**
@@ -161,7 +165,7 @@ function onAfterGetContainer(this: Chart): void {
                         pointer.getCoordinates(e).yAxis
                     );
 
-                zoomBy(
+                const hasZoomed = zoomBy(
                     this,
                     Math.pow(
                         wheelSensitivity,
@@ -175,7 +179,9 @@ function onAfterGetContainer(this: Chart): void {
                 );
 
                 // Prevent page scroll
-                e.preventDefault?.();
+                if (hasZoomed) {
+                    e.preventDefault?.();
+                }
             }
 
 
@@ -195,7 +201,6 @@ function compose(
         composedClasses.push(ChartClass);
 
         addEvent(ChartClass, 'afterGetContainer', onAfterGetContainer);
-
     }
 }
 

@@ -3339,10 +3339,7 @@ class Series {
      */
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         let horAxis = this.xAxis,
-            vertAxis = this.yAxis,
-            scale = 1,
-            left = 0,
-            top = 0;
+            vertAxis = this.yAxis;
 
         const chart = this.chart,
             inverted = (
@@ -3352,11 +3349,7 @@ class Series {
                 this.invertible &&
                 name === 'series'
             ),
-            {
-                plotSizeX = 0,
-                plotSizeY = 0
-            } = chart,
-            { group, zoomBox } = this;
+            scale = 1;
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
@@ -3364,46 +3357,17 @@ class Series {
             vertAxis = this.xAxis;
         }
 
-        let initLeft = horAxis ? horAxis.left : chart.plotLeft,
-            initTop = vertAxis ? vertAxis.top : chart.plotTop,
-            translateX = initLeft,
-            translateY = initTop;
+        const translateX = horAxis ? horAxis.left : chart.plotLeft,
+            translateY = vertAxis ? vertAxis.top : chart.plotTop,
+            params = {
+                scale, translateX, translateY, name
+            };
 
-        if (group && zoomBox) {
-            scale = zoomBox.scale;
-            left = zoomBox.x * (scale - (group.scaleX || 1)) -
-                (name === 'series' ? zoomBox.panX : 0);
-            top = zoomBox.y * (scale - (group.scaleY || 1)) -
-                (name === 'series' ? zoomBox.panY : 0);
-
-            initLeft = group.translateX || initLeft;
-            initTop = group.translateY || initTop;
-
-            translateX = initLeft - left;
-            translateY = initTop - top;
-
-            // Do not allow to move outside the chart
-            // Vertical lock
-            if (translateY > chart.plotTop) {
-                translateY = initTop;
-            } else if (
-                initTop - top < (plotSizeY * (1 - scale) + chart.plotTop)
-            ) {
-                translateY = (plotSizeY * (1 - scale)) + chart.plotTop;
-            }
-            // Horizontal lock
-            if (translateX > chart.plotLeft) {
-                translateX = initLeft;
-            } else if (
-                translateX < (plotSizeX * (1 - scale) + chart.plotLeft)
-            ) {
-                translateX = (plotSizeX * (1 - scale)) + chart.plotLeft;
-            }
-        }
+        fireEvent(this, 'getPlotBox', params);
 
         return {
-            translateX,
-            translateY,
+            translateX: params.translateX,
+            translateY: params.translateY,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
                 (horAxis.len - vertAxis.len) / 2 :
@@ -3411,8 +3375,8 @@ class Series {
             rotationOriginY: inverted ?
                 (horAxis.len + vertAxis.len) / 2 :
                 0,
-            scaleX: inverted ? -scale : scale, // #1623
-            scaleY: scale
+            scaleX: inverted ? -params.scale : params.scale, // #1623
+            scaleY: params.scale
         };
     }
 
