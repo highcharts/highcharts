@@ -102,10 +102,11 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The length of a BoxPlot point's lower whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength)
+     * [whiskerLength](#boxplot.options.whiskerLength), overriden by
+     * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength).
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
-     *         Configuring custom whisker length
+     *         Configuring whisker length
      *
      * @type {number|string}
      *
@@ -252,10 +253,11 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The length of a BoxPlot point's upper whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength)
+     * [whiskerLength](#boxplot.options.whiskerLength), overriden by
+     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength).
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
-     *         Configuring custom whisker length
+     *         Configuring whisker length
      *
      * @type {number|string}
      *
@@ -312,7 +314,9 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * boxplot series and on specific boxplot points. Whisker lengths defined
      * on points override whisker lengths defined on a boxplot series.
      *
-     * Superceded by [whiskerLength](#boxPlot.point.whiskerLength)
+     * Overriden by [whiskerLength](#boxplot.point.whiskerLength),
+     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength), and
+     * [lowerWhiskerLength](#boxPlot.point.lowerWhiskerLength)
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
