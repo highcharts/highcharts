@@ -125,7 +125,16 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * @type {Highcharts.CSSObject}
      */
     style: {
-        /** @internal */
+        /**
+         * The font size to use for the label. If a number is set, it
+         * translates to pixels. You may also use a string and specify
+         * the unit to use, like `px`, `em` or `%` to name a few.
+         *
+         * If `useHTML` is true, you need to provide a string with
+         * the unit.
+         *
+         * @type {number|string}
+         */
         fontSize: '0.8em',
         /** @internal */
         fontWeight: 'bold'

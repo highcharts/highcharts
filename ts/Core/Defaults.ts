@@ -889,6 +889,17 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+
+            /**
+             * The font size to use for the subtitle. If a number is set, it
+             * translates to pixels. You may also use a string and specify
+             * the unit to use, like `px`, `em` or `%` to name a few.
+             *
+             * If `useHTML` is true, you need to provide a string with
+             * the unit.
+             *
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -996,6 +1007,17 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+
+            /**
+             * The font size to use for the caption. If a number is set, it
+             * translates to pixels. You may also use a string and specify
+             * the unit to use, like `px`, `em` or `%` to name a few.
+             *
+             * If `useHTML` is true, you need to provide a string with
+             * the unit.
+             *
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -1453,6 +1475,16 @@ const defaultOptions: DefaultOptions = {
              * @apioption legend.navigation.style
              */
             style: {
+                /**
+                 * The font size to use for text. If a number is set, it
+                 * translates to pixels. You may also use a string and specify
+                 * the unit to use, like `px`, `em` or `%` to name a few.
+                 *
+                 * If `useHTML` is true, you need to provide a string with
+                 * the unit.
+                 *
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             },
 
@@ -2731,7 +2763,17 @@ const defaultOptions: DefaultOptions = {
             color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
-            /** @internal */
+
+            /**
+             * The font size to use for text. If a number is set, it
+             * translates to pixels. You may also use a string and specify
+             * the unit to use, like `px`, `em` or `%` to name a few.
+             *
+             * If `useHTML` is true, you need to provide a string with
+             * the unit.
+             *
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -2850,7 +2892,17 @@ const defaultOptions: DefaultOptions = {
             cursor: 'pointer',
             /** @internal */
             color: Palette.neutralColor40,
-            /** @internal */
+
+            /**
+             * The font size to use for text. If a number is set, it
+             * translates to pixels. You may also use a string and specify
+             * the unit to use, like `px`, `em` or `%` to name a few.
+             *
+             * If `useHTML` is true, you need to provide a string with
+             * the unit.
+             *
+             * @type {number|string}
+             */
             fontSize: '0.6em'
         },
 

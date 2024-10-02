@@ -1160,7 +1160,17 @@ namespace AxisDefaults {
                 color: Palette.neutralColor80,
                 /** @internal */
                 cursor: 'default',
-                /** @internal */
+
+                /**
+                 * The font size to use for text. If a number is set, it
+                 * translates to pixels. You may also use a string and specify
+                 * the unit to use, like `px`, `em` or `%` to name a few.
+                 *
+                 * If `useHTML` is true, you need to provide a string with
+                 * the unit.
+                 *
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             }
         },
@@ -2085,7 +2095,17 @@ namespace AxisDefaults {
             style: {
                 /** @internal */
                 color: Palette.neutralColor60,
-                /** @internal */
+
+                /**
+                 * The font size to use for text. If a number is set, it
+                 * translates to pixels. You may also use a string and specify
+                 * the unit to use, like `px`, `em` or `%` to name a few.
+                 *
+                 * If `useHTML` is true, you need to provide a string with
+                 * the unit.
+                 *
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             }
         },
@@ -3228,7 +3248,16 @@ namespace AxisDefaults {
             style: {
                 /** @internal */
                 color: Palette.neutralColor100,
-                /** @internal */
+                /**
+                 * The font size to use for text. If a number is set, it
+                 * translates to pixels. You may also use a string and specify
+                 * the unit to use, like `px`, `em` or `%` to name a few.
+                 *
+                 * If `useHTML` is true, you need to provide a string with
+                 * the unit.
+                 *
+                 * @type {number|string}
+                 */
                 fontSize: '0.7em',
                 /** @internal */
                 fontWeight: 'bold',
