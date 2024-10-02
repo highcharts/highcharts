@@ -136,6 +136,9 @@
   "overrides": {
     "gulp-jsdoc3": {
       "jsdoc": "^4.0.3"
+    },
+    "dateformat": {
+      "meow": "9.0.0"
     }
   },
   "engines": {
