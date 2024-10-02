@@ -62,6 +62,7 @@ h2 {
 .chart {
     height: 400px;
     border-radius: 5px;
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 .chart,
