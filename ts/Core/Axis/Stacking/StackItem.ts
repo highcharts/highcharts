@@ -302,7 +302,7 @@ class StackItem {
 
             if (isJustify) {
                 // Justify stackLabel into the alignBox
-                Series.prototype.justifyDataLabel.call(
+                const justified = Series.prototype.justifyDataLabel.call(
                     axis,
                     label,
                     alignOptions,
@@ -310,7 +310,9 @@ class StackItem {
                     labelBox,
                     stackBox
                 );
-                label.align(label.options, void 0, stackBox);
+                if (justified) {
+                    label.align(label.options, void 0, stackBox);
+                }
             }
 
             // Add attr to avoid the default animation of justifyDataLabel.

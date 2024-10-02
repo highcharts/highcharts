@@ -633,21 +633,21 @@ namespace StockChart {
             plotHeight: number;
             justified: boolean;
             triggered: boolean;
+            dataLabel: SVGElement;
         })
     ): void {
         const series = this;
         const chart = series.chart;
-        const plotHeight = chart.navigator ?
-            series.yAxis.top + series.yAxis.height :
-            chart.plotHeight;
+        const plotHeight = chart.inverted ? chart.plotHeight :
+            (
+                chart.navigator ?
+                    series.yAxis.top + series.yAxis.height :
+                    chart.plotHeight
+            );
 
-        if (e.off > plotHeight) {
-            if (!(e.options.verticalAlign === 'top' && e.y <= 0)) {
-                e.y += chart.plotHeight - e.off;
-            }
-            e.justified = true;
+        if (e.off <= plotHeight && e.justified === true) {
+            e.options.y = e.y -= chart.plotHeight - e.off;
         }
-        e.triggered = true;
     }
 
     /**

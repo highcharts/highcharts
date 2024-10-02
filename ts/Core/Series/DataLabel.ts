@@ -893,15 +893,6 @@ namespace DataLabel {
 
         // Off bottom
         off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
-        const e = {
-            y: y,
-            off: off,
-            options: options,
-            plotHeight: chart.plotHeight,
-            justified: justified,
-            triggered: false
-        };
-
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
@@ -918,15 +909,19 @@ namespace DataLabel {
             dataLabel.placed = !isNew;
         }
 
-        fireEvent(this, 'getJustifiedOptions', e);
+        const e = {
+            y: y,
+            off: off,
+            options: options,
+            plotHeight: chart.plotHeight,
+            justified: justified,
+            dataLabel
+        };
 
         // Correct y position of dataLabels if they're in navigator. #21285
-        if (e.triggered) {
-            justified = e.justified;
-            options.y = e.y;
-        }
+        fireEvent(this, 'getJustifiedOptions', e);
 
-        return justified;
+        return e.justified;
     }
 
     /**
