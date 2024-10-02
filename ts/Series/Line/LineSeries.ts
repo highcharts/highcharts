@@ -202,18 +202,19 @@ class LineSeries extends Series {
     ): SVGPath {
         const series = this,
             options = series.options,
-            stepOption = typeof options.step === 'object' ?
+            stepOption = isObject(options.step) ?
                 options.step :
                 { type: options.step },
+            stepType = stepOption.type,
             graphPath: SVGPath = [],
             isSpline = !!(series as unknown as Partial<SplineSeries>)
                 .getPointSpline,
             xMap: number[] = [];
 
         let gap: boolean,
-            step = 0,
+            stepNum = 0,
             pointRange = (
-                stepOption.type === 'center' && series.closestPointRangePx
+                stepType === 'center' && series.closestPointRangePx
             ) || 0;
 
         points = points || series.points;
@@ -226,13 +227,13 @@ class LineSeries extends Series {
         }
 
         // Reverse the steps (#5004)
-        if (stepOption.type && !isSpline) {
-            step = ({
+        if (stepType && !isSpline) {
+            stepNum = ({
                 right: 1,
                 center: 2
-            } as Record<SeriesStepType, number>)[stepOption.type] || 3;
-            if (step && reversed) {
-                step = 4 - step;
+            } as Record<SeriesStepType, number>)[stepType] || 3;
+            if (stepNum && reversed) {
+                stepNum = 4 - stepNum;
             }
             if (series.xAxis.reversed) {
                 pointRange *= -1;
@@ -274,7 +275,7 @@ class LineSeries extends Series {
 
             } else if (isNumber(plotX) && isNumber(plotY)) {
 
-                if (step) {
+                if (stepNum) {
                     const lastX = lastPoint && !lastPoint.isNull ?
                             lastPoint.plotX || 0 :
                             plotX - pointRange,
@@ -298,12 +299,12 @@ class LineSeries extends Series {
                         ];
 
                     // Step right
-                    if (step === 1) {
+                    if (stepNum === 1) {
                         a[1] = lastX;
                         b[1] = plotX;
 
                     // Step center
-                    } else if (step === 2) {
+                    } else if (stepNum === 2) {
                         a[1] = (lastX + plotX) / 2;
                         b[1] = (nextX + plotX) / 2;
                     }
@@ -334,7 +335,7 @@ class LineSeries extends Series {
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.
                 xMap.push(point.x);
-                if (step) {
+                if (stepNum) {
                     xMap.push(point.x);
                 }
 
