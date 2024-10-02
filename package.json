@@ -44,7 +44,7 @@
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
     "prepare": "husky install",
-    "postinstall": "npx gulp update-vendor",
+    "postinstall": "npx gulp update-vendor && npx gulp update-devDependencies",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
     "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
@@ -132,6 +132,11 @@
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "yargs": "^17.7.2"
+  },
+  "overrides": {
+    "gulp-jsdoc3": {
+      "jsdoc": "^4.0.3"
+    }
   },
   "engines": {
     "node": ">=14.14.0"
