@@ -22,7 +22,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        pie: {
             borderRadius: 5,
             dataLabels: [{
                 enabled: true,
