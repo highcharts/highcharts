@@ -119,6 +119,7 @@ class Point {
     public dataLabels?: Array<SVGElement|SVGLabel>;
     public destroyed?: boolean;
     public formatPrefix: string = 'point';
+    public formattedValue?: string;
     public graphic?: SVGElement;
     public graphics?: Array<SVGElement|undefined>;
     public hiddenInDataClass?: boolean;

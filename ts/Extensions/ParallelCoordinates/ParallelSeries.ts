@@ -20,7 +20,6 @@
 
 import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
 import type ParallelCoordinates from './ParallelCoordinates';
-import type Point from '../../Core/Series/Point';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type Series from '../../Core/Series/Series';
 
@@ -37,9 +36,7 @@ const {
     insertItem,
     isArray,
     isNumber,
-    pick,
-    pushUnique,
-    wrap
+    pushUnique
 } = U;
 
 /* *
@@ -72,11 +69,7 @@ namespace ParallelSeries {
     ): void {
 
         if (pushUnique(composed, 'ParallelSeries')) {
-            const CompoClass = SeriesClass as typeof Composition,
-                {
-                    line: { prototype: { pointClass: LinePointClass } },
-                    spline: { prototype: { pointClass: SplinePointClass } }
-                } = SeriesClass.types;
+            const CompoClass = SeriesClass as typeof Composition;
 
             addEvent(
                 CompoClass,
@@ -86,6 +79,11 @@ namespace ParallelSeries {
             );
             addEvent(CompoClass, 'bindAxes', onSeriesBindAxes);
             addEvent(CompoClass, 'destroy', onSeriesDestroy);
+            addEvent(
+                SeriesClass,
+                'afterGeneratePoints',
+                onSeriesAfterGeneratePoints
+            );
         }
 
     }
@@ -206,63 +204,49 @@ namespace ParallelSeries {
 
     /**
      * @private
-     * /
-    function wrapSeriesGetLabelConfig(
-        this: Point,
-        proceed: Function
+     */
+    function onSeriesAfterGeneratePoints(
+        this: Series
     ): void {
-        const chart = this.series && this.series.chart,
-            config = proceed.apply(this, [].slice.call(arguments, 1));
+        const chart = this.chart;
 
-        let formattedValue,
-            yAxisOptions,
-            labelFormat,
-            yAxis;
+        if (chart?.hasParallelCoordinates) {
+            for (const point of this.points) {
+                const yAxis = chart.yAxis[point.x || 0],
+                    yAxisOptions = yAxis.options,
+                    labelFormat = yAxisOptions.tooltipValueFormat ??
+                        yAxisOptions.labels.format;
 
-        if (
-            chart &&
-            chart.hasParallelCoordinates &&
-            !defined(config.formattedValue)
-        ) {
-            yAxis = chart.yAxis[this.x as any];
-            yAxisOptions = yAxis.options;
+                let formattedValue: string;
 
-            labelFormat = pick(
-                yAxisOptions.tooltipValueFormat,
-                yAxisOptions.labels.format
-            );
+                if (labelFormat) {
+                    formattedValue = format(
+                        labelFormat,
+                        extend(
+                            point,
+                            { value: point.y } as any
+                        ),
+                        chart
+                    );
+                } else if (yAxis.dateTime) {
+                    formattedValue = chart.time.dateFormat(
+                        chart.time.resolveDTLFormat(
+                            yAxisOptions.dateTimeLabelFormats?.[
+                                yAxis.tickPositions.info?.unitName || 'year'
+                            ] || ''
+                        ).main,
+                        point.y ?? void 0
+                    );
+                } else if (isArray(yAxisOptions.categories)) {
+                    formattedValue = yAxisOptions.categories[point.y ?? -1];
+                } else {
+                    formattedValue = String(point.y ?? '');
+                }
 
-            if (labelFormat) {
-                formattedValue = format(
-                    labelFormat,
-                    extend(
-                        this,
-                        { value: this.y } as any
-                    ),
-                    chart
-                );
-            } else if (yAxis.dateTime) {
-                formattedValue = chart.time.dateFormat(
-                    chart.time.resolveDTLFormat(
-                        (yAxisOptions.dateTimeLabelFormats as any)[
-                            (yAxis.tickPositions.info as any).unitName
-                        ]
-                    ).main as any,
-                    this.y as any
-                );
-            } else if (isArray(yAxisOptions.categories)) {
-                formattedValue = yAxisOptions.categories[this.y as any];
-            } else {
-                formattedValue = this.y;
+                point.formattedValue = formattedValue;
             }
-
-            config.formattedValue =
-                config.point.formattedValue = formattedValue;
         }
-
-        return config;
     }
-    */
 }
 
 /* *
