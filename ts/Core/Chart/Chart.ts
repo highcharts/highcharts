@@ -74,6 +74,8 @@ const {
     svg,
     win
 } = H;
+import { NonPlotOptions } from '../Series/SeriesOptions';
+import PieSeriesOptions from '../../Series/Pie/PieSeriesOptions';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -433,6 +435,10 @@ class Chart {
 
             const options = merge(defaultOptions, userOptions), // Do the merge
                 optionsChart = options.chart;
+
+            if (options.plotOptions.pie) {
+                this.mergePieDataLabelPlotOptions(options.plotOptions.pie);
+            }
 
             /**
              * The original options given to the constructor or a chart factory
@@ -3217,6 +3223,10 @@ class Chart {
 
         options = diffObjects(options, chart.options);
 
+        if (options.plotOptions?.pie) {
+            this.mergePieDataLabelPlotOptions(options.plotOptions?.pie);
+        }
+
         chart.userOptions = merge(chart.userOptions, options);
 
         // If the top-level chart option is present, some special updates are
@@ -3919,6 +3929,29 @@ class Chart {
             }
         }
         return hasZoomed;
+    }
+
+    /**
+     * When pie plot options have multiple data labels, the default data label
+     * plot options are not merged (#21928).
+     *
+     * This method performs a merge of the data labels with the default data
+     * label options if the data labels are in an array.
+     *
+     * @private
+     * @param {Omit<PieSeriesOptions, NonPlotOptions>} piePlotOptions
+     *          The plot options for the pie series.
+     */
+    public mergePieDataLabelPlotOptions(
+        piePlotOptions: Omit<PieSeriesOptions, NonPlotOptions>
+    ): void {
+        const dataLabels = piePlotOptions.dataLabels;
+        if (dataLabels instanceof Array) {
+            const defaults = defaultOptions.plotOptions.pie?.dataLabels;
+            for (let i = 0; i < dataLabels.length; i++) {
+                dataLabels[i] = merge(defaults, dataLabels[i]);
+            }
+        }
     }
 
 }
