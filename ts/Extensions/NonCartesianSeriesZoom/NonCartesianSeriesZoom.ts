@@ -18,6 +18,8 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
+import type Point from '../../Core/Series/Point';
+import type Tooltip from '../../Core/Tooltip';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
@@ -206,6 +208,50 @@ function onGetPlotBox(
     }
 }
 
+/**
+ * Clip series and data labels group with zoom rect
+ * @private
+ */
+function onAfterDrawChartBox(this: Chart): void {
+    const chart = this;
+
+    if (chart.series.find((series): boolean => !!series.zoomBox)) {
+        if (!chart.zoomClipRect) {
+            chart.zoomClipRect = chart.renderer.clipRect({
+                x: chart.plotLeft,
+                y: chart.plotTop,
+                width: chart.clipBox.width,
+                height: chart.clipBox.height
+            });
+        }
+
+        chart.seriesGroup?.clip(chart.zoomClipRect);
+        chart.dataLabelsGroup?.clip(chart.zoomClipRect);
+    }
+}
+
+/**
+ * Adjust tooltip position to scaled series group
+ * @private
+ */
+function onGetAnchor(params: {
+    point: Point,
+    ret: number[]
+}): void {
+    if (
+        params.point.series &&
+        params.point.series.group &&
+        params.point.series.zoomBox
+    ) {
+        const chart = params.point.series.chart,
+            scale = params.point.series.zoomBox.scale,
+            left = (params.point.series.group.translateX || 0),
+            top = (params.point.series.group.translateY || 0);
+        params.ret[0] = (params.ret[0] * scale) + left - chart.plotLeft;
+        params.ret[1] = (params.ret[1] * scale) + top - chart.plotTop;
+    }
+}
+
 /* *
  *
  *  Class
@@ -230,11 +276,14 @@ class NonCartesianSeriesZoom {
      * */
     public static compose(
         ChartClass: typeof Chart,
-        SeriesClass: typeof Series
+        SeriesClass: typeof Series,
+        TooltipClass: typeof Tooltip
     ): void {
         if (pushUnique(composed, 'NonCartesianSeriesZoom')) {
+            addEvent(ChartClass, 'afterDrawChartBox', onAfterDrawChartBox);
             addEvent(ChartClass, 'transform', onTransform);
             addEvent(SeriesClass, 'getPlotBox', onGetPlotBox);
+            addEvent(TooltipClass, 'getAnchor', onGetAnchor);
         }
     }
 }

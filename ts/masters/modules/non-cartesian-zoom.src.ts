@@ -16,5 +16,5 @@ import Highcharts from '../../Core/Globals.js';
 import NonCartesianSeriesZoom from '../../Extensions/NonCartesianSeriesZoom/NonCartesianSeriesZoom.js';
 const G: AnyRecord = Highcharts;
 G.NonCartesianSeriesZoom = G.NonCartesianSeriesZoom || NonCartesianSeriesZoom;
-G.NonCartesianSeriesZoom.compose(G.Chart, G.Series);
+G.NonCartesianSeriesZoom.compose(G.Chart, G.Series, G.Tooltip);
 export default Highcharts;

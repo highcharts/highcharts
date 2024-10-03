@@ -370,19 +370,11 @@ class Tooltip {
 
         }
 
-        if (
-            points[0].series &&
-            points[0].series.group &&
-            points[0].series.zoomBox
-        ) {
-            const scale = points[0].series.zoomBox.scale,
-                left = (points[0].series.group.translateX || 0),
-                top = (points[0].series.group.translateY || 0);
-            ret[0] = (ret[0] * scale) + left - chart.plotLeft;
-            ret[1] = (ret[1] * scale) + top - chart.plotTop;
-        }
+        const params = { point: points[0], ret };
 
-        return ret.map(Math.round);
+        fireEvent(this, 'getAnchor', params);
+
+        return params.ret.map(Math.round);
 
     }
 

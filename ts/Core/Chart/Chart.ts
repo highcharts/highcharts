@@ -2247,20 +2247,6 @@ class Chart {
             });
         }
 
-        if (chart.series.find((series): boolean => !!series.zoomBox)) {
-            if (!chart.zoomClipRect) {
-                chart.zoomClipRect = renderer.clipRect({
-                    x: chart.plotLeft,
-                    y: chart.plotTop,
-                    width: clipBox.width,
-                    height: clipBox.height
-                });
-            }
-
-            chart.seriesGroup?.clip(chart.zoomClipRect);
-            chart.dataLabelsGroup?.clip(chart.zoomClipRect);
-        }
-
         // Plot area border
         verb = 'animate';
         if (!plotBorder) {

@@ -3348,8 +3348,7 @@ class Series {
                 horAxis &&
                 this.invertible &&
                 name === 'series'
-            ),
-            scale = 1;
+            );
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
@@ -3357,11 +3356,12 @@ class Series {
             vertAxis = this.xAxis;
         }
 
-        const translateX = horAxis ? horAxis.left : chart.plotLeft,
-            translateY = vertAxis ? vertAxis.top : chart.plotTop,
-            params = {
-                scale, translateX, translateY, name
-            };
+        const params = {
+            scale: 1,
+            translateX: horAxis ? horAxis.left : chart.plotLeft,
+            translateY: vertAxis ? vertAxis.top : chart.plotTop,
+            name
+        };
 
         fireEvent(this, 'getPlotBox', params);
 
