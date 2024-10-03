@@ -196,7 +196,9 @@ class LineSeries extends Series {
         connectCliffs?: boolean
     ): SVGPath {
         const series = this,
+            chart = this.chart,
             options = series.options,
+            nullInteraction = options.nullInteraction,
             graphPath = [] as SVGPath,
             xMap: Array<(number|null)> = [];
         let gap: boolean,
@@ -222,7 +224,7 @@ class LineSeries extends Series {
         points = this.getValidPoints(
             points,
             false,
-            options.nullInteraction || !(
+            nullInteraction || !(
                 options.connectNulls &&
                     !nullsAsZeroes &&
                     !connectCliffs
@@ -233,11 +235,13 @@ class LineSeries extends Series {
         points.forEach(function (point, i): void {
 
             const plotX = point.plotX,
-                plotY = point.plotY,
-                lastPoint = (points as any)[i - 1],
-                isNull = point.isNull || typeof plotY !== 'number';
+                lastPoint = (points as any)[i - 1];
+
             // The path to this point from the previous
-            let pathToPoint: SVGPath;
+            let pathToPoint: SVGPath,
+                plotY = point.plotY;
+
+            const isNull = point.isNull || typeof plotY !== 'number';
 
             if (
                 (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -252,6 +256,9 @@ class LineSeries extends Series {
 
             // Area series, nullsAsZeroes is set
             } else if (isNull && !nullsAsZeroes) {
+                if (nullInteraction) {
+                    plotY = point.plotY = chart.plotSizeY || 0;
+                }
                 gap = true;
 
             } else {
