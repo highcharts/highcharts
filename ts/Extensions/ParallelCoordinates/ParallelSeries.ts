@@ -86,22 +86,6 @@ namespace ParallelSeries {
             );
             addEvent(CompoClass, 'bindAxes', onSeriesBindAxes);
             addEvent(CompoClass, 'destroy', onSeriesDestroy);
-
-            if (LinePointClass) {
-                wrap(
-                    LinePointClass.prototype,
-                    'getLabelConfig',
-                    wrapSeriesGetLabelConfig
-                );
-            }
-
-            if (SplinePointClass) {
-                wrap(
-                    SplinePointClass.prototype,
-                    'getLabelConfig',
-                    wrapSeriesGetLabelConfig
-                );
-            }
         }
 
     }
@@ -222,7 +206,7 @@ namespace ParallelSeries {
 
     /**
      * @private
-     */
+     * /
     function wrapSeriesGetLabelConfig(
         this: Point,
         proceed: Function
@@ -278,7 +262,7 @@ namespace ParallelSeries {
 
         return config;
     }
-
+    */
 }
 
 /* *

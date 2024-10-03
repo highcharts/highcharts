@@ -876,23 +876,11 @@ export default SankeySeries;
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
+ * @param {Highcharts.SankeyPoint|Highcharts.Point} this
  *        Data label context to format
  *
  * @return {string|undefined}
  *         Formatted data label text
- */
-
-/**
- * Context for the node formatter function.
- *
- * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * The node object. The node name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
- * @type {Highcharts.SankeyNodeObject}
  */
 
 ''; // Detach doclets above

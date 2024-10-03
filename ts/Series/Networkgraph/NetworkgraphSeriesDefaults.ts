@@ -19,7 +19,6 @@
  * */
 
 import type {
-    NetworkgraphDataLabelsFormatterContextObject,
     NetworkgraphSeriesOptions
 } from './NetworkgraphSeriesOptions';
 import type NetworkgraphPoint from './NetworkgraphPoint';
@@ -152,16 +151,9 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * @since 7.0.0
          */
         formatter: function (
-            this: (
-                NetworkgraphDataLabelsFormatterContextObject|
-                Point.PointLabelObject
-            )
+            this: Point|NetworkgraphPoint
         ): string {
-            return (
-                this as (
-                    NetworkgraphDataLabelsFormatterContextObject
-                )
-            ).key;
+            return String(this.key ?? '');
         },
 
         /**
@@ -185,15 +177,12 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * @since 7.1.0
          */
         linkFormatter: function (
-            this: (
-                NetworkgraphDataLabelsFormatterContextObject|
-                Point.PointLabelObject
-            )
+            this: Point|NetworkgraphPoint
         ): string {
             return (
-                (this.point as NetworkgraphPoint).fromNode.name +
+                (this as NetworkgraphPoint).fromNode.name +
                 '<br>' +
-                (this.point as NetworkgraphPoint).toNode.name
+                (this as NetworkgraphPoint).toNode.name
             );
         },
 

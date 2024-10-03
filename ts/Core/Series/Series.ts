@@ -2330,11 +2330,10 @@ class Series {
             // Negative points #19028
             point.negative = (point.y || 0) < (threshold || 0);
 
-            // Some API data
-            point.category = pick(
-                categories && categories[point.x],
-                point.x as any
-            );
+            // Set point properties for convenient access in tooltip and data
+            // labels
+            point.category = categories?.[point.x] ?? point.x;
+            point.key = point.name ?? point.category;
 
             // Determine auto enabling of markers (#3635, #5099)
             if (!point.isNull && point.visible !== false) {

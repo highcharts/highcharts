@@ -1344,29 +1344,5 @@ export default PackedBubbleSeries;
  *         Formatted data label text
  */
 
-/**
- * Context for the formatter function.
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- * @since 7.0.0
- *//**
- * The color of the node.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#color
- * @type {Highcharts.ColorString}
- * @since 7.0.0
- *//**
- * The point (node) object. The node name, if defined, is available through
- * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
- * contains all nodes connected to this point.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- * @since 7.0.0
- *//**
- * The ID of the node.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#key
- * @type {string}
- * @since 7.0.0
- */
 
 ''; // Detach doclets above

@@ -607,36 +607,11 @@ export default NetworkgraphSeries;
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.Point} this
  *        Data label context to format
  *
  * @return {string}
  *         Formatted data label text
- */
-
-/**
- * Context for the formatter function.
- *
- * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- * @since 7.0.0
- *//**
- * The color of the node.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#color
- * @type {Highcharts.ColorString}
- * @since 7.0.0
- *//**
- * The point (node) object. The node name, if defined, is available through
- * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
- * contains all nodes connected to this point.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- * @since 7.0.0
- *//**
- * The ID of the node.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#key
- * @type {string}
- * @since 7.0.0
  */
 
 /**
