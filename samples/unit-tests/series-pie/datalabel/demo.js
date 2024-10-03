@@ -652,3 +652,92 @@ QUnit.test('Connector color of individual point (#8864).', function (assert) {
         'Color applied to indiviudal connector.'
     );
 });
+
+QUnit.test(
+    'Multiple data labels in pie plot options (#21928).',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            plotOptions: {
+                pie: {
+                    dataLabels: [{
+                        enabled: true,
+                        distance: 20
+                    }, {
+                        enabled: true,
+                        distance: -40,
+                        format: '{point.percentage:.1f}%'
+                    }]
+                }
+            },
+            series: [
+                {
+                    type: 'pie',
+                    data: [
+                        {
+                            y: 61.41
+                        },
+                        {
+                            y: 11.84
+                        }
+                    ]
+                }
+            ]
+        });
+
+        assert.ok(
+            chart.options.plotOptions.pie.dataLabels[0].distance === 20,
+            'Distance is defined by user, should not be merged with defaults'
+        );
+
+        assert.ok(
+            chart.options.plotOptions.pie.dataLabels[0].connectorShape ===
+            'crookedLine',
+            'ConnectorShape is not defined by user, merged with defaults'
+        );
+    });
+
+QUnit.test(
+    'Multiple data labels in pie plot options from update (#21928).',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [
+                {
+                    type: 'pie',
+                    data: [
+                        {
+                            y: 61.41
+                        },
+                        {
+                            y: 11.84
+                        }
+                    ]
+                }
+            ]
+        });
+
+        chart.update({
+            plotOptions: {
+                pie: {
+                    dataLabels: [{
+                        enabled: true,
+                        distance: 20
+                    }, {
+                        enabled: true,
+                        distance: -40,
+                        format: '{point.percentage:.1f}%'
+                    }]
+                }
+            }
+        });
+
+        assert.ok(
+            chart.options.plotOptions.pie.dataLabels[0].distance === 20,
+            'Distance is defined by user, should not be merged with defaults'
+        );
+
+        assert.ok(
+            chart.options.plotOptions.pie.dataLabels[0].connectorShape ===
+            'crookedLine',
+            'ConnectorShape is not defined by user, merged with defaults'
+        );
+    });
