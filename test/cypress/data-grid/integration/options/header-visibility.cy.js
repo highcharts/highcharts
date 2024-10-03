@@ -1,4 +1,4 @@
-describe('Exporting to JSON.', () => {
+describe('DataGrid Header visibility.', () => {
     before(() => {
         cy.visit('data-grid/basic/header-visibility');
     });
