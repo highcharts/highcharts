@@ -176,6 +176,35 @@ QUnit.test(
     }
 );
 
+
+QUnit.test(
+    'The parallel coordinates axes should have the ability to scroll.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                parallelCoordinates: true,
+                scrollablePlotArea: {
+                    minWidth: 700
+                }
+            },
+            yAxis: [{}, {}, {}, {}, {}],
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }, {
+                data: [2, 3, 4, 7, 1]
+            }, {
+                data: [3, 4, 1, 6, 7]
+            }]
+        });
+
+        assert.notOk(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'yAxis should not have that class.'
+        );
+    }
+);
+
 QUnit.test('#12517: Reset zoom button', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
