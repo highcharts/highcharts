@@ -660,7 +660,8 @@ const Options: DeepPartial<A11yOptions> = {
              */
             order: [
                 'series', 'zoom', 'rangeSelector',
-                'navigator', 'legend', 'chartMenu'
+                'navigator', 'legend', 'chartMenu',
+                'stockTools'
             ],
 
             /**
