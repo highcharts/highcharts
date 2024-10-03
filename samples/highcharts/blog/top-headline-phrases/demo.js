@@ -33,7 +33,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        format: 'This trigrams "<b>{category}</b>" was used <b>{y}</b> times'
+        format: 'This trigrams "<b> {category} </b>" was used <b>{y}</b> times'
     },
     plotOptions: {
         bar: {
