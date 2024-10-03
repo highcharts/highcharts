@@ -16,6 +16,7 @@
  *
  * */
 
+import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
 import type {
@@ -63,6 +64,19 @@ interface DependencyWheelSeriesNodeOptions extends SankeySeriesNodeOptions {
  * @requires modules/sankey
  */
 export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
+
+    /**
+     * The corner radius of the border surrounding each node. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a relative size. For nodes this is relative to the node width.
+     *
+     * @default 3
+     *
+     * @since 11.0.0
+     *
+     * @product highcharts
+     */
+    borderRadius?: (number|string|BorderRadiusOptionsObject);
 
     /**
      * The center of the wheel relative to the plot area. Can be

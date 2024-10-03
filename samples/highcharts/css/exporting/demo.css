@@ -7,6 +7,10 @@
     max-width: 800px;
 }
 
+.controls {
+    padding: 10px;
+}
+
 .highcharts-column-series rect {
     stroke-dasharray: 2;
     stroke: black;

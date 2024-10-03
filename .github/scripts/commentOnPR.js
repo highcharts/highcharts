@@ -6,7 +6,7 @@ async function createOrUpdateComment(github, context, title, body){
     });
 
     const commentToUpdate = comments.find(comment =>
-        comment.body.startsWith('## ' + title)
+        comment.body.startsWith('## ' + title.split('-')[0].trim())
     );
 
     const commentBody = `## ${title}

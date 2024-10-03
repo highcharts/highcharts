@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 .highcharts-figure {
     max-width: 800px;
     min-width: 320px;
@@ -40,4 +44,8 @@
 
 #csv {
     display: none;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

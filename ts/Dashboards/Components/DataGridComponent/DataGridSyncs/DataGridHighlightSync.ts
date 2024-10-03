@@ -21,14 +21,14 @@
  * */
 
 import type Sync from '../../Sync/Sync';
+import type DataCursor from '../../../../Data/DataCursor';
 import type DataGridComponent from '../DataGridComponent.js';
 import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
+import type { TableCell } from '../../../Plugins/DataGridTypes';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 import U from '../../../../Core/Utilities.js';
 const { addEvent, removeEvent } = U;
-
 
 /* *
  *
@@ -58,21 +58,21 @@ const syncPair: Sync.SyncPair = {
 
         const { dataCursor: cursor } = board;
 
-        const onDataGridHover = (e: any): void => {
+        const onCellHover = (e: TableCell.TableCellEvent): void => {
             const table = this.getFirstConnector()?.table;
             if (table) {
-                const row = e.row;
+                const cell = e.target;
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: parseInt(row.dataset.rowIndex, 10),
-                    column: e.columnName,
+                    row: cell.row.id,
+                    column: cell.column.id,
                     state: 'dataGrid.hoverRow' + groupKey
                 });
             }
         };
 
-        const onDataGridMouseOut = (): void => {
+        const onCellMouseOut = (): void => {
             const table = this.getFirstConnector()?.table;
             if (table) {
                 cursor.emitCursor(table, {
@@ -82,20 +82,20 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        addEvent(dataGrid.container, 'dataGridHover', onDataGridHover);
-        addEvent(dataGrid.container, 'mouseout', onDataGridMouseOut);
+        addEvent(dataGrid, 'cellMouseOver', onCellHover);
+        addEvent(dataGrid, 'cellMouseOut', onCellMouseOut);
 
         // Return a function that calls the callbacks
         return function (): void {
             removeEvent(
                 dataGrid.container,
-                'dataGridHover',
-                onDataGridHover
+                'cellMouseOver',
+                onCellHover
             );
             removeEvent(
                 dataGrid.container,
-                'mouseout',
-                onDataGridMouseOut
+                'cellMouseOut',
+                onCellMouseOut
             );
         };
     },
@@ -115,44 +115,38 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
-        let highlightTimeout: number | undefined;
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
             if (cursor.type !== 'position') {
                 return;
             }
 
-            const { row } = cursor;
+            const { row, column } = cursor;
             const { dataGrid } = component;
+            const viewport = dataGrid?.viewport;
 
-            if (row === void 0 || !dataGrid) {
+            if (row === void 0 || !viewport) {
+                return;
+            }
+
+            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            if (rowIndex === void 0) {
                 return;
             }
 
             if (highlightOptions.autoScroll) {
-                dataGrid.scrollToRow(
-                    row - Math.round(dataGrid.rowElements.length / 2) + 1
-                );
+                viewport.scrollToRow(rowIndex);
             }
 
-            if (highlightTimeout) {
-                clearTimeout(highlightTimeout);
-            }
-            highlightTimeout = setTimeout((): void => {
-                const highlightedDataRow = dataGrid.container
-                    .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
-
-                if (highlightedDataRow) {
-                    dataGrid.toggleRowHighlight(highlightedDataRow);
-                    dataGrid.hoveredRow = highlightedDataRow;
-                }
-            }, highlightOptions.autoScroll ? 10 : 0);
+            dataGrid.hoverRow(rowIndex);
+            dataGrid.hoverColumn(column);
         };
 
         const handleCursorOut = (): void => {
             const { dataGrid } = component;
             if (dataGrid) {
-                dataGrid.toggleRowHighlight(void 0);
+                dataGrid.hoverColumn();
+                dataGrid.hoverRow();
             }
         };
 
