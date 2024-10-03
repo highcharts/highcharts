@@ -45,7 +45,7 @@ Highcharts.chart('container', {
     tooltip: {
         shared: true,
         headerFormat: `<span style="font-size:11px">
-                        Chart loading time for {point.x} points: 
+                        Chart loading time for {category:,.0f} points: 
                         </span><br/>`
     },
     yAxis: {

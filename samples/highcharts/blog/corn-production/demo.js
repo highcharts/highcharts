@@ -73,7 +73,7 @@ const chart = Highcharts.chart('production', {
     tooltip: {
         formatter: function () {
             return '<b>Region: </b>' + this.series.name + '<br>' +
-                '<b>Year: </b>' + this.x + ' <br>' +
+                '<b>Year: </b>' + this.category + ' <br>' +
                 '<b>Production: </b>' +
                 Highcharts.numberFormat(this.y, 0, '.', ',') + ' tonnes<br>' +
                 '<b>Total: </b>' +

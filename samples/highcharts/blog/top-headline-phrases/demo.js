@@ -33,10 +33,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        formatter: function () {
-            return 'This trigrams "<b> ' + this.x + ' </b>" was used <b>' +
-                this.y + '</b>';
-        }
+        format: 'This trigrams "<b>{category}</b>" was used <b>{y}</b> times'
     },
     plotOptions: {
         bar: {
