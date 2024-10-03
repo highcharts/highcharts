@@ -278,6 +278,7 @@ class NetworkgraphSeries extends Series {
                 this.options.marker && this.options.marker.radius,
                 0
             );
+            node.key = node.name;
 
             // If node exists, but it's not available in nodeLookup,
             // then it's leftover from previous runs (e.g. setData)
