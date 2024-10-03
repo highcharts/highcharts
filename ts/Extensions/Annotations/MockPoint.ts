@@ -95,6 +95,8 @@ interface MockSeries {
  */
 class MockPoint {
 
+    point: MockPoint;
+
     /* *
      *
      *  Static Functions
@@ -201,6 +203,9 @@ class MockPoint {
         target: (ControlTarget|null),
         options: (MockPointOptions|Function)
     ) {
+        // Circular reference for formats and formatters
+        this.point = this;
+
         /**
          * A mock series instance imitating a real series from a real point.
          *
