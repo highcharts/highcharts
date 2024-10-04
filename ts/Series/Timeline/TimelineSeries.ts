@@ -101,8 +101,6 @@ class TimelineSeries extends LineSeries {
 
     public visiblePointsCount?: number;
 
-    public yData?: Array<number>;
-
     /* *
      *
      *  Functions
@@ -229,21 +227,20 @@ class TimelineSeries extends LineSeries {
         super.generatePoints();
 
         const series = this,
-            points = series.points;
+            points = series.points,
+            xData = series.getColumn('x');
 
         for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
             points[i].applyOptions({
-                x: (series.xData as any)[i]
-            }, (series.xData as any)[i]);
+                x: xData[i]
+            }, xData[i]);
         }
     }
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
             map = (
-                series.data.length ?
-                    series.data :
-                    series.userOptions.data || []
+                (series.data.length ? series.data : series.options.data) || []
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (
@@ -438,10 +435,10 @@ class TimelineSeries extends LineSeries {
     }
 
     public processData(): undefined {
-        const series = this;
+        const series = this,
+            xData = series.getColumn('x');
 
-        let visiblePoints = 0,
-            i: (number|undefined);
+        let visiblePoints = 0;
 
         series.visibilityMap = series.getVisibilityMap();
 
@@ -454,9 +451,7 @@ class TimelineSeries extends LineSeries {
 
         series.visiblePointsCount = visiblePoints;
 
-        for (i = 0; i < (series.xData as any).length; i++) {
-            (series.yData as any)[i] = 1;
-        }
+        this.dataTable.setColumn('y', new Array(xData.length).fill(1));
 
         super.processData.call(this, arguments as any);
 

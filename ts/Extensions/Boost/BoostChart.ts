@@ -25,10 +25,11 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Pointer from '../../Core/Pointer';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -229,7 +230,7 @@ function isChartSeriesBoosting(
         }
 
         if (patientMax(
-            series.processedXData,
+            series.getColumn('x', true),
             seriesOptions.data as any,
             /// series.xData,
             series.points
@@ -368,16 +369,15 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>>): number {
+function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+    args.forEach((t): boolean|undefined => {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
             typeof t.length !== 'undefined'
         ) {
-            /// r = r < t.length ? t.length : r;
             if (t.length > 0) {
                 r = t.length;
                 return true;

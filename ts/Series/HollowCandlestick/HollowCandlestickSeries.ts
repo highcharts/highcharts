@@ -41,6 +41,9 @@ interface HollowcandleInfo {
     trendDirection: 'down'|'up';
 }
 
+// Data array type (o, h, l, c) used locally
+type DataArr = Array<number|null|undefined>;
+
 /* *
  *
  *  Code
@@ -169,8 +172,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            // Processed and grouped data
-            processedYData = series.allGroupedData || series.yData,
+            table = series.allGroupedTable || series.dataTable,
+            dataLength = table.rowCount,
             hollowCandlestickData = this.hollowCandlestickData;
 
         hollowCandlestickData.length = 0;
@@ -181,14 +184,18 @@ class HollowCandlestickSeries extends CandlestickSeries {
             trendDirection: 'up'
         });
 
-        for (let i = 1; i < processedYData.length; i++) {
-            const dataPoint: any = processedYData[i],
-                previousDataPoint: any = processedYData[i - 1];
+        let previousDataArr: DataArr|undefined;
+        for (let i = 1; i < dataLength; i++) {
+            const dataArr = table.getRow(
+                i,
+                this.pointArrayMap
+            ) as Array<number>;
 
             hollowCandlestickData.push(series.isBullish(
-                dataPoint,
-                previousDataPoint
+                dataArr,
+                previousDataArr
             ));
+            previousDataArr = dataArr;
         }
     }
 
@@ -260,14 +267,16 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Previous point.
      */
     public isBullish(
-        dataPoint: Array<(number)>,
-        previousDataPoint: Array<(number)>
+        dataPoint: DataArr,
+        previousDataPoint?: DataArr
     ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
-            isBullish: dataPoint[0] <= dataPoint[3],
+            isBullish: (dataPoint[0] || 0) <= (dataPoint[3] || 0),
             // For bearish candles.
-            trendDirection: dataPoint[3] < previousDataPoint[3] ? 'down' : 'up'
+            trendDirection:
+                (dataPoint[3] || 0) < (previousDataPoint?.[3] || 0) ?
+                    'down' : 'up'
         };
     }
 

@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Lars Cabrera
- js_wrap: b
-...

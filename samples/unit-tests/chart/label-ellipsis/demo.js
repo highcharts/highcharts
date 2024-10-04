@@ -9,6 +9,7 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
 
     var chart1 = Highcharts.chart('container', {
         chart: {
+            axisLayoutRuns: 1,
             width: 400
         },
         xAxis: {
@@ -36,6 +37,6 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
     assert.strictEqual(
         chart2.xAxis[0].ticks['0'].label.styles.width,
         textWidth,
-        'Label widths are equal'
+        'Label widths should be equal whether addSeries or initiated series'
     );
 });

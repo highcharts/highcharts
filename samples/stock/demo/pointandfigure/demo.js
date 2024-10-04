@@ -4,7 +4,7 @@ easy and usually requires only a few minor tweaks to the original methods.
 Follow the comments below to see how the new series is added. */
 
 // Plugin responsible for adding the PNF series and its logic to the library
-(({ isNumber, relativeLength, defined, pick }) => {
+(({ DataTableCore, isNumber, relativeLength, defined, pick }) => {
     /* Define a custom 'X' symbol path. */
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
         return [
@@ -156,9 +156,13 @@ Follow the comments below to see how the new series is added. */
         });
 
         return {
-            groupedXData,
-            groupedYData,
-            groupMap
+            groupMap,
+            modified: new DataTableCore({
+                columns: {
+                    x: groupedXData,
+                    y: groupedYData
+                }
+            })
         };
     }
 

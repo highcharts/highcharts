@@ -281,6 +281,7 @@ extend(HLCSeries.prototype, {
     pointClass: HLCPoint,
     animate: null as any, // Disable animation
     directTouch: false,
+    keysAffectYAxis: ['low', 'high'],
     pointArrayMap: ['high', 'low', 'close'],
     pointAttrToOptions: {
         stroke: 'color',

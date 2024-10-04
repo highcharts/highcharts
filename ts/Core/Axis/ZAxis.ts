@@ -191,7 +191,7 @@ class ZAxis extends Axis implements AxisLike {
                     threshold = void 0;
                 }
 
-                const zData: Array<(number|null|undefined)> = series.zData as any;
+                const zData = series.getColumn('z');
 
                 if (zData.length) {
                     this.dataMin = Math.min(

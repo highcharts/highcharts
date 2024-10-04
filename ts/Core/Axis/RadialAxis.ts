@@ -344,7 +344,7 @@ namespace RadialAxis {
      */
     function getCrosshairPosition(
         this: AxisComposition,
-        options: PlotLineOptions,
+        options: Axis.PlotLinePathOptions,
         x1: number,
         y1: number
     ): [(number | undefined), number, number] {

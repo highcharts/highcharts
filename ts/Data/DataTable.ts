@@ -28,11 +28,13 @@ import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
 
+import DataTableCore from './DataTableCore.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
     fireEvent,
+    extend,
     uniqueKey
 } = U;
 
@@ -55,7 +57,7 @@ const {
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTable implements DataEvent.Emitter {
+class DataTable extends DataTableCore implements DataEvent.Emitter {
 
 
     /* *
@@ -149,62 +151,12 @@ class DataTable implements DataEvent.Emitter {
      *
      * */
 
-
-    /**
-     * Constructs an instance of the DataTable class.
-     *
-     * @param {Highcharts.DataTableOptions} [options]
-     * Options to initialize the new DataTable instance.
-     */
     public constructor(
         options: DataTableOptions = {}
     ) {
-
-        /**
-         * Whether the ID was automatic generated or given in the constructor.
-         *
-         * @name Highcharts.DataTable#autoId
-         * @type {boolean}
-         */
-        this.autoId = !options.id;
-        this.columns = {};
-
-        /**
-         * ID of the table for identification purposes.
-         *
-         * @name Highcharts.DataTable#id
-         * @type {string}
-         */
-        this.id = (options.id || uniqueKey());
+        super(options);
         this.modified = this;
-        this.rowCount = 0;
-        this.versionTag = uniqueKey();
 
-        const columns = options.columns || {},
-            columnNames = Object.keys(columns),
-            thisColumns = this.columns;
-
-        let rowCount = 0;
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName].slice();
-            thisColumns[columnName] = column;
-            rowCount = Math.max(rowCount, column.length);
-        }
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            thisColumns[columnNames[i]].length = rowCount;
-        }
-
-        this.rowCount = rowCount;
     }
 
     /* *
@@ -213,23 +165,13 @@ class DataTable implements DataEvent.Emitter {
      *
      * */
 
-    public readonly autoId: boolean;
-
-    public readonly columns: Record<string, DataTable.Column>;
-
-    public readonly id: string;
+    private modifier?: DataModifier;
 
     private localRowIndexes?: Array<number>;
 
     public modified: DataTable;
 
-    private modifier?: DataModifier;
-
     private originalRowIndexes?: Array<number|undefined>;
-
-    private rowCount: number;
-
-    private versionTag: string;
 
     /* *
      *
@@ -480,20 +422,16 @@ class DataTable implements DataEvent.Emitter {
      * Event object with event information.
      */
     public emit<E extends DataEvent>(e: E): void {
-        const table = this;
-
-        switch (e.type) {
-            case 'afterDeleteColumns':
-            case 'afterDeleteRows':
-            case 'afterSetCell':
-            case 'afterSetColumns':
-            case 'afterSetRows':
-                table.versionTag = uniqueKey();
-                break;
-            default:
+        if ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ].includes(e.type)) {
+            this.versionTag = uniqueKey();
         }
-
-        fireEvent(table, e.type, e);
+        fireEvent(this, e.type, e);
     }
 
     /**
@@ -1242,35 +1180,6 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Sets cell values for a column. Will insert a new column, if not found.
-     *
-     * @function Highcharts.DataTable#setColumn
-     *
-     * @param {string} columnName
-     * Column name to set.
-     *
-     * @param {Highcharts.DataTableColumn} [column]
-     * Values to set in the column.
-     *
-     * @param {number} [rowIndex=0]
-     * Index of the first row to change. (Default: 0)
-     *
-     * @param {Highcharts.DataTableEventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @emits #setColumns
-     * @emits #afterSetColumns
-     */
-    public setColumn(
-        columnName: string,
-        column: DataTable.Column = [],
-        rowIndex: number = 0,
-        eventDetail?: DataEvent.Detail
-    ): void {
-        this.setColumns({ [columnName]: column }, rowIndex, eventDetail);
-    }
-
-    /**
      * Sets cell values for multiple columns. Will insert new columns, if not
      * found.
      *
@@ -1296,8 +1205,9 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
+
+        let rowCount = table.rowCount;
 
         table.emit({
             type: 'setColumns',
@@ -1307,21 +1217,25 @@ class DataTable implements DataEvent.Emitter {
             rowIndex
         });
 
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
+        if (typeof rowIndex === 'undefined') {
+            super.setColumns(
+                columns,
+                rowIndex,
+                extend(eventDetail, { silent: true })
+            );
+        } else {
 
-            if (reset) {
-                tableColumns[columnName] = column.slice();
-                table.rowCount = column.length;
-            } else {
+            for (
+                let i = 0,
+                    iEnd = columnNames.length,
+                    column: DataTable.Column,
+                    columnName: string;
+                i < iEnd;
+                ++i
+            ) {
+                columnName = columnNames[i];
+                column = columns[columnName];
+
                 const tableColumn: DataTable.Column = (
                     tableColumns[columnName] ?
                         tableColumns[columnName] :
@@ -1337,18 +1251,14 @@ class DataTable implements DataEvent.Emitter {
                     tableColumn[i] = column[i];
                 }
 
-                table.rowCount = Math.max(table.rowCount, tableColumn.length);
+                rowCount = Math.max(rowCount, tableColumn.length);
             }
-        }
 
-        const tableColumnNames = Object.keys(tableColumns);
-
-        for (let i = 0, iEnd = tableColumnNames.length; i < iEnd; ++i) {
-            tableColumns[tableColumnNames[i]].length = table.rowCount;
+            this.applyRowCount(rowCount);
         }
 
         if (tableModifier) {
-            tableModifier.modifyColumns(table, columns, (rowIndex || 0));
+            tableModifier.modifyColumns(table, columns, rowIndex || 0);
         }
 
         table.emit({
@@ -1468,6 +1378,9 @@ class DataTable implements DataEvent.Emitter {
      * @param {number} [rowIndex]
      * Index of the row to set. Leave `undefind` to add as a new row.
      *
+     * @param {boolean} [insert]
+     * Whether to insert the row at the given index, or to overwrite the row.
+     *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1477,9 +1390,10 @@ class DataTable implements DataEvent.Emitter {
     public setRow(
         row: (DataTable.Row | DataTable.RowObject),
         rowIndex?: number,
+        insert?: boolean,
         eventDetail?: DataEvent.Detail
     ): void {
-        this.setRows([row], rowIndex, eventDetail);
+        this.setRows([row], rowIndex, insert, eventDetail);
     }
 
     /**
@@ -1495,6 +1409,9 @@ class DataTable implements DataEvent.Emitter {
      * @param {number} [rowIndex]
      * Index of the first row to set. Leave `undefined` to add as new rows.
      *
+     * @param {boolean} [insert]
+     * Whether to insert the row at the given index, or to overwrite the row.
+     *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1504,6 +1421,7 @@ class DataTable implements DataEvent.Emitter {
     public setRows(
         rows: Array<(DataTable.Row | DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
+        insert?: boolean,
         eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
@@ -1530,31 +1448,24 @@ class DataTable implements DataEvent.Emitter {
             row = rows[i];
             if (row === DataTable.NULL) {
                 for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
-                    columns[columnNames[j]][i2] = null;
+                    if (insert) {
+                        columns[columnNames[j]].splice(i2, 0, null);
+                    } else {
+                        columns[columnNames[j]][i2] = null;
+                    }
                 }
             } else if (row instanceof Array) {
                 for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
                     columns[columnNames[j]][i2] = row[j];
                 }
             } else {
-                const rowColumnNames = Object.keys(row);
-                for (
-                    let j = 0,
-                        jEnd = rowColumnNames.length,
-                        rowColumnName: string;
-                    j < jEnd;
-                    ++j
-                ) {
-                    rowColumnName = rowColumnNames[j];
-                    if (!columns[rowColumnName]) {
-                        columns[rowColumnName] = new Array(i2 + 1);
-                    }
-                    columns[rowColumnName][i2] = row[rowColumnName];
-                }
+                super.setRow(row, i2, void 0, { silent: true });
             }
         }
 
-        const indexRowCount = (rowIndex + rowCount);
+        const indexRowCount = insert ?
+            rowCount + rows.length :
+            rowIndex + rowCount;
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {

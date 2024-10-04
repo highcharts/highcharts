@@ -25,12 +25,13 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type Templating from '../Core/Templating';
 import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
 import type {
     PlotLineLabelOptions,
     PlotLineOptions
 } from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
+import type Templating from '../Core/Templating';
+import type Time from '../Core/Time';
 
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
@@ -59,7 +60,7 @@ declare module '../Core/Axis/AxisOptions' {
 
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
-    format?: string;
+    format?: Time.DateTimeFormat;
     formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
@@ -114,21 +115,20 @@ const defaultOptions: CurrentDateIndicatorOptions = {
      */
     label: {
         /**
-         * Format of the label. This options is passed as the fist argument to
+         * Format of the label. This options is passed as the first argument to
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat) function.
          *
-         * @type      {string}
-         * @default   %a, %b %d %Y, %H:%M
+         * @type      {string|Intl.DateTimeFormatOptions}
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */
-        format: '%a, %b %d %Y, %H:%M',
+        format: '%[abdYHM]',
         formatter: function (
             this: PlotLineOrBand,
             value?: number,
             format?: string
         ): string {
-            return this.axis.chart.time.dateFormat(format || '', value);
+            return this.axis.chart.time.dateFormat(format || '', value, true);
         },
         rotation: 0,
         /**

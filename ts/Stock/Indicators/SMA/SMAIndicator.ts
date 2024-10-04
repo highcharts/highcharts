@@ -13,8 +13,10 @@
  *  Imports
  *
  * */
-
-import type IndicatorLike from '../IndicatorLike';
+import type {
+    IndicatorLike,
+    IndicatorLinkedSeriesLike
+} from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
@@ -36,8 +38,7 @@ const {
     extend,
     isArray,
     merge,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *
@@ -56,6 +57,38 @@ interface CalculateOnObject {
     chart: string;
     xAxis?: string;
 }
+
+
+/**
+ *
+ * Return the parent series values in the legacy two-dimensional yData
+ * format
+ * @private
+ */
+const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
+    series: TLinkedSeries,
+    processed?: boolean
+): Array<number|null|Array<number|null>> => {
+    const yData = [],
+        pointArrayMap = series.pointArrayMap,
+        table = processed && series.dataTable.modified || series.dataTable;
+
+    if (!pointArrayMap) {
+        return series.getColumn('y', processed);
+    }
+
+    const columns = pointArrayMap.map((key): Array<number> =>
+        series.getColumn(key, processed)
+    );
+
+    for (let i = 0; i < table.rowCount; i++) {
+        const values = pointArrayMap.map((key, colIndex): number =>
+            columns[colIndex]?.[i] || 0
+        );
+        yData.push(values);
+    }
+    return yData;
+};
 
 /* *
  *
@@ -176,7 +209,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent!: LineSeriesType;
+    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesLike;
 
     public nameBase?: string;
 
@@ -232,11 +265,11 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getValues<TLinkedSeries extends LineSeriesType>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
-            xVal: Array<number> = series.xData as any,
+            xVal = series.xData || [],
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
             yValLen = yVal.length,
             SMA: Array<Array<number>> = [],
@@ -344,7 +377,10 @@ class SMAIndicator extends LineSeries {
 
                     // Most indicators are being calculated on chart's init.
                     if (indicator.calculateOn.chart === 'init') {
-                        if (!indicator.processedYData) {
+                        // When closestPointRange is set, it is an indication
+                        // that `Series.processData` has run. If it hasn't we
+                        // need to `recalculateValues`.
+                        if (!indicator.closestPointRange) {
                             indicator.recalculateValues();
                         }
                     } else if (!hasEvents) {
@@ -387,8 +423,9 @@ class SMAIndicator extends LineSeries {
     public recalculateValues(): void {
         const croppedDataValues = [],
             indicator = this,
+            table = this.dataTable,
             oldData = indicator.points || [],
-            oldDataLength = (indicator.xData || []).length,
+            oldDataLength = indicator.dataTable.rowCount,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
@@ -397,25 +434,63 @@ class SMAIndicator extends LineSeries {
         let overwriteData = true,
             oldFirstPointIndex,
             oldLastPointIndex,
-            croppedData,
             min,
-            max,
-            i;
+            max;
+
+        // For the newer data table, temporarily set the parent series `yData`
+        // to the legacy format that is documented for custom indicators, and
+        // get the xData from the data table
+        const yData = indicator.linkedParent.yData,
+            processedYData = indicator.linkedParent.processedYData;
+        indicator.linkedParent.xData = indicator.linkedParent
+            .getColumn('x');
+        indicator.linkedParent.yData = tableToMultiYData(
+            indicator.linkedParent
+        ) as any;
+        indicator.linkedParent.processedYData = tableToMultiYData(
+            indicator.linkedParent,
+            true
+        ) as any;
+
 
         // Updating an indicator with redraw=false may destroy data.
         // If there will be a following update for the parent series,
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
-            indicator.linkedParent.yData && // #18176, #18177 indicators should
-            indicator.linkedParent.yData.length ? // Work with empty dataset
+        const processedData: IndicatorValuesObject<
+            typeof LineSeries.prototype
+        > = indicator.linkedParent.options &&
+            // #18176, #18177 indicators should work with empty dataset
+            indicator.linkedParent.dataTable.rowCount ?
             (
                 indicator.getValues(
                     indicator.linkedParent,
                     indicator.options.params as any
                 ) || emptySet
             ) : emptySet;
+
+        // Reset
+        delete indicator.linkedParent.xData;
+        indicator.linkedParent.yData = yData;
+        indicator.linkedParent.processedYData = processedYData;
+
+        const pointArrayMap = indicator.pointArrayMap || ['y'],
+            valueColumns: Record<string, Array<number|null>> = {};
+
+        // Split legacy twodimensional values into value columns
+        (processedData.yData as any)
+            .forEach((values: number|null|Array<number|null>): void => {
+                pointArrayMap.forEach((key, index): void => {
+                    const column = valueColumns[key] || [];
+                    column.push(
+                        isArray(values) ? values[index] : values
+                    );
+                    if (!valueColumns[key]) {
+                        valueColumns[key] = column;
+                    }
+                });
+            });
 
         // We need to update points to reflect changes in all,
         // x and y's, values. However, do it only for non-grouped
@@ -433,31 +508,30 @@ class SMAIndicator extends LineSeries {
                     max = indicator.xAxis.max;
                 }
 
-                croppedData = indicator.cropData(
-                    processedData.xData,
-                    processedData.yData,
+                const croppedData = indicator.cropData(
+                    table,
                     min as any,
                     max as any
                 );
 
-                for (i = 0; i < croppedData.xData.length; i++) {
-                    // (#10774)
-                    croppedDataValues.push([
-                        croppedData.xData[i]
-                    ].concat(
-                        // Note: allowing new any here because this code
-                        // will be removed with the Series/DataTable refactor
-                        splat(croppedData.yData[i]) as any
-                    ));
+                const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
+                for (
+                    let i = 0;
+                    i < (croppedData.modified?.rowCount || 0);
+                    i++
+                ) {
+                    const values = keys.map((key): number =>
+                        this.getColumn(key)[i] || 0
+                    );
+                    croppedDataValues.push(values);
                 }
 
+                const indicatorXData = indicator.getColumn('x');
                 oldFirstPointIndex = processedData.xData.indexOf(
-                    (indicator.xData as any)[0]
+                    indicatorXData[0]
                 );
                 oldLastPointIndex = processedData.xData.indexOf(
-                    (indicator.xData as any)[
-                        (indicator.xData as any).length - 1
-                    ]
+                    indicatorXData[indicatorXData.length - 1]
                 );
 
                 // Check if indicator points should be shifted (#8572)
@@ -484,22 +558,24 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            indicator.xData = processedData.xData;
-            indicator.yData = (processedData.yData as any);
+            table.setColumns({
+                ...valueColumns,
+                x: processedData.xData as Array<number>
+            });
             indicator.options.data = (processedData.values as any);
         }
 
-        // Removal of processedXData property is required because on
-        // first translate processedXData array is empty
-        if (indicator.calculateOn.xAxis && indicator.processedXData) {
-            delete (indicator as Partial<typeof indicator>).processedXData;
-
+        if (
+            indicator.calculateOn.xAxis &&
+            indicator.getColumn('x', true).length
+        ) {
             indicator.isDirty = true;
             indicator.redraw();
         }
 
         indicator.isDirtyData = !!indicator.linkedSeries.length;
         fireEvent(indicator, 'updatedData'); // #18689
+
     }
 
     /**

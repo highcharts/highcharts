@@ -374,7 +374,7 @@ QUnit.test('Axis title multiline', function (assert) {
     chart.yAxis[0].update({
         title: {
             style: {
-                textOverflow: 'ellipsis'
+                whiteSpace: 'nowrap'
             }
         }
     });

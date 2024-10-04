@@ -151,7 +151,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         indicator = chart.series[2];
 
     assert.deepEqual(
-        round(indicator.yData),
+        round(indicator.getColumn('y')),
         expectedData,
         'yData is correct after the chart is loaded.'
     );
@@ -160,7 +160,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     volume.addPoint(11731);
 
     assert.deepEqual(
-        round(indicator.yData),
+        round(indicator.getColumn('y')),
         expectedData.concat(126.73),
         'yData is correct after add point on the base and the volume series.'
     );
@@ -169,7 +169,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     volume.data[volume.data.length - 1].update({ y: 10000 });
 
     assert.deepEqual(
-        round(indicator.yData),
+        round(indicator.getColumn('y')),
         expectedData.concat(126.8033),
         'yData is correct after update point on the base and the volume series.'
     );
@@ -181,7 +181,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        round(indicator.yData),
+        round(indicator.getColumn('y')),
         expectedData.concat(127.0885),
         'yData is correct after indicator update (period).'
     );
@@ -190,7 +190,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     volume.data[volume.data.length - 1].remove();
 
     assert.deepEqual(
-        round(indicator.yData),
+        round(indicator.getColumn('y')),
         [
             127.21,
             127.2044,

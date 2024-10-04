@@ -30,27 +30,27 @@ Highcharts.chart('container', {
         pointValKey: 'high',
         data: [{
             x: 1,
-            low: 0,
-            open: 30,
-            close: 50
+            high: 50,
+            low: 10,
+            close: 30
         }]
     }, {
         name: 'low',
         pointValKey: 'low',
         data: [{
             x: 2,
-            low: 0,
-            open: 30,
-            close: 50
+            high: 50,
+            low: 10,
+            close: 30
         }]
     }, {
         name: 'close',
         pointValKey: 'close', // default
         data: [{
             x: 3,
-            low: 0,
-            open: 30,
-            close: 50
+            high: 50,
+            low: 10,
+            close: 30
         }]
     }]
 });

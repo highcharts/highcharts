@@ -290,7 +290,7 @@ namespace DateTimeAxis{
         public getXDateFormat(
             x: number,
             dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
-        ): string {
+        ): Time.DateTimeFormat {
             const { axis } = this,
                 time = axis.chart.time;
 

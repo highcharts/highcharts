@@ -116,7 +116,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toAroonWithRound(chart.series[1].yData),
+            toAroonWithRound(chart.series[1].getColumn('y')),
             [
                 71.4286,
                 71.4286,
@@ -143,7 +143,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toAroonWithRound(chart.series[1].yData),
+            toAroonWithRound(chart.series[1].getColumn('y')),
             [
                 71.4286,
                 71.4286,

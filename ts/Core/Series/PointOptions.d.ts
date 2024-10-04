@@ -97,8 +97,8 @@ export interface PointOptions {
     selected?: boolean;
     states?: PointStatesOptions<Point>;
     visible?: boolean;
-    x?: number;
-    y?: (null|number);
+    x?: number|string;
+    y?: null|number;
 }
 
 export interface PointSelectEvent extends Event {

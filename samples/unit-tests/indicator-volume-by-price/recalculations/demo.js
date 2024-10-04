@@ -264,7 +264,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         low: 55,
         close: 80
     });
-    const yData = chart.series[2].yData.slice();
+    const yData = chart.series[2].getColumn('y').slice();
     chart.series[0].points[14].update({
         open: 60,
         high: 150,

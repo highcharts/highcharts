@@ -1140,8 +1140,8 @@ class SVGElement implements SVGElementLike {
                 // added to the DOM. In styled mode, no CSS should find its way
                 // to the DOM whatsoever (#6173, #6474).
                 (
-                    ['textOutline', 'textOverflow', 'width'] as
-                    ('textOutline'|'textOverflow'|'width')[]
+                    ['textOutline', 'textOverflow', 'whiteSpace', 'width'] as
+                    ('textOutline'|'textOverflow'|'whiteSpace'|'width')[]
                 ).forEach(
                     (key): boolean|undefined => (
                         stylesToApply &&

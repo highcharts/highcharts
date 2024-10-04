@@ -369,32 +369,27 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#processData
      */
     function afterProcessData(this: Series): void {
-        const series = this;
-
-        if (
-            series.xAxis && // Not pies
-            series.processedYData &&
-            series.dataModify
-        ) {
-            const processedXData = series.processedXData,
-                processedYData = series.processedYData,
-                length = processedYData.length,
-                compareStart = series.options.compareStart === true ? 0 : 1;
-            let keyIndex = -1,
-                i;
+        const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
             // against close or the pointValKey (#4922, #3112, #9854)
-            if (series.pointArrayMap) {
-                keyIndex = series.pointArrayMap.indexOf(
-                    series.options.pointValKey || series.pointValKey || 'y'
-                );
-            }
+            compareColumn = this.getColumn((
+                series.pointArrayMap &&
+                (series.options.pointValKey || series.pointValKey)
+            ) || 'y', true);
+
+        if (
+            series.xAxis && // Not pies
+            compareColumn.length &&
+            series.dataModify
+        ) {
+            const processedXData = series.getColumn('x', true),
+                length = series.dataTable.rowCount,
+                compareStart = series.options.compareStart === true ? 0 : 1;
 
             // Find the first value for comparison
-            for (i = 0; i < length - compareStart; i++) {
-                const compareValue = processedYData[i] && keyIndex > -1 ?
-                    (processedYData[i] as any)[keyIndex] : processedYData[i];
+            for (let i = 0; i < length - compareStart; i++) {
+                const compareValue = compareColumn[i];
 
                 if (
                     isNumber(compareValue) &&

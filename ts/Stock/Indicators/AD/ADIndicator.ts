@@ -18,6 +18,7 @@ import type {
     ADParamsOptions
 } from './ADOptions';
 import type ADPoint from './ADPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -129,7 +130,7 @@ class ADIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: ADParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -137,7 +138,7 @@ class ADIndicator extends SMAIndicator {
             yVal: Array<(number|null|undefined)> = (series.yData as any),
             volumeSeriesID: string = (params.volumeSeriesID as any),
             volumeSeries: LineSeries = series.chart.get(volumeSeriesID) as any,
-            yValVolume = volumeSeries && volumeSeries.yData,
+            yValVolume = volumeSeries?.getColumn('y'),
             yValLen = yVal ? yVal.length : 0,
             AD: Array<Array<number>> = [],
             xData: Array<number> = [],

@@ -402,8 +402,8 @@ namespace NodesComposition {
     ): void {
         const nodes = this.series.options.nodes,
             data = this.series.options.data,
-            dataLength = data && data.length || 0,
-            linkConfig = data && data[this.index];
+            dataLength = data?.length || 0,
+            linkConfig = data?.[this.index];
 
         pointProto.update.call(
             this,
@@ -425,7 +425,7 @@ namespace NodesComposition {
                 // options.data, because of default logic in point.update()
                 nodeConfig = merge(
                     nodes && nodes[nodeIndex] || {},
-                    data && data[this.index] || {}
+                    data?.[this.index] || {}
                 );
 
             // Restore link config

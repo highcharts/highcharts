@@ -20,13 +20,12 @@
 
 import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
+import type Chart from '../../Core/Chart/Chart';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     xrange: { prototype: { pointClass: XRangePoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { pick } = U;
 
 /* *
  *
@@ -46,23 +45,17 @@ class GanttPoint extends XRangePoint {
      * @private
      */
     public static setGanttPointAliases(
-        options: (GanttPoint|GanttPointOptions)
+        options: (GanttPoint|GanttPointOptions),
+        chart: Chart
     ): void {
-        /**
-         * Add a value to options if the value exists.
-         * @private
-         */
-        function addIfExists(prop: string, val: unknown): void {
-            if (typeof val !== 'undefined') {
-                (options as any)[prop] = val;
-            }
-        }
-
-        addIfExists('x', pick(options.start, options.x));
-        addIfExists('x2', pick(options.end, options.x2));
-        addIfExists(
-            'partialFill', pick(options.completed, options.partialFill)
+        options.x = options.start = chart.time.parse(
+            options.start ?? options.x
         );
+        options.x2 = options.end = chart.time.parse(
+            options.end ?? options.x2
+        );
+        (options as any).partialFill = options.completed =
+            options.completed ?? options.partialFill;
     }
 
     /* *
@@ -113,7 +106,9 @@ class GanttPoint extends XRangePoint {
     ): GanttPoint {
         const ganttPoint = super.applyOptions(options, x) as GanttPoint;
 
-        GanttPoint.setGanttPointAliases(ganttPoint);
+        GanttPoint.setGanttPointAliases(ganttPoint, ganttPoint.series.chart);
+
+        this.isNull = !this.isValid?.();
 
         return ganttPoint;
     }

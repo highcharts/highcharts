@@ -57,6 +57,7 @@
         "no-inner-declarations": 0, // deprecated with ES6
         "no-invalid-this": 0, // covered by TypeScript
         "no-shadow": 0, // @todo
+        "no-sequences": 0,
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo
         "no-unused-expressions": 0,

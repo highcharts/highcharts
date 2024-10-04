@@ -16,6 +16,7 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -498,15 +499,24 @@ class TreegraphSeries extends TreemapSeries {
             // Set dataLabel width to the width of the point shape.
             if (
                 point.shapeArgs &&
-                series.options.dataLabels &&
-                !splat(series.options.dataLabels)[0].style?.width
+                series.options.dataLabels
             ) {
-                options.style.width = `${point.shapeArgs.width || 0}px`;
-                if (point.dataLabel) {
-                    point.dataLabel.css({
-                        width: point.shapeArgs.width + 'px'
-                    });
+                const css: CSSObject = {};
+
+                let { width = 0, height = 0 } = point.shapeArgs;
+                if (series.chart.inverted) {
+                    [width, height] = [height, width];
                 }
+
+                if (!splat(series.options.dataLabels)[0].style?.width) {
+                    css.width = `${width}px`;
+                }
+                if (!splat(series.options.dataLabels)[0].style?.lineClamp) {
+                    css.lineClamp = Math.floor(height / 16);
+                }
+
+                extend(options.style, css);
+                point.dataLabel?.css(css);
             }
 
             // Merge custom options with point options

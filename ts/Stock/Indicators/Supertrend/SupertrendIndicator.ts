@@ -15,6 +15,7 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -40,6 +41,7 @@ const {
     addEvent,
     correctFloat,
     isArray,
+    isNumber,
     extend,
     merge,
     objectEach
@@ -57,13 +59,12 @@ const {
  */
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
-    index: number,
-    close: number
+    index: number
 ): SupertrendLinkedParentPointObject {
     return {
-        index: index,
-        close: mainSeries.yData[index][close],
-        x: mainSeries.xData[index]
+        index,
+        close: mainSeries.getColumn('close')[index],
+        x: mainSeries.getColumn('x')[index]
     } as any;
 }
 
@@ -241,6 +242,7 @@ class SupertrendIndicator extends SMAIndicator {
 
             // Series that indicator is linked to
             mainSeries = indicator.linkedParent,
+            mainXData = mainSeries.getColumn('x'),
             mainLinePoints: Array<(SupertrendLinkedParentPointObject)> =
                 (mainSeries ? mainSeries.points : []),
             indicPoints: Array<SupertrendPoint> = indicator.points,
@@ -286,8 +288,7 @@ class SupertrendIndicator extends SMAIndicator {
                     }
                 },
                 intersect: indicOptions.changeTrendLine
-            },
-            close = 3;
+            };
 
         let // Supertrend line point
             point: SupertrendPoint,
@@ -333,10 +334,11 @@ class SupertrendIndicator extends SMAIndicator {
             // but supertrend has additional one
             if (
                 !nextMainPoint &&
-                mainPoint && mainSeries.yData[mainPoint.index - 1]
+                mainPoint &&
+                isNumber(mainXData[mainPoint.index - 1])
             ) {
                 nextMainPoint = createPointObj(
-                    mainSeries, mainPoint.index - 1, close
+                    mainSeries, mainPoint.index - 1
                 );
             }
 
@@ -344,27 +346,30 @@ class SupertrendIndicator extends SMAIndicator {
             // but supertrend has additional one (and points are shifted)
             if (
                 !prevPrevMainPoint &&
-                prevMainPoint && mainSeries.yData[prevMainPoint.index + 1]
+                prevMainPoint &&
+                isNumber(mainXData[prevMainPoint.index + 1])
             ) {
                 prevPrevMainPoint = createPointObj(
-                    mainSeries, prevMainPoint.index + 1, close
+                    mainSeries, prevMainPoint.index + 1
                 );
             }
 
             // When points are shifted (right or left plot area edge)
             if (
                 !mainPoint &&
-                nextMainPoint && mainSeries.yData[nextMainPoint.index + 1]
+                nextMainPoint &&
+                isNumber(mainXData[nextMainPoint.index + 1])
             ) {
                 mainPoint = createPointObj(
-                    mainSeries, nextMainPoint.index + 1, close
+                    mainSeries, nextMainPoint.index + 1
                 );
             } else if (
                 !mainPoint &&
-                prevMainPoint && mainSeries.yData[prevMainPoint.index - 1]
+                prevMainPoint &&
+                isNumber(mainXData[prevMainPoint.index - 1])
             ) {
                 mainPoint = createPointObj(
-                    mainSeries, prevMainPoint.index - 1, close
+                    mainSeries, prevMainPoint.index - 1
                 );
             }
 
@@ -382,8 +387,10 @@ class SupertrendIndicator extends SMAIndicator {
                 } else if (point.x === nextMainPoint.x) {
                     mainPoint = nextMainPoint;
                     nextMainPoint = ({
-                        close: mainSeries.yData[mainPoint.index - 1][close],
-                        x: mainSeries.xData[mainPoint.index - 1]
+                        close: mainSeries.getColumn('close')[
+                            mainPoint.index - 1
+                        ],
+                        x: mainXData[mainPoint.index - 1]
                     } as any);
                 } else if (
                     prevPrevMainPoint && point.x === prevPrevMainPoint.x
@@ -547,7 +554,7 @@ class SupertrendIndicator extends SMAIndicator {
     //     ) THAN Current FINAL LOWERBAND
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),

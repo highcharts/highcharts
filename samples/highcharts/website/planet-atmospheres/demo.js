@@ -197,7 +197,7 @@ Highcharts.chart('container', {
         zIndex: 20,
         useHTML: true,
         labelFormatter: function () {
-            let data = this.yData[0] + '%';
+            let data = this.getColumn('y')[0] + '%';
             const index = this.index;
             if (data === 'undefined%') {
                 data = '--';

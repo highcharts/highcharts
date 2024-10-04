@@ -157,7 +157,7 @@ class ColumnSeries extends Series {
         if (init && clipOffset) {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
+                yAxis.toPixels(options.threshold || 0),
                 yAxisPos,
                 yAxisPos + yAxis.len
             );
@@ -576,6 +576,7 @@ class ColumnSeries extends Series {
                     metrics
                 );
             }
+
 
             // Cache for access in polar
             point.barX = barX;
