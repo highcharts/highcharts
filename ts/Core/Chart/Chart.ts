@@ -332,6 +332,7 @@ class Chart {
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
+    public locale?: string|Array<string>;
     public margin!: Array<number>;
     public marginBottom?: number;
     public numberFormatter!: NumberFormatterCallbackFunction;
@@ -502,6 +503,9 @@ class Chart {
              */
             this.series = [];
 
+            this.locale = options.lang.locale ??
+                (this.renderTo.closest('[lang]') as HTMLDOMElement|null)?.lang;
+
             /**
              * The `Time` object associated with the chart. Since v6.0.5,
              * time settings can be applied individually for each chart. If
@@ -514,14 +518,16 @@ class Chart {
             this.time = new Time(extend(
                 options.time || {},
                 {
-                    locale: (
-                        options.lang.locale ??
-                        (this.renderTo.closest('[lang]') as HTMLDOMElement|null)
-                            ?.lang
-                    )
+                    locale: this.locale
                 }
             ));
             options.time = this.time.options;
+
+            // Detect the number format of the locale and set the lang settings
+            // eslint-disable-next-line new-cap
+            const numString = Intl.NumberFormat(this.locale).format(10000.1);
+            options.lang.thousandsSep ??= numString[2];
+            options.lang.decimalPoint ??= numString[6];
 
             /**
              * Callback function to override the default function that formats
