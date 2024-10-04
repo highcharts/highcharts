@@ -3,7 +3,7 @@ Advanced accessibility configuration
 
 The Accessibility module is highly configurable. While the goal of the module is to provide the most accessible charts possible out of the box, it can sometimes be advantageous or necessary to make changes to the configuration.
 
-The most important configuration for the module is the text description. Read more about [basic configuration of the chart](https://www.highcharts.com/docs/accessibility/accessibility-module#basic-configuration)
+The most important configuration for the module is the text description. Read more about the [basic configuration of the chart](https://www.highcharts.com/docs/accessibility/accessibility-module#basic-configuration).
 
 
 Configuration of screen reader behavior
@@ -35,7 +35,7 @@ Highcharts.chart('container', {
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/before-chart-format )
 
-If more detailed control is required, the [`accessibility.screenReaderSection.beforeChartFormatter`](https://api.highcharts.com/highcharts/accessibility.screenReaderSection.beforeChartFormatter) option allows for definition of a function to return the HTML string, receiving the chart as an argument.
+If more detailed control is required, the [`accessibility.screenReaderSection.beforeChartFormatter`](https://api.highcharts.com/highcharts/accessibility.screenReaderSection.beforeChartFormatter) option allows for defining a function to return the HTML string, receiving the chart as an argument.
 
 ### Individual data points
 
