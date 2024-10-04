@@ -1686,10 +1686,10 @@ class Tooltip {
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
             dateTime = xAxis && xAxis.dateTime,
-            e = {
-                isFooter: isFooter,
-                labelConfig: point
-            } as AnyRecord;
+            e: Tooltip.HeaderFormatterEventObject = {
+                isFooter,
+                point
+            };
         let xDateFormat = tooltipOptions.xDateFormat,
             formatString = tooltipOptions[
                 isFooter ? 'footerFormat' : 'headerFormat'
@@ -1697,7 +1697,7 @@ class Tooltip {
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
-            e: AnyRecord
+            e: Tooltip.HeaderFormatterEventObject
         ): void {
 
             // Guess the best date format based on the closest point distance
@@ -1730,7 +1730,7 @@ class Tooltip {
             e.text = format(formatString, point, this.chart);
 
         });
-        return e.text;
+        return e.text || '';
     }
 
     /**
@@ -1848,6 +1848,12 @@ namespace Tooltip {
             this: Point,
             tooltip: Tooltip
         ): (false|string|Array<string>);
+    }
+
+    export interface HeaderFormatterEventObject {
+        isFooter?: boolean;
+        point: Point;
+        text?: string;
     }
 
     export interface PositionerCallbackFunction {
