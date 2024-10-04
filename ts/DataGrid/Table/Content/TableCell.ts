@@ -187,6 +187,8 @@ class TableCell extends Cell {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
 
+        this.htmlElement.focus();
+
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {
             target: this

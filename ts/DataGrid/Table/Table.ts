@@ -419,7 +419,8 @@ class Table {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
             columnDistribution: this.columnDistribution,
-            columnWidths: this.columns.map((column): number => column.width)
+            columnWidths: this.columns.map((column): number => column.width),
+            focusCursor: this.focusCursor
         };
     }
 
@@ -445,6 +446,13 @@ class Table {
                 this.columns[i].width = widths[i];
             }
             this.reflow();
+
+            if (meta.focusCursor) {
+                const [rowIndex, columnIndex] = meta.focusCursor;
+
+                const row = this.rows[rowIndex - this.rows[0].index];
+                row?.cells[columnIndex]?.htmlElement.focus();
+            }
         }
     }
 
@@ -490,6 +498,7 @@ namespace Table {
         scrollLeft: number;
         columnDistribution: ColumnDistribution;
         columnWidths: number[];
+        focusCursor?: [number, number];
     }
 }
 
