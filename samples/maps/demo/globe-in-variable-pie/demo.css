@@ -1,0 +1,25 @@
+* {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.highcharts-figure {
+    min-width: 360px;
+    margin: 0 auto;
+}
+
+.highcharts-description {
+    padding: 2em;
+}
+
+#container {
+    height: 600px;
+}
+
+a {
+    font-weight: bold;
+}
+
+a:hover,
+a:active {
+    text-decoration: underline;
+}
