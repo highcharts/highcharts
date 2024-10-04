@@ -1593,6 +1593,10 @@ class Series {
         const series = this,
             { dataTable: table, isCartesian, options, xAxis } = series,
             cropThreshold = options.cropThreshold,
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                // X-range series etc, #21003
+                series.getExtremesFromAll,
             logarithmic = xAxis?.logarithmic,
             dataLength = table.rowCount;
 
@@ -1617,7 +1621,7 @@ class Series {
             if (
                 isCartesian &&
                 series.sorted &&
-                !forceExtremesFromAll &&
+                !getExtremesFromAll &&
                 (
                     !cropThreshold ||
                     dataLength > cropThreshold ||
