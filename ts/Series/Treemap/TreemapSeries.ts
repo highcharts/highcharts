@@ -506,7 +506,9 @@ class TreemapSeries extends ScatterSeries {
                 }
             });
 
-            if (groupChildren.length) {
+            if (groupChildren.length === 1) {
+                groupChildren[0].visible = true;
+            } else if (groupChildren.length) {
                 const val = groupChildren.reduce(
                         (acc, child): number => acc + child.val,
                         0
@@ -534,7 +536,6 @@ class TreemapSeries extends ScatterSeries {
                     );
 
                     groupPoint = new PointClass(series, {
-                        name,
                         value: val
                     } as TreemapPointOptions);
 
@@ -550,6 +551,8 @@ class TreemapSeries extends ScatterSeries {
                     extend(groupPoint, {
                         node,
                         formatPrefix: 'groupedNodes',
+                        name,
+                        value: val,
                         groupedPointsAmount: groupChildren.length,
                         id: id
                     });
@@ -1665,6 +1668,20 @@ class TreemapSeries extends ScatterSeries {
             ),
             val: tree.val
         });
+
+        // Hide grouped node if drilled down into grouped node
+        if (rootNode.isGroup) {
+            rootNode.visible = false;
+            series.nodeList.forEach((node): void => {
+                if (
+                    !rootNode.children.find(
+                        (child): boolean => child.id === node.id
+                    )
+                ) {
+                    node.visible = false;
+                }
+            });
+        }
 
         series.calculateChildrenAreas(tree, seriesArea);
 
