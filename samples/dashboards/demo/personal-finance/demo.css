@@ -6,6 +6,7 @@
 :root {
     --highcharts-dashboards-green: #20d17e;
     --highcharts-dashboards-orange: #feaa61;
+    --highcharts-dashboards-green-transparent: #20d17e30;
 }
 
 /* General */
@@ -85,22 +86,37 @@
     fill: var(--highcharts-dashboards-orange);
 }
 
-#dashboard-row-3-cell-3 .highcharts-dashboards-component-content {
-    padding: 10px 0 !important;
-    height: 165px !important;
-}
-
 #dashboard-row-3-cell-3 .highcharts-datagrid-container {
     border: none;
     font-weight: 100;
 }
 
-#dashboard-row-3-cell-3 .highcharts-datagrid-column-header {
+.highcharts-datagrid-container table {
+    border: 0;
+}
+
+.highcharts-datagrid-container tbody {
+    background-color: var(--highcharts-neutral-color-0);
+}
+
+.highcharts-datagrid-container {
+    background-color: transparent;
+}
+
+#dashboard-row-3-cell-3 .highcharts-datagrid-table th {
     background-color: var(--highcharts-neutral-color-0);
 }
 
 #dashboard-row-3-cell-3 .highcharts-datagrid-row {
     background-color: var(--highcharts-neutral-color-0);
+}
+
+#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-column {
+    background: none;
+}
+
+#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-row td {
+    background: var(--highcharts-dashboards-green-transparent);
 }
 
 /* Custom classes and ids */

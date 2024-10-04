@@ -534,40 +534,52 @@ async function setupDashboard() {
                     highlight: true
                 },
                 dataGridOptions: {
-                    cellHeight: 38,
-                    editable: false,
-                    columns: {
-                        time: {
-                            headerFormat: 'Local Time',
-                            cellFormatter: function () {
+                    credits: {
+                        enabled: false
+                    },
+                    columns: [{
+                        id: 'time',
+                        headerFormat: 'Local Time',
+                        cells: {
+                            formatter: function () {
                                 return Highcharts.dateFormat(
                                     '%I:%M %p', this.value
                                 );
                             }
-                        },
-                        temperature: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'temperature'
-                            ),
-                            cellFormat: '{value:.1f}'
-                        },
-                        wind: {
-                            headerFormat: paramConfig.getColumnHeader('wind'),
-                            cellFormat: '{value:.1f}'
-                        },
-                        windDir: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'windDir'
-                            ),
-                            cellFormat: '{value:.0f} {log}'
-                        },
-                        precipitation: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'precipitation'
-                            ),
-                            cellFormat: '{value:.1f}'
                         }
-                    }
+                    }, {
+                        id: 'temperature',
+                        header: {
+                            format: paramConfig.getColumnHeader('temperature')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }, {
+                        id: 'wind',
+                        header: {
+                            format: paramConfig.getColumnHeader('wind')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }, {
+                        id: 'windDir',
+                        header: {
+                            format: paramConfig.getColumnHeader('windDir')
+                        },
+                        cells: {
+                            format: '{value:.0f} {log}'
+                        }
+                    }, {
+                        id: 'precipitation',
+                        header: {
+                            format: paramConfig.getColumnHeader('precipitation')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }]
                 }
             }, {
                 cell: 'city-chart',

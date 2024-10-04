@@ -36,6 +36,10 @@
     padding: 0 20px;
 }
 
+.highcharts-datagrid-table tbody {
+    scroll-behavior: smooth;
+}
+
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-col-0,
