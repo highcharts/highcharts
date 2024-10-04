@@ -684,13 +684,14 @@ QUnit.test(
             ]
         });
 
-        assert.ok(
-            chart.options.plotOptions.pie.dataLabels[0].distance === 20,
+        assert.strictEqual(
+            chart.options.plotOptions.pie.dataLabels[0].distance,
+            20,
             'Distance is defined by user, should not be merged with defaults'
         );
 
-        assert.ok(
-            chart.options.plotOptions.pie.dataLabels[0].connectorShape ===
+        assert.strictEqual(
+            chart.options.plotOptions.pie.dataLabels[0].connectorShape,
             'crookedLine',
             'ConnectorShape is not defined by user, merged with defaults'
         );
@@ -730,13 +731,14 @@ QUnit.test(
             }
         });
 
-        assert.ok(
-            chart.options.plotOptions.pie.dataLabels[0].distance === 20,
+        assert.strictEqual(
+            chart.options.plotOptions.pie.dataLabels[0].distance,
+            20,
             'Distance is defined by user, should not be merged with defaults'
         );
 
-        assert.ok(
-            chart.options.plotOptions.pie.dataLabels[0].connectorShape ===
+        assert.strictEqual(
+            chart.options.plotOptions.pie.dataLabels[0].connectorShape,
             'crookedLine',
             'ConnectorShape is not defined by user, merged with defaults'
         );
