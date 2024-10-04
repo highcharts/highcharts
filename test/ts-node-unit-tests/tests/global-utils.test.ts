@@ -32,7 +32,6 @@ describe('Global utilities', () => {
         'isNumber',
         'isObject',
         'isString',
-        'keys',
         'merge',
         'normalizeTickInterval',
         'numberFormat',
@@ -54,7 +53,7 @@ describe('Global utilities', () => {
     ];
 
     keys.forEach(key => {
-        it(`The ${key} property is defined on the Highcharts object`, () => {
+        it(`The '${key}' property should be defined on the Highcharts object`, () => {
             const prop = Highcharts[key];
             ok(prop);
             match(typeof prop, /function|object/);
