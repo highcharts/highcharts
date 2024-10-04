@@ -951,22 +951,26 @@ class Point {
     public tooltipFormatter(pointFormat: string): string {
 
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
-        const series = this.series,
-            seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
-            valuePrefix = seriesTooltipOptions.valuePrefix || '',
-            valueSuffix = seriesTooltipOptions.valueSuffix || '';
-
+        const {
+                chart,
+                pointArrayMap = ['y'],
+                tooltipOptions
+            } = this.series,
+            {
+                valueDecimals = '',
+                valuePrefix = '',
+                valueSuffix = ''
+            } = tooltipOptions;
 
         // Replace default point style with class name
-        if (series.chart.styledMode) {
-            pointFormat =
-                (series.chart.tooltip as any).styledModeFormat(pointFormat);
+        if (chart.styledMode) {
+            pointFormat = chart.tooltip?.styledModeFormat(pointFormat) ||
+                pointFormat;
         }
 
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
-        (series.pointArrayMap || ['y']).forEach(function (key: string): void {
+        pointArrayMap.forEach((key: string): void => {
             key = '{point.' + key; // Without the closing bracket
             if (valuePrefix || valueSuffix) {
 
@@ -981,10 +985,7 @@ class Point {
             );
         });
 
-        return format(pointFormat, {
-            point: this,
-            series: this.series
-        }, series.chart);
+        return format(pointFormat, this, chart);
     }
 
     /**
