@@ -262,13 +262,13 @@ class Tooltip {
         let s: (string|Array<string>);
 
         // Build the header
-        s = [tooltip.tooltipFooterHeaderFormatter(hoverPoints[0])];
+        s = [tooltip.headerFooterFormatter(hoverPoints[0])];
 
         // Build the values
         s = s.concat(tooltip.bodyFormatter(hoverPoints));
 
         // Footer
-        s.push(tooltip.tooltipFooterHeaderFormatter(hoverPoints[0], true));
+        s.push(tooltip.headerFooterFormatter(hoverPoints[0], true));
 
         return s;
     }
@@ -1676,9 +1676,9 @@ class Tooltip {
      * #3397: abstraction to enable formatting of footer and header
      *
      * @private
-     * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
+     * @function Highcharts.Tooltip#headerFooterFormatter
      */
-    public tooltipFooterHeaderFormatter(
+    public headerFooterFormatter(
         point: Point,
         isFooter?: boolean
     ): string {

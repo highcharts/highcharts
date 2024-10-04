@@ -47,7 +47,7 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
     chart.tooltip.refresh([chart.series[0].points[0]]);
 
     assert.strictEqual(
-        chart.tooltip.tooltipFooterHeaderFormatter(
+        chart.tooltip.headerFooterFormatter(
             chart.series[0].points[0],
             false
         ),
@@ -65,7 +65,7 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
         'Keys in header should be replaced'
     );
     assert.strictEqual(
-        chart.tooltip.tooltipFooterHeaderFormatter(
+        chart.tooltip.headerFooterFormatter(
             chart.series[0].points[0],
             true
         ),
