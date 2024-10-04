@@ -144,7 +144,7 @@ const dataGrid = new DataGrid('container', {
 });
 ```
 
-If a row reference is needed, an index column has to be part of the table:
+If a row reference is needed, an index column has to be part of the dataTable:
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
@@ -156,7 +156,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
+dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
 ```
 
 

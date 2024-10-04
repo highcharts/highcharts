@@ -62,6 +62,13 @@ Dashboards.board('container', {
         type: 'DataGrid',
         connector: {
             id: 'data'
+        },
+        dataGridOptions: {
+            columnDefaults: {
+                cells: {
+                    editable: true
+                }
+            }
         }
     }]
 });

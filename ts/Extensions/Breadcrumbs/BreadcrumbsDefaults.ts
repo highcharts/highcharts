@@ -35,7 +35,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const lang: Partial<LangOptions> = {
     /**
      * @since   10.0.0
-     * @product highcharts
+     * @product highcharts highmaps
      *
      * @private
      */

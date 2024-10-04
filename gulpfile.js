@@ -107,7 +107,6 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/update-vendor',
     'unsorted/upload-files',
     'update-pr-testresults',
-    'update-pr-testresults-cypress',
     'pr-size-table'
 ]));
 
