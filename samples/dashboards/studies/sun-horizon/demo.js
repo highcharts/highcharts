@@ -798,7 +798,7 @@ const createBoard = async () => {
                 padding: '10px'
             },
             title: 'Time control',
-            elements: [`
+            html: `
             <div class="component-padding">
                 <p>
                     <label id="date-input-label" for="date-input"></label>
@@ -814,7 +814,7 @@ const createBoard = async () => {
                     </button>
                 </p>
             </div>
-            `],
+            `,
             events: {
                 // @todo - at the time of the `mount` event, the elements are
                 // not yet attached, so I need to use `resize`. What is the
