@@ -147,7 +147,6 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
         // eslint-disable-next-line jsdoc/require-description
         /**
-         * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
          * @default function () {
          *   let format;
          *

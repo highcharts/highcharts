@@ -1922,14 +1922,15 @@ export default Tooltip;
  * Callback function to format the text of the tooltip from scratch.
  *
  * In case of single or shared tooltips, a string should be returned. In case
- * of splitted tooltips, it should return an array where the first item is the
+ * of split tooltips, it should return an array where the first item is the
  * header, and subsequent items are mapped to the points. Return `false` to
  * disable tooltip for a specific point on series.
  *
  * @callback Highcharts.TooltipFormatterCallbackFunction
  *
- * @param {Highcharts.TooltipFormatterContextObject} this
- * Context to format
+ * @param {Highcharts.Point} this
+ * The formatter's context is the hovered `Point` instance. In case of shared or
+ * split tooltips, all points are available in `this.points`.
  *
  * @param {Highcharts.Tooltip} tooltip
  * The tooltip instance

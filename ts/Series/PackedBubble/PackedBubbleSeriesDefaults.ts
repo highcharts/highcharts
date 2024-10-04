@@ -146,7 +146,6 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          * Note that if a `format` is defined, the format takes precedence
          * and the formatter is ignored.
          *
-         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.0.0
          */
         formatter: function (
@@ -166,7 +165,6 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
 
         // eslint-disable-next-line valid-jsdoc
         /**
-         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
         parentNodeFormatter: function (

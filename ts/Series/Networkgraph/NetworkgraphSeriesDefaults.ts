@@ -147,7 +147,6 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * Note that if a `format` is defined, the format takes precedence
          * and the formatter is ignored.
          *
-         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
          * @since 7.0.0
          */
         formatter: function (
@@ -173,7 +172,6 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * The `linkFormat` option takes precedence over the
          * `linkFormatter`.
          *
-         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
         linkFormatter: function (

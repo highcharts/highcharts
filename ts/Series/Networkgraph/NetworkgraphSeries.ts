@@ -604,18 +604,6 @@ export default NetworkgraphSeries;
  * */
 
 /**
- * Formatter callback function.
- *
- * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.Point} this
- *        Data label context to format
- *
- * @return {string}
- *         Formatted data label text
- */
-
-/**
  * Callback that fires after the end of Networkgraph series simulation
  * when the layout is stable.
  *

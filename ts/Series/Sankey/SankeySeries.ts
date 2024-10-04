@@ -876,7 +876,7 @@ export default SankeySeries;
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SankeyPoint|Highcharts.Point} this
+ * @param {Highcharts.Point} this
  *        Data label context to format
  *
  * @return {string|undefined}

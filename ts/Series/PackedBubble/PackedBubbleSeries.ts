@@ -1325,24 +1325,3 @@ SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
  * */
 
 export default PackedBubbleSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * Formatter callback function.
- *
- * @callback Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject} this
- *        Data label context to format
- *
- * @return {string}
- *         Formatted data label text
- */
-
-
-''; // Detach doclets above
