@@ -43,6 +43,7 @@ const EditGlobals: EditGlobals = {
         editSidebar: PREFIX + 'sidebar',
         editSidebarShow: PREFIX + 'sidebar-show',
         editSidebarHide: PREFIX + 'sidebar-hide',
+        editSidebarHeader: PREFIX + 'sidebar-header',
         editSidebarTitle: PREFIX + 'sidebar-title',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         rowContextHighlight: PREFIX + 'row-context-highlight',
@@ -206,6 +207,7 @@ namespace EditGlobals {
         editOverlayActive: string;
         editSidebar: string;
         editSidebarHide: string;
+        editSidebarHeader: string;
         editSidebarMenuItem: string;
         editSidebarRight: string;
         editSidebarRightShow: string;

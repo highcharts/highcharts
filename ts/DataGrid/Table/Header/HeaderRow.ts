@@ -95,7 +95,7 @@ class HeaderRow extends Row {
         const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
-        vp.theadElement.appendChild(this.htmlElement);
+        vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.classNames.headerRow);
 
         if (!header) {
