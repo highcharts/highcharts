@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Kamil Musiałowski
+ *  (c) 2010-2024 Kamil Musialowski
  *
  *  License: www.highcharts.com/license
  *
@@ -32,9 +32,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
     pointPadding: 0.1,
     pointRange: null,
     dataGrouping: {
-        groupAll: true,
-        enabled: true,
-        forced: true
+        enabled: false
     },
     markerUp: {
         symbol: 'cross',

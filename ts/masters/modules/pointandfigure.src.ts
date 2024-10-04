@@ -6,11 +6,13 @@
  *
  * Point and figure series type for Highcharts Stock
  *
- * (c) 2010-2024 Kamil Musiałowski
+ * (c) 2010-2024 Kamil Musialowski
  *
  * License: www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Series/PointAndFigure/PointAndFigureSeries.js';
+import PointAndFigureSeries from '../../Series/PointAndFigure/PointAndFigureSeries.js';
+const G: AnyRecord = Highcharts;
+PointAndFigureSeries.compose(G.Axis);
 export default Highcharts;

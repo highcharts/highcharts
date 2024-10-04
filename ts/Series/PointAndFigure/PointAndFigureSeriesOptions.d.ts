@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024
+ *  (c) 2010-2024 Kamil Musialowski
  *
  *  License: www.highcharts.com/license
  *
@@ -25,14 +25,10 @@ import ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 
 interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
-    boxSize?: number|string;
-    reversalAmount?: number;
-    pointPadding?: number;
-    markerUp?: PnfPointMarkerOptions;
-}
-
-interface PnfPointMarkerOptions extends PointMarkerOptions {
-    markerUp?: PointMarkerOptions;
+    boxSize: number|string;
+    reversalAmount: number;
+    pointPadding: number;
+    markerUp: PointMarkerOptions;
 }
 
 
