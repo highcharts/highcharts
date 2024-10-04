@@ -1,85 +1,88 @@
 describe('layout resize on window changes', () => {
-    before(()=>{
+    before(() => {
         cy.visit('/dashboards/cypress/component-datagrid-custom-html');
     });
 
-    it('The columnAssignment and visibleColumns should be respected', () =>{
-        cy.get('.highcharts-datagrid-column-header').should('have.length', 2);
-        cy.chart().then(chart =>{
-            assert.strictEqual(
-                chart.series.length,
-                1,
-                'The chart should have only one series.'
-            )
+    it('The columnAssignment should be respected', () => {
+        cy.get('th').should('have.length', 2);
+        cy.chart().then((chart) => {
+            assert.strictEqual(chart.series.length, 1, 'The chart should have only one series.');
         });
-    })
-
-    it('Chart and DataGridComponent should have synced hover events.', () => {
-        const firstDataGridRow = cy.get('.highcharts-datagrid-cell').eq(0)
-
-        // Hover over DataGridComponent.
-        firstDataGridRow.trigger('mouseover');
-        firstDataGridRow.parent().should('have.class', 'highcharts-datagrid-row hovered');
-        cy.chart().then(chart =>{
-            assert.notOk(
-                chart.tooltip.isHidden,
-                'When hovering over DataGrid, chart should have tooltip.'
-            )
-        })
-
-        // Hover over the chart.
-        cy.get('.highcharts-point').eq(1).trigger('mouseover');
-        firstDataGridRow.parent().should('not.have.class', 'highcharts-datagrid-row hovered');
-        cy.get('.highcharts-datagrid-row').eq(1).should('have.class', 'highcharts-datagrid-row hovered');
-
-        // Hover over the first point
-        cy.get('.highcharts-point').eq(0).trigger('mouseover');
-        firstDataGridRow.parent().should('not.have.class', 'highcharts-datagrid-row hovered');
-        cy.get('.highcharts-datagrid-row').eq(0).should('have.class', 'highcharts-datagrid-row hovered');
     });
 
-    it('Updating of the store should work by changing chart and datagrid', () =>{
-        cy.get('.highcharts-datagrid-row').eq(1).children().eq(1)
-            .type('{backspace}{backspace}{backspace}000');
+    it('Chart and DataGridComponent should have synced hover events.', () => {
+        // Arrange
+        cy.get('tr.highcharts-datagrid-row').eq(0).as('firstDataGridRow');
+        cy.get('tr.highcharts-datagrid-row').eq(1).as('secondDataGridRow');
 
-        cy.chart().then(chart =>{
+        // Act - hover over DataGridComponent.
+        cy.get('@firstDataGridRow').children().eq(0).trigger('mouseover');
+
+        // Assert - hover over DataGridComponent.
+        cy.get('@firstDataGridRow').should('have.class', 'highcharts-datagrid-hovered-row');
+        cy.get('@firstDataGridRow').children().eq(0).should('have.class', 'highcharts-datagrid-hovered-column');
+        cy.get('@firstDataGridRow').children().eq(1).should('not.have.class', 'highcharts-datagrid-hovered-column');
+        cy.chart().then((chart) => {
+            assert.notOk(chart.tooltip.isHidden, 'When hovering over DataGrid, chart should have tooltip.');
+        });
+
+        // Act - hover over the chart.
+        cy.get('.highcharts-point').eq(1).trigger('mouseover');
+
+        // Assert - hover over the chart.
+        cy.get('@firstDataGridRow').should('not.have.class', 'highcharts-datagrid-hovered-row');
+        cy.get('@secondDataGridRow').should('have.class', 'highcharts-datagrid-hovered-row');
+        cy.get('@secondDataGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-hovered-column');
+        cy.get('@secondDataGridRow').children().eq(1).should('have.class', 'highcharts-datagrid-hovered-column');
+    });
+
+    it('Updating of the store should work by changing chart and datagrid', () => {
+        // Arrange
+        cy.get('tr.highcharts-datagrid-row').eq(1).children().eq(1).as('dataGridCell');
+
+        // Act
+        cy.get('@dataGridCell').dblclick().type('{backspace}{backspace}{backspace}000{enter}');
+
+        // Assert
+        cy.chart().then((chart) => {
             assert.strictEqual(
                 chart.series[0].points[1].y,
                 2000,
                 'After updating the Data Grid the chart should be updated.'
-            )
-        })
-
-        cy.get('input.highcharts-datagrid-cell-input').should('have.focus');
-    })
+            );
+        });
+    });
 
     it('Chart and DataGridComponent should have synced extremes events.', () => {
+        // Arrange
         let containerTop;
 
-        cy.get('.highcharts-datagrid-outer-container')
+        // Act
+        cy.get('tbody')
             .invoke('scrollTop')
             .then((scrollTopValue) => {
                 containerTop = scrollTopValue;
             });
-
-        cy.get('.highcharts-dashboards-component-highcharts-content').eq(0)
+        cy.get('.highcharts-dashboards-component-highcharts-content')
+            .eq(0)
             .trigger('mousedown', 300)
             .trigger('mousemove', 300, 100)
             .trigger('mouseup');
 
-        cy.get('.highcharts-datagrid-outer-container').then($container =>{
+        // Assert
+        cy.get('tbody').then(($container) => {
             assert.ok(
                 $container.scrollTop() > containerTop,
                 'When selecting a range in the chart, the DataGridComponent should scroll.'
-            )
-        })
+            );
+        });
     });
 
     it('Toggling series visibility should change hide/show column in DataGridComponent', () => {
         cy.get('.highcharts-legend-item').eq(0).click();
-        cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 1);
+        cy.get('th').should('have.length', 1);
         cy.get('.highcharts-legend-item').eq(0).click();
-        cy.get('.highcharts-datagrid-column-headers').children().should('have.length', 2);
+        cy.get('th').should('have.length', 2);
     });
 
     it('DataGridComponent should not throw error when dragging point on chart.', () => {
@@ -96,19 +99,15 @@ describe('layout resize on window changes', () => {
                 board.mountedComponents[1].component.connectorHandlers[0].connector.table.emit({
                     type: 'afterSetCell'
                 });
-            }
-            catch (e) {
+            } catch (e) {
                 error = true;
             }
 
-            assert.ok(
-                !error,
-                'Error in reference to cells should not be thrown.'
-            )
+            assert.ok(!error, 'Error in reference to cells should not be thrown.');
         });
     });
 
     it('The dataGridOptions should be applied to the component.', () => {
-        cy.get('.highcharts-datagrid-column-header').eq(1).should('have.text', 'Vitamin A (IU)');
+        cy.get('th').eq(1).should('have.text', 'Vitamin A (IU)');
     });
 });

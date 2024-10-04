@@ -21,7 +21,7 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -34,7 +34,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Run unit tests
-        run: npx ts-node test/ts-node-unit-tests/index.ts
+        run: npm run test-node
 
   test_cypress:
     name: Cypress tests

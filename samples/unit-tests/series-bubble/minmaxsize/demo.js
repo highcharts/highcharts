@@ -70,6 +70,35 @@ QUnit.test(
                 );
             });
         });
+
+        chart.update({
+            chart: {
+                width: 200,
+                type: 'bubble'
+            },
+            xAxis: {
+                categories: ['a', 'b']
+            },
+            series: [
+                { data: [1, 2], maxSize: 600 }
+            ]
+        });
+
+        const xAxis = chart.series[0].xAxis,
+            { ticks, tickPositions } = xAxis;
+
+        for (const tickPos of tickPositions) {
+            const correctLabelState = tickPos === 0 ? 'inherit' : 'hidden';
+            assert.strictEqual(
+                ticks[tickPos].label.visibility,
+                correctLabelState,
+                `Label of tick-position ${
+                    tickPos
+                } should be \"${
+                    correctLabelState
+                }\"`
+            );
+        }
     }
 );
 QUnit.test(

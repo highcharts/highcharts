@@ -102,9 +102,13 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: {
-                'Vitamin A': {
-                    headerFormat: '{text} μg'
+                id: 'Vitamin A',
+                header: {
+                    format: '{id} μg'
                 }
             }
         }
