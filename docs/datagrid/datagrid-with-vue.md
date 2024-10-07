@@ -9,13 +9,7 @@ To create a DataGrid with Angular please follow the steps below: <br>
     npm install @highcharts/dashboards
     ```
 
-2. Import the Dashboards package.
-
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    ```
-
-3. Create a DataGrid Vue component:
+2. Create a DataGrid Vue component:
 
     ```html
     // DataGrid.vue
@@ -41,7 +35,7 @@ To create a DataGrid with Angular please follow the steps below: <br>
 
     ```
 
-4. Use the component in your application:
+3. Use the component in your application:
 
     ```html
     // App.vue

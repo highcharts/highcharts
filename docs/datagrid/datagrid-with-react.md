@@ -7,23 +7,57 @@ To create a DataGrid with Angular please follow the steps below: <br>
 
     ```bash
     npm install @highcharts/dashboards
+    ````
+
+3. Create a DataGrid React component:
+
+    ```tsx
+    // DataGrid.tsx
+
+    import { useEffect } from 'react';
+    import DG from '@highcharts/dashboards/datagrid';
+    import '@highcharts/dashboards/css/datagrid.css';
+
+    export default function DataGrid(props: { config: DG.Options }) {
+        const { config } = props;
+
+        useEffect(() => {
+            DG.dataGrid('container', config);
+        }, [config]);
+
+        return (
+            <div id="container" />
+        );
+    }
+
     ```
 
-2. Import the Dashboards package.
+4. Use the component in your application:
 
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
+    ```tsx
+    // App.tsx
+
+    import DataGrid from "./components/DataGrid";
+
+    function App() {
+
+        const config: DataGrid.Options = {
+            dataTable: {
+                columns: {
+                    name: ['John', 'Jane', 'Joe', 'Jack'],
+                    age: [24, 25, 26, 27],
+                    city: ['New York', 'Los Angeles', 'Chicago', 'Houston'],
+                }
+            }
+        }
+
+        return (
+            <div className="App">
+                <DataGrid config={config} />
+            </div>
+        );
+    }
+
+    export default App;
+
     ```
-
-3. Create a HTML container.  
-
-    Add a div where you want to render the dashboard:
-    ```html
-    <div id="container"></div>
-    ```
-
-    You can refer to the element by its id or you can use the `ElementRef` to get the element.
-
-4. Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes three arguments:
-    - `container` - the element where the DataGrid will be rendered, can be an id of the element or the direct reference to the element
-    - `options` - the options object for the DataGrid
