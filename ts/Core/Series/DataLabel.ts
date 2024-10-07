@@ -566,7 +566,7 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            const nullInteraction = (series.options as any)?.nullInteraction;
+            const nullInteraction = (seriesOptions as any)?.nullInteraction;
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
