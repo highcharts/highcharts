@@ -1223,7 +1223,12 @@ class Tooltip {
                 const { xAxis, yAxis } = series;
 
                 if (!plotY && (series.options as any)?.nullInteraction) {
-                    plotY = chart.plotSizeY || 0;
+                    plotY = clamp(
+                        (
+                            chart.plotSizeY || 0),
+                        0,
+                        yAxis.len - yAxis.pos - distance
+                    );
                 }
 
                 // Set anchorX to plotX. Limit to within xAxis.
