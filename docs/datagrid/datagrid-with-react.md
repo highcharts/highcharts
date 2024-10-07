@@ -44,9 +44,9 @@ To create a DataGrid with Angular please follow the steps below: <br>
         const config: DataGrid.Options = {
             dataTable: {
                 columns: {
-                    name: ['John', 'Jane', 'Joe', 'Jack'],
-                    age: [24, 25, 26, 27],
-                    city: ['New York', 'Los Angeles', 'Chicago', 'Houston'],
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
                 }
             }
         }
