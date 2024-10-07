@@ -74,8 +74,7 @@ const board = Dashboards.board('container', {
         dataGridOptions: {
             credits: {
                 enabled: false
-            },
-            editable: false
+            }
         }
     }, {
         // Modified sheet
@@ -88,8 +87,7 @@ const board = Dashboards.board('container', {
         dataGridOptions: {
             credits: {
                 enabled: false
-            },
-            editable: false
+            }
         }
     }]
 });
