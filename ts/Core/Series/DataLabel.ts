@@ -241,7 +241,7 @@ namespace DataLabel {
             { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
-            plotY = point.plotY || (
+            plotY = point.plotY ?? (
                 (series.options as any)?.nullInteraction && chart.plotSizeY
             ),
             rotation = options.rotation || 0,
