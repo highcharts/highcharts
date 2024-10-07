@@ -34,7 +34,7 @@ To create a DataGrid with Angular please follow the steps below: <br>
 Example:
 ```ts
 import { Component, OnInit } from '@angular/core';
-import DataGrid from '@highcharts/dashboards/datagrid.src';
+import DataGrid from '@highcharts/dashboards/datagrid';
 import '@highcharts/dashboards/css/datagrid.css';
 
 @Component({
