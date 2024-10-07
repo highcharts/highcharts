@@ -24,7 +24,7 @@ To create a DataGrid with Angular please follow the steps below: <br>
 
     watch(datagridContainer, () => {
         if (datagridContainer.value) {
-            DataGrid.dataGrid(datagridContainer.value, props.config, true);
+            DataGrid.dataGrid(datagridContainer.value, props.config);
         }
     });
     </script>

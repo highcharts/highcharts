@@ -27,7 +27,7 @@ To create a DataGrid with Angular please follow the steps below: <br>
     - `options` - the object options for the DataGrid
 
     ```ts
-    DataGrid.dataGrid('container', this.options, true);
+    DataGrid.dataGrid('container', this.options);
     ```
 
 
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        DataGrid.dataGrid('container', this.options, true);
+        DataGrid.dataGrid('container', this.options);
     }
 }
 ```
