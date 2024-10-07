@@ -368,28 +368,30 @@ class AreaRangeSeries extends AreaSeries {
         // Create a line on both top and bottom of the range
         const linePath: SVGPath = ([] as SVGPath).concat(lowerPath, higherPath);
 
+        this.graphPath = linePath;
+
+        const areaPath: SVGPath = lowerPath.concat(higherAreaPath);
+
         // For the area path, we need to change the 'move' statement into
         // 'lineTo'
-        if (
-            !this.chart.polar &&
-            higherAreaPath[0] &&
-            higherAreaPath[0][0] === 'M'
-        ) {
-            // This probably doesn't work for spline
-            higherAreaPath[0] = [
-                'L',
-                higherAreaPath[0][1],
-                higherAreaPath[0][2]
-            ];
+        if (!this.chart.polar) {
+            for (let i = 1; i < areaPath.length; i++) {
+                if (areaPath[i][0] === 'M') {
+                    areaPath[i] = [
+                        'L',
+                        areaPath[i][1] || 0,
+                        areaPath[i][2] || 0
+                    ];
+                }
+            }
         }
-
-        this.graphPath = linePath;
-        this.areaPath = lowerPath.concat(higherAreaPath);
 
         // Prepare for sideways animation
         linePath.isArea = true;
         linePath.xMap = lowerPath.xMap;
-        this.areaPath.xMap = lowerPath.xMap;
+        areaPath.xMap = lowerPath.xMap;
+
+        this.areaPath = areaPath;
 
         return linePath;
     }

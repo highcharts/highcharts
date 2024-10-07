@@ -834,6 +834,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Center step with no risers
      * @sample {highcharts} highcharts/plotoptions/area-step/
      *         Stepped, stacked area
+     * @sample {highcharts} highcharts/plotoptions/arearange-step/
+     *         Area reange with steps
      * @sample {highstock} stock/plotoptions/line-step/
      *         Step line
      * @sample {highstock} stock/plotoptions/line-step-no-risers/
