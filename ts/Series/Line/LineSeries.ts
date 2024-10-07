@@ -253,12 +253,12 @@ class LineSeries extends Series {
             // Line series, nullsAsZeroes is not handled
             if (isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
-
-            // Area series, nullsAsZeroes is set
-            } else if (isNull && !nullsAsZeroes) {
                 if (nullInteraction) {
                     plotY = point.plotY = chart.plotSizeY || 0;
                 }
+
+            // Area series, nullsAsZeroes is set
+            } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
             } else {

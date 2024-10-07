@@ -241,7 +241,9 @@ namespace DataLabel {
             { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
-            plotY = point.plotY,
+            plotY = point.plotY || (
+                (series.options as any)?.nullInteraction && chart.plotSizeY
+            ),
             rotation = options.rotation || 0,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
@@ -564,6 +566,7 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
+            const nullInteraction = (series.options as any)?.nullInteraction;
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
@@ -589,7 +592,11 @@ namespace DataLabel {
                             labelOptions.enabled &&
                             (point.visible || point.dataLabelOnHidden) &&
                             // #2282, #4641, #7112, #10049
-                            (!point.isNull || point.dataLabelOnNull) &&
+                            (
+                                !point.isNull ||
+                                point.dataLabelOnNull ||
+                                nullInteraction
+                            ) &&
                             applyFilter(point, labelOptions)
                         ),
                         {
@@ -623,11 +630,13 @@ namespace DataLabel {
                         labelText = defined(formatString) ?
                             format(formatString, labelConfig, chart) :
                             (
-                                (labelOptions as any)[
-                                    point.formatPrefix + 'Formatter'
-                                ] ||
-                                labelOptions.formatter
-                            ).call(labelConfig, labelOptions);
+                                point.isNull ? 'Null' : (
+                                    (labelOptions as any)[
+                                        point.formatPrefix + 'Formatter'
+                                    ] ||
+                                    labelOptions.formatter
+                                ).call(labelConfig, labelOptions)
+                            );
 
                         rotation = labelOptions.rotation;
 
