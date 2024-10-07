@@ -235,12 +235,11 @@ class LineSeries extends Series {
 
             const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1];
+                lastPoint = (points as any)[i - 1],
+                isNull = point.isNull || typeof plotY !== 'number';
 
             // The path to this point from the previous
             let pathToPoint: SVGPath;
-
-            const isNull = point.isNull || typeof plotY !== 'number';
 
             if (
                 (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
