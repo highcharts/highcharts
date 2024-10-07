@@ -630,7 +630,7 @@ namespace DataLabel {
                         labelText = defined(formatString) ?
                             format(formatString, labelConfig, chart) :
                             (
-                                point.isNull ? 'Null' : (
+                                (point.isNull && nullInteraction) ? 'Null' : (
                                     (labelOptions as any)[
                                         point.formatPrefix + 'Formatter'
                                     ] ||
