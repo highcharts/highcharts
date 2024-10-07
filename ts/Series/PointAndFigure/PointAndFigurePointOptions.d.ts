@@ -8,8 +8,8 @@
  *
  * */
 
-import { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import ScatterPoint from '../Scatter/ScatterPoint';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type ScatterPoint from '../Scatter/ScatterPoint';
 
 /* *
  *

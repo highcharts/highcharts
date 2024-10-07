@@ -14,8 +14,8 @@
  *
  * */
 
-import { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *

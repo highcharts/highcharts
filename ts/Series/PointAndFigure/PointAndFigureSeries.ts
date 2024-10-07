@@ -17,14 +17,14 @@
 
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
-import PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
-import ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
-import Point from '../../Core/Series/Point.js';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import Axis from '../../Core/Axis/Axis.js';
-import { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
+import type Point from '../../Core/Series/Point.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
+import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
