@@ -483,6 +483,7 @@ class ColumnSeries extends Series {
             threshold = options.threshold,
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
+            nullInteraction = options.nullInteraction,
             seriesPointWidth = metrics.width,
             seriesXOffset = series.pointXOffset = metrics.offset,
             dataMin = series.dataMin,
@@ -511,7 +512,10 @@ class ColumnSeries extends Series {
                 // Don't draw too far outside plot area (#1303, #2241,
                 // #4264)
                 plotY = clamp(
-                    point.plotY as any,
+                    (
+                        point.isNull && nullInteraction && (
+                            chart.plotSizeY || 0)
+                    ) || point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
                 );
