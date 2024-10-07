@@ -305,12 +305,12 @@ const datagridComponent = {
         columns: [{
             id: 'time',
             header: {
-                format: 'Time (UTC)'
+                format: 'Time (local)'
             },
             cells: {
                 formatter: function () {
                     return Highcharts.dateFormat(
-                        '%H:%M',
+                        '%H:%M:%S',
                         this.value
                     );
                 }
@@ -367,11 +367,13 @@ async function createDashboard() {
         const idx = activeItem.generatorId - 1;
         const aggData = data.aggs[idx];
 
+        // Timezone offset in milliseconds
+        const tzOffset = new Date().getTimezoneOffset() * 60000;
+
         if (useHistoricalData) {
             // Get measurement history (24 hours, 10 minute intervals)
             const hist = aggData.P_hist;
-            let ts = new Date(hist.start).valueOf();
-
+            let ts = new Date(hist.start).valueOf() - tzOffset;
             const interval = hist.res * 1000; // Resolution: seconds
             const histLen = hist.values.length;
 
@@ -386,7 +388,7 @@ async function createDashboard() {
             }
         } else {
             // Use latest measurement
-            const ts = new Date(data.tst_iso).valueOf();
+            const ts = new Date(data.tst_iso).valueOf() - tzOffset;
             modifiedData.push([ts, aggData.P_gen]);
         }
 
@@ -710,9 +712,12 @@ async function dashboardUpdate(mqttData, connId) {
     const idx = activeItem.generatorId - 1;
     const aggInfo = mqttData.aggs[idx];
 
-    // Get data
+    // Get data from connector
     const dataTable = await dashboard.dataPool.getConnectorTable(connId);
     const rowCount = await dataTable.getRowCount();
+    if (rowCount === 0) {
+        return;
+    }
 
     const chartOptions = {
         yAxis: {
@@ -728,11 +733,11 @@ async function dashboardUpdate(mqttData, connId) {
 
     // KPI
     const kpiComp = dashboard.getComponentByCellId('el-kpi');
+    const power = dataTable.getCell('power', rowCount - 1);
     await kpiComp.update({
-        value: rowCount > 0 ?
-            dataTable.getCellAsNumber('power', rowCount - 1) : 0,
+        value: power,
         chartOptions: chartOptions,
-        title: aggName + ' (current)'
+        title: aggName + ' (latest)'
     });
 
     // Chart
@@ -742,18 +747,16 @@ async function dashboardUpdate(mqttData, connId) {
             id: connId
         },
         chartOptions: chartOptions,
-        title: aggName + ' (24h)'
+        title: aggName + ' (history)'
     });
 
     // Datagrid
     const gridComp = dashboard.getComponentByCellId('el-datagrid');
-    // gridComp.dataGrid.viewport.loadPresentationData();
-    log('Update datagrid: ' + connId + ', ' + aggName);
     await gridComp.update({
         connector: {
             id: connId
         },
-        title: aggName + ' (24h)'
+        title: aggName + ' (history)'
     });
 }
 
