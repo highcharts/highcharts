@@ -346,9 +346,8 @@ class Tooltip {
             let chartX = 0,
                 chartY = 0;
             points.forEach(function (point): void {
-                const pos = point.pos(
-                    true
-                );
+                const pos = point.pos(true);
+
                 if (pos) {
                     chartX += pos[0];
                     chartY += pos[1];

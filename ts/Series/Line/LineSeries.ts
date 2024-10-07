@@ -197,7 +197,6 @@ class LineSeries extends Series {
     ): SVGPath {
         const series = this,
             options = series.options,
-            nullInteraction = options.nullInteraction,
             graphPath = [] as SVGPath,
             xMap: Array<(number|null)> = [];
         let gap: boolean,
@@ -223,7 +222,7 @@ class LineSeries extends Series {
         points = this.getValidPoints(
             points,
             false,
-            nullInteraction || !(
+            options.nullInteraction || !(
                 options.connectNulls &&
                     !nullsAsZeroes &&
                     !connectCliffs
@@ -237,7 +236,6 @@ class LineSeries extends Series {
                 plotY = point.plotY,
                 lastPoint = (points as any)[i - 1],
                 isNull = point.isNull || typeof plotY !== 'number';
-
             // The path to this point from the previous
             let pathToPoint: SVGPath;
 

@@ -3577,7 +3577,8 @@ class Series {
         this.buildingKdTree = true;
 
         const series = this,
-            dimensions = (series.options.findNearestPointBy as any)
+            seriesOptions = series.options,
+            dimensions = (seriesOptions.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3631,7 +3632,7 @@ class Series {
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
                     !series.directTouch,
-                    (series.options as any)?.nullInteraction
+                    (seriesOptions as any)?.nullInteraction
                 ),
                 dimensions,
                 dimensions
@@ -3644,7 +3645,7 @@ class Series {
         // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
+            seriesOptions.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
