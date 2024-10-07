@@ -18,6 +18,7 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
+import ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 import Point from '../../Core/Series/Point.js';
@@ -155,7 +156,7 @@ class PointAndFigureSeries extends ScatterSeries {
         /**
          *
          */
-        function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): any {
+        function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): number {
             const y = pnfDataGroups[pnfDataGroups.length - 1].y;
             return y[y.length - 1];
         }
@@ -254,7 +255,7 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         // Process the pnfDataGroups to HC series format
-        const finalData: any = [];
+        const finalData: ScatterPointOptions[] = [];
 
         series.processedXData.length = 0;
         series.processedYData.length = 0;
@@ -280,7 +281,7 @@ class PointAndFigureSeries extends ScatterSeries {
     public markerAttribs(
         point: Point
     ): SVGAttributes {
-        const series = this as any,
+        const series = this,
             options = series.options,
             attribs: SVGAttributes = {},
             pos = point.pos();
