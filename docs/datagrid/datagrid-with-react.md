@@ -14,19 +14,22 @@ To create a DataGrid with Angular please follow the steps below: <br>
     ```tsx
     // DataGrid.tsx
 
-    import { useEffect } from 'react';
+    import { useEffect, useRef } from 'react';
     import DG from '@highcharts/dashboards/datagrid';
     import '@highcharts/dashboards/css/datagrid.css';
 
     export default function DataGrid(props: { config: DG.Options }) {
         const { config } = props;
+        const containerRef = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
-            DG.dataGrid('container', config);
+            if (containerRef.current) {
+                DG.dataGrid(containerRef.current, config);
+            }
         }, [config]);
 
         return (
-            <div id="container" />
+            <div ref={containerRef} />
         );
     }
 
