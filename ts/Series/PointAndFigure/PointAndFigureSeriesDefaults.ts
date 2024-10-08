@@ -24,7 +24,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
           '<b> {series.name}</b><br/>' +
-          'Close: {point.y}<br/>',
+          'Close: {point.y:.2f}<br/>',
         headerFormat: ''
     },
     turboThreshold: 0,

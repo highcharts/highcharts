@@ -28,6 +28,7 @@ interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     boxSize: number|string;
     reversalAmount: number;
     pointPadding: number;
+    marker: PointMarkerOptions;
     markerUp: PointMarkerOptions;
 }
 

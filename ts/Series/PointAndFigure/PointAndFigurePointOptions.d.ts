@@ -8,7 +8,6 @@
  *
  * */
 
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 
 /* *
@@ -23,10 +22,10 @@ import type ScatterPoint from '../Scatter/ScatterPoint';
  *
  * */
 
-interface PointAndFigurePoint extends ScatterPoint {
+interface PointAndFigurePointOptions extends ScatterPoint {
     x: number;
     y: number;
-    marker?: PointMarkerOptions;
+    upTrend: boolean;
 }
 
 /* *
@@ -35,4 +34,4 @@ interface PointAndFigurePoint extends ScatterPoint {
  *
  * */
 
-export default PointAndFigurePoint;
+export default PointAndFigurePointOptions;

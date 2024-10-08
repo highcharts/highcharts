@@ -22,9 +22,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import type Axis from '../../Core/Axis/Axis.js';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
 import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
+import type PointAndFigurePointOptions from './PointAndFigurePointOptions.js';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -124,7 +123,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public options!: PointAndFigureSeriesOptions;
 
-    public points!: Array<PointAndFigurePoint>;
+    public points!: Array<PointAndFigurePointOptions>;
 
     public xData!: Array<number>;
 
@@ -169,11 +168,10 @@ class PointAndFigureSeries extends ScatterSeries {
             y: Array<number>,
             upTrend: boolean
         ): void {
-            const marker = upTrend ? series.options.markerUp : void 0;
             pnfDataGroups.push({
                 x,
                 y,
-                marker
+                upTrend
             });
         }
 
@@ -255,13 +253,14 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         // Process the pnfDataGroups to HC series format
-        const finalData: ScatterPointOptions[] = [];
+        const finalData: {x: number, y: number, upTrend: boolean}[] = [];
 
         series.processedXData.length = 0;
         series.processedYData.length = 0;
 
         pnfDataGroups.forEach((point): void => {
-            const x = point.x;
+            const x = point.x,
+                upTrend = point.upTrend;
 
             point.y.forEach((y): void => {
                 series.processedXData.push(x);
@@ -269,7 +268,7 @@ class PointAndFigureSeries extends ScatterSeries {
                 finalData.push({
                     x,
                     y,
-                    marker: point.marker
+                    upTrend
                 });
             });
         });
@@ -296,6 +295,7 @@ class PointAndFigureSeries extends ScatterSeries {
         // Math.floor for #1843:
             attribs.x = Math.floor(attribs.x);
         }
+
         return attribs;
     }
 
@@ -320,9 +320,7 @@ class PointAndFigureSeries extends ScatterSeries {
 interface PointAndFigureGroup {
     x: number;
     y: Array<number>;
-    marker?: {
-        symbol?: SymbolKey;
-    }
+    upTrend: boolean;
 }
 
 interface PointAndFigureSeries {

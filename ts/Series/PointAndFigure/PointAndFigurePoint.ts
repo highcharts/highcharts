@@ -10,7 +10,6 @@
 
 'use strict';
 
-
 /* *
 *
 *  Imports
@@ -18,6 +17,7 @@
 * */
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PointAndFigureSeries from './PointAndFigureSeries.js';
 const {
     seriesTypes: {
         scatter: {
@@ -46,11 +46,31 @@ class PointAndFigurePoint extends ScatterPoint {
      *
      * */
 
+    public upTrend!: boolean;
+
+    public series!: PointAndFigureSeries;
+
     /* *
      *
      *  Functions
      *
      * */
+
+    public resolveMarker(): void {
+        const seriesOptions = this.series.options;
+        if (this.upTrend) {
+            this.marker = this.options.marker = seriesOptions.markerUp;
+        } else {
+            this.marker = this.options.marker = seriesOptions.marker;
+        }
+
+        this.color = this.options.marker.lineColor;
+    }
+
+    public resolveColor(): void {
+        super.resolveColor();
+        this.resolveMarker();
+    }
 
 }
 
