@@ -121,21 +121,20 @@ abstract class Cell {
     }
 
     /**
-     * Initialize event listeners.
+     * Initialize event listeners. Events added to the `cellEvents` array will
+     * be registered now and unregistered when the cell is destroyed.
      */
     protected initEvents(): void {
-        const clickHandler = (e: Event): void => {
+        this.cellEvents.push(['click', (e): void => {
             this.onClick(e as MouseEvent);
-        };
-        const keyDownHandler = (e: Event): void => {
+        }]);
+        this.cellEvents.push(['keydown', (e): void => {
             this.onKeyDown(e as KeyboardEvent);
-        };
+        }]);
 
-        this.htmlElement.addEventListener('click', clickHandler);
-        this.htmlElement.addEventListener('keydown', keyDownHandler);
-
-        this.cellEvents.push(['keydown', keyDownHandler]);
-        this.cellEvents.push(['click', clickHandler]);
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.addEventListener(pair[0], pair[1]);
+        });
     }
 
     /**

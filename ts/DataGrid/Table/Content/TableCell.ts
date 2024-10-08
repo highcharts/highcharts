@@ -96,44 +96,59 @@ class TableCell extends Cell {
     }
 
     public override initEvents(): void {
-        super.initEvents();
-
-        const mouseOverHandler = (): void => {
-            this.onMouseOver();
-        };
-        const mouseOutHandler = (): void => {
-            this.onMouseOut();
-        };
-        const dblClickHandler = (e: Event): void => {
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
+        this.cellEvents.push(['dblclick', (e): void => {
             this.onDblClick(e as MouseEvent);
-        };
-        const focusHandler = (): void => {
-            const vp = this.row.viewport;
-            vp.tbodyElement.setAttribute('tabindex', '-1');
+        }]);
+        this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
+        this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
+        this.cellEvents.push(['mousedown', (e): void => {
+            this.onMouseDown(e as MouseEvent);
+        }]);
 
-            vp.focusCursor = [
-                this.row.index,
-                this.column.index
-            ];
-        };
-        const blurHandler = (): void => {
-            const vp = this.row.viewport;
-            vp.tbodyElement.setAttribute('tabindex', '0');
+        super.initEvents();
+    }
 
-            delete vp.focusCursor;
-        };
+    /**
+     * Handles the focus event on the cell.
+     */
+    protected onFocus(): void {
+        const vp = this.row.viewport;
+        vp.tbodyElement.setAttribute('tabindex', '-1');
 
-        this.htmlElement.addEventListener('mouseover', mouseOverHandler);
-        this.htmlElement.addEventListener('mouseout', mouseOutHandler);
-        this.htmlElement.addEventListener('dblclick', dblClickHandler);
-        this.htmlElement.addEventListener('focus', focusHandler);
-        this.htmlElement.addEventListener('blur', blurHandler);
+        vp.focusCursor = [
+            this.row.index,
+            this.column.index
+        ];
+    }
 
-        this.cellEvents.push(['blur', blurHandler]);
-        this.cellEvents.push(['focus', focusHandler]);
-        this.cellEvents.push(['dblclick', dblClickHandler]);
-        this.cellEvents.push(['mouseout', mouseOutHandler]);
-        this.cellEvents.push(['mouseover', mouseOverHandler]);
+    /**
+     * Handles the blur event on the cell.
+     */
+    protected onBlur(): void {
+        const vp = this.row.viewport;
+        vp.tbodyElement.setAttribute('tabindex', '0');
+
+        delete vp.focusCursor;
+    }
+
+    /**
+     * Handles the mouse down event on the cell.
+     *
+     * @param e
+     * The mouse event object.
+     */
+    protected onMouseDown(e: MouseEvent): void {
+        const { dataGrid } = this.row.viewport;
+
+        if (e.target === this.htmlElement) {
+            this.htmlElement.focus();
+        }
+
+        fireEvent(dataGrid, 'cellMouseDown', {
+            target: this
+        });
     }
 
     /**
@@ -186,8 +201,6 @@ class TableCell extends Cell {
     protected override onClick(): void {
         const vp = this.row.viewport;
         const { dataGrid } = vp;
-
-        this.htmlElement.focus();
 
         dataGrid.options?.events?.cell?.click?.call(this);
         fireEvent(dataGrid, 'cellClick', {
