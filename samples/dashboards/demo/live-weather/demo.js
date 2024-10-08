@@ -544,7 +544,9 @@ async function setupDashboard() {
                     },
                     columns: [{
                         id: 'time',
-                        headerFormat: 'Local Time',
+                        header: {
+                            format: 'Local Time'
+                        },
                         cells: {
                             formatter: function () {
                                 return Highcharts.dateFormat(
