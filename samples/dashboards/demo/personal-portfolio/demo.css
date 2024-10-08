@@ -57,3 +57,8 @@
 .highcharts-gauge-chart .highcharts-data-label {
     font-size: 2em;
 }
+
+.wallet .highcharts-point {
+    fill: none;
+    stroke: none;
+}

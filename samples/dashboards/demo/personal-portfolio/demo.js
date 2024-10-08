@@ -1,27 +1,16 @@
-// Todo: put into array?
-const investmentData1 = {
-        investmentDays: [4, 6, 10], // Inves2,tment days
-        investments: [100, 100, 100] // Amounts invested on those days
-    // Todo: metadata linking to a stock?
-    },
-    investmentData2 = {
-        investmentDays: [1, 4, 7], // Investment days
-        investments: [200, 10, 800] // Amounts invested on those days
-        // Todo: metadata linking to a stock?
-    };
+const basicInvestmentPlan = {
+    interval: 30, // Every 30 days
+    amount: 200   // Amount in EUR
+};
 
-
-// Loop over each day to calculate portfolio value and total units
-const generatePortfolio = (investment, stockPrices) => {
-    const { investmentDays, investments } = investment;
+const generatePortfolio = (investmentPlan, stockPrices) => {
+    const { interval, amount } = investmentPlan;
     const portfolioValues = [];
     let totalUnits = 0;
     stockPrices.forEach((priceData, day) => {
         // Check if it's an investment day
-        if (investmentDays.includes(day)) {
-            const investmentIndex = investmentDays.indexOf(day),
-                unitsBought = investments[investmentIndex] / priceData[1];
-            totalUnits += unitsBought;
+        if ((day % interval) === 0) {
+            totalUnits += amount / priceData[1];
         }
 
         // Calculate portfolio value for the day
@@ -60,65 +49,24 @@ const connector = new Connectors.Morningstar.TimeSeriesConnector({
         {
             id: 'US64110L1061',
             idType: 'ISIN'
-        }, {
+        },
+        {
             id: 'US5949181045',
+            idType: 'ISIN'
+        },
+        {
+            id: 'US0231351067',
+            idType: 'ISIN'
+        },
+        {
+            id: 'US02079K3059',
             idType: 'ISIN'
         }
     ],
-    currencyId: 'EUR'
+    currencyId: 'EUR',
+    startDate: '2022-01-01',
+    endDate: '2023-12-31'
 });
-
-// TODO: Wait for this to go live?
-/*
-const riskScoreConnector = new Connectors.Morningstar.RiskScoreConnector({
-    ...commonOptions,
-    portfolios: [
-        {
-            name: 'MyPortfolio',
-            currency: 'USD',
-            totalValue: 100,
-            holdings: [
-                {
-                    id: 'US64110L1061',
-                    idType: 'ISIN',
-                    weight: 50
-                },
-                {
-                    id: 'US5949181045',
-                    idType: 'ISIN',
-                    weight: 50
-                }
-            ]
-        }
-    ]
-});
-*/
-
-/*
-const riskScoreConnector = new Connectors.Morningstar.RiskScoreConnector({
-    ...commonOptions,
-    portfolios: [
-        {
-            name: 'test1',
-            currency: 'EUR',
-            totalValue: 1000,
-            holdings: [
-                {
-                    id: 'US64110L1061',
-                    idType: 'ISIN',
-                    weight: 50
-                },
-                {
-                    id: 'US5949181045',
-                    idType: 'ISIN',
-                    weight: 50
-                }
-            ]
-        }
-    ]
-})*/
-
-// Mock risk score:
 
 const mockRiskScore = {
     riskScores: [
@@ -163,36 +111,16 @@ const mockRiskScore = {
     }
 };
 
-const sumAllArrays = data => {
-    // Initialize an empty object to accumulate sums by time
-    const valueSumsByTime = {};
+function sumAllArrays(arr) {
+    return arr.reduce((acc, current) => acc.map((num, idx) =>
+        [num[0], num[1] + current[idx][1]]
+    ));
+}
 
-    // Iterate over each array in the data
-    data.forEach(arr => {
-        arr.forEach(([time, value]) => {
-            // If this time doesn't exist in the result object, initialize it
-            if (!valueSumsByTime[time]) {
-                valueSumsByTime[time] = 0;
-            }
-            // Sum the values for the corresponding time
-            valueSumsByTime[time] += value;
-        });
-    });
-
-    // Convert the result object to an array of arrays [time, sum]
-    const resultArray =
-        Object.entries(valueSumsByTime).map(
-            ([time, sum]) => [Number(time), sum]
-        );
-
-    return resultArray;
-};
 
 Promise.all([
     connector.load()
 ]).then(() => {
-
-    // morningStarData = connector.table.getRows(0, undefined);
 
     const { Date: dates, ...companies } = connector.table.getColumns();
 
@@ -203,35 +131,50 @@ Promise.all([
         ])
     );
 
-    const netflixHolding = generatePortfolio(
-            investmentData1,
-            processedData['0P0001BUL2']
+    const microsoftHolding = generatePortfolio(
+            basicInvestmentPlan,
+            processedData['0P000003MH']
         ),
-        microsoftHolding = generatePortfolio(
-            investmentData2,
-            processedData['0P0001BUL3']
+        netflixHolding = generatePortfolio(
+            basicInvestmentPlan,
+            processedData['0P000003UP']
+        ),
+        amazonHolding = generatePortfolio(
+            basicInvestmentPlan,
+            processedData['0P000000B7']
+        ),
+        alphabetHolding = generatePortfolio(
+            basicInvestmentPlan,
+            processedData['0P000002HD']
         );
 
-    const walletTotal = sumAllArrays([netflixHolding, microsoftHolding]);
+    const walletTotal = sumAllArrays([
+        netflixHolding,
+        microsoftHolding,
+        amazonHolding,
+        alphabetHolding
+    ]);
+
     const lastTotal = walletTotal[walletTotal.length - 1][1];
 
-    const portfolio = {
-        name: 'PersonalPortfolio',
-        totalValue: lastTotal,
-        holdings: [
-            {
-                id: 'US64110L1061',
-                idType: 'ISIN',
-                weight: 50
-            },
-            {
-                id: 'US5949181045',
-                idType: 'ISIN',
-                weight: 50
-            }
-        ]
-    };
-
+    /*
+        const portfolio = {
+            name: 'PersonalPortfolio',
+            totalValue: lastTotal,
+            holdings: [
+                {
+                    id: 'US64110L1061',
+                    idType: 'ISIN',
+                    weight: 50
+                },
+                {
+                    id: 'US5949181045',
+                    idType: 'ISIN',
+                    weight: 50
+                }
+            ]
+        };
+    */
     const commonGaugeOptions = {
         chart: {
             type: 'gauge',
@@ -341,18 +284,33 @@ Promise.all([
             chartConstructor: 'stockChart',
             renderTo: 'wallet',
             chartOptions: {
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
                 chart: {
-                    type: 'areaspline'
+                    className: 'wallet',
+                    height: 500
+                },
+                rangeSelector: {
+                    animate: false,
+                    x: 0,
+                    y: 0,
+                    buttonSpacing: 40,
+                    inputEnabled: false,
+                    dropdown: 'never',
+                    selected: 4
+                },
+                navigator: {
+                    enabled: false
                 },
                 title: {
                     text: 'Holding over time'
                 },
-
                 series: [{
-                    data: netflixHolding
-                }, {
-                    data: microsoftHolding
-                }, {
                     data: walletTotal
                 }]
 
@@ -389,6 +347,7 @@ Promise.all([
                         valueDescriptionFormat: 'Risk score.'
                     }
                 },
+
                 series: [{
                     id: 'kpi-risk-score',
                     data: [mockRiskScore.riskScores[0].portfolio.riskScore]
