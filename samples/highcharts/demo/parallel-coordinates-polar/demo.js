@@ -97,7 +97,7 @@ Highcharts.chart('container', {
         min: -0.5,
         max: 2.5
     }],
-    series: data.map(function (set, i) {
+    series: data.map(function (set) {
         return {
             name: set[0],
             data: set.slice(1)
