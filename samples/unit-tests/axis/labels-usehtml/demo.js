@@ -660,6 +660,14 @@ QUnit.test(
                     }
                 }
             },
+            yAxis: {
+                title: {
+                    useHTML: true,
+                    style: {
+                        fontSize: '40'
+                    }
+                }
+            },
             series: [
                 {
                     data: [1, 2, 3, 4]
@@ -669,6 +677,12 @@ QUnit.test(
 
         assert.strictEqual(
             chart.xAxis[0].labelGroup.div.children.item(0).style.fontSize,
+            '40px',
+            'xAxis labels should have font size 40px'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].axisTitle.element.style.fontSize,
             '40px',
             'xAxis labels should have font size 40px'
         );
