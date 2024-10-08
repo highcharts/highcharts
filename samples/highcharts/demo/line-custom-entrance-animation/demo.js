@@ -1,5 +1,7 @@
 (function (H) {
     const animateSVGPath = (svgElem, animation, callback = void 0) => {
+        if (!svgElem) return;
+
         const length = svgElem.element.getTotalLength();
         svgElem.attr({
             'stroke-dasharray': length,
@@ -99,8 +101,7 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'your-access-token'
         }
     }
 };
@@ -136,18 +137,22 @@ const FANGPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
             idType: 'ISIN'
         }
     ],
+    startDate: '2017-01-01',
+    endDate: '2024-01-01',
     currencyId: 'EUR'
 });
 
 Promise.all([FANGPriceConnector.load()]).then(() => {
     const { Date: dates, ...companies } = FANGPriceConnector.table.getColumns();
-
+console.log(companies);
     const processedData = Object.fromEntries(
         Object.entries(companies).map(([key, values]) => [
             key,
             values.map((value, i) => [dates[i], value])
         ])
     );
+
+    console.log(processedData);
 
     Highcharts.chart('container', {
         chart: {
@@ -219,25 +224,25 @@ Promise.all([FANGPriceConnector.load()]).then(() => {
 
         series: [{
             name: 'Facebook',
-            data: processedData['0P0001BUKZ'],
+            data: processedData['0P0000W3KZ'],
             yAxis: 0
         }, {
             name: 'Amazon',
-            data: processedData['0P00014L1C'],
+            data: processedData['0P000000B7'],
             yAxis: 1,
             animation: {
                 defer: 1000
             }
         }, {
             name: 'Netflix',
-            data: processedData['0P0001BUL2'],
+            data: processedData['0P000002HD'],
             yAxis: 2,
             animation: {
                 defer: 2000
             }
         }, {
             name: 'Google',
-            data: processedData['0P00014KY5'],
+            data: processedData['0P000003UP'],
             yAxis: 3,
             animation: {
                 defer: 3000

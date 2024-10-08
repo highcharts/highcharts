@@ -30,7 +30,8 @@ Promise.all([
 
     Highcharts.chart('container', {
         chart: {
-            type: 'areaspline'
+            type: 'areaspline',
+            zoomType: 'x'
         },
         title: {
             text: 'Netflix, Inc.',

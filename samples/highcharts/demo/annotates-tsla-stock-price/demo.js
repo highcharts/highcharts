@@ -3,8 +3,7 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: '<your username here>',
-            password: '<your password here>'
+            token: 'your-access-token'
         }
     }
 };
