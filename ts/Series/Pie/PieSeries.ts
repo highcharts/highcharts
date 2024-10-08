@@ -25,7 +25,6 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { NonPlotOptions } from '../../Core/Series/SeriesOptions';
 import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
@@ -34,7 +33,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     clamp,
     extend,
     fireEvent,
@@ -553,47 +551,6 @@ extend(PieSeries.prototype, {
     searchPoint: noop as any,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-
-addEvent(PieSeries, 'setOptions', (e): void => {
-    const chart = e.target.chart;
-    const piePlotOptions = chart.options.plotOptions.pie;
-    if (piePlotOptions) {
-        PieSeries.mergePieDataLabelPlotOptions(piePlotOptions);
-    }
-});
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace PieSeries {
-
-    /**
-     * When pie plot options have multiple data labels, the default data label
-     * plot options are not merged (#21928).
-     *
-     * This method performs a merge of the data labels with the default data
-     * label options if the data labels are in an array.
-     *
-     * @private
-     * @param {Omit<PieSeriesOptions, NonPlotOptions>} piePlotOptions
-     *          The plot options for the pie series.
-     */
-    export function mergePieDataLabelPlotOptions(
-        piePlotOptions: Omit<PieSeriesOptions, NonPlotOptions>
-    ): void {
-        const dataLabels = piePlotOptions.dataLabels;
-        if (dataLabels instanceof Array) {
-            const defaults = PieSeries.defaultOptions.dataLabels;
-            for (let i = 0; i < dataLabels.length; i++) {
-                dataLabels[i] = merge(defaults, dataLabels[i]);
-            }
-        }
-    }
-
-}
 
 /* *
  *
