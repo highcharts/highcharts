@@ -96,8 +96,6 @@ class TableCell extends Cell {
     }
 
     public override initEvents(): void {
-        this.cellEvents.push(['blur', (): void => this.onBlur()]);
-        this.cellEvents.push(['focus', (): void => this.onFocus()]);
         this.cellEvents.push(['dblclick', (e): void => {
             this.onDblClick(e as MouseEvent);
         }]);
@@ -113,24 +111,15 @@ class TableCell extends Cell {
     /**
      * Handles the focus event on the cell.
      */
-    protected onFocus(): void {
+    protected override onFocus(): void {
+        super.onFocus();
+
         const vp = this.row.viewport;
-        vp.tbodyElement.setAttribute('tabindex', '-1');
 
         vp.focusCursor = [
             this.row.index,
             this.column.index
         ];
-    }
-
-    /**
-     * Handles the blur event on the cell.
-     */
-    protected onBlur(): void {
-        const vp = this.row.viewport;
-        vp.tbodyElement.setAttribute('tabindex', '0');
-
-        delete vp.focusCursor;
     }
 
     /**

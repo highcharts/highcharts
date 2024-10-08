@@ -22,6 +22,8 @@
  *
  * */
 
+import type Cell from '../Cell';
+
 import Table from '../Table.js';
 import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
@@ -79,6 +81,12 @@ class RowsVirtualizer {
      * flickering loops when scrolling to the last row.
      */
     private preventScroll = false;
+
+    /**
+     * The only cell that is to be focusable using tab key - a table focus
+     * entry point.
+     */
+    public focusAnchorCell?: Cell;
 
 
     /* *
@@ -280,6 +288,7 @@ class RowsVirtualizer {
             rows.push(alwaysLastRow);
         }
 
+        // Focus the cell if the focus cursor is set
         if (vp.focusCursor) {
             const [rowIndex, columnIndex] = vp.focusCursor;
             const row = rows.find((row): boolean => row.index === rowIndex);
@@ -290,6 +299,10 @@ class RowsVirtualizer {
                 });
             }
         }
+
+        const firstVisibleRow = rows[rowCursor - rows[0].index];
+        this.focusAnchorCell = firstVisibleRow?.cells[0];
+        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');
     }
 
     /**

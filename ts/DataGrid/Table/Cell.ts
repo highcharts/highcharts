@@ -125,6 +125,8 @@ abstract class Cell {
      * be registered now and unregistered when the cell is destroyed.
      */
     protected initEvents(): void {
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
         this.cellEvents.push(['click', (e): void => {
             this.onClick(e as MouseEvent);
         }]);
@@ -144,6 +146,28 @@ abstract class Cell {
      * Mouse event object.
      */
     protected abstract onClick(e: MouseEvent): void;
+
+    /**
+     * Handles the focus event on the cell.
+     */
+    protected onFocus(): void {
+        const vp = this.row.viewport;
+        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
+
+        focusAnchor?.setAttribute('tabindex', '-1');
+    }
+
+    /**
+     * Handles the blur event on the cell.
+     */
+    protected onBlur(): void {
+        const vp = this.row.viewport;
+        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
+
+        focusAnchor?.setAttribute('tabindex', '0');
+
+        delete vp.focusCursor;
+    }
 
     /**
      * Handles user keydown on the cell.

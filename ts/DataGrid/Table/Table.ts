@@ -24,6 +24,7 @@
 
 import type { ColumnDistribution } from '../Options';
 import type TableCell from './Content/TableCell';
+import type TableRow from './Content/TableRow';
 
 import DGUtils from '../Utils.js';
 import DataTable from '../../Data/DataTable.js';
@@ -35,7 +36,6 @@ import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
-import TableRow from './Content/TableRow';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -186,8 +186,6 @@ class Table {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
-
-        this.tbodyElement.setAttribute('tabindex', '0');
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
