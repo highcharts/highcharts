@@ -19,6 +19,7 @@
 import type RenkoSeriesOptions from './RenkoSeriesOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type RenkoPoint from './RenkoPoint.js';
+import type ColorType from '../../Core/Color/ColorType';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -28,6 +29,12 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import U from '../../Core/Utilities.js';
 const { merge, relativeLength, isNumber } = U;
 
+interface RenkoData {
+    x: number;
+    low: number;
+    high: number;
+    color?: ColorType
+}
 /**
  * For each renko series create renko data
  */
@@ -55,11 +62,10 @@ function generateRenkoData(this: Axis): void {
  * @augments Highcharts.seriesTypes.column
  */
 class RenkoSeries extends ColumnSeries {
-    public renkoData?: {
-        x: number;
-        low: number;
-        high: number;
-    }[];
+    /**
+     * Renko data created from linear data
+     */
+    public renkoData?: RenkoData[];
 
     /**
      * Create renko data from linear data
@@ -71,7 +77,7 @@ class RenkoSeries extends ColumnSeries {
         const boxSize = this.options.boxSize;
         const change =
             isNumber(boxSize) ? boxSize : relativeLength(boxSize, yData[0]);
-        const renkoData = [],
+        const renkoData: RenkoData[] = [],
             length = xData.length;
         let prevTrend = 0;
         let prevPrice = yData[0];
@@ -91,7 +97,6 @@ class RenkoSeries extends ColumnSeries {
                 for (let j = 0; j < currentChange / change; j++) {
                     renkoData.push({
                         x: xData[i] + j,
-                        y: prevPrice,
                         low: prevPrice,
                         high: prevPrice + change,
                         color: this.options.color
@@ -107,10 +112,8 @@ class RenkoSeries extends ColumnSeries {
                 for (let j = 0; j < Math.abs(currentChange) / change; j++) {
                     renkoData.push({
                         x: xData[i] + j,
-                        y: prevPrice,
                         low: prevPrice - change,
                         high: prevPrice,
-                        isDown: true,
                         color: this.options.downColor
                     });
                     prevPrice -= change;
@@ -149,7 +152,6 @@ class RenkoSeries extends ColumnSeries {
 
     public static defaultOptions: RenkoSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        { tooltip: ColumnSeries.defaultOptions.tooltip },
         RenkoSeriesDefaults
     );
 

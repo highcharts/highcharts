@@ -49,16 +49,6 @@ interface RenkoPoint {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace RenkoPoint {
-    export type PointShortOptions = [number, number, number];
-}
-
-/* *
- *
  *  Default Export
  *
  * */
