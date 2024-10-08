@@ -2,12 +2,13 @@
 const gulp = require('gulp'),
     path = require('path');
 /**
- * Update the updateDevDependencies files to resolve vulnerabilities
+ * Temporary code patch ink-docstrap to resolve a vulnerabilitiy in taffydb.
+ * Note: remove if no longer needed (after ink-docstrap is updated or not used).
  *
  * @return {Promise<Array<*>>}
  *         Promises to keep
  */
-function updateDevDependencies() {
+function patchInkDocstrap() {
     const { readFile, writeFile } = require('fs/promises');
 
     const promises = [],
@@ -27,4 +28,4 @@ function updateDevDependencies() {
 
     return Promise.all(promises);
 }
-gulp.task('update-devDependencies', updateDevDependencies);
+gulp.task('patch-ink-docstrap', patchInkDocstrap);

@@ -104,7 +104,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/filesize',
     'unsorted/get-filesizes',
     'unsorted/nightly',
-    'unsorted/update-devDependencies',
+    'unsorted/patch-ink-docstrap',
     'unsorted/update-vendor',
     'unsorted/upload-files',
     'update-pr-testresults',
