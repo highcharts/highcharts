@@ -2180,10 +2180,7 @@ class Axis {
             roundedMax = tickPositions[tickPositions.length - 1],
             minPointOffset =
                 (!this.isOrdinal && this.minPointOffset) || 0, // (#12716)
-            lPar = this.linkedParent,
-            min = this.min,
-            max = this.max,
-            len = this.len;
+            linkedParent = this.linkedParent;
 
         fireEvent(this, 'trimTicks');
 
@@ -2192,7 +2189,12 @@ class Axis {
             // Grid axis has custom handling of ticks, don't trim.
             !this.grid &&
             // Linked axes with same range and length should trim ticks, #21743.
-            (min === lPar?.min && max === lPar?.max && len === lPar?.len)
+            (
+                linkedParent &&
+                this.min === linkedParent.min &&
+                this.max === linkedParent.max &&
+                this.len === linkedParent.len
+            )
         ) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
