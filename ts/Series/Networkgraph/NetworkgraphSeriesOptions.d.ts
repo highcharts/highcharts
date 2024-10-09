@@ -58,18 +58,7 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
-    (this: (
-        NetworkgraphDataLabelsFormatterContextObject|
-        Point.PointLabelObject
-    )): (number|string|null|undefined);
-}
-
-export interface NetworkgraphDataLabelsFormatterContextObject
-    extends Point.PointLabelObject {
-
-    color: ColorType;
-    key: string;
-    point: NetworkgraphPoint;
+    (this: Point|NetworkgraphPoint): (number|string|null|undefined);
 }
 
 export interface NetworkgraphDataLabelsOptions

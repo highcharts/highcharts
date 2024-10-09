@@ -502,39 +502,3 @@ SeriesRegistry.registerSeriesType('timeline', TimelineSeries);
  * */
 
 export default TimelineSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * Callback JavaScript function to format the data label as a string. Note that
- * if a `format` is defined, the format takes precedence and the formatter is
- * ignored.
- *
- * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
- *        Data label context to format
- *
- * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-
-/**
- * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
- * @type {string|undefined}
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
- * @type {Highcharts.Series}
- */
-
-''; // Dettach doclets above
