@@ -18,6 +18,27 @@
 
 import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * The Point and Figure series represents changes in stock price movements,
+ * without focusing on the time and volume. Each data point is created when the
+ * `boxSize` criteria is met. Opposite column of points gets created only when
+ * the `reversalAmount` threshold is met.
+ *
+ * @sample stock/demo/pointandfigure/
+ *         Point and Figure series
+ *
+ * @extends      plotOptions.scatter
+ * @product      highstock
+ * @requires     modules/pointandfigure
+ * @optionparent plotOptions.pointandfigure
+ */
+
 const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
     boxSize: '2%',
     reversalAmount: 3,
@@ -45,8 +66,75 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
         lineColor: '#FF0000',
         lineWidth: 2
     }
-
 };
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * A `pointandfigure` series. If the [type](#series.pointandfigure.type)
+ * option is not specified, it is inherited from [chart.type](
+ * #chart.type).
+ *
+ * @type      {*}
+ * @extends   series,plotOptions.pointandfigure
+ * @product   highstock
+ * @requires  modules/pointandfigure
+ * @apioption series.pointandfigure
+ */
+
+/**
+ * An array of data points for the series. For the `pointandfigure` series
+ * type, points can be given in the following way:
+ *
+ * 1. An array of arrays with 2 values. In this case, the values correspond
+ *    to `x, close`. Close values are parsed under the hood to create
+ *    point and figure format data points.
+ *    ```js
+ *    data: [
+ *        [1665408600000, 140.42],
+ *        [1665495000000, 138.98],
+ *        [1665581400000, 138.34]
+ *    ]
+ *    ```
+ *
+ * @type      {Array<Array<number,number>|*>}
+ * @extends   series.scatter.data
+ * @product   highstock
+ * @apioption series.pointandfigure.data
+ */
+
+/**
+ * Price increment that determines if a new point should be added to the column.
+ *
+ *
+ * @type      {string|number}
+ * @since next
+ * @product   highstock
+ * @apioption plotOptions.pointandfigure.boxSize
+ */
+
+/**
+ * Threshold that should be met to create a new column in opposite direction.
+ *
+ *
+ * @type      {number}
+ * @since next
+ * @product   highstock
+ * @apioption plotOptions.pointandfigure.reversalAmount
+ */
+
+/**
+ * Marker options for the up direction column, inherited from `series.marker`
+ * options.
+ *
+ * @extends   plotOptions.series.marker
+ * @product   highstock
+ * @apioption plotOptions.pointandfigure.markerUp
+ */
 
 ''; // Keeps doclets above detached
 
