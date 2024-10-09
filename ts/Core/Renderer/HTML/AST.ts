@@ -123,6 +123,7 @@ class AST {
         'cx',
         'cy',
         'd',
+        'data-hc-option',
         'dx',
         'dy',
         'disabled',
