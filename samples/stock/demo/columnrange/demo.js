@@ -11,6 +11,14 @@
             type: 'columnrange'
         },
 
+        colorAxis: {
+            stops: [
+                [0, '#1E90FF'],
+                [0.5, '#FFFF99'],
+                [1, '#FF3333']
+            ]
+        },
+
         rangeSelector: {
             selected: 2
         },
