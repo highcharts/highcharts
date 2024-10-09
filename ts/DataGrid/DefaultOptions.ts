@@ -40,6 +40,9 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
         rows: {
             bufferSize: 10,
             strictHeights: false
+        },
+        header: {
+            enabled: true
         }
     },
     credits: {
