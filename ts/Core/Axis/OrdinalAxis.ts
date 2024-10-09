@@ -20,11 +20,11 @@ import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type Point from '../Series/Point.js';
+import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
-import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
@@ -1207,14 +1207,12 @@ namespace OrdinalAxis {
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
                 chart = axis.chart,
-                key = axis.series.reduce((key, series): string => {
+                key = axis.series.reduce((k, series): string => {
                     const grouping = series.currentDataGrouping;
-                    if (grouping) {
-                        key += grouping.count + (grouping.unitName as any);
-                    } else {
-                        key += 'raw';
-                    }
-                    return key;
+                    return (
+                        k +
+                        (grouping ? grouping.count + grouping.unitName : 'raw')
+                    );
                 }, ''),
                 overscroll = withOverscroll ?
                     axis.ordinal.convertOverscroll(
@@ -1264,7 +1262,7 @@ namespace OrdinalAxis {
 
                 // Add the fake series to hold the full data, then apply
                 // processData to it
-                axis.series.forEach(function (series): void {
+                axis.series.forEach((series): void => {
                     fakeSeries = {
                         xAxis: fakeAxis,
                         xData: (series.xData as any).slice(),
@@ -1284,6 +1282,7 @@ namespace OrdinalAxis {
                     }
 
                     fakeSeries.options = {
+                        ...series.options,
                         dataGrouping: series.currentDataGrouping ? {
                             firstAnchor:
                                 series.options.dataGrouping?.firstAnchor,
@@ -1408,10 +1407,10 @@ namespace OrdinalAxis {
          * Get index of point inside the ordinal positions array.
          *
          * @private
-         * @param {number} val
+         * @param {number} pixelVal
          * The pixel value of a point.
          *
-         * @param {number[]} [ordinalArray]
+         * @param {Array<number>} [ordinalArray]
          * An array of all points available on the axis for the given data set.
          * Either ordinalPositions if the value is inside the plotArea or
          * extendedOrdinalPositions if not.
@@ -1463,7 +1462,7 @@ namespace OrdinalAxis {
                 // Max + pointRange because we need to scroll to the last
 
                 while (
-                    (max as any) <= (axis.dataMax as any) + (extraRange as any)
+                    (max as any) < (axis.dataMax as any) + (extraRange as any)
                 ) {
                     (max as any) += (distance as any);
                     positions.push(max);
