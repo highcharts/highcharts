@@ -426,8 +426,6 @@ function mapAnimateDrilldown(
                             ),
                             true
                         );
-                    series.isDirty = true;
-                    chart.redraw();
                 }
             });
 
