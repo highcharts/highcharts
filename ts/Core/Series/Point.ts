@@ -1513,7 +1513,11 @@ class Point {
                                         markerAttribs.x,
                                         markerAttribs.y,
                                         markerAttribs.width,
-                                        markerAttribs.height
+                                        markerAttribs.height,
+                                        extend(
+                                            markerOptions,
+                                            markerStateOptions
+                                        )
                                     )
                                     .add(series.markerGroup);
                             stateMarkerGraphic.currentSymbol = newSymbol;
