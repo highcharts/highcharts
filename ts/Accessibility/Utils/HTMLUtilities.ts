@@ -302,7 +302,7 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
         // No previous siblings are headings, try parent node
         const parent = el.parentElement;
         if (!parent) {
-            return 'p';
+            return 'h6';
         }
         const parentTagName = parent.tagName;
         if (isHeading(parentTagName)) {
