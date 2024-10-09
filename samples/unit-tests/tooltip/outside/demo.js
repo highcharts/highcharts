@@ -1,4 +1,6 @@
 QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
+    document.getElementById('container').className = 'mock-css-class';
+
     var chart = Highcharts.chart('container', {
         chart: {
             styledMode: true,
@@ -111,9 +113,9 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     );
 
     assert.strictEqual(
-        chart.tooltip.container.parentNode.nodeName,
-        'BODY',
-        'The outside tooltip should be part of the body'
+        chart.tooltip.container.parentNode.id,
+        chart.container.id,
+        'The tooltip container should be child of chart container'
     );
 
     controller.moveTo(-1, -1);
