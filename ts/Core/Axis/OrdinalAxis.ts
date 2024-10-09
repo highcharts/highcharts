@@ -711,8 +711,10 @@ namespace OrdinalAxis {
 
                 // Apply it if it is within the available data range
                 if (
-                    trimmedRange.min >= Math.min(extremes.dataMin, min) &&
-                    trimmedRange.max <= Math.max(dataMax, max) + overscroll
+                    trimmedRange.min >= Math.min(ordinalPositions[0], min) &&
+                    trimmedRange.max <= Math.max(
+                        ordinalPositions[ordinalPositions.length - 1], max
+                    ) + overscroll
                 ) {
                     xAxis.setExtremes(
                         trimmedRange.min,
