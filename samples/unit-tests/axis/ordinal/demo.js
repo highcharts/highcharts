@@ -356,107 +356,93 @@ QUnit.test('findIndexOf', assert => {
     assert.equal(findIndexOf(array, 6, true), 3);
 });
 
+QUnit.test('lin2val- unit test for values outside the plotArea.', assert => {
+    const axis = {
+        transA: 0.04,
+        min: 3.24,
+        max: 7,
+        len: 500,
+        translationSlope: 0.2,
+        minPixelPadding: 0,
+        ordinal: {
+            extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
+            positions: [3, 4.2, 4.8, 5, 7, 8],
+            slope: 500
+        }
+    };
+    axis.ordinal.axis = axis;
 
-QUnit.test(
-    'lin2val- unit test for values outside the plotArea.', function (assert) {
-        const axis = {
-            transA: 0.04,
-            min: 3.24,
-            max: 7,
-            len: 500,
-            translationSlope: 0.2,
-            minPixelPadding: 0,
-            ordinal: {
-                extendedOrdinalPositions: [
-                    0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9
-                ],
-                positions: [3, 4.2, 4.8, 5, 7],
-                slope: 500
-            },
-            series: [{
-                points: [{
-                    x: 3,
-                    plotX: -20
-                }, {
-                    x: 4.2,
-                    plotX: 80 // distance between points 100px
-                }]
-            }]
-        };
-        axis.ordinal.axis = axis;
+    axis.ordinal.getExtendedPositions = () =>
+        axis.ordinal.extendedOrdinalPositions;
 
-        axis.ordinal.getExtendedPositions = function () {
-            return axis.ordinal.extendedOrdinalPositions;
-        };
+    // On the chart there are 5 points equaly spaced.
+    // The distance between them equals 100px.
+    // Thare are some points that are out of the current range.
+    // The last visible point is located at 380px.
+    // EOP = extendedOrdinalPositions
 
-        // On the chart there are 5 points equaly spaced.
-        // The distance between them equals 100px.
-        // Thare are some points that are out of the current range.
-        // The last visible point is located at 380px.
-        // EOP = extendedOrdinalPositions
-
-        axis.ordinal.getIndexOfPoint =
+    axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
         Highcharts.OrdinalAxis.Additions.prototype.getIndexOfPoint;
-        axis.ordinal.findIndexOf =
+    axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
         Highcharts.OrdinalAxis.Additions.prototype.findIndexOf;
-        function lin2val(val) {
-            return Highcharts.Axis.prototype.lin2val.call(axis, val);
-        }
+    function lin2val(val) {
+        return Highcharts.Axis.prototype.lin2val.call(axis, val);
+    }
 
-        assert.strictEqual(
-            lin2val(-20 / axis.transA + axis.min),
-            3,
-            `For the pixel value equal to the first point x position,
+    assert.strictEqual(
+        lin2val(-20 / axis.transA + axis.min),
+        3,
+        `For the pixel value equal to the first point x position,
         the function should return the value for that point.`
-        );
-        assert.strictEqual(
-            lin2val(80 / axis.transA + axis.min),
-            4.2,
-            `For the pixel value equal to the second point x position,
+    );
+    assert.strictEqual(
+        lin2val(80 / axis.transA + axis.min),
+        4.2,
+        `For the pixel value equal to the second point x position,
         the function should return the value for that point.`
-        );
-        assert.strictEqual(
-            lin2val(30 / axis.transA + axis.min),
-            3.6,
-            `For the pixel value located between two visible points,
+    );
+    assert.strictEqual(
+        lin2val(30 / axis.transA + axis.min),
+        3.6,
+        `For the pixel value located between two visible points,
         the function should calculate the value between them.`
-        );
-        assert.strictEqual(
-            lin2val(-50 / axis.transA + axis.min),
-            2.55,
-            'For the pixel value smaller than the first visible point, the ' +
+    );
+    assert.strictEqual(
+        lin2val(-50 / axis.transA + axis.min),
+        2.55,
+        'For the pixel value smaller than the first visible point, the ' +
             'function should calculate value between that point and next ' +
             'using EOP array.'
-        );
-        assert.strictEqual(
-            lin2val(-520 / axis.transA + axis.min),
-            -520 / axis.transA + axis.min, // #16784
-            `For the pixel value lower than any point in EOP array, the function
+    );
+    assert.strictEqual(
+        lin2val(-520 / axis.transA + axis.min),
+        -520 / axis.transA + axis.min, // #16784
+        `For the pixel value lower than any point in EOP array, the function
         should return requested value.`
-        );
-        assert.strictEqual(
-            lin2val(380 / axis.transA + axis.min),
-            7,
-            `For the pixel value equal to last point,
+    );
+    assert.strictEqual(
+        lin2val(380 / axis.transA + axis.min),
+        7,
+        `For the pixel value equal to last point,
         the function should return the value for that point.`
-        );
-        assert.strictEqual(
-            lin2val(420 / axis.transA + axis.min),
-            7.4,
-            'For the pixel value higher than the first visible point, the ' +
+    );
+    assert.strictEqual(
+        lin2val(420 / axis.transA + axis.min),
+        7.4,
+        'For the pixel value higher than the first visible point, the ' +
             'function should calculate value between that point and next ' +
             'using EOP array.'
-        );
-        assert.strictEqual(
-            lin2val(1000 / axis.transA + axis.min),
-            1000 / axis.transA + axis.min, // #16784
-            'For the pixel value higher than any point in ' +
+    );
+    assert.strictEqual(
+        lin2val(1000 / axis.transA + axis.min),
+        1000 / axis.transA + axis.min, // #16784
+        'For the pixel value higher than any point in ' +
             'extendedOrdinalPositions, array, the function should return ' +
             'requested value.'
-        );
-    });
+    );
+});
 
 QUnit.test('val2lin- unit tests', function (assert) {
     const axis = {
