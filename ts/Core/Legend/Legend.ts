@@ -357,8 +357,12 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const { area, group, label, line, symbol } = item.legendItem || {};
+        const originalColor = item.color,
+            { area, group, label, line, symbol } = item.legendItem || {};
 
+        if (item instanceof Series || item instanceof Point) {
+            item.color = item.options?.legendSymbolColor || originalColor;
+        }
         group?.[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'
         );
@@ -397,6 +401,8 @@ class Legend {
                 'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
             }));
         }
+
+        item.color = originalColor;
 
         fireEvent(this, 'afterColorizeItem', { item, visible });
     }
