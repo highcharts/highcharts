@@ -252,6 +252,8 @@ class DataGrid {
             afterLoadCallback?.(this);
         });
         DataGrid.dataGrids.push(this);
+
+        console.log('datagrid', DataGrid); // a11y should be available here
     }
 
 

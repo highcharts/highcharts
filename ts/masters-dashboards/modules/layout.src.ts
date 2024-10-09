@@ -52,7 +52,7 @@ declare global {
 
 const G = Globals as unknown as Dashboards;
 
-G.EditMode = EditMode;
+// G.EditMode = EditMode;
 G.FullScreen = Fullscreen;
 
 
