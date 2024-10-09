@@ -1072,7 +1072,8 @@ function seriesRenderCanvas(this: Series): void {
             this.processedXData ||
             false
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullInteraction = (options as any).nullInteraction;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1238,7 +1239,6 @@ function seriesRenderCanvas(this: Series): void {
         i: number
     ): boolean {
         const chartDestroyed = typeof chart.index === 'undefined';
-
         let x: number,
             y: number,
             clientX,
@@ -1257,7 +1257,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any;
+                y = yData[i] as any ?? (nullInteraction && yMin);
             }
 
             // Resolve low and high for range series
@@ -1279,8 +1279,12 @@ function seriesRenderCanvas(this: Series): void {
                 isYInside = (y || 0) >= yMin && y <= yMax;
             }
 
-            if (y !== null && x >= xMin && x <= xMax && isYInside) {
-
+            if (
+                (y !== null || nullInteraction) &&
+                x >= xMin &&
+                x <= xMax &&
+                isYInside
+            ) {
                 clientX = xAxis.toPixels(x, true);
 
                 if (sampling) {
