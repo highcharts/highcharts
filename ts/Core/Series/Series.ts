@@ -2387,7 +2387,7 @@ class Series {
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
             function (point: Point): boolean {
-                const { plotX, plotY } = point,
+                const { plotX = 0, plotY = 0 } = point,
                     // Undefined plotY is treated as null when negative values
                     // in log axis (#18422)
                     asNull = !allowNull && (point.isNull || !isNumber(plotY));
@@ -3581,7 +3581,8 @@ class Series {
         this.buildingKdTree = true;
 
         const series = this,
-            dimensions = (series.options.findNearestPointBy as any)
+            seriesOptions = series.options,
+            dimensions = (seriesOptions.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3634,7 +3635,8 @@ class Series {
                     void 0,
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
-                    !series.directTouch
+                    !series.directTouch,
+                    (seriesOptions as any)?.nullInteraction
                 ),
                 dimensions,
                 dimensions
@@ -3647,7 +3649,7 @@ class Series {
         // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
+            seriesOptions.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
