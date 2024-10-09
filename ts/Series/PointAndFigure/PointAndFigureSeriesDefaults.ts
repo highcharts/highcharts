@@ -40,7 +40,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
  */
 
 const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
-    boxSize: '2%',
+    boxSize: '1%',
     reversalAmount: 3,
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +

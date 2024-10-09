@@ -58,11 +58,8 @@ class PointAndFigurePoint extends ScatterPoint {
 
     public resolveMarker(): void {
         const seriesOptions = this.series.options;
-        if (this.upTrend) {
-            this.marker = this.options.marker = seriesOptions.markerUp;
-        } else {
-            this.marker = this.options.marker = seriesOptions.marker;
-        }
+        this.marker = this.options.marker =
+            this.upTrend ? seriesOptions.markerUp : seriesOptions.marker;
 
         this.color = this.options.marker.lineColor;
     }

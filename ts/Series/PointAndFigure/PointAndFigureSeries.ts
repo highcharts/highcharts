@@ -163,21 +163,6 @@ class PointAndFigureSeries extends ScatterSeries {
         /**
          *
          */
-        function pushPointGroup(
-            x: number,
-            y: Array<number>,
-            upTrend: boolean
-        ): void {
-            pnfDataGroups.push({
-                x,
-                y,
-                upTrend
-            });
-        }
-
-        /**
-         *
-         */
         function pushNewPoint(
             y: number,
             upTrend: boolean,
@@ -207,13 +192,13 @@ class PointAndFigureSeries extends ScatterSeries {
                     firstPoint = yData[0];
 
                 if (close - firstPoint >= calculatedBoxSize) {
-                    pushPointGroup(x, [close], true);
                     upTrend = true;
+                    pnfDataGroups.push({ x, y: [close], upTrend });
                     break;
                 }
                 if (firstPoint - close >= calculatedBoxSize) {
-                    pushPointGroup(x, [close], false);
                     upTrend = false;
+                    pnfDataGroups.push({ x, y: [close], upTrend });
                     break;
                 }
             }
@@ -231,7 +216,7 @@ class PointAndFigureSeries extends ScatterSeries {
                     if (lastPoint - close >= reversal) { // Handle reversal
                         upTrend = false;
 
-                        pushPointGroup(x, [], false);
+                        pnfDataGroups.push({ x, y: [], upTrend });
                         pushNewPoint(close, upTrend, lastPoint);
                     }
                 }
@@ -245,7 +230,7 @@ class PointAndFigureSeries extends ScatterSeries {
                     if (close - lastPoint >= reversal) { // Handle reversal
                         upTrend = true;
 
-                        pushPointGroup(x, [], true);
+                        pnfDataGroups.push({ x, y: [], upTrend });
                         pushNewPoint(close, upTrend, lastPoint);
                     }
                 }

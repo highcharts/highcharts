@@ -3,6 +3,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         chart: {
             height: 800
         },
+        title: {
+            text: 'Point and Figure series'
+        },
         series: [
             {
                 type: 'pointandfigure',
