@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Create Dashboard
 const data = [
     ['Day', 'EUR', 'Rate'],

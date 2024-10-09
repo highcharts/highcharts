@@ -1,3 +1,9 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 /* eslint-disable jsdoc/require-description */
 
 // left arrow
