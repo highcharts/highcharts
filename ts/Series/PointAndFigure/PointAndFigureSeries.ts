@@ -23,7 +23,6 @@ import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import type Axis from '../../Core/Axis/Axis.js';
 import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
-import type PointAndFigurePointOptions from './PointAndFigurePointOptions.js';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -122,7 +121,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public options!: PointAndFigureSeriesOptions;
 
-    public points!: Array<PointAndFigurePointOptions>;
+    public points!: Array<PointAndFigurePoint>;
 
     public xData!: Array<number>;
 

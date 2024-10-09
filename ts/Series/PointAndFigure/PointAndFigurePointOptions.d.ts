@@ -23,9 +23,6 @@ import type ScatterPoint from '../Scatter/ScatterPoint';
  * */
 
 interface PointAndFigurePointOptions extends ScatterPoint {
-    x: number;
-    y: number;
-    upTrend: boolean;
 }
 
 /* *
