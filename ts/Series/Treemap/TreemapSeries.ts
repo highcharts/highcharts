@@ -1599,22 +1599,6 @@ class TreemapSeries extends ScatterSeries {
                             name = groupAreaThreshold.name ||
                                 `+ ${groupChildren.length}`;
 
-                        groupChildren.forEach((child): void => {
-                            if (
-                                child.parentNode &&
-                                child.parentNode.children.indexOf(child) > -1
-                            ) {
-                                child.parentNode.children.splice(
-                                    child.parentNode.children.indexOf(child),
-                                    1
-                                );
-                                delete child.parentNode;
-                                delete child.parent;
-                                child.ignore = true;
-                                child.visible = false;
-                            }
-                        });
-
                         let groupNode = series.nodeList.find((node): boolean =>
                                 node.id === id
                             ),
@@ -1663,6 +1647,24 @@ class TreemapSeries extends ScatterSeries {
                                 children: groupChildren,
                                 childrenTotal: val,
                                 name
+                            });
+
+                            groupChildren.forEach((child): void => {
+                                if (
+                                    child.parentNode &&
+                                    child.parentNode
+                                        .children.indexOf(child) > -1
+                                ) {
+                                    child.parentNode.children.splice(
+                                        child.parentNode
+                                            .children.indexOf(child),
+                                        1
+                                    );
+                                    child.parentNode = groupNode;
+                                    child.parent = id;
+                                    child.ignore = true;
+                                    child.visible = false;
+                                }
                             });
 
                             node.children.push(groupNode);
