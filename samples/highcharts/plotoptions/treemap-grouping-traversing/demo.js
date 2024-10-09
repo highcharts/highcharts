@@ -11,8 +11,7 @@ Highcharts.chart('container', {
         },
         data: [{
             value: 600,
-            name: 'A',
-            id: 'A'
+            name: 'A'
         }, {
             value: 200,
             name: 'B'

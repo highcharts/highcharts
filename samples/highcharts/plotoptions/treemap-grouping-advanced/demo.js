@@ -78,6 +78,7 @@
             name: 'Export',
             type: 'treemap',
             layoutAlgorithm: 'squarified',
+            animationLimit: 1500,
             allowTraversingTree: true,
             borderRadius: 6,
             borderColor: '#fff',
