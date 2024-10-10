@@ -178,6 +178,9 @@ async function createDashboard() {
                     data: ['time', 'value']
                 }]
             },
+            sync: {
+                highlight: true
+            },
             chartOptions: {
                 ...chartOptions,
                 title: {
@@ -308,7 +311,6 @@ function logClear() {
 function setConnectStatus(connected) {
     connectButton.innerText = connected ? 'Disconnect' : 'Connect';
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
-    connectStatus.style.color = connected ? 'green' : 'red';
 }
 
 /* *

@@ -9,6 +9,7 @@
 
     /* Colors */
     --custom-background: var(--highcharts-neutral-color-3);
+    --text-color: var(--highcharts-neutral-color-80);
 }
 
 /* *
@@ -70,6 +71,7 @@
     padding: 10px;
     margin: 0;
     overflow: none;
+    color: var(--text-color);
 }
 
 #html-log h1 {
@@ -104,6 +106,7 @@
     font-size: 0.9em;
     width: 100%;
     background-color: var(--highcharts-neutral-color-10);
+    color: var(--text-color);
     margin: 0 auto;
     text-align: center;
 }
