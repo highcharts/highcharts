@@ -33,6 +33,9 @@ import Globals from './Globals.js';
  * */
 
 const DefaultOptions: Globals.DeepPartial<Options> = {
+    accessibility: {
+        enabled: true
+    },
     rendering: {
         columns: {
             distribution: 'full'

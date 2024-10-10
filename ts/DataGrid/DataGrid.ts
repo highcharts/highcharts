@@ -26,15 +26,16 @@ import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './O
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Column from './Table/Column';
 
+import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Credits from './Credits.js';
 import DataGridDefaultOptions from './DefaultOptions.js';
-import Table from './Table/Table.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
-import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
+import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
+import QueryingController from './Querying/QueryingController.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
@@ -136,6 +137,11 @@ class DataGrid {
      * An array containing the current DataGrid objects in the page.
      */
     public static readonly dataGrids: Array<(DataGrid|undefined)> = [];
+
+    /**
+     * The accessibility controller.
+     */
+    public accessibility?: Accessibility;
 
     /**
      * The user options declared for the columns as an object of column ID to
@@ -243,6 +249,7 @@ class DataGrid {
 
         this.querying = new QueryingController(this);
 
+        this.initAccessibility();
         this.initContainers(renderTo);
         this.loadDataTable(this.options?.dataTable);
 
@@ -251,6 +258,7 @@ class DataGrid {
             this.renderViewport();
             afterLoadCallback?.(this);
         });
+
         DataGrid.dataGrids.push(this);
     }
 
@@ -260,6 +268,23 @@ class DataGrid {
      *  Methods
      *
      * */
+
+    private initAccessibility(): void {
+        if (!this.options?.accessibility?.enabled) {
+            return;
+        }
+
+        // TODO: Move it to a separate module
+        this.accessibility = new Accessibility(this);
+
+        // // eslint-disable-next-line no-console
+        // console.warn(
+        //     'Highcharts DataGrid warning: Consider including the ' +
+        //     '"datagrid-accessibility.js" module to make your chart more ' +
+        //     'usable for people with disabilities. Set the "accessibility.e' +
+        //     'nabled" option to false to remove this warning.'
+        // );
+    }
 
     /**
      * Initializes the container of the data grid.

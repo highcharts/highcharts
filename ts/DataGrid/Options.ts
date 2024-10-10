@@ -20,10 +20,11 @@
  *
  * */
 
+import type A11yOptions from './Accessibility/A11yOptions';
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import Column from './Table/Column';
+import type Column from './Table/Column';
 
 
 /* *
@@ -63,6 +64,11 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  * Options to control the content and the user experience of a grid structure.
  */
 export interface Options {
+    /**
+     * Accessibility options for the datagrid.
+     */
+    accessibility?: A11yOptions;
+
     /**
      * Options for the table caption.
      */
