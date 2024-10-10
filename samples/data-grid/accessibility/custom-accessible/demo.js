@@ -28,7 +28,7 @@ DataGrid.dataGrid('container', {
         {
             format: 'Product',
             accessibility: {
-                descripion: `The product group consists in two columns:
+                description: `The product group consists in two columns:
                     product name and units`
             },
             columns: [{
@@ -37,7 +37,7 @@ DataGrid.dataGrid('container', {
             }, {
                 format: 'Units',
                 accessibility: {
-                    descripion: `The Units group consists in two columns:
+                    description: `The Units group consists in two columns:
                         weight and custom price`
                 },
                 columns: [{
