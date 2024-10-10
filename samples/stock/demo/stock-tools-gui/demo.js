@@ -1,27 +1,16 @@
 (async () => {
 
-    // Load the dataset
-    const data = await fetch(
-        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
-    ).then(response => response.json());
-
-    // split the data set into ohlc and volume
-    const ohlc = [],
-        volume = [],
-        dataLength = data.length;
-
-    for (let i = 0; i < dataLength; i += 1) {
-        ohlc.push([
-            data[i][0], // the date
-            data[i][1], // open
-            data[i][2], // high
-            data[i][3], // low
-            data[i][4] // close
-        ]);
-
-        volume.push([
-            data[i][0], // the date
-            data[i][5] // the volume
+    const data = [];
+    for (let i = 0; i < 300; i++) {
+        if (i > 100 && i < 200) {
+            continue;
+        }
+        data.push([
+            i,
+            Math.sin(i / 10),
+            Math.sin(i / 10) + 1,
+            Math.sin(i / 10),
+            Math.sin(i / 10) + 1
         ]);
     }
 
@@ -78,13 +67,7 @@
             type: 'ohlc',
             id: 'aapl-ohlc',
             name: 'AAPL Stock Price',
-            data: ohlc
-        }, {
-            type: 'column',
-            id: 'aapl-volume',
-            name: 'AAPL Volume',
-            data: volume,
-            yAxis: 1
+            data
         }],
         responsive: {
             rules: [{

@@ -20,6 +20,7 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type RenkoPoint from './RenkoPoint.js';
 import type ColorType from '../../Core/Color/ColorType';
+import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -67,6 +68,9 @@ class RenkoSeries extends ColumnSeries {
      */
     public renkoData?: RenkoData[];
 
+    public getProcessedData(): Series.ProcessedDataObject {
+        return super.getProcessedData(true);
+    }
     /**
      * Create renko data from linear data
      *

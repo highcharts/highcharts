@@ -54,6 +54,13 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      * trend is inferred from series.color)
      */
     downColor: ColorType;
+    /**
+     * The size of the individual box, representing a point. Can be set in yAxis
+     * value, or percent value of the first point e.g. if first point's value is
+     * 200, and box size is set to `20%`, the box will be 40, so the new point
+     * will be drawn when the next value changes for more than 40.
+     *
+     */
     boxSize: string | number;
 
     /**
@@ -77,7 +84,7 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      * 2. An array of objects with named values. With renko series, the data
      * does not directly correspond to the points in the series. the reason
      * is that the points are calculated based on the trends and boxSize.
-     * Setting options for indivcidual point is impossible.
+     * Setting options for individual point is impossible.
      *
      *    ```js
      *    data: [{

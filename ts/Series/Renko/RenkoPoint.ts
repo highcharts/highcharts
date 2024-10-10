@@ -33,7 +33,6 @@ const {
  * */
 
 class RenkoPoint extends ColumnPoint {
-    public isDown = false;
     public options!: RenkoPointOptions;
 }
 

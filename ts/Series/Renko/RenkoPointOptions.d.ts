@@ -23,7 +23,6 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface RenkoPointOptions extends ColumnPointOptions {
-    // Nothing to add
 }
 
 /* *
