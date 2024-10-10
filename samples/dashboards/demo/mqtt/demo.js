@@ -901,7 +901,7 @@ class ControlBar {
         const genId = tmp.length > 1 ? tmp[1] : 1;
 
         // Show the power plant name
-        this.elDropdownButton.innerHTML = fullName;
+        this.elDropdownButton.textContent = fullName;
 
         const id = activeItem.plantName;
         if (id !== '') {
