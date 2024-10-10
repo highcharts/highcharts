@@ -1,0 +1,7 @@
+---
+ name: MQTT customer connector demo
+ authors:
+   - Jomar Hønsi
+ js_wrap: b
+ skipTest: true
+...
