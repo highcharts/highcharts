@@ -2144,6 +2144,7 @@ namespace AxisDefaults {
          * @product   highcharts gantt
          * @type      {boolean}
          * @default   true
+         * @apioption xAxis.uniqueNames
          */
 
         /**
