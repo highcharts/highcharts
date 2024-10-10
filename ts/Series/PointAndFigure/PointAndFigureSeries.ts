@@ -22,7 +22,6 @@ import PointAndFigureSymbols from './PointAndFigureSymbols.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import type Axis from '../../Core/Axis/Axis.js';
 import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
@@ -36,7 +35,6 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 const {
-    addEvent,
     merge,
     pushUnique,
     isNumber,
@@ -57,21 +55,6 @@ const {
  *
  * */
 
-/**
- *
- */
-function generatePnfData(
-    this: Axis
-): void {
-    const series = this.series;
-
-    series.forEach((series): void => {
-        if (series.is('pointandfigure')) {
-            const pnfSeries = series as PointAndFigureSeries;
-            pnfSeries.generatePnfData();
-        }
-    });
-}
 
 /* *
  *
@@ -108,11 +91,9 @@ class PointAndFigureSeries extends ScatterSeries {
      * */
 
     public static compose(
-        AxisClass: typeof Axis,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
-            addEvent(AxisClass, 'postProcessData', generatePnfData);
             PointAndFigureSymbols.compose(SVGRendererClass);
         }
     }
@@ -273,6 +254,16 @@ class PointAndFigureSeries extends ScatterSeries {
 
         series.pnfDataGroups = pnfDataGroups;
         series.processedData = finalData;
+    }
+
+    public processData(force?: boolean): (boolean|undefined) {
+        const ret = super.processData(force);
+
+        if (this.is?.('pointandfigure')) {
+            this.generatePnfData();
+        }
+
+        return ret;
     }
 
     public markerAttribs(
