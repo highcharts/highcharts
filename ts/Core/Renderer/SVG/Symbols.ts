@@ -298,24 +298,6 @@ function circle(
 /**
  *
  */
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['Z']
-    ];
-}
-
-/**
- *
- */
 function diamond(
     x: number,
     y: number,
@@ -424,7 +406,6 @@ declare module './SymbolType' {
         arc: typeof arc;
         callout: typeof callout;
         circle: typeof circle;
-        cross: typeof cross;
         diamond: typeof diamond;
         rect: typeof rect;
         roundedRect: typeof roundedRect;
@@ -438,7 +419,6 @@ const Symbols: SymbolTypeRegistry = {
     arc,
     callout,
     circle,
-    cross,
     diamond,
     rect,
     roundedRect,

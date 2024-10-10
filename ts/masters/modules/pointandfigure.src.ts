@@ -14,5 +14,5 @@
 import Highcharts from '../../Core/Globals.js';
 import PointAndFigureSeries from '../../Series/PointAndFigure/PointAndFigureSeries.js';
 const G: AnyRecord = Highcharts;
-PointAndFigureSeries.compose(G.Axis);
+PointAndFigureSeries.compose(G.Axis, G.Renderer);
 export default Highcharts;

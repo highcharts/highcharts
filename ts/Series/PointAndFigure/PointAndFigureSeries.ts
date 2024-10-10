@@ -18,11 +18,13 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PointAndFigureSymbols from './PointAndFigureSymbols.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import type Axis from '../../Core/Axis/Axis.js';
 import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -106,10 +108,12 @@ class PointAndFigureSeries extends ScatterSeries {
      * */
 
     public static compose(
-        AxisClass: typeof Axis
+        AxisClass: typeof Axis,
+        SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
             addEvent(AxisClass, 'postProcessData', generatePnfData);
+            PointAndFigureSymbols.compose(SVGRendererClass);
         }
     }
 
@@ -127,6 +131,8 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public yData!: Array<number>;
 
+    public allowDG = false;
+
     public takeOrdinalPosition: boolean = true;
 
     public pnfDataGroups: Array<PointAndFigureGroup> = [];
@@ -134,6 +140,7 @@ class PointAndFigureSeries extends ScatterSeries {
     public getColumnMetrics = columnProto.getColumnMetrics;
 
     public pointClass = PointAndFigurePoint;
+
 
     /* *
      *
