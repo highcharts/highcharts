@@ -58,7 +58,14 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
         sorting: {
             sortable: true
         },
-        resizing: true
+        resizing: true,
+        cells: {
+            accessibility: {
+                beforeEdit: 'The cell can be edited, by pressing Enter.',
+                afterEdit: 'The cell value has been updated.',
+                cancelEdit: 'The cell editing has been cancelled.'
+            }
+        }
     }
 };
 

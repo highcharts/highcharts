@@ -269,21 +269,16 @@ class DataGrid {
      *
      * */
 
+    /**
+     * Initializes the accessibility controller.
+     */
     private initAccessibility(): void {
         if (!this.options?.accessibility?.enabled) {
             return;
         }
 
-        // TODO: Move it to a separate module
+        // Can be moved to a separate module in the future (if needed).
         this.accessibility = new Accessibility(this);
-
-        // // eslint-disable-next-line no-console
-        // console.warn(
-        //     'Highcharts DataGrid warning: Consider including the ' +
-        //     '"datagrid-accessibility.js" module to make your chart more ' +
-        //     'usable for people with disabilities. Set the "accessibility.e' +
-        //     'nabled" option to false to remove this warning.'
-        // );
     }
 
     /**

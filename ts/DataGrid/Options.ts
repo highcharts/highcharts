@@ -67,7 +67,7 @@ export interface Options {
     /**
      * Accessibility options for the datagrid.
      */
-    accessibility?: A11yOptions;
+    accessibility?: A11yOptions.GeneralA11yOptions;
 
     /**
      * Options for the table caption.
@@ -254,6 +254,9 @@ export interface ColumnOptions {
  * Options for all cells in the column.
  */
 export interface ColumnCellOptions {
+
+    accessibility?: A11yOptions.CellA11yOptions;
+
     /**
      * Allows to define an additional class name to all table cells in the
      * column. Applied only to cell that are in the table, not in the column
@@ -303,6 +306,9 @@ export interface ColumnCellOptions {
  * Options for the header cells in the columns.
  */
 export interface ColumnHeaderOptions {
+
+    accessibility?: A11yOptions.HeaderCellA11yOptions;
+
     /**
      * Allows user to define an additional class name only to the column header.
      *
@@ -505,6 +511,9 @@ export interface HeaderEvents {
  * Options to control the structure of table header.
  */
 export interface GroupedHeaderOptions {
+
+    accessibility?: A11yOptions.HeaderCellA11yOptions;
+
     /**
      * The format of the column header. Use `{id}` to display the column id.
      */
