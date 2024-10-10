@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 /* eslint-disable max-len */
 /* eslint-disable jsdoc/require-description */
 
