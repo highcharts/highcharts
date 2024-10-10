@@ -12,8 +12,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import RenkoSeries from '../../Series/Renko/RenkoSeries.js';
-const G: AnyRecord = Highcharts;
+import '../../Series/Renko/RenkoSeries.js';
 
-RenkoSeries.compose(G.Axis);
 export default Highcharts;
