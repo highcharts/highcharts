@@ -3,6 +3,26 @@ const basicInvestmentPlan = {
     amount: 200   // Amount in EUR
 };
 
+const stockCollection = [
+    {
+        tradingSymbol: 'NFLX',
+        ISIN: 'US64110L1061',
+        SecID: '0P000003UP'
+    }, {
+        tradingSymbol: 'MSFT',
+        ISIN: 'US5949181045',
+        SecID: '0P000003MH'
+    }, {
+        tradingSymbol: 'AMZN',
+        ISIN: 'US0231351067',
+        SecID: '0P000000B7'
+    }, {
+        tradingSymbol: 'GOOGL',
+        ISIN: 'US02079K3059',
+        SecID: '0P000002HD'
+    }
+];
+
 const generatePortfolio = (investmentPlan, stockPrices) => {
     const { interval, amount } = investmentPlan;
     const portfolioValues = [];
@@ -26,6 +46,10 @@ const data = [
     ['Mock2', 'MOCK6529', 30]
 ];
 
+const getIDs = () =>  stockCollection.map(stock => ({
+    id: stock.ISIN,
+    idType: 'ISIN'
+}));
 
 // Morningstar data fetch
 const commonOptions = {
@@ -45,24 +69,7 @@ const connector = new Connectors.Morningstar.TimeSeriesConnector({
     series: {
         type: 'Price'
     },
-    securities: [
-        {
-            id: 'US64110L1061',
-            idType: 'ISIN'
-        },
-        {
-            id: 'US5949181045',
-            idType: 'ISIN'
-        },
-        {
-            id: 'US0231351067',
-            idType: 'ISIN'
-        },
-        {
-            id: 'US02079K3059',
-            idType: 'ISIN'
-        }
-    ],
+    securities: getIDs(),
     currencyId: 'EUR',
     startDate: '2022-01-01',
     endDate: '2023-12-31'
@@ -131,29 +138,15 @@ Promise.all([
         ])
     );
 
-    const microsoftHolding = generatePortfolio(
-            basicInvestmentPlan,
-            processedData['0P000003MH']
-        ),
-        netflixHolding = generatePortfolio(
-            basicInvestmentPlan,
-            processedData['0P000003UP']
-        ),
-        amazonHolding = generatePortfolio(
-            basicInvestmentPlan,
-            processedData['0P000000B7']
-        ),
-        alphabetHolding = generatePortfolio(
-            basicInvestmentPlan,
-            processedData['0P000002HD']
-        );
+    const holdings = [];
 
-    const walletTotal = sumAllArrays([
-        netflixHolding,
-        microsoftHolding,
-        amazonHolding,
-        alphabetHolding
-    ]);
+    stockCollection.forEach(stock => {
+        holdings.push(generatePortfolio(
+            basicInvestmentPlan, processedData[stock.SecID]
+        ));
+    });
+
+    const walletTotal = sumAllArrays(holdings);
 
     const lastTotal = walletTotal[walletTotal.length - 1][1];
 
@@ -271,14 +264,14 @@ Promise.all([
             type: 'KPI',
             renderTo: 'kpi-holding',
             value: lastTotal,
-            valueFormat: '${value:.2f}',
+            valueFormat: '€{value:.2f}',
             title: 'Holding'
         }, {
             type: 'KPI',
             renderTo: 'kpi-balance',
-            value: 8,
+            value: 8000,
             title: 'Balance',
-            valueFormat: '${value}'
+            valueFormat: '€{value:.2f}'
         }, {
             type: 'Highcharts',
             chartConstructor: 'stockChart',
@@ -310,7 +303,11 @@ Promise.all([
                 title: {
                     text: 'Holding over time'
                 },
+                tooltip: {
+                    format: '€{y:.2f}'
+                },
                 series: [{
+                    name: 'Total',
                     data: walletTotal
                 }]
 
