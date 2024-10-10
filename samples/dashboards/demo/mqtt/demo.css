@@ -223,8 +223,8 @@ div#control-bar {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--highcharts-neutral-color-80);
-    color: white;
+    background-color: #334;
+    color: #fff;
     padding: 0;
     margin: 0;
     font-size: 14px;
@@ -291,7 +291,7 @@ div#control-cell button:hover {
     left: 2px;
     width: 16px;
     height: 16px;
-    background-color: white;
+    background-color: #fff;
     border-radius: 50%;
     transition: transform 0.3s;
 }
