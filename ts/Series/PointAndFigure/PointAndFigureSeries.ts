@@ -35,6 +35,7 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 const {
+    extend,
     merge,
     pushUnique,
     isNumber,
@@ -114,20 +115,17 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public allowDG = false;
 
-    public takeOrdinalPosition: boolean = true;
-
-    public pnfDataGroups: Array<PointAndFigureGroup> = [];
-
-    public getColumnMetrics = columnProto.getColumnMetrics;
-
-    public pointClass = PointAndFigurePoint;
-
-
     /* *
      *
      *  Functions
      *
      * */
+
+    public init(): void {
+        super.init.apply(this, arguments);
+
+        this.pnfDataGroups = [];
+    }
 
     public generatePnfData(
         this: PointAndFigureSeries
@@ -313,10 +311,20 @@ interface PointAndFigureGroup {
 }
 
 interface PointAndFigureSeries {
+    takeOrdinalPosition: boolean;
+    pnfDataGroups: Array<PointAndFigureGroup>;
+    getColumnMetrics: typeof columnProto.getColumnMetrics;
     markerWidth: number;
     markerHeight: number;
     calculatedBoxSize: number;
 }
+
+extend(PointAndFigureSeries.prototype, {
+    takeOrdinalPosition: true,
+    pnfDataGroups: [],
+    getColumnMetrics: columnProto.getColumnMetrics,
+    pointClass: PointAndFigurePoint
+});
 
 /* *
  *
