@@ -91,6 +91,11 @@ class TableCell extends Cell {
     public override render(): void {
         super.render();
 
+        if (this.column.options.cells?.editable) {
+            this.row.viewport.dataGrid.accessibility
+                ?.addEditableCellDescription(this.htmlElement);
+        }
+
         // It may happen that `await` will be needed here in the future.
         void this.setValue(this.column.data?.[this.row.index], false);
     }

@@ -47,12 +47,27 @@ class Accessibility {
     /**
      * The HTML element of the accessibility.
      */
-    public element: HTMLElement;
+    private element: HTMLElement;
 
     /**
      * The HTML element of the announcer.
      */
     private announcerElement: HTMLElement;
+
+    /**
+     * The HTML element of the description for the editable cell.
+     */
+    private editableCellDescriptionEl: HTMLElement;
+
+    /**
+     * The HTML element of the description for the sortable column.
+     */
+    private sortableColumnDescriptionEl: HTMLElement;
+
+    /**
+     * The HTML element of the main description.
+     */
+    private mainDescriptionEl: HTMLElement;
 
 
     /* *
@@ -75,6 +90,25 @@ class Accessibility {
         this.dataGrid.container?.prepend(this.element);
 
         this.announcerElement = document.createElement('p');
+        this.announcerElement.setAttribute('aria-atomic', 'true');
+        this.announcerElement.setAttribute('aria-hidden', 'false');
+
+        this.editableCellDescriptionEl = document.createElement('p');
+        this.sortableColumnDescriptionEl = document.createElement('p');
+        this.mainDescriptionEl = document.createElement('p');
+
+        this.editableCellDescriptionEl.id =
+            Accessibility.decriptionElementIds.editableCell;
+        this.sortableColumnDescriptionEl.id =
+            Accessibility.decriptionElementIds.sortableColumn;
+        this.mainDescriptionEl.id =
+            Accessibility.decriptionElementIds.main;
+
+        this.element.appendChild(this.editableCellDescriptionEl);
+        this.element.appendChild(this.sortableColumnDescriptionEl);
+        this.element.appendChild(this.mainDescriptionEl);
+
+        this.loadOptions();
     }
 
 
@@ -84,15 +118,44 @@ class Accessibility {
     *
     * */
 
+    public loadOptions(): void {
+        const options = this.dataGrid.options?.accessibility;
+        if (!options) {
+            return;
+        }
+
+        this.mainDescriptionEl.textContent = options?.description || '';
+        this.editableCellDescriptionEl.textContent =
+            options.cellEditing?.description || '';
+        this.sortableColumnDescriptionEl.textContent =
+            options.sorting?.description || '';
+    }
+
+    public addEditableCellDescription(cellElement: HTMLElement): void {
+        cellElement.setAttribute(
+            'aria-describedby',
+            Accessibility.decriptionElementIds.editableCell
+        );
+    }
+
+    public addSortableColumnDescription(thElement: HTMLElement): void {
+        thElement.setAttribute(
+            'aria-describedby',
+            Accessibility.decriptionElementIds.sortableColumn
+        );
+    }
+
+    public addMainDescription(): void {
+        // TODO: Where to add the main description?
+    }
+
     public announce(msg: string, assertive = false): void {
         this.announcerElement.remove();
         this.announcerElement.setAttribute(
             'aria-live', assertive ? 'assertive' : 'polite'
         );
-        this.announcerElement.setAttribute('aria-atomic', 'true');
-        this.announcerElement.setAttribute('aria-hidden', 'false');
-        this.element.appendChild(this.announcerElement);
 
+        this.element.appendChild(this.announcerElement);
         this.announcerElement.textContent = msg;
 
         // Debug:
@@ -154,6 +217,12 @@ class Accessibility {
 namespace Accessibility {
     export type AriaSortState = 'ascending' | 'descending' | 'none';
     export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
+
+    export const decriptionElementIds = {
+        main: 'highcharts-datagrid-main-description',
+        editableCell: 'highchartsdata-grid-editable-cell-description',
+        sortableColumn: 'highcharts-datagrid-sortable-column-description'
+    } as const;
 }
 
 

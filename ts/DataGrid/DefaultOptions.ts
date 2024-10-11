@@ -36,17 +36,16 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
     accessibility: {
         enabled: true,
         cellEditing: {
-            description: 'The cell can be edited, by pressing Enter.',
-            startEdit: 'The cell is now in edit mode.',
-            afterEdit: 'The cell value has been updated.',
-            cancelEdit: 'The cell editing has been cancelled.'
+            description: 'Editable cell.',
+            startEdit: 'Entered cell editing mode.',
+            afterEdit: 'Edited cell value.',
+            cancelEdit: 'Editing canceled.'
         },
         sorting: {
-            description: 'The column data is sortable. Use enter to toggle ' +
-                'sorting order.',
-            ascending: 'The column has been sorted in ascending order.',
-            descending: 'The column has been sorted in descending order.',
-            none: 'The column sorting has been removed.'
+            description: 'Sortable column header.',
+            ascending: 'Sorted ascending.',
+            descending: 'Sorted descending.',
+            none: 'Not sorted.'
         }
     },
     rendering: {

@@ -75,6 +75,12 @@ class ColumnSorting {
         this.headerCellElement = headerCellElement;
 
         this.addHeaderElementAttributes();
+
+        if (column.options.sorting?.sortable) {
+            headerCellElement.classList.add(Globals.classNames.columnSortable);
+            column.viewport.dataGrid.accessibility
+                ?.addSortableColumnDescription(headerCellElement);
+        }
     }
 
 
@@ -94,10 +100,6 @@ class ColumnSorting {
         const { currentSorting } = col.viewport.dataGrid.querying.sorting;
 
         const el = this.headerCellElement;
-
-        if (sortingOptions?.sortable) {
-            el.classList.add(Globals.classNames.columnSortable);
-        }
 
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(Globals.classNames.columnSortedAsc);
