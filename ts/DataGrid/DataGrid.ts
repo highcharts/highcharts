@@ -249,8 +249,8 @@ class DataGrid {
 
         this.querying = new QueryingController(this);
 
-        this.initAccessibility();
         this.initContainers(renderTo);
+        this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
         this.querying.loadOptions();

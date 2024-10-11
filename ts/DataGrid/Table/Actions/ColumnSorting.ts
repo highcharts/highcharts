@@ -89,6 +89,7 @@ class ColumnSorting {
      */
     private addHeaderElementAttributes(): void {
         const col = this.column;
+        const a11y = col.viewport.dataGrid.accessibility;
         const sortingOptions = col.options.sorting;
         const { currentSorting } = col.viewport.dataGrid.querying.sorting;
 
@@ -98,9 +99,16 @@ class ColumnSorting {
             el.classList.add(Globals.classNames.columnSortable);
         }
 
+        a11y?.announce('sorted - announcer test', true);
+
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(Globals.classNames.columnSortedAsc);
             el.classList.remove(Globals.classNames.columnSortedDesc);
+
+            if (sortingOptions?.sortable) {
+                a11y?.setColumnSortState(el, 'none');
+            }
+
             return;
         }
 
@@ -108,10 +116,12 @@ class ColumnSorting {
             case 'asc':
                 el.classList.add(Globals.classNames.columnSortedAsc);
                 el.classList.remove(Globals.classNames.columnSortedDesc);
+                a11y?.setColumnSortState(el, 'ascending');
                 break;
             case 'desc':
                 el.classList.remove(Globals.classNames.columnSortedAsc);
                 el.classList.add(Globals.classNames.columnSortedDesc);
+                a11y?.setColumnSortState(el, 'descending');
                 break;
         }
     }

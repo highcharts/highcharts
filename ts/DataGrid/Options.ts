@@ -255,8 +255,6 @@ export interface ColumnOptions {
  */
 export interface ColumnCellOptions {
 
-    accessibility?: A11yOptions.CellA11yOptions;
-
     /**
      * Allows to define an additional class name to all table cells in the
      * column. Applied only to cell that are in the table, not in the column

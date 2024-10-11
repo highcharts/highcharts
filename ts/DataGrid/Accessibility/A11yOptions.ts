@@ -32,9 +32,10 @@ namespace A11yOptions {
     export interface GeneralA11yOptions {
         enabled?: boolean;
         description?: string;
+        cellEditing?: CellEditingA11yOptions;
     }
 
-    export interface CellA11yOptions {
+    export interface CellEditingA11yOptions {
         beforeEdit?: string;
         afterEdit?: string;
         cancelEdit?: string;

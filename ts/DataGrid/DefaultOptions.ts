@@ -34,7 +34,17 @@ import Globals from './Globals.js';
 
 const DefaultOptions: Globals.DeepPartial<Options> = {
     accessibility: {
-        enabled: true
+        enabled: true,
+        cellEditing: {
+            beforeEdit: 'The cell can be edited, by pressing Enter.',
+            afterEdit: 'The cell value has been updated.',
+            cancelEdit: 'The cell editing has been cancelled.'
+        }// ,
+        // sorting: {
+        //     ascending: 'Sort in ascending order',
+        //     descending: 'Sort in descending order'
+        //     none: 'No sort applied'
+        // }
     },
     rendering: {
         columns: {
@@ -58,14 +68,7 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
         sorting: {
             sortable: true
         },
-        resizing: true,
-        cells: {
-            accessibility: {
-                beforeEdit: 'The cell can be edited, by pressing Enter.',
-                afterEdit: 'The cell value has been updated.',
-                cancelEdit: 'The cell editing has been cancelled.'
-            }
-        }
+        resizing: true
     }
 };
 
