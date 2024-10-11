@@ -41,6 +41,7 @@ module.exports = {
             'stock/cumulative-sum',
             'stock/hollow-candlestick-chart',
             'stock/heikinashi',
+            'stock/pointandfigure',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
