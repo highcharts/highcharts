@@ -99,8 +99,6 @@ class ColumnSorting {
             el.classList.add(Globals.classNames.columnSortable);
         }
 
-        a11y?.announce('sorted - announcer test', true);
-
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(Globals.classNames.columnSortedAsc);
             el.classList.remove(Globals.classNames.columnSortedDesc);
@@ -138,6 +136,7 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.dataGrid.querying;
         const sortingController = querying.sorting;
+        const a11y = viewport.dataGrid.accessibility;
 
         sortingController.setSorting(order, this.column.id);
         await querying.proceed();
@@ -147,6 +146,8 @@ class ColumnSorting {
         for (const col of viewport.columns) {
             col.sorting?.addHeaderElementAttributes();
         }
+
+        a11y?.userSortedColumn(order);
 
         viewport.dataGrid.options?.events?.column?.afterSorting?.call(
             this.column

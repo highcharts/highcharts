@@ -33,12 +33,20 @@ namespace A11yOptions {
         enabled?: boolean;
         description?: string;
         cellEditing?: CellEditingA11yOptions;
+        sorting?: SortingA11yOptions;
     }
 
     export interface CellEditingA11yOptions {
         beforeEdit?: string;
         afterEdit?: string;
         cancelEdit?: string;
+    }
+
+    export interface SortingA11yOptions {
+        description?: string;
+        ascending?: string;
+        descending?: string;
+        none?: string;
     }
 
     export interface HeaderCellA11yOptions {

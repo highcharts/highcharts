@@ -23,6 +23,7 @@
  * */
 
 import type DataGrid from '../DataGrid';
+import type { ColumnSortingOrder } from '../Options';
 
 import Globals from '../Globals.js';
 
@@ -98,6 +99,28 @@ class Accessibility {
         setTimeout((): void => {
             this.announcerElement?.remove();
         }, 3000);
+    }
+
+    public userSortedColumn(order: ColumnSortingOrder): void {
+        const sortingOptions = this.dataGrid.options?.accessibility?.sorting;
+        let msg: string | undefined;
+
+        switch (order) {
+            case 'asc':
+                msg = sortingOptions?.ascending;
+                break;
+            case 'desc':
+                msg = sortingOptions?.descending;
+                break;
+            default:
+                msg = sortingOptions?.none;
+        }
+
+        if (!msg) {
+            return;
+        }
+
+        this.announce(msg, true);
     }
 
     public setColumnSortState(

@@ -39,12 +39,13 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
             beforeEdit: 'The cell can be edited, by pressing Enter.',
             afterEdit: 'The cell value has been updated.',
             cancelEdit: 'The cell editing has been cancelled.'
-        }// ,
-        // sorting: {
-        //     ascending: 'Sort in ascending order',
-        //     descending: 'Sort in descending order'
-        //     none: 'No sort applied'
-        // }
+        },
+        sorting: {
+            description: 'The column data is sortable. Use enter to toggle sorting order.',
+            ascending: 'The column has been sorted in ascending order.',
+            descending: 'The column has been sorted in descending order.',
+            none: 'The column sorting has been removed.'
+        }
     },
     rendering: {
         columns: {
