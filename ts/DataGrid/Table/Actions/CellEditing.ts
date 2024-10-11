@@ -108,6 +108,8 @@ class CellEditing {
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.editedCell);
 
+        cell.htmlElement.focus();
+
         // Convert to number if possible
         if (!isNaN(+newValue)) {
             newValue = +newValue;
