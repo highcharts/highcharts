@@ -60,6 +60,7 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      * 200, and box size is set to `20%`, the box will be 40, so the new point
      * will be drawn when the next value changes for more than 40.
      *
+     *
      */
     boxSize: string | number;
 

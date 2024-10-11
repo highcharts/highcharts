@@ -33,6 +33,10 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
  * @sample stock/demo/renko/
  *         Renko series
  *
+ *
+ * @sample stock/demo/renko-vs-heikinashi-vs-candlestick
+ *         Renko series
+ *
  * @extends      plotOptions.column
  * @product      highstock
  * @requires     modules/renko
