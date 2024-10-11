@@ -35,6 +35,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
  *
  * @extends      plotOptions.scatter
  * @product      highstock
+ * @excluding    dataGrouping
  * @requires     modules/pointandfigure
  * @optionparent plotOptions.pointandfigure
  */
@@ -82,6 +83,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  * @type      {*}
  * @extends   series,plotOptions.pointandfigure
  * @product   highstock
+ * @excluding dataGrouping
  * @requires  modules/pointandfigure
  * @apioption series.pointandfigure
  */

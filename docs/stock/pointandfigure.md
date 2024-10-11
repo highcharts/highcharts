@@ -2,7 +2,7 @@ Point and Figure chart
 ================
 
 
-A point-and-figure (P&F) chart is a technical analysis tool used in financial markets to track price movements without too much focus on the time. It uses a series of Xs and Os to represent upward and downward price movements, respectively. The Xs indicate price increases, while the Os indicate price decreases. Each symbol is added to the column only when the `boxSize` threshold is crossed. A new column is created only when there is a reversal in the price trend of a predefined amount, known as the `reversalAmount`. This approach filters out minor price fluctuations, focusing only on significant price changes, which helps identify trends, support, and resistance levels. Point-and-figure charts are particularly useful for spotting breakouts, trends, and potential entry or exit points in the market.
+A Point and Figure (P&F) chart is a technical analysis tool used in financial markets to track price movements without too much focus on the time. It uses a series of Xs and Os to represent upward and downward price movements, respectively. The Xs indicate price increases, while the Os indicate price decreases. Each symbol is added to the column only when the `boxSize` threshold is crossed. A new column is created only when there is a reversal in the price trend of a predefined amount, known as the `reversalAmount`. This approach filters out minor price fluctuations, focusing only on significant price changes, which helps identify trends, support, and resistance levels. Point and Figure charts are particularly useful for spotting breakouts, trends, and potential entry or exit points in the market.
 
 ![pointandfigure.png](pointandfigure.png)
 
@@ -14,9 +14,9 @@ Point and Figure series accepts the data only in `[x, close]` format, which then
 ### New options
 Point and Figure series adds the following features to the chart:
 - new `cross` symbol,
-- `boxSize` API option,
-- `reversalAmount` API option,
-- separate API options for `marker` and `markerUp`
+- [`boxSize`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.boxSize) API option,
+- [`reversalAmount`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.reversalAmount) API option,
+- separate API options for [`marker`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.marker) and [`markerUp`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.markerUp)
 
 
 
