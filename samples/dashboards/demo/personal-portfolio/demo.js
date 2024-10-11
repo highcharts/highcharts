@@ -40,12 +40,6 @@ const generatePortfolio = (investmentPlan, stockPrices) => {
     return portfolioValues;
 };
 
-const data = [
-    ['Name', 'ISIN', '% of wallet'],
-    ['Mock1', 'MOCK6528', 70],
-    ['Mock2', 'MOCK6529', 30]
-];
-
 const getIDs = () =>  stockCollection.map(stock => ({
     id: stock.ISIN,
     idType: 'ISIN'
@@ -139,6 +133,7 @@ Promise.all([
     );
 
     const holdings = [];
+    const dataGridData = [];
 
     stockCollection.forEach(stock => {
         holdings.push(generatePortfolio(
@@ -149,6 +144,15 @@ Promise.all([
     const walletTotal = sumAllArrays(holdings);
 
     const lastTotal = walletTotal[walletTotal.length - 1][1];
+
+    // Generate columns for the datagrid
+    stockCollection.forEach((stock, i) => {
+        const len = holdings[i].length,
+            lastHolding = holdings[i][len - 1][1],
+            ISIN = stock.ISIN,
+            tradingSymbol = stock.tradingSymbol;
+        dataGridData.push([tradingSymbol, ISIN, lastHolding / lastTotal * 100]);
+    });
 
     /*
         const portfolio = {
@@ -216,7 +220,9 @@ Promise.all([
                 type: 'JSON',
                 id: 'stock-grid',
                 options: {
-                    data
+                    columnNames: ['Name', 'ISIN', '% of wallet'],
+                    firstRowAsNames: false,
+                    data: dataGridData
                 }
             }
             /* { // TODO: wait for this to go live
