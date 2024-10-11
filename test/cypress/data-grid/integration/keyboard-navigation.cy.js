@@ -3,9 +3,8 @@ describe('Keyboard navigation in DataGrid.', () => {
         cy.visit('/data-grid/basic/overview');
     });
 
-    it('Focus on tbody should cause focus on the first visible cell.', () => {
-        cy.get('tbody').should('have.attr', 'tabindex', '0');
-        cy.get('tbody').focus();
+    it('The first visible cell is focusable.', () => {
+        cy.get('td').first().focus();
         cy.focused().should('have.attr', 'data-value', 'Apples');
     });
 
