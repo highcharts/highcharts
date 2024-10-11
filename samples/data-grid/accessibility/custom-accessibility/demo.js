@@ -9,16 +9,21 @@ DataGrid.dataGrid('container', {
     },
     accessiblity: {
         enabled: true,
-        description: 'The data table shows vegatables and prices'
+        description: 'The data table shows vegatables and prices',
+        cellEditing: {
+            description: 'The cell can be edited',
+            startEdit: 'Started editing the cell',
+            afterEdit: 'The cell has been updated',
+            cancelEdit: 'Cell\'s editing is cancelled'
+        },
+        sorting: {
+            description: 'The column can be sorted',
+            ascending: 'The column is sorted in ascending order',
+            descending: 'The column is sorted in descending order',
+            none: 'Cleared sorting of the column'
+        }
     },
     columnDefaults: {
-        cells: {
-            accessibility: {
-                beforeEdit: 'The cell can be edited',
-                afterEdit: 'The cell has been updated',
-                cancelEdit: 'Cell\'s editing is cancelled'
-            }
-        },
         sorting: {
             sortable: true
         }
