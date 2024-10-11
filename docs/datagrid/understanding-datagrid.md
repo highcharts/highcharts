@@ -1,11 +1,11 @@
 # Understanding DataGrid
-
 At its core the DataGrid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
 
 ![table](ill_table.png)
 
-## dataTable
+The following provides an introduction the various root configuration objects in DataGrid:
 
+## dataTable
 ```js
 {
     dataTable: {
@@ -24,7 +24,6 @@ The `dataTable` object is the only required option needed for proper rendering o
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
 ## columnDefaults and columns[]
-
 ```js
 {
     columnDefaults: {
@@ -61,7 +60,6 @@ Default options for all columns in the DataGrid, such as the column sorter, colu
 Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/datagrid/columns) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
 
 ## caption
-
 ```js
 {
     caption: {
@@ -74,8 +72,7 @@ The caption of the rendered table, inserted into the `<caption>` HTML element.
 
 For more information on the `caption` option see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#caption).
 
-## header
-
+## header[]
 ```js
 {
     header: [
@@ -89,15 +86,14 @@ For more information on the `caption` option see the [API reference](https://api
 }
 ```
 
-While format and visibility of individual columns and their header cells can be set using the `columns[]` option, the same can be achived using the `header` root option. Which option to use depends on your spesific use case, and `header` will in some cases be less verbose than `columns[]`.
+While format and visibility of individual columns and their header cells can be set using the `columns[]` option, the same can be achived using the `header[]` root option. Which option to use depends on your spesific use case, and `header[]` will in some cases be less verbose than `columns[]`.
 
-In addition the `header` option can be used to change order of headers and group headers in a hierarchical structure.
+In addition the `header[]` option can be used to change order of headers and group headers in a hierarchical structure.
 
-You can find more information about `header` in our [Header article](https://www.highcharts.com/docs/datagrid/header).
+You can find more information about `header[]` in our [Header article](https://www.highcharts.com/docs/datagrid/header).
 
-## rendering.rows
-
-Represents a [row](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) in the DataGrid.
+## rendering
+The `rendering` option object can be used to configure options related to performance and the rendering of the DataGrid. E.g. [rendering.rows](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) represents the rows in the DataGrid.
 
 ```js
 {
@@ -111,3 +107,6 @@ Represents a [row](https://api.highcharts.com/dashboards/#classes/DataGrid_Table
 ```
 
 For more information on row rendering settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings).
+
+## events
+The DataGrid supports a number of event listeners that can be added to the header, columns and cells. These allows for custom functionality and extendibility of the DataGrid. Read more about events in our [Events article](https://www.highcharts.com/docs/datagrid/events)
