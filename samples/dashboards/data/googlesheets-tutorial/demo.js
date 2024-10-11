@@ -129,6 +129,9 @@ worksheetSelect.addEventListener('input', async e => {
         }
     });
     await connector.load();
+
+    // Re-apply data modifier
+    await applyDataModifier(dataModifierSelect.value);
 });
 
 //
