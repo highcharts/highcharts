@@ -243,6 +243,18 @@
     font-size: 1em;
 }
 
+/* Accessibility */
+.highcharts-datagrid-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
 /* ==== Default Theme ==== */
 .highcharts-datagrid-container {
     background-color: var(--highcharts-background-color);

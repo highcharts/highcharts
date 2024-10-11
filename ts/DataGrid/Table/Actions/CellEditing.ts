@@ -85,6 +85,7 @@ class CellEditing {
         cellElement.innerHTML = '';
         cellElement.classList.add(Globals.classNames.editedCell);
 
+        cell.row.viewport.dataGrid.accessibility?.userEditedCell('startEdit');
         this.renderInput();
     }
 
@@ -121,6 +122,9 @@ class CellEditing {
         );
 
         dataGrid.options?.events?.cell?.afterEdit?.call(cell);
+        cell.row.viewport.dataGrid.accessibility?.userEditedCell(
+            submit ? 'afterEdit' : 'cancelEdit'
+        );
 
         delete this.editedCell;
     }

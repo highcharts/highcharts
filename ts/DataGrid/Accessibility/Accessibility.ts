@@ -23,11 +23,9 @@
  * */
 
 import type DataGrid from '../DataGrid';
+import type { ColumnSortingOrder } from '../Options';
 
-/// import Globals from './Globals.js';
-// import DGUtils from './Utils.js';
-
-// const { makeHTMLElement } = DGUtils;
+import Globals from '../Globals.js';
 
 
 /**
@@ -46,6 +44,16 @@ class Accessibility {
      */
     public dataGrid: DataGrid;
 
+    /**
+     * The HTML element of the accessibility.
+     */
+    public element: HTMLElement;
+
+    /**
+     * The HTML element of the announcer.
+     */
+    private announcerElement: HTMLElement;
+
 
     /* *
     *
@@ -61,6 +69,12 @@ class Accessibility {
      */
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;
+
+        this.element = document.createElement('div');
+        this.element.classList.add(Globals.classNames.visuallyHidden);
+        this.dataGrid.container?.prepend(this.element);
+
+        this.announcerElement = document.createElement('p');
     }
 
 
@@ -69,6 +83,64 @@ class Accessibility {
     *  Methods
     *
     * */
+
+    public announce(msg: string, assertive = false): void {
+        this.announcerElement.remove();
+        this.announcerElement.setAttribute(
+            'aria-live', assertive ? 'assertive' : 'polite'
+        );
+        this.announcerElement.setAttribute('aria-atomic', 'true');
+        this.announcerElement.setAttribute('aria-hidden', 'false');
+        this.element.appendChild(this.announcerElement);
+
+        this.announcerElement.textContent = msg;
+
+        // Debug:
+        // console.log('announce:', msg);
+
+        setTimeout((): void => {
+            this.announcerElement?.remove();
+        }, 3000);
+    }
+
+    public userSortedColumn(order: ColumnSortingOrder): void {
+        const messages = this.dataGrid.options?.accessibility?.sorting;
+        let msg: string | undefined;
+
+        switch (order) {
+            case 'asc':
+                msg = messages?.ascending;
+                break;
+            case 'desc':
+                msg = messages?.descending;
+                break;
+            default:
+                msg = messages?.none;
+        }
+
+        if (!msg) {
+            return;
+        }
+
+        this.announce(msg, true);
+    }
+
+    public userEditedCell(msgType: Accessibility.EditMsgType): void {
+        const messages = this.dataGrid.options?.accessibility?.cellEditing;
+        const msg = messages?.[msgType];
+        if (!msg) {
+            return;
+        }
+
+        this.announce(msg, true);
+    }
+
+    public setColumnSortState(
+        thElement: HTMLElement,
+        state: Accessibility.AriaSortState
+    ): void {
+        thElement?.setAttribute('aria-sort', state);
+    }
 
 }
 
@@ -80,7 +152,8 @@ class Accessibility {
  * */
 
 namespace Accessibility {
-
+    export type AriaSortState = 'ascending' | 'descending' | 'none';
+    export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
 }
 
 
