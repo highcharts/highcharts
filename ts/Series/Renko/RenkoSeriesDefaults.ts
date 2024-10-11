@@ -38,18 +38,27 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
  *         Renko series
  *
  * @extends      plotOptions.column
+ * @excluding centerInCategory, clip, colorByPoint, compare, compareBase,
+ * compareStart, compareTo, dataGrouping,  edgeColor, edgeWidth, lineColor,
+ * linkedTo, pointPadding, pointPlacement, pointRange, pointStart, pointWidth,
+ * stacking
  * @product      highstock
  * @requires     modules/renko
  * @optionparent plotOptions.renko
  */
 const RenkoDefaults: RenkoSeriesOptions = {
+    /**
+     * The size of the individual box, representing a point. Can be set in yAxis
+     * value, or percent value of the first point e.g. if first point's value is
+     * 200, and box size is set to `20%`, the box will be 40, so the new point
+     * will be drawn when the next value changes for more than 40.
+     */
     boxSize: 4,
     groupPadding: 0,
     pointPadding: 0,
     downColor: '#ff0000',
     navigatorOptions: {
-        type: 'renko',
-        dataGrouping: { enabled: false }
+        type: 'renko'
     },
     fillColor: 'transparent',
     borderWidth: 2,
@@ -71,7 +80,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
  * #chart.type).
  *
  * @type      {*}
- * @extends   series,plotOptions.renko
+ * @extends   series.plotOptions.renko
  * @excluding dataParser, dataURL, marker
  * @product   highstock
  * @requires  modules/renko

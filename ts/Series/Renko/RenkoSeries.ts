@@ -53,6 +53,7 @@ class RenkoSeries extends ColumnSeries {
      * Renko data created from linear data
      */
     public renkoData?: RenkoData[];
+    public hasDerivedData = true;
 
     public getProcessedData(): Series.ProcessedDataObject {
         const processedXData = [];
