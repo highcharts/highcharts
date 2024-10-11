@@ -37,7 +37,8 @@ namespace A11yOptions {
     }
 
     export interface CellEditingA11yOptions {
-        beforeEdit?: string;
+        description?: string;
+        startEdit?: string;
         afterEdit?: string;
         cancelEdit?: string;
     }
