@@ -356,7 +356,8 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
         maxSpeed: 5,
         gravitationalConstant: 0.01,
         friction: -0.981
-    }
+    },
+    stickyTracking: false
 };
 
 /* *
