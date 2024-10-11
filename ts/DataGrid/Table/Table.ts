@@ -24,6 +24,7 @@
 
 import type { ColumnDistribution } from '../Options';
 import type TableCell from './Content/TableCell';
+import type TableRow from './Content/TableRow';
 
 import DGUtils from '../Utils.js';
 import DataTable from '../../Data/DataTable.js';
@@ -35,7 +36,6 @@ import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
-import TableRow from './Content/TableRow';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -60,7 +60,7 @@ class Table {
     /**
      * The data grid instance which the table (viewport) belongs to.
      */
-    public dataGrid: DataGrid;
+    public readonly dataGrid: DataGrid;
 
     /**
      * The presentation version of the data table. It has applied modifiers
@@ -74,12 +74,12 @@ class Table {
     /**
      * The HTML element of the table head.
      */
-    public theadElement: HTMLElement;
+    public readonly theadElement?: HTMLElement;
 
     /**
      * The HTML element of the table body.
      */
-    public tbodyElement: HTMLElement;
+    public readonly tbodyElement: HTMLElement;
 
     /**
      * The head of the table.
@@ -145,6 +145,12 @@ class Table {
      */
     public cellEditing: CellEditing;
 
+    /**
+     * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
+     * table cell is not focused.
+     */
+    public focusCursor?: [number, number];
+
 
     /* *
     *
@@ -176,7 +182,9 @@ class Table {
 
         this.renderCaption();
 
-        this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        if (dgOptions?.rendering?.header?.enabled) {
+            this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -196,6 +204,8 @@ class Table {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
         this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
 
     /* *
@@ -212,8 +222,10 @@ class Table {
         this.loadColumns();
 
         // Load & render head
-        this.header = new TableHeader(this);
-        this.header.render();
+        if (this.dataGrid.options?.rendering?.header?.enabled) {
+            this.header = new TableHeader(this);
+            this.header.render();
+        }
 
         // TODO: Load & render footer
         // this.footer = new TableFooter(this);
@@ -264,10 +276,10 @@ class Table {
 
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             (this.dataGrid.container?.clientHeight || 0) -
-            this.theadElement.offsetHeight -
+            (this.theadElement?.offsetHeight || 0) -
             (this.captionElement?.offsetHeight || 0) -
-            borderWidth -
-            (this.dataGrid.credits?.getHeight() || 0)
+            (this.dataGrid.credits?.getHeight() || 0) -
+            borderWidth
         }px`;
 
         // Get the width of the rows.
@@ -285,6 +297,19 @@ class Table {
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
     }
+
+    /**
+     * Handles the focus event on the table body.
+     *
+     * @param e
+     * The focus event.
+     */
+    private onTBodyFocus = (e: FocusEvent): void => {
+        e.preventDefault();
+
+        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
+            ?.cells[0]?.htmlElement.focus();
+    };
 
     /**
      * Handles the resize event.
@@ -370,6 +395,7 @@ class Table {
      * Destroys the data grid table.
      */
     public destroy(): void {
+        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
@@ -391,7 +417,8 @@ class Table {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
             columnDistribution: this.columnDistribution,
-            columnWidths: this.columns.map((column): number => column.width)
+            columnWidths: this.columns.map((column): number => column.width),
+            focusCursor: this.focusCursor
         };
     }
 
@@ -417,6 +444,13 @@ class Table {
                 this.columns[i].width = widths[i];
             }
             this.reflow();
+
+            if (meta.focusCursor) {
+                const [rowIndex, columnIndex] = meta.focusCursor;
+
+                const row = this.rows[rowIndex - this.rows[0].index];
+                row?.cells[columnIndex]?.htmlElement.focus();
+            }
         }
     }
 
@@ -462,6 +496,7 @@ namespace Table {
         scrollLeft: number;
         columnDistribution: ColumnDistribution;
         columnWidths: number[];
+        focusCursor?: [number, number];
     }
 }
 

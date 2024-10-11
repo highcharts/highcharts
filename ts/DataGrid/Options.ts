@@ -125,6 +125,11 @@ export interface RenderingSettings {
     rows?: RowsSettings;
 
     /**
+     * Options to control the header rendering.
+     */
+    header?: HeaderSettings;
+
+    /**
      * Options to control the table rendering.
      */
     table?: TableSettings;
@@ -181,6 +186,18 @@ export interface RowsSettings {
      * @default false
      */
     strictHeights?: boolean;
+}
+
+/**
+ * Options to control the header rendering.
+ */
+export interface HeaderSettings {
+    /**
+     * Whether the header should be rendered.
+     *
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 /**

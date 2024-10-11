@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 let board = void 0;
 let instances = void 0;
 let currentInstanceId = void 0;
@@ -177,7 +182,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'Instance type:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.InstanceType
@@ -187,7 +194,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'Zone:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.Zone
@@ -197,7 +206,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'AMI:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.AMI
@@ -207,7 +218,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'OS:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.OS
@@ -306,8 +319,7 @@ const setupDashboard = instanceId => {
                     description: 'The chart is displaying space on disk'
                 }
             }
-        },
-        {
+        }, {
             cell: 'cpu-utilization',
             title: 'CPU utilization',
             type: 'Highcharts',
@@ -358,8 +370,7 @@ const setupDashboard = instanceId => {
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'cpu',
             type: 'KPI',
             connector: {
@@ -455,8 +466,7 @@ const setupDashboard = instanceId => {
                     valueSuffix: ' MB'
                 }
             }
-        },
-        {
+        }, {
             cell: 'health',
             type: 'HTML',
             class: 'health-indicator',
@@ -473,8 +483,7 @@ const setupDashboard = instanceId => {
                 class: 'health-title',
                 textContent: 'Health'
             }]
-        },
-        {
+        }, {
             cell: 'disk',
             type: 'KPI',
             connector: {
@@ -514,8 +523,7 @@ const setupDashboard = instanceId => {
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'network-opt',
             type: 'Highcharts',
             title: 'Network (bytes)',
@@ -576,8 +584,7 @@ const setupDashboard = instanceId => {
                     id: 'out'
                 }]
             }
-        },
-        {
+        }, {
             cell: 'disk-opt',
             type: 'Highcharts',
             title: 'Disk operations',
@@ -631,8 +638,7 @@ const setupDashboard = instanceId => {
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',

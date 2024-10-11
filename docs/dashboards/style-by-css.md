@@ -1,7 +1,7 @@
 Style by CSS
 ===
 
-By default each Dashboard and its element is styled by CSS. It gives you the
+By default each Dashboard and most of its element is styled by CSS. It gives you the
 ability to change the look and feel of the dashboard. Most of the elements
 have classes that you can use to style them. You can also add your own classes
 or ids to the elements.
@@ -23,7 +23,6 @@ If you prefer to use your own layout structure, feel free to use it as well. Onl
 The CSS is not included in the library but you can import it like that:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 

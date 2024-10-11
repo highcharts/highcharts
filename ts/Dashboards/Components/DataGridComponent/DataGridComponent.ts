@@ -280,7 +280,9 @@ class DataGridComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.dataGridClassName) {
-            this.contentElement.classList.add(this.options.dataGridClassName);
+            this.contentElement.classList.value =
+                DataGridComponentDefaults.className + ' ' +
+                this.options.dataGridClassName;
         }
 
         if (this.options.dataGridID) {
