@@ -1453,6 +1453,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
+                styles.lineClamp,
                 styles.textOverflow, // #5968
                 styles.fontWeight // #12163
             ].join(',');
