@@ -7,12 +7,12 @@ The Dashboards package contains the DataGrid.
 npm install @highcharts/dashboards
 ```
 
-## 2. Import the Dashboards package.
+## 2. Import the Dashboards package
 ```ts
 import DataGrid from '@highcharts/dashboards/datagrid';
 ```
 
-## 3. Create a HTML container.  
+## 3. Create a HTML container  
 Add a div where you want to render the DataGrid.
 ```html
 <div id="container"></div>
@@ -26,7 +26,7 @@ Create a DataGrid using the factory function `DataGrid.dataGrid`. The function t
 DataGrid.dataGrid('container', this.options);
 ```
 
-## Final example:
+## Final example
 ```ts
 import { Component, OnInit } from '@angular/core';
 import DataGrid from '@highcharts/dashboards/datagrid';
