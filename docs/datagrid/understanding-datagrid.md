@@ -57,7 +57,7 @@ Read more about [data handling and the DataTable class](https://www.highcharts.c
 
 Default options for all columns in the DataGrid, such as the column sorter, column resizer, value editor, cell format etc., are defined in the `columnDefaults` object, and the `columns[]` array of objects can be used to ovveride defaults in selected columns if needed. Note that most of the options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
-Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/datagrid/columns) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
+Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/datagrid/columns) or see the API reference for [columndDefaults](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults) and [columns[]](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columns).
 
 ## caption
 ```js
@@ -106,7 +106,7 @@ The `rendering` option object can be used to configure options related to perfor
 }
 ```
 
-For more information on row rendering settings see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings).
+For more information on rendering options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
 
 ## events
 The DataGrid supports a number of event listeners that can be added to the header, columns and cells. These allows for custom functionality and extendibility of the DataGrid. Read more about events in our [Events article](https://www.highcharts.com/docs/datagrid/events)
