@@ -31,7 +31,6 @@ namespace A11yOptions {
 
     export interface GeneralA11yOptions {
         enabled?: boolean;
-        description?: string;
         cellEditing?: CellEditingA11yOptions;
         sorting?: SortingA11yOptions;
     }

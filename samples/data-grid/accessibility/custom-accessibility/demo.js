@@ -9,7 +9,6 @@ DataGrid.dataGrid('container', {
     },
     accessiblity: {
         enabled: true,
-        description: 'The data table shows vegatables and prices',
         cellEditing: {
             description: 'The cell can be edited',
             startEdit: 'Started editing the cell',
@@ -33,8 +32,8 @@ DataGrid.dataGrid('container', {
         {
             format: 'Product',
             accessibility: {
-                description: `The product group consists in two columns:
-                    product name and units`
+                description: 'The product group consists in two columns: ' +
+                    'product name and units'
             },
             columns: [{
                 format: 'Product name',
@@ -42,8 +41,8 @@ DataGrid.dataGrid('container', {
             }, {
                 format: 'Units',
                 accessibility: {
-                    description: `The Units group consists in two columns:
-                        weight and custom price`
+                    description: 'The Units group consists in two columns: ' +
+                        'weight and custom price'
                 },
                 columns: [{
                     columnId: 'weight'

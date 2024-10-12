@@ -101,12 +101,9 @@ class Accessibility {
             Accessibility.decriptionElementIds.editableCell;
         this.sortableColumnDescriptionEl.id =
             Accessibility.decriptionElementIds.sortableColumn;
-        this.mainDescriptionEl.id =
-            Accessibility.decriptionElementIds.main;
 
         this.element.appendChild(this.editableCellDescriptionEl);
         this.element.appendChild(this.sortableColumnDescriptionEl);
-        this.element.appendChild(this.mainDescriptionEl);
 
         this.loadOptions();
     }
@@ -124,7 +121,6 @@ class Accessibility {
             return;
         }
 
-        this.mainDescriptionEl.textContent = options?.description || '';
         this.editableCellDescriptionEl.textContent =
             options.cellEditing?.description || '';
         this.sortableColumnDescriptionEl.textContent =
@@ -145,8 +141,13 @@ class Accessibility {
         );
     }
 
-    public addMainDescription(): void {
-        // TODO: Where to add the main description?
+    public addHeaderCellDescription(
+        thElement: HTMLElement,
+        description: string | undefined
+    ): void {
+        if (description) {
+            thElement.setAttribute('aria-description', description);
+        }
     }
 
     public announce(msg: string, assertive = false): void {
@@ -219,7 +220,6 @@ namespace Accessibility {
     export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
 
     export const decriptionElementIds = {
-        main: 'highcharts-datagrid-main-description',
         editableCell: 'highchartsdata-grid-editable-cell-description',
         sortableColumn: 'highcharts-datagrid-sortable-column-description'
     } as const;

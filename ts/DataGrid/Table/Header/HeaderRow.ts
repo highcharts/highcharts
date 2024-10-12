@@ -138,6 +138,12 @@ class HeaderRow extends Row {
                 )
             );
 
+            if (typeof column !== 'string') {
+                vp.dataGrid.accessibility?.addHeaderCellDescription(
+                    headerCell.htmlElement, column.accessibility?.description
+                );
+            }
+
             if (headerFormat) {
                 if (!headerCell.options.header) {
                     headerCell.options.header = {};
@@ -186,7 +192,7 @@ class HeaderRow extends Row {
      * Get all headers that should be rendered in a level.
      *
      * @param scope
-     * Level that we start
+     * Level that we start from
      *
      * @param targetLevel
      * Max level
