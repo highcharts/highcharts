@@ -64,11 +64,6 @@ class Accessibility {
      */
     private sortableColumnDescriptionEl: HTMLElement;
 
-    /**
-     * The HTML element of the main description.
-     */
-    private mainDescriptionEl: HTMLElement;
-
 
     /* *
     *
@@ -95,7 +90,6 @@ class Accessibility {
 
         this.editableCellDescriptionEl = document.createElement('p');
         this.sortableColumnDescriptionEl = document.createElement('p');
-        this.mainDescriptionEl = document.createElement('p');
 
         this.editableCellDescriptionEl.id =
             Accessibility.decriptionElementIds.editableCell;
@@ -115,6 +109,9 @@ class Accessibility {
     *
     * */
 
+    /**
+     * Load the accessibility options.
+     */
     public loadOptions(): void {
         const options = this.dataGrid.options?.accessibility;
         if (!options) {
@@ -127,6 +124,12 @@ class Accessibility {
             options.sorting?.description || '';
     }
 
+    /**
+     * Add the description for the editable cell.
+     *
+     * @param cellElement
+     * The cell element to add the description to.
+     */
     public addEditableCellDescription(cellElement: HTMLElement): void {
         cellElement.setAttribute(
             'aria-describedby',
@@ -134,6 +137,12 @@ class Accessibility {
         );
     }
 
+    /**
+     * Add the description for the sortable column header.
+     *
+     * @param thElement
+     * The header cell element to add the description to.
+     */
     public addSortableColumnDescription(thElement: HTMLElement): void {
         thElement.setAttribute(
             'aria-describedby',
@@ -141,6 +150,15 @@ class Accessibility {
         );
     }
 
+    /**
+     * Add the description to the header cell.
+     *
+     * @param thElement
+     * The header cell element to add the description to.
+     *
+     * @param description
+     * The description to be added.
+     */
     public addHeaderCellDescription(
         thElement: HTMLElement,
         description: string | undefined
@@ -150,6 +168,15 @@ class Accessibility {
         }
     }
 
+    /**
+     * Announce the message to the screen reader.
+     *
+     * @param msg
+     * The message to be announced.
+     *
+     * @param assertive
+     * Whether the message should be assertive. Default is false.
+     */
     public announce(msg: string, assertive = false): void {
         this.announcerElement.remove();
         this.announcerElement.setAttribute(
@@ -167,6 +194,13 @@ class Accessibility {
         }, 3000);
     }
 
+    /**
+     * Announce the message to the screen reader that the user sorted the
+     * column.
+     *
+     * @param order
+     * The order of the sorting.
+     */
     public userSortedColumn(order: ColumnSortingOrder): void {
         const messages = this.dataGrid.options?.accessibility?.sorting;
         let msg: string | undefined;
@@ -189,6 +223,12 @@ class Accessibility {
         this.announce(msg, true);
     }
 
+    /**
+     * Announce the message to the screen reader that the user edited the cell.
+     *
+     * @param msgType
+     * The type of the edit message.
+     */
     public userEditedCell(msgType: Accessibility.EditMsgType): void {
         const messages = this.dataGrid.options?.accessibility?.cellEditing;
         const msg = messages?.[msgType];
@@ -199,6 +239,15 @@ class Accessibility {
         this.announce(msg, true);
     }
 
+    /**
+     * Set the aria sort state of the column header cell element.
+     *
+     * @param thElement
+     * The header cell element to set the `aria-sort` state to.
+     *
+     * @param state
+     * The sort state to be set for the column header cell.
+     */
     public setColumnSortState(
         thElement: HTMLElement,
         state: Accessibility.AriaSortState
@@ -216,9 +265,19 @@ class Accessibility {
  * */
 
 namespace Accessibility {
+    /**
+     * The possible states of the aria-sort attribute.
+     */
     export type AriaSortState = 'ascending' | 'descending' | 'none';
+
+    /**
+     * The possible types of the edit message.
+     */
     export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
 
+    /**
+     * Dictionary of the IDs of the description elements.
+     */
     export const decriptionElementIds = {
         editableCell: 'highchartsdata-grid-editable-cell-description',
         sortableColumn: 'highcharts-datagrid-sortable-column-description'

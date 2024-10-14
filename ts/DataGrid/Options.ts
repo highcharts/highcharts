@@ -64,6 +64,7 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  * Options to control the content and the user experience of a grid structure.
  */
 export interface Options {
+
     /**
      * Accessibility options for the datagrid.
      */
@@ -305,8 +306,6 @@ export interface ColumnCellOptions {
  */
 export interface ColumnHeaderOptions {
 
-    accessibility?: A11yOptions.HeaderCellA11yOptions;
-
     /**
      * Allows user to define an additional class name only to the column header.
      *
@@ -510,6 +509,9 @@ export interface HeaderEvents {
  */
 export interface GroupedHeaderOptions {
 
+    /**
+     * Accessibility options for one of the column header cells.
+     */
     accessibility?: A11yOptions.HeaderCellA11yOptions;
 
     /**

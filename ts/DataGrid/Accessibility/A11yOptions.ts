@@ -29,12 +29,18 @@
 
 namespace A11yOptions {
 
+    /**
+     * Accessibility options for the DataGrid.
+     */
     export interface GeneralA11yOptions {
         enabled?: boolean;
         cellEditing?: CellEditingA11yOptions;
         sorting?: SortingA11yOptions;
     }
 
+    /**
+     * Accessibility options for the DataGrid cell editing functionality.
+     */
     export interface CellEditingA11yOptions {
         description?: string;
         startEdit?: string;
@@ -42,6 +48,9 @@ namespace A11yOptions {
         cancelEdit?: string;
     }
 
+    /**
+     * Accessibility options for the DataGrid sorting functionality.
+     */
     export interface SortingA11yOptions {
         description?: string;
         ascending?: string;
@@ -49,6 +58,9 @@ namespace A11yOptions {
         none?: string;
     }
 
+    /**
+     * Accessibility options for the DataGrid header cell.
+     */
     export interface HeaderCellA11yOptions {
         description?: string;
     }
