@@ -102,6 +102,14 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *        [1665581400000, 138.34]
  *    ]
  *    ```
+ * 2. An array of objects with named values `{x, close}`.
+ *    ```js
+ *    data: [
+ *        {x: 1665408600000, close: 140.42},
+ *        {x: 1665495000000, close: 138.98},
+ *        {x: 1665581400000, close: 138.34}
+ *    ]
+ *    ```
  *
  * @type      {Array<Array<number,number>|*>}
  * @extends   series.scatter.data
