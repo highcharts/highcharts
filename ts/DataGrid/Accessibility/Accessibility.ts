@@ -75,7 +75,7 @@ class Accessibility {
      * Construct the accessibility object.
      *
      * @param dataGrid
-     * The Data Grid Table instance which the credits belong to.
+     * The DataGrid Table instance which the accessibility controller belong to.
      */
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;

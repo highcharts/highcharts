@@ -7,7 +7,7 @@ DataGrid.dataGrid('container', {
             price: [1.5, 2.53, 5, 4.5]
         }
     },
-    accessiblity: {
+    accessibility: {
         enabled: true,
         cellEditing: {
             description: 'The cell can be edited',
