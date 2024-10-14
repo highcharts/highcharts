@@ -64,7 +64,7 @@ Moreover, you can provide detailed insights about each data point using customiz
 
 ```javascript
 tooltip: {
-    pointFormat: ' style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}<br/>'
+    pointFormat: '<span> style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}<br/>'
 }
 ```
 ## Summary
