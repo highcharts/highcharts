@@ -38,10 +38,7 @@ Note that most of the options in `columnDefaults` are mirrored 1:1 in the `colum
       id: "product",
       header: {
         className: "custom_header_class",
-        format: "Fruit ({id})",
-        formatter: function () {
-          return "Fruit (" + this.id + ")";
-        },
+        format: "Fruit ({id})"
       },
       enabled: false,
     },
@@ -55,7 +52,7 @@ Note that `className` and `format` supports templating as described in [Templati
 
 If you need more advanced formatting that is not supported through templating use the `formatter` callback function instead. As in Highcharts Core we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
-You can exlude the column, including its header, from the DataGrid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/datagrid/header).
+You can exclude the column, including its header, from the DataGrid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/datagrid/header).
 
 ## Cells
 
@@ -67,10 +64,7 @@ You can exlude the column, including its header, from the DataGrid by setting `e
       cells: {
         className: "custom_cell_class",
         format: "${value}",
-        formatter: function () {
-          return "$" + this.value;
-        },
-        editable: true,
+        editable: true
       },
     },
   ];
@@ -103,7 +97,7 @@ If you need more advanced formatting that is not supported through templating us
 
 The optional `sorting` object consists of two configuration options:
 
-- **`sortable`**: A boolean that determines whether a column can be sorted by the end user clicking on the column header.
+- **`sortable`**: A boolean that determines whether a column can be sorted by the end user by clicking on the column header.
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns only the last one will be considered.
 
@@ -113,4 +107,4 @@ When the `sortable` option is enabled, clicking on the header will toggle the so
 
 The sorting options are available for individual columns, but default value for `sortable` can also be set in `columnDefaults.sorting.sortable`.
 
-alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
+Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
