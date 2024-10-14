@@ -11,7 +11,7 @@ The available events are:
 - `click` - called after click on a cell,
 - `dblClick` - called after double click on a cell,
 - `mouseOver` - called after mouse over a cell,
-- `mouseOut` - called after mouse out a cell
+- `mouseOut` - called after mouse out from a cell
 
 ## column
 
