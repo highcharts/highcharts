@@ -89,18 +89,16 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      *    ```js
      *    data: [{
      *        x: 1,
-     *        close: 6
+     *        y: 6
      *    }, {
      *        x: 1,
-     *        close: 7,
+     *        y: 7,
      *    }]
      *    ```
      *
-     * @type {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
+     * @type {Array<Array<number|string, number> | Array<number>>}
      *
      * @extends series.column.data
-     *
-     * @excluding y
      *
      * @product highstock
      */

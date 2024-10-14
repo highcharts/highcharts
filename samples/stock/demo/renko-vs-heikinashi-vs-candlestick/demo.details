@@ -1,7 +1,7 @@
 ---
-name: Heikin Ashi
+name: renko vs Heikin Ashi vs Candlestick
 authors:
-  - Karol Kolodziej
+  - Pawel lysy
 js_wrap: b
 tags:
   - Highcharts Stock demo
