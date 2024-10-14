@@ -1,6 +1,6 @@
 # Columns options
 
-Many of the available configuration options in DataGrid applies to the columns and their corresponding row and header cells.
+Many of the available configuration options in DataGrid apply to the columns and their corresponding row and header cells.
 
 ## Defaults
 
