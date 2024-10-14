@@ -15,7 +15,7 @@ const grid = new DataGrid.DataGrid('container', {
 ```
 
 DataGrid v3.0 and higher allows you to define the data source in the `dataTable` option without creating a new instance of the `DataTable` class.  
-The grid will automatically create a new instance of the `DataTable` class for you.
+The grid will automatically create a new instance of the `DataTable` class.
 
 ```js
 const grid = DataGrid.dataGrid('container', {
