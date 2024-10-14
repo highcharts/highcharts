@@ -1,5 +1,5 @@
 # Upgrade DataGrid to v3
-The core of DataGrid has been changed in version 3.0. We have increased the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below.
+The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below.
 
 ## Factory function
 The factory function `DataGrid.DataGrid` has been replaced with `DataGrid.dataGrid`.
