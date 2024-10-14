@@ -89,6 +89,9 @@ We recommend reading our [Style by CSS article](https://www.highcharts.com/docs/
             click: function () {
                 // Callback action
             },
+            dblClick: function() {
+                // Callback action
+            },
             afterEdit: function () {
                 // Callback action
             }
