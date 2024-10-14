@@ -8,7 +8,7 @@ new_until: 2024-05-11
 tags:
 - Highcharts Dashboards demo
 categories:
-  - General:
+  - Advanced:
         priority: 2
 use_png_thumbnail: true
 ...
