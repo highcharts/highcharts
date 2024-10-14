@@ -20,12 +20,15 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type Tooltip from '../../Core/Tooltip';
+import type Pointer from '../../Core/Pointer';
+import type { GetSelectionMarkerAttrsEvent } from '../../Core/PointerEvent';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    isNumber,
     pushUnique
 } = U;
 
@@ -252,6 +255,73 @@ function onGetAnchor(params: {
     }
 }
 
+function onGetSelectionMarkerAttrs(
+    this: Pointer,
+    e: GetSelectionMarkerAttrsEvent
+): boolean {
+    const {
+            chart,
+            zoomHor,
+            zoomVert
+        } = this,
+        {
+            mouseDownX = 0,
+            mouseDownY = 0
+        } = chart,
+        attrs = e.attrs,
+        {
+            chartX,
+            chartY
+        } = e.args,
+        plotSizeRatio = this.chart.plotWidth / this.chart.plotHeight;
+
+    let sizeX: number | undefined, sizeY: number | undefined;
+
+    attrs.x = chart.plotLeft;
+    attrs.y = chart.plotTop;
+    attrs.width = zoomHor ? 1 : chart.plotWidth;
+    attrs.height = zoomVert ? 1 : chart.plotHeight;
+
+    // Adjust the width of the selection marker. Firefox needs at
+    // least one pixel width or height in order to return a bounding
+    // box.
+    if (zoomHor) {
+        sizeX = chartX - mouseDownX;
+        attrs.width = Math.max(1, Math.abs(sizeX));
+        attrs.x = (sizeX > 0 ? 0 : sizeX) + mouseDownX;
+    }
+
+    // Adjust the height of the selection marker
+    if (zoomVert) {
+        sizeY = chartY - mouseDownY;
+        attrs.height = Math.max(1, Math.abs(sizeY));
+        attrs.y = (sizeY > 0 ? 0 : sizeY) + mouseDownY;
+    }
+
+    if (
+        isNumber(sizeX) &&
+        sizeX < 0 &&
+        Math.abs(sizeX) < attrs.height &&
+        sizeX > 0
+    ) {
+        // Bottom left quartile
+        attrs.width = Math.abs(sizeX);
+        attrs.height = attrs.width / plotSizeRatio;
+    } else if (isNumber(sizeY) && sizeY < 0 && attrs.y) {
+        // Top left and right quartiles
+        const height = attrs.width / plotSizeRatio,
+            diff = attrs.height - height;
+
+        attrs.y += diff;
+        attrs.height = height;
+    } else {
+        // Bottom right quartile
+        attrs.height = attrs.width / plotSizeRatio;
+    }
+
+    return false;
+}
+
 /* *
  *
  *  Class
@@ -277,13 +347,19 @@ class NonCartesianSeriesZoom {
     public static compose(
         ChartClass: typeof Chart,
         SeriesClass: typeof Series,
-        TooltipClass: typeof Tooltip
+        TooltipClass: typeof Tooltip,
+        PointerClass: typeof Pointer
     ): void {
         if (pushUnique(composed, 'NonCartesianSeriesZoom')) {
             addEvent(ChartClass, 'afterDrawChartBox', onAfterDrawChartBox);
             addEvent(ChartClass, 'transform', onTransform);
             addEvent(SeriesClass, 'getPlotBox', onGetPlotBox);
             addEvent(TooltipClass, 'getAnchor', onGetAnchor);
+            addEvent(
+                PointerClass,
+                'getSelectionMarkerAttrs',
+                onGetSelectionMarkerAttrs
+            );
         }
     }
 }
