@@ -1,0 +1,11 @@
+---
+name: Packed bubble dashboard
+authors:
+  - Grzegorz Blachliński
+js_wrap: b
+tags:
+  - Highcharts demo
+  - Animation
+categories:
+  - Scatter and bubble charts
+...
