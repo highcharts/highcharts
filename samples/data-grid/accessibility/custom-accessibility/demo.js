@@ -23,8 +23,8 @@ DataGrid.dataGrid('container', {
         }
     },
     columnDefaults: {
-        sorting: {
-            sortable: true
+        cells: {
+            editable: true
         }
     },
     header: [
@@ -32,7 +32,7 @@ DataGrid.dataGrid('container', {
         {
             format: 'Product',
             accessibility: {
-                description: 'The product group consists in two columns: ' +
+                description: 'The Product group consists of two columns: ' +
                     'product name and units'
             },
             columns: [{
@@ -41,7 +41,7 @@ DataGrid.dataGrid('container', {
             }, {
                 format: 'Units',
                 accessibility: {
-                    description: 'The Units group consists in two columns: ' +
+                    description: 'The Units group consists of two columns: ' +
                         'weight and custom price'
                 },
                 columns: [{
@@ -55,18 +55,8 @@ DataGrid.dataGrid('container', {
     ],
     columns: [{
         id: 'weight',
-        cells: {
-            accessibility: {
-                beforeEdit: 'The weight value can be edited',
-                afterEdit: 'The weight value has been updated',
-                cancelEdit: 'The editing of weight value has been cancelled'
-            }
-        },
         header: {
-            format: 'Weight',
-            accessibility: {
-                description: 'The weight column (in kilograms)'
-            }
+            format: 'Weight'
         }
     }]
 });
