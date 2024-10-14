@@ -41,7 +41,7 @@ Let's dive right in with a bare minimum example of a fully functional DataGrid:
 </html>
 ```
 
-### 1. Import Required JS and CSS
+### 1. Import required JS and CSS
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
