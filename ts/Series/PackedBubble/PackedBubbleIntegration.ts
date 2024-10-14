@@ -23,6 +23,7 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import VerletIntegration from '../Networkgraph/VerletIntegration.js';
+import { DragNodesPoint } from '../DragNodesComposition';
 
 /* *
  *
@@ -43,14 +44,15 @@ function barycenter(this: PackedBubbleLayout): void {
         centerY: number;
 
     for (const node of nodes) {
-        if (layout.options.splitSeries && !node.isParentNode) {
-            centerX = (node.series.parentNode as any).plotX;
-            centerY = (node.series.parentNode as any).plotY;
-        } else {
-            centerX = box.width / 2;
-            centerY = box.height / 2;
-        }
         if (!node.fixedPosition) {
+            if (layout.options.splitSeries && !node.isParentNode) {
+                centerX = (node.series.parentNode as any).plotX;
+                centerY = (node.series.parentNode as any).plotY;
+            } else {
+                centerX = box.width / 2;
+                centerY = box.height / 2;
+            }
+
             (node.plotX as any) -=
                 ((node.plotX as any) - (centerX as any)) *
                 (gravitationalConstant as any) /
@@ -60,6 +62,20 @@ function barycenter(this: PackedBubbleLayout): void {
                 ((node.plotY as any) - (centerY as any)) *
                 (gravitationalConstant as any) /
                 (node.mass * Math.sqrt(nodes.length));
+
+            const series = node.series;
+
+
+            if (
+                series.chart.hoverPoint === node &&
+
+                // If redrawHalo exists we know its a draggable series and halo
+                // should be redrawn if it indeed exists.
+                series.redrawHalo &&
+                series.halo
+            ) {
+                series.redrawHalo(node as DragNodesPoint);
+            }
         }
     }
 }
