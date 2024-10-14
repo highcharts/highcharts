@@ -1,6 +1,6 @@
 # Header options
 
-By default, all columns from the DataTable are imported into the DataGrid in the order they are declared. If you need to exclude certain columns and/or change their order the `header[]` option can then be used to configure this. In addition this option can be used to group headers in a hierarchical structure.
+By default, all columns from the DataTable are imported into the DataGrid in the order they are declared. Use the header[] option if you need to exclude certain columns and/or change their order. In addition, this option can be used to group headers in a hierarchical structure.
 
 ![An illustration showing a header group](ill_header.png)
 
@@ -40,7 +40,7 @@ Let's look at a basic example that produces the illustration above:
         {
             id: "weight",
             header: {
-                format: "Weight (g)"
+                format: "Weight"
             }
         }
     ]
