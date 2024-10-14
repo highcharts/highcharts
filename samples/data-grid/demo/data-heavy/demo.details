@@ -1,0 +1,12 @@
+---
+name: Data Grid with a lot of data
+authors:
+  - Karol Kolodziej
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General:
+        priority: 20
+use_png_thumbnail: true
+...

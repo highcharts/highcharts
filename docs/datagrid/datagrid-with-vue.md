@@ -9,21 +9,55 @@ To create a DataGrid with Angular please follow the steps below: <br>
     npm install @highcharts/dashboards
     ```
 
-2. Import the Dashboards package.
+2. Create a DataGrid Vue component:
 
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    ```
-
-3. Create a HTML container.  
-
-    Add a div where you want to render the dashboard:
     ```html
-    <div id="container"></div>
+    // DataGrid.vue
+
+    <script setup lang="ts">
+    import { watch, ref } from 'vue';
+    import DataGrid from '@highcharts/dashboards/datagrid';
+    import "@highcharts/dashboards/css/datagrid.css";
+
+    const props = defineProps(['config']);
+    const datagridContainer = ref(null);
+
+    watch(datagridContainer, () => {
+        if (datagridContainer.value) {
+            DataGrid.dataGrid(datagridContainer.value, props.config);
+        }
+    });
+    </script>
+
+    <template>
+        <div ref="datagridContainer"></div>
+    </template>
+
     ```
 
-    You can refer to the element by its id or you can use the `ElementRef` to get the element.
+3. Use the component in your application:
 
-4. Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes three arguments:
-    - `container` - the element where the DataGrid will be rendered, can be an id of the element or the direct reference to the element
-    - `options` - the options object for the DataGrid
+    ```html
+    // App.vue
+
+    <script setup lang="ts">    
+    import DataGrid from './components/DataGrid.vue';
+
+    const config: DataGrid.Options = {
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+            }
+        }
+    }
+    </script>
+
+    <template>
+        <div id="app">
+            <DataGrid :config="config" />
+        </div>
+    </template>
+
+    ```
