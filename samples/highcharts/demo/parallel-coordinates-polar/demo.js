@@ -69,22 +69,40 @@ Highcharts.chart('container', {
     },
     yAxis: [{
         // Atomic Number
-        min: 0
+        min: 0,
+        labels: {
+            style: {
+                fontSize: '11px',
+                color: '#000'
+            }
+        }
     }, {
         // Atomic Radius
         labels: {
-            format: '{value} pm'
+            format: '{value} pm',
+            style: {
+                fontSize: '11px',
+                color: '#000'
+            }
         }
     }, {
         // Boiling Point
         labels: {
-            format: '{value} K'
+            format: '{value} K',
+            style: {
+                fontSize: '11px',
+                color: '#000'
+            }
         },
         min: 0
     }, {
         // Density
         labels: {
-            format: '{value:.2f} g/cm³'
+            format: '{value:.2f} g/cm³',
+            style: {
+                fontSize: '11px',
+                color: '#000'
+            }
         }
     }, {
         // Phase
@@ -95,7 +113,13 @@ Highcharts.chart('container', {
             ''
         ],
         min: -0.5,
-        max: 2.5
+        max: 2.5,
+        labels: {
+            style: {
+                fontSize: '11px',
+                color: '#000'
+            }
+        }
     }],
     series: data.map(function (set) {
         return {
