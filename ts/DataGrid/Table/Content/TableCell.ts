@@ -55,12 +55,6 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
-    /**
-     * The input element of a cell when editing state is active.
-     * @internal
-     */
-    private cellInputEl?: HTMLInputElement;
-
 
     /* *
     *
@@ -102,25 +96,48 @@ class TableCell extends Cell {
     }
 
     public override initEvents(): void {
-        super.initEvents();
-
-        const mouseOverHandler = (): void => {
-            this.onMouseOver();
-        };
-        const mouseOutHandler = (): void => {
-            this.onMouseOut();
-        };
-        const dblClickHandler = (e: Event): void => {
+        this.cellEvents.push(['dblclick', (e): void => {
             this.onDblClick(e as MouseEvent);
-        };
+        }]);
+        this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
+        this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
+        this.cellEvents.push(['mousedown', (e): void => {
+            this.onMouseDown(e as MouseEvent);
+        }]);
 
-        this.htmlElement.addEventListener('mouseover', mouseOverHandler);
-        this.htmlElement.addEventListener('mouseout', mouseOutHandler);
-        this.htmlElement.addEventListener('dblclick', dblClickHandler);
+        super.initEvents();
+    }
 
-        this.cellEvents.push(['dblclick', dblClickHandler]);
-        this.cellEvents.push(['mouseout', mouseOutHandler]);
-        this.cellEvents.push(['mouseover', mouseOverHandler]);
+    /**
+     * Handles the focus event on the cell.
+     */
+    protected override onFocus(): void {
+        super.onFocus();
+
+        const vp = this.row.viewport;
+
+        vp.focusCursor = [
+            this.row.index,
+            this.column.index
+        ];
+    }
+
+    /**
+     * Handles the mouse down event on the cell.
+     *
+     * @param e
+     * The mouse event object.
+     */
+    protected onMouseDown(e: MouseEvent): void {
+        const { dataGrid } = this.row.viewport;
+
+        if (e.target === this.htmlElement) {
+            this.htmlElement.focus();
+        }
+
+        fireEvent(dataGrid, 'cellMouseDown', {
+            target: this
+        });
     }
 
     /**
@@ -178,6 +195,22 @@ class TableCell extends Cell {
         fireEvent(dataGrid, 'cellClick', {
             target: this
         });
+    }
+
+    protected override onKeyDown(e: KeyboardEvent): void {
+        if (e.target !== this.htmlElement) {
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            if (this.column.options.cells?.editable) {
+                this.row.viewport.cellEditing.startEditing(this);
+            }
+
+            return;
+        }
+
+        super.onKeyDown(e);
     }
 
     /**
@@ -242,8 +275,21 @@ class TableCell extends Cell {
             return;
         }
 
+        let focusedRowId: number | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+        }
+
         await vp.dataGrid.querying.proceed(true);
         vp.loadPresentationData();
+
+        if (focusedRowId !== void 0 && vp.focusCursor) {
+            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+            if (newRowIndex !== void 0) {
+                vp.rows[newRowIndex - vp.rows[0].index]
+                    ?.cells[vp.focusCursor[1]].htmlElement.focus();
+            }
+        }
     }
 
     /**

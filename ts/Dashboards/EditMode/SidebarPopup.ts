@@ -22,6 +22,7 @@ import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -187,6 +188,16 @@ class SidebarPopup extends BaseForm {
      */
     private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
 
+    /**
+     * Content wrapper for sticking.
+     */
+    private sidebarWrapper?: HTMLElement;
+
+    /**
+     * Content wrapper for the header.
+     */
+    private headerWrapper?: HTMLElement;
+
     /* *
      *
      *  Functions
@@ -291,6 +302,8 @@ class SidebarPopup extends BaseForm {
     }
 
     public generateContent(context?: Cell | Row | CellHTML): void {
+        // Reset
+        this.container.innerHTML = AST.emptyHTML;
 
         // Title
         this.renderHeader(
@@ -298,6 +311,16 @@ class SidebarPopup extends BaseForm {
                 this.editMode.lang.settings :
                 this.editMode.lang.addComponent,
             ''
+        );
+
+        // Render content wrapper
+        this.sidebarWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarWrapper
+            },
+            void 0,
+            this.container
         );
 
         if (!context) {
@@ -312,7 +335,11 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordionMenu.renderContent(this.container, component);
+            this.accordionMenu.renderContent(
+                this.sidebarWrapper,
+                component,
+                this.container
+            );
         }
     }
 
@@ -323,7 +350,7 @@ class SidebarPopup extends BaseForm {
 
         const gridWrapper = createElement('div', {
             className: EditGlobals.classNames.editGridItems
-        }, {}, sidebar.container);
+        }, {}, sidebar.sidebarWrapper);
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             gridElement = createElement(
@@ -501,7 +528,23 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderHeader(title: string, iconURL: string): void {
-        const icon = EditRenderer.renderIcon(this.container, {
+        if (!this.container) {
+            return;
+        }
+
+        const headerWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarHeader
+            },
+            {},
+            this.container
+        );
+        this.container.appendChild(headerWrapper);
+
+        this.headerWrapper = headerWrapper;
+
+        const icon = EditRenderer.renderIcon(this.headerWrapper, {
             icon: iconURL,
             className: EditGlobals.classNames.editSidebarTitle
         });
@@ -509,6 +552,8 @@ class SidebarPopup extends BaseForm {
         if (icon) {
             icon.textContent = title;
         }
+
+        this.headerWrapper?.appendChild(this.closeButton);
     }
 
     /**
