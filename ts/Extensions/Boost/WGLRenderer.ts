@@ -254,7 +254,10 @@ class WGLRenderer {
     // Opengl context
     private gl?: WebGLRenderingContext;
 
-    // The data to render - array of coordinates
+    /**
+     * The data to render - array of coordinates.
+     * Repeating sequence of [x, y, checkThreshold, pointSize].
+     */
     private data: Array<number> = [];
 
     // Height of our viewport in pixels
@@ -859,6 +862,11 @@ class WGLRenderer {
                 isYInside = y >= yMin && y <= yMax;
             }
 
+            // Scatter points outside zoomed range were visible (#19701)
+            if (!sorted && !isYInside) {
+                continue;
+            }
+
             if (x > xMax && closestRight.x < xMax) {
                 closestRight.x = x;
                 closestRight.y = y;
@@ -881,10 +889,15 @@ class WGLRenderer {
 
             // The first point before and first after extremes should be
             // rendered (#9962, 19701)
+            // Boost fails to render scatter series with a single point (#21897)
             if (
-                sorted &&
-                (nx >= xMin || x >= xMin) &&
-                (px <= xMax || x <= xMax)
+                sorted && (
+                    (nx >= xMin || x >= xMin) &&
+                    (px <= xMax || x <= xMax)
+                ) ||
+                !sorted && (
+                    (x >= xMin) && (x <= xMax)
+                )
             ) {
                 isXInside = true;
             }
