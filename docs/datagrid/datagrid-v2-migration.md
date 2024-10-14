@@ -1,5 +1,5 @@
 # Upgrade DataGrid to v3
-The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below.
+The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options and the definition of styles or data source differ from the previous version. We outline all of the changes below.
 
 ## Factory function
 The factory function `DataGrid.DataGrid` has been replaced with `DataGrid.dataGrid`.
@@ -28,7 +28,7 @@ const grid = DataGrid.dataGrid('container', {
 ## Styling
 All styling is now done via CSS instead of the built-in API options.
 
-Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the following example shows how to adjust height for the rows in thead and tbody respectively, and also how to override height in selected rows:
+Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the following example shows how to adjust the height for the rows in `thead` and `tbody` respectively, and also how to override height in selected rows:
 
 ```css
 .highcharts-datagrid-table thead tr {
@@ -110,4 +110,4 @@ We recommend reading our [Style by CSS article](https://www.highcharts.com/docs/
 ```
 
 ## Recommended reading
-We recommend reading our article on [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) for an overview of new options and possibilites, and also the [Changelog](https://www.highcharts.com/changelog/#highcharts-dashboards) for any breaking changes.
+We recommend reading our article on [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) for an overview of new options and possibilities, and also the [Changelog](https://www.highcharts.com/changelog/#highcharts-dashboards) for any breaking changes.
