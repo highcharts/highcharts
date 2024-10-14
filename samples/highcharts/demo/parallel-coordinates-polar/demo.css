@@ -42,8 +42,32 @@
 }
 
 .highcharts-series-hover path {
-    stroke: rgb(255 66 66);
     stroke-width: 2px;
+}
+
+.highcharts-series-0.highcharts-series-hover path {
+    stroke: #2caffe;
+    filter: brightness(0.8);
+}
+
+.highcharts-series-1.highcharts-series-hover path {
+    stroke: #544fc5;
+    filter: brightness(0.8);
+}
+
+.highcharts-series-2.highcharts-series-hover path {
+    stroke: #00e272;
+    filter: brightness(0.8);
+}
+
+.highcharts-series-3.highcharts-series-hover path {
+    stroke: #fe6a35;
+    filter: brightness(0.8);
+}
+
+.highcharts-axis-line {
+    stroke: #75738c;
+    stroke-dasharray: 2, 2;
 }
 
 .highcharts-description {
