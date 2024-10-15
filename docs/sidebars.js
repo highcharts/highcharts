@@ -114,6 +114,7 @@ module.exports = {
             'datagrid/columns',
             'datagrid/header',
             'datagrid/events',
+            'datagrid/performance',
             'datagrid/style-by-css',
             'datagrid/datagrid-v2-migration',
             'datagrid/datagrid-with-angular',
