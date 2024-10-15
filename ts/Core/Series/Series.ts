@@ -2157,7 +2157,8 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0;
+            stackThreshold = options.startFromThreshold ? threshold : 0,
+            nullInteraction = (options as any).nullInteraction;
         let i,
             plotX,
             lastPlotX,
@@ -2307,7 +2308,7 @@ class Series {
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
-            point.plotY = plotY;
+            point.plotY = plotY ?? (nullInteraction && yAxis.max);
 
             point.isInside = this.isPointInside(point);
 

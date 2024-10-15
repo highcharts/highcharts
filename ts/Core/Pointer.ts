@@ -816,8 +816,8 @@ class Pointer {
                     let point = find(s.points, function (p: Point): boolean {
                         return (
                             p.x === hoverPoint.x && (
-                                nullInteraction ||
-                                !p.isNull
+                                !p.isNull ||
+                                nullInteraction
                             )
                         );
                     });
