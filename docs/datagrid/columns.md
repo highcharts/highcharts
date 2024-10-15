@@ -89,9 +89,9 @@ If you need more advanced formatting that is not supported through templating us
       sorting: {
         sortable: true,
         order: "desc",
-      },
-    },
-  ];
+      }
+    }
+  ]
 }
 ```
 
