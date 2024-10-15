@@ -347,7 +347,6 @@ class Tooltip {
                 chartY = 0;
             points.forEach(function (point): void {
                 const pos = point.pos(true);
-
                 if (pos) {
                     chartX += pos[0];
                     chartY += pos[1];
@@ -1209,9 +1208,8 @@ class Tooltip {
         function getAnchor(
             point: Point & { isHeader?: boolean }
         ): ({ anchorX: number; anchorY: (number|undefined) }) {
-            const { isHeader, plotX = 0, series } = point;
+            const { isHeader, plotX = 0, plotY = 0, series } = point;
 
-            let plotY = point.plotY || 0;
             let anchorX;
             let anchorY;
             if (isHeader) {
@@ -1221,16 +1219,6 @@ class Tooltip {
                 anchorY = plotTop + plotHeight / 2;
             } else {
                 const { xAxis, yAxis } = series;
-
-                if (!plotY && (series.options as any)?.nullInteraction) {
-                    plotY = clamp(
-                        (
-                            chart.plotSizeY || 0),
-                        0,
-                        yAxis.len - yAxis.pos - distance
-                    );
-                }
-
                 // Set anchorX to plotX. Limit to within xAxis.
                 anchorX = xAxis.pos + clamp(
                     plotX,

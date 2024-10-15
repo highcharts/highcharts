@@ -241,9 +241,8 @@ namespace DataLabel {
             { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
-            plotY = point.plotY ?? (
-                (series.options as any)?.nullInteraction && chart.plotSizeY
-            ),
+            plotY = point.plotY,
+
             rotation = options.rotation || 0,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
@@ -566,7 +565,10 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            const nullInteraction = (seriesOptions as any)?.nullInteraction;
+            const nullLabel = (
+                (seriesOptions as any)?.nullInteraction &&
+                'Null'
+            );
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
@@ -595,7 +597,8 @@ namespace DataLabel {
                             (
                                 !point.isNull ||
                                 point.dataLabelOnNull ||
-                                nullInteraction
+                                // A 'nullLabel' means 'nullInteraction' is true
+                                nullLabel
                             ) &&
                             applyFilter(point, labelOptions)
                         ),
@@ -630,7 +633,7 @@ namespace DataLabel {
                         labelText = defined(formatString) ?
                             format(formatString, labelConfig, chart) :
                             (
-                                (point.isNull && nullInteraction) ? 'Null' : (
+                                (point.isNull && nullLabel) || (
                                     (labelOptions as any)[
                                         point.formatPrefix + 'Formatter'
                                     ] ||
