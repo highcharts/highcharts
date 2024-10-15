@@ -203,9 +203,18 @@ body {
     height: var(--chart-row-height);
 }
 
-.el-info,
-.el-aggr {
+/* Dashboard component visibility */
+
+& .el-info,
+& .el-aggr {
     display: none;
+}
+
+.mqtt-connected {
+    & .el-info,
+    & .el-aggr {
+        display: flex;
+    }
 }
 
 /* *
