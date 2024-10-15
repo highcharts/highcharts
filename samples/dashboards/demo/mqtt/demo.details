@@ -1,5 +1,5 @@
 ---
-name: MQTT
+name: MQTT advanced dashboard
 authors:
   - Jomar Hønsi
 js_wrap: b

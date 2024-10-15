@@ -133,7 +133,7 @@ const mapComponent = {
         ...commonChartOptions,
         chart: {
             styledMode: false,
-            animation: false
+            animation: true
         },
         mapNavigation: {
             enabled: true,
@@ -149,7 +149,7 @@ const mapComponent = {
             type: 'tiledwebmap',
             provider: {
                 type: 'OpenStreetMap',
-                theme: 'Standard'
+                theme: 'OpenTopoMap'
             }
         }, {
             type: 'mappoint',
@@ -262,8 +262,7 @@ const chartComponent = {
     chartOptions: {
         ...commonChartOptions,
         chart: {
-            type: 'spline',
-            animation: true
+            type: 'spline'
         },
         credits: {
             enabled: false
@@ -524,38 +523,18 @@ async function dashboardUpdate(mqttData, connId) {
     }
 
     function getHeaderFields(fields) {
-        const cols = getInfoRecord(null, fields);
-        let colHtml = '';
-
-        cols.forEach(col => {
-            const name = col.name;
-            colHtml += `<th>${name}</th>`;
-        });
-
-        return colHtml;
+        return getInfoRecord(null, fields).map(col => `<th>${col.name}</th>`);
     }
 
     function getUnitFields(fields) {
-        const cols = getInfoRecord(null, fields);
-        let colHtml = '';
-
-        cols.forEach(col => {
-            colHtml += `<th>${col.unit}</th>`;
-        });
-
-        return colHtml;
+        return getInfoRecord(null, fields).map(col => `<th>${col.unit}</th>`);
     }
 
     function getDataFields(item, fields) {
-        const cols = getInfoRecord(item, fields);
-        let colHtml = '';
-
-        cols.forEach(col => {
+        return getInfoRecord(item, fields).map(col => {
             const value = col.value.toFixed(col.precision);
-            colHtml += `<td>${value}</td>`;
+            return `<td>${value}</td>`;
         });
-
-        return colHtml;
     }
 
     function createInfoTable(header, fields, data) {
