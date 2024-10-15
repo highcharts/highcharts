@@ -41,8 +41,8 @@ Note that most of the options in `columnDefaults` are mirrored 1:1 in the `colum
         format: "Fruit ({id})"
       },
       enabled: false,
-    },
-  ];
+    }
+  ]
 }
 ```
 
