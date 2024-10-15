@@ -45,7 +45,7 @@ By default, rows adjust their height to fit all content, which can reduce perfor
 ```
 These options can be used to configure how the table should be rendered.
 
-`table.className` is appended to the `<table>` element, and can be used to [style the DataGrid by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
+[`table.className`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.TableSettings#className) is appended to the `<table>` element, and can be used to [style the DataGrid by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
 
 `header.enabled: false` disables all [column headers](https://www.highcharts.com/docs/datagrid/header) by not rendering the `thead` element.
 
