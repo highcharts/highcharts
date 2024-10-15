@@ -1265,9 +1265,10 @@ namespace OrdinalAxis {
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
-                        getProcessedData: Series.prototype.getProcessedData,
-                        applyGrouping: Series.prototype.applyGrouping,
-                        reserveSpace: Series.prototype.reserveSpace,
+                        getProcessedData: series.getProcessedData,
+                        applyGrouping: series.applyGrouping,
+                        processedXData: series.processedXData,
+                        reserveSpace: series.reserveSpace,
                         visible: series.visible
                     } as any;
 

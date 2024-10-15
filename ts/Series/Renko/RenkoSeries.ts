@@ -56,6 +56,15 @@ class RenkoSeries extends ColumnSeries {
     public hasDerivedData = true;
 
     public getProcessedData(): Series.ProcessedDataObject {
+        if (this.processedXData?.length > 0) {
+            return {
+                xData: this.processedXData,
+                yData: this.processedYData,
+                cropped: false,
+                cropStart: 0,
+                closestPointRange: 1
+            };
+        }
         const processedXData = [];
         const processedYData = [];
         const processedData = [];
