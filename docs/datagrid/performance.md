@@ -51,7 +51,7 @@ These options can be used to configure how the table should be rendered.
 
 [`columns.distribution`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#distribution) is used to configure initial column widths.
 
-`columns.distribution:"full"` renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.distribution:"fixed"` renders a table were columns have a fixed width in pixels. Should be set to support your spesific use case.
+[`columns.distribution: "full"`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#distribution) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.distribution:"fixed"` renders a table were columns have a fixed width in pixels. Should be set to support your spesific use case.
 
 
 
