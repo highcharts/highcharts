@@ -65,9 +65,9 @@ You can exclude the column, including its header, from the DataGrid by setting `
         className: "custom_cell_class",
         format: "${value}",
         editable: true
-      },
-    },
-  ];
+      }
+    }
+  ]
 }
 ```
 
