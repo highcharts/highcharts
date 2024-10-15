@@ -71,7 +71,7 @@ document.getElementById('update').addEventListener('submit', e => {
     let options;
     try {
         options = JSON.parse(document.getElementById('options-textarea').value);
-    } catch (e) {
+    } catch {
         alert('Invalid JSON');
         return;
     }

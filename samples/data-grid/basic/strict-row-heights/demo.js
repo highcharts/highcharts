@@ -9,7 +9,7 @@ DataGrid.dataGrid('container', {
             f: Array.from({ length: 100 }, (_, i) => `F${i}`)
         }
     },
-    settings: {
+    rendering: {
         rows: {
             strictHeights: true
         }

@@ -203,6 +203,21 @@ class HeaderCell extends Cell {
         th.style.width = th.style.maxWidth = width + 'px';
     }
 
+    protected override onKeyDown(e: KeyboardEvent): void {
+        if (e.target !== this.htmlElement) {
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            if (this.column.options.sorting?.sortable) {
+                this.column.sorting?.toggle();
+            }
+            return;
+        }
+
+        super.onKeyDown(e);
+    }
+
     protected override onClick(e: MouseEvent): void {
         const column = this.column;
 
