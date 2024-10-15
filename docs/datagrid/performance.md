@@ -10,7 +10,7 @@ This technique significantly enhances DataGrid performance, leading to faster lo
 {
     rendering: {
         rows: {
-            bufferSize: 20, // default is 10
+            bufferSize: 3, // default is 10
             strictHeights: true // default is false
         }
     }
