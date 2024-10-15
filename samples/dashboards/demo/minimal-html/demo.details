@@ -7,6 +7,6 @@ tags:
   - Highcharts Dashboards demo
 categories:
   - Basic:
-        priority: 2
+        priority: 20
 use_png_thumbnail: true
 ...
