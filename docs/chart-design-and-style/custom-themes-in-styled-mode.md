@@ -13,7 +13,6 @@ In addition to the data colors, Highcharts uses two ranges of colors called the 
 How to create your own theme
 ----------------------------
 
-
 Follow the steps below to create a custom theme using CSS rules:
 
 1.  Create a CSS file
@@ -66,14 +65,12 @@ Featured themes
 Highcharts offers three different themes by default. There are available as CSS files at `code.highcharts.com/css/themes` :
 
 *   [dark-unica.css](https://code.highcharts.com/css/themes/dark-unica.css)
-
 *   [sand-signika.css](https://code.highcharts.com/css/themes/sand-signika.css)
-
 *   [grid-light.css](https://code.highcharts.com/css/themes/grid-light.css)
 
 
-Legacy
-______
+### Legacy
+
 Prior to Highcharts v11, the CSS was generated from a SASS file
 `highcharts.scss`. [Read the old docs](https://github.com/highcharts/highcharts/blob/v10.3.3/docs/chart-design-and-style/custom-themes-in-styled-mode.md) on how to set up and modify that.
 
