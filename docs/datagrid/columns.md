@@ -50,7 +50,7 @@ The `columns[].header` option can be used to configure the header for individual
 
 Note that `className` and `format` supports templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{id}` references the key in the DataTable.
 
-If you need more advanced formatting that is not supported through templating use the `formatter` callback function instead. As in Highcharts Core we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
+If you need more advanced formatting that is not supported through templating use the `formatter` callback function instead. As in Highcharts Core, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
 You can exclude the column, including its header, from the DataGrid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/datagrid/header).
 
