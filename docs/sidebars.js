@@ -108,16 +108,18 @@ module.exports = {
             'dashboards/frequently-asked-questions',
         ],
         'DataGrid': [
-            'datagrid/installation',
-            'datagrid/your-first-datagrid',
             'datagrid/general',
+            'datagrid/installation',
             'datagrid/understanding-datagrid',
             'datagrid/columns',
+            'datagrid/header',
+            'datagrid/events',
+            'datagrid/style-by-css',
             'datagrid/datagrid-v2-migration',
             'datagrid/datagrid-with-angular',
             'datagrid/datagrid-with-react',
-            'datagrid/datagrid-with-vue',
-            'datagrid/style-by-css'
+            'datagrid/datagrid-with-vue'
+            
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
