@@ -1,9 +1,9 @@
 # Performance and rendering
-Row virtualization is a performance optimization technique used in DataGrid.  Instead of rendering all the rows of data at once, which can be thousands of entries, row virtualization renders only the rows that are currently visible within the user's viewport (plus a small buffer). As the user scrolls, the DataGrid dynamically renders new rows and removes those that scroll out of view.
+Row virtualization is a performance optimization technique used in DataGrid. Instead of rendering all the rows of data at once, which can be thousands of entries, row virtualization renders only the rows currently visible within the user's viewport (plus a small buffer). As the user scrolls, the DataGrid dynamically renders new rows and removes those that scroll out of view.
 
 ![Illustration showing virtualization of rows](ill_virtualization.png)
 
-This technique significantly enhances DataGrid performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions when e.g. sorting rows.
+This technique significantly enhances DataGrid performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
 
 ## Optimizing performance
 ```js
@@ -20,7 +20,7 @@ This technique significantly enhances DataGrid performance, leading to faster lo
 The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) and [`strictHeights`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your spesific use case and preferences. 
 
 ### buffersize
-Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering, and increased performance on sorting and scroll. A larger buffer means slower initial rendering, but might decrease flicker effect on fast scrolling.
+Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering and increased performance on sorting and scroll. A larger buffer means slower initial rendering, but might decrease the flicker effect on fast scrolling.
 
 The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) of 10 should be optimal in most cases. 
 
@@ -51,7 +51,7 @@ These options can be used to configure how the table should be rendered.
 
 [`columns.distribution`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#distribution) is used to configure initial column widths.
 
-[`columns.distribution: "full"`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#distribution) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.distribution:"fixed"` renders a table were columns have a fixed width in pixels. Should be set to support your spesific use case.
+[`columns.distribution: "full"`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.ColumnsSettings#distribution) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.distribution:"fixed"` renders a table were columns have a fixed width in pixels. It should be set to support your specific use case.
 
 
 
