@@ -112,7 +112,7 @@ module.exports = {
             'datagrid/installation',
             'datagrid/understanding-datagrid',
             'datagrid/columns',
-            'datagrid/headers',
+            'datagrid/header',
             'datagrid/events',
             'datagrid/style-by-css',
             'datagrid/datagrid-v2-migration',
