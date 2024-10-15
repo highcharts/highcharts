@@ -101,11 +101,6 @@ const commonChartOptions = {
     },
     legend: {
         enabled: false
-    },
-    plotOptions: {
-        series: {
-            stickyTracking: false
-        }
     }
 };
 
@@ -132,8 +127,7 @@ const mapComponent = {
     chartOptions: {
         ...commonChartOptions,
         chart: {
-            styledMode: false,
-            animation: true
+            styledMode: false
         },
         mapNavigation: {
             enabled: true,
@@ -333,13 +327,15 @@ function printLog(msg) {
     }
 }
 
-// Set Dashboard visibility. The control bar is always visible.
+// Set Dashboard visibility.
 function setVisibility(visible) {
-    const cells = document.getElementsByClassName('row');
+    const element = document.getElementById('container');
+    const visClass = 'mqtt-connected';
 
-    for (let i = 1; i < cells.length; i++) {
-        const el = cells[i];
-        el.style.display = visible ? 'flex' : 'none';
+    if (visible) {
+        element.classList.add(visClass);
+    } else {
+        element.classList.remove(visClass);
     }
 }
 
@@ -543,8 +539,8 @@ async function dashboardUpdate(mqttData, connId) {
         }
 
         // Fields to display
-        let colHtml = getHeaderFields(fields);
-        const colHtmlUnit = getUnitFields(fields);
+        const colHtml = getHeaderFields(fields).join('');
+        const colHtmlUnit = getUnitFields(fields).join('');
 
         let html = `<table class="info-field"><caption>${header}</caption>
             <tr><th>Name</th>${colHtml}</tr>
@@ -553,9 +549,8 @@ async function dashboardUpdate(mqttData, connId) {
         // Populate fields
         data.forEach(item => {
             const name = item.name.replace('_', ' ');
-
-            colHtml = getDataFields(item, fields);
-            html += `<tr><td>${name}</td>${colHtml}</tr>`;
+            const dataHtml = getDataFields(item, fields).join('');
+            html += `<tr><td>${name}</td>${dataHtml}</tr>`;
         });
         html += '</table>';
 
@@ -786,7 +781,7 @@ class ControlBar {
         st.backgroundColor = connected ?
             this.color.onColor : this.color.offColor;
 
-        // Use logo image only when connected, otherwise text
+        // Use logo only when connected, otherwise text
         this.setLogoVisibility();
 
         this.elDropdown.style.visibility = connected ? 'visible' : 'hidden';
@@ -953,7 +948,7 @@ function startTopicDiscovery() {
             // eslint-disable-next-line max-len
             printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
         },
-        packetEvent: event => {
+        packetEvent: async event => {
             const { count } = event.detail;
             printLog(`Packet #${count} received`);
             updatePowerPlantList(event.data, event.detail.topic);
@@ -963,8 +958,15 @@ function startTopicDiscovery() {
             const expTopics = Object.keys(topicMap).length;
             if (count === expTopics) {
                 discoveryConnector.unsubscribe();
+
                 // All topics discovered, create the dashboard
-                createDashboard();
+                await createDashboard();
+
+                // Display the first power plant
+                const powPlant = Object.keys(powPlantList)[0];
+                setTimeout(() => {
+                    controlBar.onPowPlantClicked(powPlant);
+                }, 1000);
             }
         }
     };
@@ -1340,7 +1342,7 @@ class MQTTConnector extends DataConnector {
 
         // Clear the data table on each packet, without resetting counter
         if (connector.options.autoClear) {
-            await connTable.deleteRows();
+            await connTable.deleteColumns();
         }
 
         // Parse the message
