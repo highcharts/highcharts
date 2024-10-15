@@ -22,7 +22,7 @@ The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Op
 ### buffersize
 Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering, and increased performance on sorting and scroll. A larger buffer means slower initial rendering, but might decrease flicker effect on fast scrolling.
 
-The default `bufferSize` of 10 should be optimal in most cases. 
+The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) of 10 should be optimal in most cases. 
 
 ### strictHeights
 By default, rows adjust their height to fit all content, which can reduce performance and scrolling smoothness. Setting `strictHeights: true` ensures all rows have a uniform height, truncating multiline text with an ellipsis. This skips height calculations and boosts performance.
