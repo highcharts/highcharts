@@ -17,7 +17,7 @@ This technique significantly enhances DataGrid performance, leading to faster lo
 }
 ```
 
-The `bufferSize` and `strictHeights` options can be adjusted to optimize performance and smoothness of scrolling based on your spesific use case and preferences. 
+The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) and [`strictHeights`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your spesific use case and preferences. 
 
 ### buffersize
 Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering, and increased performance on sorting and scroll. A larger buffer means slower initial rendering, but might decrease flicker effect on fast scrolling.
