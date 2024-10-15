@@ -106,7 +106,7 @@ The `rendering` option object can be used to configure options related to perfor
 }
 ```
 
-For more information on rendering options see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
+For more information on rendering options read our article on [Performance and rendering](https://www.highcharts.com/docs/datagrid/performance) or see the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
 
 ## events
 The DataGrid supports a number of event listeners that can be added to the header, columns and cells. These allows for custom functionality and extendibility of the DataGrid. Read more about events in our [Events article](https://www.highcharts.com/docs/datagrid/events)
