@@ -47,7 +47,7 @@ These options can be used to configure how the table should be rendered.
 
 [`table.className`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.TableSettings#className) is appended to the `<table>` element, and can be used to [style the DataGrid by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
 
-`header.enabled: false` disables all [column headers](https://www.highcharts.com/docs/datagrid/header) by not rendering the `thead` element.
+[`header.enabled: false`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/datagrid/header) by not rendering the `thead` element.
 
 `columns.distribution` is used to configure initial column widths.
 
