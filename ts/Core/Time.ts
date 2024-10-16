@@ -651,14 +651,15 @@ class Time {
      *         The formatted date.
      */
     public dateFormat(
-        format: Time.DateTimeFormat,
+        format: Time.DateTimeFormat = '%Y-%m-%d %H:%M:%S',
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
+        const lang = H.defaultOptions?.lang;
+
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return H.defaultOptions.lang?.invalidDate || '';
+            return lang?.invalidDate || '';
         }
-        format = format ?? '%Y-%m-%d %H:%M:%S';
 
         // First, identify and replace locale-aware formats like %[Ymd]
         if (isString(format)) {
@@ -685,7 +686,6 @@ class Time {
                     milliseconds,
                     weekday
                 ] = this.toParts(timestamp),
-                lang = H.defaultOptions.lang,
                 langWeekdays = lang?.weekdays || this.weekdays,
                 shortWeekdays = lang?.shortWeekdays || this.shortWeekdays,
                 months = lang?.months || this.months,
