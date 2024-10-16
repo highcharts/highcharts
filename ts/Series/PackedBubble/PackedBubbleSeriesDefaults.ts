@@ -158,10 +158,11 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
                 PackedBubbleDataLabelFormatterObject
             )
         ): string {
-            const { numberFormatter } = this.series.chart;
-            const { value } = this.point as PackedBubblePoint;
+            const chart = this.series.chart,
+                { numberFormatter } = chart,
+                { value } = this.point as PackedBubblePoint;
 
-            return isNumber(value) ? numberFormatter(value, -1) : '';
+            return isNumber(value) ? numberFormatter(value, -1, chart) : '';
         },
 
         /**

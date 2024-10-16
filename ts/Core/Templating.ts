@@ -30,6 +30,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    isString,
     pick,
     pInt,
     ucfirst
@@ -176,7 +177,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = defaultOptions.lang,
+        lang = chart?.options.lang || defaultOptions.lang,
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
 
@@ -416,7 +417,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
 function numberFormat(
     number: number,
     decimals: number,
-    decimalPoint?: string,
+    decimalPoint?: string|Chart,
     thousandsSep?: string
 ): string {
     number = +number || 0;
@@ -425,7 +426,8 @@ function numberFormat(
     let ret,
         fractionDigits;
 
-    const lang = defaultOptions.lang,
+    const chart = isObject(decimalPoint) ? decimalPoint : void 0,
+        lang = chart?.options.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         exponent = number.toString().split('e'),
         firstDecimals = decimals;
@@ -473,8 +475,10 @@ function numberFormat(
     const thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = pick(decimalPoint, lang.decimalPoint);
-    thousandsSep = pick(thousandsSep, lang.thousandsSep);
+    if (!isString(decimalPoint)) {
+        decimalPoint = lang.decimalPoint ?? '.';
+    }
+    thousandsSep ??= lang.thousandsSep ?? ' ';
 
     // Start building the return
     ret = number < 0 ? '-' : '';

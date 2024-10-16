@@ -534,7 +534,7 @@ class BubbleLegendItem {
 
         return format ? F.format(format, range) :
             formatter ? formatter.call(range) :
-                numberFormatter(range.value, 1);
+                numberFormatter(range.value, 1, this.chart);
     }
 
     /**

@@ -696,7 +696,7 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, -1, chart
                     ) + numericSymbols[i];
                 }
             }
@@ -704,9 +704,9 @@ class Axis {
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
+                ret = numberFormatter(value, -1, chart);
             } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
+                ret = numberFormatter(value, -1, chart, ''); // #2466
             }
         }
 
