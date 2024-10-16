@@ -429,6 +429,7 @@ async function createDashboard() {
                 autoConnect: true,
                 autoSubscribe: true,
                 autoReset: true, // Clear data table on subscribe
+                maxRows: 24, // Maximum number of rows in the data table
 
                 columnNames: ['time', 'power'],
                 beforeParse: data => dataParser(data),
@@ -1190,8 +1191,6 @@ class MQTTConnector extends DataConnector {
      *
      */
     async load() {
-        super.load();
-
         const connector = this,
             {
                 host, port, autoConnect
@@ -1205,6 +1204,8 @@ class MQTTConnector extends DataConnector {
         if (autoConnect) {
             await this.connect();
         }
+        super.load();
+
         return connector;
     }
 
@@ -1357,18 +1358,32 @@ class MQTTConnector extends DataConnector {
 
         converter.parse({ data });
         const convTable = converter.getTable();
+        const nRowsCurrent = connTable.getRowCount();
 
-        if (connTable.getRowCount() === 0) {
+        if (nRowsCurrent === 0) {
             // Initialize the table on first packet
             connTable.setColumns(convTable.getColumns());
         } else {
-            const nRows = convTable.getRowCount();
-            const rows = convTable.getRows();
-            if (nRows === 1) {
+            const maxRows = connector.options.maxRows;
+            const nRowsParsed = convTable.getRowCount();
+
+            if (nRowsParsed === 1) {
+                const rows = convTable.getRows();
                 // One row, append to table
+                if (nRowsCurrent === maxRows) {
+                    // Remove the oldest row
+                    connTable.deleteRows(0, 1);
+                }
                 connTable.setRows(rows);
             } else {
-                // Multiple rows, replace all rows
+                // Multiple rows, replace table content
+                const rows = convTable.getRows();
+
+                if (nRowsParsed >= maxRows) {
+                    // Get the newest 'maxRows' rows
+                    rows.splice(0, nRowsParsed - maxRows);
+                    connTable.deleteRows();
+                }
                 connTable.setRows(rows, 0);
             }
         }
@@ -1494,7 +1509,8 @@ MQTTConnector.defaultOptions = {
     // Custom connector properties
     autoConnect: false,  // Automatically connect after load
     autoSubscribe: false, // Automatically subscribe after connect
-    autoReset: false   // Clear data table on subscribe
+    autoReset: false,   // Clear data table on subscribe
+    maxRows: 100
 };
 
 // Register the connector
