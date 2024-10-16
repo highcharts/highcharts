@@ -109,14 +109,44 @@ possibilities of limiting access.
 ``` JavaScript
 async function run() {
     const connector = new DataConnector.types.GoogleSheets({
-        googleAPIKey: 'AIzaSyDaGmWKa4JsXZ-HjGw7ISLn_3namBGewQe',
-        googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
+        googleAPIKey: 'Aa...zz',
+        googleSpreadsheetKey: 'Bb...wW'
     });
     await connector.load();
 }
 run();
 ```
 
+## GoogleSheetsConnector Tutorial
+
+Google Sheets is a spreadsheet application included as part of the free, web-based Google Docs Editors suite offered by Google.
+
+With the `GoogleSheetsConnector` in Highcharts Dashboards you can load tables from a Google spreadsheet right into one your dashboard 
+components, whether it is a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
+Alternatively, the data may be filtered or modified before being parsed, in the `beforeParse` callback.
+
+The connector requires two API keys; one for the Google Spreadsheets API and one for the document itself. In addition, the owner of the Google account must grant read access to the document. See the [GoogleSheetsConnector API](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) for further details.
+
+### Google API key
+
+> Prerequisite
+>
+> The owner of the document must have a [Google Cloud Project](https://developers.google.com/workspace/guides/get-started) where the API/Service with [Google Sheets API](https://developers.google.com/sheets/api/guides/concepts) is enabled and an API key exists.
+
+Providing the Google Sheet API exists, the `API key` can be extracted from the [Credentials Panel](https://console.cloud.google.com/apis/credentials).
+
+### Spreadsheet Key
+The `spreadsheet key` can be extracted directly from the URL of the document as illustrated below:
+
+```
+https://docs.google.com/spreadsheets/d/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/edit
+```
+
+Spreadsheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
+
+### Basic demo
+
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial" allow="fullscreen"></iframe>
 
 
 HTMLTableConnector

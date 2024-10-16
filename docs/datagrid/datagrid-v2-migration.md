@@ -1,12 +1,11 @@
-Upgrade DataGrid to v3
-===
-The core of DataGrid has been changed in version 3.0. We have increased the performance and flexibility while adding accessibility support. This means that API options have been changed and the definition of styles or data source are different. We outline all of the changes below.
+# Upgrade DataGrid to v3
+The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options and the definition of styles or data source differ from the previous version. We outline all of the changes below.
 
 ## Factory function
 The factory function `DataGrid.DataGrid` has been replaced with `DataGrid.dataGrid`.
 
 ## Data source
-In the newest DataGrid, the data source definition has been redesigned. This is a critical upgrade, so please double-check if everything is configured properly.
+In DataGrid 3.0, the data source definition has been redesigned. This is a critical upgrade, so please double-check if everything is configured properly.
 
 DataGrid v2.x.x requires you to create a new instance of the DataTable class.
 ```js
@@ -15,8 +14,8 @@ const grid = new DataGrid.DataGrid('container', {
 });
 ```
 
-DataGrid v3.0.0 and higher allows to define the data source in the `dataTable` option without creating a new instance of the DataTable class.  
-The grid will automatically create a new instance of the DataTable class for you.
+DataGrid v3.0 and higher allows you to define the data source in the `dataTable` option without creating a new instance of the `DataTable` class.  
+The grid will automatically create a new instance of the `DataTable` class.
 
 ```js
 const grid = DataGrid.dataGrid('container', {
@@ -27,21 +26,24 @@ const grid = DataGrid.dataGrid('container', {
 ```
 
 ## Styling
-The main change is CSS styling instead of the built-in API options.
+All styling is now done via CSS instead of the built-in API options.
 
-Since Dashboards v3.0, we have removed the following option from the DataGrid:
- * `cellHeight`
-
-so if you want to change the default height by CSS:
+Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the following example shows how to adjust the height for the rows in `thead` and `tbody` respectively, and also how to override height in selected rows:
 
 ```css
-.highcharts-datagrid-row[data-row-index="1"] td {
-  height: 150px;
+.highcharts-datagrid-table thead tr {
+    height: 70px;
+}
+
+.highcharts-datagrid-table tbody tr {
+    height: 50px;
+}
+
+.highcharts-datagrid-table tbody tr[data-row-index="0"] {
+    height: 150px;
 }
 ```
-
-The next main change is a new naming of CSS classes.
-We recommend reading our [article about styling the DataGrid in Dashboards v3.0 and higher](https://www.highcharts.com/docs/datagrid/style-by-css).
+We recommend reading our [Style by CSS article](https://www.highcharts.com/docs/datagrid/style-by-css) for information on more CSS naming changes and tips on how to style the DataGrid.
 
 ## Example of the new DataGrid
 
@@ -52,7 +54,6 @@ We recommend reading our [article about styling the DataGrid in Dashboards v3.0 
             weight: [100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5],
             metaData: ['a', 'b', 'c', 'd'],
-            icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
     columnDefaults: {
@@ -76,8 +77,7 @@ We recommend reading our [article about styling the DataGrid in Dashboards v3.0 
         id: 'weight',
         className: 'custom-column-class-name',
         cells: {
-            formatter: function () {
-                return 'V: ' + this.value;
+            format: 'V:{value}';
             }
         }
     }, {
@@ -90,12 +90,6 @@ We recommend reading our [article about styling the DataGrid in Dashboards v3.0 
                 // Callback action
             },
             dblClick: function() {
-
-            },
-            mouseOver: function () {
-                // Callback action
-            },
-            mouseOut: function () {
                 // Callback action
             },
             afterEdit: function () {
@@ -118,25 +112,5 @@ We recommend reading our [article about styling the DataGrid in Dashboards v3.0 
     }
 ```
 
-### Column Defaults
-The options applied to all columns.
-
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columnDefaults).
-
-### Rendering
-Options to control the way datagrid is rendered.
-
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#rendering).
-
-### Columns
-Column options that are applied individually.
-
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#columns).
-
-### Events
-Events applied to column, column header, or a cell.
-
-You can find more information in our [API Reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.Options-1#events).
-
-## Changelog
-The rest of changes and new options you can be found in [the Changelog.](https://www.highcharts.com/changelog/#highcharts-dashboards)
+## Recommended reading
+We recommend reading our article on [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) for an overview of new options and possibilities, and also the [Changelog](https://www.highcharts.com/changelog/#highcharts-dashboards) for any breaking changes.
