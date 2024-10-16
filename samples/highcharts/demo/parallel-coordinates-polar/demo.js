@@ -1,5 +1,5 @@
 const data = [
-    // Name (Symbol), Atomic Number, Atomic Radius, Boiling Point, Density, Phase
+    // Name (Symbol),Atomic Number,Atomic Radius,Boiling Point,Density,Phase
     ['Mercury (Hg)', 80, 151, 629, 13.546, 1],
     ['Iron (Fe)', 26, 126, 3134, 7.874, 2],
     ['Silver (Ag)', 47, 144, 2435, 10.503, 2],
@@ -12,13 +12,13 @@ Highcharts.chart('container', {
         parallelAxes: {
             labels: {
                 style: {
-                    opacity: 0.7
+                    opacity: 0.7,
+                    fontSize: '11px',
+                    color: '#000'
                 }
             },
             gridLineWidth: 0,
             showFirstLabel: false,
-            startOnTick: false,
-            endOnTick: false,
             minPadding: 0.2,
             tickPixelInterval: 42,
             lineWidth: 0
@@ -77,57 +77,32 @@ Highcharts.chart('container', {
     },
     yAxis: [{
         // Atomic Number
-        min: 0,
-        labels: {
-            style: {
-                fontSize: '11px',
-                color: '#000'
-            }
-        }
+        min: 0
     }, {
         // Atomic Radius
         labels: {
-            format: '{value} pm',
-            style: {
-                fontSize: '11px',
-                color: '#000'
-            }
+            format: '{value} pm'
         }
     }, {
         // Boiling Point
         labels: {
-            format: '{value} K',
-            style: {
-                fontSize: '11px',
-                color: '#000'
-            }
+            format: '{value} K'
         },
         min: 0
     }, {
         // Density
         labels: {
-            format: '{value} g/cm³',
-            style: {
-                fontSize: '11px',
-                color: '#000'
-            }
+            format: '{value} g/cm³'
         }
     }, {
         // Phase
         categories: [
             'gas',
             'liquid',
-            'solid',
-            ''
+            'solid'
         ],
         min: -0.5,
-        max: 2.5,
-        labels: {
-            style: {
-                fontSize: '11px',
-                color: '#000'
-            }
-        }
+        max: 2.5
     }],
     series: data.map(function (set) {
         return {
