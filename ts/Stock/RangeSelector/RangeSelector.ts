@@ -1573,13 +1573,14 @@ class RangeSelector {
         // button. This is used both by the buttonGroup and the inputGroup.
         const getXOffsetForExportButton = (
             group: SVGElement,
-            position: RangeSelectorPositionOptions
+            position: RangeSelectorPositionOptions,
+            rightAligned?: boolean
         ): number => {
             if (
                 navButtonOptions &&
                 this.titleCollision(chart) &&
                 verticalAlign === 'top' &&
-                position.align === 'right' && (
+                rightAligned && (
                     (
                         position.y -
                         group.getBBox().height - 12
@@ -1630,7 +1631,9 @@ class RangeSelector {
                 // Detect collision between button group and exporting
                 const xOffsetForExportButton = getXOffsetForExportButton(
                     buttonGroup,
-                    buttonPosition
+                    buttonPosition,
+                    buttonPosition.align === 'right' ||
+                    inputPosition.align === 'right'
                 );
 
                 this.alignButtonGroup(xOffsetForExportButton);
@@ -1649,7 +1652,9 @@ class RangeSelector {
                 // Detect collision between the input group and exporting button
                 xOffsetForExportButton = getXOffsetForExportButton(
                     inputGroup,
-                    inputPosition
+                    inputPosition,
+                    buttonPosition.align === 'right' ||
+                    inputPosition.align === 'right'
                 );
 
                 if (inputPosition.align === 'left') {
@@ -1865,11 +1870,12 @@ class RangeSelector {
         xOffsetForExportButton: number,
         width?: number
     ): void {
-        const { chart, options, buttonGroup, dropdownLabel } = this;
+        const { chart, options, buttonGroup, dropdown, dropdownLabel } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
         let translateX = buttonPosition.x - chart.spacing[3];
         let dropdownTranslateX = chart.plotLeft;
+
         if (buttonPosition.align === 'right') {
             translateX += xOffsetForExportButton - plotLeft; // #13014
 
@@ -1887,6 +1893,17 @@ class RangeSelector {
             }
         }
 
+        if (dropdown) {
+            css(dropdown, {
+                left: dropdownTranslateX + 'px',
+                top: buttonGroup?.translateY + 'px'
+            });
+        }
+
+        dropdownLabel?.attr({
+            x: dropdownTranslateX
+        });
+
         if (buttonGroup) {
             // Align button group
             buttonGroup.align({
@@ -1895,11 +1912,6 @@ class RangeSelector {
                 align: buttonPosition.align,
                 x: translateX
             }, true, chart.spacingBox);
-
-            dropdownLabel?.attr({
-                x: dropdownTranslateX
-            });
-            // TODO - align dropdown
         }
     }
 
@@ -1995,16 +2007,22 @@ class RangeSelector {
 
         // Detect collision
         if (inputGroup && buttonGroup) {
-            if (
-                (inputPosition.align === buttonPosition.align)
-            ) {
+            const totalWidth =
+                inputGroup.getBBox().width + buttonGroup.getBBox().width;
+
+            // Different Alignment
+            if (inputPosition.align !== buttonPosition.align) {
+                if (totalWidth - xOffsetForExportButton > chart.plotWidth) {
+                    moveInputsDown();
+                }
+            }
+            // Same alignment
+            if (inputPosition.align === buttonPosition.align) {
                 moveInputsDown();
 
                 if (
                     this.initialButtonGroupWidth >
-                    chart.plotWidth +
-                    xOffsetForExportButton -
-                    20
+                    chart.plotWidth + xOffsetForExportButton - 20
                 ) {
                     this.collapseButtons();
                 } else {
@@ -2014,7 +2032,8 @@ class RangeSelector {
                 if (
                     this.initialButtonGroupWidth -
                     xOffsetForExportButton +
-                    inputGroup.getBBox().width > chart.plotWidth
+                    inputGroup.getBBox().width >
+                    chart.plotWidth
                 ) {
                     this.collapseButtons();
                 } else {
@@ -2022,7 +2041,7 @@ class RangeSelector {
                 }
             }
         }
-
+        // Forced states
         if (buttonGroup) {
             if (dropdown === 'always') {
                 this.collapseButtons();
