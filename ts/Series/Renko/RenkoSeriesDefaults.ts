@@ -74,15 +74,21 @@ const RenkoDefaults: RenkoSeriesOptions = {
     }
 };
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `renko` series. If the [type](#series.renko.type)
  * option is not specified, it is inherited from [chart.type](
  * #chart.type).
  *
  * @type      {*}
- * @extends   series.plotOptions.renko
- * @excluding dataParser, dataURL, marker
+ * @extends   series,plotOptions.renko
  * @product   highstock
+ * @excluding dataParser, dataURL, marker
  * @requires  modules/renko
  * @apioption series.renko
  */
