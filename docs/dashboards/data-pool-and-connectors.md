@@ -273,7 +273,11 @@ Although the `JSONConnector` and the `MQTTConnector` have much in common there a
 * The `load` method does not return any data
 * The `orientation` option is fixed to `columns`
 * The options `dataUrl`, `dataModifier` and `firstRowAsNames` are not supported
-* The options `autoConnect` and `autoSubscribe` are specific to the MQTT connector
+* The MQTT connector has some additional options:
+    * `autoConnect` - automatically connect after load
+    * `autoSubscribe` - automatically subscribe on connect
+    * `autoReset` - clear data table on subscribe
+    * `maxRows` - maximum number of rows in data table
 
 #### MQTT client options
 

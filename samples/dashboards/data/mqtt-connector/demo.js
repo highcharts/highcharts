@@ -89,6 +89,7 @@ const dataGridOptions = {
 
 // Connector configuration
 const connConfig = {
+    autoSubscribe: true,
     columnNames: [
         'time',
         'value'
@@ -388,8 +389,6 @@ class MQTTConnector extends DataConnector {
      *
      */
     async load() {
-        super.load();
-
         const connector = this,
             {
                 host, port, autoConnect
@@ -403,8 +402,21 @@ class MQTTConnector extends DataConnector {
         if (autoConnect) {
             await this.connect();
         }
+        super.load();
 
         return connector;
+    }
+
+    /**
+     * Clear the data table and reset the packet count.
+     *
+     */
+    async reset() {
+        const connector = this,
+            table = connector.table;
+
+        connector.packetCount = 0;
+        await table.deleteColumns();
     }
 
     /**
@@ -439,7 +451,13 @@ class MQTTConnector extends DataConnector {
      *
      */
     async subscribe() {
-        const { topic, qOs } = this.options;
+        const { topic, qOs, autoReset } = this.options;
+
+        if (autoReset) {
+            // Reset the data table
+            await this.reset();
+        }
+
         this.mqtt.subscribe(topic, {
             qos: qOs,
             onSuccess: () => {
@@ -513,39 +531,59 @@ class MQTTConnector extends DataConnector {
      * Process incoming message
      *
      */
-    onMessageArrived(mqttPacket) {
+    async onMessageArrived(mqttPacket) {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
             connTable = connector.table;
 
-        // Parse the message
+        // Parse the packets
         let data;
         const payload = mqttPacket.payloadString;
         try {
             data = JSON.parse(payload);
-        // eslint-disable-next-line no-unused-vars
         } catch (e) {
             connector.emit({
                 type: 'errorEvent',
                 detail: {
-                    code: 0, // N.A.
-                    message: 'Invalid JSON: ' + payload
+                    code: -1,
+                    message: 'Invalid JSON: ' + payload,
+                    jsError: e
                 }
             });
-            return; // Skip invalid messages
+            return; // Skip invalid packets
         }
 
         converter.parse({ data });
         const convTable = converter.getTable();
+        const nRowsCurrent = connTable.getRowCount();
 
-        // Append the incoming data to the current table
-        if (connTable.getRowCount() === 0) {
-            // First message, initialize columns for data storage
+        if (nRowsCurrent === 0) {
+            // Initialize the table on first packet
             connTable.setColumns(convTable.getColumns());
         } else {
-            // Subsequent message, append as row
-            connTable.setRows(convTable.getRows());
+            const maxRows = connector.options.maxRows;
+            const nRowsParsed = convTable.getRowCount();
+
+            if (nRowsParsed === 1) {
+                const rows = convTable.getRows();
+                // One row, append to table
+                if (nRowsCurrent === maxRows) {
+                    // Remove the oldest row
+                    connTable.deleteRows(0, 1);
+                }
+                connTable.setRows(rows);
+            } else {
+                // Multiple rows, replace table content
+                const rows = convTable.getRows();
+
+                if (nRowsParsed >= maxRows) {
+                    // Get the newest 'maxRows' rows
+                    rows.splice(0, nRowsParsed - maxRows);
+                    connTable.deleteRows();
+                }
+                connTable.setRows(rows, 0);
+            }
         }
         connector.packetCount++;
 
@@ -644,7 +682,6 @@ class MQTTConnector extends DataConnector {
         if (connector.options.errorEvent) {
             connector.on('errorEvent', connector.options.errorEvent);
         }
-
     }
 }
 
@@ -659,15 +696,17 @@ MQTTConnector.defaultOptions = {
     port: 8000,
     user: '',
     password: '',
+    topic: 'highcharts/test',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    topic: 'highcharts/test',
     useSSL: false,
     cleanSession: true,
 
     // Custom connector properties
-    autoConnect: false,
-    autoSubscribe: true
+    autoConnect: false,  // Automatically connect after load
+    autoSubscribe: false, // Automatically subscribe after connect
+    autoReset: false,   // Clear data table on subscribe
+    maxRows: 100
 };
 
 // Register the connector
