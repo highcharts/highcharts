@@ -296,8 +296,8 @@ class HTMLElement extends SVGElement {
             styles.overflow = 'hidden';
         }
 
-        // Highcharts supports using numbers for font size with SVG.
-        // With HTML font size should behave in the same way. (#21624)
+        // SVG natively supports setting font size as numbers. With HTML, the
+        // font size should behave in the same way (#21624).
         if (isNumber(Number(styles?.fontSize))) {
             styles.fontSize = styles.fontSize + 'px';
         }
