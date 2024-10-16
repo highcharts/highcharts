@@ -1,5 +1,5 @@
 const data = [
-    // Name (Sybol), Atomic Number, Atomic Radius, Boiling Point, Density, Phase
+    // Name (Symbol), Atomic Number, Atomic Radius, Boiling Point, Density, Phase
     ['Mercury (Hg)', 80, 151, 629, 13.546, 1],
     ['Iron (Fe)', 26, 126, 3134, 7.874, 2],
     ['Silver (Ag)', 47, 144, 2435, 10.503, 2],
@@ -67,6 +67,7 @@ Highcharts.chart('container', {
             }
         },
         gridLineWidth: 0,
+        // Display custom grid lines in the center of the category
         plotLines: Array.from({ length: 5 }, (_, value) => ({
             value,
             width: 1,
@@ -105,7 +106,7 @@ Highcharts.chart('container', {
     }, {
         // Density
         labels: {
-            format: '{value:.2f} g/cm³',
+            format: '{value} g/cm³',
             style: {
                 fontSize: '11px',
                 color: '#000'
