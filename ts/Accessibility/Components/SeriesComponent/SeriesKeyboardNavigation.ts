@@ -140,7 +140,10 @@ function isSkipPoint(
         point.options.accessibility.enabled === false
     );
 
-    return point.isNull &&
+    return !(
+        !point.isNull ||
+        (point.series.options as any).nullInteraction
+    ) &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         point.isInside === false ||
