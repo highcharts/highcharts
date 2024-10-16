@@ -55,10 +55,7 @@ const chartOptions = {
     },
     tooltip: {
         useHTML: true,
-        formatter: function () {
-            const date = Highcharts.dateFormat('%A, %b %e, %H:%M:%S', this.x);
-            return `<b>${date} </b><hr>Wind speed: ${this.y} m/s <br/>`;
-        }
+        format: '<b>{x:%A, %b %e, %H:%M:%S} </b><hr>Wind speed: {y} m/s <br/>'
     }
 };
 
