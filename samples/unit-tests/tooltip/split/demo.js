@@ -310,7 +310,6 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
             true,
             'The tooltip should be aligned towards the left'
         );
-
         assert.strictEqual(
             ttRight <= mainContainer.clientWidth,
             true,
