@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const data = [
     ['Delhi', 31.18, 1484, 250],
     ['Tokyo', 37.33, 2194, 2017],
