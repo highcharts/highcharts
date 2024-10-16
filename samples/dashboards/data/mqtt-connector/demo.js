@@ -196,7 +196,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions: dataGridOptions
+            dataGridOptions
         }, {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
