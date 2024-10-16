@@ -27,6 +27,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
+import Series from '../../Core/Series/Series.js';
 const { composed } = H;
 const {
     scatter: ScatterSeries,
@@ -127,9 +128,17 @@ class PointAndFigureSeries extends ScatterSeries {
         this.pnfDataGroups = [];
     }
 
-    public generatePnfData(
-        this: PointAndFigureSeries
-    ): void {
+    public getProcessedData(): Series.ProcessedDataObject {
+        if (this.processedXData?.length > 0) {
+            return {
+                xData: this.processedXData,
+                yData: this.processedYData,
+                cropped: false,
+                cropStart: 0,
+                closestPointRange: 1
+            };
+        }
+
         const series = this,
             options = series.options,
             xData = series.xData,
@@ -232,16 +241,16 @@ class PointAndFigureSeries extends ScatterSeries {
         // Process the pnfDataGroups to HC series format
         const finalData: {x: number, y: number, upTrend: boolean}[] = [];
 
-        series.processedXData.length = 0;
-        series.processedYData.length = 0;
+        const processedXData: number[] = [];
+        const processedYData: number[] = [];
 
         pnfDataGroups.forEach((point): void => {
             const x = point.x,
                 upTrend = point.upTrend;
 
             point.y.forEach((y): void => {
-                series.processedXData.push(x);
-                series.processedYData.push(y as any);
+                processedXData.push(x);
+                processedYData.push(y);
                 finalData.push({
                     x,
                     y,
@@ -252,16 +261,14 @@ class PointAndFigureSeries extends ScatterSeries {
 
         series.pnfDataGroups = pnfDataGroups;
         series.processedData = finalData;
-    }
 
-    public processData(force?: boolean): (boolean|undefined) {
-        const ret = super.processData(force);
-
-        if (this.is?.('pointandfigure')) {
-            this.generatePnfData();
-        }
-
-        return ret;
+        return {
+            xData: processedXData,
+            yData: processedYData,
+            cropped: false,
+            cropStart: 0,
+            closestPointRange: 1
+        };
     }
 
     public markerAttribs(
