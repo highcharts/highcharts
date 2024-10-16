@@ -20,7 +20,8 @@ Highcharts.chart('container', {
             startOnTick: false,
             endOnTick: false,
             minPadding: 0.2,
-            tickPixelInterval: 42
+            tickPixelInterval: 42,
+            lineWidth: 0
         },
         polar: true,
         type: 'area'
@@ -65,7 +66,13 @@ Highcharts.chart('container', {
                 fontWeight: 'bold'
             }
         },
-        gridLineWidth: 0
+        gridLineWidth: 0,
+        plotLines: Array.from({ length: 5 }, (_, value) => ({
+            value,
+            width: 1,
+            dashStyle: '2,2',
+            color: '#75738c'
+        }))
     },
     yAxis: [{
         // Atomic Number
@@ -132,7 +139,7 @@ Highcharts.chart('container', {
             fillOpacity: 0,
             states: {
                 hover: {
-                    lineWidthPlus: 2
+                    lineWidthPlus: 0
                 }
             },
             legendSymbol: 'rectangle'
