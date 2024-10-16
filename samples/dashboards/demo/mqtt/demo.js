@@ -429,7 +429,6 @@ async function createDashboard() {
                 autoConnect: true,
                 autoSubscribe: true,
                 autoReset: true, // Clear data table on subscribe
-                autoClear: useHistoricalData,
 
                 columnNames: ['time', 'power'],
                 beforeParse: data => dataParser(data),
@@ -962,10 +961,9 @@ function startTopicDiscovery() {
                 // All topics discovered, create the dashboard
                 await createDashboard();
 
-                // Display the first power plant
-                const powPlant = Object.keys(powPlantList)[0];
+                // Display the first power plant (delayed)
                 setTimeout(() => {
-                    controlBar.onPowPlantClicked(powPlant);
+                    controlBar.onPowPlantClicked(Object.keys(powPlantList)[0]);
                 }, 1000);
             }
         }
@@ -1219,7 +1217,7 @@ class MQTTConnector extends DataConnector {
             table = connector.table;
 
         connector.packetCount = 0;
-        await table.deleteRows();
+        await table.deleteColumns();
     }
 
     /**
@@ -1340,12 +1338,7 @@ class MQTTConnector extends DataConnector {
             converter = connector.converter,
             connTable = connector.table;
 
-        // Clear the data table on each packet, without resetting counter
-        if (connector.options.autoClear) {
-            await connTable.deleteColumns();
-        }
-
-        // Parse the message
+        // Parse the packets
         let data;
         const payload = mqttPacket.payloadString;
         try {
@@ -1359,19 +1352,25 @@ class MQTTConnector extends DataConnector {
                     jsError: e
                 }
             });
-            return; // Skip invalid messages
+            return; // Skip invalid packets
         }
 
         converter.parse({ data });
         const convTable = converter.getTable();
 
-        // Append the incoming data to the current table
         if (connTable.getRowCount() === 0) {
-            // First message, initialize columns for data storage
+            // Initialize the table on first packet
             connTable.setColumns(convTable.getColumns());
         } else {
-            // Subsequent message, append as row
-            connTable.setRows(convTable.getRows());
+            const nRows = convTable.getRowCount();
+            const rows = convTable.getRows();
+            if (nRows === 1) {
+                // One row, append to table
+                connTable.setRows(rows);
+            } else {
+                // Multiple rows, replace all rows
+                connTable.setRows(rows, 0);
+            }
         }
         connector.packetCount++;
 
@@ -1384,6 +1383,8 @@ class MQTTConnector extends DataConnector {
                 count: connector.packetCount
             }
         });
+
+        return connector;
     }
 
     /**
@@ -1493,8 +1494,7 @@ MQTTConnector.defaultOptions = {
     // Custom connector properties
     autoConnect: false,  // Automatically connect after load
     autoSubscribe: false, // Automatically subscribe after connect
-    autoReset: false,    // Clear data table on subscribe
-    autoClear: false     // Clear data table on each packet
+    autoReset: false   // Clear data table on subscribe
 };
 
 // Register the connector
