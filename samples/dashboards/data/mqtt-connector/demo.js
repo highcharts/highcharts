@@ -33,8 +33,7 @@ const topicMap = {
 // Options for chart
 const chartOptions = {
     chart: {
-        type: 'spline',
-        animation: true
+        type: 'spline'
     },
     legend: {
         enabled: false
@@ -525,6 +524,7 @@ class MQTTConnector extends DataConnector {
         const payload = mqttPacket.payloadString;
         try {
             data = JSON.parse(payload);
+        // eslint-disable-next-line no-unused-vars
         } catch (e) {
             connector.emit({
                 type: 'errorEvent',
