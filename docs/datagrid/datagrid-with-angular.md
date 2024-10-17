@@ -54,3 +54,5 @@ export class AppComponent implements OnInit {
 }
 ```
 
+See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-angular?file=src%2Fmain.ts).
+
