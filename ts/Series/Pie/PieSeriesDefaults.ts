@@ -341,9 +341,9 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @default function () { return this.point.isNull ? void 0 : this.point.name; }
          */
         formatter: function (
-            this: Point.PointLabelObject
+            this: Point
         ): (string|undefined) { // #2945
-            return this.point.isNull ? void 0 : this.point.name;
+            return this.isNull ? void 0 : this.name;
         },
 
         /**

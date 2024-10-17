@@ -34,7 +34,7 @@ Highcharts.chart('container', {
         shadow: false
     },
     tooltip: {
-        headerFormat: '<b>{point.x}</b><br/>',
+        headerFormat: '<b>{category}</b><br/>',
         pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
     },
     plotOptions: {
