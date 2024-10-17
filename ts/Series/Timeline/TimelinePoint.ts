@@ -240,7 +240,13 @@ class TimelinePoint extends LinePoint {
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
-        options = Point.prototype.optionsToObject.call(this, options);
+        options = Point.prototype.optionsToObject.call(
+            this,
+            options ?? (
+                (this.series.options.nullInteraction && { y: 0 }) ||
+                null
+            )
+        );
         this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
         return super.applyOptions(options, x);
     }
