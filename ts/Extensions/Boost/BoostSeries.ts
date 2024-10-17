@@ -1258,7 +1258,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any ?? (nullYSubstitute || null);
+                y = yData[i] as any ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
