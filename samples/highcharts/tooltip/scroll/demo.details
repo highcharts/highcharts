@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Kacper Madej
+ requiresManualTesting: true
+ js_wrap: b
+...

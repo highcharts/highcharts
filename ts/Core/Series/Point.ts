@@ -115,6 +115,7 @@ class Point {
     public category!: (number|string);
     public color?: ColorType;
     public colorIndex?: number;
+    public cumulativeSum?: number;
     public dataLabels?: Array<SVGElement|SVGLabel>;
     public destroyed?: boolean;
     public formatPrefix: string = 'point';
@@ -1320,10 +1321,14 @@ class Point {
             point.importedUserEvent?.();
 
             point.importedUserEvent = addEvent(point, eventType, userEvent);
+            if (point.hcEvents) {
+                point.hcEvents[eventType].userEvent = true;
+            }
         } else if (
             point.importedUserEvent &&
             !userEvent &&
-            point.hcEvents?.[eventType]
+            point.hcEvents?.[eventType] &&
+            point.hcEvents?.[eventType].userEvent
         ) {
             removeEvent(point, eventType);
             delete point.hcEvents[eventType];
@@ -1632,7 +1637,10 @@ class Point {
 
 interface Point extends PointLike {
     // Merge extensions with point class
-    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    hcEvents?: Record<
+    string,
+    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+    >;
 }
 
 /* *

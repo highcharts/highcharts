@@ -45,3 +45,7 @@
     stroke: rgb(255 66 66);
     stroke-width: 2px;
 }
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}

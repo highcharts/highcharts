@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Ferry passengers by vehicle type 2024'
+        text: 'Ferry passengers by vehicle type 2024',
+        align: 'left'
     },
     xAxis: {
         categories: [

@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container {
     height: 400px;
 }
@@ -9,6 +13,10 @@
     margin: 1em auto;
 }
 
+#sliders {
+    margin: 0.3rem 10px;
+}
+
 #sliders td input[type="range"] {
     display: inline;
 }
@@ -16,4 +24,8 @@
 #sliders td {
     padding-right: 1em;
     white-space: nowrap;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

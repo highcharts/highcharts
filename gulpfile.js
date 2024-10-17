@@ -22,9 +22,13 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api',
+    'api-docs',
+    'api-server',
     'api-tree',
     'api-upload',
     'dashboards/api',
+    'dashboards/api2',
     'dashboards/api-docs',
     'dashboards/api-server',
     'dashboards/cypress',
@@ -100,10 +104,10 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/filesize',
     'unsorted/get-filesizes',
     'unsorted/nightly',
+    'unsorted/patch-ink-docstrap',
     'unsorted/update-vendor',
     'unsorted/upload-files',
     'update-pr-testresults',
-    'update-pr-testresults-cypress',
     'pr-size-table'
 ]));
 

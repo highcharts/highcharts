@@ -45,4 +45,4 @@ Other series types, like the choropleth `map` series, typically rely on a GeoJSO
 
 Another way to join the data is to simply skip the `mapData` and set the [geometry](https://api.highcharts.com/highmaps/series.map.data.geometry) directly on the data point. This mixes the data and the structure and is not generally recommended, but it performs faster, and may be considered in situations where you have static data and a backend to perform the joining.
 
-<iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/maps/demo/basic-map' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/maps/demo/basic-map" allow="fullscreen"></iframe>

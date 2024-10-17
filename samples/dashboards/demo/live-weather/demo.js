@@ -1,15 +1,17 @@
-/* eslint-disable jsdoc/require-description */
-
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
-
 const rangeConfig = {
     first: 0, // 0: current observation
     hours: 24 // max: 19 days
 };
 
 // The current date is used in several charts
-const currentDay = Highcharts.dateFormat('%e %B %Y', Date.now());
+const currentDay = Highcharts.dateFormat('%B %e, %Y', Date.now());
 
 // Windbarb series object (deleted when not showing wind)
 let windbarbSeries = null;
@@ -86,15 +88,20 @@ const locations = {
     mapUrl: 'https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json',
     default: 'New York',
     points: [
-        ['city', 'lat', 'lon', 'elevation'],
-        ['New York', 40.71, -74.01, 10],
-        ['San Diego', 32.71, -117.16, 36],
-        ['Anchorage', 61.22, -149.89, 0],
-        ['Winnipeg', 49.90, -97.14, 236],
-        ['Monterrey', 25.68, -99.13, 540],
-        ['Baracoa', 20.35, -74.50, 15]
+        ['city', 'lat', 'lon', 'elevation', 'timeDifference'],
+        ['New York', 40.71, -74.01, 10, 5],
+        ['San Diego', 32.71, -117.16, 36, 8],
+        ['Anchorage', 61.22, -149.89, 0, 9],
+        ['Winnipeg', 49.90, -97.14, 236, 6],
+        ['Monterrey', 25.68, -99.13, 540, 6],
+        ['Baracoa', 20.35, -74.50, 15, 5]
     ]
 };
+
+function getTimeDifference(city) {
+    const location = locations.points.find(point => point[0] === city);
+    return location ? location[4] : 0; // Default to 0 if city is not found
+}
 
 // Application configuration (weather station data set + data provider)
 const weatherStationConfig = {
@@ -532,40 +539,54 @@ async function setupDashboard() {
                     highlight: true
                 },
                 dataGridOptions: {
-                    cellHeight: 38,
-                    editable: false,
-                    columns: {
-                        time: {
-                            headerFormat: 'Time UTC',
-                            cellFormatter: function () {
+                    credits: {
+                        enabled: false
+                    },
+                    columns: [{
+                        id: 'time',
+                        header: {
+                            format: 'Local Time'
+                        },
+                        cells: {
+                            formatter: function () {
                                 return Highcharts.dateFormat(
-                                    '%H:%M', this.value
+                                    '%I:%M %p', this.value
                                 );
                             }
-                        },
-                        temperature: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'temperature'
-                            ),
-                            cellFormat: '{value:.1f}'
-                        },
-                        wind: {
-                            headerFormat: paramConfig.getColumnHeader('wind'),
-                            cellFormat: '{value:.1f}'
-                        },
-                        windDir: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'windDir'
-                            ),
-                            cellFormat: '{value:.0f}'
-                        },
-                        precipitation: {
-                            headerFormat: paramConfig.getColumnHeader(
-                                'precipitation'
-                            ),
-                            cellFormat: '{value:.1f}'
                         }
-                    }
+                    }, {
+                        id: 'temperature',
+                        header: {
+                            format: paramConfig.getColumnHeader('temperature')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }, {
+                        id: 'wind',
+                        header: {
+                            format: paramConfig.getColumnHeader('wind')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }, {
+                        id: 'windDir',
+                        header: {
+                            format: paramConfig.getColumnHeader('windDir')
+                        },
+                        cells: {
+                            format: '{value:.0f} {log}'
+                        }
+                    }, {
+                        id: 'precipitation',
+                        header: {
+                            format: paramConfig.getColumnHeader('precipitation')
+                        },
+                        cells: {
+                            format: '{value:.1f}'
+                        }
+                    }]
                 }
             }, {
                 cell: 'city-chart',
@@ -601,6 +622,8 @@ async function setupDashboard() {
                                 symbol: 'circle'
                             },
                             tooltip: {
+                                headerFormat: '<span style="font-size: 10px">' +
+                                    '{point.x:%B %e, %Y, %l:%M %p}</span><br/>',
                                 pointFormatter: function () {
                                     return this.y + ' ' + activeParam.unit;
                                 }
@@ -608,9 +631,13 @@ async function setupDashboard() {
                         },
                         windbarb: {
                             tooltip: {
-                                pointFormat: '<b>{point.value} m/s</b> ' +
+                                headerFormat: '<span style="font-size: 10px">' +
+                                    '{point.x:%B %e, %Y, %l:%M %p}</span><br/>',
+                                pointFormat: '<b>{point.value:.2f} m/s</b> ' +
+                                    // eslint-disable-next-line max-len
                                     '({point.beaufort})<br/>Wind direction: ' +
-                                    '{point.direction} degrees',
+                                    // eslint-disable-next-line max-len
+                                    '{point.series.directionData.(point.index)::.0f}',
                                 pointFormatter: null
                             }
                         }
@@ -626,7 +653,7 @@ async function setupDashboard() {
                     xAxis: {
                         type: 'datetime',
                         labels: {
-                            format: '{value:%H:%M}',
+                            format: '{value:%l:%M %p}',
                             accessibility: {
                                 description: 'Hours, minutes'
                             }
@@ -678,6 +705,9 @@ async function setupDashboard() {
                     const retData = [];
                     const forecastData = data.properties.timeseries;
 
+                    // Get the time difference for the current city
+                    const timeDifference = getTimeDifference(city);
+
                     for (let i = 0; i < rangeConfig.hours; i++) {
                         const item = forecastData[i];
 
@@ -687,10 +717,13 @@ async function setupDashboard() {
                         // Data for the next hour
                         const hourSpan = item.data.next_1_hours.details;
 
+                        // Convert UTC time to local time
+                        const localTime = new Date(item.time).getTime() -
+                            timeDifference * 3600000;
+
                         // Picks the parameters this application uses
                         retData.push({
-                            // UTC -> milliseconds
-                            time: new Date(item.time).getTime(),
+                            time: localTime,
                             temperature: instantData.air_temperature,
                             precipitation: hourSpan.precipitation_amount,
                             wind: instantData.wind_speed,

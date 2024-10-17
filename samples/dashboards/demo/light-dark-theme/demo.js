@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const data = [
     ['Food', 'Vitamin A'],
     ['Beef Liver', 6421],
@@ -102,9 +107,13 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: {
-                'Vitamin A': {
-                    headerFormat: '{text} μg'
+                id: 'Vitamin A',
+                header: {
+                    format: '{id} μg'
                 }
             }
         }

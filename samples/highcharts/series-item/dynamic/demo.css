@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #container {
     max-width: 800px;
     margin: 1em auto;
@@ -5,4 +9,8 @@
 
 input[type="number"] {
     min-width: 50px;
+}
+
+.controls {
+    padding: 10px;
 }

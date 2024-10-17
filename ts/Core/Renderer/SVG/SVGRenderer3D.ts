@@ -732,31 +732,31 @@ namespace SVGRenderer3D {
         const renderer = this,
             wrapper = renderer.g(),
             elementProto = renderer.Element.prototype,
-            customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
+            customAttribs: Array<keyof SVGAttributes3D> = [
+                'alpha', 'beta',
+                'x', 'y', 'r', 'innerR', 'start', 'end', 'depth'
+            ];
 
         /**
          * Get custom attributes. Don't mutate the original object and return an
          * object with only custom attr.
          * @private
          */
-        function suckOutCustom(
+        function extractCustom(
             params: SVGAttributes3D
-        ): (SVGAttributes3D|undefined) {
-            const ca = {} as SVGAttributes;
-
-            let hasCA = false,
-                key: string;
+        ): ([SVGAttributes3D, SVGAttributes]|false) {
+            const ca: Record<string, any> = {};
 
             params = merge(params); // Don't mutate the original object
 
+            let key: keyof SVGAttributes3D;
             for (key in params) {
                 if (customAttribs.indexOf(key) !== -1) {
-                    (ca as any)[key] = (params as any)[key];
-                    delete (params as any)[key];
-                    hasCA = true;
+                    ca[key] = params[key];
+                    delete params[key];
                 }
             }
-            return hasCA ? [ca, params] : (false as any);
+            return Object.keys(ca).length ? [ca, params] : false;
         }
 
         attribs = merge(attribs);
@@ -876,18 +876,27 @@ namespace SVGRenderer3D {
             this: SVGElement,
             params?: (string|SVGAttributes)
         ): (number|string|SVGElement) {
-            let ca, paramArr;
-
             if (typeof params === 'object') {
-                paramArr = suckOutCustom(params);
+                const paramArr = extractCustom(params);
                 if (paramArr) {
-                    ca = (paramArr as any)[0];
-                    arguments[0] = (paramArr as any)[1];
+                    const ca = paramArr[0];
+                    arguments[0] = paramArr[1];
+
+                    // Translate alpha and beta to rotation
+                    if (ca.alpha !== void 0) {
+                        ca.alpha *= deg2rad;
+                    }
+                    if (ca.beta !== void 0) {
+                        ca.beta *= deg2rad;
+                    }
+
                     extend(wrapper.attribs, ca);
-                    wrapper.setPaths(wrapper.attribs as any);
+                    if (wrapper.attribs) {
+                        wrapper.setPaths(wrapper.attribs);
+                    }
                 }
             }
-            return elementProto.attr.apply(wrapper, arguments as any);
+            return elementProto.attr.apply(wrapper, arguments);
         } as any;
 
         // Override the animate function by sucking out custom parameters
@@ -900,26 +909,20 @@ namespace SVGRenderer3D {
             complete?: Function
         ): SVGElement {
             const from = this.attribs,
-                randomProp = (
-                    'data-' + Math.random().toString(26).substring(2, 9)
-                );
-
-            let paramArr,
-                to: SVGAttributes;
+                randomProp = 'data-' +
+                    Math.random().toString(26).substring(2, 9);
 
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
             delete params.center;
             delete params.z;
-            delete params.alpha;
-            delete params.beta;
 
             const anim = animObject(
                 pick(animation, this.renderer.globalAnimation)
             );
 
             if (anim.duration) {
-                paramArr = suckOutCustom(params);
+                const paramArr = extractCustom(params);
                 // Params need to have a property in order for the step to run
                 // (#5765, #7097, #7437)
                 wrapper[randomProp] = 0;
@@ -927,24 +930,27 @@ namespace SVGRenderer3D {
                 wrapper[randomProp + 'Setter'] = H.noop;
 
                 if (paramArr) {
-                    to = (paramArr as any)[0]; // Custom attr
-                    anim.step = function (a: unknown, fx: Fx): void {
-                        const interpolate = (key: string): number => (
+                    const to = paramArr[0], // Custom attr
+                        interpolate = (
+                            key: keyof SVGAttributes,
+                            pos: number
+                        ): number => (
                             (from as any)[key] + (
-                                pick((to as any)[key], (from as any)[key]) -
+                                pick(to[key], (from as any)[key]) -
                                 (from as any)[key]
-                            ) * fx.pos
+                            ) * pos
                         );
 
+                    anim.step = function (a: unknown, fx: Fx): void {
                         if (fx.prop === randomProp) {
-                            (fx.elem as any).setPaths(merge(from, {
-                                x: interpolate('x'),
-                                y: interpolate('y'),
-                                r: interpolate('r'),
-                                innerR: interpolate('innerR'),
-                                start: interpolate('start'),
-                                end: interpolate('end'),
-                                depth: interpolate('depth')
+                            fx.elem.setPaths(merge(from, {
+                                x: interpolate('x', fx.pos),
+                                y: interpolate('y', fx.pos),
+                                r: interpolate('r', fx.pos),
+                                innerR: interpolate('innerR', fx.pos),
+                                start: interpolate('start', fx.pos),
+                                end: interpolate('end', fx.pos),
+                                depth: interpolate('depth', fx.pos)
                             }));
                         }
                     };

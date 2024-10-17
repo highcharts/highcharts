@@ -291,7 +291,7 @@ class HighchartsComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        super.resize(width, height);
+        this.resizeDynamicContent(width, height);
 
         while (this.innerResizeTimeouts.length) {
             const timeoutID = this.innerResizeTimeouts.pop();
@@ -396,7 +396,9 @@ class HighchartsComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
+            this.chartContainer.classList.value =
+                HighchartsComponentDefaults.className + ' ' +
+                this.options.chartClassName;
         }
 
         if (this.options.chartID) {
