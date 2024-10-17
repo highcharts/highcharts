@@ -816,6 +816,19 @@ class Series {
             ),
             userPlotOptionsType = userPlotOptions[this.type] || {};
 
+        // When plot options have multiple data labels, the default data label
+        // plot options are not merged (#21928).
+        const dataLabelOptions = typeOptions.dataLabels;
+        if (dataLabelOptions instanceof Array) {
+            const dataLabelDefaults = defaultPlotOptionsType.dataLabels || {};
+            for (let i = 0; i < dataLabelOptions.length; i++) {
+                dataLabelOptions[i] = merge(
+                    dataLabelDefaults,
+                    dataLabelOptions[i]
+                );
+            }
+        }
+
         // Use copy to prevent undetected changes (#9762)
         /**
          * Contains series options by the user without defaults.
