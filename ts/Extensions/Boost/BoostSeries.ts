@@ -670,6 +670,7 @@ function enterBoost(
     // Destroy existing points after zoom out
     if (
         series.is('scatter') &&
+        !series.is('treemap') &&
         series.data.length
     ) {
         for (const point of series.data) {
@@ -1506,8 +1507,11 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
+            // Flag for code that should run for ScatterSeries and its
+            // subclasses, apart from the enlisted exceptions.
             isScatter = series.is('scatter') &&
                 !series.is('bubble') &&
+                !series.is('treemap') &&
                 !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
@@ -1516,6 +1520,7 @@ function wrapSeriesProcessData(
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||
             isScatter ||
+            series.is('treemap') ||
             // Use processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
