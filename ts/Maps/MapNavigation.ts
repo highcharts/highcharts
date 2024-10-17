@@ -412,10 +412,14 @@ class MapNavigation {
                         e.target as any,
                         'highcharts-no-mousewheel'
                     )) {
+                        const initialZoom = chart.mapView?.zoom;
                         chart.pointer.onContainerMouseWheel(e);
-                        // Issue #5011, returning false from non-jQuery event
-                        // does not prevent default
-                        stopEvent(e as Event);
+
+                        // If the zoom level changed, prevent the default action
+                        // which is to scroll the page
+                        if (initialZoom !== chart.mapView?.zoom) {
+                            stopEvent(e as Event);
+                        }
                     }
                     return false;
                 }
