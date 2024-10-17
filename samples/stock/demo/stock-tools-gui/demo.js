@@ -49,29 +49,26 @@
             shadow: false,
             positioner: function (width, height, point) {
                 const chart = this.chart;
-                let position;
 
-                if (point.isHeader) {
-                    position = {
-                        x: Math.max(
-                            // Left side limit
-                            chart.plotLeft,
-                            Math.min(
-                                point.plotX + chart.plotLeft - width / 2,
-                                // Right side limit
-                                chart.chartWidth - width - chart.marginRight
-                            )
-                        ),
-                        y: point.plotY
-                    };
-                } else {
-                    position = {
+                if (point.formatPrefix === 'point') {
+                    return {
                         x: point.series.chart.plotLeft,
                         y: point.series.yAxis.top - chart.plotTop
                     };
                 }
 
-                return position;
+                return {
+                    x: Math.max(
+                        // Left side limit
+                        chart.plotLeft,
+                        Math.min(
+                            point.plotX + chart.plotLeft - width / 2,
+                            // Right side limit
+                            chart.chartWidth - width - chart.marginRight
+                        )
+                    ),
+                    y: point.plotY
+                };
             }
         },
         series: [{
