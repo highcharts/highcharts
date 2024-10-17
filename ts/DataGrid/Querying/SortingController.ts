@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Sorting Controller class
+ *  DataGrid Sorting Controller class
  *
  *  (c) 2020-2024 Highsoft AS
  *

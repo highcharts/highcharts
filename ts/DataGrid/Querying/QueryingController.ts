@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Querying Controller class
+ *  DataGrid Querying Controller class
  *
  *  (c) 2020-2024 Highsoft AS
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid utilities
+ *  DataGrid utilities
  *
  *  (c) 2009-2024 Highsoft AS
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Rows Renderer class.
+ *  DataGrid Rows Renderer class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
