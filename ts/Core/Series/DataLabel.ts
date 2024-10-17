@@ -390,6 +390,7 @@ namespace DataLabel {
                     alignTo,
                     isNew
                 );
+                dataLabel.align(options, void 0, alignTo);
             } else if (pick(options.crop, true)) {
                 const { x, y } = dataLabel.alignAttr,
                     correction = 1;
@@ -906,10 +907,21 @@ namespace DataLabel {
             options.x = x;
             options.y = y;
             dataLabel.placed = !isNew;
-            dataLabel.align(options, void 0, alignTo);
         }
 
-        return justified;
+        const e = {
+            y: y,
+            off: off,
+            options: options,
+            plotHeight: chart.plotHeight,
+            justified: justified,
+            dataLabel
+        };
+
+        // Correct y position of dataLabels if they're in navigator. #21285
+        fireEvent(this, 'getJustifiedOptions', e);
+
+        return e.justified;
     }
 
     /**
