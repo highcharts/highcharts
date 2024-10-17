@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 let board = void 0;
 let instances = void 0;
 let currentInstanceId = void 0;

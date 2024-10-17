@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 const rangeConfig = {
