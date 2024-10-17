@@ -33,6 +33,21 @@ import Globals from './Globals.js';
  * */
 
 const DefaultOptions: Globals.DeepPartial<Options> = {
+    accessibility: {
+        enabled: true,
+        cellEditing: {
+            description: 'Editable cell.',
+            startEdit: 'Entered cell editing mode.',
+            afterEdit: 'Edited cell value.',
+            cancelEdit: 'Editing canceled.'
+        },
+        sorting: {
+            description: 'Sortable column header.',
+            ascending: 'Sorted ascending.',
+            descending: 'Sorted descending.',
+            none: 'Not sorted.'
+        }
+    },
     rendering: {
         columns: {
             distribution: 'full'
