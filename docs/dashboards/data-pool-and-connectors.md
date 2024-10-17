@@ -216,3 +216,116 @@ You can see a typical implementation of this in the
 [GoogleSheetsConnector](https://github.com/highcharts/highcharts/blob/master/ts/Data/Connectors/GoogleSheetsConnector.ts).
 Please note that the included connectors use a separate converter instance for
 the second step regarding adding the data to the `DataTable`.
+
+
+
+Custom Data Connector Tutorial
+------------------------------
+
+This tutorial shows how to implement a `Custom Data Connector` for the *MQTT protocol* and how to deploy it in a simple Highcharts Dashboards application. The connector is implemented as a JavaScript class and is independent of the application.
+
+### About MQTT
+[MQTT](https://en.wikipedia.org/wiki/MQTT) is the de-facto standard protocol for low resource, low power devices and is widely used in [IoT](https://en.wikipedia.org/wiki/Internet_of_things) applications across a wide range of industries: Mobile Internet, Smart Hardware, Internet of Vehicles, Smart Cities, Telemedicine, Power, Oil, Energy, and other fields.
+
+The hub of the MQTT network infrastructure is the so-called broker, a server that applications can send messages to and where clients (e.g. a web application) can subscribe to a *topic*. MQTT is a protocol on top of TCP/IP, for web clients available as [WebSocket](https://en.wikipedia.org/wiki/WebSocket) or TCP.
+
+### MQTT Data
+The MQTT data packet consists of a `topic` that uniquely defines and data set for a specific connection and a text payload. The payload is typically a JSON object and the `MQTT custom connector` described in this tutorial supports JSON only.
+
+### Connecting
+Establish a data link to a MQTT broker typically consists of these steps:
+* Connect to the server with a given host name and port number, with optional authentication (user, password).
+* Wait for a successful connection.
+* Subscribe to one or more topics
+* Wait for confirmation of the subscription.
+* Packets now arrive at a rate determined by the data provider (often a wireless sensor application).
+* Process the incoming packets.
+
+The MQTT client may also send packets to a broker but this feature is not implemented in the Data Connector we use for this tutorial.
+
+### MQTT Custom Connector
+
+The base class for the `MQTTConnector` is the `DataConnector` where the constructor and the `load` methods are re-implemented. The `load` method differs from that of the CSV and JSON connectors by not waiting for data to arrive (due to the nature of the MQTT protocol there may not be any data available immediately). It does however establish the connection and subscribes to the subject defined in the connector `options` providing the `autoConnect` and `autoSubscribe` options are set (this is the default behavior).
+
+The `MQTT Connector` uses the `JSONConverter` for parsing and thus provides the application with a `beforeParse` callback that is invoked on every packet reception. This callback is crucial to implementing an application because the payload of the incoming packet typically is a hierarchical JSON object but Dashboards requires a single-level data structure.
+
+In addition, the `MQTTConnector` provides these custom methods:
+* connect
+* subscribe
+* unsubscribe
+* disconnect
+
+In a typical application these are not needed as the whole connect/subscribe sequence is executed by default in the `load` method.
+
+The `MQTT` connector supports the following optional callbacks:
+
+* beforeParse - fired before an incoming packet is parsed
+* connectEvent - handles both connect/disconnect
+* subscribeEvent - handles subscribe/unsubscribe
+* packetEvent - fired on an incoming packet
+* errorEvent - reports errors from the MQTT client or the connector
+
+The standard `DataConnector` events `load`, `afterLoad` and `loadError` are not used but stub callbacks are provided for reference.
+
+Although the `JSONConnector` and the `MQTTConnector` have much in common there are some important differences:
+
+* The MQTT Connector does not use polling
+* The `load` method does not return any data
+* The `orientation` option is fixed to `columns`
+* The options `dataUrl`, `dataModifier` and `firstRowAsNames` are not supported
+* The MQTT connector has some additional options:
+    * `autoConnect` - automatically connect after load
+    * `autoSubscribe` - automatically subscribe on connect
+    * `autoReset` - clear data table on subscribe
+    * `maxRows` - maximum number of rows in data table
+
+#### MQTT client options
+
+The `MQTTConnector` uses the [PAHO client library](https://eclipse.dev/paho/index.php?page=clients/js/index.php) (version 1.1.0) for access control and communication with the MQTT Broker. This library supports MQTT versions 3.1 and 3.1.1.
+
+The client options are the following:
+
+* host - the name of the MQTT broker (e.g. mqtt.mosquitto.org or broker.hivemq.com)
+* port - WebSocket port (depends on the broker). See [HiveMQ](https://www.hivemq.com/mqtt/public-mqtt-broker/) for an example.
+* user - empty for anonymous clients
+* password - empty for anonymous clients
+* useSSL - true for a secure connection
+* topic - MQTT topic
+* timeout - connection timeout, value in seconds
+* qOs - quality of service
+
+### The sample application
+
+The `MQTTConnector`is implemented as part of a sample application that displays incoming data from two connectors, one for each MQTT topic.
+
+Each connector provides data for a `spline` chart and a `DataGrid` component. In addition timestamped events and the raw data are displayed as unformatted text in a message log that resides outside the Dashboards container. The log may be cleared by the user.
+
+The sample application relies on data being published to the two MQTT topics (*highcharts/topic1* and *highcharts/topic2*). The payload of the MQTT packet must be of a specific format to work correctly (see example below).
+
+For basic testing the data is generated by an MQTT client hosted by Highcharts. It uses the [HiveMQ Websocket Client](https://www.hivemq.com/demos/websocket-client/), publishing to the topics *highcharts/topic1* and *highcharts/topic2*.
+
+NB! Click the *Connect* button connects the application to the MQT broker and subscribes to the two mentioned topics. Data should immediately appear in the charts and in the data grids.
+
+Example data:
+```
+highcharts/topic1
+```
+Message
+```javascript
+ {
+    "name": "North Sea",
+    "value": 35.69,
+    "timestamp": "2024-09-12T08:12:01.028Z"
+ }
+```
+
+#### Reuse
+
+The `MQTTConnector` can be reused for other applications by simply copying the entire class from the demo's Javascript file. The implementation is found at the bottom of the file. It is important to also copy the `MQTTConnector.defaultOptions` and the code line that registers the connector as a `Dashboards` component.
+
+```javascript
+// Register the connector
+MQTTConnector.registerType('MQTT', MQTTConnector);
+```
+
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/mqtt-connector" allow="fullscreen"></iframe>
