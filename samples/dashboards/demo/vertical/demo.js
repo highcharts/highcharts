@@ -12,6 +12,7 @@ const weatherEventsMap = [
 
 Highcharts.setOptions({
     chart: {
+        styledMode: true,
         animation: false,
         spacing: [40, 40, 20, 40],
         borderRadius: 5
