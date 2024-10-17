@@ -889,6 +889,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -996,6 +999,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -1453,6 +1459,9 @@ const defaultOptions: DefaultOptions = {
              * @apioption legend.navigation.style
              */
             style: {
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             },
 
@@ -2731,7 +2740,9 @@ const defaultOptions: DefaultOptions = {
             color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -2850,7 +2861,9 @@ const defaultOptions: DefaultOptions = {
             cursor: 'pointer',
             /** @internal */
             color: Palette.neutralColor40,
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.6em'
         },
 
