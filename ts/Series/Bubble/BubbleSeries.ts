@@ -244,7 +244,7 @@ class BubbleSeries extends ScatterSeries {
 
         dataLabels: {
             formatter: function (
-                this: Point.PointLabelObject
+                this: Point
             ): string { // #2945
                 const { numberFormatter } = this.series.chart;
                 const { z } = (this.point as BubblePoint);

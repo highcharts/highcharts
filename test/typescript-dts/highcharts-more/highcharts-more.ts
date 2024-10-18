@@ -53,7 +53,7 @@ function test_seriesAreaRange() {
         }],
         tooltip: {
             formatter: function() {
-                const high = this.point.options.high;
+                const high = this.options.high;
                 return '' + high;
             },
             shared: true,
