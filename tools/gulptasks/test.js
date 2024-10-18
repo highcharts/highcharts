@@ -97,8 +97,17 @@ function checkDemosConsistency() {
     const FSLib = require('../libs/fs.js');
     const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
+    const assert = require('node:assert');
+    const { existsSync } = require('node:fs');
 
     let errors = 0;
+
+
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        assert(existsSync(FSLib.path(p + '/demo.details')), `Missing demo.details file at ${p}`);
+    });
 
     glob.sync(
         FSLib.path(process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details', true)
