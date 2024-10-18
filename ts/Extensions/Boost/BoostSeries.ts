@@ -1072,7 +1072,8 @@ function seriesRenderCanvas(this: Series): void {
             this.processedXData ||
             false
         ),
-        lineWidth = pick(options.lineWidth, 1);
+        lineWidth = pick(options.lineWidth, 1),
+        nullYSubstitute = (options as any).nullInteraction && yMin;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1257,7 +1258,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any;
+                y = yData[i] as any ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
