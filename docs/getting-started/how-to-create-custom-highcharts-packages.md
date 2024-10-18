@@ -17,7 +17,7 @@ repository and click on "Code" and select "Download ZIP". Once the zip file is
 downloaded, unpack it to a desired location.
 
 The following steps require Node.js, which you can download and install from the
-[Node.js website](https://nodejs.org/en/). Highcharts supports the TSL variant.
+[Node.js website](https://nodejs.org/en/). Highcharts supports the LTS variant.
 
 When Node.js is installed, open you command line, shell, or terminal, and go to
 the unpacked folder `highcharts-master`. There you have to run `npm install` to

@@ -10,7 +10,7 @@ Appearance
 
  The following code example shows the most common appearance options for tooltip:
 
-```js
+```javascript
 tooltip: {
     backgroundColor: '#FCFFC5',
     borderColor: 'black',
@@ -20,6 +20,18 @@ tooltip: {
 ```
 
 The background color can also be set to a gradient, see [an example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/backgroundcolor-gradient/). Text properties can be set using the [style](https://api.highcharts.com/highcharts/tooltip.style) option.
+
+Alternatively, the tooltip can be styled with CSS by enabling [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css):
+
+```css
+.highcharts-tooltip-box {
+    fill: #FCFFC5;
+    stroke: black;
+    stroke-width: 3;
+}
+```
+
+**Note:** Since the tooltip content is rendered as SVG by default, you have to specify SVG properties such as `fill` and `stroke` in CSS.
 
 Tooltip formatting
 ------------------
