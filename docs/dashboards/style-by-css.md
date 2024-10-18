@@ -91,6 +91,7 @@ To style the dashboard's component subtitle:
 ```
 
 ### KPI Component
+
 To style the dashboard's KPI component div and its content:
 ```css
 .highcharts-dashboards-component-kpi {
@@ -105,11 +106,40 @@ To style the dashboard's KPI value:
 }
 ```
 
+To properly style the chart element of the KPI, you need to set the `styledMode` option to `true` in the component's configuration.
+```js
+{
+    type: 'KPI',
+    renderTo: 'kpi-container',
+    chartOptions: {
+        chart: {
+            styledMode: true
+        }
+        ...
+    }
+    ...
+}
+```
+
 ### Highcharts Component
 To style the dashboard's Highcharts component div and its content:
 ```css
 .highcharts-dashboards-component-highcharts {
     background-color: gray;
+}
+```
+To style the chart element of the Highcharts component, you need to set the `styledMode` option to `true` in the component's configuration.
+```js
+{
+    type: 'Highcharts',
+    renderTo: 'chart-container',
+    chartOptions: {
+        chart: {
+            styledMode: true
+        }
+        ...
+    }
+    ...
 }
 ```
 
