@@ -1,7 +1,7 @@
 ---
-name: renko vs Heikin Ashi vs Candlestick
+name: Renko vs Heikin Ashi vs Candlestick
 authors:
-  - Pawel lysy
+  - Pawel Lysy
 js_wrap: b
 tags:
   - Highcharts Stock demo
