@@ -1558,7 +1558,11 @@ function wrapSeriesProcessData(
                 firstPoint = series.getFirstValidPoint(
                     series.options.data
                 );
-                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                if (
+                    !isNumber(firstPoint) &&
+                    !isArray(firstPoint) &&
+                    !series.is('treemap')
+                ) {
                     error(12, false, series.chart);
                 }
             }
