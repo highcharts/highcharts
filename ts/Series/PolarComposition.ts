@@ -367,7 +367,7 @@ function onChartAfterInit(event: any): void {
 /**
  *
  */
-function onChartGetAxes(
+function onChartCreateAxes(
     this: Chart
 ): void {
 
@@ -1495,7 +1495,7 @@ class PolarAdditions {
                 seriesProto = SeriesClass.prototype;
 
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
-            addEvent(ChartClass, 'getAxes', onChartGetAxes);
+            addEvent(ChartClass, 'createAxes', onChartCreateAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
 
             wrap(chartProto, 'get', wrapChartGet);
