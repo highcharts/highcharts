@@ -90,7 +90,8 @@ namespace Globals {
         resizerHandles: classNamePrefix + 'column-resizer',
         resizedColumn: classNamePrefix + 'column-resized',
         creditsContainer: classNamePrefix + 'credits-container',
-        creditsText: classNamePrefix + 'credits'
+        creditsText: classNamePrefix + 'credits',
+        visuallyHidden: classNamePrefix + 'visually-hidden'
     };
 
     export const win = window;
