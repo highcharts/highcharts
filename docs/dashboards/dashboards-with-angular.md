@@ -37,9 +37,10 @@ To create a dashboard with Angular please follow the steps below: <br>
     ```
 
 4. Create a HTML structure for the dashboard.  
-There are two ways to do it:
-    - Use the `dashboards` layout system.  
+    You can use one of two ways to setup Dashboards:
+    * Use the `dashboards` layout system.
     To do that first import the `layout` module and initialize it:
+
     ```typescript
     import LayoutModule from '@highcharts/dashboards/modules/layout';
 
@@ -51,7 +52,9 @@ There are two ways to do it:
     ```
 
     You can refer to the element by its id or you can use the `ElementRef` to get the element.
-    - Declare your own HTML structure. Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
+    
+    * Declare your own HTML structure.
+    Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
 5. Create a dashboard using the factory function `Dashboards.board`. The function takes three arguments:
     - `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element
