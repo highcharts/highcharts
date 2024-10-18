@@ -73,7 +73,9 @@ Highcharts.chart('container', {
             width: 1,
             dashStyle: '2,2',
             color: '#75738c'
-        }))
+        })),
+        min: 0,
+        max: 5
     },
     yAxis: [{
         // Atomic Number
