@@ -56,7 +56,8 @@ To create a dashboard with Vue, please follow the steps below: <br>
     ```html
     <div ref="dashboardContainer"></div>
     ```
-    #### Declare your own HTML structure. Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
+    #### Declare your own HTML structure.
+    Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
 5. Create a dashboard using the factory function `Dashboards.board`. The function takes three arguments:
     - `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element
