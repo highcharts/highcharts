@@ -2007,16 +2007,6 @@ class RangeSelector {
 
         // Detect collision
         if (inputGroup && buttonGroup) {
-            const totalWidth =
-                inputGroup.getBBox().width + buttonGroup.getBBox().width;
-
-            // Different Alignment
-            if (inputPosition.align !== buttonPosition.align) {
-                if (totalWidth - xOffsetForExportButton > chart.plotWidth) {
-                    moveInputsDown();
-                }
-            }
-            // Same alignment
             if (inputPosition.align === buttonPosition.align) {
                 moveInputsDown();
 
@@ -2028,17 +2018,19 @@ class RangeSelector {
                 } else {
                     this.expandButtons();
                 }
-            } else if (dropdown === 'responsive') {
-                if (
-                    this.initialButtonGroupWidth -
-                    xOffsetForExportButton +
-                    inputGroup.getBBox().width >
-                    chart.plotWidth
-                ) {
+            } else if (
+                this.initialButtonGroupWidth -
+                xOffsetForExportButton +
+                inputGroup.getBBox().width >
+                chart.plotWidth
+            ) {
+                if (dropdown === 'responsive') {
                     this.collapseButtons();
                 } else {
-                    this.expandButtons();
+                    moveInputsDown();
                 }
+            } else {
+                this.expandButtons();
             }
         }
         // Forced states
