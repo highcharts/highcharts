@@ -4,13 +4,14 @@
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-        title: {
-            text: 'AAPL Stock Price on Renko chart'
+        rangeSelector: {
+            selected: 1
         },
         series: [
             {
-                name: 'AAPL',
+                boxSize: 6,
                 type: 'renko',
+                yAxis: 0,
                 data: linearData
             }
         ]
