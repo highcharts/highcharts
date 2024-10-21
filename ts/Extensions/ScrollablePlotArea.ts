@@ -177,7 +177,11 @@ class ScrollablePlotArea {
                 for (const axis of chart.axes) {
                     // Apply the corrected plot size to the axes of the other
                     // orientation than the scrolling direction
-                    if (axis.horiz === recalculateHoriz) {
+                    if (
+                        axis.horiz === recalculateHoriz ||
+                        // Or parallel axes
+                        (chart.hasParallelCoordinates && !axis.horiz)
+                    ) {
                         axis.setAxisSize();
                         axis.setAxisTranslation();
                     }
@@ -458,11 +462,37 @@ class ScrollablePlotArea {
             axisClass = '.highcharts-yaxis';
         }
 
-        if (axisClass) {
-            fixedSelectors.push(
+        if (
+            axisClass && !(
+                this.chart.hasParallelCoordinates &&
+                axisClass === '.highcharts-yaxis'
+            )
+        ) {
+            // Add if not added yet
+            for (const className of [
                 `${axisClass}:not(.highcharts-radial-axis)`,
                 `${axisClass}-labels:not(.highcharts-radial-axis-labels)`
-            );
+            ]) {
+                if (fixedSelectors.indexOf(className) === -1) {
+                    fixedSelectors.push(className);
+                }
+            }
+        } else {
+            // Clear all axis related selectors
+            for (const classBase of [
+                '.highcharts-xaxis',
+                '.highcharts-yaxis'
+            ]) {
+                for (const className of [
+                    `${classBase}:not(.highcharts-radial-axis)`,
+                    `${classBase}-labels:not(.highcharts-radial-axis-labels)`
+                ]) {
+                    const classIndex = fixedSelectors.indexOf(className);
+                    if (classIndex > -1) {
+                        fixedSelectors.splice(classIndex, 1);
+                    }
+                }
+            }
         }
 
         for (const className of fixedSelectors) {
