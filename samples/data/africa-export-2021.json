@@ -1,0 +1,8584 @@
+[{
+    "id": "agriculture",
+    "name": "Agriculture"
+},
+{
+    "id": "minerals",
+    "name": "Minerals"
+},
+{
+    "id": "chemicals",
+    "name": "Chemicals"
+},
+{
+    "id": "textiles",
+    "name": "Textiles"
+},
+{
+    "id": "stone",
+    "name": "Stone"
+},
+{
+    "id": "metals",
+    "name": "Metals"
+},
+{
+    "id": "machinery",
+    "name": "Machinery"
+},
+{
+    "id": "electronics",
+    "name": "Electronics"
+},
+{
+    "id": "vehicles",
+    "name": "Vehicles"
+},
+{
+    "id": "other",
+    "name": "Other"
+},
+{
+    "id": "services",
+    "name": "Services"
+},
+{
+    "name": "Horses",
+    "grossExport": 6231941,
+    "value": 0.0009011821301325096,
+    "code": "0101",
+    "parent": "agriculture"
+},
+{
+    "name": "Bovine",
+    "grossExport": 267816429,
+    "value": 0.0387281233841434,
+    "code": "0102",
+    "parent": "agriculture"
+},
+{
+    "name": "Swine",
+    "grossExport": 1116736,
+    "value": 0.00016148781371255893,
+    "code": "0103",
+    "parent": "agriculture"
+},
+{
+    "name": "Sheep",
+    "grossExport": 514416495,
+    "value": 0.07438821271565303,
+    "code": "0104",
+    "parent": "agriculture"
+},
+{
+    "name": "Fowl",
+    "grossExport": 26696284,
+    "value": 0.003860468846181701,
+    "code": "0105",
+    "parent": "agriculture"
+},
+{
+    "name": "Other live animals",
+    "grossExport": 268689903,
+    "value": 0.03885443381614771,
+    "code": "0106",
+    "parent": "agriculture"
+},
+{
+    "name": "Beef",
+    "grossExport": 181483537,
+    "value": 0.026243785115687413,
+    "code": "0201",
+    "parent": "agriculture"
+},
+{
+    "name": "Beef (frozen)",
+    "grossExport": 100085191,
+    "value": 0.0144730166123362,
+    "code": "0202",
+    "parent": "agriculture"
+},
+{
+    "name": "Pork",
+    "grossExport": 28267808,
+    "value": 0.004087722176384019,
+    "code": "0203",
+    "parent": "agriculture"
+},
+{
+    "name": "Lamb",
+    "grossExport": 238529178,
+    "value": 0.03449298264036783,
+    "code": "0204",
+    "parent": "agriculture"
+},
+{
+    "name": "Horse meat",
+    "grossExport": 3196537,
+    "value": 0.0004622415428367152,
+    "code": "0205",
+    "parent": "agriculture"
+},
+{
+    "name": "Edible offal",
+    "grossExport": 18612910,
+    "value": 0.0026915565923625864,
+    "code": "0206",
+    "parent": "agriculture"
+},
+{
+    "name": "Poultry",
+    "grossExport": 123390382,
+    "value": 0.017843109761248394,
+    "code": "0207",
+    "parent": "agriculture"
+},
+{
+    "name": "Other meat",
+    "grossExport": 6174527,
+    "value": 0.0008928796653274949,
+    "code": "0208",
+    "parent": "agriculture"
+},
+{
+    "name": "Pig and poultry fat",
+    "grossExport": 598115,
+    "value": 0.00008649160025170424,
+    "code": "0209",
+    "parent": "agriculture"
+},
+{
+    "name": "Preserved meat",
+    "grossExport": 5902948,
+    "value": 0.0008536074479365958,
+    "code": "0210",
+    "parent": "agriculture"
+},
+{
+    "name": "Live Fish",
+    "grossExport": 83530079,
+    "value": 0.012079031961848934,
+    "code": "0301",
+    "parent": "agriculture"
+},
+{
+    "name": "Fish, excluding fillets",
+    "grossExport": 376369184,
+    "value": 0.0544256088036383,
+    "code": "0302",
+    "parent": "agriculture"
+},
+{
+    "name": "Frozen fish, excluding fillets",
+    "grossExport": 1734183255,
+    "value": 0.250774992860335,
+    "code": "0303",
+    "parent": "agriculture"
+},
+{
+    "name": "Fish fillets",
+    "grossExport": 674083737,
+    "value": 0.09747720942758321,
+    "code": "0304",
+    "parent": "agriculture"
+},
+{
+    "name": "Preserved fish",
+    "grossExport": 192133473,
+    "value": 0.02778384013390002,
+    "code": "0305",
+    "parent": "agriculture"
+},
+{
+    "name": "Crustaceans",
+    "grossExport": 623086745,
+    "value": 0.0901026887315576,
+    "code": "0306",
+    "parent": "agriculture"
+},
+{
+    "name": "Molluscs",
+    "grossExport": 857431054,
+    "value": 0.12399051012926517,
+    "code": "0307",
+    "parent": "agriculture"
+},
+{
+    "name": "Milk",
+    "grossExport": 134752671,
+    "value": 0.01948617599120808,
+    "code": "0401",
+    "parent": "agriculture"
+},
+{
+    "name": "Milk, concentrated",
+    "grossExport": 160745542,
+    "value": 0.023244926411990226,
+    "code": "0402",
+    "parent": "agriculture"
+},
+{
+    "name": "Fermented milk products",
+    "grossExport": 68504856,
+    "value": 0.009906279930201656,
+    "code": "0403",
+    "parent": "agriculture"
+},
+{
+    "name": "Whey",
+    "grossExport": 5862506,
+    "value": 0.0008477592526942439,
+    "code": "0404",
+    "parent": "agriculture"
+},
+{
+    "name": "Butter",
+    "grossExport": 27073578,
+    "value": 0.003915028189828602,
+    "code": "0405",
+    "parent": "agriculture"
+},
+{
+    "name": "Cheese",
+    "grossExport": 254547043,
+    "value": 0.03680927762789659,
+    "code": "0406",
+    "parent": "agriculture"
+},
+{
+    "name": "Eggs, in shell",
+    "grossExport": 58543049,
+    "value": 0.00846573316439804,
+    "code": "0407",
+    "parent": "agriculture"
+},
+{
+    "name": "Egg yolks",
+    "grossExport": 515976,
+    "value": 0.00007461372801463489,
+    "code": "0408",
+    "parent": "agriculture"
+},
+{
+    "name": "Honey",
+    "grossExport": 18475229,
+    "value": 0.002671646959575823,
+    "code": "0409",
+    "parent": "agriculture"
+},
+{
+    "name": "Edible animal products, n.e.c.",
+    "grossExport": 318644,
+    "value": 0.00004607814462202761,
+    "code": "0410",
+    "parent": "agriculture"
+},
+{
+    "name": "Human hair, unworked",
+    "grossExport": 98025,
+    "value": 0.000014175098625972109,
+    "code": "0501",
+    "parent": "agriculture"
+},
+{
+    "name": "Brushmaking hair",
+    "grossExport": 244333,
+    "value": 0.00003533225577740009,
+    "code": "0502",
+    "parent": "agriculture"
+},
+{
+    "name": "Animal guts, except fish",
+    "grossExport": 128324012,
+    "value": 0.018556547066364993,
+    "code": "0504",
+    "parent": "agriculture"
+},
+{
+    "name": "Feathers and down",
+    "grossExport": 3605202,
+    "value": 0.0005213373518648497,
+    "code": "0505",
+    "parent": "agriculture"
+},
+{
+    "name": "Bones, simply prepared",
+    "grossExport": 4286865,
+    "value": 0.000619910575579984,
+    "code": "0506",
+    "parent": "agriculture"
+},
+{
+    "name": "Whalebone & horns",
+    "grossExport": 6638907,
+    "value": 0.0009600322519118247,
+    "code": "0507",
+    "parent": "agriculture"
+},
+{
+    "name": "Coral and shells",
+    "grossExport": 5511517,
+    "value": 0.0007970037954983108,
+    "code": "0508",
+    "parent": "agriculture"
+},
+{
+    "name": "Animal products used in pharmaceuticals",
+    "grossExport": 3427217,
+    "value": 0.0004955994795981459,
+    "code": "0510",
+    "parent": "agriculture"
+},
+{
+    "name": "Animal products n.e.c.",
+    "grossExport": 22788850,
+    "value": 0.003295426639352048,
+    "code": "0511",
+    "parent": "agriculture"
+},
+{
+    "name": "Flower bulbs",
+    "grossExport": 13535296,
+    "value": 0.0019572981967021248,
+    "code": "0601",
+    "parent": "agriculture"
+},
+{
+    "name": "Other live plants",
+    "grossExport": 237257011,
+    "value": 0.03430901842008008,
+    "code": "0602",
+    "parent": "agriculture"
+},
+{
+    "name": "Cut flowers",
+    "grossExport": 1145101775,
+    "value": 0.16558970260036443,
+    "code": "0603",
+    "parent": "agriculture"
+},
+{
+    "name": "Other parts of plants",
+    "grossExport": 42409041,
+    "value": 0.006132643089088446,
+    "code": "0604",
+    "parent": "agriculture"
+},
+{
+    "name": "Potatoes",
+    "grossExport": 271010451,
+    "value": 0.03919000124044052,
+    "code": "0701",
+    "parent": "agriculture"
+},
+{
+    "name": "Tomatoes",
+    "grossExport": 1073026412,
+    "value": 0.15516710245726073,
+    "code": "0702",
+    "parent": "agriculture"
+},
+{
+    "name": "Onions, shallots, garlic",
+    "grossExport": 309851208,
+    "value": 0.0448066455779301,
+    "code": "0703",
+    "parent": "agriculture"
+},
+{
+    "name": "Cabbages, cauliflowers, broccoli",
+    "grossExport": 68877843,
+    "value": 0.009960216451611555,
+    "code": "0704",
+    "parent": "agriculture"
+},
+{
+    "name": "Lettuce",
+    "grossExport": 36585127,
+    "value": 0.00529046450873466,
+    "code": "0705",
+    "parent": "agriculture"
+},
+{
+    "name": "Carrots & turnips",
+    "grossExport": 57380163,
+    "value": 0.008297571738835559,
+    "code": "0706",
+    "parent": "agriculture"
+},
+{
+    "name": "Cucumbers",
+    "grossExport": 13970138,
+    "value": 0.0020201793824885564,
+    "code": "0707",
+    "parent": "agriculture"
+},
+{
+    "name": "Legumes",
+    "grossExport": 518254509,
+    "value": 0.07494321630634787,
+    "code": "0708",
+    "parent": "agriculture"
+},
+{
+    "name": "Other vegetables",
+    "grossExport": 758810298,
+    "value": 0.109729261030893,
+    "code": "0709",
+    "parent": "agriculture"
+},
+{
+    "name": "Frozen vegetables",
+    "grossExport": 213014641,
+    "value": 0.03080340265188515,
+    "code": "0710",
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetables, provisionally preserved",
+    "grossExport": 86225653,
+    "value": 0.012468830761171617,
+    "code": "0711",
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetables, dried",
+    "grossExport": 135365161,
+    "value": 0.019574746316710974,
+    "code": "0712",
+    "parent": "agriculture"
+},
+{
+    "name": "Legumes, dried",
+    "grossExport": 1258254399,
+    "value": 0.181952361156728,
+    "code": "0713",
+    "parent": "agriculture"
+},
+{
+    "name": "Tubers",
+    "grossExport": 232995525,
+    "value": 0.03369277782489315,
+    "code": "0714",
+    "parent": "agriculture"
+},
+{
+    "name": "Cashew nuts & coconuts",
+    "grossExport": 2880332830,
+    "value": 0.41651621464805266,
+    "code": "0801",
+    "parent": "agriculture"
+},
+{
+    "name": "Other nuts",
+    "grossExport": 510763577,
+    "value": 0.07385997529741699,
+    "code": "0802",
+    "parent": "agriculture"
+},
+{
+    "name": "Bananas and plantains",
+    "grossExport": 572692649,
+    "value": 0.08281535100172638,
+    "code": "0803",
+    "parent": "agriculture"
+},
+{
+    "name": "Avocados, pineapples, mangos, etc.",
+    "grossExport": 1264234206,
+    "value": 0.18281708295207896,
+    "code": "0804",
+    "parent": "agriculture"
+},
+{
+    "name": "Citrus fruit",
+    "grossExport": 3317431998,
+    "value": 0.4797238026687652,
+    "code": "0805",
+    "parent": "agriculture"
+},
+{
+    "name": "Grapes",
+    "grossExport": 1162052404,
+    "value": 0.16804088176738574,
+    "code": "0806",
+    "parent": "agriculture"
+},
+{
+    "name": "Melons and papayas",
+    "grossExport": 318428532,
+    "value": 0.04604698644655461,
+    "code": "0807",
+    "parent": "agriculture"
+},
+{
+    "name": "Apples & pears",
+    "grossExport": 655681944,
+    "value": 0.09481618182574977,
+    "code": "0808",
+    "parent": "agriculture"
+},
+{
+    "name": "Peaches & cherries",
+    "grossExport": 209180665,
+    "value": 0.030248982984151306,
+    "code": "0809",
+    "parent": "agriculture"
+},
+{
+    "name": "Other fresh fruit",
+    "grossExport": 1264733159,
+    "value": 0.18288923503557525,
+    "code": "0810",
+    "parent": "agriculture"
+},
+{
+    "name": "Fruits and nuts, frozen",
+    "grossExport": 404505183,
+    "value": 0.05849427047938685,
+    "code": "0811",
+    "parent": "agriculture"
+},
+{
+    "name": "Fruits and nuts, provisionally preserved",
+    "grossExport": 13308798,
+    "value": 0.001924545006305946,
+    "code": "0812",
+    "parent": "agriculture"
+},
+{
+    "name": "Fruits, dried",
+    "grossExport": 92928613,
+    "value": 0.013438125523588819,
+    "code": "0813",
+    "parent": "agriculture"
+},
+{
+    "name": "Peel of citrus fruit or melons",
+    "grossExport": 5789655,
+    "value": 0.0008372244900316507,
+    "code": "0814",
+    "parent": "agriculture"
+},
+{
+    "name": "Coffee",
+    "grossExport": 2318533639,
+    "value": 0.33527613364406034,
+    "code": "0901",
+    "parent": "agriculture"
+},
+{
+    "name": "Tea",
+    "grossExport": 1511339251,
+    "value": 0.21855019576871018,
+    "code": "0902",
+    "parent": "agriculture"
+},
+{
+    "name": "Mate",
+    "grossExport": 32471,
+    "value": 0.000004695533052628823,
+    "code": "0903",
+    "parent": "agriculture"
+},
+{
+    "name": "Pepper",
+    "grossExport": 88531293,
+    "value": 0.012802242384696091,
+    "code": "0904",
+    "parent": "agriculture"
+},
+{
+    "name": "Vanilla",
+    "grossExport": 663695347,
+    "value": 0.09597497578499141,
+    "code": "0905",
+    "parent": "agriculture"
+},
+{
+    "name": "Cinnamon",
+    "grossExport": 10907644,
+    "value": 0.0015773213922672066,
+    "code": "0906",
+    "parent": "agriculture"
+},
+{
+    "name": "Cloves",
+    "grossExport": 176224613,
+    "value": 0.025483308029571706,
+    "code": "0907",
+    "parent": "agriculture"
+},
+{
+    "name": "Nutmeg",
+    "grossExport": 5446412,
+    "value": 0.0007875891584562918,
+    "code": "0908",
+    "parent": "agriculture"
+},
+{
+    "name": "Anise, fennel, etc.",
+    "grossExport": 62716258,
+    "value": 0.00906920828974152,
+    "code": "0909",
+    "parent": "agriculture"
+},
+{
+    "name": "Spices",
+    "grossExport": 199496840,
+    "value": 0.028848634354193093,
+    "code": "0910",
+    "parent": "agriculture"
+},
+{
+    "name": "Wheat and meslin",
+    "grossExport": 88405835,
+    "value": 0.012784100282952482,
+    "code": 1001,
+    "parent": "agriculture"
+},
+{
+    "name": "Rye",
+    "grossExport": 5722289,
+    "value": 0.0008274828966214263,
+    "code": 1002,
+    "parent": "agriculture"
+},
+{
+    "name": "Barley",
+    "grossExport": 3975116,
+    "value": 0.0005748294960436597,
+    "code": 1003,
+    "parent": "agriculture"
+},
+{
+    "name": "Oats",
+    "grossExport": 2695642,
+    "value": 0.0003898086325969162,
+    "code": 1004,
+    "parent": "agriculture"
+},
+{
+    "name": "Corn",
+    "grossExport": 1012181573,
+    "value": 0.14636851440618812,
+    "code": 1005,
+    "parent": "agriculture"
+},
+{
+    "name": "Rice",
+    "grossExport": 494725959,
+    "value": 0.07154082388833088,
+    "code": 1006,
+    "parent": "agriculture"
+},
+{
+    "name": "Grain sorghum",
+    "grossExport": 53218670,
+    "value": 0.007695790828799421,
+    "code": 1007,
+    "parent": "agriculture"
+},
+{
+    "name": "Other cereals",
+    "grossExport": 24787105,
+    "value": 0.0035843882481747143,
+    "code": 1008,
+    "parent": "agriculture"
+},
+{
+    "name": "Wheat or meslin flour",
+    "grossExport": 335903035,
+    "value": 0.04857392144747117,
+    "code": 1101,
+    "parent": "agriculture"
+},
+{
+    "name": "Cereal flours",
+    "grossExport": 56037558,
+    "value": 0.008103421692513465,
+    "code": 1102,
+    "parent": "agriculture"
+},
+{
+    "name": "Cereal meals",
+    "grossExport": 145793350,
+    "value": 0.02108273517226086,
+    "code": 1103,
+    "parent": "agriculture"
+},
+{
+    "name": "Worked cereal grains",
+    "grossExport": 11064233,
+    "value": 0.0015999652537182889,
+    "code": 1104,
+    "parent": "agriculture"
+},
+{
+    "name": "Potato flour",
+    "grossExport": 3203516,
+    "value": 0.0004632507549082343,
+    "code": 1105,
+    "parent": "agriculture"
+},
+{
+    "name": "Flour of dried legumes",
+    "grossExport": 43626531,
+    "value": 0.006308700633859013,
+    "code": 1106,
+    "parent": "agriculture"
+},
+{
+    "name": "Malt",
+    "grossExport": 30824463,
+    "value": 0.004457432319486133,
+    "code": 1107,
+    "parent": "agriculture"
+},
+{
+    "name": "Starches",
+    "grossExport": 49231068,
+    "value": 0.007119155770078444,
+    "code": 1108,
+    "parent": "agriculture"
+},
+{
+    "name": "Wheat gluten",
+    "grossExport": 2117487,
+    "value": 0.000306203387546175,
+    "code": 1109,
+    "parent": "agriculture"
+},
+{
+    "name": "Soya beans",
+    "grossExport": 657875041,
+    "value": 0.09513331894659979,
+    "code": 1201,
+    "parent": "agriculture"
+},
+{
+    "name": "Peanuts",
+    "grossExport": 1040606402,
+    "value": 0.15047894291423597,
+    "code": 1202,
+    "parent": "agriculture"
+},
+{
+    "name": "Copra",
+    "grossExport": 924160,
+    "value": 0.00013363998108827734,
+    "code": 1203,
+    "parent": "agriculture"
+},
+{
+    "name": "Linseed",
+    "grossExport": 1239640,
+    "value": 0.00017926058924458115,
+    "code": 1204,
+    "parent": "agriculture"
+},
+{
+    "name": "Rape or colza seeds",
+    "grossExport": 19740458,
+    "value": 0.0028546078966779917,
+    "code": 1205,
+    "parent": "agriculture"
+},
+{
+    "name": "Sunflower seeds",
+    "grossExport": 13527969,
+    "value": 0.0019562386614036553,
+    "code": 1206,
+    "parent": "agriculture"
+},
+{
+    "name": "Other oil seeds",
+    "grossExport": 2134424797,
+    "value": 0.308652711116506,
+    "code": 1207,
+    "parent": "agriculture"
+},
+{
+    "name": "Flours of oil seeds",
+    "grossExport": 58502134,
+    "value": 0.008459816570056988,
+    "code": 1208,
+    "parent": "agriculture"
+},
+{
+    "name": "Seeds used for sowing",
+    "grossExport": 253680724,
+    "value": 0.036684001858791226,
+    "code": 1209,
+    "parent": "agriculture"
+},
+{
+    "name": "Hop cones",
+    "grossExport": 5500146,
+    "value": 0.0007953594695970006,
+    "code": 1210,
+    "parent": "agriculture"
+},
+{
+    "name": "Plants used in perfumery, pharmacy or insecticide",
+    "grossExport": 314782367,
+    "value": 0.04551972555921396,
+    "code": 1211,
+    "parent": "agriculture"
+},
+{
+    "name": "Seaweeds & edible vegetable products",
+    "grossExport": 335566634,
+    "value": 0.04852527551681189,
+    "code": 1212,
+    "parent": "agriculture"
+},
+{
+    "name": "Cereal straw and husks",
+    "grossExport": 2006357,
+    "value": 0.00029013321452598344,
+    "code": 1213,
+    "parent": "agriculture"
+},
+{
+    "name": "Forage products",
+    "grossExport": 145102086,
+    "value": 0.02098277357698839,
+    "code": 1214,
+    "parent": "agriculture"
+},
+{
+    "name": "Lac",
+    "grossExport": 225008736,
+    "value": 0.03253783243565744,
+    "code": 1301,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable saps and extracts",
+    "grossExport": 137426951,
+    "value": 0.019872895529626487,
+    "code": 1302,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable materials used for plaiting",
+    "grossExport": 5993066,
+    "value": 0.0008666391392191806,
+    "code": 1401,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable products n.e.c.",
+    "grossExport": 33817999,
+    "value": 0.004890318501994656,
+    "code": 1404,
+    "parent": "agriculture"
+},
+{
+    "name": "Pig and poultry fat, rendered",
+    "grossExport": 2056662,
+    "value": 0.0002974076683528595,
+    "code": 1501,
+    "parent": "agriculture"
+},
+{
+    "name": "Bovine, sheep and goat fats",
+    "grossExport": 4878107,
+    "value": 0.0007054082920994127,
+    "code": 1502,
+    "parent": "agriculture"
+},
+{
+    "name": "Lard oil, tallow oil etc.",
+    "grossExport": 1239816,
+    "value": 0.00017928604007200446,
+    "code": 1503,
+    "parent": "agriculture"
+},
+{
+    "name": "Fish oils",
+    "grossExport": 134528995,
+    "value": 0.019453830881692516,
+    "code": 1504,
+    "parent": "agriculture"
+},
+{
+    "name": "Wool grease",
+    "grossExport": 2636359,
+    "value": 0.0003812358973575027,
+    "code": 1505,
+    "parent": "agriculture"
+},
+{
+    "name": "Other animal fats and oils",
+    "grossExport": 98283,
+    "value": 0.000014212407225263115,
+    "code": 1506,
+    "parent": "agriculture"
+},
+{
+    "name": "Soybean oil",
+    "grossExport": 497385369,
+    "value": 0.07192539312104597,
+    "code": 1507,
+    "parent": "agriculture"
+},
+{
+    "name": "Peanut oil",
+    "grossExport": 85883058,
+    "value": 0.012419289134915409,
+    "code": 1508,
+    "parent": "agriculture"
+},
+{
+    "name": "Olive oil",
+    "grossExport": 701571120,
+    "value": 0.1014520767062863,
+    "code": 1509,
+    "parent": "agriculture"
+},
+{
+    "name": "Olive oil, blended",
+    "grossExport": 40921651,
+    "value": 0.0059175561220363194,
+    "code": 1510,
+    "parent": "agriculture"
+},
+{
+    "name": "Palm oil",
+    "grossExport": 833628380,
+    "value": 0.12054847746910845,
+    "code": 1511,
+    "parent": "agriculture"
+},
+{
+    "name": "Sunflower seed oil",
+    "grossExport": 259947882,
+    "value": 0.03759027661272696,
+    "code": 1512,
+    "parent": "agriculture"
+},
+{
+    "name": "Coconut & palm kernel oil",
+    "grossExport": 61662447,
+    "value": 0.008916819869867667,
+    "code": 1513,
+    "parent": "agriculture"
+},
+{
+    "name": "Rapeseed, colza or mustard oil,",
+    "grossExport": 1830857,
+    "value": 0.00026475469058965997,
+    "code": 1514,
+    "parent": "agriculture"
+},
+{
+    "name": "Other vegetable fats and oils",
+    "grossExport": 343856712,
+    "value": 0.04972407861058391,
+    "code": 1515,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable fats, hydrogenated",
+    "grossExport": 77286610,
+    "value": 0.011176182802520198,
+    "code": 1516,
+    "parent": "agriculture"
+},
+{
+    "name": "Margarine",
+    "grossExport": 197701764,
+    "value": 0.028589053845739988,
+    "code": 1517,
+    "parent": "agriculture"
+},
+{
+    "name": "Animal or vegetable fats and oils, processed",
+    "grossExport": 50298455,
+    "value": 0.007273507374231267,
+    "code": 1518,
+    "parent": "agriculture"
+},
+{
+    "name": "Stearic acid",
+    "grossExport": 215467293,
+    "value": 0.031158073235870748,
+    "code": 1519,
+    "parent": "agriculture"
+},
+{
+    "name": "Glycerol",
+    "grossExport": 7038087,
+    "value": 0.001017756463791606,
+    "code": 1520,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable waxes and beeswax",
+    "grossExport": 13655100,
+    "value": 0.001974622690614759,
+    "code": 1521,
+    "parent": "agriculture"
+},
+{
+    "name": "Degras and wax residues",
+    "grossExport": 8697136,
+    "value": 0.0012576665193929362,
+    "code": 1522,
+    "parent": "agriculture"
+},
+{
+    "name": "Sausages",
+    "grossExport": 29284721,
+    "value": 0.00423477488813136,
+    "code": 1601,
+    "parent": "agriculture"
+},
+{
+    "name": "Other prepared or preserved meat",
+    "grossExport": 50889649,
+    "value": 0.007358998149615944,
+    "code": 1602,
+    "parent": "agriculture"
+},
+{
+    "name": "Extracts and juices of meat or fish",
+    "grossExport": 326892,
+    "value": 0.000047270862943547816,
+    "code": 1603,
+    "parent": "agriculture"
+},
+{
+    "name": "Prepared or preserved fish",
+    "grossExport": 1596866776,
+    "value": 0.23091807235233985,
+    "code": 1604,
+    "parent": "agriculture"
+},
+{
+    "name": "Prepared aquatic invertibrates",
+    "grossExport": 1307631734,
+    "value": 0.18909266815507192,
+    "code": 1605,
+    "parent": "agriculture"
+},
+{
+    "name": "Sugarcane & sucrose",
+    "grossExport": 1811617579,
+    "value": 0.2619725361374121,
+    "code": 1701,
+    "parent": "agriculture"
+},
+{
+    "name": "Other sugars",
+    "grossExport": 100426189,
+    "value": 0.014522327301254937,
+    "code": 1702,
+    "parent": "agriculture"
+},
+{
+    "name": "Molasses",
+    "grossExport": 124649475,
+    "value": 0.01802518338995812,
+    "code": 1703,
+    "parent": "agriculture"
+},
+{
+    "name": "Confectionery sugar",
+    "grossExport": 306690870,
+    "value": 0.04434963866294507,
+    "code": 1704,
+    "parent": "agriculture"
+},
+{
+    "name": "Cocoa beans",
+    "grossExport": 7444498599,
+    "value": 1.0765264153199305,
+    "code": 1801,
+    "parent": "agriculture"
+},
+{
+    "name": "Cocoa residues",
+    "grossExport": 17298709,
+    "value": 0.0025015139625298786,
+    "code": 1802,
+    "parent": "agriculture"
+},
+{
+    "name": "Cocoa paste",
+    "grossExport": 1731713252,
+    "value": 0.25041781320074363,
+    "code": 1803,
+    "parent": "agriculture"
+},
+{
+    "name": "Cocoa butter",
+    "grossExport": 924091106,
+    "value": 0.13363001853541082,
+    "code": 1804,
+    "parent": "agriculture"
+},
+{
+    "name": "Cocoa powder",
+    "grossExport": 209007731,
+    "value": 0.030223975521710262,
+    "code": 1805,
+    "parent": "agriculture"
+},
+{
+    "name": "Chocolates",
+    "grossExport": 443707995,
+    "value": 0.06416327049484662,
+    "code": 1806,
+    "parent": "agriculture"
+},
+{
+    "name": "Malt extract",
+    "grossExport": 252889626,
+    "value": 0.036569603570876824,
+    "code": 1901,
+    "parent": "agriculture"
+},
+{
+    "name": "Pasta",
+    "grossExport": 308820638,
+    "value": 0.0446576179687389,
+    "code": 1902,
+    "parent": "agriculture"
+},
+{
+    "name": "Tapioca",
+    "grossExport": 3295604,
+    "value": 0.0004765673219295913,
+    "code": 1903,
+    "parent": "agriculture"
+},
+{
+    "name": "Cereal foods",
+    "grossExport": 140780072,
+    "value": 0.020357780210879417,
+    "code": 1904,
+    "parent": "agriculture"
+},
+{
+    "name": "Bakery products",
+    "grossExport": 285019760,
+    "value": 0.041215845022707476,
+    "code": 1905,
+    "parent": "agriculture"
+},
+{
+    "name": "Pickled fruits and vegetables",
+    "grossExport": 115096330,
+    "value": 0.016643731999361717,
+    "code": 2001,
+    "parent": "agriculture"
+},
+{
+    "name": "Tomatoes, prepared or preserved",
+    "grossExport": 93228017,
+    "value": 0.01348142143003116,
+    "code": 2002,
+    "parent": "agriculture"
+},
+{
+    "name": "Mushrooms, prepared or preserved",
+    "grossExport": 1506570,
+    "value": 0.0002178605288133721,
+    "code": 2003,
+    "parent": "agriculture"
+},
+{
+    "name": "Other vegetables, frozen",
+    "grossExport": 99654547,
+    "value": 0.014410742486626606,
+    "code": 2004,
+    "parent": "agriculture"
+},
+{
+    "name": "Other vegetables, prepared or preserved",
+    "grossExport": 428021208,
+    "value": 0.061894851695054556,
+    "code": 2005,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetables, fruits and nuts, preserved by sugar",
+    "grossExport": 4846142,
+    "value": 0.0007007859301756259,
+    "code": 2006,
+    "parent": "agriculture"
+},
+{
+    "name": "Jams, jellies and marmalades",
+    "grossExport": 88853481,
+    "value": 0.012848833016433962,
+    "code": 2007,
+    "parent": "agriculture"
+},
+{
+    "name": "Fruits and nuts, otherwise prepared",
+    "grossExport": 420721286,
+    "value": 0.060839232064226666,
+    "code": 2008,
+    "parent": "agriculture"
+},
+{
+    "name": "Fruit juices",
+    "grossExport": 443248458,
+    "value": 0.06409681823983736,
+    "code": 2009,
+    "parent": "agriculture"
+},
+{
+    "name": "Coffee extracts",
+    "grossExport": 158988040,
+    "value": 0.022990779365978053,
+    "code": 2101,
+    "parent": "agriculture"
+},
+{
+    "name": "Yeasts",
+    "grossExport": 141757556,
+    "value": 0.020499131214249063,
+    "code": 2102,
+    "parent": "agriculture"
+},
+{
+    "name": "Sauces and seasonings",
+    "grossExport": 297835114,
+    "value": 0.04306903458533687,
+    "code": 2103,
+    "parent": "agriculture"
+},
+{
+    "name": "Soups and broths",
+    "grossExport": 277566322,
+    "value": 0.040138025907659594,
+    "code": 2104,
+    "parent": "agriculture"
+},
+{
+    "name": "Ice cream",
+    "grossExport": 48226370,
+    "value": 0.006973869432518466,
+    "code": 2105,
+    "parent": "agriculture"
+},
+{
+    "name": "Food preparations n.e.c.",
+    "grossExport": 615633362,
+    "value": 0.0890248775698933,
+    "code": 2106,
+    "parent": "agriculture"
+},
+{
+    "name": "Waters",
+    "grossExport": 24463406,
+    "value": 0.0035375791152991365,
+    "code": 2201,
+    "parent": "agriculture"
+},
+{
+    "name": "Waters, flavored or sweetened",
+    "grossExport": 413606921,
+    "value": 0.05981044526967258,
+    "code": 2202,
+    "parent": "agriculture"
+},
+{
+    "name": "Beer",
+    "grossExport": 201909409,
+    "value": 0.029197508656839996,
+    "code": 2203,
+    "parent": "agriculture"
+},
+{
+    "name": "Wine",
+    "grossExport": 741582623,
+    "value": 0.10723801908015397,
+    "code": 2204,
+    "parent": "agriculture"
+},
+{
+    "name": "Wine, flavored",
+    "grossExport": 8489821,
+    "value": 0.0012276873245789252,
+    "code": 2205,
+    "parent": "agriculture"
+},
+{
+    "name": "Other fermented beverages",
+    "grossExport": 86689189,
+    "value": 0.012535861299469896,
+    "code": 2206,
+    "parent": "agriculture"
+},
+{
+    "name": "Ethyl alcohol > 80%",
+    "grossExport": 252562247,
+    "value": 0.036522262284336936,
+    "code": 2207,
+    "parent": "agriculture"
+},
+{
+    "name": "Spirits < 80% alcohol",
+    "grossExport": 199658056,
+    "value": 0.028871947312112855,
+    "code": 2208,
+    "parent": "agriculture"
+},
+{
+    "name": "Vinegars",
+    "grossExport": 5674230,
+    "value": 0.0008205332300581456,
+    "code": 2209,
+    "parent": "agriculture"
+},
+{
+    "name": "Flours of fish, for animal feed",
+    "grossExport": 421560243,
+    "value": 0.06096055109730955,
+    "code": 2301,
+    "parent": "agriculture"
+},
+{
+    "name": "Cereal residues",
+    "grossExport": 259095496,
+    "value": 0.03746701565259028,
+    "code": 2302,
+    "parent": "agriculture"
+},
+{
+    "name": "Starch residues",
+    "grossExport": 142014173,
+    "value": 0.02053623982209503,
+    "code": 2303,
+    "parent": "agriculture"
+},
+{
+    "name": "Solid soybean residues",
+    "grossExport": 313148112,
+    "value": 0.04528340088892589,
+    "code": 2304,
+    "parent": "agriculture"
+},
+{
+    "name": "Solid peanut residues",
+    "grossExport": 18990258,
+    "value": 0.0027461237447860836,
+    "code": 2305,
+    "parent": "agriculture"
+},
+{
+    "name": "Solid vegetable oil and fat residues",
+    "grossExport": 199468601,
+    "value": 0.02884455079785441,
+    "code": 2306,
+    "parent": "agriculture"
+},
+{
+    "name": "Wine lees",
+    "grossExport": 17699,
+    "value": 0.0000025593988327577697,
+    "code": 2307,
+    "parent": "agriculture"
+},
+{
+    "name": "Vegetable materials for animal feeding",
+    "grossExport": 6977403,
+    "value": 0.0010089811341816239,
+    "code": 2308,
+    "parent": "agriculture"
+},
+{
+    "name": "Animal feed",
+    "grossExport": 316500956,
+    "value": 0.04576824551404702,
+    "code": 2309,
+    "parent": "agriculture"
+},
+{
+    "name": "Unmanufactured tobacco",
+    "grossExport": 1797130693,
+    "value": 0.259877631390325,
+    "code": 2401,
+    "parent": "agriculture"
+},
+{
+    "name": "Cigars and cigarettes",
+    "grossExport": 418016773,
+    "value": 0.06044814062316343,
+    "code": 2402,
+    "parent": "agriculture"
+},
+{
+    "name": "Other manufactured tobacco",
+    "grossExport": 320600014,
+    "value": 0.04636099788766171,
+    "code": 2403,
+    "parent": "agriculture"
+},
+{
+    "name": "Salt",
+    "grossExport": 274891987,
+    "value": 0.03975129841585762,
+    "code": 2501,
+    "parent": "minerals"
+},
+{
+    "name": "Unroasted iron pyrites",
+    "grossExport": 2594468,
+    "value": 0.0003751781666098302,
+    "code": 2502,
+    "parent": "minerals"
+},
+{
+    "name": "Sulphur, crude",
+    "grossExport": 148288525,
+    "value": 0.02144355487860169,
+    "code": 2503,
+    "parent": "minerals"
+},
+{
+    "name": "Natural graphite",
+    "grossExport": 72677327,
+    "value": 0.010509648335598323,
+    "code": 2504,
+    "parent": "minerals"
+},
+{
+    "name": "Natural sands",
+    "grossExport": 123314874,
+    "value": 0.017832190777855892,
+    "code": 2505,
+    "parent": "minerals"
+},
+{
+    "name": "Quartz",
+    "grossExport": 11754256,
+    "value": 0.0016997473917360307,
+    "code": 2506,
+    "parent": "minerals"
+},
+{
+    "name": "Kaolin",
+    "grossExport": 14143248,
+    "value": 0.0020452122957570294,
+    "code": 2507,
+    "parent": "minerals"
+},
+{
+    "name": "Clays",
+    "grossExport": 91685207,
+    "value": 0.013258320344480167,
+    "code": 2508,
+    "parent": "minerals"
+},
+{
+    "name": "Chalk",
+    "grossExport": 2705748,
+    "value": 0.00039127003067612124,
+    "code": 2509,
+    "parent": "minerals"
+},
+{
+    "name": "Natural calcium phosphates",
+    "grossExport": 1860482210,
+    "value": 0.26903870256176027,
+    "code": 2510,
+    "parent": "minerals"
+},
+{
+    "name": "Natural barium sulfate",
+    "grossExport": 95732635,
+    "value": 0.013843606660027437,
+    "code": 2511,
+    "parent": "minerals"
+},
+{
+    "name": "Siliceous fossil meals and earths",
+    "grossExport": 745877,
+    "value": 0.00010785901594332262,
+    "code": 2512,
+    "parent": "minerals"
+},
+{
+    "name": "Natural abrasives",
+    "grossExport": 33010108,
+    "value": 0.004773491829165937,
+    "code": 2513,
+    "parent": "minerals"
+},
+{
+    "name": "Slate",
+    "grossExport": 251017,
+    "value": 0.00003629880879159032,
+    "code": 2514,
+    "parent": "minerals"
+},
+{
+    "name": "Marble",
+    "grossExport": 92870548,
+    "value": 0.013429728919643733,
+    "code": 2515,
+    "parent": "minerals"
+},
+{
+    "name": "Granite",
+    "grossExport": 208912125,
+    "value": 0.030210150227354387,
+    "code": 2516,
+    "parent": "minerals"
+},
+{
+    "name": "Gravel",
+    "grossExport": 10978178,
+    "value": 0.0015875211005710506,
+    "code": 2517,
+    "parent": "minerals"
+},
+{
+    "name": "Dolomite",
+    "grossExport": 7264844,
+    "value": 0.0010505471073940498,
+    "code": 2518,
+    "parent": "minerals"
+},
+{
+    "name": "Natural magnesia",
+    "grossExport": 48907979,
+    "value": 0.007072434847457004,
+    "code": 2519,
+    "parent": "minerals"
+},
+{
+    "name": "Gypsum",
+    "grossExport": 118918113,
+    "value": 0.017196388474261626,
+    "code": 2520,
+    "parent": "minerals"
+},
+{
+    "name": "Limstone",
+    "grossExport": 17054252,
+    "value": 0.002466163775487703,
+    "code": 2521,
+    "parent": "minerals"
+},
+{
+    "name": "Quicklime",
+    "grossExport": 94729340,
+    "value": 0.013698523206051976,
+    "code": 2522,
+    "parent": "minerals"
+},
+{
+    "name": "Cements",
+    "grossExport": 1567911748,
+    "value": 0.2267309733712862,
+    "code": 2523,
+    "parent": "minerals"
+},
+{
+    "name": "Asbestos",
+    "grossExport": 1492992,
+    "value": 0.00021589705532045243,
+    "code": 2524,
+    "parent": "minerals"
+},
+{
+    "name": "Mica",
+    "grossExport": 20978758,
+    "value": 0.003033674712577418,
+    "code": 2525,
+    "parent": "minerals"
+},
+{
+    "name": "Natural steatite",
+    "grossExport": 6115180,
+    "value": 0.0008842976752417457,
+    "code": 2526,
+    "parent": "minerals"
+},
+{
+    "name": "Natural borates",
+    "grossExport": 575977,
+    "value": 0.00008329029106137758,
+    "code": 2528,
+    "parent": "minerals"
+},
+{
+    "name": "Feldspar",
+    "grossExport": 168099913,
+    "value": 0.02430841974794523,
+    "code": 2529,
+    "parent": "minerals"
+},
+{
+    "name": "Mineral substances n.e.c.",
+    "grossExport": 98260912,
+    "value": 0.01420921314642149,
+    "code": 2530,
+    "parent": "minerals"
+},
+{
+    "name": "Iron ores and concentrates",
+    "grossExport": 13276618784,
+    "value": 1.9198916672546178,
+    "code": 2601,
+    "parent": "minerals"
+},
+{
+    "name": "Manganese > 47% by weight",
+    "grossExport": 4853159276,
+    "value": 0.7018006772236818,
+    "code": 2602,
+    "parent": "minerals"
+},
+{
+    "name": "Copper ore",
+    "grossExport": 2166717861,
+    "value": 0.3133225133826098,
+    "code": 2603,
+    "parent": "minerals"
+},
+{
+    "name": "Nickel ore",
+    "grossExport": 411666458,
+    "value": 0.05952984078709111,
+    "code": 2604,
+    "parent": "minerals"
+},
+{
+    "name": "Cobalt ore",
+    "grossExport": 68146931,
+    "value": 0.009854521479034085,
+    "code": 2605,
+    "parent": "minerals"
+},
+{
+    "name": "Aluminum ore",
+    "grossExport": 3868775451,
+    "value": 0.559451911039681,
+    "code": 2606,
+    "parent": "minerals"
+},
+{
+    "name": "Lead ore",
+    "grossExport": 226256989,
+    "value": 0.032718338524769054,
+    "code": 2607,
+    "parent": "minerals"
+},
+{
+    "name": "Zinc ore",
+    "grossExport": 1167758370,
+    "value": 0.16886600424437062,
+    "code": 2608,
+    "parent": "minerals"
+},
+{
+    "name": "Tin ore",
+    "grossExport": 557819725,
+    "value": 0.08066462246761173,
+    "code": 2609,
+    "parent": "minerals"
+},
+{
+    "name": "Chromium ore",
+    "grossExport": 2210720711,
+    "value": 0.3196856323683161,
+    "code": 2610,
+    "parent": "minerals"
+},
+{
+    "name": "Tungsten ore",
+    "grossExport": 35467429,
+    "value": 0.0051288375831131175,
+    "code": 2611,
+    "parent": "minerals"
+},
+{
+    "name": "Uranium ore",
+    "grossExport": 68398727,
+    "value": 0.009890932936658417,
+    "code": 2612,
+    "parent": "minerals"
+},
+{
+    "name": "Molybdenum ore",
+    "grossExport": 376486,
+    "value": 0.00005444250121191263,
+    "code": 2613,
+    "parent": "minerals"
+},
+{
+    "name": "Titanium ore",
+    "grossExport": 1634863828,
+    "value": 0.23641271106283399,
+    "code": 2614,
+    "parent": "minerals"
+},
+{
+    "name": "Zirconium ore",
+    "grossExport": 881414483,
+    "value": 0.12745868122300658,
+    "code": 2615,
+    "parent": "minerals"
+},
+{
+    "name": "Precious metal ores",
+    "grossExport": 2710282229,
+    "value": 0.3919257118112168,
+    "code": 2616,
+    "parent": "minerals"
+},
+{
+    "name": "Other ores",
+    "grossExport": 151028789,
+    "value": 0.021839816163592263,
+    "code": 2617,
+    "parent": "minerals"
+},
+{
+    "name": "Granulated iron or steel slag",
+    "grossExport": 252670069,
+    "value": 0.03653785409748715,
+    "code": 2618,
+    "parent": "minerals"
+},
+{
+    "name": "Iron or steel slag",
+    "grossExport": 33454628,
+    "value": 0.0048377725212467035,
+    "code": 2619,
+    "parent": "minerals"
+},
+{
+    "name": "Slag, ash and residues containing metals",
+    "grossExport": 700307839,
+    "value": 0.10126939746356947,
+    "code": 2620,
+    "parent": "minerals"
+},
+{
+    "name": "Other slag and ash",
+    "grossExport": 8957125,
+    "value": 0.0012952627419552199,
+    "code": 2621,
+    "parent": "minerals"
+},
+{
+    "name": "Coal",
+    "grossExport": 7711506629,
+    "value": 1.1151376385709024,
+    "code": 2701,
+    "parent": "minerals"
+},
+{
+    "name": "Lignite",
+    "grossExport": 33424,
+    "value": 0.000004833343498847149,
+    "code": 2702,
+    "parent": "minerals"
+},
+{
+    "name": "Peat",
+    "grossExport": 1234144,
+    "value": 0.00017846582931549832,
+    "code": 2703,
+    "parent": "minerals"
+},
+{
+    "name": "Coke",
+    "grossExport": 347540783,
+    "value": 0.05025682096988086,
+    "code": 2704,
+    "parent": "minerals"
+},
+{
+    "name": "Non-petroleum gases",
+    "grossExport": 97192,
+    "value": 0.000014054641016633321,
+    "code": 2705,
+    "parent": "minerals"
+},
+{
+    "name": "Tar distilled from coal, lignite etc.",
+    "grossExport": 1178275,
+    "value": 0.0001703867822853077,
+    "code": 2706,
+    "parent": "minerals"
+},
+{
+    "name": "Oils etc. from high temperature coal tar",
+    "grossExport": 186964333,
+    "value": 0.027036346440337585,
+    "code": 2707,
+    "parent": "minerals"
+},
+{
+    "name": "Pitch and pitch coke",
+    "grossExport": 12512098,
+    "value": 0.0018093366301232172,
+    "code": 2708,
+    "parent": "minerals"
+},
+{
+    "name": "Petroleum oils, crude",
+    "grossExport": 135016356873,
+    "value": 19.52430680738814,
+    "code": 2709,
+    "parent": "minerals"
+},
+{
+    "name": "Petroleum oils, refined",
+    "grossExport": 18039946801,
+    "value": 2.6087021179440453,
+    "code": 2710,
+    "parent": "minerals"
+},
+{
+    "name": "Petroleum gases",
+    "grossExport": 33548065988,
+    "value": 4.8512843059476705,
+    "code": 2711,
+    "parent": "minerals"
+},
+{
+    "name": "Petroleum jelly",
+    "grossExport": 266215301,
+    "value": 0.0384965891090829,
+    "code": 2712,
+    "parent": "minerals"
+},
+{
+    "name": "Petroleum coke",
+    "grossExport": 125123787,
+    "value": 0.01809377221300818,
+    "code": 2713,
+    "parent": "minerals"
+},
+{
+    "name": "Bitumen and asphalt, natural",
+    "grossExport": 22608763,
+    "value": 0.003269384803226004,
+    "code": 2714,
+    "parent": "minerals"
+},
+{
+    "name": "Bituminous mixtures",
+    "grossExport": 568123214,
+    "value": 0.0821545788335043,
+    "code": 2715,
+    "parent": "minerals"
+},
+{
+    "name": "Electrical energy",
+    "grossExport": 1664615777,
+    "value": 0.24071505037821164,
+    "code": 2716,
+    "parent": "minerals"
+},
+{
+    "name": "Iodine",
+    "grossExport": 12102310,
+    "value": 0.0017500784274632852,
+    "code": 2801,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfur, sublimed or precipitated",
+    "grossExport": 1151832,
+    "value": 0.00016656294007192765,
+    "code": 2802,
+    "parent": "chemicals"
+},
+{
+    "name": "Carbon",
+    "grossExport": 112031353,
+    "value": 0.016200514950023937,
+    "code": 2803,
+    "parent": "chemicals"
+},
+{
+    "name": "Silicon & rare gases",
+    "grossExport": 190956662,
+    "value": 0.02761366505622464,
+    "code": 2804,
+    "parent": "chemicals"
+},
+{
+    "name": "Rare-earth metals",
+    "grossExport": 6019074,
+    "value": 0.0008704000773988723,
+    "code": 2805,
+    "parent": "chemicals"
+},
+{
+    "name": "Hydrochloric acid",
+    "grossExport": 7825056,
+    "value": 0.0011315576695103782,
+    "code": 2806,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfiric acid, oleum",
+    "grossExport": 62391098,
+    "value": 0.009022187886076932,
+    "code": 2807,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfonitric acids",
+    "grossExport": 3979198,
+    "value": 0.000575419781711512,
+    "code": 2808,
+    "parent": "chemicals"
+},
+{
+    "name": "Phosphoric acid etc.",
+    "grossExport": 2923446082,
+    "value": 0.4227506915589058,
+    "code": 2809,
+    "parent": "chemicals"
+},
+{
+    "name": "Oxides of boron; boric acids",
+    "grossExport": 1042654,
+    "value": 0.00015077503986497652,
+    "code": 2810,
+    "parent": "chemicals"
+},
+{
+    "name": "Other inorganic acids",
+    "grossExport": 62511255,
+    "value": 0.009039563426251387,
+    "code": 2811,
+    "parent": "chemicals"
+},
+{
+    "name": "Halides of nonmetals",
+    "grossExport": 587894,
+    "value": 0.00008501357237048965,
+    "code": 2812,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfides of nonmetals",
+    "grossExport": 50242,
+    "value": 0.000007265343587514315,
+    "code": 2813,
+    "parent": "chemicals"
+},
+{
+    "name": "Ammonia",
+    "grossExport": 1167494201,
+    "value": 0.16882780356465704,
+    "code": 2814,
+    "parent": "chemicals"
+},
+{
+    "name": "Sodium hydroxide",
+    "grossExport": 57041837,
+    "value": 0.008248647439751339,
+    "code": 2815,
+    "parent": "chemicals"
+},
+{
+    "name": "Hydroxides or peroxides of magnesium",
+    "grossExport": 1406081,
+    "value": 0.00020332911860347348,
+    "code": 2816,
+    "parent": "chemicals"
+},
+{
+    "name": "Zinc oxide or peroxide",
+    "grossExport": 10962254,
+    "value": 0.0015852183791171361,
+    "code": 2817,
+    "parent": "chemicals"
+},
+{
+    "name": "Aluminum oxide",
+    "grossExport": 106944803,
+    "value": 0.015464964346443845,
+    "code": 2818,
+    "parent": "chemicals"
+},
+{
+    "name": "Chromium oxides and hydroxides",
+    "grossExport": 15199143,
+    "value": 0.0021979020765646885,
+    "code": 2819,
+    "parent": "chemicals"
+},
+{
+    "name": "Manganese oxides",
+    "grossExport": 25873463,
+    "value": 0.0037414831912312187,
+    "code": 2820,
+    "parent": "chemicals"
+},
+{
+    "name": "Iron oxides and hydroxides",
+    "grossExport": 13577715,
+    "value": 0.0019634322799320673,
+    "code": 2821,
+    "parent": "chemicals"
+},
+{
+    "name": "Cobalt oxides and hydroxides",
+    "grossExport": 2990671749,
+    "value": 0.4324719918386484,
+    "code": 2822,
+    "parent": "chemicals"
+},
+{
+    "name": "Titanium oxides",
+    "grossExport": 2960210,
+    "value": 0.00042806701049312825,
+    "code": 2823,
+    "parent": "chemicals"
+},
+{
+    "name": "Lead oxides",
+    "grossExport": 14661374,
+    "value": 0.0021201369287657556,
+    "code": 2824,
+    "parent": "chemicals"
+},
+{
+    "name": "Metal base oxides, n.e.c.",
+    "grossExport": 120978795,
+    "value": 0.01749437746264995,
+    "code": 2825,
+    "parent": "chemicals"
+},
+{
+    "name": "Flourides",
+    "grossExport": 69022762,
+    "value": 0.009981172749676102,
+    "code": 2826,
+    "parent": "chemicals"
+},
+{
+    "name": "Chlorides, bromides, iodides etc.",
+    "grossExport": 80879939,
+    "value": 0.01169580323578279,
+    "code": 2827,
+    "parent": "chemicals"
+},
+{
+    "name": "Hyopchlorites",
+    "grossExport": 17168699,
+    "value": 0.00248271360984064,
+    "code": 2828,
+    "parent": "chemicals"
+},
+{
+    "name": "Sodium chlorate",
+    "grossExport": 1831654,
+    "value": 0.0002648699423479349,
+    "code": 2829,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfides; polysulfides",
+    "grossExport": 9174964,
+    "value": 0.0013267637805635662,
+    "code": 2830,
+    "parent": "chemicals"
+},
+{
+    "name": "Dithionites and sulfoxylates",
+    "grossExport": 287943,
+    "value": 0.00004163856591337197,
+    "code": 2831,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfites",
+    "grossExport": 7168925,
+    "value": 0.0010366765510553136,
+    "code": 2832,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfates",
+    "grossExport": 625510441,
+    "value": 0.09045317207600417,
+    "code": 2833,
+    "parent": "chemicals"
+},
+{
+    "name": "Nitrites, nitrates",
+    "grossExport": 17691262,
+    "value": 0.0025582798639929875,
+    "code": 2834,
+    "parent": "chemicals"
+},
+{
+    "name": "Phosphates",
+    "grossExport": 240690943,
+    "value": 0.03480558893550861,
+    "code": 2835,
+    "parent": "chemicals"
+},
+{
+    "name": "Carbonates",
+    "grossExport": 203598198,
+    "value": 0.029441719323847974,
+    "code": 2836,
+    "parent": "chemicals"
+},
+{
+    "name": "Cyanides",
+    "grossExport": 10640041,
+    "value": 0.001538624132204916,
+    "code": 2837,
+    "parent": "chemicals"
+},
+{
+    "name": "Silicates",
+    "grossExport": 31016491,
+    "value": 0.004485200907488664,
+    "code": 2839,
+    "parent": "chemicals"
+},
+{
+    "name": "Borates",
+    "grossExport": 1676639,
+    "value": 0.0002424536922739225,
+    "code": 2840,
+    "parent": "chemicals"
+},
+{
+    "name": "Salts of oxometallic acids",
+    "grossExport": 53751750,
+    "value": 0.007772877914497285,
+    "code": 2841,
+    "parent": "chemicals"
+},
+{
+    "name": "Other salts of acids",
+    "grossExport": 3226556,
+    "value": 0.00046658249958910544,
+    "code": 2842,
+    "parent": "chemicals"
+},
+{
+    "name": "Compounds of precious metals",
+    "grossExport": 40213065,
+    "value": 0.005815089644760287,
+    "code": 2843,
+    "parent": "chemicals"
+},
+{
+    "name": "Uranium",
+    "grossExport": 715482881,
+    "value": 0.10346381436745387,
+    "code": 2844,
+    "parent": "chemicals"
+},
+{
+    "name": "Non-radioactive isotopes",
+    "grossExport": 33298,
+    "value": 0.0000048151230201236346,
+    "code": 2845,
+    "parent": "chemicals"
+},
+{
+    "name": "Compounds of rare-earth metals",
+    "grossExport": 4471994,
+    "value": 0.0006466815200689163,
+    "code": 2846,
+    "parent": "chemicals"
+},
+{
+    "name": "Hydrogen peroxide",
+    "grossExport": 4190007,
+    "value": 0.0006059042332926653,
+    "code": 2847,
+    "parent": "chemicals"
+},
+{
+    "name": "Carbides",
+    "grossExport": 89434516,
+    "value": 0.012932854729569811,
+    "code": 2849,
+    "parent": "chemicals"
+},
+{
+    "name": "Hydrides, nitrides, azides, silicides and borides",
+    "grossExport": 12271840,
+    "value": 0.0017745936477648516,
+    "code": 2850,
+    "parent": "chemicals"
+},
+{
+    "name": "Inorganic compounds, liquid or compressed air",
+    "grossExport": 335424,
+    "value": 0.000048504649645682926,
+    "code": 2851,
+    "parent": "chemicals"
+},
+{
+    "name": "Acyclic hydrocarbons",
+    "grossExport": 414274332,
+    "value": 0.05990695755479432,
+    "code": 2901,
+    "parent": "chemicals"
+},
+{
+    "name": "Cyclic hydrocarbons",
+    "grossExport": 26233781,
+    "value": 0.0037935876868875613,
+    "code": 2902,
+    "parent": "chemicals"
+},
+{
+    "name": "Halogenated derivatives of hydrocarbons",
+    "grossExport": 7566287,
+    "value": 0.0010941378674563696,
+    "code": 2903,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfonated, nitrated derivatives of hydrocarbons",
+    "grossExport": 10129112,
+    "value": 0.00146474023558804,
+    "code": 2904,
+    "parent": "chemicals"
+},
+{
+    "name": "Acyclic alcohols",
+    "grossExport": 1049120442,
+    "value": 0.1517101324751181,
+    "code": 2905,
+    "parent": "chemicals"
+},
+{
+    "name": "Cyclic alcohols",
+    "grossExport": 4285880,
+    "value": 0.0006197681377105978,
+    "code": 2906,
+    "parent": "chemicals"
+},
+{
+    "name": "Phenols, phenol-alcohols",
+    "grossExport": 37764354,
+    "value": 0.0054609889568592125,
+    "code": 2907,
+    "parent": "chemicals"
+},
+{
+    "name": "Derivatives of phenols",
+    "grossExport": 295002,
+    "value": 0.00004265934654281075,
+    "code": 2908,
+    "parent": "chemicals"
+},
+{
+    "name": "Ethers",
+    "grossExport": 17460838,
+    "value": 0.0025249589466168998,
+    "code": 2909,
+    "parent": "chemicals"
+},
+{
+    "name": "Epoxides",
+    "grossExport": 704308,
+    "value": 0.00010184784864127687,
+    "code": 2910,
+    "parent": "chemicals"
+},
+{
+    "name": "Acetals and hemiacetals",
+    "grossExport": 42303,
+    "value": 0.00000611730882095892,
+    "code": 2911,
+    "parent": "chemicals"
+},
+{
+    "name": "Aldehydes",
+    "grossExport": 4727330,
+    "value": 0.000683604886381196,
+    "code": 2912,
+    "parent": "chemicals"
+},
+{
+    "name": "Derivatives of aldehydes",
+    "grossExport": 332578,
+    "value": 0.0000480930981976899,
+    "code": 2913,
+    "parent": "chemicals"
+},
+{
+    "name": "Ketones and quinones",
+    "grossExport": 194889512,
+    "value": 0.028182382593905382,
+    "code": 2914,
+    "parent": "chemicals"
+},
+{
+    "name": "Saturated acyclic monocarboxylic acids",
+    "grossExport": 68501219,
+    "value": 0.00990575399463723,
+    "code": 2915,
+    "parent": "chemicals"
+},
+{
+    "name": "Unsaturated acyclic monocarboxylic acids",
+    "grossExport": 126726419,
+    "value": 0.01832552397695757,
+    "code": 2916,
+    "parent": "chemicals"
+},
+{
+    "name": "Polycarboxylic acids",
+    "grossExport": 8594759,
+    "value": 0.001242862091216133,
+    "code": 2917,
+    "parent": "chemicals"
+},
+{
+    "name": "Carboxylic acids with additional oxygen function",
+    "grossExport": 28368529,
+    "value": 0.004102287135411884,
+    "code": 2918,
+    "parent": "chemicals"
+},
+{
+    "name": "Phosporic esters",
+    "grossExport": 194552,
+    "value": 0.00002813357600489799,
+    "code": 2919,
+    "parent": "chemicals"
+},
+{
+    "name": "Esters of other inorganic acids of nonmetals",
+    "grossExport": 6049164,
+    "value": 0.0008747513012464162,
+    "code": 2920,
+    "parent": "chemicals"
+},
+{
+    "name": "Amine-function compounds",
+    "grossExport": 7129447,
+    "value": 0.0010309677569358936,
+    "code": 2921,
+    "parent": "chemicals"
+},
+{
+    "name": "Oxygen-function amino-compounds",
+    "grossExport": 13877011,
+    "value": 0.0020067125688212175,
+    "code": 2922,
+    "parent": "chemicals"
+},
+{
+    "name": "Quaternary ammonium salts and hydroxides",
+    "grossExport": 7009770,
+    "value": 0.0010136616281089571,
+    "code": 2923,
+    "parent": "chemicals"
+},
+{
+    "name": "Carboxyamide-function compounds",
+    "grossExport": 1543929,
+    "value": 0.00022326290075489407,
+    "code": 2924,
+    "parent": "chemicals"
+},
+{
+    "name": "Carboxyimide-function compounds",
+    "grossExport": 2650193,
+    "value": 0.00038323639023576543,
+    "code": 2925,
+    "parent": "chemicals"
+},
+{
+    "name": "Nitrile-function compounds",
+    "grossExport": 870999,
+    "value": 0.00012595252974366826,
+    "code": 2926,
+    "parent": "chemicals"
+},
+{
+    "name": "Diazo-, azo-, or azoxy-compounds",
+    "grossExport": 82800,
+    "value": 0.000011973457446880804,
+    "code": 2927,
+    "parent": "chemicals"
+},
+{
+    "name": "Organix derivatives of hydrazine",
+    "grossExport": 2717314,
+    "value": 0.0003929425549373606,
+    "code": 2928,
+    "parent": "chemicals"
+},
+{
+    "name": "Isocyanates",
+    "grossExport": 15163177,
+    "value": 0.0021927011421379434,
+    "code": 2929,
+    "parent": "chemicals"
+},
+{
+    "name": "Organo-sulfur compounds",
+    "grossExport": 22061992,
+    "value": 0.0031903179034471585,
+    "code": 2930,
+    "parent": "chemicals"
+},
+{
+    "name": "Other organo-inorganic compounds",
+    "grossExport": 843774,
+    "value": 0.00012201560487662321,
+    "code": 2931,
+    "parent": "chemicals"
+},
+{
+    "name": "Heterocyclic compounds with oxygen hetero-atom(s) only",
+    "grossExport": 38087622,
+    "value": 0.0055077357641289985,
+    "code": 2932,
+    "parent": "chemicals"
+},
+{
+    "name": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+    "grossExport": 16543082,
+    "value": 0.0023922450285900937,
+    "code": 2933,
+    "parent": "chemicals"
+},
+{
+    "name": "Nucleic acids and their salts",
+    "grossExport": 11708958,
+    "value": 0.0016931969850279534,
+    "code": 2934,
+    "parent": "chemicals"
+},
+{
+    "name": "Sulfonamides",
+    "grossExport": 2441327,
+    "value": 0.0003530329100050866,
+    "code": 2935,
+    "parent": "chemicals"
+},
+{
+    "name": "Vitamins",
+    "grossExport": 35358912,
+    "value": 0.005113145268115978,
+    "code": 2936,
+    "parent": "chemicals"
+},
+{
+    "name": "Hormones",
+    "grossExport": 1027180,
+    "value": 0.00014853739154936017,
+    "code": 2937,
+    "parent": "chemicals"
+},
+{
+    "name": "Glycosides",
+    "grossExport": 15737265,
+    "value": 0.002275718270625442,
+    "code": 2938,
+    "parent": "chemicals"
+},
+{
+    "name": "Vegetable alkaloids",
+    "grossExport": 14175645,
+    "value": 0.002049897127893582,
+    "code": 2939,
+    "parent": "chemicals"
+},
+{
+    "name": "Other sugars, chemically pure",
+    "grossExport": 6115873,
+    "value": 0.000884397887874725,
+    "code": 2940,
+    "parent": "chemicals"
+},
+{
+    "name": "Antibiotics",
+    "grossExport": 4989704,
+    "value": 0.0007215459965764605,
+    "code": 2941,
+    "parent": "chemicals"
+},
+{
+    "name": "Other organic compounds",
+    "grossExport": 5048683,
+    "value": 0.0007300747712957791,
+    "code": 2942,
+    "parent": "chemicals"
+},
+{
+    "name": "Heparin for therapeutic use",
+    "grossExport": 5507791,
+    "value": 0.0007964649899132012,
+    "code": 3001,
+    "parent": "chemicals"
+},
+{
+    "name": "Serums and vaccines",
+    "grossExport": 381516505,
+    "value": 0.05516994731763511,
+    "code": 3002,
+    "parent": "chemicals"
+},
+{
+    "name": "Medicaments, not packaged",
+    "grossExport": 68149476,
+    "value": 0.009854889503782905,
+    "code": 3003,
+    "parent": "chemicals"
+},
+{
+    "name": "Medicaments, packaged",
+    "grossExport": 945035459,
+    "value": 0.1366587180450479,
+    "code": 3004,
+    "parent": "chemicals"
+},
+{
+    "name": "Wadding, gauze and bandages",
+    "grossExport": 75269814,
+    "value": 0.010884540035792667,
+    "code": 3005,
+    "parent": "chemicals"
+},
+{
+    "name": "Pharmaceutical goods",
+    "grossExport": 21684556,
+    "value": 0.0031357380256099494,
+    "code": 3006,
+    "parent": "chemicals"
+},
+{
+    "name": "Animal or vegetable fertilizers",
+    "grossExport": 29259718,
+    "value": 0.004231159279960535,
+    "code": 3101,
+    "parent": "chemicals"
+},
+{
+    "name": "Nitrogenous fertilizers",
+    "grossExport": 4120049365,
+    "value": 0.5957878713873885,
+    "code": 3102,
+    "parent": "chemicals"
+},
+{
+    "name": "Phosphatic fertilizers",
+    "grossExport": 1131293617,
+    "value": 0.16359294665552376,
+    "code": 3103,
+    "parent": "chemicals"
+},
+{
+    "name": "Potassic fertilizers",
+    "grossExport": 136543973,
+    "value": 0.01974521075294132,
+    "code": 3104,
+    "parent": "chemicals"
+},
+{
+    "name": "Mixed fertilizers",
+    "grossExport": 5618071615,
+    "value": 0.8124123359387851,
+    "code": 3105,
+    "parent": "chemicals"
+},
+{
+    "name": "Vegetable tanning extracts",
+    "grossExport": 56413014,
+    "value": 0.00815771524854216,
+    "code": 3201,
+    "parent": "chemicals"
+},
+{
+    "name": "Synthetic tanning substances",
+    "grossExport": 28143966,
+    "value": 0.004069813759510388,
+    "code": 3202,
+    "parent": "chemicals"
+},
+{
+    "name": "Coloring matter of animal or vegetable origin",
+    "grossExport": 6581580,
+    "value": 0.0009517423679135477,
+    "code": 3203,
+    "parent": "chemicals"
+},
+{
+    "name": "Synthetic organic coloring matter",
+    "grossExport": 36404269,
+    "value": 0.005264311180631666,
+    "code": 3204,
+    "parent": "chemicals"
+},
+{
+    "name": "Color lakes",
+    "grossExport": 970863,
+    "value": 0.00014039356059481926,
+    "code": 3205,
+    "parent": "chemicals"
+},
+{
+    "name": "Other coloring matter",
+    "grossExport": 51811879,
+    "value": 0.0074923590392444095,
+    "code": 3206,
+    "parent": "chemicals"
+},
+{
+    "name": "Prepared pigments",
+    "grossExport": 18366191,
+    "value": 0.002655879304345231,
+    "code": 3207,
+    "parent": "chemicals"
+},
+{
+    "name": "Paints and varnishes, nonaqueous",
+    "grossExport": 173020541,
+    "value": 0.02501997687318593,
+    "code": 3208,
+    "parent": "chemicals"
+},
+{
+    "name": "Paints and varnishes, aqueous",
+    "grossExport": 102394162,
+    "value": 0.014806909921691053,
+    "code": 3209,
+    "parent": "chemicals"
+},
+{
+    "name": "Other paints and varnishes",
+    "grossExport": 4755586,
+    "value": 0.0006876909010384311,
+    "code": 3210,
+    "parent": "chemicals"
+},
+{
+    "name": "Prepared driers",
+    "grossExport": 6292443,
+    "value": 0.0009099311412732245,
+    "code": 3211,
+    "parent": "chemicals"
+},
+{
+    "name": "Pigments, nonaqueous",
+    "grossExport": 15524815,
+    "value": 0.002244996518999961,
+    "code": 3212,
+    "parent": "chemicals"
+},
+{
+    "name": "Artists' colors",
+    "grossExport": 11482307,
+    "value": 0.0016604216697647532,
+    "code": 3213,
+    "parent": "chemicals"
+},
+{
+    "name": "Glaziers' putty",
+    "grossExport": 61531922,
+    "value": 0.008897945044586821,
+    "code": 3214,
+    "parent": "chemicals"
+},
+{
+    "name": "Ink",
+    "grossExport": 57760393,
+    "value": 0.008352555648558115,
+    "code": 3215,
+    "parent": "chemicals"
+},
+{
+    "name": "Essential oils",
+    "grossExport": 287619952,
+    "value": 0.041591850919636464,
+    "code": 3301,
+    "parent": "chemicals"
+},
+{
+    "name": "Mixtures of odoriferous subtances",
+    "grossExport": 933782981,
+    "value": 0.13503153125150974,
+    "code": 3302,
+    "parent": "chemicals"
+},
+{
+    "name": "Perfumes",
+    "grossExport": 47485326,
+    "value": 0.006866709302080467,
+    "code": 3303,
+    "parent": "chemicals"
+},
+{
+    "name": "Make-up preparations",
+    "grossExport": 527445248,
+    "value": 0.07627226126192622,
+    "code": 3304,
+    "parent": "chemicals"
+},
+{
+    "name": "Hair products",
+    "grossExport": 199705124,
+    "value": 0.028878753673164902,
+    "code": 3305,
+    "parent": "chemicals"
+},
+{
+    "name": "Dental hygiene products",
+    "grossExport": 107680067,
+    "value": 0.015571288648572146,
+    "code": 3306,
+    "parent": "chemicals"
+},
+{
+    "name": "Toiletries",
+    "grossExport": 114284730,
+    "value": 0.016526368979266445,
+    "code": 3307,
+    "parent": "chemicals"
+},
+{
+    "name": "Soap",
+    "grossExport": 357084194,
+    "value": 0.05163686475619238,
+    "code": 3401,
+    "parent": "chemicals"
+},
+{
+    "name": "Cleaning products",
+    "grossExport": 625807895,
+    "value": 0.09049618599884722,
+    "code": 3402,
+    "parent": "chemicals"
+},
+{
+    "name": "Lubricants",
+    "grossExport": 34204887,
+    "value": 0.004946265204950077,
+    "code": 3403,
+    "parent": "chemicals"
+},
+{
+    "name": "Artificial and prepared waxes",
+    "grossExport": 16793885,
+    "value": 0.002428512891489249,
+    "code": 3404,
+    "parent": "chemicals"
+},
+{
+    "name": "Polishes and creams",
+    "grossExport": 37155260,
+    "value": 0.005372909716640005,
+    "code": 3405,
+    "parent": "chemicals"
+},
+{
+    "name": "Candles",
+    "grossExport": 14103891,
+    "value": 0.002039520999081463,
+    "code": 3406,
+    "parent": "chemicals"
+},
+{
+    "name": "Modeling pastes",
+    "grossExport": 486651,
+    "value": 0.00007037312850219794,
+    "code": 3407,
+    "parent": "chemicals"
+},
+{
+    "name": "Casein",
+    "grossExport": 8135917,
+    "value": 0.0011765103380537937,
+    "code": 3501,
+    "parent": "chemicals"
+},
+{
+    "name": "Albumins",
+    "grossExport": 2099140,
+    "value": 0.0003035502833942677,
+    "code": 3502,
+    "parent": "chemicals"
+},
+{
+    "name": "Gelatin",
+    "grossExport": 25704956,
+    "value": 0.00371711590386405,
+    "code": 3503,
+    "parent": "chemicals"
+},
+{
+    "name": "Peptones",
+    "grossExport": 998851,
+    "value": 0.00014444082058302337,
+    "code": 3504,
+    "parent": "chemicals"
+},
+{
+    "name": "Dextrins and other modified starches",
+    "grossExport": 49962783,
+    "value": 0.0072249668620560335,
+    "code": 3505,
+    "parent": "chemicals"
+},
+{
+    "name": "Glues and adhesives",
+    "grossExport": 69683458,
+    "value": 0.010076713998967458,
+    "code": 3506,
+    "parent": "chemicals"
+},
+{
+    "name": "Enzymes",
+    "grossExport": 29895350,
+    "value": 0.004323076100055652,
+    "code": 3507,
+    "parent": "chemicals"
+},
+{
+    "name": "Propellant powders",
+    "grossExport": 1909484,
+    "value": 0.0002761247031340549,
+    "code": 3601,
+    "parent": "chemicals"
+},
+{
+    "name": "Prepared explosives, except gunpowder",
+    "grossExport": 94408959,
+    "value": 0.013652193879116115,
+    "code": 3602,
+    "parent": "chemicals"
+},
+{
+    "name": "Detonators",
+    "grossExport": 75105427,
+    "value": 0.010860768529158365,
+    "code": 3603,
+    "parent": "chemicals"
+},
+{
+    "name": "Fireworks",
+    "grossExport": 2468794,
+    "value": 0.0003570048297598387,
+    "code": 3604,
+    "parent": "chemicals"
+},
+{
+    "name": "Matches",
+    "grossExport": 18766580,
+    "value": 0.002713778346056574,
+    "code": 3605,
+    "parent": "chemicals"
+},
+{
+    "name": "Ferrocerium and other pyrophoric alloys",
+    "grossExport": 3154658,
+    "value": 0.00045618554737273065,
+    "code": 3606,
+    "parent": "chemicals"
+},
+{
+    "name": "Photographic plates",
+    "grossExport": 3257890,
+    "value": 0.0004711136145123007,
+    "code": 3701,
+    "parent": "chemicals"
+},
+{
+    "name": "Photographic film in rolls",
+    "grossExport": 310212,
+    "value": 0.00004485881861729212,
+    "code": 3702,
+    "parent": "chemicals"
+},
+{
+    "name": "Photographic paper",
+    "grossExport": 545082,
+    "value": 0.00007882265859976668,
+    "code": 3703,
+    "parent": "chemicals"
+},
+{
+    "name": "Photographic film, not developed",
+    "grossExport": 115392,
+    "value": 0.00001668648794336316,
+    "code": 3704,
+    "parent": "chemicals"
+},
+{
+    "name": "Photographic film, developed",
+    "grossExport": 392780,
+    "value": 0.000056798727246205816,
+    "code": 3705,
+    "parent": "chemicals"
+},
+{
+    "name": "Motion-picture film",
+    "grossExport": 7524,
+    "value": 0.0000010880228723469946,
+    "code": 3706,
+    "parent": "chemicals"
+},
+{
+    "name": "Chemical preparations for photographic uses",
+    "grossExport": 11790060,
+    "value": 0.0017049248998329887,
+    "code": 3707,
+    "parent": "chemicals"
+},
+{
+    "name": "Artificial graphite",
+    "grossExport": 18570266,
+    "value": 0.002685389972563495,
+    "code": 3801,
+    "parent": "chemicals"
+},
+{
+    "name": "Activated carbon",
+    "grossExport": 23249174,
+    "value": 0.0033619927000498495,
+    "code": 3802,
+    "parent": "chemicals"
+},
+{
+    "name": "Tall oil",
+    "grossExport": 2505574,
+    "value": 0.0003623234742634169,
+    "code": 3803,
+    "parent": "chemicals"
+},
+{
+    "name": "Residual lyes",
+    "grossExport": 14211790,
+    "value": 0.002055123946968673,
+    "code": 3804,
+    "parent": "chemicals"
+},
+{
+    "name": "Turpentines",
+    "grossExport": 21892429,
+    "value": 0.0031657979111154497,
+    "code": 3805,
+    "parent": "chemicals"
+},
+{
+    "name": "Rosin and resin acids",
+    "grossExport": 1702754,
+    "value": 0.00024623010339983183,
+    "code": 3806,
+    "parent": "chemicals"
+},
+{
+    "name": "Wood tar and oils",
+    "grossExport": 3092110,
+    "value": 0.0004471406703632198,
+    "code": 3807,
+    "parent": "chemicals"
+},
+{
+    "name": "Insecticides, rodenticides, fungicides, etc.",
+    "grossExport": 443560448,
+    "value": 0.0641419341696544,
+    "code": 3808,
+    "parent": "chemicals"
+},
+{
+    "name": "Finishing agents",
+    "grossExport": 22521178,
+    "value": 0.003256719401408552,
+    "code": 3809,
+    "parent": "chemicals"
+},
+{
+    "name": "Pickling preparations for metal surfaces",
+    "grossExport": 4222272,
+    "value": 0.0006105699773086509,
+    "code": 3810,
+    "parent": "chemicals"
+},
+{
+    "name": "Anti-knock",
+    "grossExport": 31344412,
+    "value": 0.004532620571008453,
+    "code": 3811,
+    "parent": "chemicals"
+},
+{
+    "name": "Stabilizers for rubber or plastic",
+    "grossExport": 10834571,
+    "value": 0.0015667545268563863,
+    "code": 3812,
+    "parent": "chemicals"
+},
+{
+    "name": "Preparations for fire extinguishers",
+    "grossExport": 2259316,
+    "value": 0.00032671285006107426,
+    "code": 3813,
+    "parent": "chemicals"
+},
+{
+    "name": "Organic composite solvents and thinners",
+    "grossExport": 47894470,
+    "value": 0.0069258743778491455,
+    "code": 3814,
+    "parent": "chemicals"
+},
+{
+    "name": "Catalytic preparations",
+    "grossExport": 1035662484,
+    "value": 0.14976401789257088,
+    "code": 3815,
+    "parent": "chemicals"
+},
+{
+    "name": "Refractory cements",
+    "grossExport": 16675895,
+    "value": 0.002411450714627444,
+    "code": 3816,
+    "parent": "chemicals"
+},
+{
+    "name": "Mixed alkylbenzenes",
+    "grossExport": 106779119,
+    "value": 0.015441005284564269,
+    "code": 3817,
+    "parent": "chemicals"
+},
+{
+    "name": "Chemical elements for electronics",
+    "grossExport": 1226577,
+    "value": 0.00017737158834326948,
+    "code": 3818,
+    "parent": "chemicals"
+},
+{
+    "name": "Hydraulic fluids",
+    "grossExport": 17712534,
+    "value": 0.0025613559435438333,
+    "code": 3819,
+    "parent": "chemicals"
+},
+{
+    "name": "Antifreezing preparation",
+    "grossExport": 14167384,
+    "value": 0.0020487025296814,
+    "code": 3820,
+    "parent": "chemicals"
+},
+{
+    "name": "Prepared culture media for micro-organisms",
+    "grossExport": 6969309,
+    "value": 0.001007810685334099,
+    "code": 3821,
+    "parent": "chemicals"
+},
+{
+    "name": "Diagnostic or laboratory reagents",
+    "grossExport": 136570582,
+    "value": 0.019749058599912384,
+    "code": 3822,
+    "parent": "chemicals"
+},
+{
+    "name": "Industrial monocarboxylic fatty acids",
+    "grossExport": 603638552,
+    "value": 0.0872903443921346,
+    "code": 3823,
+    "parent": "chemicals"
+},
+{
+    "name": "Polymers of ethylene",
+    "grossExport": 711141901,
+    "value": 0.10283607838547609,
+    "code": 3901,
+    "parent": "chemicals"
+},
+{
+    "name": "Polymers of propylene",
+    "grossExport": 838312428,
+    "value": 0.12122582347644113,
+    "code": 3902,
+    "parent": "chemicals"
+},
+{
+    "name": "Polymers of styrene",
+    "grossExport": 50988042,
+    "value": 0.007373226463608346,
+    "code": 3903,
+    "parent": "chemicals"
+},
+{
+    "name": "Polymers of vinyl chloride",
+    "grossExport": 264583618,
+    "value": 0.038260636367931956,
+    "code": 3904,
+    "parent": "chemicals"
+},
+{
+    "name": "Polymers of vinyl acetate",
+    "grossExport": 43599205,
+    "value": 0.006304749103687593,
+    "code": 3905,
+    "parent": "chemicals"
+},
+{
+    "name": "Acrylic polymers",
+    "grossExport": 113914199,
+    "value": 0.016472787612584684,
+    "code": 3906,
+    "parent": "chemicals"
+},
+{
+    "name": "Polyacetals",
+    "grossExport": 520668837,
+    "value": 0.07529234497266203,
+    "code": 3907,
+    "parent": "chemicals"
+},
+{
+    "name": "Polyamides",
+    "grossExport": 3703811,
+    "value": 0.0005355969009636356,
+    "code": 3908,
+    "parent": "chemicals"
+},
+{
+    "name": "Amino-resins",
+    "grossExport": 67482585,
+    "value": 0.009758452414287641,
+    "code": 3909,
+    "parent": "chemicals"
+},
+{
+    "name": "Silicones in primary forms",
+    "grossExport": 7737831,
+    "value": 0.0011189443262035643,
+    "code": 3910,
+    "parent": "chemicals"
+},
+{
+    "name": "Petroleum resins",
+    "grossExport": 2380126,
+    "value": 0.00034418281858954853,
+    "code": 3911,
+    "parent": "chemicals"
+},
+{
+    "name": "Cellulose n.e.c.",
+    "grossExport": 27222531,
+    "value": 0.0039365678324262505,
+    "code": 3912,
+    "parent": "chemicals"
+},
+{
+    "name": "Natural polymers",
+    "grossExport": 6847981,
+    "value": 0.0009902658103930948,
+    "code": 3913,
+    "parent": "chemicals"
+},
+{
+    "name": "Ion-exchangers based on polymers",
+    "grossExport": 1014731,
+    "value": 0.00014673717933008217,
+    "code": 3914,
+    "parent": "chemicals"
+},
+{
+    "name": "Plastic waste",
+    "grossExport": 58655270,
+    "value": 0.00848196110362686,
+    "code": 3915,
+    "parent": "chemicals"
+},
+{
+    "name": "Monofilament",
+    "grossExport": 12023215,
+    "value": 0.00173864073885506,
+    "code": 3916,
+    "parent": "chemicals"
+},
+{
+    "name": "Plastic tubes and fittings",
+    "grossExport": 502641488,
+    "value": 0.07268546458459961,
+    "code": 3917,
+    "parent": "chemicals"
+},
+{
+    "name": "Plastic floor coverings",
+    "grossExport": 18244124,
+    "value": 0.002638227564850444,
+    "code": 3918,
+    "parent": "chemicals"
+},
+{
+    "name": "Self-adhesive plastic sheets",
+    "grossExport": 41128545,
+    "value": 0.005947474437314278,
+    "code": 3919,
+    "parent": "chemicals"
+},
+{
+    "name": "Other plates of plastics, noncellular and not reinforced",
+    "grossExport": 589112344,
+    "value": 0.085189753409616,
+    "code": 3920,
+    "parent": "chemicals"
+},
+{
+    "name": "Other plastic plates, sheets etc.",
+    "grossExport": 139444464,
+    "value": 0.020164641979554372,
+    "code": 3921,
+    "parent": "chemicals"
+},
+{
+    "name": "Baths, sinks etc.",
+    "grossExport": 119079466,
+    "value": 0.017219721243336827,
+    "code": 3922,
+    "parent": "chemicals"
+},
+{
+    "name": "Packing lids",
+    "grossExport": 598449936,
+    "value": 0.08654003433314661,
+    "code": 3923,
+    "parent": "chemicals"
+},
+{
+    "name": "Plastic household articles",
+    "grossExport": 125912814,
+    "value": 0.01820787101987944,
+    "code": 3924,
+    "parent": "chemicals"
+},
+{
+    "name": "Plastic builders' ware",
+    "grossExport": 50685728,
+    "value": 0.007329509750871677,
+    "code": 3925,
+    "parent": "chemicals"
+},
+{
+    "name": "Other articles of plastic",
+    "grossExport": 663582844,
+    "value": 0.09595870706659591,
+    "code": 3926,
+    "parent": "chemicals"
+},
+{
+    "name": "Natural rubber",
+    "grossExport": 2383705544,
+    "value": 0.3447004456156746,
+    "code": 4001,
+    "parent": "chemicals"
+},
+{
+    "name": "Synthetic rubber",
+    "grossExport": 6460844,
+    "value": 0.0009342831003011492,
+    "code": 4002,
+    "parent": "chemicals"
+},
+{
+    "name": "Reclaimed rubber",
+    "grossExport": 1334892,
+    "value": 0.00019303469273166193,
+    "code": 4003,
+    "parent": "chemicals"
+},
+{
+    "name": "Scrap of rubber",
+    "grossExport": 2579616,
+    "value": 0.00037303046383203945,
+    "code": 4004,
+    "parent": "chemicals"
+},
+{
+    "name": "Compounded rubber",
+    "grossExport": 12786357,
+    "value": 0.001848996394204426,
+    "code": 4005,
+    "parent": "chemicals"
+},
+{
+    "name": "Unvulcanized rubber rods",
+    "grossExport": 2213645,
+    "value": 0.0003201085049516963,
+    "code": 4006,
+    "parent": "chemicals"
+},
+{
+    "name": "Vulcanized rubber thread and cord",
+    "grossExport": 851459,
+    "value": 0.0001231269094717836,
+    "code": 4007,
+    "parent": "chemicals"
+},
+{
+    "name": "Vulcanized rubber plates",
+    "grossExport": 11184371,
+    "value": 0.0016173380463602378,
+    "code": 4008,
+    "parent": "chemicals"
+},
+{
+    "name": "Vulcanized rubber tubes",
+    "grossExport": 79292507,
+    "value": 0.011466249497838142,
+    "code": 4009,
+    "parent": "chemicals"
+},
+{
+    "name": "Conveyor belts of vulcanized rubber",
+    "grossExport": 48581472,
+    "value": 0.007025219658198445,
+    "code": 4010,
+    "parent": "chemicals"
+},
+{
+    "name": "New pneumatic tires of rubber",
+    "grossExport": 448796740,
+    "value": 0.06489913851073463,
+    "code": 4011,
+    "parent": "chemicals"
+},
+{
+    "name": "Used pneumatic tires of rubber",
+    "grossExport": 10675538,
+    "value": 0.0015437572459608574,
+    "code": 4012,
+    "parent": "chemicals"
+},
+{
+    "name": "Rubber inner tubes",
+    "grossExport": 4322104,
+    "value": 0.0006250063807366341,
+    "code": 4013,
+    "parent": "chemicals"
+},
+{
+    "name": "Rubber hygenic or pharmeceutical items",
+    "grossExport": 3184603,
+    "value": 0.00046051580320904516,
+    "code": 4014,
+    "parent": "chemicals"
+},
+{
+    "name": "Vulcanized rubber articles of apparel",
+    "grossExport": 35220059,
+    "value": 0.005093066155955691,
+    "code": 4015,
+    "parent": "chemicals"
+},
+{
+    "name": "Other articles of vulcanized rubber",
+    "grossExport": 128370734,
+    "value": 0.01856330339340404,
+    "code": 4016,
+    "parent": "chemicals"
+},
+{
+    "name": "Hard rubber",
+    "grossExport": 1322292,
+    "value": 0.00019121264485931052,
+    "code": 4017,
+    "parent": "chemicals"
+},
+{
+    "name": "Raw hides of bovines or equines",
+    "grossExport": 23892180,
+    "value": 0.003454975851971215,
+    "code": 4101,
+    "parent": "agriculture"
+},
+{
+    "name": "Raw skins of sheep or lambs",
+    "grossExport": 32564346,
+    "value": 0.004709031535223467,
+    "code": 4102,
+    "parent": "agriculture"
+},
+{
+    "name": "Other raw hides and skins",
+    "grossExport": 50177790,
+    "value": 0.007256058373714022,
+    "code": 4103,
+    "parent": "agriculture"
+},
+{
+    "name": "Tanned hides of bovines or equines",
+    "grossExport": 259546363,
+    "value": 0.037532214165135,
+    "code": 4104,
+    "parent": "agriculture"
+},
+{
+    "name": "Tanned sheepskins",
+    "grossExport": 113311318,
+    "value": 0.01638560681549491,
+    "code": 4105,
+    "parent": "agriculture"
+},
+{
+    "name": "Tanned skins of other animals",
+    "grossExport": 51219601,
+    "value": 0.00740671150989992,
+    "code": 4106,
+    "parent": "agriculture"
+},
+{
+    "name": "Bovine leather further prepared",
+    "grossExport": 53614764,
+    "value": 0.007753068783557449,
+    "code": 4107,
+    "parent": "agriculture"
+},
+{
+    "name": "Chamois leather",
+    "grossExport": 3751084,
+    "value": 0.0005424329064453554,
+    "code": 4108,
+    "parent": "agriculture"
+},
+{
+    "name": "Patent leather",
+    "grossExport": 4166891,
+    "value": 0.0006025614984817704,
+    "code": 4109,
+    "parent": "agriculture"
+},
+{
+    "name": "Waste of leather",
+    "grossExport": 308155,
+    "value": 0.00004456136207178205,
+    "code": 4110,
+    "parent": "agriculture"
+},
+{
+    "name": "Composition leather",
+    "grossExport": 11026308,
+    "value": 0.0015944810342294852,
+    "code": 4111,
+    "parent": "agriculture"
+},
+{
+    "name": "Saddlery and harnesses",
+    "grossExport": 24884086,
+    "value": 0.003598412377119835,
+    "code": 4201,
+    "parent": "agriculture"
+},
+{
+    "name": "Trunks or cases",
+    "grossExport": 182040472,
+    "value": 0.026324321800749957,
+    "code": 4202,
+    "parent": "agriculture"
+},
+{
+    "name": "Leather apparel",
+    "grossExport": 56709167,
+    "value": 0.00820054103771204,
+    "code": 4203,
+    "parent": "agriculture"
+},
+{
+    "name": "Other articles of leather",
+    "grossExport": 43374901,
+    "value": 0.006272313180992362,
+    "code": 4205,
+    "parent": "agriculture"
+},
+{
+    "name": "Other raw furskins",
+    "grossExport": 196680,
+    "value": 0.000028441299645561792,
+    "code": 4301,
+    "parent": "agriculture"
+},
+{
+    "name": "Other tanned furskins",
+    "grossExport": 2612744,
+    "value": 0.0003778210036665837,
+    "code": 4302,
+    "parent": "agriculture"
+},
+{
+    "name": "Furskin apparel",
+    "grossExport": 687380,
+    "value": 0.00009939994178547011,
+    "code": 4303,
+    "parent": "agriculture"
+},
+{
+    "name": "Artificial fur",
+    "grossExport": 219710,
+    "value": 0.00003177159825669301,
+    "code": 4304,
+    "parent": "agriculture"
+},
+{
+    "name": "Fuel wood",
+    "grossExport": 299675703,
+    "value": 0.043335196590997466,
+    "code": 4401,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood charcoal",
+    "grossExport": 107218594,
+    "value": 0.015504556434461225,
+    "code": 4402,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood in the rough",
+    "grossExport": 1321799980,
+    "value": 0.19114149533596492,
+    "code": 4403,
+    "parent": "agriculture"
+},
+{
+    "name": "Strips and other pieces of wood",
+    "grossExport": 6630960,
+    "value": 0.0009588830602894774,
+    "code": 4404,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood wool or flour",
+    "grossExport": 346955,
+    "value": 0.00005017211266283248,
+    "code": 4405,
+    "parent": "agriculture"
+},
+{
+    "name": "Wooden railway ties",
+    "grossExport": 10852966,
+    "value": 0.0015694145721430453,
+    "code": 4406,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood sawn lengthwise",
+    "grossExport": 1452866882,
+    "value": 0.21009468342523419,
+    "code": 4407,
+    "parent": "agriculture"
+},
+{
+    "name": "Sheets for veneering for plywood",
+    "grossExport": 390149153,
+    "value": 0.05641828842248898,
+    "code": 4408,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood shaped along its edges",
+    "grossExport": 42344294,
+    "value": 0.006123280221343117,
+    "code": 4409,
+    "parent": "agriculture"
+},
+{
+    "name": "Particle board and similar board",
+    "grossExport": 60124338,
+    "value": 0.008694398581701429,
+    "code": 4410,
+    "parent": "agriculture"
+},
+{
+    "name": "Fiberboard of wood",
+    "grossExport": 54925529,
+    "value": 0.007942614543827504,
+    "code": 4411,
+    "parent": "agriculture"
+},
+{
+    "name": "Plywood",
+    "grossExport": 159696554,
+    "value": 0.02309323543155196,
+    "code": 4412,
+    "parent": "agriculture"
+},
+{
+    "name": "Densified wood",
+    "grossExport": 40665650,
+    "value": 0.005880536592086333,
+    "code": 4413,
+    "parent": "agriculture"
+},
+{
+    "name": "Wooden frames",
+    "grossExport": 5673245,
+    "value": 0.0008203907921887594,
+    "code": 4414,
+    "parent": "agriculture"
+},
+{
+    "name": "Packing boxes",
+    "grossExport": 29632818,
+    "value": 0.004285112141958497,
+    "code": 4415,
+    "parent": "agriculture"
+},
+{
+    "name": "Casks, barrels, etc. of wood",
+    "grossExport": 1270987,
+    "value": 0.0001837935840584383,
+    "code": 4416,
+    "parent": "agriculture"
+},
+{
+    "name": "Wooden tools",
+    "grossExport": 1714398,
+    "value": 0.0002479139070050429,
+    "code": 4417,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood carpentry for construction",
+    "grossExport": 98671610,
+    "value": 0.014268602941427757,
+    "code": 4418,
+    "parent": "agriculture"
+},
+{
+    "name": "Wooden kitchenware",
+    "grossExport": 19623485,
+    "value": 0.0028376927851087408,
+    "code": 4419,
+    "parent": "agriculture"
+},
+{
+    "name": "Wood marquetry, ornaments, etc.",
+    "grossExport": 17972175,
+    "value": 0.0025989018428791665,
+    "code": 4420,
+    "parent": "agriculture"
+},
+{
+    "name": "Other articles of wood",
+    "grossExport": 23259463,
+    "value": 0.0033634805612052956,
+    "code": 4421,
+    "parent": "agriculture"
+},
+{
+    "name": "Natural cork, raw",
+    "grossExport": 19052872,
+    "value": 0.002755178165855878,
+    "code": 4501,
+    "parent": "agriculture"
+},
+{
+    "name": "Natural cork, debacked",
+    "grossExport": 548278,
+    "value": 0.00007928482248865837,
+    "code": 4502,
+    "parent": "agriculture"
+},
+{
+    "name": "Articles of natural cork",
+    "grossExport": 11826643,
+    "value": 0.0017102150567626898,
+    "code": 4503,
+    "parent": "agriculture"
+},
+{
+    "name": "Agglomerated cork",
+    "grossExport": 4990985,
+    "value": 0.0007217312381101495,
+    "code": 4504,
+    "parent": "agriculture"
+},
+{
+    "name": "Products of plaiting materials",
+    "grossExport": 28057774,
+    "value": 0.004057349795207712,
+    "code": 4601,
+    "parent": "agriculture"
+},
+{
+    "name": "Basketwork",
+    "grossExport": 53246922,
+    "value": 0.007699876265028759,
+    "code": 4602,
+    "parent": "agriculture"
+},
+{
+    "name": "Mechanical woodpulp",
+    "grossExport": 40460,
+    "value": 0.000005850798167884025,
+    "code": 4701,
+    "parent": "agriculture"
+},
+{
+    "name": "Chemical woodpulp, dissolving grade",
+    "grossExport": 586300789,
+    "value": 0.08478318294884227,
+    "code": 4702,
+    "parent": "agriculture"
+},
+{
+    "name": "Chemical woodpulp, soda or sulfate",
+    "grossExport": 35175421,
+    "value": 0.005086611189850451,
+    "code": 4703,
+    "parent": "agriculture"
+},
+{
+    "name": "Chemical woodpulp, sulfite",
+    "grossExport": 6649,
+    "value": 9.61491770100368e-7,
+    "code": 4704,
+    "parent": "agriculture"
+},
+{
+    "name": "Semichemical woodpulp",
+    "grossExport": 711454,
+    "value": 0.00010288121007745331,
+    "code": 4705,
+    "parent": "agriculture"
+},
+{
+    "name": "Pulps of recovered paper fibers",
+    "grossExport": 3091950,
+    "value": 0.0004471175332473804,
+    "code": 4706,
+    "parent": "agriculture"
+},
+{
+    "name": "Paper waste",
+    "grossExport": 80808513,
+    "value": 0.011685474538058141,
+    "code": 4707,
+    "parent": "agriculture"
+},
+{
+    "name": "Newsprint",
+    "grossExport": 27011522,
+    "value": 0.003906054459450297,
+    "code": 4801,
+    "parent": "agriculture"
+},
+{
+    "name": "Paper used for graphic purposes",
+    "grossExport": 85710281,
+    "value": 0.012394304375769279,
+    "code": 4802,
+    "parent": "agriculture"
+},
+{
+    "name": "Tissue",
+    "grossExport": 175878042,
+    "value": 0.025433191445986887,
+    "code": 4803,
+    "parent": "agriculture"
+},
+{
+    "name": "Uncoated kraft paper and paperboard",
+    "grossExport": 160746352,
+    "value": 0.02324504354363916,
+    "code": 4804,
+    "parent": "agriculture"
+},
+{
+    "name": "Other uncoated paper and paperboard",
+    "grossExport": 207560611,
+    "value": 0.03001471187750096,
+    "code": 4805,
+    "parent": "agriculture"
+},
+{
+    "name": "Transparent paper",
+    "grossExport": 2006872,
+    "value": 0.0002902076871175914,
+    "code": 4806,
+    "parent": "agriculture"
+},
+{
+    "name": "Uncoated composite paper",
+    "grossExport": 2433351,
+    "value": 0.0003518795247804933,
+    "code": 4807,
+    "parent": "agriculture"
+},
+{
+    "name": "Corrugated paper and paperboard",
+    "grossExport": 29666805,
+    "value": 0.004290026899183703,
+    "code": 4808,
+    "parent": "agriculture"
+},
+{
+    "name": "Carbon paper",
+    "grossExport": 10160027,
+    "value": 0.0014692107601891307,
+    "code": 4809,
+    "parent": "agriculture"
+},
+{
+    "name": "Paper and paperboard, coated with kaolin",
+    "grossExport": 59723014,
+    "value": 0.008636364332469402,
+    "code": 4810,
+    "parent": "agriculture"
+},
+{
+    "name": "Cellulose wadding, coated",
+    "grossExport": 63223210,
+    "value": 0.009142517084422812,
+    "code": 4811,
+    "parent": "agriculture"
+},
+{
+    "name": "Filter blocks of paper pulp",
+    "grossExport": 3758252,
+    "value": 0.0005434694492349599,
+    "code": 4812,
+    "parent": "agriculture"
+},
+{
+    "name": "Cigarette paper",
+    "grossExport": 8203131,
+    "value": 0.0011862299512039706,
+    "code": 4813,
+    "parent": "agriculture"
+},
+{
+    "name": "Wallpaper",
+    "grossExport": 1439580,
+    "value": 0.00020817330762537038,
+    "code": 4814,
+    "parent": "agriculture"
+},
+{
+    "name": "Other carbon paper",
+    "grossExport": 1557470,
+    "value": 0.00022522102378977587,
+    "code": 4816,
+    "parent": "agriculture"
+},
+{
+    "name": "Letterstock",
+    "grossExport": 5430478,
+    "value": 0.0007852849909326372,
+    "code": 4817,
+    "parent": "agriculture"
+},
+{
+    "name": "Toilet paper",
+    "grossExport": 558657478,
+    "value": 0.08078576739389792,
+    "code": 4818,
+    "parent": "agriculture"
+},
+{
+    "name": "Cardboard packing containers",
+    "grossExport": 400045056,
+    "value": 0.05784930501027835,
+    "code": 4819,
+    "parent": "agriculture"
+},
+{
+    "name": "Notebooks",
+    "grossExport": 84800026,
+    "value": 0.012262675154654415,
+    "code": 4820,
+    "parent": "agriculture"
+},
+{
+    "name": "Paper labels",
+    "grossExport": 64228585,
+    "value": 0.009287901320904186,
+    "code": 4821,
+    "parent": "agriculture"
+},
+{
+    "name": "Bobbins, spools, cops of paper",
+    "grossExport": 1483271,
+    "value": 0.00021449133092623593,
+    "code": 4822,
+    "parent": "agriculture"
+},
+{
+    "name": "Other paper cut to size",
+    "grossExport": 58659085,
+    "value": 0.008482512779232657,
+    "code": 4823,
+    "parent": "agriculture"
+},
+{
+    "name": "Books, brochures etc.",
+    "grossExport": 80924582,
+    "value": 0.0117022589249229,
+    "code": 4901,
+    "parent": "agriculture"
+},
+{
+    "name": "Newspapers, journals and periodicals",
+    "grossExport": 6432273,
+    "value": 0.0009301515344471052,
+    "code": 4902,
+    "parent": "agriculture"
+},
+{
+    "name": "Children's books",
+    "grossExport": 1125011,
+    "value": 0.000162684436422377,
+    "code": 4903,
+    "parent": "agriculture"
+},
+{
+    "name": "Music, printed or in manuscript",
+    "grossExport": 139260,
+    "value": 0.000020137967198703147,
+    "code": 4904,
+    "parent": "agriculture"
+},
+{
+    "name": "Maps",
+    "grossExport": 589496,
+    "value": 0.00008524523274283146,
+    "code": 4905,
+    "parent": "agriculture"
+},
+{
+    "name": "Architectural, engineering, etc. drawings",
+    "grossExport": 125680,
+    "value": 0.0000181742044918355,
+    "code": 4906,
+    "parent": "agriculture"
+},
+{
+    "name": "Unused stamps",
+    "grossExport": 458908357,
+    "value": 0.06636134884731261,
+    "code": 4907,
+    "parent": "agriculture"
+},
+{
+    "name": "Transfers (decalcomanias)",
+    "grossExport": 2943201,
+    "value": 0.0004256073904724278,
+    "code": 4908,
+    "parent": "agriculture"
+},
+{
+    "name": "Printed or illustrated postcards",
+    "grossExport": 753381,
+    "value": 0.00010894414667618967,
+    "code": 4909,
+    "parent": "agriculture"
+},
+{
+    "name": "Calendars",
+    "grossExport": 2075897,
+    "value": 0.00030018918349767536,
+    "code": 4910,
+    "parent": "agriculture"
+},
+{
+    "name": "Other printed matter",
+    "grossExport": 43632189,
+    "value": 0.0063095188201178825,
+    "code": 4911,
+    "parent": "agriculture"
+},
+{
+    "name": "Raw silk",
+    "grossExport": 70202,
+    "value": 0.000010151698788477367,
+    "code": 5002,
+    "parent": "textiles"
+},
+{
+    "name": "Silk waste",
+    "grossExport": 218852,
+    "value": 0.00003164752547300432,
+    "code": 5003,
+    "parent": "textiles"
+},
+{
+    "name": "Silk yarn",
+    "grossExport": 1089565,
+    "value": 0.00015755869762210968,
+    "code": 5004,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn from silk waste",
+    "grossExport": 2918,
+    "value": 4.21963150120751e-7,
+    "code": 5005,
+    "parent": "textiles"
+},
+{
+    "name": "Silk yarn, for retail sale",
+    "grossExport": 134243,
+    "value": 0.000019412474010164487,
+    "code": 5006,
+    "parent": "textiles"
+},
+{
+    "name": "Woven silk fabrics",
+    "grossExport": 2970481,
+    "value": 0.00042955226872304266,
+    "code": 5007,
+    "parent": "textiles"
+},
+{
+    "name": "Wool",
+    "grossExport": 338514092,
+    "value": 0.04895149849917262,
+    "code": 5101,
+    "parent": "textiles"
+},
+{
+    "name": "Animal hair",
+    "grossExport": 12962409,
+    "value": 0.0018744547411903955,
+    "code": 5102,
+    "parent": "textiles"
+},
+{
+    "name": "Wool or animal hair waste",
+    "grossExport": 2612725,
+    "value": 0.00037781825613407785,
+    "code": 5103,
+    "parent": "textiles"
+},
+{
+    "name": "Garnetted stock of wool or animal hair",
+    "grossExport": 2866,
+    "value": 4.1444358747295147e-7,
+    "code": 5104,
+    "parent": "textiles"
+},
+{
+    "name": "Wool, combed",
+    "grossExport": 95622109,
+    "value": 0.013827623829619539,
+    "code": 5105,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of carded wool, not for retail sale",
+    "grossExport": 15637077,
+    "value": 0.0022612303871147165,
+    "code": 5106,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of combed wool, not for retail sale",
+    "grossExport": 1933245,
+    "value": 0.00027956070944317726,
+    "code": 5107,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of animal hair, not for retail sale",
+    "grossExport": 9095422,
+    "value": 0.0013152614526379647,
+    "code": 5108,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of wool or animal hair, for retail sale",
+    "grossExport": 2663547,
+    "value": 0.0003851674717665099,
+    "code": 5109,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of coarse animal hair or of horsehair",
+    "grossExport": 91462,
+    "value": 0.00001322604305563541,
+    "code": 5110,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of carded wool",
+    "grossExport": 2424612,
+    "value": 0.000350615804434741,
+    "code": 5111,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of combed wool",
+    "grossExport": 3293606,
+    "value": 0.000476278397195547,
+    "code": 5112,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of coarse animal hair",
+    "grossExport": 322564,
+    "value": 0.0000466450039600925,
+    "code": 5113,
+    "parent": "textiles"
+},
+{
+    "name": "Raw cotton",
+    "grossExport": 2093003470,
+    "value": 0.30266289836013116,
+    "code": 5201,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton waste",
+    "grossExport": 10239784,
+    "value": 0.0014807441786141413,
+    "code": 5202,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton, carded or combed",
+    "grossExport": 39400644,
+    "value": 0.005697607902339365,
+    "code": 5203,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton sewing thread",
+    "grossExport": 8629168,
+    "value": 0.0012478378725843662,
+    "code": 5204,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton yarn of > 85%",
+    "grossExport": 187409222,
+    "value": 0.027100680492391758,
+    "code": 5205,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton yarn of < 85%",
+    "grossExport": 7913216,
+    "value": 0.0011443062203378783,
+    "code": 5206,
+    "parent": "textiles"
+},
+{
+    "name": "Cotton yarn for retail sale",
+    "grossExport": 17251561,
+    "value": 0.0024946960329199084,
+    "code": 5207,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of cotton of > 85% weighing < 200 g/m2",
+    "grossExport": 118922506,
+    "value": 0.017197023732698394,
+    "code": 5208,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of cotton of < 85% weighing > 200 g/m2",
+    "grossExport": 195366620,
+    "value": 0.028251375738054734,
+    "code": 5209,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of cotton of < 85% weighing < 200 g/m2",
+    "grossExport": 5902388,
+    "value": 0.0008535264680311581,
+    "code": 5210,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of cotton of < 85% weighing > 200 g/m2",
+    "grossExport": 11725992,
+    "value": 0.001695660220223004,
+    "code": 5211,
+    "parent": "textiles"
+},
+{
+    "name": "Other woven cotton fabrics",
+    "grossExport": 7604247,
+    "value": 0.0010996271481892633,
+    "code": 5212,
+    "parent": "textiles"
+},
+{
+    "name": "Flax, raw or processed",
+    "grossExport": 35300374,
+    "value": 0.005104680265072191,
+    "code": 5301,
+    "parent": "textiles"
+},
+{
+    "name": "Hemp fiber",
+    "grossExport": 1537171,
+    "value": 0.00022228564682462816,
+    "code": 5302,
+    "parent": "textiles"
+},
+{
+    "name": "Textile bast fibers",
+    "grossExport": 19434209,
+    "value": 0.002810322155498646,
+    "code": 5303,
+    "parent": "textiles"
+},
+{
+    "name": "Vegetable textile fibers",
+    "grossExport": 84947038,
+    "value": 0.012283934115115538,
+    "code": 5305,
+    "parent": "textiles"
+},
+{
+    "name": "Flax yarn",
+    "grossExport": 32791493,
+    "value": 0.00474187857554577,
+    "code": 5306,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of textile bast fibers",
+    "grossExport": 236167,
+    "value": 0.00003415139522774756,
+    "code": 5307,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of other vegetable textile fibers",
+    "grossExport": 3767838,
+    "value": 0.0005448556516876868,
+    "code": 5308,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of flax",
+    "grossExport": 7921730,
+    "value": 0.0011455374041144815,
+    "code": 5309,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of jute or of other textile bast fibers",
+    "grossExport": 546589,
+    "value": 0.00007904058130957887,
+    "code": 5310,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of vegetable textile fibers",
+    "grossExport": 682013,
+    "value": 0.00009862383615603281,
+    "code": 5311,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic sowing thread",
+    "grossExport": 31647970,
+    "value": 0.0045765171748207755,
+    "code": 5401,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic filament yarn",
+    "grossExport": 42150979,
+    "value": 0.006095325524165052,
+    "code": 5402,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial filament yarn",
+    "grossExport": 8160410,
+    "value": 0.0011800521966678814,
+    "code": 5403,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic monofilament >67 dtex, thickness < 1mm",
+    "grossExport": 4133385,
+    "value": 0.0005977162972110557,
+    "code": 5404,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial monofilament >67dtex t<1mm, strip, straws t<5mm",
+    "grossExport": 6896,
+    "value": 9.972096926774156e-7,
+    "code": 5405,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic filament yarn for retail sale",
+    "grossExport": 6918179,
+    "value": 0.0010004169307536762,
+    "code": 5406,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of synthetic filament yarn",
+    "grossExport": 209025542,
+    "value": 0.030226551116524107,
+    "code": 5407,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of artificial filament yarn",
+    "grossExport": 3679326,
+    "value": 0.00053205619920534,
+    "code": 5408,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic filament tow",
+    "grossExport": 21172948,
+    "value": 0.0030617559408577296,
+    "code": 5501,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial filament tow",
+    "grossExport": 5452175,
+    "value": 0.0007884225284474316,
+    "code": 5502,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic staple fibers",
+    "grossExport": 110456423,
+    "value": 0.01597276908846819,
+    "code": 5503,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial staple fibers, not processed for spinning",
+    "grossExport": 330440,
+    "value": 0.00004778392848728614,
+    "code": 5504,
+    "parent": "textiles"
+},
+{
+    "name": "Waste of man-made fibers",
+    "grossExport": 19231451,
+    "value": 0.002781001934665136,
+    "code": 5505,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic staple fibers, processed",
+    "grossExport": 43988895,
+    "value": 0.006361100995384152,
+    "code": 5506,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial staple fibers, processed",
+    "grossExport": 602076,
+    "value": 0.00008706438847570297,
+    "code": 5507,
+    "parent": "textiles"
+},
+{
+    "name": "Synthetic staple fibers sewing thread",
+    "grossExport": 31356060,
+    "value": 0.004534304953041561,
+    "code": 5508,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of synthetic staple fibers, not for retail sale",
+    "grossExport": 39205869,
+    "value": 0.005669442078979265,
+    "code": 5509,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of artificial staple fibers, not for retail sale",
+    "grossExport": 16468850,
+    "value": 0.002381510563696412,
+    "code": 5510,
+    "parent": "textiles"
+},
+{
+    "name": "Yarn of synthetic staple fibers, for retail sale",
+    "grossExport": 18523357,
+    "value": 0.0026786066040203095,
+    "code": 5511,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of > 85% synthetic staple fibers",
+    "grossExport": 21788932,
+    "value": 0.003150831523127771,
+    "code": 5512,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of < 85% synthetic staple fibers weighing < 170 g/m2",
+    "grossExport": 9493556,
+    "value": 0.001372834405622946,
+    "code": 5513,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of < 85% synthetic staple fibers weighing > 170 g/m2",
+    "grossExport": 8195142,
+    "value": 0.0011850746860887155,
+    "code": 5514,
+    "parent": "textiles"
+},
+{
+    "name": "Other woven fabrics of synthetic staple fibers",
+    "grossExport": 11742740,
+    "value": 0.0016980820978234911,
+    "code": 5515,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabrics of artificial staple fibers",
+    "grossExport": 11709764,
+    "value": 0.0016933135382489943,
+    "code": 5516,
+    "parent": "textiles"
+},
+{
+    "name": "Wadding of textile materials",
+    "grossExport": 18871393,
+    "value": 0.002728935036822032,
+    "code": 5601,
+    "parent": "textiles"
+},
+{
+    "name": "Felt",
+    "grossExport": 4210918,
+    "value": 0.0006089281097258987,
+    "code": 5602,
+    "parent": "textiles"
+},
+{
+    "name": "Nonwoven textiles",
+    "grossExport": 133652840,
+    "value": 0.019327132758390923,
+    "code": 5603,
+    "parent": "textiles"
+},
+{
+    "name": "Rubber textiles",
+    "grossExport": 6021045,
+    "value": 0.0008706850977446187,
+    "code": 5604,
+    "parent": "textiles"
+},
+{
+    "name": "Metallised yarn",
+    "grossExport": 65018,
+    "value": 0.000009402056235281352,
+    "code": 5605,
+    "parent": "textiles"
+},
+{
+    "name": "Gimp yarn",
+    "grossExport": 464887,
+    "value": 0.00006722590232014584,
+    "code": 5606,
+    "parent": "textiles"
+},
+{
+    "name": "Twine and ropes of baste fibers",
+    "grossExport": 70926776,
+    "value": 0.0102565064526624,
+    "code": 5607,
+    "parent": "textiles"
+},
+{
+    "name": "Nets",
+    "grossExport": 29946689,
+    "value": 0.00433050007749364,
+    "code": 5608,
+    "parent": "textiles"
+},
+{
+    "name": "Articles of yarn, rope etc not elsewhere clasified",
+    "grossExport": 3487965,
+    "value": 0.0005043840640544637,
+    "code": 5609,
+    "parent": "textiles"
+},
+{
+    "name": "Carpets, knotted",
+    "grossExport": 85120425,
+    "value": 0.012309007084515808,
+    "code": 5701,
+    "parent": "textiles"
+},
+{
+    "name": "Woven carpets and rugs",
+    "grossExport": 259816296,
+    "value": 0.037571248359446696,
+    "code": 5702,
+    "parent": "textiles"
+},
+{
+    "name": "Carpets, tufted",
+    "grossExport": 154832399,
+    "value": 0.02238984469595374,
+    "code": 5703,
+    "parent": "textiles"
+},
+{
+    "name": "Carpets of felt",
+    "grossExport": 16148873,
+    "value": 0.0023352396579780477,
+    "code": 5704,
+    "parent": "textiles"
+},
+{
+    "name": "Other carpets",
+    "grossExport": 66804244,
+    "value": 0.009660359574940122,
+    "code": 5705,
+    "parent": "textiles"
+},
+{
+    "name": "Woven pile fabrics",
+    "grossExport": 3337143,
+    "value": 0.00048257415102241717,
+    "code": 5801,
+    "parent": "textiles"
+},
+{
+    "name": "Terry cloth",
+    "grossExport": 4022103,
+    "value": 0.0005816241439308166,
+    "code": 5802,
+    "parent": "textiles"
+},
+{
+    "name": "Gauze",
+    "grossExport": 7142656,
+    "value": 0.0010328778704554087,
+    "code": 5803,
+    "parent": "textiles"
+},
+{
+    "name": "Lace and net fabrics",
+    "grossExport": 11081935,
+    "value": 0.0016025250863719686,
+    "code": 5804,
+    "parent": "textiles"
+},
+{
+    "name": "Hand-woven tapestries",
+    "grossExport": 1587837,
+    "value": 0.00022961230376911682,
+    "code": 5805,
+    "parent": "textiles"
+},
+{
+    "name": "Narrow woven fabrics",
+    "grossExport": 24980182,
+    "value": 0.0036123085288929688,
+    "code": 5806,
+    "parent": "textiles"
+},
+{
+    "name": "Labels and badges of textiles",
+    "grossExport": 7253459,
+    "value": 0.0010489007569951037,
+    "code": 5807,
+    "parent": "textiles"
+},
+{
+    "name": "Braids in piece",
+    "grossExport": 14109212,
+    "value": 0.0020402904527900964,
+    "code": 5808,
+    "parent": "textiles"
+},
+{
+    "name": "Woven fabric incorporating metal threads",
+    "grossExport": 427566,
+    "value": 0.00006182902544363572,
+    "code": 5809,
+    "parent": "textiles"
+},
+{
+    "name": "Embroidery in the piece",
+    "grossExport": 4577921,
+    "value": 0.0006619993030034059,
+    "code": 5810,
+    "parent": "textiles"
+},
+{
+    "name": "Quilted textile products",
+    "grossExport": 3980378,
+    "value": 0.0005755904179408274,
+    "code": 5811,
+    "parent": "textiles"
+},
+{
+    "name": "Stiffened textiles",
+    "grossExport": 912285,
+    "value": 0.0001319227732720731,
+    "code": 5901,
+    "parent": "textiles"
+},
+{
+    "name": "Tire cord fabric",
+    "grossExport": 220564,
+    "value": 0.00003189509261248571,
+    "code": 5902,
+    "parent": "textiles"
+},
+{
+    "name": "Textile fabrics impregnated with plastics",
+    "grossExport": 19290493,
+    "value": 0.002789539819623816,
+    "code": 5903,
+    "parent": "textiles"
+},
+{
+    "name": "Linoleum",
+    "grossExport": 151964,
+    "value": 0.000021975054196350172,
+    "code": 5904,
+    "parent": "textiles"
+},
+{
+    "name": "Textile wall coverings",
+    "grossExport": 494587,
+    "value": 0.00007152072944783135,
+    "code": 5905,
+    "parent": "textiles"
+},
+{
+    "name": "Rubberized textile fabrics",
+    "grossExport": 2893832,
+    "value": 0.0004184682887732121,
+    "code": 5906,
+    "parent": "textiles"
+},
+{
+    "name": "Other textile fabrics impregnated, coated or covered",
+    "grossExport": 2444608,
+    "value": 0.0003535073654867679,
+    "code": 5907,
+    "parent": "textiles"
+},
+{
+    "name": "Textile wicks",
+    "grossExport": 189447,
+    "value": 0.000027395357402647677,
+    "code": 5908,
+    "parent": "textiles"
+},
+{
+    "name": "Textile hosepiping and similar tubing",
+    "grossExport": 1748065,
+    "value": 0.00025278238999857115,
+    "code": 5909,
+    "parent": "textiles"
+},
+{
+    "name": "Transmission belts or belting, of textile material",
+    "grossExport": 1222888,
+    "value": 0.00017683813321619772,
+    "code": 5910,
+    "parent": "textiles"
+},
+{
+    "name": "Textile articles for technical use",
+    "grossExport": 17798285,
+    "value": 0.002573756136170977,
+    "code": 5911,
+    "parent": "textiles"
+},
+{
+    "name": "Pile fabrics, knit",
+    "grossExport": 22460068,
+    "value": 0.0032478824692276473,
+    "code": 6001,
+    "parent": "textiles"
+},
+{
+    "name": "Other knitted fabrics",
+    "grossExport": 168662760,
+    "value": 0.02438981134943804,
+    "code": 6002,
+    "parent": "textiles"
+},
+{
+    "name": "Men's overcoats, knit",
+    "grossExport": 29672418,
+    "value": 0.004290838578128744,
+    "code": 6101,
+    "parent": "textiles"
+},
+{
+    "name": "Women's overcoats, knit",
+    "grossExport": 57044631,
+    "value": 0.008249051471636685,
+    "code": 6102,
+    "parent": "textiles"
+},
+{
+    "name": "Men's suits, knit",
+    "grossExport": 332305599,
+    "value": 0.04805370711336637,
+    "code": 6103,
+    "parent": "textiles"
+},
+{
+    "name": "Women's suits, knit",
+    "grossExport": 793686824,
+    "value": 0.11477264991925089,
+    "code": 6104,
+    "parent": "textiles"
+},
+{
+    "name": "Men's shirts, knit",
+    "grossExport": 242446095,
+    "value": 0.035059396155131886,
+    "code": 6105,
+    "parent": "textiles"
+},
+{
+    "name": "Women's shirts, knit",
+    "grossExport": 87074203,
+    "value": 0.012591537008956048,
+    "code": 6106,
+    "parent": "textiles"
+},
+{
+    "name": "Men's undergarments, knit",
+    "grossExport": 146826872,
+    "value": 0.021232189661239305,
+    "code": 6107,
+    "parent": "textiles"
+},
+{
+    "name": "Women's undergarments, knit",
+    "grossExport": 222327446,
+    "value": 0.03215009920235132,
+    "code": 6108,
+    "parent": "textiles"
+},
+{
+    "name": "T-shirts, knit",
+    "grossExport": 1117258097,
+    "value": 0.1615633125798614,
+    "code": 6109,
+    "parent": "textiles"
+},
+{
+    "name": "Sweaters, pullovers, sweatshirts etc., knit",
+    "grossExport": 910386194,
+    "value": 0.13164819268220737,
+    "code": 6110,
+    "parent": "textiles"
+},
+{
+    "name": "Babies' garments, knit",
+    "grossExport": 171725973,
+    "value": 0.024832773312073692,
+    "code": 6111,
+    "parent": "textiles"
+},
+{
+    "name": "Activewear, knit",
+    "grossExport": 122365815,
+    "value": 0.017694950227722085,
+    "code": 6112,
+    "parent": "textiles"
+},
+{
+    "name": "Garments knit with impregnated fibers",
+    "grossExport": 23536811,
+    "value": 0.0034035870162291786,
+    "code": 6113,
+    "parent": "textiles"
+},
+{
+    "name": "Other garments, knit",
+    "grossExport": 204649985,
+    "value": 0.029593815059206458,
+    "code": 6114,
+    "parent": "textiles"
+},
+{
+    "name": "Socks, stockings, etc., knit",
+    "grossExport": 69959962,
+    "value": 0.01011669840570529,
+    "code": 6115,
+    "parent": "textiles"
+},
+{
+    "name": "Gloves, knit",
+    "grossExport": 15502897,
+    "value": 0.0022418270233439137,
+    "code": 6116,
+    "parent": "textiles"
+},
+{
+    "name": "Other clothing accesories, knit",
+    "grossExport": 15929033,
+    "value": 0.0023034492608147348,
+    "code": 6117,
+    "parent": "textiles"
+},
+{
+    "name": "Men's overcoats, not knit",
+    "grossExport": 207386625,
+    "value": 0.029989552288523267,
+    "code": 6201,
+    "parent": "textiles"
+},
+{
+    "name": "Womens overcoats, not knit",
+    "grossExport": 321798645,
+    "value": 0.04653432828950969,
+    "code": 6202,
+    "parent": "textiles"
+},
+{
+    "name": "Men's suits and pants",
+    "grossExport": 2279797626,
+    "value": 0.329674636019455,
+    "code": 6203,
+    "parent": "textiles"
+},
+{
+    "name": "Women's suits and pants",
+    "grossExport": 2796542006,
+    "value": 0.40439947714076907,
+    "code": 6204,
+    "parent": "textiles"
+},
+{
+    "name": "Men's shirts",
+    "grossExport": 441738747,
+    "value": 0.06387850350051866,
+    "code": 6205,
+    "parent": "textiles"
+},
+{
+    "name": "Women's shirts",
+    "grossExport": 542892868,
+    "value": 0.07850609484556856,
+    "code": 6206,
+    "parent": "textiles"
+},
+{
+    "name": "Men's undergarments",
+    "grossExport": 51375866,
+    "value": 0.007429308518691427,
+    "code": 6207,
+    "parent": "textiles"
+},
+{
+    "name": "Women's undergarments",
+    "grossExport": 55765617,
+    "value": 0.00806409712739798,
+    "code": 6208,
+    "parent": "textiles"
+},
+{
+    "name": "Babies' garments",
+    "grossExport": 91200931,
+    "value": 0.013188290657541209,
+    "code": 6209,
+    "parent": "textiles"
+},
+{
+    "name": "Garments made of textile felts and nonwoven fabric",
+    "grossExport": 238859596,
+    "value": 0.03454076338750169,
+    "code": 6210,
+    "parent": "textiles"
+},
+{
+    "name": "Activewear",
+    "grossExport": 747801098,
+    "value": 0.10813725393277465,
+    "code": 6211,
+    "parent": "textiles"
+},
+{
+    "name": "Brassieres",
+    "grossExport": 276332447,
+    "value": 0.0399595989776201,
+    "code": 6212,
+    "parent": "textiles"
+},
+{
+    "name": "Handkerchiefs",
+    "grossExport": 2095601,
+    "value": 0.0003030385193132954,
+    "code": 6213,
+    "parent": "textiles"
+},
+{
+    "name": "Shawls, scarves, etc.",
+    "grossExport": 117789046,
+    "value": 0.01703311751195272,
+    "code": 6214,
+    "parent": "textiles"
+},
+{
+    "name": "Ties, bow ties and cravats",
+    "grossExport": 705453,
+    "value": 0.00010201342362650244,
+    "code": 6215,
+    "parent": "textiles"
+},
+{
+    "name": "Gloves",
+    "grossExport": 5315746,
+    "value": 0.0007686939435921117,
+    "code": 6216,
+    "parent": "textiles"
+},
+{
+    "name": "Other clothing accesories",
+    "grossExport": 71671779,
+    "value": 0.010364239082110448,
+    "code": 6217,
+    "parent": "textiles"
+},
+{
+    "name": "Blankets",
+    "grossExport": 39578819,
+    "value": 0.005723373249931128,
+    "code": 6301,
+    "parent": "textiles"
+},
+{
+    "name": "House linen",
+    "grossExport": 250486783,
+    "value": 0.036222135715659,
+    "code": 6302,
+    "parent": "textiles"
+},
+{
+    "name": "Curtains",
+    "grossExport": 77839180,
+    "value": 0.011256088278141247,
+    "code": 6303,
+    "parent": "textiles"
+},
+{
+    "name": "Other furnishing articles",
+    "grossExport": 126919174,
+    "value": 0.018353397694230198,
+    "code": 6304,
+    "parent": "textiles"
+},
+{
+    "name": "Bags for packing goods",
+    "grossExport": 229553689,
+    "value": 0.033195064335942145,
+    "code": 6305,
+    "parent": "textiles"
+},
+{
+    "name": "Tents, tarpaulins, etc.",
+    "grossExport": 89133178,
+    "value": 0.01288927915323976,
+    "code": 6306,
+    "parent": "textiles"
+},
+{
+    "name": "Other made up articles",
+    "grossExport": 263369578,
+    "value": 0.03808507771722167,
+    "code": 6307,
+    "parent": "textiles"
+},
+{
+    "name": "Needlecraft sets of woven fabric and yarn",
+    "grossExport": 2236981,
+    "value": 0.00032348305329687034,
+    "code": 6308,
+    "parent": "textiles"
+},
+{
+    "name": "Used clothes and textiles",
+    "grossExport": 56253157,
+    "value": 0.00813459881150006,
+    "code": 6309,
+    "parent": "textiles"
+},
+{
+    "name": "Used or new rags textile scraps",
+    "grossExport": 15416548,
+    "value": 0.0022293403557463207,
+    "code": 6310,
+    "parent": "textiles"
+},
+{
+    "name": "Waterproof footwear",
+    "grossExport": 27848203,
+    "value": 0.004027044367060366,
+    "code": 6401,
+    "parent": "textiles"
+},
+{
+    "name": "Other footwear of rubber or plastics",
+    "grossExport": 310939630,
+    "value": 0.044964038989780936,
+    "code": 6402,
+    "parent": "textiles"
+},
+{
+    "name": "Leather footwear",
+    "grossExport": 509212750,
+    "value": 0.07363571489775547,
+    "code": 6403,
+    "parent": "textiles"
+},
+{
+    "name": "Textile footwear",
+    "grossExport": 89172536,
+    "value": 0.012894970594522298,
+    "code": 6404,
+    "parent": "textiles"
+},
+{
+    "name": "Other footwear",
+    "grossExport": 56958746,
+    "value": 0.008236631901675026,
+    "code": 6405,
+    "parent": "textiles"
+},
+{
+    "name": "Parts of footwear",
+    "grossExport": 233671515,
+    "value": 0.0337905306932448,
+    "code": 6406,
+    "parent": "textiles"
+},
+{
+    "name": "Hat forms",
+    "grossExport": 45671,
+    "value": 0.000006604345109377936,
+    "code": 6501,
+    "parent": "textiles"
+},
+{
+    "name": "Hat shapes",
+    "grossExport": 258250,
+    "value": 0.00003734475103450444,
+    "code": 6502,
+    "parent": "textiles"
+},
+{
+    "name": "Hats",
+    "grossExport": 3495580,
+    "value": 0.0005054852461614444,
+    "code": 6504,
+    "parent": "textiles"
+},
+{
+    "name": "Hats, knit",
+    "grossExport": 26397668,
+    "value": 0.003817286890034868,
+    "code": 6505,
+    "parent": "textiles"
+},
+{
+    "name": "Other headgear",
+    "grossExport": 14703197,
+    "value": 0.0021261848262391966,
+    "code": 6506,
+    "parent": "textiles"
+},
+{
+    "name": "Headbands",
+    "grossExport": 9086395,
+    "value": 0.0013139560854837015,
+    "code": 6507,
+    "parent": "textiles"
+},
+{
+    "name": "Umbrellas",
+    "grossExport": 6480581,
+    "value": 0.000937137208146911,
+    "code": 6601,
+    "parent": "textiles"
+},
+{
+    "name": "Walking sticks",
+    "grossExport": 220189,
+    "value": 0.00003184086499723716,
+    "code": 6602,
+    "parent": "textiles"
+},
+{
+    "name": "Parts of umbrellas or walking sticks",
+    "grossExport": 5298551,
+    "value": 0.0007662074266742479,
+    "code": 6603,
+    "parent": "textiles"
+},
+{
+    "name": "Feathers or down",
+    "grossExport": 10437897,
+    "value": 0.0015093927000534395,
+    "code": 6701,
+    "parent": "textiles"
+},
+{
+    "name": "Artificial flowers",
+    "grossExport": 2360393,
+    "value": 0.0003413292891716826,
+    "code": 6702,
+    "parent": "textiles"
+},
+{
+    "name": "Human animal hair prepared for use in wigs",
+    "grossExport": 9172264,
+    "value": 0.0013263733417337765,
+    "code": 6703,
+    "parent": "textiles"
+},
+{
+    "name": "Wigs",
+    "grossExport": 206982566,
+    "value": 0.02993112253921736,
+    "code": 6704,
+    "parent": "textiles"
+},
+{
+    "name": "Flagstones, of natural stone",
+    "grossExport": 11449731,
+    "value": 0.0016557109529798549,
+    "code": 6801,
+    "parent": "stone"
+},
+{
+    "name": "Worked building stone",
+    "grossExport": 352967526,
+    "value": 0.051041565853765625,
+    "code": 6802,
+    "parent": "stone"
+},
+{
+    "name": "Worked slate",
+    "grossExport": 565786,
+    "value": 0.00008181660138938286,
+    "code": 6803,
+    "parent": "stone"
+},
+{
+    "name": "Grindstones",
+    "grossExport": 31456128,
+    "value": 0.004548775483715407,
+    "code": 6804,
+    "parent": "stone"
+},
+{
+    "name": "Natural or artificial abrasive powder",
+    "grossExport": 8814923,
+    "value": 0.0012746993410390202,
+    "code": 6805,
+    "parent": "stone"
+},
+{
+    "name": "Mineral wools and insulating materials",
+    "grossExport": 17772815,
+    "value": 0.002570072996543295,
+    "code": 6806,
+    "parent": "stone"
+},
+{
+    "name": "Asphalt",
+    "grossExport": 29432517,
+    "value": 0.004256147220460095,
+    "code": 6807,
+    "parent": "stone"
+},
+{
+    "name": "Panels of vegetable fibers",
+    "grossExport": 4796426,
+    "value": 0.0006935966498564336,
+    "code": 6808,
+    "parent": "stone"
+},
+{
+    "name": "Plaster articles",
+    "grossExport": 41247650,
+    "value": 0.005964697850952089,
+    "code": 6809,
+    "parent": "stone"
+},
+{
+    "name": "Articles of cement, of concrete or of artificial stone",
+    "grossExport": 40751713,
+    "value": 0.005892981902089363,
+    "code": 6810,
+    "parent": "stone"
+},
+{
+    "name": "Asbestos-cement or cellulose fiber-cement",
+    "grossExport": 13161625,
+    "value": 0.0019032627641220115,
+    "code": 6811,
+    "parent": "stone"
+},
+{
+    "name": "Asbestos fibres",
+    "grossExport": 7962714,
+    "value": 0.0011514639763367395,
+    "code": 6812,
+    "parent": "stone"
+},
+{
+    "name": "Friction material and articles thereof",
+    "grossExport": 10323187,
+    "value": 0.0014928048340663417,
+    "code": 6813,
+    "parent": "stone"
+},
+{
+    "name": "Mica articles",
+    "grossExport": 282302,
+    "value": 0.00004082283797305971,
+    "code": 6814,
+    "parent": "stone"
+},
+{
+    "name": "Articles of stone or of other mineral substances",
+    "grossExport": 95889918,
+    "value": 0.013866350878718472,
+    "code": 6815,
+    "parent": "stone"
+},
+{
+    "name": "Bricks, blocks, and other ceramic goods",
+    "grossExport": 21700558,
+    "value": 0.0031380520264078352,
+    "code": 6901,
+    "parent": "stone"
+},
+{
+    "name": "Bricks, tiles and similar refractory ceramic constructional goods",
+    "grossExport": 21486039,
+    "value": 0.0031070310829531566,
+    "code": 6902,
+    "parent": "stone"
+},
+{
+    "name": "Other refractory ceramic goods",
+    "grossExport": 17483901,
+    "value": 0.0025282940172581727,
+    "code": 6903,
+    "parent": "stone"
+},
+{
+    "name": "Ceramic building bricks",
+    "grossExport": 27239396,
+    "value": 0.003939006629042695,
+    "code": 6904,
+    "parent": "stone"
+},
+{
+    "name": "Architectural ceramic ornaments",
+    "grossExport": 3947366,
+    "value": 0.0005708166525152668,
+    "code": 6905,
+    "parent": "stone"
+},
+{
+    "name": "Ceramic pipes",
+    "grossExport": 7488836,
+    "value": 0.0010829379127133942,
+    "code": 6906,
+    "parent": "stone"
+},
+{
+    "name": "Unglazed ceramic flags and pavers",
+    "grossExport": 294937841,
+    "value": 0.042650068703966135,
+    "code": 6907,
+    "parent": "stone"
+},
+{
+    "name": "Glazed ceramic flags and pavers",
+    "grossExport": 28160567,
+    "value": 0.004072214379885698,
+    "code": 6908,
+    "parent": "stone"
+},
+{
+    "name": "Ceramic wares for technical ware",
+    "grossExport": 50109160,
+    "value": 0.007246133997088667,
+    "code": 6909,
+    "parent": "stone"
+},
+{
+    "name": "Ceramic sinks, washbasins, and similar sanitary fixtures",
+    "grossExport": 195915922,
+    "value": 0.028330808638084765,
+    "code": 6910,
+    "parent": "stone"
+},
+{
+    "name": "Porcelain or china household articles",
+    "grossExport": 22136352,
+    "value": 0.0032010708780335117,
+    "code": 6911,
+    "parent": "stone"
+},
+{
+    "name": "Ceramic household articles",
+    "grossExport": 11977255,
+    "value": 0.001731994602330197,
+    "code": 6912,
+    "parent": "stone"
+},
+{
+    "name": "Ornamental ceramic articles",
+    "grossExport": 5971178,
+    "value": 0.0008634739817723529,
+    "code": 6913,
+    "parent": "stone"
+},
+{
+    "name": "Other ceramic articles",
+    "grossExport": 41867993,
+    "value": 0.006054403775021779,
+    "code": 6914,
+    "parent": "stone"
+},
+{
+    "name": "Cullet and other scraps of glass",
+    "grossExport": 2829040,
+    "value": 0.0004090989137140539,
+    "code": 7001,
+    "parent": "stone"
+},
+{
+    "name": "Glass balls",
+    "grossExport": 11015342,
+    "value": 0.0015928952741526433,
+    "code": 7002,
+    "parent": "stone"
+},
+{
+    "name": "Glass, cast or rolled",
+    "grossExport": 11999029,
+    "value": 0.001735143274581989,
+    "code": 7003,
+    "parent": "stone"
+},
+{
+    "name": "Drawn and blown glass",
+    "grossExport": 1585916,
+    "value": 0.0002293345137720702,
+    "code": 7004,
+    "parent": "stone"
+},
+{
+    "name": "Float glass",
+    "grossExport": 153675387,
+    "value": 0.022222532691756513,
+    "code": 7005,
+    "parent": "stone"
+},
+{
+    "name": "Worked glass",
+    "grossExport": 2909749,
+    "value": 0.0004207699979783088,
+    "code": 7006,
+    "parent": "stone"
+},
+{
+    "name": "Safety glass",
+    "grossExport": 129993544,
+    "value": 0.018797973036874728,
+    "code": 7007,
+    "parent": "stone"
+},
+{
+    "name": "Multiple-walled insulating glass",
+    "grossExport": 1531586,
+    "value": 0.00022147801687485966,
+    "code": 7008,
+    "parent": "stone"
+},
+{
+    "name": "Glass mirrors",
+    "grossExport": 21390952,
+    "value": 0.0030932808396167853,
+    "code": 7009,
+    "parent": "stone"
+},
+{
+    "name": "Glass containers for conveyance",
+    "grossExport": 260401628,
+    "value": 0.03765589144874981,
+    "code": 7010,
+    "parent": "stone"
+},
+{
+    "name": "Glass envelopes",
+    "grossExport": 1007281,
+    "value": 0.00014565985737381089,
+    "code": 7011,
+    "parent": "stone"
+},
+{
+    "name": "Glassware for interior decorative use",
+    "grossExport": 130299094,
+    "value": 0.01884215769777925,
+    "code": 7013,
+    "parent": "stone"
+},
+{
+    "name": "Signaling glassware",
+    "grossExport": 164683,
+    "value": 0.00002381431029860714,
+    "code": 7014,
+    "parent": "stone"
+},
+{
+    "name": "Clock or watch glasses and similar glasses",
+    "grossExport": 409961,
+    "value": 0.000059283219666433584,
+    "code": 7015,
+    "parent": "stone"
+},
+{
+    "name": "Glass paving blocks or other molded products",
+    "grossExport": 7255597,
+    "value": 0.0010492099267055072,
+    "code": 7016,
+    "parent": "stone"
+},
+{
+    "name": "Laboratory, hygienic or pharmaceutical glassware",
+    "grossExport": 1702997,
+    "value": 0.00024626524289451284,
+    "code": 7017,
+    "parent": "stone"
+},
+{
+    "name": "Glass beads",
+    "grossExport": 3058756,
+    "value": 0.00044231744935255236,
+    "code": 7018,
+    "parent": "stone"
+},
+{
+    "name": "Glass fibers",
+    "grossExport": 419628973,
+    "value": 0.06068127598664001,
+    "code": 7019,
+    "parent": "stone"
+},
+{
+    "name": "Other articles of glass",
+    "grossExport": 5730498,
+    "value": 0.0008286699752709606,
+    "code": 7020,
+    "parent": "stone"
+},
+{
+    "name": "Pearls",
+    "grossExport": 3733824,
+    "value": 0.000539936990074182,
+    "code": 7101,
+    "parent": "stone"
+},
+{
+    "name": "Diamonds",
+    "grossExport": 16043598981,
+    "value": 2.3200163006500447,
+    "code": 7102,
+    "parent": "stone"
+},
+{
+    "name": "Precious stones",
+    "grossExport": 594780217,
+    "value": 0.08600936737314045,
+    "code": 7103,
+    "parent": "stone"
+},
+{
+    "name": "Synthetic precious stones",
+    "grossExport": 28298773,
+    "value": 0.004092199931333809,
+    "code": 7104,
+    "parent": "stone"
+},
+{
+    "name": "Diamond dust",
+    "grossExport": 2747943,
+    "value": 0.00039737172194388856,
+    "code": 7105,
+    "parent": "stone"
+},
+{
+    "name": "Silver",
+    "grossExport": 167909753,
+    "value": 0.024280921285770123,
+    "code": 7106,
+    "parent": "stone"
+},
+{
+    "name": "Silver clad metals",
+    "grossExport": 227096,
+    "value": 0.000032839665366628536,
+    "code": 7107,
+    "parent": "stone"
+},
+{
+    "name": "Gold",
+    "grossExport": 59815610164,
+    "value": 8.649754383549093,
+    "code": 7108,
+    "parent": "stone"
+},
+{
+    "name": "Gold clad metals",
+    "grossExport": 4340758,
+    "value": 0.0006277038792295582,
+    "code": 7109,
+    "parent": "stone"
+},
+{
+    "name": "Platinum",
+    "grossExport": 26575289535,
+    "value": 3.842972202727768,
+    "code": 7110,
+    "parent": "stone"
+},
+{
+    "name": "Platinum clad metals",
+    "grossExport": 3412950,
+    "value": 0.000493536371900143,
+    "code": 7111,
+    "parent": "stone"
+},
+{
+    "name": "Scrap of precious metal",
+    "grossExport": 692929161,
+    "value": 0.10020238916589755,
+    "code": 7112,
+    "parent": "stone"
+},
+{
+    "name": "Jewelry of precious metal",
+    "grossExport": 397758207,
+    "value": 0.057518610696402246,
+    "code": 7113,
+    "parent": "stone"
+},
+{
+    "name": "Goldsmith and silversmith wares",
+    "grossExport": 3732843,
+    "value": 0.0005397951306326918,
+    "code": 7114,
+    "parent": "stone"
+},
+{
+    "name": "Other articles of precious metals",
+    "grossExport": 245933516,
+    "value": 0.0355637015529925,
+    "code": 7115,
+    "parent": "stone"
+},
+{
+    "name": "Articles of precious stones",
+    "grossExport": 15435201,
+    "value": 0.0022320377096322706,
+    "code": 7116,
+    "parent": "stone"
+},
+{
+    "name": "Imitation jewelry",
+    "grossExport": 15804616,
+    "value": 0.0022854576949310566,
+    "code": 7117,
+    "parent": "stone"
+},
+{
+    "name": "Coin",
+    "grossExport": 7885612,
+    "value": 0.0011403144894276888,
+    "code": 7118,
+    "parent": "stone"
+},
+{
+    "name": "Pig iron",
+    "grossExport": 203360823,
+    "value": 0.029407393243395637,
+    "code": 7201,
+    "parent": "metals"
+},
+{
+    "name": "Ferroalloys",
+    "grossExport": 5047829002,
+    "value": 0.7299512772292004,
+    "code": 7202,
+    "parent": "metals"
+},
+{
+    "name": "Ferrous products from the reduction of iron ore",
+    "grossExport": 157170947,
+    "value": 0.02272801504577848,
+    "code": 7203,
+    "parent": "metals"
+},
+{
+    "name": "Ferrous waste and scrap",
+    "grossExport": 744602577,
+    "value": 0.10767472548970153,
+    "code": 7204,
+    "parent": "metals"
+},
+{
+    "name": "Powders of iron or steel",
+    "grossExport": 30760732,
+    "value": 0.0044482163724263845,
+    "code": 7205,
+    "parent": "metals"
+},
+{
+    "name": "Iron and nonalloy steel",
+    "grossExport": 13334994,
+    "value": 0.001928333130596749,
+    "code": 7206,
+    "parent": "metals"
+},
+{
+    "name": "Semifinished products of iron or nonalloy steel",
+    "grossExport": 513486042,
+    "value": 0.0742536627228774,
+    "code": 7207,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled iron, width > 600mm, hot-rolled, not clad",
+    "grossExport": 1179060033,
+    "value": 0.17050030353192483,
+    "code": 7208,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled iron, width > 600mm, cold-rolled, not clad",
+    "grossExport": 208181626,
+    "value": 0.030104514977457177,
+    "code": 7209,
+    "parent": "metals"
+},
+{
+    "name": "Flat rolled iron, width > 600mm, clad",
+    "grossExport": 879089875,
+    "value": 0.1271225266943993,
+    "code": 7210,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled iron, width < 600mm, not clad",
+    "grossExport": 14752780,
+    "value": 0.0021333548738308476,
+    "code": 7211,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled iron, width < 600mm, clad",
+    "grossExport": 25390376,
+    "value": 0.0036716254419843428,
+    "code": 7212,
+    "parent": "metals"
+},
+{
+    "name": "Hot rolled bars of iron",
+    "grossExport": 631887718,
+    "value": 0.09137537080530939,
+    "code": 7213,
+    "parent": "metals"
+},
+{
+    "name": "Other bars of iron, not further worked than forged",
+    "grossExport": 629638699,
+    "value": 0.09105014697325954,
+    "code": 7214,
+    "parent": "metals"
+},
+{
+    "name": "Other bars and rods of iron or nonalloy steel",
+    "grossExport": 34205820,
+    "value": 0.0049464001232568154,
+    "code": 7215,
+    "parent": "metals"
+},
+{
+    "name": "Angles of iron or nonalloy steel",
+    "grossExport": 170661439,
+    "value": 0.02467883427161768,
+    "code": 7216,
+    "parent": "metals"
+},
+{
+    "name": "Wire of iron or nonalloy steel",
+    "grossExport": 160024420,
+    "value": 0.02314064714168818,
+    "code": 7217,
+    "parent": "metals"
+},
+{
+    "name": "Stainless steel in ingots",
+    "grossExport": 2953913,
+    "value": 0.0004271564203778746,
+    "code": 7218,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled products of stainless steel of a width > 600 mm",
+    "grossExport": 498970512,
+    "value": 0.07215461585362713,
+    "code": 7219,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled products of stainless steel of a width < 600 mm",
+    "grossExport": 25584718,
+    "value": 0.0036997286505247016,
+    "code": 7220,
+    "parent": "metals"
+},
+{
+    "name": "Bars of stainless steel, hot-rolled",
+    "grossExport": 494026,
+    "value": 0.0000714396049354195,
+    "code": 7221,
+    "parent": "metals"
+},
+{
+    "name": "Other bars and rods of stainless steel",
+    "grossExport": 17049122,
+    "value": 0.002465421941711103,
+    "code": 7222,
+    "parent": "metals"
+},
+{
+    "name": "Wire of stainless steel",
+    "grossExport": 1562847,
+    "value": 0.00022599857548895316,
+    "code": 7223,
+    "parent": "metals"
+},
+{
+    "name": "Other alloy steel in primary form",
+    "grossExport": 2027796,
+    "value": 0.00029323344344148677,
+    "code": 7224,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled products of other alloy steel, width > 600 mm",
+    "grossExport": 14761297,
+    "value": 0.0021345864914283723,
+    "code": 7225,
+    "parent": "metals"
+},
+{
+    "name": "Flat-rolled products of other alloy steel, width < 600 mm",
+    "grossExport": 3180499,
+    "value": 0.000459922336187765,
+    "code": 7226,
+    "parent": "metals"
+},
+{
+    "name": "Bars of other alloy steel",
+    "grossExport": 25935963,
+    "value": 0.003750521127105978,
+    "code": 7227,
+    "parent": "metals"
+},
+{
+    "name": "Other bars and rods of other alloy steel",
+    "grossExport": 110440313,
+    "value": 0.015970439470117108,
+    "code": 7228,
+    "parent": "metals"
+},
+{
+    "name": "Wire of other alloy steel",
+    "grossExport": 3968369,
+    "value": 0.0005738538327901077,
+    "code": 7229,
+    "parent": "metals"
+},
+{
+    "name": "Sheet piling of iron or steel",
+    "grossExport": 11126412,
+    "value": 0.0016089567707543953,
+    "code": 7301,
+    "parent": "metals"
+},
+{
+    "name": "Railway construction material of iron or steel",
+    "grossExport": 13871438,
+    "value": 0.002005906674155137,
+    "code": 7302,
+    "parent": "metals"
+},
+{
+    "name": "Tubes of cast iron",
+    "grossExport": 7291430,
+    "value": 0.0010543916284047113,
+    "code": 7303,
+    "parent": "metals"
+},
+{
+    "name": "Tubes, seamless, of iron or steel",
+    "grossExport": 101502304,
+    "value": 0.014677941035076799,
+    "code": 7304,
+    "parent": "metals"
+},
+{
+    "name": "Other tubes and pipes, diameter > 406.4 mm, of iron or steel",
+    "grossExport": 5525052,
+    "value": 0.0007989610508913486,
+    "code": 7305,
+    "parent": "metals"
+},
+{
+    "name": "Other tubes, pipes and hollow profiles of iron or steel",
+    "grossExport": 192398669,
+    "value": 0.027822189324975904,
+    "code": 7306,
+    "parent": "metals"
+},
+{
+    "name": "Tube or pipe fittings of iron or steel",
+    "grossExport": 104123186,
+    "value": 0.015056938850297765,
+    "code": 7307,
+    "parent": "metals"
+},
+{
+    "name": "Structures and their parts, of iron or steel",
+    "grossExport": 570534272,
+    "value": 0.0825032346350135,
+    "code": 7308,
+    "parent": "metals"
+},
+{
+    "name": "Tanks etc. > 300 liters, iron or steel",
+    "grossExport": 46533006,
+    "value": 0.006728997188604457,
+    "code": 7309,
+    "parent": "metals"
+},
+{
+    "name": "Tanks etc. < 300 liters, iron or steel",
+    "grossExport": 70071087,
+    "value": 0.010132767855690611,
+    "code": 7310,
+    "parent": "metals"
+},
+{
+    "name": "Containers for compressed or liquified gas",
+    "grossExport": 40106451,
+    "value": 0.005799672516834662,
+    "code": 7311,
+    "parent": "metals"
+},
+{
+    "name": "Wire of iron or steel, not insulated",
+    "grossExport": 57349009,
+    "value": 0.008293066653167683,
+    "code": 7312,
+    "parent": "metals"
+},
+{
+    "name": "Barbed wire of iron or steel",
+    "grossExport": 51739765,
+    "value": 0.007481930851921651,
+    "code": 7313,
+    "parent": "metals"
+},
+{
+    "name": "Cloth of iron or steel wire",
+    "grossExport": 95273771,
+    "value": 0.01377725172551167,
+    "code": 7314,
+    "parent": "metals"
+},
+{
+    "name": "Chain of iron or steel",
+    "grossExport": 32726422,
+    "value": 0.004732468855140866,
+    "code": 7315,
+    "parent": "metals"
+},
+{
+    "name": "Anchors of iron or steel",
+    "grossExport": 2533363,
+    "value": 0.00036634195746379576,
+    "code": 7316,
+    "parent": "metals"
+},
+{
+    "name": "Nails and similar articles of iron or steel",
+    "grossExport": 46791697,
+    "value": 0.006766405711314494,
+    "code": 7317,
+    "parent": "metals"
+},
+{
+    "name": "Screws and similar articles of iron or steel",
+    "grossExport": 125538211,
+    "value": 0.01815370081359956,
+    "code": 7318,
+    "parent": "metals"
+},
+{
+    "name": "Articles for sewing of iron or steel",
+    "grossExport": 1072217,
+    "value": 0.00015505005583722455,
+    "code": 7319,
+    "parent": "metals"
+},
+{
+    "name": "Springs of iron or steel",
+    "grossExport": 66382794,
+    "value": 0.009599414965749448,
+    "code": 7320,
+    "parent": "metals"
+},
+{
+    "name": "Stoves and similar non-electric appliances of iron or steel",
+    "grossExport": 162484579,
+    "value": 0.02349640329022756,
+    "code": 7321,
+    "parent": "metals"
+},
+{
+    "name": "Radiators for central heating of iron or steel",
+    "grossExport": 4116499,
+    "value": 0.0005952744638481567,
+    "code": 7322,
+    "parent": "metals"
+},
+{
+    "name": "Household articles of iron or steel",
+    "grossExport": 48498291,
+    "value": 0.007013191105494471,
+    "code": 7323,
+    "parent": "metals"
+},
+{
+    "name": "Sanitary ware and parts of iron or steel",
+    "grossExport": 13895896,
+    "value": 0.0020094434715251346,
+    "code": 7324,
+    "parent": "metals"
+},
+{
+    "name": "Other cast articles of iron or steel",
+    "grossExport": 60725770,
+    "value": 0.00878136984328588,
+    "code": 7325,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of iron or steel",
+    "grossExport": 451762275,
+    "value": 0.0653279755533643,
+    "code": 7326,
+    "parent": "metals"
+},
+{
+    "name": "Copper mattes",
+    "grossExport": 39802451,
+    "value": 0.005755711996739834,
+    "code": 7401,
+    "parent": "metals"
+},
+{
+    "name": "Unrefined copper",
+    "grossExport": 8869069334,
+    "value": 1.2825292785517446,
+    "code": 7402,
+    "parent": "metals"
+},
+{
+    "name": "Refined copper and copper alloys",
+    "grossExport": 16054501935,
+    "value": 2.3215929438356038,
+    "code": 7403,
+    "parent": "metals"
+},
+{
+    "name": "Copper waste and scrap",
+    "grossExport": 965766402,
+    "value": 0.13965655698036447,
+    "code": 7404,
+    "parent": "metals"
+},
+{
+    "name": "Master alloys of copper",
+    "grossExport": 82572661,
+    "value": 0.011940582642019493,
+    "code": 7405,
+    "parent": "metals"
+},
+{
+    "name": "Copper powders and flakes",
+    "grossExport": 13829137,
+    "value": 0.0019997896545481263,
+    "code": 7406,
+    "parent": "metals"
+},
+{
+    "name": "Copper bars, rods and profiles",
+    "grossExport": 50929558,
+    "value": 0.007364769269341156,
+    "code": 7407,
+    "parent": "metals"
+},
+{
+    "name": "Copper wire",
+    "grossExport": 417706037,
+    "value": 0.06040320603049176,
+    "code": 7408,
+    "parent": "metals"
+},
+{
+    "name": "Copper plates, sheets and strip > 0.15 mm",
+    "grossExport": 16437480,
+    "value": 0.002376974242922153,
+    "code": 7409,
+    "parent": "metals"
+},
+{
+    "name": "Copper foil < 0.15 mm thick",
+    "grossExport": 1648850,
+    "value": 0.0002384352090735436,
+    "code": 7410,
+    "parent": "metals"
+},
+{
+    "name": "Copper tubes and pipes",
+    "grossExport": 55435107,
+    "value": 0.008016303076422513,
+    "code": 7411,
+    "parent": "metals"
+},
+{
+    "name": "Copper tube or pipe fittings",
+    "grossExport": 12342301,
+    "value": 0.001784782799759594,
+    "code": 7412,
+    "parent": "metals"
+},
+{
+    "name": "Copper wire, uninsulated",
+    "grossExport": 13646620,
+    "value": 0.001973396423475272,
+    "code": 7413,
+    "parent": "metals"
+},
+{
+    "name": "Screws and similar articles of copper",
+    "grossExport": 5328682,
+    "value": 0.0007705645794077256,
+    "code": 7415,
+    "parent": "metals"
+},
+{
+    "name": "Household articles of copper",
+    "grossExport": 1852508,
+    "value": 0.0002678855761836505,
+    "code": 7418,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of copper",
+    "grossExport": 34367428,
+    "value": 0.004969769767110384,
+    "code": 7419,
+    "parent": "metals"
+},
+{
+    "name": "Nickel mattes",
+    "grossExport": 438590909,
+    "value": 0.06342330417270857,
+    "code": 7501,
+    "parent": "metals"
+},
+{
+    "name": "Nickel unwrought",
+    "grossExport": 960624815,
+    "value": 0.13891304764275655,
+    "code": 7502,
+    "parent": "metals"
+},
+{
+    "name": "Nickel waste and scrap",
+    "grossExport": 11770712,
+    "value": 0.0017021270441001115,
+    "code": 7503,
+    "parent": "metals"
+},
+{
+    "name": "Nickel powders",
+    "grossExport": 11770727,
+    "value": 0.0017021292132047212,
+    "code": 7504,
+    "parent": "metals"
+},
+{
+    "name": "Nickel bars, wire etc.",
+    "grossExport": 560733,
+    "value": 0.00008108590234978036,
+    "code": 7505,
+    "parent": "metals"
+},
+{
+    "name": "Nickel plates",
+    "grossExport": 40415977,
+    "value": 0.005844432135067792,
+    "code": 7506,
+    "parent": "metals"
+},
+{
+    "name": "Nickel tubes and pipes",
+    "grossExport": 3386076,
+    "value": 0.0004896502040809706,
+    "code": 7507,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of nickel",
+    "grossExport": 2091923,
+    "value": 0.00030250665486293755,
+    "code": 7508,
+    "parent": "metals"
+},
+{
+    "name": "Unwrought aluminum",
+    "grossExport": 3158563517,
+    "value": 0.45675031236799113,
+    "code": 7601,
+    "parent": "metals"
+},
+{
+    "name": "Waste or scrap, aluminium",
+    "grossExport": 408853980,
+    "value": 0.05912313685408037,
+    "code": 7602,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum powders",
+    "grossExport": 117048696,
+    "value": 0.016926057738754677,
+    "code": 7603,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum bars",
+    "grossExport": 348747286,
+    "value": 0.05043128971782813,
+    "code": 7604,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum wire",
+    "grossExport": 172111311,
+    "value": 0.02488849587421942,
+    "code": 7605,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum plates > 0.2 mm",
+    "grossExport": 570799763,
+    "value": 0.08254162648514671,
+    "code": 7606,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum foil < 0.2 mm",
+    "grossExport": 46670965,
+    "value": 0.006748947022129991,
+    "code": 7607,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum tubes and pipes",
+    "grossExport": 53942287,
+    "value": 0.007800430893501588,
+    "code": 7608,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum tube or pipe fittings",
+    "grossExport": 3445568,
+    "value": 0.0004982531621779492,
+    "code": 7609,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum structures (bridges, towers etc)",
+    "grossExport": 58192914,
+    "value": 0.0084151012015579,
+    "code": 7610,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum containers, >300 liters",
+    "grossExport": 1310749,
+    "value": 0.000189543446558473,
+    "code": 7611,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum containers, <300 liters",
+    "grossExport": 217084394,
+    "value": 0.031391917318126884,
+    "code": 7612,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum containers for compressed or liquefied gas",
+    "grossExport": 714911,
+    "value": 0.00010338111638655799,
+    "code": 7613,
+    "parent": "metals"
+},
+{
+    "name": "Aluminum wire, not insulated",
+    "grossExport": 21805469,
+    "value": 0.003153222888656745,
+    "code": 7614,
+    "parent": "metals"
+},
+{
+    "name": "Household articles of aluminum",
+    "grossExport": 44961674,
+    "value": 0.0065017716229411465,
+    "code": 7615,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of aluminum",
+    "grossExport": 102208579,
+    "value": 0.014780073325635926,
+    "code": 7616,
+    "parent": "metals"
+},
+{
+    "name": "Lead refined unwrought",
+    "grossExport": 326730204,
+    "value": 0.04724746611358314,
+    "code": 7801,
+    "parent": "metals"
+},
+{
+    "name": "Lead waste or scrap",
+    "grossExport": 17680157,
+    "value": 0.00255667400354676,
+    "code": 7802,
+    "parent": "metals"
+},
+{
+    "name": "Lead foil <2mm",
+    "grossExport": 2064294,
+    "value": 0.00029851130877839803,
+    "code": 7804,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of lead",
+    "grossExport": 11277552,
+    "value": 0.0016308126688041723,
+    "code": 7806,
+    "parent": "metals"
+},
+{
+    "name": "Unwrought zinc",
+    "grossExport": 37959863,
+    "value": 0.005489260921738225,
+    "code": 7901,
+    "parent": "metals"
+},
+{
+    "name": "Zinc waste and scrap",
+    "grossExport": 11627496,
+    "value": 0.0016814170117122797,
+    "code": 7902,
+    "parent": "metals"
+},
+{
+    "name": "Zinc powders",
+    "grossExport": 29918095,
+    "value": 0.004326365185679195,
+    "code": 7903,
+    "parent": "metals"
+},
+{
+    "name": "Zinx bars and wire",
+    "grossExport": 227916,
+    "value": 0.000032958243085305376,
+    "code": 7904,
+    "parent": "metals"
+},
+{
+    "name": "Zinc plates and foil",
+    "grossExport": 506679,
+    "value": 0.00007326931697739273,
+    "code": 7905,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of zinc",
+    "grossExport": 13526985,
+    "value": 0.001956096368141243,
+    "code": 7907,
+    "parent": "metals"
+},
+{
+    "name": "Unwrought tin",
+    "grossExport": 29572728,
+    "value": 0.004276422708891068,
+    "code": 8001,
+    "parent": "metals"
+},
+{
+    "name": "Tin waste and scrap",
+    "grossExport": 1190545,
+    "value": 0.0001721611098562404,
+    "code": 8002,
+    "parent": "metals"
+},
+{
+    "name": "Tin bars and wire",
+    "grossExport": 2793350,
+    "value": 0.0004039378908121315,
+    "code": 8003,
+    "parent": "metals"
+},
+{
+    "name": "Other articles of tin",
+    "grossExport": 1029995,
+    "value": 0.00014894446018115932,
+    "code": 8007,
+    "parent": "metals"
+},
+{
+    "name": "Tungsten (wolfram)",
+    "grossExport": 7260957,
+    "value": 0.0010499850200861268,
+    "code": 8101,
+    "parent": "metals"
+},
+{
+    "name": "Molybdenum",
+    "grossExport": 284687,
+    "value": 0.00004116772560604052,
+    "code": 8102,
+    "parent": "metals"
+},
+{
+    "name": "Tantalum",
+    "grossExport": 943262,
+    "value": 0.0001364022635055517,
+    "code": 8103,
+    "parent": "metals"
+},
+{
+    "name": "Magnesium",
+    "grossExport": 889958,
+    "value": 0.00012869413336366118,
+    "code": 8104,
+    "parent": "metals"
+},
+{
+    "name": "Cobalt",
+    "grossExport": 3607277778,
+    "value": 0.5216375238401176,
+    "code": 8105,
+    "parent": "metals"
+},
+{
+    "name": "Bismuth",
+    "grossExport": 13564,
+    "value": 0.0000019614489952837102,
+    "code": 8106,
+    "parent": "metals"
+},
+{
+    "name": "Cadmium",
+    "grossExport": 75419,
+    "value": 0.000010906113371815256,
+    "code": 8107,
+    "parent": "metals"
+},
+{
+    "name": "Titanium",
+    "grossExport": 35461977,
+    "value": 0.00512804918589089,
+    "code": 8108,
+    "parent": "metals"
+},
+{
+    "name": "Zirconium",
+    "grossExport": 14419497,
+    "value": 0.00208515982771649,
+    "code": 8109,
+    "parent": "metals"
+},
+{
+    "name": "Antimony",
+    "grossExport": 328941,
+    "value": 0.00004756716263326592,
+    "code": 8110,
+    "parent": "metals"
+},
+{
+    "name": "Manganese",
+    "grossExport": 77661196,
+    "value": 0.011230350550481516,
+    "code": 8111,
+    "parent": "metals"
+},
+{
+    "name": "Other metals",
+    "grossExport": 5067087,
+    "value": 0.0007327361180452041,
+    "code": 8112,
+    "parent": "metals"
+},
+{
+    "name": "Cermets",
+    "grossExport": 574527,
+    "value": 0.00008308061094908318,
+    "code": 8113,
+    "parent": "metals"
+},
+{
+    "name": "Handtools for gardening",
+    "grossExport": 14540122,
+    "value": 0.0021026030439547753,
+    "code": 8201,
+    "parent": "metals"
+},
+{
+    "name": "Handsaws",
+    "grossExport": 10033844,
+    "value": 0.0014509638183893751,
+    "code": 8202,
+    "parent": "metals"
+},
+{
+    "name": "Pliers, pincers and other metal handtools",
+    "grossExport": 4313130,
+    "value": 0.0006237086777519927,
+    "code": 8203,
+    "parent": "metals"
+},
+{
+    "name": "Wrenches",
+    "grossExport": 8927497,
+    "value": 0.0012909783265296622,
+    "code": 8204,
+    "parent": "metals"
+},
+{
+    "name": "Hand tools n.e.c.",
+    "grossExport": 31830996,
+    "value": 0.004602984010843394,
+    "code": 8205,
+    "parent": "metals"
+},
+{
+    "name": "Retail tool sets",
+    "grossExport": 6312442,
+    "value": 0.0009128231361461732,
+    "code": 8206,
+    "parent": "metals"
+},
+{
+    "name": "Interchangeable tools for hand tools",
+    "grossExport": 134206272,
+    "value": 0.019407162885223556,
+    "code": 8207,
+    "parent": "metals"
+},
+{
+    "name": "Knives and blades for machines",
+    "grossExport": 7077747,
+    "value": 0.001023491576380293,
+    "code": 8208,
+    "parent": "metals"
+},
+{
+    "name": "Articles for utensils, of cermet",
+    "grossExport": 2559859,
+    "value": 0.0003701734638467977,
+    "code": 8209,
+    "parent": "metals"
+},
+{
+    "name": "Hand-operated appliances, food preparation, <10kg",
+    "grossExport": 704513,
+    "value": 0.00010187749307094608,
+    "code": 8210,
+    "parent": "metals"
+},
+{
+    "name": "Knife sets",
+    "grossExport": 4412105,
+    "value": 0.0006380211530032611,
+    "code": 8211,
+    "parent": "metals"
+},
+{
+    "name": "Razors",
+    "grossExport": 44723322,
+    "value": 0.0064673042614752175,
+    "code": 8212,
+    "parent": "metals"
+},
+{
+    "name": "Scissors",
+    "grossExport": 540099,
+    "value": 0.00007810208204834389,
+    "code": 8213,
+    "parent": "metals"
+},
+{
+    "name": "Other cutlery",
+    "grossExport": 1747316,
+    "value": 0.000252674079375048,
+    "code": 8214,
+    "parent": "metals"
+},
+{
+    "name": "Cutlery",
+    "grossExport": 3972087,
+    "value": 0.0005743914815194254,
+    "code": 8215,
+    "parent": "metals"
+},
+{
+    "name": "Padlocks and locks",
+    "grossExport": 45236427,
+    "value": 0.006541502822867509,
+    "code": 8301,
+    "parent": "metals"
+},
+{
+    "name": "Base metal mountings, fittings and similar articles",
+    "grossExport": 90208182,
+    "value": 0.013044732228713512,
+    "code": 8302,
+    "parent": "metals"
+},
+{
+    "name": "Safes",
+    "grossExport": 2964094,
+    "value": 0.00042862866398012925,
+    "code": 8303,
+    "parent": "metals"
+},
+{
+    "name": "Paper trays and similar office equipment, of base metal",
+    "grossExport": 1609079,
+    "value": 0.00023268404511074295,
+    "code": 8304,
+    "parent": "metals"
+},
+{
+    "name": "Paper clips and similar office articles, of metal",
+    "grossExport": 1584001,
+    "value": 0.0002290575914168676,
+    "code": 8305,
+    "parent": "metals"
+},
+{
+    "name": "Ornaments, statuettes, etc. of metal",
+    "grossExport": 5121549,
+    "value": 0.0007406117030629821,
+    "code": 8306,
+    "parent": "metals"
+},
+{
+    "name": "Flexible tubing of base metal",
+    "grossExport": 17543055,
+    "value": 0.002536848098197941,
+    "code": 8307,
+    "parent": "metals"
+},
+{
+    "name": "Clasps, buckles etc. of metal",
+    "grossExport": 9216402,
+    "value": 0.0013327560043520184,
+    "code": 8308,
+    "parent": "metals"
+},
+{
+    "name": "Stoppers, caps and lids of metal",
+    "grossExport": 78709479,
+    "value": 0.011381939583003117,
+    "code": 8309,
+    "parent": "metals"
+},
+{
+    "name": "Sign plates and similar plates of base metal",
+    "grossExport": 6039374,
+    "value": 0.000873335598970994,
+    "code": 8310,
+    "parent": "metals"
+},
+{
+    "name": "Wire etc. used for welding",
+    "grossExport": 20163268,
+    "value": 0.002915749171353302,
+    "code": 8311,
+    "parent": "metals"
+},
+{
+    "name": "Nuclear reactors and related equipment",
+    "grossExport": 740625,
+    "value": 0.00010709954011589487,
+    "code": 8401,
+    "parent": "machinery"
+},
+{
+    "name": "Steam boilers",
+    "grossExport": 23528411,
+    "value": 0.003402372317647611,
+    "code": 8402,
+    "parent": "machinery"
+},
+{
+    "name": "Central heating boilers",
+    "grossExport": 23599024,
+    "value": 0.003412583449902401,
+    "code": 8403,
+    "parent": "machinery"
+},
+{
+    "name": "Auxiliary parts for use with boilers",
+    "grossExport": 7253886,
+    "value": 0.001048962504173,
+    "code": 8404,
+    "parent": "machinery"
+},
+{
+    "name": "Water gas generators",
+    "grossExport": 9511672,
+    "value": 0.00137545410556386,
+    "code": 8405,
+    "parent": "machinery"
+},
+{
+    "name": "Steam turbines",
+    "grossExport": 6482177,
+    "value": 0.0009373680008774089,
+    "code": 8406,
+    "parent": "machinery"
+},
+{
+    "name": "Spark-ignition reciprocating internal combustion piston engines",
+    "grossExport": 109422732,
+    "value": 0.01582329016091114,
+    "code": 8407,
+    "parent": "machinery"
+},
+{
+    "name": "Compression-ignition internal combustion piston engines",
+    "grossExport": 149930464,
+    "value": 0.02168099070887795,
+    "code": 8408,
+    "parent": "machinery"
+},
+{
+    "name": "Parts suitable for use with spark-ignition engines",
+    "grossExport": 514891932,
+    "value": 0.07445696422154884,
+    "code": 8409,
+    "parent": "machinery"
+},
+{
+    "name": "Hydraulic turbines, water wheels and regulators",
+    "grossExport": 8872011,
+    "value": 0.001282954663970512,
+    "code": 8410,
+    "parent": "machinery"
+},
+{
+    "name": "Gas turbines",
+    "grossExport": 318973489,
+    "value": 0.046125791029282624,
+    "code": 8411,
+    "parent": "machinery"
+},
+{
+    "name": "Other engines and motors",
+    "grossExport": 144395356,
+    "value": 0.020880575490256095,
+    "code": 8412,
+    "parent": "machinery"
+},
+{
+    "name": "Pumps for liquids",
+    "grossExport": 433701294,
+    "value": 0.06271623174355241,
+    "code": 8413,
+    "parent": "machinery"
+},
+{
+    "name": "Pumps, compressors, fans, etc.",
+    "grossExport": 145812916,
+    "value": 0.02108556455231407,
+    "code": 8414,
+    "parent": "machinery"
+},
+{
+    "name": "Air conditioners",
+    "grossExport": 171747668,
+    "value": 0.024835910560374538,
+    "code": 8415,
+    "parent": "machinery"
+},
+{
+    "name": "Furnace burners",
+    "grossExport": 8956856,
+    "value": 0.001295223842679215,
+    "code": 8416,
+    "parent": "machinery"
+},
+{
+    "name": "Industrial furnaces",
+    "grossExport": 28434485,
+    "value": 0.0041118248329887735,
+    "code": 8417,
+    "parent": "machinery"
+},
+{
+    "name": "Refrigerators, freezers",
+    "grossExport": 238483334,
+    "value": 0.034486353278251954,
+    "code": 8418,
+    "parent": "machinery"
+},
+{
+    "name": "Equipment for temperature change of materials",
+    "grossExport": 90909592,
+    "value": 0.013146161006344147,
+    "code": 8419,
+    "parent": "machinery"
+},
+{
+    "name": "Calendering or other rolling machines, other than for metals or glass",
+    "grossExport": 4468744,
+    "value": 0.0006462115474034288,
+    "code": 8420,
+    "parent": "machinery"
+},
+{
+    "name": "Centrifuges",
+    "grossExport": 2845393713,
+    "value": 0.4114637746645854,
+    "code": 8421,
+    "parent": "machinery"
+},
+{
+    "name": "Dish washing machines",
+    "grossExport": 52991832,
+    "value": 0.007662988472032083,
+    "code": 8422,
+    "parent": "machinery"
+},
+{
+    "name": "Weighing machinery",
+    "grossExport": 20473116,
+    "value": 0.0029605553530320594,
+    "code": 8423,
+    "parent": "machinery"
+},
+{
+    "name": "Sprays and powder dispersers",
+    "grossExport": 126832360,
+    "value": 0.018340843784389698,
+    "code": 8424,
+    "parent": "machinery"
+},
+{
+    "name": "Pulleys and winches",
+    "grossExport": 35126688,
+    "value": 0.005079564058186698,
+    "code": 8425,
+    "parent": "machinery"
+},
+{
+    "name": "Ships' derricks; cranes",
+    "grossExport": 73856201,
+    "value": 0.010680121737461055,
+    "code": 8426,
+    "parent": "machinery"
+},
+{
+    "name": "Fork-lift trucks",
+    "grossExport": 43723562,
+    "value": 0.0063227319931528315,
+    "code": 8427,
+    "parent": "machinery"
+},
+{
+    "name": "Other lifting machinery",
+    "grossExport": 62621019,
+    "value": 0.0090554360661451,
+    "code": 8428,
+    "parent": "machinery"
+},
+{
+    "name": "Self-propelled bulldozers, excavators and road rollers",
+    "grossExport": 370092172,
+    "value": 0.05351790909258081,
+    "code": 8429,
+    "parent": "machinery"
+},
+{
+    "name": "Other moving, excavating or boring machinery",
+    "grossExport": 141937032,
+    "value": 0.020525084695513996,
+    "code": 8430,
+    "parent": "machinery"
+},
+{
+    "name": "Parts for use with hoists and excavation machinery",
+    "grossExport": 492038803,
+    "value": 0.07115224239051529,
+    "code": 8431,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for soil preparation or cultivation",
+    "grossExport": 41028732,
+    "value": 0.005933040781418801,
+    "code": 8432,
+    "parent": "machinery"
+},
+{
+    "name": "Harvesting or agricultural machinery",
+    "grossExport": 35783104,
+    "value": 0.005174486389629351,
+    "code": 8433,
+    "parent": "machinery"
+},
+{
+    "name": "Dairy machinery",
+    "grossExport": 6067287,
+    "value": 0.0008773720134361484,
+    "code": 8434,
+    "parent": "machinery"
+},
+{
+    "name": "Machines for wine and juice production",
+    "grossExport": 1574279,
+    "value": 0.0002276517224156771,
+    "code": 8435,
+    "parent": "machinery"
+},
+{
+    "name": "Other agricultural machinery",
+    "grossExport": 61320871,
+    "value": 0.00886742559811796,
+    "code": 8436,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for processing grain",
+    "grossExport": 21015078,
+    "value": 0.003038926837872958,
+    "code": 8437,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for the industrial preparation of food or drink",
+    "grossExport": 78096547,
+    "value": 0.011293305341217714,
+    "code": 8438,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for making paper",
+    "grossExport": 6419593,
+    "value": 0.0009283179180168341,
+    "code": 8439,
+    "parent": "machinery"
+},
+{
+    "name": "Bookbinding machinery",
+    "grossExport": 2295597,
+    "value": 0.00033195933568462837,
+    "code": 8440,
+    "parent": "machinery"
+},
+{
+    "name": "Other machinery for making paper",
+    "grossExport": 18008550,
+    "value": 0.0026041619215582765,
+    "code": 8441,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for making printing components",
+    "grossExport": 4591494,
+    "value": 0.0006639620534614557,
+    "code": 8442,
+    "parent": "machinery"
+},
+{
+    "name": "Printers and copiers",
+    "grossExport": 91909596,
+    "value": 0.013290768558768188,
+    "code": 8443,
+    "parent": "machinery"
+},
+{
+    "name": "Machines to extrude, cut manmade textile fibres",
+    "grossExport": 404837,
+    "value": 0.00005854225353167733,
+    "code": 8444,
+    "parent": "machinery"
+},
+{
+    "name": "Machines for preparing textile fibers",
+    "grossExport": 2179282,
+    "value": 0.00031513937550426677,
+    "code": 8445,
+    "parent": "machinery"
+},
+{
+    "name": "Looms",
+    "grossExport": 2778141,
+    "value": 0.0004017385633446241,
+    "code": 8446,
+    "parent": "machinery"
+},
+{
+    "name": "Knitting machines",
+    "grossExport": 2484101,
+    "value": 0.0003592183287107977,
+    "code": 8447,
+    "parent": "machinery"
+},
+{
+    "name": "Auxiliary machinery for use with knitting and textile machines",
+    "grossExport": 22398911,
+    "value": 0.0032390387405189652,
+    "code": 8448,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery to manufacture felt",
+    "grossExport": 80935,
+    "value": 0.000011703765440377993,
+    "code": 8449,
+    "parent": "machinery"
+},
+{
+    "name": "Household- or laundry-type washing machines",
+    "grossExport": 90640818,
+    "value": 0.013107294411515308,
+    "code": 8450,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for processing fabrics",
+    "grossExport": 11962116,
+    "value": 0.0017298053973508697,
+    "code": 8451,
+    "parent": "machinery"
+},
+{
+    "name": "Sewing machines",
+    "grossExport": 40057933,
+    "value": 0.005792656475670317,
+    "code": 8452,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for preparing leather",
+    "grossExport": 1197628,
+    "value": 0.0001731853610530551,
+    "code": 8453,
+    "parent": "machinery"
+},
+{
+    "name": "Machines used in metallurgy",
+    "grossExport": 9812825,
+    "value": 0.0014190029296037212,
+    "code": 8454,
+    "parent": "machinery"
+},
+{
+    "name": "Metal-rolling mills",
+    "grossExport": 19720086,
+    "value": 0.0028516619634037423,
+    "code": 8455,
+    "parent": "machinery"
+},
+{
+    "name": "Machines for working materials by laser and similar means",
+    "grossExport": 3005001,
+    "value": 0.00043454410146538956,
+    "code": 8456,
+    "parent": "machinery"
+},
+{
+    "name": "Machining centers for working metal",
+    "grossExport": 1976963,
+    "value": 0.00028588263713234075,
+    "code": 8457,
+    "parent": "machinery"
+},
+{
+    "name": "Lathes for removing metal",
+    "grossExport": 3179177,
+    "value": 0.0004597311657681421,
+    "code": 8458,
+    "parent": "machinery"
+},
+{
+    "name": "Machine tools for drilling by removing metal",
+    "grossExport": 26607274,
+    "value": 0.003847597379426304,
+    "code": 8459,
+    "parent": "machinery"
+},
+{
+    "name": "Machines with grinding stones for finishing metal",
+    "grossExport": 2782664,
+    "value": 0.0004023926206880087,
+    "code": 8460,
+    "parent": "machinery"
+},
+{
+    "name": "Other machine tools for planing and cutting metals",
+    "grossExport": 3682424,
+    "value": 0.0005325041916107801,
+    "code": 8461,
+    "parent": "machinery"
+},
+{
+    "name": "Machine tools for molding and forging metals",
+    "grossExport": 14389021,
+    "value": 0.002080752785576984,
+    "code": 8462,
+    "parent": "machinery"
+},
+{
+    "name": "Other machine tools for working metal, without removal",
+    "grossExport": 2441275,
+    "value": 0.00035302539044243877,
+    "code": 8463,
+    "parent": "machinery"
+},
+{
+    "name": "Machine tools for working stone",
+    "grossExport": 3371414,
+    "value": 0.00048752997662823906,
+    "code": 8464,
+    "parent": "machinery"
+},
+{
+    "name": "Machine tools for working wood",
+    "grossExport": 13377484,
+    "value": 0.0019344774809218453,
+    "code": 8465,
+    "parent": "machinery"
+},
+{
+    "name": "Parts and accessories for metal working machines",
+    "grossExport": 18197740,
+    "value": 0.0026315201149686067,
+    "code": 8466,
+    "parent": "machinery"
+},
+{
+    "name": "Tools for hand working, pneumatic, hydraulic motors",
+    "grossExport": 25425885,
+    "value": 0.003676760291023972,
+    "code": 8467,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for soldering",
+    "grossExport": 6745326,
+    "value": 0.0009754211814775204,
+    "code": 8468,
+    "parent": "machinery"
+},
+{
+    "name": "Cash registers, calculators, etc.",
+    "grossExport": 11423868,
+    "value": 0.0016519709828113926,
+    "code": 8470,
+    "parent": "machinery"
+},
+{
+    "name": "Computers",
+    "grossExport": 253673564,
+    "value": 0.03668296647285742,
+    "code": 8471,
+    "parent": "machinery"
+},
+{
+    "name": "Other office machines",
+    "grossExport": 14905709,
+    "value": 0.002155469473757104,
+    "code": 8472,
+    "parent": "machinery"
+},
+{
+    "name": "Parts and accessories for office machines",
+    "grossExport": 160411222,
+    "value": 0.023196581408443835,
+    "code": 8473,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for working minerals",
+    "grossExport": 446600898,
+    "value": 0.06458160444374098,
+    "code": 8474,
+    "parent": "machinery"
+},
+{
+    "name": "Machines for assembling electric lamps",
+    "grossExport": 2353396,
+    "value": 0.00034031747417463155,
+    "code": 8475,
+    "parent": "machinery"
+},
+{
+    "name": "Automatic goods-vending machines",
+    "grossExport": 1033340,
+    "value": 0.00014942817050917642,
+    "code": 8476,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for working rubber or plastics",
+    "grossExport": 38623381,
+    "value": 0.0055852102519101995,
+    "code": 8477,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery for preparing tobacco",
+    "grossExport": 8387803,
+    "value": 0.0012129348103057868,
+    "code": 8478,
+    "parent": "machinery"
+},
+{
+    "name": "Machines n.e.c.",
+    "grossExport": 191454584,
+    "value": 0.027685668049930754,
+    "code": 8479,
+    "parent": "machinery"
+},
+{
+    "name": "Molding boxes for metal foundry",
+    "grossExport": 37405929,
+    "value": 0.005409158202204644,
+    "code": 8480,
+    "parent": "machinery"
+},
+{
+    "name": "Appliances for thermostatically controlled valves",
+    "grossExport": 314074249,
+    "value": 0.04541732675800175,
+    "code": 8481,
+    "parent": "machinery"
+},
+{
+    "name": "Ball or roller bearings",
+    "grossExport": 45909435,
+    "value": 0.0066388244732227064,
+    "code": 8482,
+    "parent": "machinery"
+},
+{
+    "name": "Transmission shafts",
+    "grossExport": 195069527,
+    "value": 0.028208414018329298,
+    "code": 8483,
+    "parent": "machinery"
+},
+{
+    "name": "Gaskets and similar joints of metal sheeting",
+    "grossExport": 20584385,
+    "value": 0.0029766456264216363,
+    "code": 8484,
+    "parent": "machinery"
+},
+{
+    "name": "Machinery parts, not containing electrical features, n.e.c.",
+    "grossExport": 53844562,
+    "value": 0.007786299176967815,
+    "code": 8485,
+    "parent": "machinery"
+},
+{
+    "name": "Electric motors and generators",
+    "grossExport": 361440717,
+    "value": 0.05226684836436699,
+    "code": 8501,
+    "parent": "electronics"
+},
+{
+    "name": "Electric generating sets and rotary converters",
+    "grossExport": 90228592,
+    "value": 0.013047683657052772,
+    "code": 8502,
+    "parent": "electronics"
+},
+{
+    "name": "Parts for use with electric generators",
+    "grossExport": 79277659,
+    "value": 0.011464102373488248,
+    "code": 8503,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical transformers",
+    "grossExport": 401262209,
+    "value": 0.05802531382249869,
+    "code": 8504,
+    "parent": "electronics"
+},
+{
+    "name": "Electromagnets",
+    "grossExport": 12134869,
+    "value": 0.0017547866859296255,
+    "code": 8505,
+    "parent": "electronics"
+},
+{
+    "name": "Primary cells and primary batteries",
+    "grossExport": 30366174,
+    "value": 0.004391160533980413,
+    "code": 8506,
+    "parent": "electronics"
+},
+{
+    "name": "Batteries",
+    "grossExport": 198840239,
+    "value": 0.02875368527046025,
+    "code": 8507,
+    "parent": "electronics"
+},
+{
+    "name": "Vacuum cleaners",
+    "grossExport": 12787919,
+    "value": 0.001849222270297808,
+    "code": 8508,
+    "parent": "electronics"
+},
+{
+    "name": "Electromechanical domestic appliances",
+    "grossExport": 17755723,
+    "value": 0.002567601374143753,
+    "code": 8509,
+    "parent": "electronics"
+},
+{
+    "name": "Electric shavers and hair clippers",
+    "grossExport": 2265693,
+    "value": 0.00032763500873424765,
+    "code": 8510,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical ignition equipment",
+    "grossExport": 70923397,
+    "value": 0.010256017825697265,
+    "code": 8511,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical lighting equipment used for motor vehicles",
+    "grossExport": 294904463,
+    "value": 0.04264524201238809,
+    "code": 8512,
+    "parent": "electronics"
+},
+{
+    "name": "Portable electric lamps",
+    "grossExport": 5529115,
+    "value": 0.0007995485890266951,
+    "code": 8513,
+    "parent": "electronics"
+},
+{
+    "name": "Industrial electric furnaces",
+    "grossExport": 13192622,
+    "value": 0.0019077451464949698,
+    "code": 8514,
+    "parent": "electronics"
+},
+{
+    "name": "Electric soldering machines",
+    "grossExport": 27694624,
+    "value": 0.004004835772601013,
+    "code": 8515,
+    "parent": "electronics"
+},
+{
+    "name": "Electric heaters",
+    "grossExport": 263708128,
+    "value": 0.03813403440826807,
+    "code": 8516,
+    "parent": "electronics"
+},
+{
+    "name": "Telephones",
+    "grossExport": 81691987,
+    "value": 0.011813231039802412,
+    "code": 8517,
+    "parent": "electronics"
+},
+{
+    "name": "Microphones",
+    "grossExport": 48176493,
+    "value": 0.006966656870476459,
+    "code": 8518,
+    "parent": "electronics"
+},
+{
+    "name": "Sound reproducing apparatus",
+    "grossExport": 1667695,
+    "value": 0.00024116032749850098,
+    "code": 8519,
+    "parent": "electronics"
+},
+{
+    "name": "Magnetic tape recorders",
+    "grossExport": 1310991,
+    "value": 0.00018957844144618007,
+    "code": 8520,
+    "parent": "electronics"
+},
+{
+    "name": "Video recording apparatus",
+    "grossExport": 53598791,
+    "value": 0.007750758976361808,
+    "code": 8521,
+    "parent": "electronics"
+},
+{
+    "name": "Parts and accessories for video or sound equipment",
+    "grossExport": 688857,
+    "value": 0.00009961352628606243,
+    "code": 8522,
+    "parent": "electronics"
+},
+{
+    "name": "Sound storage media",
+    "grossExport": 32388009,
+    "value": 0.004683531975249909,
+    "code": 8523,
+    "parent": "electronics"
+},
+{
+    "name": "Tapes, cassettes, records and compact disks",
+    "grossExport": 4517936,
+    "value": 0.0006533250536682471,
+    "code": 8524,
+    "parent": "electronics"
+},
+{
+    "name": "Transmission apparatus for radio, telephone and TV",
+    "grossExport": 582624250,
+    "value": 0.08425152976927346,
+    "code": 8525,
+    "parent": "electronics"
+},
+{
+    "name": "Radar",
+    "grossExport": 109996907,
+    "value": 0.015906319870205375,
+    "code": 8526,
+    "parent": "electronics"
+},
+{
+    "name": "Reception apparatus for radio broadcasting",
+    "grossExport": 12460807,
+    "value": 0.001801919593819981,
+    "code": 8527,
+    "parent": "electronics"
+},
+{
+    "name": "Monitors and projectors",
+    "grossExport": 1210552270,
+    "value": 0.17505430062886426,
+    "code": 8528,
+    "parent": "electronics"
+},
+{
+    "name": "Parts of radios, telephones, and T.V.s",
+    "grossExport": 244322327,
+    "value": 0.035330712387166625,
+    "code": 8529,
+    "parent": "electronics"
+},
+{
+    "name": "Electric signal and traffic controls",
+    "grossExport": 13193030,
+    "value": 0.0019078041461403602,
+    "code": 8530,
+    "parent": "electronics"
+},
+{
+    "name": "Electric sound or visual signaling apparatus",
+    "grossExport": 45174988,
+    "value": 0.006532618314992161,
+    "code": 8531,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical capacitors",
+    "grossExport": 11206394,
+    "value": 0.0016205227257485551,
+    "code": 8532,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical resistors",
+    "grossExport": 15865728,
+    "value": 0.002294294916325909,
+    "code": 8533,
+    "parent": "electronics"
+},
+{
+    "name": "Electronic printed circuits",
+    "grossExport": 91266215,
+    "value": 0.013197731179231577,
+    "code": 8534,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical apparatus for > 1k volts",
+    "grossExport": 50424059,
+    "value": 0.00729167058859308,
+    "code": 8535,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical apparatus for < 1k volts",
+    "grossExport": 1061242308,
+    "value": 0.15346303883656487,
+    "code": 8536,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical boards",
+    "grossExport": 568987379,
+    "value": 0.08227954311918767,
+    "code": 8537,
+    "parent": "electronics"
+},
+{
+    "name": "Parts for electrical apparatus",
+    "grossExport": 407669216,
+    "value": 0.058951811717140805,
+    "code": 8538,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical filament",
+    "grossExport": 40147775,
+    "value": 0.005805648255428079,
+    "code": 8539,
+    "parent": "electronics"
+},
+{
+    "name": "Thermionic, cold cathode or photocathode tubes",
+    "grossExport": 2928369,
+    "value": 0.000423462579834117,
+    "code": 8540,
+    "parent": "electronics"
+},
+{
+    "name": "Semiconductor devices",
+    "grossExport": 409454989,
+    "value": 0.05921004694691481,
+    "code": 8541,
+    "parent": "electronics"
+},
+{
+    "name": "Electronic integrated circuits",
+    "grossExport": 574653896,
+    "value": 0.08309896099565539,
+    "code": 8542,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical machines with individual functions n.e.c.",
+    "grossExport": 143438734,
+    "value": 0.020742241277577952,
+    "code": 8543,
+    "parent": "electronics"
+},
+{
+    "name": "Insulated electrical wire",
+    "grossExport": 6640115980,
+    "value": 0.9602070788512466,
+    "code": 8544,
+    "parent": "electronics"
+},
+{
+    "name": "Carbon articles for eletrical purposes",
+    "grossExport": 8125707,
+    "value": 0.001175033900849293,
+    "code": 8545,
+    "parent": "electronics"
+},
+{
+    "name": "Electrical insulators of any material",
+    "grossExport": 17453102,
+    "value": 0.0025238402670660653,
+    "code": 8546,
+    "parent": "electronics"
+},
+{
+    "name": "Insulating fittings for electrical machines",
+    "grossExport": 67249117,
+    "value": 0.00972469131328271,
+    "code": 8547,
+    "parent": "electronics"
+},
+{
+    "name": "Waste and scrap of batteries",
+    "grossExport": 48983511,
+    "value": 0.00708335730141688,
+    "code": 8548,
+    "parent": "electronics"
+},
+{
+    "name": "Electric trains",
+    "grossExport": 369102,
+    "value": 0.0000533747233159251,
+    "code": 8601,
+    "parent": "vehicles"
+},
+{
+    "name": "Other rail locomotives",
+    "grossExport": 27086547,
+    "value": 0.003916903597674358,
+    "code": 8602,
+    "parent": "vehicles"
+},
+{
+    "name": "Self-propelled railway coaches",
+    "grossExport": 168259,
+    "value": 0.000024331424837617357,
+    "code": 8603,
+    "parent": "vehicles"
+},
+{
+    "name": "Railway service vehicles",
+    "grossExport": 8376064,
+    "value": 0.001211237269038046,
+    "code": 8604,
+    "parent": "vehicles"
+},
+{
+    "name": "Railway coaches, not self-propelled",
+    "grossExport": 2450434,
+    "value": 0.00035434984571726944,
+    "code": 8605,
+    "parent": "vehicles"
+},
+{
+    "name": "Railway cars, not self-propelled",
+    "grossExport": 20935115,
+    "value": 0.0030273636304113043,
+    "code": 8606,
+    "parent": "vehicles"
+},
+{
+    "name": "Parts of railway locomotives",
+    "grossExport": 28446871,
+    "value": 0.00411361593496869,
+    "code": 8607,
+    "parent": "vehicles"
+},
+{
+    "name": "Railway track fixtures",
+    "grossExport": 1968182,
+    "value": 0.00028461284329368055,
+    "code": 8608,
+    "parent": "vehicles"
+},
+{
+    "name": "Containers for multimodal transportation",
+    "grossExport": 116710268,
+    "value": 0.016877118689759107,
+    "code": 8609,
+    "parent": "vehicles"
+},
+{
+    "name": "Tractors",
+    "grossExport": 251279888,
+    "value": 0.03633682422977022,
+    "code": 8701,
+    "parent": "vehicles"
+},
+{
+    "name": "Buses",
+    "grossExport": 92284694,
+    "value": 0.013345010345500194,
+    "code": 8702,
+    "parent": "vehicles"
+},
+{
+    "name": "Cars",
+    "grossExport": 9373509425,
+    "value": 1.3554748336735947,
+    "code": 8703,
+    "parent": "vehicles"
+},
+{
+    "name": "Motor vehicles for transporting goods",
+    "grossExport": 4434343667,
+    "value": 0.641237019343839,
+    "code": 8704,
+    "parent": "vehicles"
+},
+{
+    "name": "Special purpose motor vehicles",
+    "grossExport": 80338056,
+    "value": 0.011617443174892838,
+    "code": 8705,
+    "parent": "vehicles"
+},
+{
+    "name": "Vehicle chassis fitted with engines",
+    "grossExport": 3959646,
+    "value": 0.0005725924261559393,
+    "code": 8706,
+    "parent": "vehicles"
+},
+{
+    "name": "Vehicle Bodies",
+    "grossExport": 25478588,
+    "value": 0.003684381512374491,
+    "code": 8707,
+    "parent": "vehicles"
+},
+{
+    "name": "Parts of motor vehicles",
+    "grossExport": 2066439256,
+    "value": 0.29882152775700516,
+    "code": 8708,
+    "parent": "vehicles"
+},
+{
+    "name": "Work trucks",
+    "grossExport": 5103212,
+    "value": 0.0007379600449808149,
+    "code": 8709,
+    "parent": "vehicles"
+},
+{
+    "name": "Tanks and other armored fighting vehicles",
+    "grossExport": 62008846,
+    "value": 0.008966911581052957,
+    "code": 8710,
+    "parent": "vehicles"
+},
+{
+    "name": "Motorcycles",
+    "grossExport": 114365284,
+    "value": 0.016538017649449736,
+    "code": 8711,
+    "parent": "vehicles"
+},
+{
+    "name": "Bicycles",
+    "grossExport": 61210412,
+    "value": 0.008851452456377319,
+    "code": 8712,
+    "parent": "vehicles"
+},
+{
+    "name": "Wheelchairs",
+    "grossExport": 1284247,
+    "value": 0.00018571107253362716,
+    "code": 8713,
+    "parent": "vehicles"
+},
+{
+    "name": "Parts of motorcycles or wheelchairs",
+    "grossExport": 34309892,
+    "value": 0.004961449660254542,
+    "code": 8714,
+    "parent": "vehicles"
+},
+{
+    "name": "Baby carriages",
+    "grossExport": 1082345,
+    "value": 0.0001565146352698575,
+    "code": 8715,
+    "parent": "vehicles"
+},
+{
+    "name": "Trailers and semi-trailers",
+    "grossExport": 251107498,
+    "value": 0.03631189543352302,
+    "code": 8716,
+    "parent": "vehicles"
+},
+{
+    "name": "Gliders, hang gliders",
+    "grossExport": 2153302,
+    "value": 0.00031138248631984694,
+    "code": 8801,
+    "parent": "vehicles"
+},
+{
+    "name": "Other aircraft and spacecraft",
+    "grossExport": 578967002,
+    "value": 0.08372266620284001,
+    "code": 8802,
+    "parent": "vehicles"
+},
+{
+    "name": "Parts of other aircraft",
+    "grossExport": 1197439505,
+    "value": 0.17315810336149168,
+    "code": 8803,
+    "parent": "vehicles"
+},
+{
+    "name": "Parachutes",
+    "grossExport": 8328120,
+    "value": 0.0012043042322767746,
+    "code": 8804,
+    "parent": "vehicles"
+},
+{
+    "name": "Aircraft launching gear",
+    "grossExport": 3092005,
+    "value": 0.0004471254866309502,
+    "code": 8805,
+    "parent": "vehicles"
+},
+{
+    "name": "Cargo ships and similar vessels",
+    "grossExport": 1033664766,
+    "value": 0.14947513393769327,
+    "code": 8901,
+    "parent": "vehicles"
+},
+{
+    "name": "Fishing vessels",
+    "grossExport": 23922599,
+    "value": 0.003459374651513203,
+    "code": 8902,
+    "parent": "vehicles"
+},
+{
+    "name": "Pleasure or sport boats",
+    "grossExport": 1432904319,
+    "value": 0.20720795759659683,
+    "code": 8903,
+    "parent": "vehicles"
+},
+{
+    "name": "Tugs and pusher craft",
+    "grossExport": 114467755,
+    "value": 0.01655283567068209,
+    "code": 8904,
+    "parent": "vehicles"
+},
+{
+    "name": "Special function vessels, n.e.c.",
+    "grossExport": 2028133817,
+    "value": 0.2932822941356212,
+    "code": 8905,
+    "parent": "vehicles"
+},
+{
+    "name": "Other vessels",
+    "grossExport": 445879917,
+    "value": 0.06447734556302227,
+    "code": 8906,
+    "parent": "vehicles"
+},
+{
+    "name": "Other floating structures",
+    "grossExport": 19000941,
+    "value": 0.0027476685810892847,
+    "code": 8907,
+    "parent": "vehicles"
+},
+{
+    "name": "Floating structures for scrapping",
+    "grossExport": 413016906,
+    "value": 0.059725124985910254,
+    "code": 8908,
+    "parent": "vehicles"
+},
+{
+    "name": "Optical fibers",
+    "grossExport": 15969312,
+    "value": 0.0023092738851203257,
+    "code": 9001,
+    "parent": "machinery"
+},
+{
+    "name": "Lenses and other optical elements",
+    "grossExport": 2649631,
+    "value": 0.0003831551211163796,
+    "code": 9002,
+    "parent": "machinery"
+},
+{
+    "name": "Frames for spectacles, goggles",
+    "grossExport": 13659064,
+    "value": 0.0019751959126596795,
+    "code": 9003,
+    "parent": "machinery"
+},
+{
+    "name": "Glasses",
+    "grossExport": 12696481,
+    "value": 0.0018359996978095487,
+    "code": 9004,
+    "parent": "machinery"
+},
+{
+    "name": "Binoculars and telescopes",
+    "grossExport": 1498039,
+    "value": 0.00021662688671821102,
+    "code": 9005,
+    "parent": "machinery"
+},
+{
+    "name": "Photographic cameras",
+    "grossExport": 29201258,
+    "value": 0.00422270555626072,
+    "code": 9006,
+    "parent": "machinery"
+},
+{
+    "name": "Cinematographic cameras and projectors",
+    "grossExport": 2939729,
+    "value": 0.0004251053150587132,
+    "code": 9007,
+    "parent": "machinery"
+},
+{
+    "name": "Still image projectors",
+    "grossExport": 891232,
+    "value": 0.00012887836264853227,
+    "code": 9008,
+    "parent": "machinery"
+},
+{
+    "name": "Electrostatic photo-copyers",
+    "grossExport": 9832201,
+    "value": 0.0014218048343318703,
+    "code": 9009,
+    "parent": "machinery"
+},
+{
+    "name": "Apparatus and equipment for photographic laboratories, n.e.c.",
+    "grossExport": 12167725,
+    "value": 0.001759537892667243,
+    "code": 9010,
+    "parent": "machinery"
+},
+{
+    "name": "Optical microscopes",
+    "grossExport": 1959648,
+    "value": 0.0002833787673775975,
+    "code": 9011,
+    "parent": "machinery"
+},
+{
+    "name": "Microscopes, other than optical",
+    "grossExport": 1162525,
+    "value": 0.00016810922244486843,
+    "code": 9012,
+    "parent": "machinery"
+},
+{
+    "name": "Liquid crystal devices",
+    "grossExport": 23709041,
+    "value": 0.003428492675360535,
+    "code": 9013,
+    "parent": "machinery"
+},
+{
+    "name": "Navigational instruments",
+    "grossExport": 30600924,
+    "value": 0.004425107021126008,
+    "code": 9014,
+    "parent": "machinery"
+},
+{
+    "name": "Surveying instruments",
+    "grossExport": 85717079,
+    "value": 0.012395287413978504,
+    "code": 9015,
+    "parent": "machinery"
+},
+{
+    "name": "Balances of a sensitivity < 50 milligram",
+    "grossExport": 714254,
+    "value": 0.00010328610960464253,
+    "code": 9016,
+    "parent": "machinery"
+},
+{
+    "name": "Drafting tables and machines",
+    "grossExport": 7061639,
+    "value": 0.0010211622472431632,
+    "code": 9017,
+    "parent": "machinery"
+},
+{
+    "name": "Medical instruments",
+    "grossExport": 437999032,
+    "value": 0.06333771463076066,
+    "code": 9018,
+    "parent": "machinery"
+},
+{
+    "name": "Therapy applicances",
+    "grossExport": 16535981,
+    "value": 0.002391218174467747,
+    "code": 9019,
+    "parent": "machinery"
+},
+{
+    "name": "Other breathing appliances and gas masks",
+    "grossExport": 12458431,
+    "value": 0.001801576007649766,
+    "code": 9020,
+    "parent": "machinery"
+},
+{
+    "name": "Orthopedic appliances",
+    "grossExport": 91367467,
+    "value": 0.013212372924562633,
+    "code": 9021,
+    "parent": "machinery"
+},
+{
+    "name": "X-ray machines",
+    "grossExport": 39012061,
+    "value": 0.005641416090563021,
+    "code": 9022,
+    "parent": "machinery"
+},
+{
+    "name": "Instruments designed for demonstrational purposes",
+    "grossExport": 12771364,
+    "value": 0.001846828301843302,
+    "code": 9023,
+    "parent": "machinery"
+},
+{
+    "name": "Machines for testing the mechanical properties of materials",
+    "grossExport": 3645230,
+    "value": 0.0005271256798199675,
+    "code": 9024,
+    "parent": "machinery"
+},
+{
+    "name": "Thermometers, hydrometers etc.",
+    "grossExport": 24090670,
+    "value": 0.0034836788902397092,
+    "code": 9025,
+    "parent": "machinery"
+},
+{
+    "name": "Instruments for measuring properties of liquids or gases",
+    "grossExport": 89271722,
+    "value": 0.012909313581845083,
+    "code": 9026,
+    "parent": "machinery"
+},
+{
+    "name": "Instruments for physical or chemical analysis",
+    "grossExport": 82440686,
+    "value": 0.011921498136626352,
+    "code": 9027,
+    "parent": "machinery"
+},
+{
+    "name": "Gas, liquid or electricity meters",
+    "grossExport": 291511793,
+    "value": 0.04215463826992059,
+    "code": 9028,
+    "parent": "machinery"
+},
+{
+    "name": "Meters",
+    "grossExport": 29201535,
+    "value": 0.004222745612392517,
+    "code": 9029,
+    "parent": "machinery"
+},
+{
+    "name": "Instruments for measuring electricity",
+    "grossExport": 68757350,
+    "value": 0.009942792323493838,
+    "code": 9030,
+    "parent": "machinery"
+},
+{
+    "name": "Measuring instruments",
+    "grossExport": 103012840,
+    "value": 0.014896375075149041,
+    "code": 9031,
+    "parent": "machinery"
+},
+{
+    "name": "Automatic regulating instruments",
+    "grossExport": 188826973,
+    "value": 0.027305697174381766,
+    "code": 9032,
+    "parent": "machinery"
+},
+{
+    "name": "Other parts for machines and appliances",
+    "grossExport": 5723393,
+    "value": 0.000827642542720718,
+    "code": 9033,
+    "parent": "machinery"
+},
+{
+    "name": "Watches with precious metal",
+    "grossExport": 19706181,
+    "value": 0.002849651203430326,
+    "code": 9101,
+    "parent": "machinery"
+},
+{
+    "name": "Watches",
+    "grossExport": 14133513,
+    "value": 0.0020438045468651766,
+    "code": 9102,
+    "parent": "machinery"
+},
+{
+    "name": "Clocks with watch movements",
+    "grossExport": 1255255,
+    "value": 0.00018151862714353093,
+    "code": 9103,
+    "parent": "machinery"
+},
+{
+    "name": "Instrument panel clocks for vehicles",
+    "grossExport": 3546970,
+    "value": 0.0005129165985551063,
+    "code": 9104,
+    "parent": "machinery"
+},
+{
+    "name": "Other clocks",
+    "grossExport": 544804,
+    "value": 0.00007878245786099576,
+    "code": 9105,
+    "parent": "machinery"
+},
+{
+    "name": "Apparatus for measuring intervals of time",
+    "grossExport": 6600419,
+    "value": 0.0009544666186966611,
+    "code": 9106,
+    "parent": "machinery"
+},
+{
+    "name": "Time switches",
+    "grossExport": 6448978,
+    "value": 0.0009325671939477109,
+    "code": 9107,
+    "parent": "machinery"
+},
+{
+    "name": "Watch movements, complete",
+    "grossExport": 169076,
+    "value": 0.000024449568735372205,
+    "code": 9108,
+    "parent": "machinery"
+},
+{
+    "name": "Clock movements, complete",
+    "grossExport": 205910,
+    "value": 0.00002977602201554621,
+    "code": 9109,
+    "parent": "machinery"
+},
+{
+    "name": "Clock movements, complete, unassembled",
+    "grossExport": 80813,
+    "value": 0.000011686123389550462,
+    "code": 9110,
+    "parent": "machinery"
+},
+{
+    "name": "Watch cases and parts",
+    "grossExport": 137664,
+    "value": 0.0000199071744682053,
+    "code": 9111,
+    "parent": "machinery"
+},
+{
+    "name": "Clock cases",
+    "grossExport": 149817,
+    "value": 0.00002166458302318045,
+    "code": 9112,
+    "parent": "machinery"
+},
+{
+    "name": "Watch straps",
+    "grossExport": 28924298,
+    "value": 0.0041826552087427474,
+    "code": 9113,
+    "parent": "machinery"
+},
+{
+    "name": "Other clock or watch parts",
+    "grossExport": 15551324,
+    "value": 0.002248829905273625,
+    "code": 9114,
+    "parent": "machinery"
+},
+{
+    "name": "Pianos",
+    "grossExport": 682966,
+    "value": 0.00009876164660225112,
+    "code": 9201,
+    "parent": "machinery"
+},
+{
+    "name": "Musical instruments, string",
+    "grossExport": 817760,
+    "value": 0.0001182537990550875,
+    "code": 9202,
+    "parent": "machinery"
+},
+{
+    "name": "Musical instruments, wind",
+    "grossExport": 274618,
+    "value": 0.00003971167798487334,
+    "code": 9205,
+    "parent": "machinery"
+},
+{
+    "name": "Musical instruments, percussion",
+    "grossExport": 1912921,
+    "value": 0.0002766217173036796,
+    "code": 9206,
+    "parent": "machinery"
+},
+{
+    "name": "Musical instruments, electric",
+    "grossExport": 1080470,
+    "value": 0.00015624349719361473,
+    "code": 9207,
+    "parent": "machinery"
+},
+{
+    "name": "Other musical instruments, n.e.c.",
+    "grossExport": 534719,
+    "value": 0.00007732409652824463,
+    "code": 9208,
+    "parent": "machinery"
+},
+{
+    "name": "Parts of musical instruments",
+    "grossExport": 9554611,
+    "value": 0.0013816633844202805,
+    "code": 9209,
+    "parent": "machinery"
+},
+{
+    "name": "Military weapons, other than pistols and swords",
+    "grossExport": 9041298,
+    "value": 0.0013074347447773974,
+    "code": 9301,
+    "parent": "machinery"
+},
+{
+    "name": "Revolvers and pistols",
+    "grossExport": 437716,
+    "value": 0.00006329678622969658,
+    "code": 9302,
+    "parent": "machinery"
+},
+{
+    "name": "Other firearms",
+    "grossExport": 4993198,
+    "value": 0.000722051253343603,
+    "code": 9303,
+    "parent": "machinery"
+},
+{
+    "name": "Other arms (air guns, truncheons, etc.)",
+    "grossExport": 7773844,
+    "value": 0.0011241520571580875,
+    "code": 9304,
+    "parent": "machinery"
+},
+{
+    "name": "Parts of military weapons",
+    "grossExport": 9354753,
+    "value": 0.001352762523811359,
+    "code": 9305,
+    "parent": "machinery"
+},
+{
+    "name": "Munitions of war",
+    "grossExport": 95695664,
+    "value": 0.013838260395591825,
+    "code": 9306,
+    "parent": "machinery"
+},
+{
+    "name": "Swords",
+    "grossExport": 729303,
+    "value": 0.00010546229995631051,
+    "code": 9307,
+    "parent": "machinery"
+},
+{
+    "name": "Seats",
+    "grossExport": 534026487,
+    "value": 0.07722395431886164,
+    "code": 9401,
+    "parent": "textiles"
+},
+{
+    "name": "Medical, dental or veterinary furniture",
+    "grossExport": 10623641,
+    "value": 0.0015362525778313794,
+    "code": 9402,
+    "parent": "textiles"
+},
+{
+    "name": "Other furniture and parts",
+    "grossExport": 324920277,
+    "value": 0.04698573804695921,
+    "code": 9403,
+    "parent": "textiles"
+},
+{
+    "name": "Mattresses and bedding",
+    "grossExport": 79969479,
+    "value": 0.01156414437023826,
+    "code": 9404,
+    "parent": "textiles"
+},
+{
+    "name": "Lamps",
+    "grossExport": 123564878,
+    "value": 0.017868343099782823,
+    "code": 9405,
+    "parent": "textiles"
+},
+{
+    "name": "Prefabricated buildings",
+    "grossExport": 97402672,
+    "value": 0.014085105657059036,
+    "code": 9406,
+    "parent": "textiles"
+},
+{
+    "name": "Toys",
+    "grossExport": 83256404,
+    "value": 0.01203945664824054,
+    "code": 9503,
+    "parent": "machinery"
+},
+{
+    "name": "Games",
+    "grossExport": 50474434,
+    "value": 0.007298955164908134,
+    "code": 9504,
+    "parent": "machinery"
+},
+{
+    "name": "Christmas and other festivity articles",
+    "grossExport": 7814970,
+    "value": 0.001130099163570653,
+    "code": 9505,
+    "parent": "machinery"
+},
+{
+    "name": "Sports equipment",
+    "grossExport": 69867067,
+    "value": 0.010103265140855917,
+    "code": 9506,
+    "parent": "machinery"
+},
+{
+    "name": "Fishing and hunting equipment",
+    "grossExport": 21771256,
+    "value": 0.0031482754502554153,
+    "code": 9507,
+    "parent": "machinery"
+},
+{
+    "name": "Fairground amusements",
+    "grossExport": 585459,
+    "value": 0.00008466145438880903,
+    "code": 9508,
+    "parent": "machinery"
+},
+{
+    "name": "Worked animal carving material",
+    "grossExport": 4302505,
+    "value": 0.0006221722286532836,
+    "code": 9601,
+    "parent": "machinery"
+},
+{
+    "name": "Worked vegetable or mineral carving material",
+    "grossExport": 1468406,
+    "value": 0.00021234174825778324,
+    "code": 9602,
+    "parent": "machinery"
+},
+{
+    "name": "Brooms and mops",
+    "grossExport": 49721167,
+    "value": 0.007190027503426981,
+    "code": 9603,
+    "parent": "machinery"
+},
+{
+    "name": "Hand sieves and riddles",
+    "grossExport": 328746,
+    "value": 0.000047538964273336666,
+    "code": 9604,
+    "parent": "machinery"
+},
+{
+    "name": "Travel sets",
+    "grossExport": 1701392,
+    "value": 0.00024603314870124906,
+    "code": 9605,
+    "parent": "machinery"
+},
+{
+    "name": "Buttons",
+    "grossExport": 7793530,
+    "value": 0.0011269987900481757,
+    "code": 9606,
+    "parent": "machinery"
+},
+{
+    "name": "Slide fasteners",
+    "grossExport": 24183115,
+    "value": 0.003497047081950783,
+    "code": 9607,
+    "parent": "machinery"
+},
+{
+    "name": "Pens",
+    "grossExport": 78892916,
+    "value": 0.011408465852492049,
+    "code": 9608,
+    "parent": "machinery"
+},
+{
+    "name": "Pencils, crayons, pastels, etc.",
+    "grossExport": 9031258,
+    "value": 0.0013059828907584761,
+    "code": 9609,
+    "parent": "machinery"
+},
+{
+    "name": "Slates and boards, with writing or drawing surfaces",
+    "grossExport": 1654370,
+    "value": 0.00023923343957000235,
+    "code": 9610,
+    "parent": "machinery"
+},
+{
+    "name": "Hand-operated stamps",
+    "grossExport": 570153,
+    "value": 0.00008244810004482404,
+    "code": 9611,
+    "parent": "machinery"
+},
+{
+    "name": "Typewriter ribbons and ink pads",
+    "grossExport": 5893044,
+    "value": 0.000852175260466138,
+    "code": 9612,
+    "parent": "machinery"
+},
+{
+    "name": "Cigarette lighters",
+    "grossExport": 6723702,
+    "value": 0.0009722942002718279,
+    "code": 9613,
+    "parent": "machinery"
+},
+{
+    "name": "Smoking pipes",
+    "grossExport": 19085015,
+    "value": 0.0027598262678210366,
+    "code": 9614,
+    "parent": "machinery"
+},
+{
+    "name": "Combs, hair-slides etc.",
+    "grossExport": 1278780,
+    "value": 0.00018492050620679026,
+    "code": 9615,
+    "parent": "machinery"
+},
+{
+    "name": "Scent sprays",
+    "grossExport": 2217684,
+    "value": 0.00032069257251966674,
+    "code": 9616,
+    "parent": "machinery"
+},
+{
+    "name": "Vacuum vessels",
+    "grossExport": 2959104,
+    "value": 0.00042790707517988857,
+    "code": 9617,
+    "parent": "machinery"
+},
+{
+    "name": "Mannequins",
+    "grossExport": 2775328,
+    "value": 0.00040133178392677294,
+    "code": 9618,
+    "parent": "machinery"
+},
+{
+    "name": "Paintings and drawings",
+    "grossExport": 95465572,
+    "value": 0.013804987487731103,
+    "code": 9701,
+    "parent": "textiles"
+},
+{
+    "name": "Original engravings",
+    "grossExport": 3355450,
+    "value": 0.00048522147089536457,
+    "code": 9702,
+    "parent": "textiles"
+},
+{
+    "name": "Sculptures",
+    "grossExport": 45340915,
+    "value": 0.006556612516366418,
+    "code": 9703,
+    "parent": "textiles"
+},
+{
+    "name": "Postage or revenue stamps",
+    "grossExport": 424773,
+    "value": 0.00006142513816526448,
+    "code": 9704,
+    "parent": "textiles"
+},
+{
+    "name": "Collectors pieces",
+    "grossExport": 71967638,
+    "value": 0.010407022356829974,
+    "code": 9705,
+    "parent": "textiles"
+},
+{
+    "name": "Antiques >100 years",
+    "grossExport": 43263504,
+    "value": 0.006256204397910114,
+    "code": 9706,
+    "parent": "textiles"
+},
+{
+    "name": "Commodities not specified according to kind",
+    "grossExport": 2339506305,
+    "value": 0.33830892741095214,
+    "code": 9999,
+    "parent": "other"
+},
+{
+    "name": "Trade data discrepancies",
+    "grossExport": 10946042624,
+    "value": 1.5828741010894622,
+    "code": "XXXX",
+    "parent": "other"
+},
+{
+    "name": "Unspecified",
+    "grossExport": 794,
+    "value": 1.1481793735293911e-7,
+    "code": "unspecified",
+    "parent": "services"
+},
+{
+    "name": "Travel and tourism",
+    "grossExport": 23714482944,
+    "value": 3.4292796184150314,
+    "code": "travel",
+    "parent": "services"
+},
+{
+    "name": "Transport",
+    "grossExport": 25698180825,
+    "value": 3.716136166309006,
+    "code": "transport",
+    "parent": "services"
+},
+{
+    "name": "ICT",
+    "grossExport": 34584656668,
+    "value": 5.001182547455078,
+    "code": "ict",
+    "parent": "services"
+},
+{
+    "name": "Insurance and finance",
+    "grossExport": 6190492101,
+    "value": 0.8951883302726479,
+    "code": "financial",
+    "parent": "services"
+}]
