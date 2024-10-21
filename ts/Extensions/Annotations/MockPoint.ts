@@ -95,6 +95,8 @@ interface MockSeries {
  */
 class MockPoint {
 
+    point: MockPoint;
+
     /* *
      *
      *  Static Functions
@@ -201,6 +203,9 @@ class MockPoint {
         target: (ControlTarget|null),
         options: (MockPointOptions|Function)
     ) {
+        // Circular reference for formats and formatters
+        this.point = this;
+
         /**
          * A mock series instance imitating a real series from a real point.
          *
@@ -313,21 +318,6 @@ class MockPoint {
         this.setAxis(options, 'y');
 
         this.refresh();
-    }
-
-    /**
-     * Returns a label config object - the same as
-     * Highcharts.Point.prototype.getLabelConfig
-     * @private
-     * @return {Highcharts.AnnotationMockLabelOptionsObject}
-     * The point's label config
-     */
-    public getLabelConfig(): MockLabelConfigObject {
-        return {
-            x: this.x,
-            y: this.y,
-            point: this
-        };
     }
 
     /**

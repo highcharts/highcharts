@@ -99,10 +99,7 @@ export interface CollapseButtonOptions {
 
 export interface TreegraphDataLabelFormatterCallback {
     (
-        this: (
-            TreegraphDataLabelFormatterContext|
-            Point.PointLabelObject
-        )
+        this: (TreegraphPoint|Point)
     ): (string|undefined);
 }
 

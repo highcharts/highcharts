@@ -48,7 +48,7 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         defer: false,
         enabled: true,
         formatter: function (
-            this: Point.PointLabelObject
+            this: Point
         ): (string|undefined) { // #2945
             return this.point.name;
         },
