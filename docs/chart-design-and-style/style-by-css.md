@@ -11,21 +11,44 @@ To customize your styles, you can create your own themes, or just add your own i
 
 Highcharts since v11 honors the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. If you end user prefers dark mode, the Highcharts CSS will pick this up and set the CSS color variables accordingly. To avoid this, you can set either the `.highcharts-light` or `.highcharts-dark` class name on the chart container. See a [live demo for switching between modes](https://www.highcharts.com/samples/highcharts/css/prefers-color-scheme).
 
-## Loading from node_modules
+## Loading the CSS
 
-To use Highcharts’ default CSS styles in your project, you can include the highcharts.css file from the node_modules directory. Simply add a `<link>` tag in your HTML file:
+### Loading from the CDN
+
+You can include the `highcharts.css` file directly from the Highcharts CDN at [code.highcharts.com](https://code.highcharts.com/css/highcharts.css). Simply add a `<link>` tag in your HTML:
+
+```html
+<link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css" />
+```
+
+Alternatively, it can be imported in CSS:
+
+```html
+<style>
+@import url('https://code.highcharts.com/css/highcharts.css');
+</style>
+```
+
+It is recommended to use a version-specific URL in production, for example `https://code.highcharts.com/11.4.8/css/highcharts.css`.
+
+
+### Loading from node_modules
+
+When using Highcharts with NPM, you can load the CSS from the `node_modules` directory. If the `node_modules` directory is available from the server, it would look like:
 
 ```html
 <link rel="stylesheet" href="./node_modules/highcharts/css/highcharts.css" />
 ```
 
-or import it in CSS:
+or in CSS:
 
 ```html
 <style>
 @import url('./node_modules/highcharts/css/highcharts.css');
 </style>
 ```
+
+If the `node_modules` directory is not served, the file should be copied to a public location and the link should be adjusted.
 
 Some build tools, such as [Vite](https://vitejs.dev/), also support CSS imports using the package name: `@import url('highcharts/css/highcharts.css')`
 
