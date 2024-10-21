@@ -330,7 +330,8 @@ extend(PointAndFigureSeries.prototype, {
     takeOrdinalPosition: true,
     pnfDataGroups: [],
     getColumnMetrics: columnProto.getColumnMetrics,
-    pointClass: PointAndFigurePoint
+    pointClass: PointAndFigurePoint,
+    sorted: true
 });
 
 /* *
