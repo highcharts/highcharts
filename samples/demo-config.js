@@ -51,7 +51,7 @@ module.exports = {
     },
     'Highcharts Dashboards': {
         categories: ['Basic', 'Advanced'],
-        filter: { tags: ['Highcharts dashboards demo'] },
+        filter: { tags: ['Highcharts Dashboards demo'] },
         path: '/dashboards/'
     }
 };
