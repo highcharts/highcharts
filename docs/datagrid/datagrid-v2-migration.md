@@ -1,21 +1,9 @@
-# Upgrade DataGrid to v3
+# Upgrade DataGrid from v2.x.x to a newer versions
 The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options and the definition of styles or data source differ from the previous version. We outline all of the changes below.
 
-## Factory function
-The factory function `DataGrid.DataGrid` has been replaced with `DataGrid.dataGrid`.
-
 ## Data source
-In DataGrid 3.0, the data source definition has been redesigned. This is a critical upgrade, so please double-check if everything is configured properly.
-
-DataGrid v2.x.x requires you to create a new instance of the DataTable class.
-```js
-const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataGrid.DataTable({ columns })
-});
-```
-
 DataGrid v3.0 and higher allows you to define the data source in the `dataTable` option without creating a new instance of the `DataTable` class.  
-The grid will automatically create a new instance of the `DataTable` class.
+The grid will automatically create a new instance of the `DataTable` class if you do not provide your own instance.
 
 ```js
 const grid = DataGrid.dataGrid('container', {
@@ -24,6 +12,9 @@ const grid = DataGrid.dataGrid('container', {
     }
 });
 ```
+
+## API changes
+Some API options have been renamed or removed, make sure to check the [API reference](https://api.highcharts.com/dashboards/) for the full list of options.
 
 ## Styling
 All styling is now done via CSS instead of the built-in API options.
