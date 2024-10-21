@@ -33,6 +33,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import Color from '../Color/Color.js';
 import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
@@ -43,6 +44,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isString,
     merge,
     objectEach,
@@ -242,7 +244,7 @@ namespace DataLabel {
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
             plotY = point.plotY,
-            rotation = options.rotation || 0,
+            { distance, rotation = 0 } = options,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -337,10 +339,19 @@ namespace DataLabel {
 
             setStartPos(alignTo); // Data sorting
 
+            // Apply the distance
+            let { x = 0, y = 0 } = options;
+            if (isNumber(distance) && this.isCartesian) {
+                x += distance * (1 - 2 * alignFactor);
+                y += distance * (1 - 2 * verticalAlignFactor);
+            }
+
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
                 options, {
+                    x,
+                    y,
                     width: unrotatedbBox.width,
                     height: unrotatedbBox.height
                 }
@@ -597,7 +608,10 @@ namespace DataLabel {
                             borderColor,
                             distance,
                             style = {}
-                        } = labelOptions;
+                        } = labelOptions,
+                        padding: Array<number> = splat(
+                            labelOptions.padding || 0
+                        );
 
                     let labelConfig,
                         formatString,
@@ -646,12 +660,19 @@ namespace DataLabel {
                                 }
 
                                 point.contrastColor = renderer.getContrast(
-                                    labelBgColor !== 'auto' && labelBgColor ||
+                                    (
+                                        labelBgColor !== 'auto' &&
+                                        labelBgColor !== 'contrast' &&
+                                        labelBgColor
+                                    ) ||
                                     (point.color || series.color) as any
                                 );
 
                                 style.color = (
-                                    labelBgColor || // #20007
+                                    (
+                                        labelBgColor &&
+                                        labelBgColor !== 'contrast'
+                                    ) || // #20007
                                     (
                                         !defined(distance) &&
                                         labelOptions.inside
@@ -670,16 +691,25 @@ namespace DataLabel {
                         }
 
                         attr = {
-                            r: labelOptions.borderRadius || 0,
+                            r: labelOptions.borderRadius ?? 3,
                             rotation,
-                            padding: labelOptions.padding,
+                            padding: padding[0],
+                            paddingLeft: padding[3 % padding.length],
+                            paddingRight: padding[1 % padding.length],
                             zIndex: 1
                         };
 
                         if (!chart.styledMode) {
                             attr.fill = backgroundColor === 'auto' ?
                                 point.color :
-                                backgroundColor;
+                                (
+                                    backgroundColor === 'contrast' &&
+                                    isString(style.color)
+                                ) ?
+                                    new Color(
+                                        renderer.getContrast(style.color)
+                                    ).setOpacity(0.6).get() :
+                                    backgroundColor;
                             attr.stroke = borderColor === 'auto' ?
                                 point.color :
                                 borderColor;
