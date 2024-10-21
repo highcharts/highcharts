@@ -56,3 +56,5 @@ const config: DataGrid.Options = {
     </div>
 </template>
 ```
+
+See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FDataGrid.vue).
