@@ -39,6 +39,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     description?: string;
     linkedTo?: string;
+    nullInteraction?: boolean,
     pointDescriptionFormatter?: Function;
     pointStart?: number;
     skipKeyboardNavigation?: boolean;
