@@ -76,7 +76,7 @@ async function scriptsTS(argv) {
 
         fsLib.copyAllFiles(
             'ts',
-            argv.webpack ? 'code/es-modules/' : 'js',
+            argv.assembler ? 'js' : 'code/es-modules/',
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
@@ -85,10 +85,10 @@ async function scriptsTS(argv) {
             await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
         } else if (argv.datagrid) {
             await processLib.exec(`npx tsc -p ${typeScriptFolderDatagrid}`);
-        } else if (argv.webpack) {
-            await processLib.exec('npx tsc -p ts --outDir code/es-modules/');
+        } else if (argv.assembler) {
+            await processLib.exec('npx tsc -p ts --outDir js/');
         } else {
-            await processLib.exec('npx tsc --build ts');
+            await processLib.exec('npx tsc -p ts');
         }
 
         if (argv.dashboards) {
