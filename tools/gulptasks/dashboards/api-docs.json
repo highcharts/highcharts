@@ -92,6 +92,10 @@
         "../../../ts/DataGrid/Table/Actions/ColumnsResizer.ts",
         "../../../ts/DataGrid/Table/Actions/ColumnSorting.ts",
         "../../../ts/DataGrid/Table/Actions/RowsVirtualizer.ts",
+
+        // DataGrid - A11y
+        "../../../ts/DataGrid/Accessibility/A11yOptions.ts",
+        "../../../ts/DataGrid/Accessibility/Accessibility.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
