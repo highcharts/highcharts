@@ -1022,7 +1022,12 @@ namespace SeriesKeyboardNavigation {
         const chart = this.series.chart,
             tooltipElement = chart.tooltip?.label?.element;
 
-        if (!this.isNull && highlightVisually) {
+        if (
+            (
+                !this.isNull ||
+                (this.series.options as any).nullInteraction
+            ) && highlightVisually
+        ) {
             this.onMouseOver(); // Show the hover marker and tooltip
         } else {
             if (chart.tooltip) {
