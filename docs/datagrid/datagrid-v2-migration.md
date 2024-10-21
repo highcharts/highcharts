@@ -13,6 +13,9 @@ const grid = DataGrid.dataGrid('container', {
 });
 ```
 
+## API changes
+Some API options have been renamed or removed, make sure to check the [API reference](https://api.highcharts.com/dashboards/) for the full list of options.
+
 ## Styling
 All styling is now done via CSS instead of the built-in API options.
 
