@@ -155,8 +155,8 @@ function task() {
     return new Promise((resolve, reject) => {
 
         if (
+            argv.assembler ||
             argv.force ||
-            argv.webpack ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
@@ -166,7 +166,7 @@ function task() {
             gulp.series(
                 'scripts-ts',
                 'scripts-css',
-                argv.webpack ? 'scripts-webpack' : 'scripts-js'
+                argv.assembler ? 'scripts-js' : 'scripts-webpack'
             )(
                 function (error) {
 

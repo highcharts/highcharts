@@ -34,6 +34,15 @@ const productMasters = [
  *
  * */
 
+/**
+ * Creates a configuration to resolve an external reference via the given path.
+ *
+ * @param  {...Array<string>} pathMembers
+ * Path to resolve to.
+ *
+ * @returns 
+ * UMD configuration.
+ */
 function createUMDConfig(...pathMembers) {
     const commonjs = ['highcharts', ...pathMembers];
     return {
@@ -44,6 +53,15 @@ function createUMDConfig(...pathMembers) {
     };
 }
 
+/**
+ * Resolves external references of the binded master file to specific UMD paths.
+ *
+ * @param {*} info
+ * Webpack reference information.
+ *
+ * @return
+ * UMD config for external reference, or `undefined`.
+ */
 async function resolveExternals(info) {
     // eslint-disable-next-line no-invalid-this
     const masterName = this.masterName;
@@ -121,6 +139,12 @@ async function resolveExternals(info) {
 
     // Fallback to core namespace
     switch (path) {
+        case 'Core/Animation/AnimationUtilities':
+        case 'Core/Defaults':
+        case 'Core/Globals':
+        case 'Core/Renderer/RendererUtilities':
+        case 'Core/Utilities':
+            return createUMDConfig();
         case 'Core/Animation/Fx':
         case 'Core/Axis/Axis':
         case 'Core/Axis/PlotLineOrBand/PlotLineOrBand':
@@ -143,12 +167,6 @@ async function resolveExternals(info) {
         case 'Core/Time':
         case 'Core/Tooltip':
             return createUMDConfig(name);
-        case 'Core/Animation/AnimationUtilities':
-        case 'Core/Defaults':
-        case 'Core/Globals':
-        case 'Core/Renderer/RendererUtilities':
-        case 'Core/Utilities':
-            return createUMDConfig();
         case 'Series/Area/AreaSeries':
             return createUMDConfig('Series', 'types', 'area');
         case 'Series/AreaSpline/AreaSplineSeries':
