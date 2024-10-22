@@ -321,10 +321,10 @@ namespace FocusBorderComposition {
                 borderPosX = attrX - (bb.width * correction.x) - pad;
             }
             if (!isNaN(attrY)) {
+                // Correct by line height if "text-achor" == "start", #19335.
                 const dim = this.attr('text-anchor') === 'start' ?
                     lineHeight :
                     bb.height;
-                // Correct by line height if "text-achor" == "start", #19335.
                 borderPosY = attrY - (dim * correction.y) - pad;
             }
 
