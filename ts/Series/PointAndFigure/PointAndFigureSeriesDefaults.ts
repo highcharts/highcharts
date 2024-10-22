@@ -35,7 +35,9 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
  *
  * @extends      plotOptions.scatter
  * @product      highstock
- * @excluding    dataGrouping
+ * @excluding    boostBlending, boostThreshold, compare, compareBase,
+ *               compareStart, cumulative, cumulativeStart, dataGrouping,
+ *               dataGrouping, dragDrop
  * @requires     modules/pointandfigure
  * @optionparent plotOptions.pointandfigure
  */
@@ -66,7 +68,8 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
         fillColor: 'transparent',
         lineColor: '#FF0000',
         lineWidth: 2
-    }
+    },
+    legendSymbol: 'lineMarker'
 };
 
 /* *
@@ -83,7 +86,9 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  * @type      {*}
  * @extends   series,plotOptions.pointandfigure
  * @product   highstock
- * @excluding dataGrouping
+ * @excluding boostBlending, boostThreshold, compare, compareBase,
+ *            compareStart, cumulative, cumulativeStart, dataGrouping,
+ *            dataGrouping, dragDrop
  * @requires  modules/pointandfigure
  * @apioption series.pointandfigure
  */
@@ -93,7 +98,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  * type, points can be given in the following way:
  *
  * 1. An array of arrays with 2 values. In this case, the values correspond
- *    to `x, close`. Close values are parsed under the hood to create
+ *    to `x, y`. Y values are parsed under the hood to create
  *    point and figure format data points.
  *    ```js
  *    data: [
@@ -102,12 +107,12 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *        [1665581400000, 138.34]
  *    ]
  *    ```
- * 2. An array of objects with named values `{x, close}`.
+ * 2. An array of objects with named values `{x, y}`.
  *    ```js
  *    data: [
- *        {x: 1665408600000, close: 140.42},
- *        {x: 1665495000000, close: 138.98},
- *        {x: 1665581400000, close: 138.34}
+ *        {x: 1665408600000, y: 140.42},
+ *        {x: 1665495000000, y: 138.98},
+ *        {x: 1665581400000, y: 138.34}
  *    ]
  *    ```
  *
