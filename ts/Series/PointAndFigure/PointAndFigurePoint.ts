@@ -69,6 +69,20 @@ class PointAndFigurePoint extends ScatterPoint {
         this.resolveMarker();
     }
 
+    /**
+     * Extend the parent method by adding up or down to the class name.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#getClassName
+     */
+    public getClassName(): string {
+        return super.getClassName.call(this) +
+        (
+            this.upTrend ?
+                ' highcharts-point-up' :
+                ' highcharts-point-down'
+        );
+    }
+
 }
 
 /* *
