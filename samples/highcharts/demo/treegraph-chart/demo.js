@@ -2,7 +2,15 @@ Highcharts.chart('container', {
     chart: {
         spacingBottom: 30,
         marginRight: 120,
-        height: 1200
+        height: 1200,
+        zooming: {
+            type: 'xy'
+        },
+        panning: {
+            enabled: true,
+            type: 'xy'
+        },
+        panKey: 'shift'
     },
     title: {
         text: 'Phylogenetic language tree'

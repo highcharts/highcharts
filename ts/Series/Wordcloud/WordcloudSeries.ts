@@ -99,6 +99,8 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
     public data!: Array<WordcloudPoint>;
+    public defaultScale?: number;
+    public field?: WordcloudSeries.WordcloudFieldObject;
     public options!: WordcloudSeriesOptions;
     public points!: Array<WordcloudPoint>;
 
@@ -153,6 +155,10 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
+
+        if ((this as any).zoomBox) {
+            return;
+        }
         const series = this,
             hasRendered = series.hasRendered,
             xAxis = series.xAxis,
@@ -344,10 +350,13 @@ class WordcloudSeries extends ColumnSeries {
         testElement = testElement.destroy() as any;
 
         // Scale the series group to fit within the plotArea.
-        const scale = getScale(xAxis.len, yAxis.len, field);
+        series.defaultScale = getScale(xAxis.len, yAxis.len, field);
+
+        series.field = field;
+
         series.group.attr({
-            scaleX: scale,
-            scaleY: scale
+            scaleX: series.defaultScale,
+            scaleY: series.defaultScale
         });
     }
 
@@ -362,9 +371,9 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Series.PlotBoxTransform {
+    public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
-            chart = series.chart,
+            { chart, group, zoomBox } = this,
             inverted = chart.inverted,
             // Swap axes for inverted (#2339)
             xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
@@ -372,13 +381,76 @@ class WordcloudSeries extends ColumnSeries {
             width = xAxis ? xAxis.len : chart.plotWidth,
             height = yAxis ? yAxis.len : chart.plotHeight,
             x = xAxis ? xAxis.left : chart.plotLeft,
-            y = yAxis ? yAxis.top : chart.plotTop;
+            y = yAxis ? yAxis.top : chart.plotTop,
+            field = series.field;
+
+        let left = 0,
+            top = 0,
+            translateX = x + width / 2,
+            translateY = y + height / 2,
+            initLeft = translateX,
+            initTop = translateY,
+            scale = series.defaultScale || 1,
+            seriesHeight = 0,
+            seriesWidth = 0;
+
+        if (field) {
+            seriesHeight =
+                Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2;
+            seriesWidth =
+                Math.max(Math.abs(field.left), Math.abs(field.right)) * 2;
+        }
+
+        if (group && zoomBox) {
+            scale += zoomBox.scale - 1;
+
+            const newWidth = seriesWidth * scale,
+                newHeight = seriesHeight * scale,
+                newMiddleX = x + newWidth / 2,
+                newMiddleY = y + newHeight / 2,
+                scaleDiff = scale - (group.scaleX || 1);
+
+            // Do not apply translation when zooming out
+            if (scaleDiff > 0) {
+                left += scaleDiff * (zoomBox.x - (x + (width / 2)));
+                top += scaleDiff * (zoomBox.y - (y + (height / 2)));
+            }
+
+            left -= (name === 'series' ? zoomBox.panX : 0);
+            top -= (name === 'series' ? zoomBox.panY : 0);
+
+            if (isNumber(group.translateX) && isNumber(group.translateY)) {
+                initLeft = group.translateX;
+                initTop = group.translateY;
+            }
+
+            translateX = initLeft - left;
+            translateY = initTop - top;
+
+            // Do not allow to move outside the chart
+            // Vertical lock
+            if (translateY > newMiddleY) {
+                translateY = newMiddleY;
+            } else if (
+                translateY < 2 * y + height - newMiddleY
+            ) {
+                translateY = 2 * y + height - newMiddleY;
+            }
+            // Horizontal lock
+            if (translateX > newMiddleX) {
+                translateX = newMiddleX;
+            } else if (
+                translateX < 2 * x + width - newMiddleX
+            ) {
+                translateX = 2 * x + width - newMiddleX;
+            }
+        }
 
         return {
-            translateX: x + (width / 2),
-            translateY: y + (height / 2),
-            scaleX: 1, // #1623
-            scaleY: 1
+            translateX: translateX,
+            translateY: translateY,
+            scaleX: scale,
+            scaleY: scale
         };
     }
 }

@@ -747,7 +747,8 @@ interface TreegraphSeries {
 extend(TreegraphSeries.prototype, {
     pointClass: TreegraphPoint,
     NodeClass: TreegraphNode,
-    LinkClass: TreegraphLink
+    LinkClass: TreegraphLink,
+    isCartesian: false
 });
 
 /* *
