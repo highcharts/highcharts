@@ -1,6 +1,6 @@
 ---
- name: Highcharts Dashboards Demo
+ name: Personal portfolio dashboard
  authors:
-   - Karol Kolodziej
+   - Askel Eirik Johansson
  js_wrap: b
 ...

@@ -4,61 +4,82 @@
 
 /* Dashboards */
 
+:root {
+    --highcharts-color-0: #c963ff;
+}
+
 .highcharts-gauge-chart .highcharts-grid-line {
     stroke-width: 0;
 }
 
-.highcharts-gauge-chart .highcharts-title {
-    font-size: 0.8rem;
+.highcharts-datagrid-table {
+    border: 0;
 }
 
+#kpi-gauge-risk {
+    flex: 0 1 37.5%;
+}
+
+.highcharts-yaxis .highcharts-tick {
+    stroke-width: 4px;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-radial-axis-grid {
+    stroke-width: 0;
+}
+
+.highcharts-dashboards-component-kpi-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.highcharts-dashboards-component-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.highcharts-datagrid-table tbody td {
+    padding-left: 14px;
+}
+
+@media (max-width: 800px) {
+    #data-grid,
+    #kpi-gauge-risk {
+        flex: 1 1 100%;
+    }
+
+    #kpi-goal-target,
+    #kpi-goal-years,
+    #kpi-goal-annual,
+    #kpi-gauge-goal {
+        flex: 1 1 50%;
+        height: 186px;
+    }
+}
+
+#goal-analysis-wrapper .highcharts-dashboards-component-title {
+    margin-top: 48px;
+    margin-bottom: 8px;
+    color: var(--highcharts-neutral-color-100);
+}
+
+#goal-analysis-wrapper .highcharts-dashboards-component-subtitle {
+    font-weight: 100;
+    color: var(--highcharts-neutral-color-60);
+}
+
+#kpi-wrapper .highcharts-dashboards-component-title {
+    margin-top: 20px;
+}
+
+#kpi-gauge-risk .highcharts-dashboards-component-kpi-value,
+#kpi-gauge-goal .highcharts-dashboards-component-kpi-value,
 .highcharts-data-label-box {
     display: none;
 }
 
-.highcharts-gauge-series .highcharts-pivot,
-.highcharts-gauge-series .highcharts-dial {
-    fill: var(--highcharts-neutral-color-60);
-    stroke: var(--highcharts-neutral-color-60);
-}
-
-.highcharts-plot-band {
-    fill-opacity: 1;
-}
-
-.highcharts-plot-band.null-band {
-    fill: var(--highcharts-neutral-color-20);
-}
-
-.highcharts-plot-band.band-0 {
-    fill: #78b4cc;
-}
-
-.highcharts-plot-band.band-1 {
-    fill: #4d89b8;
-}
-
-.highcharts-plot-band.band-2 {
-    fill: #31669e;
-}
-
-.highcharts-plot-band.band-3 {
-    fill: #4651b0;
-}
-
-.highcharts-plot-band.band-4 {
-    fill: #3d35a6;
-}
-
-.highcharts-plot-band.band-5 {
-    fill: #3e1ba8;
-}
-
-.highcharts-gauge-chart .highcharts-data-label {
-    font-size: 2em;
-}
-
-.wallet .highcharts-point {
+#wallet-chart .highcharts-point {
     fill: none;
     stroke: none;
 }

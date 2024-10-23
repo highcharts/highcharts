@@ -3,6 +3,7 @@ const basicInvestmentPlan = {
     amount: 200   // Amount in EUR
 };
 
+
 const stockCollection = [
     {
         tradingSymbol: 'NFLX',
@@ -23,9 +24,10 @@ const stockCollection = [
     }
 ];
 
+
 const generatePortfolio = (investmentPlan, stockPrices) => {
-    const { interval, amount } = investmentPlan;
-    const portfolioValues = [];
+    const { interval, amount } = investmentPlan,
+        portfolioValues = [];
     let totalUnits = 0;
     stockPrices.forEach((priceData, day) => {
         // Check if it's an investment day
@@ -40,13 +42,15 @@ const generatePortfolio = (investmentPlan, stockPrices) => {
     return portfolioValues;
 };
 
-const getIDs = () =>  stockCollection.map(stock => ({
+
+const getHoldings = weight =>  stockCollection.map(stock => ({
     id: stock.ISIN,
-    idType: 'ISIN'
+    idType: 'ISIN',
+    ...(weight && { weight })
 }));
 
 // Morningstar data fetch
-const commonOptions = {
+const commonMSOptions = {
     api: {
         url: 'https://demo-live-data.highcharts.com',
         access: {
@@ -57,60 +61,6 @@ const commonOptions = {
     }
 };
 
-// eslint-disable-next-line no-undef
-const connector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'Price'
-    },
-    securities: getIDs(),
-    currencyId: 'EUR',
-    startDate: '2022-01-01',
-    endDate: '2023-12-31'
-});
-
-const mockRiskScore = {
-    riskScores: [
-        {
-            portfolio: {
-                externalId: 'string',
-                name: 'string',
-                riskScore: 30,
-                alignmentScore: 0,
-                rSquared: 0,
-                retainedWeightProxied: 0,
-                scoringMethodUsed: 'string',
-                effectiveDate: 'string'
-            },
-            metadata: {
-                requestId: 'string',
-                messages: [{
-                    type: 'Warning',
-                    message: 'string',
-                    invalidHoldings: [{
-                        identifier: 'string',
-                        identifierType: 'SecurityId',
-                        cusip: 'string',
-                        fundCode: 'string',
-                        isin: 'string',
-                        performanceId: 'string',
-                        securityId: 'string',
-                        ticker: 'string',
-                        tradingSymbol: 'string',
-                        status: 'Invalid'
-                    }]
-                }]
-            }
-        }
-    ],
-    metadata: {
-        requestId: 'string',
-        messages: [{
-            type: 'Warning',
-            message: 'string'
-        }]
-    }
-};
 
 function sumAllArrays(arr) {
     return arr.reduce((acc, current) => acc.map((num, idx) =>
@@ -119,11 +69,25 @@ function sumAllArrays(arr) {
 }
 
 
-Promise.all([
-    connector.load()
-]).then(() => {
+(async () => {
+    // eslint-disable-next-line no-undef
+    const timeSeriesConnector = new Connectors.Morningstar
+        .TimeSeriesConnector({
+            ...commonMSOptions,
+            series: {
+                type: 'Price'
+            },
+            securities: getHoldings(),
+            currencyId: 'EUR',
+            startDate: '2022-01-01',
+            endDate: '2023-12-31'
+        });
 
-    const { Date: dates, ...companies } = connector.table.getColumns();
+
+    await timeSeriesConnector.load();
+
+    const { Date: dates, ...companies } =
+        timeSeriesConnector.table.getColumns();
 
     const processedData = Object.fromEntries(
         Object.entries(companies).map(([key, values]) => [
@@ -132,8 +96,8 @@ Promise.all([
         ])
     );
 
-    const holdings = [];
-    const dataGridData = [];
+    const holdings = [],
+        dataGridData = [];
 
     stockCollection.forEach(stock => {
         holdings.push(generatePortfolio(
@@ -141,9 +105,24 @@ Promise.all([
         ));
     });
 
-    const walletTotal = sumAllArrays(holdings);
+    const walletTotal = sumAllArrays(holdings),
+        lastTotal = walletTotal[walletTotal.length - 1][1],
+        annualInvestment = 200 * 12 * holdings.length,
+        // eslint-disable-next-line no-undef
+        goalAnalysisConnector = new Connectors.Morningstar
+            .GoalAnalysisConnector({
+                ...commonMSOptions,
+                annualInvestment,
+                assetClassWeights: [
+                    1
+                ],
+                currentSavings: lastTotal,
+                includeDetailedInvestmentGrowthGraph: true,
+                target: 100000,
+                timeHorizon: 5
+            });
 
-    const lastTotal = walletTotal[walletTotal.length - 1][1];
+    await goalAnalysisConnector.load();
 
     // Generate columns for the datagrid
     stockCollection.forEach((stock, i) => {
@@ -151,90 +130,191 @@ Promise.all([
             lastHolding = holdings[i][len - 1][1],
             ISIN = stock.ISIN,
             tradingSymbol = stock.tradingSymbol;
-        dataGridData.push([tradingSymbol, ISIN, lastHolding / lastTotal * 100]);
+        dataGridData.push([
+            tradingSymbol,
+            ISIN,
+            Math.round(lastHolding / lastTotal * 100)
+        ]);
     });
 
-    /*
-        const portfolio = {
-            name: 'PersonalPortfolio',
-            totalValue: lastTotal,
-            holdings: [
-                {
-                    id: 'US64110L1061',
-                    idType: 'ISIN',
-                    weight: 50
-                },
-                {
-                    id: 'US5949181045',
-                    idType: 'ISIN',
-                    weight: 50
+    // Generate portfolio for risk score
+    const portfolio = {
+        name: 'PersonalPortfolio',
+        currency: 'EUR',
+        totalValue: lastTotal,
+        // Holdings with equal weights
+        holdings: getHoldings(100 / stockCollection.length)
+    };
+
+    // Creating chart and KPI options
+    const walletChartOptions = {
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
                 }
-            ]
-        };
-    */
-    const commonGaugeOptions = {
+            }
+        },
         chart: {
-            type: 'gauge',
-            className: 'highcharts-gauge-chart',
-            marginBottom: 0
+            height: 400
+        },
+        rangeSelector: {
+            animate: false,
+            x: 0,
+            y: 0,
+            buttonSpacing: 40,
+            inputEnabled: false,
+            dropdown: 'never',
+            selected: 4
+        },
+        navigator: {
+            enabled: false
+        },
+        title: {
+            text: 'Holding over time'
+        },
+        tooltip: {
+            format: '€{y:.2f}'
+        },
+        series: [{
+            name: 'Total',
+            data: walletTotal
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 731
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    rangeSelector: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
+
+    };
+
+    const riskScoreKPIOptions = {
+        chart: {
+            height: 186,
+            type: 'solidgauge'
         },
         pane: {
-            startAngle: -90,
-            endAngle: 89.9,
-            background: null,
-            center: ['50%', '64%'],
-            size: '100%'
-        },
-        yAxis: {
-            visible: true,
-            min: 0,
-            minorTickInterval: null,
-            labels: {
-                distance: 12,
-                allowOverlap: true
-            }
+            background: [{
+                backgroundColor: '#EEE',
+                borderRadius: 30,
+                borderWidth: 0,
+                outerRadius: '100%',
+                innerRadius: '90%',
+                shape: 'arc'
+            }],
+            size: 250,
+            center: ['50%', '90%'],
+            endAngle: 80,
+            startAngle: -80
         },
         tooltip: {
             enabled: false
         },
         plotOptions: {
             series: {
-                dial: {
-                    baseWidth: 12,
-                    baseLength: 0,
-                    rearLength: 0
-                },
-                pivot: {
-                    radius: 5
-                },
+                borderRadius: 30,
+                innerRadius: '90%',
                 dataLabels: {
+                    format: '<div style="text-align:center; ' +
+                        'margin-top: -20px">' +
+                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
+                    '<div style="font-size:14px; opacity:0.4; ' +
+                    'text-align: center;">Risk score</div>' +
+                    '</div>',
                     useHTML: true
                 }
             }
+        },
+        accessibility: {
+            point: {
+                valueDescriptionFormat: 'Risk score.'
+            }
+        },
+
+        yAxis: {
+            visible: true,
+            tickPositions: [23, 40, 60, 78, 90],
+            tickLength: 20,
+            min: 0,
+            max: 100,
+            labels: {
+                enabled: false
+            },
+            zIndex: 10
         }
     };
+    const goalAnalysisKPIOptions = {
+        chart: {
+            height: 186,
+            type: 'solidgauge'
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360,
+            background: [{
+                innerRadius: '90%',
+                outerRadius: '110%'
+            }]
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            lineWidth: 0,
+            minorTickInterval: null,
+            tickAmount: 2
+        },
+        series: [{
+            borderRadius: 30,
+            dataLabels: {
+                format: '<div style="text-align:center; ' +
+                    'margin-top: -20px">' +
+                '<div style="font-size:1.2em;">{y}%</div>' +
+                '<div style="font-size:14px; opacity:0.4; ' +
+                'text-align: center;">Goal probability</div>' +
+                '</div>',
+                useHTML: true
+            },
+            innerRadius: '90%',
+            radius: '110%'
+        }]
+    };
 
+    // Creating the dashboard
     Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 type: 'JSON',
                 id: 'stock-grid',
                 options: {
-                    columnNames: ['Name', 'ISIN', '% of wallet'],
+                    columnNames: ['name', 'ISIN', 'percentage'],
                     firstRowAsNames: false,
                     data: dataGridData
                 }
-            }
-            /* { // TODO: wait for this to go live
+            },
+            {
                 id: 'risk-score',
                 type: 'MorningstarRiskScore',
                 options: {
+                    ...commonMSOptions,
                     portfolios: [
                         portfolio
-                    ],
-                    ...commonOptions
+                    ]
                 }
-            }*/]
+            }]
         },
         gui: {
             layouts: [{
@@ -253,15 +333,30 @@ Promise.all([
                     }]
                 }, {
                     cells: [{
-                        id: 'wallet'
+                        id: 'wallet-chart'
                     }]
                 }, {
                     cells: [{
                         id: 'data-grid'
+                    }, {
+                        id: 'kpi-gauge-risk'
                     }]
-                }, {
+                },  {
                     cells: [{
-                        id: 'gauge-risk'
+                        id: 'goal-analysis-wrapper',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'kpi-gauge-goal'
+                                }, {
+                                    id: 'kpi-goal-target'
+                                }, {
+                                    id: 'kpi-goal-years'
+                                }, {
+                                    id: 'kpi-goal-annual'
+                                }]
+                            }]
+                        }
                     }]
                 }]
             }]
@@ -281,43 +376,8 @@ Promise.all([
         }, {
             type: 'Highcharts',
             chartConstructor: 'stockChart',
-            renderTo: 'wallet',
-            chartOptions: {
-                plotOptions: {
-                    series: {
-                        marker: {
-                            enabled: false
-                        }
-                    }
-                },
-                chart: {
-                    className: 'wallet',
-                    height: 500
-                },
-                rangeSelector: {
-                    animate: false,
-                    x: 0,
-                    y: 0,
-                    buttonSpacing: 40,
-                    inputEnabled: false,
-                    dropdown: 'never',
-                    selected: 4
-                },
-                navigator: {
-                    enabled: false
-                },
-                title: {
-                    text: 'Holding over time'
-                },
-                tooltip: {
-                    format: '€{y:.2f}'
-                },
-                series: [{
-                    name: 'Total',
-                    data: walletTotal
-                }]
-
-            }
+            renderTo: 'wallet-chart',
+            chartOptions: walletChartOptions
         }, {
             type: 'DataGrid',
             connector: {
@@ -325,74 +385,40 @@ Promise.all([
             },
             renderTo: 'data-grid',
             dataGridOptions: {
-
+                credits: {
+                    enabled: false
+                }
             }
         }, {
-            renderTo: 'gauge-risk',
+            renderTo: 'kpi-gauge-risk',
             type: 'KPI',
-            /*
-                connector: { // TODO: wait for this to go live
-                    id: 'risk-score',
-                    columnAssignment: [
-                        {
-                            seriesId: 'kpi-risk-score',
-                            data: ['PersonalPortfolio_RiskScore']
-                        }
-                    ]
-                }
-            */
-            chartOptions: Highcharts.merge(commonGaugeOptions, {
-                title: {
-                    text: 'Risk score'
-                },
-                accessibility: {
-                    point: {
-                        valueDescriptionFormat: 'Risk score.'
-                    }
-                },
-
-                series: [{
-                    id: 'kpi-risk-score',
-                    data: [mockRiskScore.riskScores[0].portfolio.riskScore]
-                }],
-                yAxis: {
-                    borderRadius: 30,
-                    max: 100,
-                    plotBands: [{
-                        from: 0,
-                        to: 50,
-                        className: 'band-0',
-                        borderRadius: '50%',
-                        thickness: 20
-                    }, {
-                        from: 50,
-                        to: 100,
-                        className: 'band-5',
-                        borderRadius: '50%',
-                        thickness: 20
-                    }, {
-                        from: 23,
-                        to: 40,
-                        className: 'band-1',
-                        thickness: 20
-                    }, {
-                        from: 40,
-                        to: 60,
-                        className: 'band-2',
-                        thickness: 20
-                    }, {
-                        from: 60,
-                        to: 78,
-                        className: 'band-3',
-                        thickness: 20
-                    }, {
-                        from: 78,
-                        to: 92,
-                        className: 'band-4',
-                        thickness: 20
-                    }]
-                }
-            })
+            connector: {
+                id: 'risk-score'
+            },
+            columnName: 'PersonalPortfolio_RiskScore',
+            chartOptions: riskScoreKPIOptions
+        }, {
+            type: 'KPI',
+            renderTo: 'kpi-goal-target',
+            value: goalAnalysisConnector.metadata.financialGoal,
+            valueFormat: '€{value:.2f}',
+            title: 'Financial goal'
+        }, {
+            type: 'KPI',
+            renderTo: 'kpi-goal-years',
+            value: goalAnalysisConnector.metadata.years,
+            title: 'Years'
+        }, {
+            type: 'KPI',
+            renderTo: 'kpi-goal-annual',
+            value: annualInvestment,
+            valueFormat: '€{value:.2f}',
+            title: 'Annual investment'
+        }, {
+            renderTo: 'kpi-gauge-goal',
+            type: 'KPI',
+            value: goalAnalysisConnector.metadata.probabilityOfReachingTarget,
+            chartOptions: goalAnalysisKPIOptions
         }]
     });
-});
+})();
