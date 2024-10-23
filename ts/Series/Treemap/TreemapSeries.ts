@@ -31,7 +31,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
-    TreemapSeriesLayoutAlgorithmValue,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from './TreemapSeriesOptions';
@@ -53,6 +52,7 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapNode from './TreemapNode.js';
 import TreemapPoint from './TreemapPoint.js';
+import TreemapPointOptions from './TreemapPointOptions';
 import TreemapSeriesDefaults from './TreemapSeriesDefaults.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
@@ -295,8 +295,8 @@ class TreemapSeries extends ScatterSeries {
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
-        const childrenArea: Array<unknown> = [];
+    ): Array<TreemapNode.NodeValuesObject> {
+        const childrenArea: Array<TreemapNode.NodeValuesObject> = [];
 
         let pTot,
             direction = parent.direction,
@@ -329,7 +329,9 @@ class TreemapSeries extends ScatterSeries {
                 x: pX,
                 y: pY,
                 width: pW,
-                height: pH
+                height: pH,
+                direction: 0,
+                val: 0
             });
             if (directionChange) {
                 direction = 1 - direction;
@@ -343,9 +345,9 @@ class TreemapSeries extends ScatterSeries {
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         const series = this,
-            childrenArea: Array<unknown> = [],
+            childrenArea: Array<TreemapNode.NodeValuesObject> = [],
             plot: TreemapAlgorithmGroup.PlotObject = {
                 x: parent.x,
                 y: parent.y,
@@ -442,27 +444,29 @@ class TreemapSeries extends ScatterSeries {
      */
     public calculateChildrenAreas(
         parent: TreemapNode,
-        area: TreemapSeries.AreaObject
+        area: TreemapNode.NodeValuesObject
     ): void {
         const series = this,
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<
-            TreemapSeriesLayoutAlgorithmValue|undefined,
-            TreemapSeriesLayoutAlgorithmValue
-            >(
+            algorithm = pick(
                 (
-                    (series as any)[
-                        (level && level.layoutAlgorithm) as any
-                    ] &&
+                    level?.layoutAlgorithm &&
+                    series[level?.layoutAlgorithm] &&
                     level.layoutAlgorithm
                 ),
-                options.layoutAlgorithm as any
+                series.options.layoutAlgorithm
             ),
             alternate = options.alternateStartingDirection,
             // Collect all children which should be included
-            children = parent.children.filter((n): boolean => !n.ignore);
+            children = parent.children.filter((n): boolean =>
+                parent.isGroup || !n.ignore
+            );
+
+        if (!algorithm) {
+            return;
+        }
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
@@ -471,8 +475,7 @@ class TreemapSeries extends ScatterSeries {
                 0 :
                 1;
         }
-        childrenValues = series[algorithm](area as any, children) as any;
-
+        childrenValues = series[algorithm](area, children);
         let i = -1;
         for (const child of children) {
             const values: TreemapNode.NodeValuesObject = childrenValues[++i];
@@ -557,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
             points = series.points.filter(function (
                 n: TreemapPoint
             ): boolean {
-                return n.node.visible;
+                return n.node.visible || defined(n.dataLabel);
             });
 
         let options: DataLabelOptions,
@@ -592,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
             // Merge custom options with point options
             point.dlOptions = merge(options, point.options.dataLabels);
         }
-        super.drawDataLabels();
+        super.drawDataLabels(points);
     }
 
     /**
@@ -698,7 +701,10 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false;
 
         if (
-            !point.node.isLeaf &&
+            (
+                !point.node.isLeaf ||
+                point.node.isGroup
+            ) &&
             (point.node.level - this.nodeMap[this.rootNode].level) === 1
         ) {
             drillId = point.id;
@@ -1055,10 +1061,10 @@ class TreemapSeries extends ScatterSeries {
             // Stroke width uses pick because it can be 0.
             attr: SVGAttributes = {
                 'stroke':
-                (point && (point as any).borderColor) ||
-                level.borderColor ||
-                stateOptions.borderColor ||
-                options.borderColor,
+                    (point && (point as any).borderColor) ||
+                    level.borderColor ||
+                    stateOptions.borderColor ||
+                    options.borderColor,
                 'stroke-width': pick(
                     point && (point as any).borderWidth,
                     level.borderWidth,
@@ -1066,10 +1072,10 @@ class TreemapSeries extends ScatterSeries {
                     options.borderWidth
                 ),
                 'dashstyle':
-                (point && (point as any).borderDashStyle) ||
-                level.borderDashStyle ||
-                stateOptions.borderDashStyle ||
-                options.borderDashStyle,
+                    (point && (point as any).borderDashStyle) ||
+                    level.borderDashStyle ||
+                    stateOptions.borderDashStyle ||
+                    options.borderDashStyle,
                 'fill': (point && point.color) || this.color
             };
 
@@ -1330,7 +1336,7 @@ class TreemapSeries extends ScatterSeries {
             (a.sortIndex || 0) - (b.sortIndex || 0)
         ));
         // Set the values
-        const val = pick(point && point.options.value, childrenTotal);
+        const val = pick(point?.options.value, childrenTotal);
         if (point) {
             point.value = val;
         }
@@ -1353,28 +1359,28 @@ class TreemapSeries extends ScatterSeries {
     public sliceAndDice(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmFill(true, parent, children);
     }
 
     public squarified(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmLowAspectRatio(true, parent, children);
     }
 
     public strip(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmLowAspectRatio(false, parent, children);
     }
 
     public stripes(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
-    ): Array<unknown> {
+    ): Array<TreemapNode.NodeValuesObject> {
         return this.algorithmFill(false, parent, children);
     }
 
@@ -1386,20 +1392,40 @@ class TreemapSeries extends ScatterSeries {
             rootId = updateRootId(series),
             rootNode,
             pointValues,
-            seriesArea,
-            val: TreemapNode.NodeValuesObject;
+            seriesArea;
+
+        // Group points are removed, but not destroyed during generatePoints
+        // method, save them for later usage
+        const groupPoints = (this.points || []).filter((point): boolean => {
+            if (point.node?.isGroup) {
+                point.node.visible = false;
+                return true;
+            }
+            return false;
+        });
 
         // Call prototype function
         super.translate();
 
+        if (series.options.groupAreaThreshold?.enabled) {
+            this.points.push(...groupPoints);
+        } else {
+            groupPoints.forEach((point): void => point.destroy());
+        }
+
         // @todo Only if series.isDirtyData is true
         const tree = series.tree = series.getTree();
+
+        if (series.options.groupAreaThreshold?.enabled) {
+            groupPoints.forEach((groupPoint): void => {
+                this.nodeList.push(groupPoint.node);
+                this.nodeMap[groupPoint.node.id] = groupPoint.node;
+            });
+        }
+
         rootNode = series.nodeMap[rootId];
 
-        if (
-            rootId !== '' &&
-            (!rootNode)
-        ) {
+        if (rootId !== '' && !rootNode) {
             series.setRootNode('', false);
             rootId = series.rootNode;
             rootNode = series.nodeMap[rootId];
@@ -1438,7 +1464,12 @@ class TreemapSeries extends ScatterSeries {
                     false;
 
             for (const child of children) {
-                child.visible = true;
+                if (rootNode.isGroup) {
+                    series.nodeMap[child.id].visible = true;
+                } else {
+                    child.visible = true;
+                }
+
                 if (child.children.length) {
                     next = ((next as any) || []).concat(child.children);
                 }
@@ -1462,6 +1493,7 @@ class TreemapSeries extends ScatterSeries {
             ),
             val: tree.val
         });
+
         series.calculateChildrenAreas(tree, seriesArea);
 
         // Logic for point colors
@@ -1472,17 +1504,191 @@ class TreemapSeries extends ScatterSeries {
             series.setColorRecursive(series.tree);
         }
 
-        // Update axis extremes according to the root node.
         if (options.allowTraversingTree) {
-            val = rootNode.pointValues as any;
-            series.xAxis.setExtremes(val.x, val.x + val.width, false);
-            series.yAxis.setExtremes(val.y, val.y + val.height, false);
+            if (!rootNode.pointValues) {
+                return;
+            }
+            series.xAxis.setExtremes(
+                rootNode.pointValues.x,
+                rootNode.pointValues.x + rootNode.pointValues.width,
+                false
+            );
+            series.yAxis.setExtremes(
+                rootNode.pointValues.y,
+                rootNode.pointValues.y + rootNode.pointValues.height,
+                false
+            );
             series.xAxis.setScale();
             series.yAxis.setScale();
         }
 
+        // Hide grouped node if drilled down into grouped node
+        if (rootNode.isGroup) {
+            rootNode.visible = false;
+        }
+
         // Assign values to points.
         series.setPointValues();
+
+        const { groupAreaThreshold } = series.options;
+
+        if (
+            groupAreaThreshold &&
+            groupAreaThreshold.enabled &&
+            groupAreaThreshold.pixelWidth &&
+            !rootNode.isGroup
+        ) {
+            const checkIfHide = (node: TreemapNode): void => {
+
+                if (node.parentNode) {
+                    if (node.point?.shapeArgs) {
+                        const { width = 0, height = 0 } = node.point.shapeArgs,
+                            area = width * height;
+
+                        const {
+                                pixelWidth = 0,
+                                pixelHeight = 0
+                            } = groupAreaThreshold,
+                            compareHeight = defined(pixelHeight),
+                            thresholdArea = pixelHeight ?
+                                pixelWidth * pixelHeight :
+                                pixelWidth * pixelWidth;
+
+                        if (
+                            width < pixelWidth ||
+                            height < (
+                                compareHeight ?
+                                    pixelHeight :
+                                    pixelWidth
+                            ) ||
+                            area < thresholdArea
+                        ) {
+                            if (!node.parentNode.groupedChildrenKeys) {
+                                node.parentNode.groupedChildrenKeys = [];
+                            }
+                            node.parentNode.groupedChildrenKeys.push(node.id);
+                        }
+                    }
+
+                }
+                node.children.forEach((child): void => {
+                    checkIfHide(child);
+                });
+
+                if (
+                    node.visible &&
+                    !node.ignore &&
+                    node.groupedChildrenKeys?.length
+                ) {
+
+                    if (node.groupedChildrenKeys.length > 1) {
+                        const id = `highcharts-grouped-treemap-points-${node?.id || 'root'}`,
+                            groupChildren = series.nodeList.filter(
+                                (otherNode): boolean|undefined =>
+                                    node.groupedChildrenKeys?.includes(
+                                        otherNode.id
+                                    )
+                            );
+
+                        const val = groupChildren.reduce(
+                                (acc: number, child: TreemapNode): number =>
+                                    acc + child.val,
+                                0
+                            ),
+                            PointClass = series.pointClass,
+                            name = groupAreaThreshold.name ||
+                                `+ ${groupChildren.length}`;
+
+                        let groupNode = series.nodeList.find((node): boolean =>
+                                node.id === id
+                            ),
+                            groupPoint = groupNode?.point;
+
+                        if (!groupPoint) {
+                            groupNode = new series.NodeClass().init(
+                                id,
+                                series.nodeList.length - 1,
+                                [],
+                                0,
+                                (node?.level || 0) + 1,
+                                series,
+                                node?.id
+                            );
+
+                            groupPoint = new PointClass(series, {
+                                value: val
+                            } as TreemapPointOptions);
+
+                            series.points.push(groupPoint);
+                        }
+
+                        if (groupNode) {
+                            if (series.colorAxis) {
+                                groupPoint.color = series
+                                    .colorAxis.toColor(val, groupPoint);
+                            }
+
+                            extend(groupPoint, {
+                                node: groupNode,
+                                formatPrefix: 'groupedNodes',
+                                name,
+                                value: val,
+                                groupedPointsAmount: groupChildren.length,
+                                id: id
+                            });
+
+                            extend(groupNode, {
+                                point: groupPoint,
+                                isLeaf: true,
+                                isGroup: true,
+                                parentNode: node,
+                                val,
+                                visible: true,
+                                children: groupChildren,
+                                childrenTotal: val,
+                                name
+                            });
+
+                            groupChildren.forEach((child): void => {
+                                if (
+                                    child.parentNode &&
+                                    child.parentNode
+                                        .children.indexOf(child) > -1
+                                ) {
+                                    child.parentNode.children.splice(
+                                        child.parentNode
+                                            .children.indexOf(child),
+                                        1
+                                    );
+                                    child.parentNode = groupNode;
+                                    child.parent = id;
+                                    child.ignore = true;
+                                    child.visible = false;
+                                }
+                            });
+
+                            node.children.push(groupNode);
+
+                            series.nodeMap[groupNode.id] = groupNode;
+                            series.nodeList.push(groupNode);
+                        }
+                    }
+                }
+            };
+
+            checkIfHide(tree);
+
+            series.calculateChildrenAreas(tree, seriesArea);
+            // Logic for point colors
+            if (
+                !series.colorAxis &&
+                !options.colorByPoint
+            ) {
+                series.setColorRecursive(series.tree);
+            }
+            // Assign values to points.
+            series.setPointValues();
+        }
     }
 
     /* eslint-enable valid-jsdoc */
