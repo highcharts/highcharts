@@ -2161,7 +2161,11 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0;
+            stackThreshold = options.startFromThreshold ? threshold : 0,
+            nullYSubstitute = (
+                (options as any).nullInteraction &&
+                series.chart.plotSizeY
+            );
         let i,
             plotX,
             lastPlotX,
@@ -2311,7 +2315,7 @@ class Series {
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
-            point.plotY = plotY;
+            point.plotY = plotY ?? nullYSubstitute;
 
             point.isInside = this.isPointInside(point);
 
@@ -3581,7 +3585,8 @@ class Series {
         this.buildingKdTree = true;
 
         const series = this,
-            dimensions = (series.options.findNearestPointBy as any)
+            seriesOptions = series.options,
+            dimensions = (seriesOptions.findNearestPointBy as any)
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3634,7 +3639,8 @@ class Series {
                     void 0,
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
-                    !series.directTouch
+                    !series.directTouch,
+                    (seriesOptions as any)?.nullInteraction
                 ),
                 dimensions,
                 dimensions
@@ -3647,7 +3653,7 @@ class Series {
         // be dealing with click events on mobile, so don't delay (#6817).
         syncTimeout(
             startRecursive,
-            series.options.kdNow || e?.type === 'touchstart' ? 0 : 1
+            seriesOptions.kdNow || e?.type === 'touchstart' ? 0 : 1
         );
     }
 
