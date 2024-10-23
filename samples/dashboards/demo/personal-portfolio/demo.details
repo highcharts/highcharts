@@ -1,6 +1,12 @@
 ---
- name: Personal portfolio dashboard
- authors:
-   - Askel Eirik Johansson
- js_wrap: b
+name: Morningstar personal portfolio
+authors:
+  - Askel Eirik Johansson
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - Advanced:
+        priority: 50
+use_png_thumbnail: true
 ...
