@@ -1,0 +1,636 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+/* *
+ *
+ *  Common CSS variables
+ *
+ * */
+
+:root {
+    /* Dashboards container */
+    --container-background: var(--highcharts-neutral-color-0);
+
+    /* Dashboards components */
+    --component-background: #ebf1f4;
+    --component-title-text: rgb(0, 112, 192);
+
+    /* Frequently used colors */
+    --color-text: #2f2b38;
+    --color-tooltip-background: #dce5ec;
+    --color-tooltip-text: #000;
+    --color-tooltip-border: #666;
+    --color-custom: #297ac2;
+
+    /* Dimensions */
+    --control-bar-height: 100px;
+    --chart-row-height: 300px;
+    --info-row-height: 450px;
+    --dropdown-width: 140px;
+    --text-font-size: 14px;
+}
+
+/* Colors */
+
+#el-kpi {
+    --color-axis-labels: var(--color-custom);
+    --color-gauge: var(--color-custom);
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
+}
+
+#el-info {
+    --color-table-td: var(--highcharts-neutral-color-0);
+    --color-table-bg: var(--highcharts-neutral-color-20);
+    --color-header: var(--highcharts-neutral-color-80);
+    --color-unit: green;
+    --color-table-caption: var(--color-custom);
+}
+
+#el-map {
+    --color-map: #05031a;
+    --color-marker-border: #fff;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-navigation: #f7f7f7;
+    --color-navigation-line: #838393;
+    --color-navigation-text: #20202b;
+    --color-text: #000;
+    --color-text-border: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+    :root {
+        --color-text: #dadae2;
+        --component-background: var(--highcharts-neutral-color-20);
+        --component-title-text: rgb(148, 183, 212);
+        --color-tooltip-background: #c0d8ec;
+        --color-tooltip-border: #ccc;
+    }
+
+    #el-info {
+        --color-unit: #f0f0f0;
+        --color-table-caption: rgb(148, 183, 212);
+    }
+
+    #el-kpi {
+        --color-axis-labels: #dfdfde;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
+    }
+
+    #el-map {
+        --color-tooltip-border: #666;
+    }
+}
+
+/* *
+ *
+ *  Common styles
+ *
+ * */
+
+body {
+    background-color: var(--container-background);
+    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#container {
+    background-color: var(--container-background);
+    padding: 5px;
+}
+
+.highcharts-dashboards-component {
+    background-color: var(--component-background);
+    padding: 0;
+    margin: 0;
+}
+
+.highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+.highcharts-dashboards-component-title {
+    white-space: nowrap;
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    color: var(--component-title-text);
+    text-align: left;
+    margin: 0;
+    padding: 10px;
+}
+
+.highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke-width: 1px;
+    stroke: var(--color-tooltip-border);
+}
+
+.highcharts-tooltip text {
+    fill: var(--color-tooltip-text);
+}
+
+.highcharts-description {
+    margin: auto;
+    padding: 20px;
+    background-color: var(--container-background);
+    color: var(--color-text);
+}
+
+/* *
+ *
+ *  Layout
+ *
+ * */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.cell,
+.col-wrapper {
+    flex: 1;
+    min-width: 20px;
+}
+
+.col-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 5px;
+    padding: 5px;
+    background-clip: border-box;
+}
+
+.el-aggr {
+    min-width: 0;
+    flex: 1;
+}
+
+#el-info,
+#el-map {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: var(--info-row-height);
+}
+
+#el-info {
+    flex: 1 1 70%;
+}
+
+#el-map {
+    flex: 1 1 30%;
+}
+
+#el-kpi,
+#el-datagrid {
+    flex: 1 1 30%;
+    height: var(--chart-row-height);
+}
+
+#el-chart {
+    flex: 1 1 40%;
+    height: var(--chart-row-height);
+}
+
+/* Dashboard component visibility */
+
+& .el-info,
+& .el-aggr {
+    display: none;
+}
+
+.mqtt-connected {
+    & .el-info,
+    & .el-aggr {
+        display: flex;
+    }
+}
+
+/* *
+ *
+ *  Control/status bar (top row)
+ *
+ * */
+
+div#control-bar .highcharts-dashboards-component-content {
+    background-color: none;
+}
+
+div#control-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #334;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    height: var(--control-bar-height);
+}
+
+div#control-bar h1 {
+    padding: 0 5%;
+    font-size: 2em;
+}
+
+div#control-bar img {
+    display: none;
+}
+
+div#control-bar #connect-status {
+    color: #dadae2;
+    font-size: 1em;
+}
+
+div#control-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+div#control-cell button:hover {
+    cursor: pointer;
+}
+
+/* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
+#connect-switch {
+    padding: 10px;
+    margin: 0 20px;
+}
+
+#connect-switch #connect-toggle {
+    display: none;
+}
+
+#connect-switch span {
+    position: relative;
+    top: 5px;
+    left: -10px;
+    text-align: center;
+    font-size: 1em;
+}
+
+#connect-switch label#button {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    top: 10px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+#connect-switch label#button::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+#connect-switch #connect-toggle:checked + label#button {
+    background-color: #2196f3;
+}
+
+#connect-switch #connect-toggle:checked + label#button::before {
+    transform: translateX(20px);
+}
+
+/* Container for power plant names */
+#dropdown-container {
+    width: var(--dropdown-width);
+    position: relative;
+    display: inline-block;
+
+    /* Hidden until connected */
+    visibility: hidden;
+
+    /* Show the dropdown menu */
+    & .show {
+        display: block;
+    }
+
+    & #dropdown-button {
+        width: 100%;
+        color: white;
+        background-color: var(--color-custom);
+        margin: 0;
+        text-align: left;
+        padding: 16px 3px;
+        font-size: 1em;
+        border: none;
+        cursor: pointer;
+    }
+
+    & #dropdown-button::after {
+        content: " \25BC";
+        position: absolute;
+        font-size: 1.5em;
+        top: 12px;
+        right: 40px;
+    }
+}
+
+/* Dropdown content  */
+.dropdown-content {
+    width: 100%;
+    display: none;
+    position: absolute;
+    font-size: 1em;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+
+    & a {
+        background-color: var(--color-custom);
+        color: #fff;
+        padding: 4% 10%;
+        text-decoration: none;
+        display: block;
+    }
+
+    & a:hover {
+        background-color: #abc;
+    }
+}
+
+/* *
+ *
+ *  KPI
+ *
+ * */
+
+#el-kpi .highcharts-dashboards-component-kpi-value {
+    display: none;
+}
+
+#el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
+    margin: 0.5em 0;
+}
+
+#el-kpi .highcharts-data-label text {
+    fill: var(--color-axis-labels);
+    font-size: 18px;
+}
+
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis-labels);
+    font-weight: bold;
+}
+
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
+    fill: var(--highcharts-neutral-color-5);
+    stroke: var(--highcharts-neutral-color-20);
+    fill-opacity: 1;
+}
+
+#el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+/* *
+ *
+ *  Data grid
+ *
+ * */
+
+#el-datagrid {
+    font-size: var(--text-font-size);
+}
+
+/* *
+ *
+ *  Information panel (HTML)
+ *
+ * */
+#el-info .highcharts-dashboards-component-content {
+    overflow-y: auto;
+    background-color: var(--component-background);
+}
+
+#el-info div#info-container {
+    padding: 5px;
+    margin: 0;
+    overflow: auto;
+    max-height: 100%;
+
+    & h3 {
+        padding: 5px;
+        margin: 0;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    & p {
+        text-align: center;
+        font-size: 13px;
+    }
+}
+
+#el-info span.pw-descr {
+    margin: 5px;
+    display: block;
+    text-align: justify;
+}
+
+#el-info table.info-field {
+    margin: 15px 0 10px;
+    background-color: var(--color-table-bg);
+    width: 100%;
+    border-spacing: 1px;
+    font-size: var(--text-font-size);
+
+    & caption {
+        padding: 3px;
+        color: var(--color-table-caption);
+        font-size: 14px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    & th {
+        text-align: left;
+        background-color: var(--color-table-td);
+        color: var(--color-header);
+        padding: 5px;
+    }
+
+    & th:nth-of-type(1) {
+        width: 20%;
+    }
+
+    & th:nth-of-type(2) {
+        width: 20%;
+    }
+
+    & tr.unit th {
+        font-size: 12px;
+        color: var(--color-unit);
+        font-weight: normal;
+    }
+
+    & td {
+        padding: 5px;
+        background-color: var(--color-table-td);
+        color: var(--color-text);
+    }
+
+    & td:first-of-type {
+        text-transform: capitalize;
+    }
+}
+
+#el-info h3.info-field {
+    padding: 10px;
+    color: var(--color-custom);
+    font-size: var(--text-font-size);
+}
+
+/* *
+ *
+ *  Map
+ *
+ * */
+
+#el-map .highcharts-background {
+    fill: var(--component-background);
+}
+
+#el-map text.highcharts-credits {
+    fill: var(--color-map);
+}
+
+#el-map text.highcharts-credits a {
+    fill: var(--color-map);
+}
+
+#el-map .highcharts-map-navigation {
+    fill: var(--highcharts-neutral-color-5);
+    font-size: 20px;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+#el-map .highcharts-map-navigation text {
+    fill: var(--color-navigation-text);
+}
+
+#el-map .highcharts-series-0 .highcharts-point {
+    fill: var(--color-map);
+    stroke: var(--component-background);
+}
+
+#el-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.8;
+}
+
+#el-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
+    paint-order: stroke;
+    stroke: var(--color-text-border);
+    stroke-width: 2px;
+}
+
+#el-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#el-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
+}
+
+/* Map tooltip (table) */
+#el-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#el-map .map-tooltip caption {
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+#el-map .map-tooltip td,
+#el-map .map-tooltip th {
+    background-color: var(--color-tooltip-background);
+    text-align: left;
+    padding: 3px;
+}
+
+#el-map .map-tooltip td:nth-of-type(1) {
+    font-weight: bold;
+    color: var(--color-custom);
+}
+
+#el-map .map-tooltip td:nth-of-type(2) {
+    font-weight: bold;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    .row {
+        flex-direction: row;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column;
+    }
+
+    #connect-status {
+        display: none;
+    }
+
+    .highcharts-description {
+        text-align: justify;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    :root {
+        --control-bar-height: 120px;
+    }
+
+    #el-kpi,
+    #el-chart,
+    #el-datagrid,
+    .el-info,
+    .el-info > div,
+    .el-aggr {
+        flex: unset;
+        width: 100%;
+    }
+
+    #connect-status {
+        display: none;
+    }
+
+    #connect-switch span {
+        font-size: 1em;
+    }
+
+    .highcharts-description {
+        text-align: justify;
+    }
+}
