@@ -425,11 +425,7 @@ class ControllableLabel extends Controllable {
 
         label.attr({
             text: text ?
-                format(
-                    String(text),
-                    point.getLabelConfig(),
-                    this.annotation.chart
-                ) :
+                format(String(text), point, this.annotation.chart) :
                 (options.formatter as any).call(point, this)
         });
 

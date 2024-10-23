@@ -890,6 +890,7 @@ function getPoint(
             point.x, // @todo simplify
         point.x
     );
+    point.key = point.name ?? point.category;
 
     point.dist = boostPoint.dist;
     point.distX = boostPoint.distX;

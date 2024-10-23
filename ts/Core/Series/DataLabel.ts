@@ -599,8 +599,7 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
-                    let labelConfig,
-                        formatString,
+                    let formatString,
                         labelText,
                         rotation,
                         attr: SVGAttributes = {},
@@ -619,15 +618,14 @@ namespace DataLabel {
                             labelOptions.format
                         );
 
-                        labelConfig = point.getLabelConfig();
                         labelText = defined(formatString) ?
-                            format(formatString, labelConfig, chart) :
+                            format(formatString, point, chart) :
                             (
                                 (labelOptions as any)[
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(labelConfig, labelOptions);
+                            ).call(point, labelOptions);
 
                         rotation = labelOptions.rotation;
 
@@ -1055,7 +1053,7 @@ export default DataLabel;
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PointLabelObject} this
+ * @param {Highcharts.Point} this
  * Data label context to format
  *
  * @param {Highcharts.DataLabelsOptions} options
