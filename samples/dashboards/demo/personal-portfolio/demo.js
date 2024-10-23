@@ -156,6 +156,7 @@ function sumAllArrays(arr) {
             }
         },
         chart: {
+            styledMode: true,
             height: 400
         },
         rangeSelector: {
@@ -204,6 +205,7 @@ function sumAllArrays(arr) {
 
     const riskScoreKPIOptions = {
         chart: {
+            styledMode: true,
             height: 186,
             type: 'solidgauge'
         },
@@ -213,7 +215,7 @@ function sumAllArrays(arr) {
                 borderRadius: 30,
                 borderWidth: 0,
                 outerRadius: '100%',
-                innerRadius: '90%',
+                innerRadius: '85%',
                 shape: 'arc'
             }],
             size: 250,
@@ -226,13 +228,13 @@ function sumAllArrays(arr) {
         },
         plotOptions: {
             series: {
-                borderRadius: 30,
-                innerRadius: '90%',
+                borderRadius: 20,
+                innerRadius: '85%',
                 dataLabels: {
                     format: '<div style="text-align:center; ' +
                         'margin-top: -20px">' +
-                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
-                    '<div style="font-size:14px; opacity:0.4; ' +
+                    '<div style="font-size:1.6em;">{y:.0f}</div>' +
+                    '<div style="font-size:14px; opacity:0.5; ' +
                     'text-align: center;">Risk score</div>' +
                     '</div>',
                     useHTML: true
@@ -248,7 +250,8 @@ function sumAllArrays(arr) {
         yAxis: {
             visible: true,
             tickPositions: [23, 40, 60, 78, 90],
-            tickLength: 20,
+            minorTickWidth: 0,
+            tickLength: 50,
             min: 0,
             max: 100,
             labels: {
@@ -259,6 +262,7 @@ function sumAllArrays(arr) {
     };
     const goalAnalysisKPIOptions = {
         chart: {
+            styledMode: true,
             height: 186,
             type: 'solidgauge'
         },
@@ -267,29 +271,30 @@ function sumAllArrays(arr) {
             endAngle: 360,
             background: [{
                 innerRadius: '90%',
-                outerRadius: '110%'
+                outerRadius: '115%'
             }]
         },
         yAxis: {
             min: 0,
             max: 100,
-            lineWidth: 0,
-            minorTickInterval: null,
-            tickAmount: 2
+            minorTickInterval: null
+        },
+        tooltip: {
+            enabled: false
         },
         series: [{
             borderRadius: 30,
             dataLabels: {
                 format: '<div style="text-align:center; ' +
                     'margin-top: -20px">' +
-                '<div style="font-size:1.2em;">{y}%</div>' +
-                '<div style="font-size:14px; opacity:0.4; ' +
+                '<div style="font-size:1.6em;">{y}%</div>' +
+                '<div style="font-size:14px; opacity:0.5; ' +
                 'text-align: center;">Goal probability</div>' +
                 '</div>',
                 useHTML: true
             },
             innerRadius: '90%',
-            radius: '110%'
+            radius: '115%'
         }]
     };
 
