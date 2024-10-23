@@ -102,7 +102,9 @@ function onTransform(
                                 width: fromWidth = 1,
                                 height: fromHeight = 1
                             } = from,
-                            scale = series.zoomBox?.scale || 1,
+                            scale = series.zoomBox?.scale ||
+                                series.group?.scaleX ||
+                                1,
                             width = (
                                 series.zoomBox?.width ||
                                 chart.plotSizeX ||
