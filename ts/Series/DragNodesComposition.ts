@@ -243,8 +243,14 @@ function onMouseUp(
 ): void {
     if (point.fixedPosition) {
         if (point.hasDragged) {
-            if (this.layout.enableSimulation) {
-                this.layout.start();
+            const layout = (
+                (point as any)?.isParentNode ?
+                    (this as any).parentNodeLayout :
+                    this.layout
+            );
+
+            if (layout.enableSimulation) {
+                layout.start();
             } else {
                 this.chart.redraw();
             }
