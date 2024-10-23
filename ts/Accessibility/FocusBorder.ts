@@ -276,6 +276,16 @@ namespace FocusBorderComposition {
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
 
+        if (bb.width < 8) {
+            bb.width = 8;
+            bb.x -= 4;
+        }
+
+        if (bb.height < 8) {
+            bb.height = 8;
+            bb.y -= 4;
+        }
+
         let borderPosX = bb.x - pad,
             borderPosY = bb.y - pad,
             borderWidth = bb.width + 2 * pad,
