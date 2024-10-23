@@ -2,5 +2,8 @@
 
 #container {
     height: 250px;
-    margin: 8px;
+}
+
+#msg-container {
+    padding: 5px;
 }
