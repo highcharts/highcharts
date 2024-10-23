@@ -72,7 +72,7 @@ class PointAndFigurePoint extends ScatterPoint {
     /**
      * Extend the parent method by adding up or down to the class name.
      * @private
-     * @function Highcharts.seriesTypes.ohlc#getClassName
+     * @function Highcharts.seriesTypes.pointandfigure#getClassName
      */
     public getClassName(): string {
         return super.getClassName.call(this) +

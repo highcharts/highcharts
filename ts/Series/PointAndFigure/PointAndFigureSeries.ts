@@ -154,7 +154,9 @@ class PointAndFigureSeries extends ScatterSeries {
         let upTrend: boolean;
 
         /**
-         *
+         * Get the Y value of last data point, from the last PNF group.
+         * @private
+         * @function Highcharts.seriesTypes.pointandfigure#getLastPoint
          */
         function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): number {
             const y = pnfDataGroups[pnfDataGroups.length - 1].y;
@@ -162,7 +164,9 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         /**
-         *
+         * Push new data point to the last PNF group.
+         * @private
+         * @function Highcharts.seriesTypes.pointandfigure#pushNewPoint
          */
         function pushNewPoint(
             y: number,
