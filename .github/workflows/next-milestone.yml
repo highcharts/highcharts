@@ -1,0 +1,38 @@
+name: Highcharts Milestone
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+    types:
+      - 'closed'
+    paths-ignore:
+      - '.github/workflows/dashboards*'
+      - 'css/dashboards*'
+      - 'css/datagrid*'
+      - 'samples/dashboards/**'
+      - 'samples/data-grid/**'
+      - 'test/cypress/dashboards/visual/**'
+      - 'test/cypress/data-grid/visual/**'
+      - 'ts/Dashboards/**'
+      - 'ts/DataGrid/**'
+
+jobs:
+  assign-next-milestone:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assign Milestone
+        if: ${{ github.event.pull_request.merged == true }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { default: assignMilestone } =
+              await import('${{ github.workspace }}/.github/scripts/assignMilestone.mjs');
+
+            const prNumber = ${{ github.event.pull_request.number }};
+            await assignMilestone({ github, context, core }, prNumber, 'Next');
+
