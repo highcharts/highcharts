@@ -1514,7 +1514,7 @@ class Point {
                                         markerAttribs.y,
                                         markerAttribs.width,
                                         markerAttribs.height,
-                                        extend(
+                                        merge(
                                             markerOptions,
                                             markerStateOptions
                                         )
