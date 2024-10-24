@@ -547,9 +547,10 @@ QUnit.test('Focus border', function (assert) {
         stroke: 'blue',
         strokeWidth: 1
     };
+    const padding = 2;
 
     const regularText = ren.text('regular text', 50, 50).add();
-    regularText.addFocusBorder(2, style);
+    regularText.addFocusBorder(padding, style);
 
     const wordcloudText = ren
         .text('wordcloud text', 100, 100)
@@ -562,7 +563,7 @@ QUnit.test('Focus border', function (assert) {
             whiteSpace: 'nowrap'
         })
         .add();
-    wordcloudText.addFocusBorder(2, style);
+    wordcloudText.addFocusBorder(padding, style);
 
     const regularRotatedText = ren
         .text('regular rotated text', 150, 150)
@@ -570,7 +571,7 @@ QUnit.test('Focus border', function (assert) {
             rotation: 90
         })
         .add();
-    regularRotatedText.addFocusBorder(2, style);
+    regularRotatedText.addFocusBorder(padding, style);
 
     const wordcloudRotatedText = ren
         .text('wordcloud rotated text', 200, 200)
@@ -584,7 +585,7 @@ QUnit.test('Focus border', function (assert) {
             whiteSpace: 'nowrap'
         })
         .add();
-    wordcloudRotatedText.addFocusBorder(2, style);
+    wordcloudRotatedText.addFocusBorder(padding, style);
 
     const labelText = ren
         .label('label', 250, 250)
@@ -592,7 +593,7 @@ QUnit.test('Focus border', function (assert) {
             color: 'blue'
         })
         .add();
-    labelText.addFocusBorder(2, style);
+    labelText.addFocusBorder(padding, style);
 
     const labelRotatedText = ren
         .label('rotated label', 300, 300)
@@ -603,7 +604,7 @@ QUnit.test('Focus border', function (assert) {
             color: 'blue'
         })
         .add();
-    labelRotatedText.addFocusBorder(2, style);
+    labelRotatedText.addFocusBorder(padding, style);
 
     // Comparing the midpoint of the border with the midpoint of the text.
     assert.close(
@@ -614,11 +615,12 @@ QUnit.test('Focus border', function (assert) {
         'should be correctly applied for text horizontally.'
     );
 
+    const lineHeight = ren.fontMetrics(regularText).h;
     assert.close(
         regularText.focusBorder.getBBox().y +
-            regularText.focusBorder.getBBox().height / 2,
-        regularText.attr('y') - (regularText.getBBox().height / 2) * 0.5,
-        0.1,
+        (regularText.focusBorder.getBBox().height / 2),
+        regularText.attr('y') - (lineHeight / 4),
+        1,
         'should be correctly applied for text vertically.'
     );
 
