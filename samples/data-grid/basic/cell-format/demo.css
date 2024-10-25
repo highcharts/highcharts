@@ -13,7 +13,15 @@
     color: #c11a1a;
 }
 
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td > span.highlight-cell),
-.highcharts-datagrid-table tbody .highcharts-datagrid-row-odd:has(td > span.highlight-cell) {
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td.highlight-cell),
+.highcharts-datagrid-table tbody .highcharts-datagrid-row-odd:has(td.highlight-cell) {
     background-color: #f0f2ca;
+}
+
+.highcharts-datagrid-table tbody tr:first-child {
+    background-color: #caf2d3;
+}
+
+.highcharts-description {
+    padding-left: 10px;
 }
