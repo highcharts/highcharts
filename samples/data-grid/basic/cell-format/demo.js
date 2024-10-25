@@ -29,14 +29,13 @@ DataGrid.dataGrid('container', {
     }, {
         id: 'Salary',
         cells: {
-            // eslint-disable-next-line max-len
-            format: '{#if (gt value 50000)}<span class="highlight-cell">{(divide value 1000):.1f}K $</span>{else}{(divide value 1000):.1f}K ${/if}'
+            className: '{#if (gt value 50000)}highlight-cell{/if}',
+            format: '{(divide value 1000):.1f}K $'
         }
     }, {
         id: 'PerformanceScore',
         cells: {
-            // eslint-disable-next-line max-len
-            format: '{#if (gt value 80)}<span class="high-color">{value}</span>{else}<span class="low-color">{value}</span>{/if}'
+            className: '{#if (gt value 80)}high{else}low{/if}-color'
         },
         header: {
             format: 'Performance score (0-100)'
