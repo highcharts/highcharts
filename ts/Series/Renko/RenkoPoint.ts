@@ -34,16 +34,14 @@ const {
 
 class RenkoPoint extends ColumnPoint {
     public options!: RenkoPointOptions;
-}
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface RenkoPoint {
-    series: RenkoSeries;
+    public upTrend!: boolean;
+    public series!: RenkoSeries;
+    public getClassName(): string {
+        return (
+            super.getClassName.call(this) +
+            (this.upTrend ? ' highcharts-point-up' : ' highcharts-point-down')
+        );
+    }
 }
 
 /* *

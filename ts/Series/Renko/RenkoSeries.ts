@@ -17,24 +17,25 @@
  * */
 
 import type RenkoSeriesOptions from './RenkoSeriesOptions';
-import type RenkoPoint from './RenkoPoint.js';
 import type ColorType from '../../Core/Color/ColorType';
 import type Series from '../../Core/Series/Series';
 import type PointOptions from '../../Core/Series/PointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 
+import RenkoPoint from './RenkoPoint.js';
 import RenkoSeriesDefaults from './RenkoSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import U from '../../Core/Utilities.js';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-const { merge, relativeLength, isNumber } = U;
+const { extend, merge, relativeLength, isNumber } = U;
 
 interface RenkoData {
     x: number;
     low: number;
-    high: number;
+    y: number;
     color?: ColorType;
+    upTrend?: boolean;
 }
 /* *
  *
@@ -58,6 +59,7 @@ class RenkoSeries extends ColumnSeries {
     public renkoData?: RenkoData[];
     public hasDerivedData = true;
     public allowDG = false;
+
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
@@ -78,9 +80,8 @@ class RenkoSeries extends ColumnSeries {
                 closestPointRange: 1
             };
         }
-        const processedXData = [];
-        const processedYData = [];
-        const processedData = [];
+        const processedXData: number[] = [];
+        const processedYData: [number, number][] = [];
         const yData = this.yData as number[];
         const xData = this.xData as number[];
         const boxSize = this.options.boxSize;
@@ -103,8 +104,9 @@ class RenkoSeries extends ColumnSeries {
                     renkoData.push({
                         x: xData[i] + j,
                         low: prevPrice,
-                        high: prevPrice + change,
-                        color: this.options.color
+                        y: prevPrice + change,
+                        color: this.options.color,
+                        upTrend: true
                     });
                     prevPrice += change;
                 }
@@ -118,8 +120,9 @@ class RenkoSeries extends ColumnSeries {
                     renkoData.push({
                         x: xData[i] + j,
                         low: prevPrice - change,
-                        high: prevPrice,
-                        color: this.options.downColor
+                        y: prevPrice,
+                        color: this.options.downColor,
+                        upTrend: false
                     });
                     prevPrice -= change;
                 }
@@ -131,16 +134,10 @@ class RenkoSeries extends ColumnSeries {
 
         for (const point of renkoData) {
             processedXData.push(point.x);
-            processedYData.push([point.high, point.low] as any);
-            processedData.push([
-                point.x,
-                point.high,
-                point.low,
-                point.color as string
-            ]);
+            processedYData.push([point.y, point.low]);
         }
 
-        this.processedData = processedData;
+        this.processedData = renkoData;
         return {
             xData: processedXData,
             yData: processedYData,
@@ -184,6 +181,10 @@ interface RenkoSeries {
     pointClass: typeof RenkoPoint;
 }
 
+
+extend(RenkoSeries.prototype, {
+    pointClass: RenkoPoint
+});
 /* *
  *
  *  Registry

@@ -63,7 +63,6 @@ const RenkoDefaults: RenkoSeriesOptions = {
     fillColor: 'transparent',
     borderWidth: 2,
     lineWidth: 0,
-    keys: ['x', 'y', 'low', 'color'],
     stickyTracking: true,
     borderRadius: {
         where: 'all'
