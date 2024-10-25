@@ -66,8 +66,28 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
     // Adjust second navigator range based on the first navigator
     Highcharts.addEvent(firstNav.navigator, 'setRange', function (e) {
         secondNav.navigator.xAxis.update({ min: e.min, max: e.max });
+
+        const { min, max } = secondNav.navigator.chart.xAxis[0].getExtremes();
+        const newMin = Math.max(min, e.min);
+        const newMax = Math.min(max, e.max);
+
+        e.min = newMin;
+        e.max = newMax;
+
         Highcharts.fireEvent(secondNav.navigator, 'setRange', e);
     });
 
+    // Bind chart
     secondNav.bind(priceChart);
+
+    // Set initial ranges
+    firstNav.setRange(
+        Date.UTC(2014),
+        firstNav.navigator.xAxis.max
+    );
+
+    secondNav.setRange(
+        Date.UTC(2022),
+        secondNav.navigator.xAxis.max
+    );
 });
