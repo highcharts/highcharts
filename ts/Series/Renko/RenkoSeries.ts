@@ -57,6 +57,7 @@ class RenkoSeries extends ColumnSeries {
      */
     public renkoData?: RenkoData[];
     public hasDerivedData = true;
+    public allowDG = false;
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
