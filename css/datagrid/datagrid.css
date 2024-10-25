@@ -187,6 +187,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     height: 12px;
     user-select: none;
     pointer-events: none;
+    color: var(--highcharts-neutral-color-60);
 }
 
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-column-sortable-icon,
@@ -196,8 +197,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-column-sortable-icon {
     transform: rotate(180deg);
-    top: calc(50%);
-    right: 6px;
+    top: calc(50% - 3px);
+    right: 7px;
 }
 
 .highcharts-datagrid-container:has(.highcharts-datagrid-no-data) {
