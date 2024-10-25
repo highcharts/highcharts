@@ -495,7 +495,10 @@ const rangeSelector: RangeSelectorOptions = {
          * `center`, `right`.
          *
          * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
-         *         Alignment
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0
@@ -542,7 +545,10 @@ const rangeSelector: RangeSelectorOptions = {
          * `center`, `right`.
          *
          * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
-         *         Alignment
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0
