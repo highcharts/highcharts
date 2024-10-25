@@ -20,11 +20,14 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
 import type RenkoPoint from './RenkoPoint.js';
 import type ColorType from '../../Core/Color/ColorType';
 import type Series from '../../Core/Series/Series';
+import type PointOptions from '../../Core/Series/PointOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 
 import RenkoSeriesDefaults from './RenkoSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import U from '../../Core/Utilities.js';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 const { merge, relativeLength, isNumber } = U;
 
 interface RenkoData {
@@ -54,7 +57,16 @@ class RenkoSeries extends ColumnSeries {
      */
     public renkoData?: RenkoData[];
     public hasDerivedData = true;
-
+    public setData(
+        data: (PointOptions | PointShortOptions)[],
+        redraw?: boolean,
+        animation?: boolean | Partial<AnimationOptions> | undefined
+    ): void {
+        if (this.processedXData) {
+            this.processedXData.length = 0;
+        }
+        super.setData(data, redraw, animation, false);
+    }
     public getProcessedData(): Series.ProcessedDataObject {
         if (this.processedXData?.length > 0) {
             return {
