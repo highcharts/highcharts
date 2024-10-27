@@ -63,11 +63,11 @@ KPIComponent allows end-user including the extra chart.
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
     ```
 
-2. The KPIComponent with chart uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.
+2. From version v3.0.0 the KPIComponent with chart does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, no need to load the set of CSS styles to display Highcharts properly.
+Importing only dashboards CSS file is enough:
     ```css
-    @import url("https://code.highcharts.com/css/highcharts.css");
+    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
     ```
-    More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
     Also, be aware that we prepared the component so it was minimalist.  
     To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).

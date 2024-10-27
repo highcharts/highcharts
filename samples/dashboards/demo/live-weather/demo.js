@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 const rangeConfig = {
@@ -539,7 +544,9 @@ async function setupDashboard() {
                     },
                     columns: [{
                         id: 'time',
-                        headerFormat: 'Local Time',
+                        header: {
+                            format: 'Local Time'
+                        },
                         cells: {
                             formatter: function () {
                                 return Highcharts.dateFormat(

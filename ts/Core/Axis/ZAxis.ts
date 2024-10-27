@@ -79,7 +79,7 @@ function chartAddZAxis(
  * Get the Z axis in addition to the default X and Y.
  * @private
  */
-function onChartAfterGetAxes(this: Chart): void {
+function onChartAfterCreateAxes(this: Chart): void {
     const zAxisOptions = this.options.zAxis = splat(this.options.zAxis || {});
 
     if (!this.is3d()) {
@@ -127,7 +127,7 @@ class ZAxis extends Axis implements AxisLike {
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
 
-            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
+            addEvent(ChartClass, 'afterCreateAxes', onChartAfterCreateAxes);
         }
 
     }

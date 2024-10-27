@@ -385,7 +385,7 @@ class RangeSelector {
             baseXAxisOptions = splat(chart.options.xAxis || {})[0];
             const axisRangeUpdateEvent = addEvent(
                 chart,
-                'afterGetAxes',
+                'afterCreateAxes',
                 function (): void {
                     const xAxis = chart.xAxis[0];
                     xAxis.range = xAxis.options.range = range;

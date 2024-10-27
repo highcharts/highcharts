@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -201,6 +201,21 @@ class HeaderCell extends Cell {
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';
+    }
+
+    protected override onKeyDown(e: KeyboardEvent): void {
+        if (e.target !== this.htmlElement) {
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            if (this.column.options.sorting?.sortable) {
+                this.column.sorting?.toggle();
+            }
+            return;
+        }
+
+        super.onKeyDown(e);
     }
 
     protected override onClick(e: MouseEvent): void {

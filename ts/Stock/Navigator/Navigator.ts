@@ -1896,8 +1896,8 @@ class Navigator {
                     if (baseSeries) {
                         erase(baseSeries, base); // #21043
                     }
-                    if (this.navigatorSeries) {
-                        erase(navigator.series as any, this.navigatorSeries);
+                    if (this.navigatorSeries && navigator.series) {
+                        erase(navigator.series, this.navigatorSeries);
                         if (defined(this.navigatorSeries.options)) {
                             this.navigatorSeries.remove(false);
                         }

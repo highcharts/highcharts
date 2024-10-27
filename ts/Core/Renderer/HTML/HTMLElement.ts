@@ -35,6 +35,7 @@ const {
     createElement,
     defined,
     extend,
+    isNumber,
     pInt,
     pushUnique
 } = U;
@@ -298,6 +299,13 @@ class HTMLElement extends SVGElement {
             styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
         }
+
+        // SVG natively supports setting font size as numbers. With HTML, the
+        // font size should behave in the same way (#21624).
+        if (isNumber(Number(styles?.fontSize))) {
+            styles.fontSize = styles.fontSize + 'px';
+        }
+
         extend(this.styles, styles);
         css(element, styles);
 

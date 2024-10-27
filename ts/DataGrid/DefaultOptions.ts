@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid default options
+ *  DataGrid default options
  *
  *  (c) 2009-2024 Highsoft AS
  *
@@ -40,6 +40,9 @@ const DefaultOptions: Globals.DeepPartial<Options> = {
         rows: {
             bufferSize: 10,
             strictHeights: false
+        },
+        header: {
+            enabled: true
         }
     },
     credits: {
