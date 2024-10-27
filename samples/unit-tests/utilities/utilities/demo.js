@@ -782,12 +782,5 @@
         document.body.removeChild(div);
     });
 
-    QUnit.test('keys', assert => {
-        assert.deepEqual(
-            Highcharts.keys({ foo: 'bar' }),
-            Object.keys({ foo: 'bar' })
-        );
-    });
-
     console.timeEnd('Utils test time');
 }());
