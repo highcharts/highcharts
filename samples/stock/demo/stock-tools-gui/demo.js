@@ -1,27 +1,57 @@
-(async () => {
+const commonOptions = {
+    api: {
+        url: 'https://demo-live-data.highcharts.com',
+        access: {
+            url: 'https://demo-live-data.highcharts.com/token/oauth',
+            username: 'username',
+            password: 'password'
+        }
+    }
+};
 
-    // Load the dataset
-    const data = await fetch(
-        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
-    ).then(response => response.json());
+const NVIDIACorpId = '0P000003RE';
 
-    // split the data set into ohlc and volume
+// eslint-disable-next-line no-undef
+const NVIDIAPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: {
+        type: 'OHLCV'
+    },
+    securities: [
+        {
+            id: NVIDIACorpId,
+            idType: 'MSID'
+        }
+    ],
+    currencyId: 'EUR'
+});
+
+Promise.all([NVIDIAPriceConnector.load()]).then(() => {
+    const {
+        [`${NVIDIACorpId}_Open`]: open,
+        [`${NVIDIACorpId}_High`]: high,
+        [`${NVIDIACorpId}_Low`]: low,
+        [`${NVIDIACorpId}_Close`]: close,
+        [`${NVIDIACorpId}_Volume`]: volume,
+        Date: date
+    } = NVIDIAPriceConnector.table.getColumns();
+
     const ohlc = [],
-        volume = [],
-        dataLength = data.length;
+        volumeSeriesData = [],
+        dataLength = date.length;
 
     for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
-            data[i][0], // the date
-            data[i][1], // open
-            data[i][2], // high
-            data[i][3], // low
-            data[i][4] // close
+            date[i],
+            open[i],
+            high[i],
+            low[i],
+            close[i]
         ]);
 
-        volume.push([
-            data[i][0], // the date
-            data[i][5] // the volume
+        volumeSeriesData.push([
+            date[i],
+            volume[i]
         ]);
     }
 
@@ -42,6 +72,9 @@
             height: '20%',
             offset: 0
         }],
+        rangeSelector: {
+            selected: 4
+        },
         tooltip: {
             shape: 'square',
             headerShape: 'callout',
@@ -72,15 +105,18 @@
             }
         },
         series: [{
-            type: 'ohlc',
-            id: 'aapl-ohlc',
-            name: 'AAPL Stock Price',
-            data: ohlc
+            type: 'candlestick',
+            id: 'nvidia-candlestick',
+            name: 'NVIDIA Corp Stock Price',
+            data: ohlc,
+            dataGrouping: {
+                groupPixelWidth: 20
+            }
         }, {
             type: 'column',
-            id: 'aapl-volume',
-            name: 'AAPL Volume',
-            data: volume,
+            id: 'nvidia-volume',
+            name: 'NVIDIA Volume',
+            data: volumeSeriesData,
             yAxis: 1
         }],
         responsive: {
@@ -96,4 +132,4 @@
             }]
         }
     });
-})();
+});
