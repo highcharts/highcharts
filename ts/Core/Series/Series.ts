@@ -3675,16 +3675,16 @@ class Series {
             p1: KDPointSearchObject,
             p2: Point
         ): void {
-            const p1kdX = p1[kdX],
-                p2kdX = p2[kdX],
-                x = (defined(p1kdX) && defined(p2kdX)) ? p1kdX - p2kdX : null,
+            const radius = useRadius ? (p2.marker?.radius || 0) : 0,
+                p1kdX = p1[kdX],
+                p2kdX = ((defined(p2[kdX]) && p2[kdX]) || 0) - radius,
+                x = defined(p1kdX) ? p1kdX - p2kdX : null,
                 p1kdY = p1[kdY],
-                p2kdY = p2[kdY],
-                y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
-                radius = useRadius ? (p2.marker?.radius || 0) : 0;
+                p2kdY: number = (defined(p2[kdY]) && p2[kdY] || 0) - radius,
+                y = defined(p1kdY) ? p1kdY - p2kdY : 0;
 
-            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
-            p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
+            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y);
+            p2.distX = defined(x) ? (Math.abs(x)) : Number.MAX_VALUE;
         }
 
         /**
