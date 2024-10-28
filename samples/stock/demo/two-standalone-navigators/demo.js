@@ -77,6 +77,25 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
         Highcharts.fireEvent(secondNav.navigator, 'setRange', e);
     });
 
+    // Add plot band on first navigator to indicate the range of the chart and
+    // second navigator
+    Highcharts.addEvent(secondNav.navigator, 'setRange', function (e) {
+        firstNav.navigator.xAxis.update({
+            plotBands: [{
+                from: e.min,
+                to: e.max,
+                color: '#9E66FF'
+            }]
+        });
+    });
+
+    // Set minimal range for the first navigator
+    firstNav.navigator.chart.update({
+        xAxis: {
+            minRange: 24 * 3600 * 1000 * 365 // 1 year
+        }
+    });
+
     // Bind chart
     secondNav.bind(priceChart);
 
