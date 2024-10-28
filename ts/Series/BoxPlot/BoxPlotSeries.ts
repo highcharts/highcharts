@@ -361,13 +361,13 @@ class BoxPlotSeries extends ColumnSeries {
                             halfWidth,
                             stemX,
                             (
-                                point.upperWhiskerLength ||
-                                options.upperWhiskerLength ||
+                                point.upperWhiskerLength ??
+                                options.upperWhiskerLength ??
                                 pointWhiskerLength
                             ),
                             (
-                                point.lowerWhiskerLength ||
-                                options.lowerWhiskerLength ||
+                                point.lowerWhiskerLength ??
+                                options.lowerWhiskerLength ??
                                 pointWhiskerLength
                             ),
                             point
