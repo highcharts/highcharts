@@ -17,7 +17,7 @@ Highcharts.chart('container', {
 
     series: [{
         whiskerLength: '100%',
-        lowerWhiskerLength: '10%',
+        lowerWhiskerLength: '10%'',
         data: [
             {
                 x: 0,

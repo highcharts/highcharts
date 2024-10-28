@@ -32,7 +32,8 @@ const {
     crisp,
     extend,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 /* *
@@ -110,9 +111,7 @@ class BoxPlotSeries extends ColumnSeries {
                             typeof xLen === 'string' &&
                             xLen.endsWith('%')
                         ) ?
-                            (
-                                halfWidth * parseFloat(xLen)
-                            ) / 100 :
+                            relativeLength(xLen, halfWidth) :
                             Number(xLen) / 2
                     ),
                     crispedYPos = crisp(
