@@ -2179,22 +2179,15 @@ class Axis {
         const roundedMin = tickPositions[0],
             roundedMax = tickPositions[tickPositions.length - 1],
             minPointOffset =
-                (!this.isOrdinal && this.minPointOffset) || 0, // (#12716)
-            linkedParent = this.linkedParent;
+                (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
 
         fireEvent(this, 'trimTicks');
 
         if (
             !this.isLinked ||
-            // Grid axis has custom handling of ticks, don't trim.
-            !this.grid &&
-            // Linked axes with same range and length should trim ticks, #21743.
-            (
-                linkedParent &&
-                this.min === linkedParent.min &&
-                this.max === linkedParent.max &&
-                this.len === linkedParent.len
-            )
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid
         ) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
