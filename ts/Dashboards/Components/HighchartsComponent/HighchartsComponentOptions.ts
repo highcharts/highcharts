@@ -95,7 +95,9 @@ export interface Options extends Component.Options {
     /**
      * @deprecated
      * This option is deprecated and does not work anymore.
-     * Use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
+     *
+     * Use [`connector.columnAssignment`](Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
+     * 
     */
     columnAssignment?: Record<string, string | Record<string, string>>;
 
