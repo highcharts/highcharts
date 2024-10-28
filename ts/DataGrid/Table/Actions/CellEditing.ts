@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Cell Editing class.
+ *  DataGrid Cell Editing class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -107,6 +107,8 @@ class CellEditing {
 
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.editedCell);
+
+        cell.htmlElement.focus();
 
         // Convert to number if possible
         if (!isNaN(+newValue)) {

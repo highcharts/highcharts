@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const data = [
     ['Food', 'Vitamin A'],
     ['Beef Liver', 6421],

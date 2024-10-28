@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -65,6 +65,8 @@ class TableHeader {
      * Amount of levels in the header, that is used in creating correct rows.
      */
     public levels: number = 1;
+
+
     /* *
     *
     *  Constructor
@@ -116,8 +118,13 @@ class TableHeader {
      * Reflows the table head's content dimensions.
      */
     public reflow(): void {
-        const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
         const vp = this.viewport;
+
+        if (!vp.theadElement) {
+            return;
+        }
+
+        const { clientWidth, offsetWidth } = vp.tbodyElement;
         const header = vp.header;
         const rows = this.rows;
         const tableEl = header?.viewport.dataGrid.tableElement;
@@ -180,8 +187,12 @@ class TableHeader {
      * The left scroll position.
      */
     public scrollHorizontally(scrollLeft: number): void {
-        this.viewport.theadElement.style.transform =
-            `translateX(${-scrollLeft}px)`;
+        const el = this.viewport.theadElement;
+        if (!el) {
+            return;
+        }
+
+        el.style.transform = `translateX(${-scrollLeft}px)`;
     }
 }
 
