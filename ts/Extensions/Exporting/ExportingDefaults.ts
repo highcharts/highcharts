@@ -443,15 +443,6 @@ const exporting: ExportingOptions = {
             titleKey: 'contextButtonTitle',
 
             /**
-             * This option is deprecated, use
-             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
-             *
-             * @deprecated
-             * @type      {string}
-             * @apioption exporting.buttons.contextButton._titleKey
-             */
-
-            /**
              * A collection of strings pointing to config options for the menu
              * items. The config options are defined in the
              * `menuItemDefinitions` option.
@@ -478,7 +469,9 @@ const exporting: ExportingOptions = {
                 'downloadJPEG',
                 'downloadPDF',
                 'downloadSVG'
-            ]
+            ],
+
+            y: -5
 
         }
 
