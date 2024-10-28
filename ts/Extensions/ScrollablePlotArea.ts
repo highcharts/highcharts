@@ -42,6 +42,7 @@ const {
     createElement,
     css,
     defined,
+    erase,
     merge,
     pushUnique
 } = U;
@@ -180,7 +181,7 @@ class ScrollablePlotArea {
                     if (
                         axis.horiz === recalculateHoriz ||
                         // Or parallel axes
-                        (chart.hasParallelCoordinates && !axis.horiz)
+                        (chart.hasParallelCoordinates && axis.coll === 'yAxis')
                     ) {
                         axis.setAxisSize();
                         axis.setAxisTranslation();
@@ -473,9 +474,7 @@ class ScrollablePlotArea {
                 `${axisClass}:not(.highcharts-radial-axis)`,
                 `${axisClass}-labels:not(.highcharts-radial-axis-labels)`
             ]) {
-                if (fixedSelectors.indexOf(className) === -1) {
-                    fixedSelectors.push(className);
-                }
+                pushUnique(fixedSelectors, className);
             }
         } else {
             // Clear all axis related selectors
@@ -487,10 +486,7 @@ class ScrollablePlotArea {
                     `${classBase}:not(.highcharts-radial-axis)`,
                     `${classBase}-labels:not(.highcharts-radial-axis-labels)`
                 ]) {
-                    const classIndex = fixedSelectors.indexOf(className);
-                    if (classIndex > -1) {
-                        fixedSelectors.splice(classIndex, 1);
-                    }
+                    erase(fixedSelectors, className);
                 }
             }
         }

@@ -176,18 +176,37 @@ QUnit.test(
     }
 );
 
-
 QUnit.test(
     'The parallel coordinates axes should have the ability to scroll.',
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
-                parallelCoordinates: true,
                 scrollablePlotArea: {
                     minWidth: 700
                 }
             },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'yAxis should be fixed on scroll.'
+        );
+
+        chart.update({
+            chart: {
+                parallelCoordinates: true
+            },
             yAxis: [{}, {}, {}, {}, {}],
+            xAxis: [{
+                opposite: true
+            }],
+            legend: {
+                enabled: false
+            },
             series: [{
                 data: [1, 2, 3, 4, 5]
             }, {
@@ -195,12 +214,24 @@ QUnit.test(
             }, {
                 data: [3, 4, 1, 6, 7]
             }]
-        });
+        }, true, true, false);
 
         assert.notOk(
             chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
                 .contains('highcharts-fixed'),
-            'yAxis should not have that class.'
+            'parallel yAxis should not be fixed on scroll.'
+        );
+
+        chart.update({
+            chart: {
+                parallelCoordinates: false
+            }
+        }, true, true, false);
+
+        assert.ok(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'yAxis should be fixed on scroll.'
         );
     }
 );
