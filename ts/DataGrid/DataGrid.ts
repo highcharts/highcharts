@@ -646,7 +646,7 @@ class DataGrid {
     private renderNoData(): void {
         makeHTMLElement('div', {
             className: Globals.classNames.noData,
-            innerText: 'No data to display'
+            innerText: this.options?.lang?.noData || ''
         }, this.contentWrapper);
     }
 

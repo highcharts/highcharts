@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Accessibility class
+ *  DataGrid Accessibility class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -113,15 +113,15 @@ class Accessibility {
      * Load the accessibility options.
      */
     public loadOptions(): void {
-        const options = this.dataGrid.options?.accessibility;
-        if (!options) {
+        const lang = this.dataGrid.options?.lang?.accessibility;
+        if (!lang) {
             return;
         }
 
         this.editableCellDescriptionEl.textContent =
-            options.cellEditing?.description || '';
+            lang.cellEditing?.editable || '';
         this.sortableColumnDescriptionEl.textContent =
-            options.sorting?.description || '';
+            lang.sorting?.sortable || '';
     }
 
     /**
@@ -185,13 +185,6 @@ class Accessibility {
 
         this.element.appendChild(this.announcerElement);
         this.announcerElement.textContent = msg;
-
-        // Debug:
-        // console.log('announce:', msg);
-
-        setTimeout((): void => {
-            this.announcerElement?.remove();
-        }, 3000);
     }
 
     /**
@@ -202,7 +195,13 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const messages = this.dataGrid.options?.accessibility?.sorting;
+        const messages = this.dataGrid.options?.lang
+            ?.accessibility?.sorting?.announcements;
+
+        if (!messages?.enabled) {
+            return;
+        }
+
         let msg: string | undefined;
 
         switch (order) {
@@ -230,7 +229,13 @@ class Accessibility {
      * The type of the edit message.
      */
     public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const messages = this.dataGrid.options?.accessibility?.cellEditing;
+        const messages = this.dataGrid.options?.lang
+            ?.accessibility?.cellEditing?.announcements;
+
+        if (!messages?.enabled) {
+            return;
+        }
+
         const msg = messages?.[msgType];
         if (!msg) {
             return;
@@ -273,7 +278,7 @@ namespace Accessibility {
     /**
      * The possible types of the edit message.
      */
-    export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
+    export type EditMsgType = 'started' | 'edited' | 'cancelled';
 
     /**
      * Dictionary of the IDs of the description elements.

@@ -58,6 +58,7 @@ declare global {
         DataConnector: typeof DataConnector;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        defaultOptions: typeof _DataGrid.defaultOptions;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -85,6 +86,7 @@ G.dataGrids = _DataGrid.dataGrids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
+G.defaultOptions = _DataGrid.defaultOptions;
 
 
 /* *
