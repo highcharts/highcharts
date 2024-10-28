@@ -68,8 +68,19 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
         secondNav.navigator.xAxis.update({ min: e.min, max: e.max });
 
         const { min, max } = secondNav.navigator.chart.xAxis[0].getExtremes();
-        const newMin = Math.max(min, e.min);
-        const newMax = Math.min(max, e.max);
+        const oneYear = 24 * 3600 * 1000 * 365; // 1 year
+
+        let newMin = Math.max(min, e.min);
+        let newMax = Math.min(max, e.max);
+
+        // Ensure the minimal range
+        if (newMax - newMin < oneYear) {
+            if (newMax < max) {
+                newMin = newMax - oneYear;
+            } else {
+                newMax = newMin + oneYear;
+            }
+        }
 
         e.min = newMin;
         e.max = newMax;
