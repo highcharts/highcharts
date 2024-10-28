@@ -38,10 +38,11 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
  *         Renko series
  *
  * @extends      plotOptions.column
- * @excluding centerInCategory, clip, colorByPoint, compare, compareBase,
- * compareStart, compareTo, dataGrouping,  edgeColor, edgeWidth, lineColor,
- * linkedTo, pointPadding, pointPlacement, pointRange, pointStart, pointWidth,
- * stacking
+ * @excluding boost, boostBlending, boostThreshold, centerInCategory,
+ * cumulative, cumulativeStart, dashStyle, dragDrop, dataSorting, edgeColor,
+ * stacking, getExtremesFromAll, clip, colorByPoint, compare, compareBase,
+ * compareStart, compareTo, dataGrouping, edgeWidth, lineColor, linkedTo,
+ * pointPadding, pointPlacement, pointRange, pointStart, pointWidth
  * @product      highstock
  * @requires     modules/renko
  * @optionparent plotOptions.renko
@@ -87,7 +88,9 @@ const RenkoDefaults: RenkoSeriesOptions = {
  * @type      {*}
  * @extends   series,plotOptions.renko
  * @product   highstock
- * @excluding dataParser, dataURL, marker
+ * @excluding boost, compare, compareStart, connectNulls, cumulative,
+ * cumulativeStart, dataGrouping, dataParser, dataSorting, dataURL,
+ * dragDrop, marker, step
  * @requires  modules/renko
  * @apioption series.renko
  */
