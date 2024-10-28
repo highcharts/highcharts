@@ -87,6 +87,31 @@ class Color implements ColorLike {
         parse: function (result: RegExpExecArray): Color.RGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
         }
+    }, {
+        // RGBA 4 digit hex color
+        regex:
+            /^#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            // #abcd => #aabbccdd, hence result + result.
+            return [
+                (pInt(result[1] + result[1], 16)),
+                (pInt(result[2] + result[2], 16)),
+                (pInt(result[3] + result[3], 16)),
+                (pInt(result[4] + result[4], 16) / 255)
+            ];
+        }
+    }, {
+        // RGBA 8 digit hex color
+        // eslint-disable-next-line max-len
+        regex: /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            return [
+                pInt(result[1], 16),
+                pInt(result[2], 16),
+                pInt(result[3], 16),
+                pInt(result[4], 16) / 255
+            ];
+        }
     }];
 
     // Must be last static member for init cycle
