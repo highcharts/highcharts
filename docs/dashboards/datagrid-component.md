@@ -10,42 +10,44 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
 The order of the imports is important, so make sure that the Dashboards module is imported after the DataGrid module.
-    ```html
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    ```
 
-    Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    import * as DataGrid from '@highcharts/dashboards/datagrid';
+```html
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+```
 
-    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
-    Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
-    ```
+Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
+
+```typescript
+import * as Dashboards from '@highcharts/dashboards';
+import * as DataGrid from '@highcharts/dashboards/datagrid';
+
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+```
 
 2. You also need to import the styles in your main CSS file.
-    ```css
-    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
-    ```
+```css
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+```
 
 3. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.
-    ```js
-    gui: {
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }]
+```js
+gui: {
+    layouts: [{
+        id: 'layout-1',
+        rows: [{
+            cells: [{
+                id: 'dashboard-col-0'
             }]
         }]
-    }
-    ```
+    }]
+}
+```
 
 4. You will also need some data that you could display in your DataGrid component. For this purpose, you can, for example, define a connector that, in this case, contains example data in the CSV format.
-    ```js
+```js
     dataPool: {
         connectors: [{
             id: 'data',
@@ -60,7 +62,7 @@ The order of the imports is important, so make sure that the Dashboards module i
             }
         }]
     }
-    ```
+```
     Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
 5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we defined in point 3 or created in our own layout), and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
