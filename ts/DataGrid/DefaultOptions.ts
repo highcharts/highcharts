@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid default options
+ *  DataGrid default options
  *
  *  (c) 2009-2024 Highsoft AS
  *

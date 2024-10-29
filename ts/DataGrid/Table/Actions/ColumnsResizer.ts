@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Columns Resizer class.
+ *  DataGrid Columns Resizer class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
