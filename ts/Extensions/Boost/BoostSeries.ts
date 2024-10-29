@@ -84,6 +84,7 @@ declare module '../../Core/Series/SeriesLike' {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        nullInteraction?: boolean;
         boostData?: Array<unknown>;
         xData?: Array<number>;
         yData?: Array<(number|null)>;
@@ -1073,7 +1074,7 @@ function seriesRenderCanvas(this: Series): void {
             false
         ),
         lineWidth = pick(options.lineWidth, 1),
-        nullYSubstitute = (options as any).nullInteraction && yMin;
+        nullYSubstitute = options.nullInteraction && yMin;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),

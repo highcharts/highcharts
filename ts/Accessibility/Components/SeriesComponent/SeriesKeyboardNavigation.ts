@@ -65,6 +65,12 @@ declare module '../../../Core/Series/SeriesLike' {
     }
 }
 
+declare module '../../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        nullInteraction?: boolean;
+    }
+}
+
 /* *
  *
  *  Functions
@@ -142,7 +148,7 @@ function isSkipPoint(
 
     return !(
         !point.isNull ||
-        (point.series.options as any).nullInteraction
+        point.series.options?.nullInteraction
     ) &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||

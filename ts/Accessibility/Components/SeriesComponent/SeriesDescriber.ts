@@ -63,6 +63,12 @@ const {
  *
  * */
 
+declare module '../../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        nullInteraction?: boolean;
+    }
+}
+
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/accessibility */
@@ -92,7 +98,7 @@ function findFirstPointWithGraphic(
         return null;
     }
 
-    const nullInteraction = (point.series.options as any).nullInteraction;
+    const nullInteraction = point.series.options?.nullInteraction;
 
     return find(point.series.data, function (p: Point): boolean {
         return !!(

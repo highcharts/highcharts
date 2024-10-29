@@ -124,6 +124,7 @@ declare module './SeriesLike' {
 
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        nullInteraction?: boolean;
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }
@@ -566,7 +567,7 @@ namespace DataLabel {
 
         if (series.hasDataLabels?.()) {
             const nullLabel = (
-                (seriesOptions as any)?.nullInteraction &&
+                seriesOptions?.nullInteraction &&
                 'Null'
             );
             dataLabelsGroup = this.initDataLabels(animationConfig);

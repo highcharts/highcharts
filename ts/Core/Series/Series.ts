@@ -137,6 +137,12 @@ declare module './SeriesLike' {
     }
 }
 
+declare module './SeriesOptions' {
+    interface SeriesOptions {
+        nullInteraction?: boolean;
+    }
+}
+
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;
@@ -2163,7 +2169,7 @@ class Series {
             threshold = options.threshold,
             stackThreshold = options.startFromThreshold ? threshold : 0,
             nullYSubstitute = (
-                (options as any).nullInteraction &&
+                options?.nullInteraction &&
                 series.chart.plotSizeY
             );
         let i,
@@ -3642,7 +3648,7 @@ class Series {
                     // For line-type series restrict to plot area, but
                     // column-type series not (#3916, #4511)
                     !series.directTouch,
-                    (seriesOptions as any)?.nullInteraction
+                    seriesOptions?.nullInteraction
                 ),
                 dimensions,
                 dimensions

@@ -62,7 +62,11 @@ const {
  *  Declarations
  *
  * */
-
+declare module './Series/SeriesOptions'{
+    interface SeriesOptions {
+        nullInteraction?: boolean;
+    }
+}
 declare module './Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;
@@ -812,12 +816,12 @@ class Pointer {
 
                 // Get all points with the same x value as the hoverPoint
                 searchSeries.forEach(function (s): any {
-                    const nullInteraction = (s.options as any)?.nullInteraction;
+                    const nullInteraction = s.options?.nullInteraction;
                     let point = find(s.points, function (p: Point): boolean {
                         return (
                             p.x === hoverPoint.x && (
                                 !p.isNull ||
-                                nullInteraction
+                                !!nullInteraction
                             )
                         );
                     });
