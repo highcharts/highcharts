@@ -1,48 +1,44 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-    var map = Highcharts.map,
-        chart = Highcharts.stockChart('container', {
-            series: [
-                {
-                    id: 'main',
-                    data: [
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15
-                    ]
-                },
-                {
-                    type: 'linearRegression',
-                    linkedTo: 'main'
-                }
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            id: 'main',
+            data: [
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15,
+                13,
+                14,
+                15
             ]
-        });
+        }, {
+            type: 'linearRegression',
+            linkedTo: 'main'
+        }]
+    });
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -71,7 +67,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [16.799999999999997, 18.6, 17.6],
         'Correct values of regression indicator'
     );
@@ -79,7 +75,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     // Slope and intercept indicators can be checked without creating a new
     // series or updating the existing one.
     assert.deepEqual(
-        map(chart.series[1].points, function (point) {
+        chart.series[1].points.map(function (point) {
             return point.regressionLineParameters.slope;
         }),
         [2.3, 2.7, 1],
@@ -87,7 +83,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        map(chart.series[1].points, function (point) {
+        chart.series[1].points.map(function (point) {
             return point.regressionLineParameters.intercept;
         }),
         [7.6, 7.799999999999999, 13.6],
@@ -103,7 +99,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[6].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [16.799999999999997, 18.6],
         'Correct values after point.remove()'
     );
@@ -114,7 +110,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [66.5014343240479, 69.67686317033707],
         'Correct values of regression angle indicator'
     );

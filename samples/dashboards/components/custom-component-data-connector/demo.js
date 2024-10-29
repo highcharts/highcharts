@@ -14,7 +14,7 @@ class TotalRevenueHTML extends HTMLComponent {
         await super.load();
         const revenue = this.getTotalRevenue();
 
-        this.elements = this.getElementsFromString(
+        this.options.elements = this.getElementsFromString(
             `
             <div class="revenue">
                 <p class="title">Total revenue</p>

@@ -65,25 +65,23 @@ class RenkoSeries extends ColumnSeries {
         redraw?: boolean,
         animation?: boolean | Partial<AnimationOptions> | undefined
     ): void {
-        if (this.processedXData) {
-            this.processedXData.length = 0;
-        }
         super.setData(data, redraw, animation, false);
     }
     public getProcessedData(): Series.ProcessedDataObject {
-        if (this.processedXData?.length > 0) {
+        const modified = this.dataTable.modified;
+        const processedXData: number[] = [];
+        const processedLowData: number[] = [];
+        const processedYData: number[] = [];
+        const xData = this.getColumn('x', true);
+        const yData = this.getColumn('y', true);
+        if (yData.length === 0 || this.dataTable.columns.low) {
             return {
-                xData: this.processedXData,
-                yData: this.processedYData,
+                modified: this.dataTable.modified,
+                closestPointRange: 1,
                 cropped: false,
-                cropStart: 0,
-                closestPointRange: 1
+                cropStart: 0
             };
         }
-        const processedXData: number[] = [];
-        const processedYData: [number, number][] = [];
-        const yData = this.yData as number[];
-        const xData = this.xData as number[];
         const boxSize = this.options.boxSize;
         const change =
             isNumber(boxSize) ? boxSize : relativeLength(boxSize, yData[0]);
@@ -134,13 +132,18 @@ class RenkoSeries extends ColumnSeries {
 
         for (const point of renkoData) {
             processedXData.push(point.x);
-            processedYData.push([point.y, point.low]);
+            processedYData.push(point.y);
+            processedLowData.push(point.low);
         }
 
         this.processedData = renkoData;
+
+        modified.setColumn('x', processedXData);
+        modified.setColumn('y', processedYData);
+        modified.setColumn('low', processedLowData);
+
         return {
-            xData: processedXData,
-            yData: processedYData,
+            modified: modified,
             cropped: false,
             cropStart: 0,
             closestPointRange: 1
@@ -180,7 +183,6 @@ class RenkoSeries extends ColumnSeries {
 interface RenkoSeries {
     pointClass: typeof RenkoPoint;
 }
-
 
 extend(RenkoSeries.prototype, {
     pointClass: RenkoPoint

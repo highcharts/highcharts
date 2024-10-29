@@ -35,6 +35,7 @@ const { format } = F;
 import H from './Globals.js';
 const {
     composed,
+    dateFormats,
     doc,
     isSafari
 } = H;
@@ -52,6 +53,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     pick,
@@ -436,7 +438,8 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart.style,
+                const chart = this.chart,
+                    chartStyle = chart.options.chart.style,
                     Renderer = RendererRegistry.getRendererType();
 
                 /**
@@ -449,8 +452,14 @@ class Tooltip {
                  */
                 this.container = container = H.doc.createElement('div');
 
-                container.className = 'highcharts-tooltip-container';
-
+                container.className = (
+                    'highcharts-tooltip-container ' +
+                    (
+                        chart.renderTo.className.match(
+                            /(highcharts[a-zA-Z0-9-]+)\s?/gm
+                        ) || [].join(' ')
+                    )
+                );
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
@@ -1696,7 +1705,7 @@ class Tooltip {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as AnyRecord;
-        let xDateFormat = tooltipOptions.xDateFormat,
+        let xDateFormat = tooltipOptions.xDateFormat || '',
             formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
 
         fireEvent(this, 'headerFormatter', e, function (
@@ -1715,12 +1724,17 @@ class Tooltip {
 
             // Insert the footer date format if any
             if (dateTime && xDateFormat) {
-                ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
-                        ['key']).forEach(
-                    function (key: string): void {
+                if (isObject(xDateFormat)) {
+                    const format = xDateFormat;
+                    dateFormats[0] = (timestamp): string =>
+                        series.chart.time.dateFormat(format, timestamp);
+                    xDateFormat = '%0';
+                }
+                (labelConfig.point?.tooltipDateKeys || ['key']).forEach(
+                    (key: string): void => {
                         formatString = formatString.replace(
-                            '{point.' + key + '}',
-                            '{point.' + key + ':' + xDateFormat + '}'
+                            new RegExp('point\\.' + key + '([ \\)}])', ''),
+                            `(point.${key}:${xDateFormat})$1`
                         );
                     }
                 );

@@ -6,7 +6,7 @@ js_wrap: b
 tags:
   - Highcharts Dashboards demo
 categories:
-  - General:
-        priority: 18
+  - Basic:
+        priority: 110
 use_png_thumbnail: true
 ...
