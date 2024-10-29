@@ -426,12 +426,12 @@ namespace StockChart {
 
         // Check if the label has to be drawn
         if (
-            !axis.crosshair ||
-            !axis.crosshair.label ||
-            !axis.crosshair.label.enabled ||
-            !axis.cross ||
-            !isNumber(axis.min) ||
-            !isNumber(axis.max)
+            !(
+                axis.crosshair?.label?.enabled &&
+                axis.cross &&
+                isNumber(axis.min) &&
+                isNumber(axis.max)
+            )
         ) {
             return;
         }
@@ -446,7 +446,7 @@ namespace StockChart {
             width = axis.width,
             tickInside = axis.options.tickPosition === 'inside',
             snap = axis.crosshair.snap !== false,
-            e = event.e || (axis.cross && axis.cross.e),
+            e = event.e || (axis.cross?.e),
             point = event.point;
 
         let crossLabel = axis.crossLabel, // The svgElement
@@ -601,8 +601,8 @@ namespace StockChart {
 
         // Show the crosslabel
         crossLabel.attr({
-            x: posx + offset,
-            y: posy,
+            x: Math.max(0, posx + offset),
+            y: Math.max(0, posy),
             // First set x and y, then anchorX and anchorY, when box is actually
             // calculated, #5702
             anchorX: horiz ?

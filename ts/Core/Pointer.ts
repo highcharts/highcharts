@@ -107,7 +107,8 @@ class Pointer {
 
     public static hoverChartIndex: (number|undefined);
 
-    public static unbindDocumentMouseUp: (Array<Function>|undefined);
+    public static unbindDocumentMouseUp:
+    Array<{ doc: Document, unbind: Function }> = [];
 
     public static unbindDocumentTouchEnd: (Function|undefined);
 
@@ -236,9 +237,10 @@ class Pointer {
         this.eventsToUnbind = [];
 
         if (!H.chartCount) {
-            if (Pointer.unbindDocumentMouseUp) {
-                Pointer.unbindDocumentMouseUp.forEach((e): void => e());
-            }
+            Pointer.unbindDocumentMouseUp.forEach(
+                (el): void => el.unbind()
+            );
+            Pointer.unbindDocumentMouseUp.length = 0;
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
                     Pointer.unbindDocumentTouchEnd()
@@ -1788,7 +1790,6 @@ class Pointer {
      * @function Highcharts.Pointer#setDOMEvents
      */
     public setDOMEvents(): void {
-
         const container = this.chart.container,
             ownerDoc = container.ownerDocument;
 
@@ -1807,17 +1808,19 @@ class Pointer {
                 this.onContainerMouseLeave.bind(this)
             )
         );
-        if (!Pointer.unbindDocumentMouseUp) {
-            Pointer.unbindDocumentMouseUp = [];
-        }
 
-        Pointer.unbindDocumentMouseUp.push(
-            addEvent(
-                ownerDoc,
-                'mouseup',
-                this.onDocumentMouseUp.bind(this)
-            )
-        );
+        if (!Pointer.unbindDocumentMouseUp.some(
+            (el): boolean => el.doc === ownerDoc
+        )) {
+            Pointer.unbindDocumentMouseUp.push({
+                doc: ownerDoc,
+                unbind: addEvent(
+                    ownerDoc,
+                    'mouseup',
+                    this.onDocumentMouseUp.bind(this)
+                )
+            });
+        }
 
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements
@@ -2289,6 +2292,10 @@ export default Pointer;
  * The related browser event.
  * @name Highcharts.SelectEventObject#originalEvent
  * @type {global.Event}
+ *//**
+ * Prevents the default action for the event, if called.
+ * @name Highcharts.SelectEventObject#preventDefault
+ * @type {Function}
  *//**
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection

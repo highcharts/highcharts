@@ -1608,6 +1608,10 @@ class Series {
             xAxis = series.xAxis,
             options = series.options,
             cropThreshold = options.cropThreshold,
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                // X-range series etc, #21003
+                series.getExtremesFromAll,
             logarithmic = xAxis?.logarithmic,
             isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
@@ -1636,7 +1640,7 @@ class Series {
         if (
             isCartesian &&
             series.sorted &&
-            !forceExtremesFromAll &&
+            !getExtremesFromAll &&
             (
                 !cropThreshold ||
                 dataLength > cropThreshold ||

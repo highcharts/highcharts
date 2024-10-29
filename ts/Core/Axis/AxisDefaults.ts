@@ -1160,7 +1160,9 @@ namespace AxisDefaults {
                 color: Palette.neutralColor80,
                 /** @internal */
                 cursor: 'default',
-                /** @internal */
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             }
         },
@@ -2085,7 +2087,9 @@ namespace AxisDefaults {
             style: {
                 /** @internal */
                 color: Palette.neutralColor60,
-                /** @internal */
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             }
         },
@@ -2144,6 +2148,7 @@ namespace AxisDefaults {
          * @product   highcharts gantt
          * @type      {boolean}
          * @default   true
+         * @apioption xAxis.uniqueNames
          */
 
         /**
@@ -3228,7 +3233,9 @@ namespace AxisDefaults {
             style: {
                 /** @internal */
                 color: Palette.neutralColor100,
-                /** @internal */
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.7em',
                 /** @internal */
                 fontWeight: 'bold',

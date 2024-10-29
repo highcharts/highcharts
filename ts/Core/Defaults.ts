@@ -889,6 +889,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -996,6 +999,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -1453,6 +1459,9 @@ const defaultOptions: DefaultOptions = {
              * @apioption legend.navigation.style
              */
             style: {
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             },
 
@@ -2215,7 +2224,10 @@ const defaultOptions: DefaultOptions = {
          * inside the chart area. For small charts, this may result in clipping
          * or overlapping. When `true`, a separate SVG element is created and
          * overlaid on the page, allowing the tooltip to be aligned inside the
-         * page itself.
+         * page itself. Beware that with this option active, CSS classes on the
+         * chart's target container, with classnames matching the pattern
+         * 'highcharts-*', will be set on the tooltip as well. This is done to
+         * support theming for tooltips with this option.
          *
          * Defaults to `true` if `chart.scrollablePlotArea` is activated,
          * otherwise `false`.
@@ -2731,7 +2743,9 @@ const defaultOptions: DefaultOptions = {
             color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -2850,7 +2864,9 @@ const defaultOptions: DefaultOptions = {
             cursor: 'pointer',
             /** @internal */
             color: Palette.neutralColor40,
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.6em'
         },
 

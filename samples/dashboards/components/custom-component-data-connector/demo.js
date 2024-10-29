@@ -14,7 +14,7 @@ class TotalRevenueHTML extends HTMLComponent {
         await super.load();
         const revenue = this.getTotalRevenue();
 
-        this.elements = this.getElementsFromString(
+        this.options.elements = this.getElementsFromString(
             `
             <div class="revenue">
                 <p class="title">Total revenue</p>
@@ -114,15 +114,15 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
-            columns: {
-                Revenue: {
-                    headerFormat: '{text} (€)'
-                },
-                Category: {
-                    show: false
+            columns: [{
+                id: 'Revenue',
+                header: {
+                    format: '{id} (€)'
                 }
-            }
+            }, {
+                id: 'Category',
+                enabled: false
+            }]
         }
     }]
 });

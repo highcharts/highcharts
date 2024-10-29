@@ -87,8 +87,15 @@ class AccordionMenu {
      *
      * @param component
      * The component to render the menu for.
+
+     * @param sidebarMainContainer
+     * The main container of the sidebar.
      */
-    public renderContent(container: HTMLElement, component: Component): void {
+    public renderContent(
+        container: HTMLElement,
+        component: Component,
+        sidebarMainContainer: HTMLElement
+    ): void {
         const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
@@ -138,7 +145,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.accordionMenuButtonsContainer
             },
             {},
-            accordionContainer
+            sidebarMainContainer
         );
 
         EditRenderer.renderButton(
@@ -164,6 +171,7 @@ class AccordionMenu {
                 }
             }
         );
+        sidebarMainContainer.appendChild(buttonContainer);
     }
 
     /**
@@ -187,6 +195,8 @@ class AccordionMenu {
         let currentLevel = this.changedOptions as Globals.AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
+        let currentDataGridOptionsLevel;
+        let currentOldDataGridOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -208,6 +218,34 @@ class AccordionMenu {
             }
 
             currentLevel = currentLevel[key];
+
+            if (key === 'dataGridOptions') {
+                const realDataGridOptions =
+                    (this.component as any).dataGrid?.options;
+
+                if (realDataGridOptions) {
+                    const oldOptionsBuffer =
+                        this.oldOptionsBuffer as Globals.AnyRecord;
+                    if (!oldOptionsBuffer.dataGridOptions) {
+                        oldOptionsBuffer.dataGridOptions = {};
+                    }
+                    currentOldDataGridOptionsBufferLevel =
+                        oldOptionsBuffer.dataGridOptions as Globals.AnyRecord;
+                    currentDataGridOptionsLevel = realDataGridOptions;
+                }
+            } else if (
+                currentDataGridOptionsLevel &&
+                currentOldDataGridOptionsBufferLevel
+            ) {
+                currentDataGridOptionsLevel = currentDataGridOptionsLevel[key];
+
+                if (currentOldDataGridOptionsBufferLevel[key] === void 0) {
+                    currentOldDataGridOptionsBufferLevel[key] = {};
+                }
+
+                currentOldDataGridOptionsBufferLevel =
+                    currentOldDataGridOptionsBufferLevel[key];
+            }
 
             if (key === 'chartOptions') {
                 const realChartOptions = (this.component as any).chart?.options;
