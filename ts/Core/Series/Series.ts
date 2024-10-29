@@ -2300,6 +2300,8 @@ class Series {
             if (isNumber(yValue) && point.plotX !== void 0) {
                 plotY = yAxis.translate(yValue, false, true, false, true);
                 plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
+            } else if (yValue === null && nullYSubstitute) {
+                plotY = nullYSubstitute;
             }
             /**
              * The translated Y value for the point in terms of pixels. Relative
@@ -2315,7 +2317,7 @@ class Series {
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
-            point.plotY = plotY ?? nullYSubstitute;
+            point.plotY = plotY;
 
             point.isInside = this.isPointInside(point);
 
