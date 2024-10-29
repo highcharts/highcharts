@@ -29,7 +29,7 @@ Below is an example of what a component configuration might look like:
 ``` JS
     {
         type: 'Highcharts',
-        cell: 'cell-id-2',
+        renderTo: 'cell-id-2',
         chartOptions: {
             series: [{
                 type: 'pie',
@@ -97,19 +97,17 @@ Your dashboard can now be created:
         },
         components: [{
             type: 'html',
-            cell: 'dashboard-col-0',
-            elements: [
-                {
-                    tagName: 'h1',
-                    style: {
-                        height: '400px',
-                        'text-align': 'center'
-                    },
-                    textContent: 'Your first dashboard'
-                }
-            ]
+            renderTo: 'dashboard-col-0',
+            elements: [{
+                tagName: 'h1',
+                style: {
+                    height: '400px',
+                    'text-align': 'center'
+                },
+                textContent: 'Your first dashboard'
+            }]
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             chartOptions: {
                 series: [{
