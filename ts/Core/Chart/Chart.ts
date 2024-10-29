@@ -1116,9 +1116,7 @@ class Chart {
      *         The currently selected series.
      */
     public getSelectedSeries(): Array<Series> {
-        return this.series.filter(function (serie): (boolean|undefined) {
-            return serie.selected;
-        });
+        return this.series.filter((s): (boolean|undefined) => s.selected);
     }
 
     /**
@@ -1168,7 +1166,7 @@ class Chart {
      * The options to set, will be merged with default options.
      */
     public applyDescription(
-        name: ('title'|'subtitle'|'caption'),
+        name: 'title'|'subtitle'|'caption',
         explicitOptions?: Chart.DescriptionOptionsType
     ): void {
         const chart = this;
@@ -1187,7 +1185,7 @@ class Chart {
 
         if (options && !elem) {
             elem = this.renderer.text(
-                options.text as any,
+                options.text,
                 0,
                 0,
                 options.useHTML
@@ -1195,7 +1193,7 @@ class Chart {
                 .attr({
                     align: options.align,
                     'class': 'highcharts-' + name,
-                    zIndex: (options as any).zIndex || 4
+                    zIndex: options.zIndex || 4
                 })
                 .add();
 
@@ -1257,55 +1255,48 @@ class Chart {
      */
     public layOutTitles(redraw = true): void {
         const titleOffset = [0, 0, 0],
-            renderer = this.renderer,
-            spacingBox = this.spacingBox;
+            { options, renderer, spacingBox } = this;
 
         // Lay out the title and the subtitle respectively
-        ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
-            const title = (this as any)[key],
-                titleOptions: Chart.DescriptionOptionsType = (
-                    (this as any).options[key]
-                ),
-                verticalAlign = titleOptions.verticalAlign || 'top',
-                offset = key === 'title' ?
-                    verticalAlign === 'top' ? -3 : 0 :
-                    // Floating subtitle (#6574)
-                    verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
+        (
+            ['title', 'subtitle', 'caption'] as
+            ('title'|'subtitle'|'caption')[]
+        ).forEach((key): void => {
+            const desc = this[key],
+                descOptions = this.options[key];
 
-            if (title) {
-
-                title
+            if (desc && descOptions) {
+                desc
                     .css({
                         width: (
-                            (titleOptions as any).width ||
-                            spacingBox.width + (titleOptions.widthAdjust || 0)
+                            descOptions.width ||
+                            spacingBox.width + (descOptions.widthAdjust || 0)
                         ) + 'px'
                     });
 
-                const baseline = renderer.fontMetrics(title).b,
+                const baseline = renderer.fontMetrics(desc).b,
                     // Skip the cache for HTML (#3481, #11666)
                     height = Math.round(
-                        title.getBBox(titleOptions.useHTML).height
-                    );
+                        desc.getBBox(descOptions.useHTML).height
+                    ),
+                    verticalAlign = descOptions.verticalAlign || 'top',
+                    offset = key === 'title' ?
+                        verticalAlign === 'top' ? -3 : 0 :
+                        // Floating subtitle (#6574)
+                        verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
-                title.align(extend({
+                desc.align(extend({
                     y: verticalAlign === 'bottom' ?
                         baseline :
                         offset + baseline,
                     height
-                }, titleOptions), false, 'spacingBox');
+                }, descOptions), false, 'spacingBox');
 
-                if (!titleOptions.floating) {
+                if (!descOptions.floating) {
                     if (verticalAlign === 'top') {
-                        titleOffset[0] = Math.ceil(
-                            titleOffset[0] +
-                            height
-                        );
+                        titleOffset[0] = Math.ceil(titleOffset[0] + height);
                     } else if (verticalAlign === 'bottom') {
-                        titleOffset[2] = Math.ceil(
-                            titleOffset[2] +
-                            height
-                        );
+                        titleOffset[2] = Math.ceil(titleOffset[2] + height);
                     }
                 }
             }
@@ -1314,15 +1305,15 @@ class Chart {
         // Handle title.margin and caption.margin
         if (
             titleOffset[0] &&
-            ((this.options.title as any).verticalAlign || 'top') === 'top'
+            (options.title?.verticalAlign || 'top') === 'top'
         ) {
-            titleOffset[0] += (this.options.title as any).margin;
+            titleOffset[0] += options.title?.margin || 0;
         }
         if (
             titleOffset[2] &&
-            (this.options.caption as any).verticalAlign === 'bottom'
+            options.caption?.verticalAlign === 'bottom'
         ) {
-            titleOffset[2] += (this.options.caption as any).margin;
+            titleOffset[2] += options.caption?.margin || 0;
         }
 
         const requiresDirtyBox = (
@@ -4048,9 +4039,11 @@ namespace Chart {
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
+        width?: number;
         widthAdjust?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 
     export interface ChartTransformParams {
@@ -4109,9 +4102,11 @@ namespace Chart {
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
+        width?: number;
         widthAdjust?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 
     export interface TitleOptions {
@@ -4122,9 +4117,11 @@ namespace Chart {
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
+        width?: number;
         widthAdjust?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 }
 
