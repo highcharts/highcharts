@@ -197,7 +197,7 @@ class Accessibility {
         this.element.appendChild(this.announcerElement);
         this.announcerElement.textContent = msg;
 
-        this.announcerTimeout = setTimeout(() => {
+        this.announcerTimeout = setTimeout((): void => {
             this.announcerElement.remove();
         }, 3000);
     }

@@ -29,7 +29,7 @@ import type Column from './Table/Column';
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Credits from './Credits.js';
-import DataGridDefaultOptions from './DefaultOptions.js';
+import Defaults from './Defaults.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
@@ -126,12 +126,6 @@ class DataGrid {
     *  Properties
     *
     * */
-
-    /**
-     * Default options for all DataGrid instances.
-     * @internal
-     */
-    public static readonly defaultOptions = DataGridDefaultOptions;
 
     /**
      * An array containing the current DataGrid objects in the page.
@@ -339,7 +333,7 @@ class DataGrid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? DataGrid.defaultOptions,
+            this.options ?? Defaults.defaultOptions,
             this.userOptions
         );
 
