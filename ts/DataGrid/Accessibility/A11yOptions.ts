@@ -74,7 +74,6 @@ namespace A11yOptions {
      * Accessibility options for the DataGrid sorting functionality.
      */
     export interface SortingLangA11yOptions {
-        sortable?: string;
         announcements?: {
             enabled?: boolean;
             ascending?: string;

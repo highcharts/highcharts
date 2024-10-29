@@ -54,7 +54,6 @@ namespace Defaults {
                     }
                 },
                 sorting: {
-                    sortable: 'Sortable column header.',
                     announcements: {
                         enabled: true,
                         ascending: 'Sorted ascending.',

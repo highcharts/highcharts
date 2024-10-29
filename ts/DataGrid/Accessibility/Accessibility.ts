@@ -26,6 +26,9 @@ import type DataGrid from '../DataGrid';
 import type { ColumnSortingOrder } from '../Options';
 
 import Globals from '../Globals.js';
+import DGUtils from '../Utils.js';
+
+const { makeHTMLElement } = DGUtils;
 
 
 /**
@@ -55,16 +58,6 @@ class Accessibility {
     private announcerElement: HTMLElement;
 
     /**
-     * The HTML element of the description for the editable cell.
-     */
-    private editableCellDescriptionEl: HTMLElement;
-
-    /**
-     * The HTML element of the description for the sortable column.
-     */
-    private sortableColumnDescriptionEl: HTMLElement;
-
-    /**
      * The timeout for the announcer element removal.
      */
     private announcerTimeout?: number;
@@ -92,21 +85,6 @@ class Accessibility {
         this.announcerElement = document.createElement('p');
         this.announcerElement.setAttribute('aria-atomic', 'true');
         this.announcerElement.setAttribute('aria-hidden', 'false');
-
-        this.editableCellDescriptionEl = document.createElement('p');
-        this.sortableColumnDescriptionEl = document.createElement('p');
-        this.editableCellDescriptionEl.setAttribute('aria-hidden', true);
-        this.sortableColumnDescriptionEl.setAttribute('aria-hidden', true);
-
-        this.editableCellDescriptionEl.id =
-            Accessibility.decriptionElementIds.editableCell;
-        this.sortableColumnDescriptionEl.id =
-            Accessibility.decriptionElementIds.sortableColumn;
-
-        this.element.appendChild(this.editableCellDescriptionEl);
-        this.element.appendChild(this.sortableColumnDescriptionEl);
-
-        this.loadOptions();
     }
 
 
@@ -117,44 +95,23 @@ class Accessibility {
     * */
 
     /**
-     * Load the accessibility options.
-     */
-    public loadOptions(): void {
-        const lang = this.dataGrid.options?.lang?.accessibility;
-        if (!lang) {
-            return;
-        }
-
-        this.editableCellDescriptionEl.textContent =
-            lang.cellEditing?.editable || '';
-        this.sortableColumnDescriptionEl.textContent =
-            lang.sorting?.sortable || '';
-    }
-
-    /**
      * Add the description for the editable cell.
      *
      * @param cellElement
      * The cell element to add the description to.
      */
     public addEditableCellDescription(cellElement: HTMLElement): void {
-        cellElement.setAttribute(
-            'aria-describedby',
-            Accessibility.decriptionElementIds.editableCell
-        );
-    }
+        const description =
+            this.dataGrid.options?.lang?.accessibility?.cellEditing?.editable;
 
-    /**
-     * Add the description for the sortable column header.
-     *
-     * @param thElement
-     * The header cell element to add the description to.
-     */
-    public addSortableColumnDescription(thElement: HTMLElement): void {
-        thElement.setAttribute(
-            'aria-describedby',
-            Accessibility.decriptionElementIds.sortableColumn
-        );
+        if (!description) {
+            return;
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.classNames.visuallyHidden,
+            innerText: ', ' + description
+        }, cellElement);
     }
 
     /**
@@ -294,14 +251,6 @@ namespace Accessibility {
      * The possible types of the edit message.
      */
     export type EditMsgType = 'started' | 'edited' | 'cancelled';
-
-    /**
-     * Dictionary of the IDs of the description elements.
-     */
-    export const decriptionElementIds = {
-        editableCell: 'highchartsdata-grid-editable-cell-description',
-        sortableColumn: 'highcharts-datagrid-sortable-column-description'
-    } as const;
 }
 
 

@@ -91,11 +91,6 @@ class TableCell extends Cell {
     public override render(): void {
         super.render();
 
-        if (this.column.options.cells?.editable) {
-            this.row.viewport.dataGrid.accessibility
-                ?.addEditableCellDescription(this.htmlElement);
-        }
-
         // It may happen that `await` will be needed here in the future.
         void this.setValue(this.column.data?.[this.row.index], false);
     }
@@ -248,6 +243,12 @@ class TableCell extends Cell {
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
+
+        if (this.column.options.cells?.editable) {
+            vp.dataGrid.accessibility
+                ?.addEditableCellDescription(this.htmlElement);
+        }
+
         vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
 
         if (!updateTable) {
