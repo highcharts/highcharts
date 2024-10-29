@@ -48,22 +48,23 @@ gui: {
 
 4. You will also need some data that you could display in your DataGrid component. For this purpose, you can, for example, define a connector that, in this case, contains example data in the CSV format.
 ```js
-    dataPool: {
-        connectors: [{
-            id: 'data',
-            type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`
-            }
-        }]
-    }
+dataPool: {
+    connectors: [{
+        id: 'data',
+        type: 'CSV',
+        options: {
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`
+        }
+    }]
+}
 ```
-    Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
+
+Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
 5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we defined in point 3 or created in our own layout), and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
     ```js
@@ -75,7 +76,7 @@ gui: {
         type: 'DataGrid'
     }]
     ```
-    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
+To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple DataGrid:
 ```js

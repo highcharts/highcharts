@@ -17,13 +17,13 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
     <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
-    Alternatively, you can also use the NPM package.
+Alternatively, you can also use the NPM package.
 
 ```bash
     npm install highcharts
 ```
 
-    Then import the package and the dedicated plug to connect it to the Dashboards.
+Then import the package and the dedicated plug to connect it to the Dashboards.
 
 ```typescript
     import * as Highcharts from 'highcharts';
