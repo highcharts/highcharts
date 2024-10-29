@@ -91,6 +91,8 @@ class ColumnSorting {
             headerCellElement.classList.add(Globals.classNames.columnSortable);
             column.viewport.dataGrid.accessibility
                 ?.addSortableColumnDescription(headerCellElement);
+            
+            headerCellElement.setAttribute('role', 'button');
         }
     }
 
