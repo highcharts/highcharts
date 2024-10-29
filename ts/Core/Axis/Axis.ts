@@ -3119,12 +3119,9 @@ class Axis {
                 tick.replaceMovedLabel();
             }
 
-            if (
-                tick &&
-                tick.label &&
-                tick.label.textPxLength > maxLabelLength
-            ) {
-                maxLabelLength = tick.label.textPxLength;
+            const textPxLength = tick.label?.textPxLength || 0;
+            if (textPxLength > maxLabelLength) {
+                maxLabelLength = textPxLength;
             }
         });
         this.maxLabelLength = maxLabelLength;
@@ -3168,7 +3165,7 @@ class Axis {
 
                         // Set the correct width in order to read
                         // the bounding box height (#4678, #5034)
-                        } else if (label.textPxLength > slotWidth) {
+                        } else if ((label.textPxLength || 0) > slotWidth) {
                             label.css({ width: slotWidth + 'px' });
                         }
 
@@ -3226,7 +3223,7 @@ class Axis {
                     labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
-                        commonWidth < label.textPxLength ||
+                        commonWidth < (label.textPxLength || 0) ||
                         // Resetting CSS, #4928
                         label.element.tagName === 'SPAN'
                     )

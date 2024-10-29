@@ -1216,6 +1216,7 @@ class Chart {
                     options.style
                 ));
             }
+            elem.textPxLength = elem.getBBox().width;
 
             /**
              * The chart title. The title has an `update` method that allows
@@ -1266,13 +1267,13 @@ class Chart {
                 descOptions = this.options[key];
 
             if (desc && descOptions) {
-                desc
-                    .css({
-                        width: (
-                            descOptions.width ||
-                            spacingBox.width + (descOptions.widthAdjust || 0)
-                        ) + 'px'
-                    });
+
+                const slotWidth = (
+                    descOptions.width ||
+                    spacingBox.width + (descOptions.widthAdjust || 0)
+                );
+
+                desc.css({ width: `${slotWidth}px` });
 
                 const baseline = renderer.fontMetrics(desc).b,
                     // Skip the cache for HTML (#3481, #11666)
@@ -1283,14 +1284,32 @@ class Chart {
                     offset = key === 'title' ?
                         verticalAlign === 'top' ? -3 : 0 :
                         // Floating subtitle (#6574)
-                        verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
+                        verticalAlign === 'top' ? titleOffset[0] + 2 : 0,
+                    alignAttr = merge(
+                        {
+                            y: verticalAlign === 'bottom' ?
+                                baseline :
+                                offset + baseline,
+                            height
+                        },
+                        {
+                            align: key === 'title' ?
+                                (
+                                    (desc.textPxLength || 0) > slotWidth ?
+                                        'left' : 'center'
+                                ) :
+                                this.title?.alignValue
+                        },
+                        descOptions
+                    );
 
-                desc.align(extend({
-                    y: verticalAlign === 'bottom' ?
-                        baseline :
-                        offset + baseline,
-                    height
-                }, descOptions), false, 'spacingBox');
+                // No animation when switching alignment
+                if (desc.alignValue !== alignAttr.align) {
+                    desc.placed = false;
+                }
+                desc
+                    .attr({ align: alignAttr.align })
+                    .align(alignAttr, false, 'spacingBox');
 
                 if (!descOptions.floating) {
                     if (verticalAlign === 'top') {

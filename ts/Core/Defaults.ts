@@ -724,6 +724,11 @@ const defaultOptions: DefaultOptions = {
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
          *
+         * Since v12 it defaults to `undefined`, meaning the alignment is
+         * computed for best fit. If the text fits in one line, it aligned to
+         * the center, but if it is wrapped into multiple lines, it is aligned
+         * to the left.
+         *
          * @sample {highcharts} highcharts/title/align/
          *         Aligned to the plot area (x = 70px = margin left - spacing
          *         left)
@@ -731,10 +736,11 @@ const defaultOptions: DefaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignValue}
-         * @since 2.0
+         * @type      {Highcharts.AlignValue}
+         * @default   undefined
+         * @since     2.0
+         * @apioption title.align
          */
-        align: 'center',
 
         /**
          * The margin between the title and the plot area, or if a subtitle
@@ -907,7 +913,9 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The horizontal alignment of the subtitle. Can be one of "left",
-         *  "center" and "right".
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
          *
          * @sample {highcharts} highcharts/subtitle/align/
          *         Footnote at right of plot area
@@ -915,9 +923,10 @@ const defaultOptions: DefaultOptions = {
          *         Footnote at bottom right of plot area
          *
          * @type  {Highcharts.AlignValue}
+         * @default undefined
          * @since 2.0
+         * @apioption subtitle.align
          */
-        align: 'center',
 
         /**
          * Adjustment made to the subtitle width, normally to reserve space
