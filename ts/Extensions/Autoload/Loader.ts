@@ -23,8 +23,10 @@ const {
 const H: AnyRecord = G;
 const loaded = new Set<string>();
 
-let root = 'https://code.highcharts.com',
-    extension = 'js';
+// Default to root and extension that supports ESM imports.
+// @todo When we get ESM bundle builds, we should change this.
+let root = '../../masters',
+    extension = 'src.js';
 
 const addStyleSheets = (
     options: Partial<Options>,
@@ -132,7 +134,7 @@ const loadScript = async (module: string): Promise<undefined> => {
     }
 
     // ES modules
-    if (root.indexOf('/es-modules/') !== -1) {
+    if (root.charAt(0) === '.') {
         await import(`${root}/${module}.${extension}`);
         loaded.add(module);
         return;
