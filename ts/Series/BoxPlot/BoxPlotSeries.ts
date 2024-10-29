@@ -99,21 +99,10 @@ class BoxPlotSeries extends ColumnSeries {
     ): SVGPath {
         const strokeWidth = point.whiskers.strokeWidth(),
             getWhisker = (
-                xLen: (
-                    number |
-                    string |
-                    undefined
-                ),
+                xLen: number | string,
                 yPos: number
             ): SVGPath.Segment[] => {
-                const halfLen = (
-                        (
-                            typeof xLen === 'string' &&
-                            xLen.endsWith('%')
-                        ) ?
-                            relativeLength(xLen, halfWidth) :
-                            Number(xLen) / 2
-                    ),
+                const halfLen = relativeLength(xLen, 2 * halfWidth) / 2,
                     crispedYPos = crisp(
                         yPos,
                         strokeWidth
