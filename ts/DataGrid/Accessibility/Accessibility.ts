@@ -64,6 +64,11 @@ class Accessibility {
      */
     private sortableColumnDescriptionEl: HTMLElement;
 
+    /**
+     * The timeout for the announcer element removal.
+     */
+    private announcerTimeout?: number;
+
 
     /* *
     *
@@ -90,6 +95,8 @@ class Accessibility {
 
         this.editableCellDescriptionEl = document.createElement('p');
         this.sortableColumnDescriptionEl = document.createElement('p');
+        this.editableCellDescriptionEl.setAttribute('aria-hidden', true);
+        this.sortableColumnDescriptionEl.setAttribute('aria-hidden', true);
 
         this.editableCellDescriptionEl.id =
             Accessibility.decriptionElementIds.editableCell;
@@ -178,6 +185,10 @@ class Accessibility {
      * Whether the message should be assertive. Default is false.
      */
     public announce(msg: string, assertive = false): void {
+        if (this.announcerTimeout) {
+            clearTimeout(this.announcerTimeout);
+        }
+
         this.announcerElement.remove();
         this.announcerElement.setAttribute(
             'aria-live', assertive ? 'assertive' : 'polite'
@@ -185,6 +196,10 @@ class Accessibility {
 
         this.element.appendChild(this.announcerElement);
         this.announcerElement.textContent = msg;
+
+        this.announcerTimeout = setTimeout(() => {
+            this.announcerElement.remove();
+        }, 3000);
     }
 
     /**
@@ -241,7 +256,7 @@ class Accessibility {
             return;
         }
 
-        this.announce(msg, true);
+        this.announce(msg);
     }
 
     /**
