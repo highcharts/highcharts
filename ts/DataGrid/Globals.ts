@@ -85,6 +85,7 @@ namespace Globals {
         noData: classNamePrefix + 'no-data',
         columnFirst: classNamePrefix + 'column-first',
         columnSortable: classNamePrefix + 'column-sortable',
+        columnSortableIcon: classNamePrefix + 'column-sortable-icon',
         columnSortedAsc: classNamePrefix + 'column-sorted-asc',
         columnSortedDesc: classNamePrefix + 'column-sorted-desc',
         resizerHandles: classNamePrefix + 'column-resizer',

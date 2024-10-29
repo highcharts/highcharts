@@ -26,6 +26,9 @@ import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
+
+const { makeHTMLElement } = DGUtils;
 
 /* *
  *
@@ -77,6 +80,14 @@ class ColumnSorting {
         this.addHeaderElementAttributes();
 
         if (column.options.sorting?.sortable) {
+            makeHTMLElement(
+                'span',
+                {
+                    className: Globals.classNames.columnSortableIcon,
+                    innerText: '▲'
+                },
+                headerCellElement
+            ).setAttribute('aria-hidden', true);
             headerCellElement.classList.add(Globals.classNames.columnSortable);
             column.viewport.dataGrid.accessibility
                 ?.addSortableColumnDescription(headerCellElement);
