@@ -651,7 +651,7 @@ class Time {
      *         The formatted date.
      */
     public dateFormat(
-        format: Time.DateTimeFormat = '%Y-%m-%d %H:%M:%S',
+        format?: Time.DateTimeFormat|null,
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
@@ -660,6 +660,8 @@ class Time {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
         }
+
+        format = format ?? '%Y-%m-%d %H:%M:%S';
 
         // First, identify and replace locale-aware formats like %[Ymd]
         if (isString(format)) {

@@ -434,31 +434,29 @@ class TimelineSeries extends LineSeries {
 
     }
 
-    public processData(): undefined {
-        const series = this,
-            xData = series.getColumn('x');
+}
 
-        let visiblePoints = 0;
+// Add series-specific properties after data is already processed, #17890
+addEvent(TimelineSeries, 'afterProcessData', function (): void {
+    const series = this,
+        xData = series.getColumn('x');
 
-        series.visibilityMap = series.getVisibilityMap();
+    let visiblePoints = 0;
 
-        // Calculate currently visible points.
-        for (const point of series.visibilityMap) {
-            if (point) {
-                visiblePoints++;
-            }
+    series.visibilityMap = series.getVisibilityMap();
+
+    // Calculate currently visible points.
+    for (const point of series.visibilityMap) {
+        if (point) {
+            visiblePoints++;
         }
-
-        series.visiblePointsCount = visiblePoints;
-
-        this.dataTable.setColumn('y', new Array(xData.length).fill(1));
-
-        super.processData.call(this, arguments as any);
-
-        return;
     }
 
-}
+    series.visiblePointsCount = visiblePoints;
+
+    this.dataTable.setColumn('y', new Array(xData.length).fill(1));
+
+});
 
 /* *
  *

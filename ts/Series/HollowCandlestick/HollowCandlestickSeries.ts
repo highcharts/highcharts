@@ -178,14 +178,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         hollowCandlestickData.length = 0;
 
-        // First point is always bullish (transparent).
-        hollowCandlestickData.push({
-            isBullish: true,
-            trendDirection: 'up'
-        });
-
         let previousDataArr: DataArr|undefined;
-        for (let i = 1; i < dataLength; i++) {
+        for (let i = 0; i < dataLength; i++) {
             const dataArr = table.getRow(
                 i,
                 this.pointArrayMap
@@ -193,7 +187,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
             hollowCandlestickData.push(series.isBullish(
                 dataArr,
-                previousDataArr
+                // Determine the first point is bullish based on
+                // its open and close values.(#21683)
+                i ? previousDataArr : dataArr
             ));
             previousDataArr = dataArr;
         }

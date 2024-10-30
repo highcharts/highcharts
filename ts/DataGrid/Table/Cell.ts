@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -23,6 +23,7 @@
  * */
 
 import type DataTable from '../../Data/DataTable';
+import type TableRow from './Content/TableRow';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
@@ -99,6 +100,7 @@ abstract class Cell {
         this.row.registerCell(this);
 
         this.htmlElement = this.init();
+        this.htmlElement.setAttribute('tabindex', '-1');
 
         this.initEvents();
     }
@@ -119,16 +121,22 @@ abstract class Cell {
     }
 
     /**
-     * Initialize event listeners.
+     * Initialize event listeners. Events added to the `cellEvents` array will
+     * be registered now and unregistered when the cell is destroyed.
      */
     protected initEvents(): void {
-        const clickHandler = (e: Event): void => {
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
+        this.cellEvents.push(['click', (e): void => {
             this.onClick(e as MouseEvent);
-        };
+        }]);
+        this.cellEvents.push(['keydown', (e): void => {
+            this.onKeyDown(e as KeyboardEvent);
+        }]);
 
-        this.htmlElement.addEventListener('click', clickHandler);
-
-        this.cellEvents.push(['click', clickHandler]);
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.addEventListener(pair[0], pair[1]);
+        });
     }
 
     /**
@@ -138,6 +146,71 @@ abstract class Cell {
      * Mouse event object.
      */
     protected abstract onClick(e: MouseEvent): void;
+
+    /**
+     * Handles the focus event on the cell.
+     */
+    protected onFocus(): void {
+        const vp = this.row.viewport;
+        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
+
+        focusAnchor?.setAttribute('tabindex', '-1');
+    }
+
+    /**
+     * Handles the blur event on the cell.
+     */
+    protected onBlur(): void {
+        const vp = this.row.viewport;
+        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
+
+        focusAnchor?.setAttribute('tabindex', '0');
+
+        delete vp.focusCursor;
+    }
+
+    /**
+     * Handles user keydown on the cell.
+     *
+     * @param e
+     * Keyboard event object.
+     */
+    protected onKeyDown(e: KeyboardEvent): void {
+        const { row, column } = this;
+        const vp = row.viewport;
+
+        const changeFocusKeys: Record<typeof e.key, [number, number]> = {
+            ArrowDown: [1, 0],
+            ArrowUp: [-1, 0],
+            ArrowLeft: [0, -1],
+            ArrowRight: [0, 1]
+        };
+
+        const dir = changeFocusKeys[e.key];
+
+        if (dir) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const localRowIndex = (row as TableRow).index === void 0 ? -1 : (
+                (row as TableRow).index - vp.rows[0].index
+            );
+
+            const nextVerticalDir = localRowIndex + dir[0];
+
+            if (nextVerticalDir < 0 && vp.header) {
+                vp.columns[column.index + dir[1]]?.header?.htmlElement.focus();
+                return;
+            }
+
+            const nextRow = vp.rows[nextVerticalDir];
+
+
+            if (nextRow) {
+                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+            }
+        }
+    }
 
     /**
      * Renders the cell by appending the HTML element to the row.
