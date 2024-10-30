@@ -1285,7 +1285,8 @@ class Chart {
                         verticalAlign === 'top' ? -3 : 0 :
                         // Floating subtitle (#6574)
                         verticalAlign === 'top' ? titleOffset[0] + 2 : 0,
-                    scale = Math.min(slotWidth / textPxLength, 1),
+                    uncappedScale = Math.min(slotWidth / textPxLength, 1),
+                    scale = Math.max(minScale, uncappedScale),
                     alignAttr: SVGAttributes = merge(
                         {
                             y: verticalAlign === 'bottom' ?
@@ -1296,7 +1297,7 @@ class Chart {
                             align: key === 'title' ?
                                 // Title defaults to center for short titles,
                                 // left for word-wrapped titles
-                                (scale < minScale ? 'left' : 'center') :
+                                (uncappedScale < minScale ? 'left' : 'center') :
                                 // Subtitle defaults to the title.align
                                 this.title?.alignValue
                         },
@@ -1309,29 +1310,15 @@ class Chart {
                     'center',
                     'right'
                 ].indexOf(alignAttr.align || 'center') * 0.5;
-                let scaleX = scale,
-                    whiteSpace = 'normal';
-                if (scaleX < 1) {
-                    // Scale down and fit on one line
-                    if (scaleX > minScale) {
-                        whiteSpace = 'nowrap';
-
-                    // Scale down to minimum and apply word wrap
-                    } else {
-                        scaleX = minScale;
-                    }
-
-                }
 
                 // Perform downscale and word wrap
                 desc
                     .css({
-                        whiteSpace,
-                        width: `${slotWidth / scaleX}px`
+                        width: `${slotWidth / scale + 1}px`
                     })
                     .attr({
-                        scaleX,
-                        scaleY: scaleX
+                        scaleX: scale,
+                        scaleY: scale
                     });
 
                 // No animation when switching alignment
@@ -1349,7 +1336,7 @@ class Chart {
                         align: alignAttr.align,
                         'transform-origin': `${
                             this.spacingBox.x +
-                            textPxLength * scaleX * alignFactor
+                            textPxLength * scale * alignFactor
                         } ${lineHeight}`
                     });
 
@@ -1358,12 +1345,12 @@ class Chart {
                     if (verticalAlign === 'top') {
 
                         titleOffset[0] = Math.ceil(
-                            titleOffset[0] + height * scaleX
+                            titleOffset[0] + height * scale
                         );
 
                     } else if (verticalAlign === 'bottom') {
                         titleOffset[2] = Math.ceil(
-                            titleOffset[2] + height * scaleX
+                            titleOffset[2] + height * scale
                         );
                     }
                 }
