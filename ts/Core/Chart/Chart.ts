@@ -1275,47 +1275,96 @@ class Chart {
 
                 desc.css({ width: `${slotWidth}px` });
 
-                const baseline = renderer.fontMetrics(desc).b,
-                    // Skip the cache for HTML (#3481, #11666)
-                    height = Math.round(
-                        desc.getBBox(descOptions.useHTML).height
-                    ),
+                const fontMetrics = renderer.fontMetrics(desc),
+                    baseline = fontMetrics.b,
+                    lineHeight = fontMetrics.h,
+                    textPxLength = desc.textPxLength || 0,
+                    minScale = 0.67,
                     verticalAlign = descOptions.verticalAlign || 'top',
                     offset = key === 'title' ?
                         verticalAlign === 'top' ? -3 : 0 :
                         // Floating subtitle (#6574)
                         verticalAlign === 'top' ? titleOffset[0] + 2 : 0,
-                    alignAttr = merge(
+                    scale = Math.min(slotWidth / textPxLength, 1),
+                    alignAttr: SVGAttributes = merge(
                         {
                             y: verticalAlign === 'bottom' ?
                                 baseline :
-                                offset + baseline,
-                            height
+                                offset + baseline
                         },
                         {
                             align: key === 'title' ?
-                                (
-                                    (desc.textPxLength || 0) > slotWidth ?
-                                        'left' : 'center'
-                                ) :
+                                // Title defaults to center for short titles,
+                                // left for word-wrapped titles
+                                (scale < minScale ? 'left' : 'center') :
+                                // Subtitle defaults to the title.align
                                 this.title?.alignValue
                         },
                         descOptions
                     );
 
+                // Compute downscale and word wrap
+                const alignFactor = [
+                    'left',
+                    'center',
+                    'right'
+                ].indexOf(alignAttr.align || 'center') * 0.5;
+                let scaleX = scale,
+                    whiteSpace = 'normal';
+                if (scaleX < 1) {
+                    // Scale down and fit on one line
+                    if (scaleX > minScale) {
+                        whiteSpace = 'nowrap';
+
+                    // Scale down to minimum and apply word wrap
+                    } else {
+                        scaleX = minScale;
+                    }
+
+                }
+
+                // Perform downscale and word wrap
+                desc
+                    .css({
+                        whiteSpace,
+                        width: `${slotWidth / scaleX}px`
+                    })
+                    .attr({
+                        scaleX,
+                        scaleY: scaleX
+                    });
+
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
                     desc.placed = false;
                 }
-                desc
-                    .attr({ align: alignAttr.align })
-                    .align(alignAttr, false, 'spacingBox');
+                // Skip the cache for HTML (#3481, #11666)
+                const height = desc.getBBox(descOptions.useHTML).height;
+                alignAttr.height = Math.round(height);
 
+                // Perform alignment
+                desc
+                    .align(alignAttr, false, 'spacingBox')
+                    .attr({
+                        align: alignAttr.align,
+                        'transform-origin': `${
+                            this.spacingBox.x +
+                            textPxLength * scaleX * alignFactor
+                        } ${lineHeight}`
+                    });
+
+                // Adjust the rendered title offset
                 if (!descOptions.floating) {
                     if (verticalAlign === 'top') {
-                        titleOffset[0] = Math.ceil(titleOffset[0] + height);
+
+                        titleOffset[0] = Math.ceil(
+                            titleOffset[0] + height * scaleX
+                        );
+
                     } else if (verticalAlign === 'bottom') {
-                        titleOffset[2] = Math.ceil(titleOffset[2] + height);
+                        titleOffset[2] = Math.ceil(
+                            titleOffset[2] + height * scaleX
+                        );
                     }
                 }
             }
