@@ -3666,6 +3666,7 @@ class Series {
             kdDimensions = (series.options.findNearestPointBy || '')
                 .indexOf('y') > -1 ? 2 : 1,
             useRadius = !!series.isBubble;
+            // GetDist = (x, y) => Math.sqrt(x * x, y * y);
 
         /**
          * Set the one and two dimensional distance on the point object.
@@ -3683,7 +3684,7 @@ class Series {
                 y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
                 radius = useRadius ? (p2.marker?.radius || 0) : 0;
 
-            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
+            p2.dist = Math.abs(Math.sqrt(((x && x * x) || 0) + y * y) - radius);
             p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
         }
 
@@ -3722,6 +3723,8 @@ class Series {
                         nPoint1 :
                         point
                 );
+
+                // }
             }
             if (tree[sideB]) {
                 // Compare distance to current best to splitting point to decide
