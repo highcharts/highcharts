@@ -18,7 +18,6 @@ DataGrid.dataGrid('container', {
                 }
             },
             sorting: {
-                sortable: 'The column can be sorted.',
                 announcements: {
                     ascending: 'The column is sorted in ascending order.',
                     descending: 'The column is sorted in descending order.',

@@ -126,6 +126,7 @@
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
     width: 100%;
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-left: 3px;

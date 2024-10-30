@@ -480,7 +480,6 @@ class DataGrid {
         this.querying.loadOptions();
 
         if (render) {
-            this.accessibility?.loadOptions();
             await this.querying.proceed(newDataTable);
             this.renderViewport();
         }

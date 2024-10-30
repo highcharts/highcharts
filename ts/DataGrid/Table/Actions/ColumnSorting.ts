@@ -88,10 +88,8 @@ class ColumnSorting {
                 },
                 headerCellElement
             ).setAttribute('aria-hidden', true);
+
             headerCellElement.classList.add(Globals.classNames.columnSortable);
-            column.viewport.dataGrid.accessibility
-                ?.addSortableColumnDescription(headerCellElement);
-            
             headerCellElement.setAttribute('role', 'button');
         }
     }

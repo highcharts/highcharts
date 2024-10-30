@@ -135,7 +135,7 @@ class HeaderCell extends Cell {
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.headerContent = makeHTMLElement('div', {
+        this.headerContent = makeHTMLElement('span', {
             className: Globals.classNames.headerCellContent
         }, this.htmlElement);
 
