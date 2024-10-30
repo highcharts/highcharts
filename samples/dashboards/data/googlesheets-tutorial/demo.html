@@ -1,0 +1,51 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+
+<div id="container">
+    <div class="row">
+        <div class="cell" id="orig-sheet-cell"></div>
+        <div class="cell" id="mod-sheet-cell"></div>
+    </div>
+    <div class="row">
+        <div class="cell config-cell">
+            <label>Worksheet</label>
+            <select id="worksheet-select" class="form-select">
+                <option value="Sheet 1">Sheet 1</option>
+                <option value="Sheet 2">Sheet 2</option>
+                <option value="Sheet 3">Sheet 3</option>
+            </select>
+        </div>
+        <div class="cell config-cell">
+            <label>Before parse</label>
+            <select id="before-parse-select" class="form-select">
+                <option value="0">None</option>
+                <option value="1">Modify header</option>
+                <option value="2">Clear row 2</option>
+            </select>
+        </div>
+        <div class="cell config-cell">
+            <label>Data modifier</label>
+            <select id="data-modifier-select" class="form-select">
+                <option value="0">None</option>
+                <option value="1">Math, sum in new column</option>
+                <option value="2">Sort, Jane (descending)</option>
+                <option value="3">Range, John (4 - 7)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="cell" id='description'>
+            <p>This <strong>Google Sheets</strong> demo is based on a simple <em>Google Sheets</em> document that
+                contains data on fruit consumption per person. The sheet has three tabs that can be accessed individually.
+                Further, the demo showcases how to connect to <em>Google Sheets</em>, how to process the data using different
+                approaches (<em>beforeParse</em> and <em>DataModifiers</em>), and finally, how to visualize the downloaded
+                and processed data in two <em>Highcharts DataGrids</em>.
+            </p>
+            <p>The original <a
+                    href="https://docs.google.com/spreadsheets/d/1Z6vzR7EUZiqLBDZ66jf82rw5kvPBQHzmMLyY4miUVKA/edit?gid=0#gid=0"
+                    target="_blank">spreadsheet</a> as displayed on the web.</p>
+        </div>
+    </div>
+</div>

@@ -35,6 +35,7 @@ const {
     createElement,
     defined,
     extend,
+    isNumber,
     pInt,
     pushUnique
 } = U;
@@ -250,8 +251,6 @@ class HTMLElement extends SVGElement {
             })
         });
 
-        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
-        this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -290,10 +289,23 @@ class HTMLElement extends SVGElement {
             doTransform = true;
         }
 
+        // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
-            styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
+        if (styles?.lineClamp) {
+            styles.display = '-webkit-box';
+            styles.WebkitLineClamp = styles.lineClamp;
+            styles.WebkitBoxOrient = 'vertical';
+            styles.overflow = 'hidden';
+        }
+
+        // SVG natively supports setting font size as numbers. With HTML, the
+        // font size should behave in the same way (#21624).
+        if (isNumber(Number(styles?.fontSize))) {
+            styles.fontSize = styles.fontSize + 'px';
+        }
+
         extend(this.styles, styles);
         css(element, styles);
 
@@ -352,7 +364,7 @@ class HTMLElement extends SVGElement {
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
             } as Record<string, number>)[textAlign],
-            whiteSpace = styles.whiteSpace;
+            { display = 'block', whiteSpace } = styles;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -411,7 +423,7 @@ class HTMLElement extends SVGElement {
                         width: (textPxLength > textWidthNum) || rotation ?
                             textWidth + 'px' :
                             'auto', // #16261
-                        display: 'block',
+                        display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
                     this.oldTextWidth = textWidth;

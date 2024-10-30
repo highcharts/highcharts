@@ -129,10 +129,9 @@ class PointAndFigureSeries extends ScatterSeries {
     }
 
     public getProcessedData(): Series.ProcessedDataObject {
-        if (this.processedXData?.length > 0) {
+        if (!this.pnfDataGroups) {
             return {
-                xData: this.processedXData,
-                yData: this.processedYData,
+                modified: this.dataTable.modified,
                 cropped: false,
                 cropStart: 0,
                 closestPointRange: 1
@@ -140,9 +139,10 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         const series = this,
+            modified = this.dataTable.modified,
             options = series.options,
-            xData = series.xData,
-            yData = series.yData,
+            xData = series.getColumn('x', true),
+            yData = series.getColumn('y', true),
             boxSize = options.boxSize,
             calculatedBoxSize = isNumber(boxSize) ?
                 boxSize : relativeLength(boxSize, yData[0]),
@@ -262,13 +262,13 @@ class PointAndFigureSeries extends ScatterSeries {
                 });
             });
         });
-
+        modified.setColumn('x', processedXData);
+        modified.setColumn('y', processedYData);
         series.pnfDataGroups = pnfDataGroups;
         series.processedData = finalData;
 
         return {
-            xData: processedXData,
-            yData: processedYData,
+            modified,
             cropped: false,
             cropStart: 0,
             closestPointRange: 1

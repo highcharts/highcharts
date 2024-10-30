@@ -157,7 +157,7 @@ class ColumnSeries extends Series {
         if (init && clipOffset) {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
+                yAxis.toPixels(options.threshold || 0),
                 yAxisPos,
                 yAxisPos + yAxis.len
             );
@@ -577,6 +577,7 @@ class ColumnSeries extends Series {
                 );
             }
 
+
             // Cache for access in polar
             point.barX = barX;
             point.pointWidth = pointWidth;
@@ -825,13 +826,25 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                const point = pointer?.getPointFromEvent(e);
+                pointer?.normalize(e);
+
+                const point = pointer?.getPointFromEvent(e),
+                    // Run point events only for points inside plot area, #21136
+                    isInsidePlot = chart.scrollablePlotArea ?
+                        chart.isInsidePlot(
+                            e.chartX - chart.plotLeft,
+                            e.chartY - chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
+                        ) : true;
 
                 // Undefined on graph in scatterchart
                 if (
                     pointer &&
                     point &&
-                    series.options.enableMouseTracking
+                    series.options.enableMouseTracking &&
+                    isInsidePlot
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);

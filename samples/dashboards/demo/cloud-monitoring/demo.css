@@ -32,6 +32,12 @@ body {
     min-height: 1000px;
 }
 
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    border-radius: 15px;
+    padding: 10px;
+    text-align: left;
+}
+
 .highcharts-dashboards-component-title {
     font-size: 1.2em;
     text-align: left;
@@ -64,22 +70,17 @@ body {
     }
 }
 
-/* https://awsicons.dev/ */
-
-#instance-details #instance .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg") 0 50% no-repeat;
+#instance-details .highcharts-dashboards-component-html-content img {
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 10px;
+    border-radius: 3px;
 }
 
-#instance-details #zone .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #ami .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #os .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg") 0 50% no-repeat;
+#instance-details .highcharts-dashboards-component-html-content p {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #instances-table .highcharts-datagrid-row {

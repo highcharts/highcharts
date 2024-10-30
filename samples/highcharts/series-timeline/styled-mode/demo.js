@@ -1,6 +1,5 @@
 Highcharts.chart('container', {
     chart: {
-        width: 600,
         height: 400,
         styledMode: true
     },
@@ -32,5 +31,9 @@ Highcharts.chart('container', {
                 }
             ]
         }
-    ]
+    ],
+
+    xAxis: {
+        type: 'datetime'
+    }
 });

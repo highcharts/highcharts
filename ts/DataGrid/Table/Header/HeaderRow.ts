@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -63,7 +63,7 @@ class HeaderRow extends Row {
      * Constructs a row in the data grid.
      *
      * @param viewport
-     * The Data Grid Table instance which the row belongs to.
+     * The DataGrid Table instance which the row belongs to.
      *
      * @param level
      * The current level of header that is rendered.
@@ -95,7 +95,7 @@ class HeaderRow extends Row {
         const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
-        vp.theadElement.appendChild(this.htmlElement);
+        vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.classNames.headerRow);
 
         if (!header) {

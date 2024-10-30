@@ -40,6 +40,7 @@ const SOURCE_GLOBS = [
     'js/Core/Time.js',
     'js/Core/Tooltip.js',
     'js/Core/Utilities.js',
+    'js/Data/DataTableCore.js',
     'js/Extensions/Annotations/Controllables/Controllable.js',
     'js/Extensions/Annotations/Annotation.js',
     'js/Extensions/Annotations/AnnotationChart.js',
