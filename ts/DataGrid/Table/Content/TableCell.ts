@@ -245,8 +245,7 @@ class TableCell extends Cell {
         this.setCustomClassName(this.column.options.cells?.className);
 
         if (this.column.options.cells?.editable) {
-            vp.dataGrid.accessibility
-                ?.addEditableCellDescription(this.htmlElement);
+            vp.dataGrid.accessibility?.addEditableCellHint(this.htmlElement);
         }
 
         vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);

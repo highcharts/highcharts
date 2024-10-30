@@ -639,7 +639,7 @@ class DataGrid {
     private renderNoData(): void {
         makeHTMLElement('div', {
             className: Globals.classNames.noData,
-            innerText: this.options?.lang?.noData || ''
+            innerText: this.options?.lang?.noData
         }, this.contentWrapper);
     }
 

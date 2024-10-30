@@ -95,22 +95,22 @@ class Accessibility {
     * */
 
     /**
-     * Add the description for the editable cell.
+     * Add the 'editable' hint span element for the editable cell.
      *
      * @param cellElement
      * The cell element to add the description to.
      */
-    public addEditableCellDescription(cellElement: HTMLElement): void {
-        const description =
+    public addEditableCellHint(cellElement: HTMLElement): void {
+        const editableLang =
             this.dataGrid.options?.lang?.accessibility?.cellEditing?.editable;
 
-        if (!description) {
+        if (!editableLang) {
             return;
         }
 
         makeHTMLElement('span', {
             className: Globals.classNames.visuallyHidden,
-            innerText: ', ' + description
+            innerText: ', ' + editableLang
         }, cellElement);
     }
 
@@ -167,10 +167,10 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const messages = this.dataGrid.options?.lang
+        const announcements = this.dataGrid.options?.lang
             ?.accessibility?.sorting?.announcements;
 
-        if (!messages?.enabled) {
+        if (!announcements?.enabled) {
             return;
         }
 
@@ -178,13 +178,13 @@ class Accessibility {
 
         switch (order) {
             case 'asc':
-                msg = messages?.ascending;
+                msg = announcements?.ascending;
                 break;
             case 'desc':
-                msg = messages?.descending;
+                msg = announcements?.descending;
                 break;
             default:
-                msg = messages?.none;
+                msg = announcements?.none;
         }
 
         if (!msg) {
