@@ -201,8 +201,8 @@ const loadScript = async (module: string): Promise<undefined> => {
 });
 
 const Loader = {
-    setRoot,
-    setRootFromURL
+    getModules,
+    setRoot
 };
 
 export default Loader;
