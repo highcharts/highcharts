@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Accessibility class
+ *  DataGrid Accessibility class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -26,6 +26,9 @@ import type DataGrid from '../DataGrid';
 import type { ColumnSortingOrder } from '../Options';
 
 import Globals from '../Globals.js';
+import DGUtils from '../Utils.js';
+
+const { makeHTMLElement } = DGUtils;
 
 
 /**
@@ -55,14 +58,9 @@ class Accessibility {
     private announcerElement: HTMLElement;
 
     /**
-     * The HTML element of the description for the editable cell.
+     * The timeout for the announcer element removal.
      */
-    private editableCellDescriptionEl: HTMLElement;
-
-    /**
-     * The HTML element of the description for the sortable column.
-     */
-    private sortableColumnDescriptionEl: HTMLElement;
+    private announcerTimeout?: number;
 
 
     /* *
@@ -87,19 +85,6 @@ class Accessibility {
         this.announcerElement = document.createElement('p');
         this.announcerElement.setAttribute('aria-atomic', 'true');
         this.announcerElement.setAttribute('aria-hidden', 'false');
-
-        this.editableCellDescriptionEl = document.createElement('p');
-        this.sortableColumnDescriptionEl = document.createElement('p');
-
-        this.editableCellDescriptionEl.id =
-            Accessibility.decriptionElementIds.editableCell;
-        this.sortableColumnDescriptionEl.id =
-            Accessibility.decriptionElementIds.sortableColumn;
-
-        this.element.appendChild(this.editableCellDescriptionEl);
-        this.element.appendChild(this.sortableColumnDescriptionEl);
-
-        this.loadOptions();
     }
 
 
@@ -110,44 +95,23 @@ class Accessibility {
     * */
 
     /**
-     * Load the accessibility options.
-     */
-    public loadOptions(): void {
-        const options = this.dataGrid.options?.accessibility;
-        if (!options) {
-            return;
-        }
-
-        this.editableCellDescriptionEl.textContent =
-            options.cellEditing?.description || '';
-        this.sortableColumnDescriptionEl.textContent =
-            options.sorting?.description || '';
-    }
-
-    /**
-     * Add the description for the editable cell.
+     * Add the 'editable' hint span element for the editable cell.
      *
      * @param cellElement
      * The cell element to add the description to.
      */
-    public addEditableCellDescription(cellElement: HTMLElement): void {
-        cellElement.setAttribute(
-            'aria-describedby',
-            Accessibility.decriptionElementIds.editableCell
-        );
-    }
+    public addEditableCellHint(cellElement: HTMLElement): void {
+        const editableLang =
+            this.dataGrid.options?.lang?.accessibility?.cellEditing?.editable;
 
-    /**
-     * Add the description for the sortable column header.
-     *
-     * @param thElement
-     * The header cell element to add the description to.
-     */
-    public addSortableColumnDescription(thElement: HTMLElement): void {
-        thElement.setAttribute(
-            'aria-describedby',
-            Accessibility.decriptionElementIds.sortableColumn
-        );
+        if (!editableLang) {
+            return;
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.classNames.visuallyHidden,
+            innerText: ', ' + editableLang
+        }, cellElement);
     }
 
     /**
@@ -178,6 +142,10 @@ class Accessibility {
      * Whether the message should be assertive. Default is false.
      */
     public announce(msg: string, assertive = false): void {
+        if (this.announcerTimeout) {
+            clearTimeout(this.announcerTimeout);
+        }
+
         this.announcerElement.remove();
         this.announcerElement.setAttribute(
             'aria-live', assertive ? 'assertive' : 'polite'
@@ -186,11 +154,8 @@ class Accessibility {
         this.element.appendChild(this.announcerElement);
         this.announcerElement.textContent = msg;
 
-        // Debug:
-        // console.log('announce:', msg);
-
-        setTimeout((): void => {
-            this.announcerElement?.remove();
+        this.announcerTimeout = setTimeout((): void => {
+            this.announcerElement.remove();
         }, 3000);
     }
 
@@ -202,18 +167,24 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const messages = this.dataGrid.options?.accessibility?.sorting;
+        const announcements = this.dataGrid.options?.lang
+            ?.accessibility?.sorting?.announcements;
+
+        if (!announcements?.enabled) {
+            return;
+        }
+
         let msg: string | undefined;
 
         switch (order) {
             case 'asc':
-                msg = messages?.ascending;
+                msg = announcements?.ascending;
                 break;
             case 'desc':
-                msg = messages?.descending;
+                msg = announcements?.descending;
                 break;
             default:
-                msg = messages?.none;
+                msg = announcements?.none;
         }
 
         if (!msg) {
@@ -230,13 +201,19 @@ class Accessibility {
      * The type of the edit message.
      */
     public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const messages = this.dataGrid.options?.accessibility?.cellEditing;
+        const messages = this.dataGrid.options?.lang
+            ?.accessibility?.cellEditing?.announcements;
+
+        if (!messages?.enabled) {
+            return;
+        }
+
         const msg = messages?.[msgType];
         if (!msg) {
             return;
         }
 
-        this.announce(msg, true);
+        this.announce(msg);
     }
 
     /**
@@ -273,15 +250,7 @@ namespace Accessibility {
     /**
      * The possible types of the edit message.
      */
-    export type EditMsgType = 'startEdit' | 'afterEdit' | 'cancelEdit';
-
-    /**
-     * Dictionary of the IDs of the description elements.
-     */
-    export const decriptionElementIds = {
-        editableCell: 'highchartsdata-grid-editable-cell-description',
-        sortableColumn: 'highcharts-datagrid-sortable-column-description'
-    } as const;
+    export type EditMsgType = 'started' | 'edited' | 'cancelled';
 }
 
 

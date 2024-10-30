@@ -112,6 +112,11 @@ export interface Options {
     header?: Array<GroupedHeaderOptions|string>;
 
     /**
+     * Language options for the datagrid.
+     */
+    lang?: LangOptions;
+
+    /**
      * Options to control the way datagrid is rendered.
      */
     rendering?: RenderingSettings;
@@ -573,6 +578,24 @@ export interface CreditsOptions {
      * @default 'bottom'
      */
     position?: 'bottom' | 'top';
+}
+
+/**
+ * Language options for the datagrid.
+ */
+export interface LangOptions {
+
+    /**
+     * Configure the accessibility strings in the chart.
+     */
+    accessibility?: A11yOptions.LangAccessibilityOptions;
+
+    /**
+     * The text to display when there is no data to show.
+     *
+     * @default 'No data to display'
+     */
+    noData?: string;
 }
 
 
