@@ -95,8 +95,6 @@ namespace Defaults {
      * Merge the default options with custom options. Commonly used for defining
      * reusable templates.
      *
-     * @function Highcharts.setOptions
-     *
      * @param options
      * The new custom chart options.
      */

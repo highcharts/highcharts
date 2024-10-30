@@ -210,10 +210,10 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const messages = this.dataGrid.options?.lang
+        const announcements = this.dataGrid.options?.lang
             ?.accessibility?.sorting?.announcements;
 
-        if (!messages?.enabled) {
+        if (!announcements?.enabled) {
             return;
         }
 
@@ -221,13 +221,13 @@ class Accessibility {
 
         switch (order) {
             case 'asc':
-                msg = messages?.ascending;
+                msg = announcements?.ascending;
                 break;
             case 'desc':
-                msg = messages?.descending;
+                msg = announcements?.descending;
                 break;
             default:
-                msg = messages?.none;
+                msg = announcements?.none;
         }
 
         if (!msg) {
