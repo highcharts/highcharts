@@ -359,6 +359,7 @@ class AccordionMenu {
             const accordionOptions = nestedOptions[i].options;
             const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
+
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
@@ -367,12 +368,13 @@ class AccordionMenu {
                     showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true,
+                    isNested: !!accordionOptions,
+                    isStandalone: !accordionOptions,
                     lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 
-            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
                     accordionOptions[j] as EditableOptions.Options,
                     collapsedHeader.content,

@@ -1132,7 +1132,8 @@
     border-radius: 5px;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
     min-height: 30px;
     display: flex;
     flex-direction: row;
@@ -1140,7 +1141,8 @@
     align-self: stretch;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-btn {
     flex-direction: row-reverse;
     justify-content: left;
     align-items: center;
@@ -1153,6 +1155,12 @@
     cursor: pointer;
     text-transform: capitalize;
     font-size: 0.75rem;
+}
+
+
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-btn {
+    cursor: unset;
+    padding-left: 8px;
 }
 
 .highcharts-dashboards-edit-accordion-header-icon.highcharts-dashboards-edit-collapsed-element {
