@@ -1279,7 +1279,7 @@ class Chart {
                     baseline = fontMetrics.b,
                     lineHeight = fontMetrics.h,
                     textPxLength = desc.textPxLength || 0,
-                    minScale = 0.67,
+                    minScale = key === 'title' ? 0.67 : 1,
                     verticalAlign = descOptions.verticalAlign || 'top',
                     offset = key === 'title' ?
                         verticalAlign === 'top' ? -3 : 0 :
