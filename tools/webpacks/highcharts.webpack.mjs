@@ -127,6 +127,7 @@ async function resolveExternals(info) {
         case 'Stock/RangeSelector/RangeSelector':
         case 'Stock/Scrollbar/Scrollbar':
             if (
+                masterName !== 'accessibility' &&
                 masterName !== 'gantt' &&
                 masterName !== 'stock'
             ) {
