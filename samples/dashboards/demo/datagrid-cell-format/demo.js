@@ -9,7 +9,17 @@ DataGrid.dataGrid('container', {
             PerformanceScore: [85, 70, 95, 60, 88]
         }
     },
+    columnDefaults: {
+        cells: {
+            className: '{#if (gt value 30)}over-30{/if}'
+        }
+    },
     columns: [{
+        id: 'ID',
+        cells: {
+            className: 'highlight-column'
+        }
+    }, {
         id: 'Salary',
         cells: {
             className: '{#if (gt value 50000)}highlight-cell{/if}',
