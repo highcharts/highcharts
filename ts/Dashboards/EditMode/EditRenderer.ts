@@ -168,7 +168,11 @@ function renderCollapseHeader(
 
     const headerBtn = createElement(
         isStandalone ? 'span' : 'button',
-        { className: EditGlobals.classNames.accordionHeaderBtn },
+        {
+            className: EditGlobals.classNames[
+                isStandalone ? 'accordionHeaderWrapper' : 'accordionHeaderBtn'   
+            ]
+        },
         {},
         header
     );

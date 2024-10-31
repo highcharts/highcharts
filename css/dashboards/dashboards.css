@@ -1142,7 +1142,7 @@
 }
 
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn,
-.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-btn {
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
     flex-direction: row-reverse;
     justify-content: left;
     align-items: center;
@@ -1157,7 +1157,7 @@
     font-size: 0.75rem;
 }
 
-.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-btn {
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
     cursor: unset;
     padding-left: 8px;
 }
