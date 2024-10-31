@@ -170,7 +170,7 @@ function renderCollapseHeader(
         isStandalone ? 'span' : 'button',
         {
             className: EditGlobals.classNames[
-                isStandalone ? 'accordionHeaderWrapper' : 'accordionHeaderBtn'   
+                isStandalone ? 'accordionHeaderWrapper' : 'accordionHeaderBtn'
             ]
         },
         {},
