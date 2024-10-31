@@ -60,21 +60,38 @@ class RenkoSeries extends ColumnSeries {
     public hasDerivedData = true;
     public allowDG = false;
 
+    public init(): void {
+        super.init.apply(this, arguments);
+        this.renkoData = [];
+    }
+
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
         animation?: boolean | Partial<AnimationOptions> | undefined
     ): void {
+        this.renkoData = [];
         super.setData(data, redraw, animation, false);
     }
+
+    public getXExtremes(xData: number[]): { min: number; max: number } {
+        this.processData();
+
+        xData = this.getColumn('x', true);
+        return {
+            min: xData[0],
+            max: xData[xData.length - 1]
+        };
+    }
+
     public getProcessedData(): Series.ProcessedDataObject {
         const modified = this.dataTable.modified;
         const processedXData: number[] = [];
-        const processedLowData: number[] = [];
         const processedYData: number[] = [];
+        const processedLowData: number[] = [];
         const xData = this.getColumn('x', true);
         const yData = this.getColumn('y', true);
-        if (yData.length === 0 || this.dataTable.columns.low) {
+        if (!this.renkoData || this.renkoData.length > 0) {
             return {
                 modified: this.dataTable.modified,
                 closestPointRange: 1,
@@ -82,6 +99,7 @@ class RenkoSeries extends ColumnSeries {
                 cropStart: 0
             };
         }
+
         const boxSize = this.options.boxSize;
         const change =
             isNumber(boxSize) ? boxSize : relativeLength(boxSize, yData[0]);
