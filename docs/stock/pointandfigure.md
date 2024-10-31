@@ -11,8 +11,8 @@ A Point and Figure (P&F) chart is a technical analysis tool used in financial ma
 
 Point and Figure series accepts the data only in `[x, close]` or `{x, close}` format, which then gets calculated internally to `[{ x, [y], marker }]` groups with unique x values for each array element, which creates up and down trend columns. After that, the groups are parsed into Highcharts data format of `[{ x, y, marker }]`, where for each `y` value in the group column, a new point is created, to create individual points in Point and Figure columns.
 
-### New options
-Point and Figure series adds the following features to the chart:
+### Options specific to the P&F series
+In addition to inherited series options, the following options control how the P&F series works:
 - new `cross` symbol,
 - [`boxSize`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.boxSize) API option,
 - [`reversalAmount`](https://api.highcharts.com/highstock/plotOptions.pointandfigure.reversalAmount) API option,

@@ -1,4 +1,8 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+(async () => {
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
     Highcharts.stockChart('container', {
         chart: {
             height: 800
@@ -9,8 +13,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         series: [
             {
                 type: 'pointandfigure',
-                data: data
+                data
             }
         ]
     });
-});
+})();
