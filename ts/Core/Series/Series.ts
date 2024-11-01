@@ -3684,7 +3684,7 @@ class Series {
                 y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
                 radius = useRadius ? (p2.marker?.radius || 0) : 0;
 
-            p2.dist = Math.abs(Math.sqrt(((x && x * x) || 0) + y * y) - radius);
+            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
             p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
         }
 
@@ -3701,13 +3701,14 @@ class Series {
                 axis = series.kdAxisArray[depth % dimensions];
             let nPoint1,
                 nPoint2,
-                ret = point;
+                ret = point,
+                more = true;
 
             setDistance(search, point);
 
             // Pick side based on distance to splitting point
             const tdist = (search[axis] || 0) - (point[axis] || 0) +
-                    (useRadius ? (point.marker?.radius || 0) : 0),
+                (useRadius ? (point.marker?.radius || 0) : 0),
                 sideA = tdist < 0 ? 'left' : 'right',
                 sideB = tdist < 0 ? 'right' : 'left';
 
@@ -3717,31 +3718,44 @@ class Series {
                     search, tree[sideA] as any, depth + 1, dimensions
                 );
 
-                ret = (
-                    (nPoint1 as any)[kdComparer] <
-                    (ret as any)[kdComparer] ?
-                        nPoint1 :
-                        point
-                );
+                const p1Dist = ret[kdComparer] || 0;
+                const p2Dist = nPoint1[kdComparer] || 0;
 
-                // }
+                if (p1Dist < 0 && p2Dist < 0) {
+                    ret = p1Dist >= p2Dist ? point : nPoint1;
+                    more = false;
+                } else {
+                    ret = p1Dist < p2Dist ? point : nPoint1;
+                }
+
             }
             if (tree[sideB]) {
+
                 // Compare distance to current best to splitting point to decide
                 // whether to check side B or not
-                if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
+                if (
+                    more && (
+                        Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]
+                    ) || (
+                        Math.sqrt(tdist * tdist) > (ret as any)[kdComparer]
+                    )
+                ) {
                     nPoint2 = doSearch(
                         search,
                         tree[sideB] as any,
                         depth + 1,
                         dimensions
                     );
-                    ret = (
-                        (nPoint2 as any)[kdComparer] <
-                        (ret as any)[kdComparer] ?
-                            nPoint2 :
-                            ret
-                    );
+
+                    const p1Dist = ret[kdComparer] || 0;
+
+                    const p2Dist = nPoint2[kdComparer] || 0;
+
+                    if (p1Dist < 0 && p2Dist < 0) {
+                        ret = p1Dist >= p2Dist ? ret : nPoint2;
+                    } else {
+                        ret = p1Dist < p2Dist ? ret : nPoint2;
+                    }
                 }
             }
 
