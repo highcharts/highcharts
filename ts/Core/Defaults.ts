@@ -606,6 +606,8 @@ const defaultOptions: DefaultOptions = {
      *
      * @sample {highmaps} maps/title/title/
      *         Title options demonstrated
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      */
     title: {
 
@@ -729,6 +731,8 @@ const defaultOptions: DefaultOptions = {
          * the center, but if it is wrapped into multiple lines, it is aligned
          * to the left.
          *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default alignment, dynamic
          * @sample {highcharts} highcharts/title/align/
          *         Aligned to the plot area (x = 70px = margin left - spacing
          *         left)
@@ -776,6 +780,8 @@ const defaultOptions: DefaultOptions = {
      * subtitle can be updated after chart initialization through the
      * `Chart.setTitle` method.
      *
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      * @sample {highmaps} maps/title/subtitle/
      *         Subtitle options demonstrated
      */
@@ -917,6 +923,8 @@ const defaultOptions: DefaultOptions = {
          * the actual alignment is inherited from the alignment of the main
          * title.
          *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
          * @sample {highcharts} highcharts/subtitle/align/
          *         Footnote at right of plot area
          * @sample {highstock} stock/chart/subtitle-footnote
