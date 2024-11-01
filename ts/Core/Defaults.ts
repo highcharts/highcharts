@@ -689,6 +689,10 @@ const defaultOptions: DefaultOptions = {
          * CSS styles for the title. Use this for font styling, but use `align`,
          * `x` and `y` for text alignment.
          *
+         * Note that the default [title.minScale](#title.minScale) option also
+         * affects the rendered font size. In order to keep the font size fixed
+         * regardless of title length, set `minScale` to 1.
+         *
          * In styled mode, the title style is given in the `.highcharts-title`
          * class.
          *
@@ -760,6 +764,24 @@ const defaultOptions: DefaultOptions = {
          * @since 2.1
          */
         margin: 15,
+
+        /**
+         * When the title is too wide to fit in the chart, the default behavior
+         * is to scale it down to fit, or apply word wrap if it is scaled down
+         * to `minScale` and still doesn't fit.
+         *
+         * The default value reflects the scale, when using default font sizes,
+         * when the title font size matches that of the subtitle. The title
+         * still stands out as it is bold by default.
+         *
+         * Set `minScale` to 1 to avoid downscaling.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Downscaling demonstrated
+         *
+         * @since next
+         */
+        minScale: 0.67,
 
         /**
          * Adjustment made to the title width, normally to reserve space for

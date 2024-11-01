@@ -1279,7 +1279,9 @@ class Chart {
                 const fontMetrics = renderer.fontMetrics(desc),
                     baseline = fontMetrics.b,
                     lineHeight = fontMetrics.h,
-                    minScale = key === 'title' ? 0.67 : 1,
+                    minScale = (
+                        descOptions as Chart.TitleOptions
+                    ).minScale || 1,
                     verticalAlign = descOptions.verticalAlign || 'top',
                     offset = key === 'title' ?
                         verticalAlign === 'top' ? -3 : 0 :
@@ -1302,17 +1304,14 @@ class Chart {
                                 this.title?.alignValue
                         },
                         descOptions
-                    );
+                    ),
+                    alignFactor = [
+                        'left',
+                        'center',
+                        'right'
+                    ].indexOf(alignAttr.align || 'center') * 0.5;
 
                 desc.css({ width: `${descOptions.width || alignTo.width}px` });
-
-
-                // Compute downscale and word wrap
-                const alignFactor = [
-                    'left',
-                    'center',
-                    'right'
-                ].indexOf(alignAttr.align || 'center') * 0.5;
 
                 // Perform downscale and word wrap
                 desc
@@ -4184,6 +4183,7 @@ namespace Chart {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
+        minScale?: number;
         style: CSSObject;
         text?: string;
         useHTML?: boolean;

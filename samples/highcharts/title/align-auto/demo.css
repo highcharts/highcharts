@@ -9,6 +9,7 @@
 
 #container {
     width: 400px;
+    height: 250px;
     margin: 0 auto;
     border: 1px dotted silver;
 }
