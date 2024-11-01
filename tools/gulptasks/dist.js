@@ -23,21 +23,42 @@ require('./scripts-webpack');
 
 Gulp.task(
     'dist',
-    Gulp.series(
-        'lint-ts',
-        'scripts-clean',
-        'scripts-css',
-        'scripts-ts',
-        'scripts-js',
-        'scripts-code',
-        'scripts-es5',
-        'scripts-webpack',
-        'dist-clean',
-        'dist-copy',
-        'dist-examples',
-        'dist-productsjs',
-        'jsdoc-dts',
-        'lint-dts',
-        'dist-compress'
+    (
+        process.argv.includes('--assembler') ?
+            // < v12
+            Gulp.series(
+                'lint-ts',
+                'scripts-clean',
+                'scripts-css',
+                'scripts-ts',
+                'scripts-js',
+                'scripts-code',
+                'scripts-es5',
+                'scripts-compile',
+                'dist-clean',
+                'dist-copy',
+                'dist-examples',
+                'dist-productsjs',
+                'jsdoc-dts',
+                'lint-dts',
+                'dist-compress'
+            ) :
+            // >= v12
+            Gulp.series(
+                'lint-ts',
+                'scripts-clean',
+                'scripts-css',
+                'scripts-ts',
+                'scripts-code',
+                'scripts-es5',
+                'scripts-webpack',
+                'dist-clean',
+                'dist-copy',
+                'dist-examples',
+                'dist-productsjs',
+                'jsdoc-dts',
+                'lint-dts',
+                'dist-compress'
+            )
     )
 );

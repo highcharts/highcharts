@@ -45,9 +45,10 @@ function removeHighcharts() {
  *         Promise to keep.
  */
 async function scriptsTS(argv) {
-    const fs = require('fs');
+    const fs = require('node:fs');
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
+    const packageJSON = require('../../package.json');
     const processLib = require('../libs/process');
     const {
         bundleTargetFolder,
@@ -82,13 +83,17 @@ async function scriptsTS(argv) {
         );
 
         if (argv.dashboards) {
-            await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
+            await processLib
+                .exec(`npx tsc -p ${typeScriptFolder} --outDir js/`);
         } else if (argv.datagrid) {
-            await processLib.exec(`npx tsc -p ${typeScriptFolderDatagrid}`);
+            await processLib
+                .exec(`npx tsc -p ${typeScriptFolderDatagrid} --outDir js/`);
         } else if (argv.assembler) {
-            await processLib.exec('npx tsc -p ts --outDir js/');
+            await processLib
+                .exec('npx tsc -p ts --outDir js/');
         } else {
-            await processLib.exec('npx tsc -p ts');
+            await processLib
+                .exec('npx tsc -p ts');
         }
 
         if (argv.dashboards) {

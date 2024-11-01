@@ -115,6 +115,11 @@ function processFile(filePath, content) {
  * Build date.
  */
 function processProductsTags(content, name, version, assetPrefix, date) {
+
+    if (!content.includes('@product.')) {
+        return content;
+    }
+
     const packageJSON = require('../package.json');
 
     name = name || packageJSON.name;
