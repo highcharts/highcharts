@@ -2,18 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
+const argv = require('yargs').argv;
 const gulp = require('gulp');
-
-/* *
- *
- *  Constants
- *
- * */
-
-const WATCH_GLOBS = [
-    'js/**/*.js',
-    'css/**/*.css'
-];
 
 /* *
  *
@@ -29,7 +19,6 @@ const WATCH_GLOBS = [
  */
 async function task() {
 
-    const argv = require('yargs').argv;
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
@@ -42,18 +31,32 @@ async function task() {
         }
     }
 
-    let jsHash;
+    const watchGlobs = [
+        argv.assembler ? 'js/**/*.js' : 'code/es-modules/**/*.js',
+        'css/**/*.css'
+    ];
+
+    let codeHash;
     let cssHash;
 
     gulp
-        .watch(WATCH_GLOBS, { queue: true }, done => {
+        .watch(watchGlobs, { queue: true }, done => {
 
             const buildTasks = [];
-            const newJsHash = fsLib.getDirectoryHash('js', true);
+            const newCodeHash = (
+                argv.assembler ?
+                    fsLib.getDirectoryHash('js', true) :
+                    fsLib.getDirectoryHash('code/es-modules', true)
+            );
 
-            if (newJsHash !== jsHash || argv.force || argv.dts) {
-                jsHash = newJsHash;
-                buildTasks.push('scripts-js', 'scripts-code');
+            if (newCodeHash !== codeHash || argv.force || argv.dts) {
+                codeHash = newCodeHash;
+                if (argv.assembler) {
+                    buildTasks.push('scripts-js');
+                    buildTasks.push('scripts-code');
+                } else {
+                    buildTasks.push('scripts-webpack');
+                }
                 if (argv.dts) {
                     buildTasks.task('jsdoc-dts')();
                 }
@@ -79,7 +82,7 @@ async function task() {
         .on('unlink', filePath => logLib.warn('Modified', filePath))
         .on('error', logLib.failure);
 
-    logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
+    logLib.warn('Watching [', watchGlobs.join(', '), '] ...');
 
     processLib.isRunning('scripts-watch', true);
 
@@ -88,7 +91,11 @@ async function task() {
     }
 
     return processLib
-        .exec('npx tsc --build ts --watch')
+        .exec(
+            argv.assembler ?
+                'npx tsc --build ts --watch --outDir js/' :
+                'npx tsc --build ts --watch'
+        )
         .then(() => void 0);
 }
 
@@ -98,5 +105,7 @@ require('./scripts-ts.js');
 
 gulp.task(
     'scripts-watch',
-    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', 'scripts-code', task)
+    argv.assembler ?
+        gulp.series('scripts-ts', 'scripts-css', 'scripts-js', 'scripts-code', task) :
+        gulp.series('scripts-ts', 'scripts-css', 'scripts-code', task)
 );
