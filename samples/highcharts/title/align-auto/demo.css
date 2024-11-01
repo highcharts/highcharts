@@ -18,30 +18,23 @@
     padding: 10px;
 }
 
+label {
+    display: block;
+    margin: 0.5em 0;
+}
+
+label span {
+    display: inline-block;
+    width: 6em;
+}
+
 input[type="range"] {
     width: 100%;
 }
 
-label {
-    display: block;
-}
-
-.button-row {
-    margin-left: -10px;
-}
-
-.highcharts-demo-button {
-    background: #f2f2f2;
-    border: none;
+input[type="text"] {
+    border: 1px solid silver;
     border-radius: 4px;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 0.8rem;
-    padding: 0.5rem 1.5rem;
-    margin: 0.5rem -5px 0.5rem 10px;
-    transition: background 250ms;
-}
-
-.highcharts-demo-button:hover {
-    background: #e6e6e6;
+    width: 20em;
+    padding: 0.5em;
 }

@@ -1,11 +1,10 @@
-const text = 'Title auto alignment and downscaling demo';
 Highcharts.chart('container', {
     title: {
-        text,
+        text: document.getElementById('title-input').value,
         useHTML: false
     },
     subtitle: {
-        text: 'Subtitle inherits align from title'
+        text: document.getElementById('subtitle-input').value
     },
     series: [{
         data: [1, 4, 3, 5],
@@ -25,12 +24,12 @@ document.getElementById('input-width').addEventListener('input', e => {
     document.getElementById('container').style.width = `${e.target.value}px`;
 });
 
-document.getElementById('short').addEventListener('click', () => {
-    Highcharts.charts[0].setTitle({ text: 'Short title' });
+document.getElementById('title-input').addEventListener('keyup', e => {
+    Highcharts.charts[0].setTitle({ text: e.target.value });
 });
 
-document.getElementById('long').addEventListener('click', () => {
-    Highcharts.charts[0].setTitle({ text });
+document.getElementById('subtitle-input').addEventListener('keyup', e => {
+    Highcharts.charts[0].setTitle(undefined, { text: e.target.value });
 });
 
 document.getElementById('exporting').addEventListener('click', e => {
