@@ -97,6 +97,40 @@ function processFile(filePath, content) {
 }
 
 /**
+ * Replaces product tags with values given values. Defaults to package.json.
+ *
+ * @param {string|Buffer} content
+ * Code
+ *
+ * @param {string} [name]
+ * Product name.
+ *
+ * @param {string} [version]
+ * Product version.
+ *
+ * @param {string} [assetPrefix]
+ * Product-specific asset prefix.
+ *
+ * @param {string} [date]
+ * Build date.
+ */
+function processProductsTags(content, name, version, assetPrefix, date) {
+    const packageJSON = require('../package.json');
+
+    name = name || packageJSON.name;
+    version = version || packageJSON.version;
+    assetPrefix = assetPrefix || '';
+    date = date || new Date().toISOString().substring(0, 10);
+
+    return content
+        .toString()
+        .replace(/@product.name@/g, () => name)
+        .replace(/@product.version@/g, () => version)
+        .replace(/@product.assetPrefix@/g, () => assetPrefix)
+        .replace(/@product.date@/g, () => date);
+}
+
+/**
  * Process code source files to improve quality.
  *
  * @param {string|Buffer} content
@@ -118,14 +152,14 @@ function processSrcJSFile(content) {
 /**
  * Simplifies template literals transpilation to plus concatination.
  *
- * @param {string} content
+ * @param {string|Buffer} content
  * Code content to process.
  *
  * @return {string}
  * Process code content.
  */
 function processTemplateLiterals(content) {
-    return content.replace(templateConcatsPattern, function (
+    return content.toString().replace(templateConcatsPattern, function (
         _match,
         prefix,
         concats
@@ -200,5 +234,6 @@ function processVariables(content) {
 
 module.exports = {
     processFile,
+    processProductsTags,
     processSrcJSFile
 };

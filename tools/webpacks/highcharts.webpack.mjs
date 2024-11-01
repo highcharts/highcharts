@@ -60,7 +60,7 @@ function createUMDConfig(...pathMembers) {
  * Webpack reference information.
  *
  * @return
- * UMD config for external reference, or `undefined`.
+ * UMD config for external reference, or `undefined` to included reference.
  */
 async function resolveExternals(info) {
     // eslint-disable-next-line no-invalid-this

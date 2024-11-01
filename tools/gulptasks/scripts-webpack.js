@@ -2,9 +2,21 @@
  * Copyright (C) Highsoft AS
  */
 
-const fs = require('node:fs/promises');
-const gulp = require('gulp');
-const path = require('node:path');
+
+const FSP = require('node:fs/promises');
+const Gulp = require('gulp');
+const Path = require('node:path');
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+const HEADER_PATTERN = /\/\*\*[\s]+\*[\s]+@license.*?\*\//su;
+
 
 /* *
  *
@@ -20,52 +32,62 @@ const path = require('node:path');
  */
 async function scriptsWebpack() {
 
+    const Code = require('../code');
+    const FSLib = require('../libs/fs');
+    const LogLib = require('../libs/log');
+    const ProcessLib = require('../libs/process');
+
     const argv = require('yargs').argv;
-    const fsLib = require('../libs/fs');
-    const logLib = require('../libs/log');
-    const processLib = require('../libs/process');
 
-    logLib.message('Packing code...');
+    LogLib.message('Packing code...');
 
-    try {
+    const configs = {
+        Highcharts: 'highcharts.webpack.mjs'
+    };
 
-        const configs = [
-            'highcharts.webpack.mjs'
-        ].map(
-            wp => path.join('tools', 'webpacks', wp)
-        );
+    let config;
+    let fileContent;
+    let fileMatch;
+    let log = '';
 
-        let log = '';
+    for (const productName of Object.keys(configs)) {
+        config = Path.join('tools', 'webpacks', configs[productName]);
 
-        fsLib.copyAllFiles(
-            'js/',
-            'code/es-modules/',
-            true
-        );
-
-        for (const config of configs) {
-            if (argv.verbose) {
-                logLib.warn(config);
-            }
-            log += await processLib.exec(
-                `npx webpack -c ${config}`,
-                {
-                    silent: argv.verbose ? 1 : 2,
-                    timeout: 60000
-                }
-            );
+        if (argv.verbose) {
+            LogLib.warn(config);
         }
 
-        await fs.writeFile('webpack.log', log);
+        log += await ProcessLib.exec(
+            `npx webpack -c ${config}`,
+            {
+                silent: argv.verbose ? 1 : 2,
+                timeout: 60000
+            }
+        );
 
-        logLib.success('Finished packing.');
+        for (const filePath of FSLib.getFilePaths('code', true)) {
+            fileContent = await FSP.readFile(filePath, 'utf8');
+            fileMatch = fileContent.match(HEADER_PATTERN);
 
-    } catch (error) {
+            if (!fileMatch) {
+                continue;
+            }
 
-        logLib.failure('ERROR:', error);
+            if (fileMatch.index > 80) {
+                fileContent = fileMatch[0] + '\n' + fileContent;
+            }
+
+            fileContent = Code.processProductsTags(fileContent);
+
+            await FSP.writeFile(filePath, fileContent, 'utf8');
+        }
 
     }
 
+    await FSP.writeFile('webpack.log', log);
+
+    LogLib.success('Finished packing.');
+
 }
 
-gulp.task('scripts-webpack', scriptsWebpack);
+Gulp.task('scripts-webpack', scriptsWebpack);
