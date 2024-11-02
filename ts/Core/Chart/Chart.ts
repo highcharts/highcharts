@@ -1311,12 +1311,10 @@ class Chart {
                         'right'
                     ].indexOf(alignAttr.align || 'center') * 0.5;
 
-                desc.css({ width: `${descOptions.width || alignTo.width}px` });
-
                 // Perform downscale and word wrap
                 desc
                     .css({
-                        width: `${alignTo.width / scale + 1}px`
+                        width: `${descOptions.width || (alignTo.width / scale + 1)}px`
                     })
                     .attr({
                         scaleX: scale,
