@@ -1309,31 +1309,35 @@ class Chart {
                         'left',
                         'center',
                         'right'
-                    ].indexOf(alignAttr.align || 'center') * 0.5;
-
-                // Perform downscale and word wrap
-                desc
-                    .css({
-                        width: `${descOptions.width || (alignTo.width / scale + 1)}px`
-                    })
-                    .attr({
-                        scaleX: scale,
-                        scaleY: scale
-                    });
+                    ].indexOf(alignAttr.align || 'center') * 0.5,
+                    width = descOptions.width || (
+                        (
+                            uncappedScale > minScale ?
+                                // One line
+                                this.chartWidth :
+                                // Allow word wrap
+                                alignTo.width
+                        ) / scale
+                    );
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
                     desc.placed = false;
                 }
-                // Skip the cache for HTML (#3481, #11666)
-                const height = desc.getBBox(descOptions.useHTML).height;
+                // Set the width and read the height. Skip the cache for HTML
+                // (#3481, #11666)
+                const height = desc
+                    .css({ width: `${width}px` })
+                    .getBBox(descOptions.useHTML).height;
                 alignAttr.height = Math.round(height);
 
-                // Perform alignment
+                // Perform scaling and alignment
                 desc
                     .align(alignAttr, false, alignTo)
                     .attr({
                         align: alignAttr.align,
+                        scaleX: scale,
+                        scaleY: scale,
                         'transform-origin': `${
                             alignTo.x +
                             textPxLength * scale * alignFactor

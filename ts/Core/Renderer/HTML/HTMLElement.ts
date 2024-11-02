@@ -418,7 +418,11 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     css(element, {
-                        width: (textPxLength > textWidthNum) || rotation ?
+                        width: (
+                            (textPxLength > textWidthNum) ||
+                            rotation ||
+                            scaleX
+                        ) ?
                             textWidth + 'px' :
                             'auto', // #16261
                         display: 'block',
