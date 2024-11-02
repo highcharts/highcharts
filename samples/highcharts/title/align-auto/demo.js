@@ -1,7 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: document.getElementById('title-input').value,
-        useHTML: false
+        text: document.getElementById('title-input').value
     },
     subtitle: {
         text: document.getElementById('subtitle-input').value
@@ -30,6 +29,17 @@ document.getElementById('title-input').addEventListener('keyup', e => {
 
 document.getElementById('subtitle-input').addEventListener('keyup', e => {
     Highcharts.charts[0].setTitle(undefined, { text: e.target.value });
+});
+
+document.getElementById('usehtml').addEventListener('click', e => {
+    Highcharts.charts[0].update({
+        title: {
+            useHTML: e.target.checked
+        },
+        subtitle: {
+            useHTML: e.target.checked
+        }
+    });
 });
 
 document.getElementById('exporting').addEventListener('click', e => {

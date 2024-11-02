@@ -349,6 +349,8 @@ class HTMLElement extends SVGElement {
                 rotation,
                 rotationOriginX,
                 rotationOriginY,
+                scaleX,
+                scaleY,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -470,6 +472,11 @@ class HTMLElement extends SVGElement {
                     top: `${y + yCorr}px`,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
+
+            if (scaleX || scaleY) {
+                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
+            }
+
             css(element, styles);
 
 
