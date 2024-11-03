@@ -942,13 +942,12 @@ abstract class Component {
         let result = component.getEditableOptions() as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (isArray(result)) {
-                if (
-                    propertyPath[0] === 'connector' &&
-                    result.length > 1
-                ) {
-                    return 'multiple connectors';
-                }
+            if (
+                isArray(result) &&
+                propertyPath[0] === 'connector' &&
+                result.length > 1
+            ) {
+                return 'multiple connectors';
             }
 
             if (!result) {
