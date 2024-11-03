@@ -932,7 +932,7 @@ abstract class Component {
 
 
     public getEditableOptionValue(
-        propertyPath?: string[]
+        propertyPath?: (string|number)[]
     ): number | boolean | undefined | string {
         const component = this;
         if (!propertyPath) {
@@ -949,8 +949,6 @@ abstract class Component {
                 ) {
                     return 'multiple connectors';
                 }
-
-                result = result[0];
             }
 
             if (!result) {
@@ -969,7 +967,6 @@ abstract class Component {
             ) {
                 result = '';
             }
-
         }
 
         return result;
