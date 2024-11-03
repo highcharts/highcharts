@@ -99,6 +99,7 @@ const {
     extend,
     find,
     fireEvent,
+    getAlignFactor,
     getStyle,
     isArray,
     isNumber,
@@ -1305,11 +1306,6 @@ class Chart {
                         },
                         descOptions
                     ),
-                    alignFactor = [
-                        'left',
-                        'center',
-                        'right'
-                    ].indexOf(alignAttr.align || 'center') * 0.5,
                     width = descOptions.width || (
                         (
                             uncappedScale > minScale ?
@@ -1340,7 +1336,9 @@ class Chart {
                         scaleY: scale,
                         'transform-origin': `${
                             alignTo.x +
-                            textPxLength * scale * alignFactor
+                            textPxLength *
+                            scale *
+                            getAlignFactor(alignAttr.align)
                         } ${lineHeight}`
                     });
 
