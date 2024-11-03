@@ -19,7 +19,7 @@ $(function () {
                     formatter: function () {
                         this.point.key = this.point.x;
                         return this.series.chart.tooltip
-                            .tooltipFooterHeaderFormatter(this.point);
+                            .headerFooterFormatter(this.point);
                     }
                 }
             }
