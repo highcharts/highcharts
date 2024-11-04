@@ -93,7 +93,7 @@ class RenkoSeries extends ColumnSeries {
         const yData = this.getColumn('y', true);
         if (!this.renkoData || this.renkoData.length > 0) {
             return {
-                modified: this.dataTable.modified,
+                modified,
                 closestPointRange: 1,
                 cropped: false,
                 cropStart: 0
