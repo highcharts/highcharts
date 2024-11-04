@@ -41,7 +41,7 @@
         series: [{
             type: 'candlestick',
             name: 'Candlestick',
-            data: data
+            data
         }, {
             type: 'heikinashi',
             name: 'Heikin Ashi',
