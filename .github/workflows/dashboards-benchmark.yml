@@ -23,7 +23,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v3
         with:
