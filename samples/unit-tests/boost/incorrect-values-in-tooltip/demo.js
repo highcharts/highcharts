@@ -39,16 +39,27 @@ QUnit.test(
             ]
         });
 
-        const points = chart.series[0].points;
-        const processedXData = chart.series[0].processedXData;
-        const xData = points.map(point => point.x);
-        const yData = chart.series[0].yData;
+        const series = chart.series[0];
+        const processedXData = series.processedXData;
+        const points = series.points;
+        const tooltipPoints = points.map(point => {
+            const boostPoint = series.boost.getPoint(point);
+            return [boostPoint.x, boostPoint.y];
+        });
 
         // Since two points are outside the range of the plot,
         // there should be four points in the series.
         assert.strictEqual(points.length, 4);
         assert.strictEqual(processedXData.length, 4);
 
-        assert.deepEqual(xData, [0, 40, 80, 100]);
-        assert.deepEqual(yData, [10, 30, 50, 60]);
+        // Check that points have been filtered as expected.
+        assert.deepEqual(processedXData, [0, 40, 80, 100]);
+
+        // Check that the tooltip receives the correct points
+        assert.deepEqual(tooltipPoints, [
+            [0, 10],
+            [40, 30],
+            [80, 50],
+            [100, 60]
+        ]);
     });
