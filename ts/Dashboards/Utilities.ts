@@ -236,7 +236,7 @@ function deepClone(value: any, excludedKeys?: string[]): any {
         return value.map((v): any => deepClone(v, excludedKeys));
     }
 
-    if (typeof value === 'object') {
+    if (value && typeof value === 'object') {
         const clone: Record<string, any> = {};
         const keys = Object.keys(value);
 
