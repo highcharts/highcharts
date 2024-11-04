@@ -126,6 +126,7 @@
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
     width: 100%;
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-left: 3px;
@@ -177,22 +178,28 @@
     cursor: pointer;
 }
 
-.highcharts-datagrid-header-cell-content::after {
+th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-icon {
     right: 10px;
     top: calc(50% - 10px);
     bottom: 50%;
     position: absolute;
-    display: inline-block;
+    display: none;
     width: 12px;
     height: 12px;
+    user-select: none;
+    pointer-events: none;
+    color: var(--highcharts-neutral-color-60);
 }
 
-.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-header-cell-content::after {
-    content: "▲";
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-column-sortable-icon,
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-column-sortable-icon {
+    display: inline-block;
 }
 
-.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-header-cell-content::after {
-    content: "▼";
+.highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-column-sortable-icon {
+    transform: rotate(180deg);
+    top: calc(50% - 3px);
+    right: 7px;
 }
 
 .highcharts-datagrid-container:has(.highcharts-datagrid-no-data) {
@@ -241,6 +248,18 @@
     outline: none;
     float: left;
     font-size: 1em;
+}
+
+/* Accessibility */
+.highcharts-datagrid-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
 }
 
 /* ==== Default Theme ==== */

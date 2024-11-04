@@ -26,6 +26,7 @@ import _DataGrid from '../DataGrid/DataGrid.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
+import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 
@@ -60,6 +61,8 @@ declare global {
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
+        defaultOptions: typeof Defaults.defaultOptions;
+        setOptions: typeof Defaults.setOptions;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -88,6 +91,8 @@ G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.defaultOptions = Defaults.defaultOptions;
+G.setOptions = Defaults.setOptions;
 
 
 /* *
