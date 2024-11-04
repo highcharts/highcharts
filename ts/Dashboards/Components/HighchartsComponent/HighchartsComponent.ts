@@ -582,6 +582,15 @@ class HighchartsComponent extends Component {
                     ...seriesOptions
                 }, false);
             } else {
+
+                // The workaround for the issue with updating the series data
+                // with keys: #20687 - remove when fixed.
+                if (seriesOptions.keys) {
+                    series.update({
+                        keys: seriesOptions.keys
+                    }, false);
+                }
+
                 series.update(seriesOptions, false);
             }
 
