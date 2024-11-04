@@ -781,18 +781,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since next
          */
-        minScale: 0.67,
-
-        /**
-         * Adjustment made to the title width, normally to reserve space for
-         * the exporting burger menu.
-         *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
-         *
-         * @since 4.2.5
-         */
-        widthAdjust: -44
+        minScale: 0.67
 
     },
 
@@ -937,7 +926,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
          *         Formatted and linked text.
          */
-        text: '',
+        text: ''
 
         /**
          * The horizontal alignment of the subtitle. Can be one of "left",
@@ -957,19 +946,6 @@ const defaultOptions: DefaultOptions = {
          * @since 2.0
          * @apioption subtitle.align
          */
-
-        /**
-         * Adjustment made to the subtitle width, normally to reserve space
-         * for the exporting burger menu.
-         *
-         * @see [title.widthAdjust](#title.widthAdjust)
-         *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
-         *
-         * @since 4.2.5
-         */
-        widthAdjust: -44
     },
 
     /**

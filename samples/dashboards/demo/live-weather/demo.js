@@ -390,8 +390,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'temperature', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -442,8 +441,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'wind', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -488,8 +486,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'precipitation', false
                         ) + ' (next 24 hours)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,

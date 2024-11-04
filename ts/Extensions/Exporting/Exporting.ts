@@ -1640,15 +1640,16 @@ namespace Exporting {
         this: ChartComposition,
         { alignTo, key, textPxLength }: Chart.LayoutTitleEventObject
     ): void {
-        const { align, verticalAlign } = merge(
+        const exportingOptions = this.options.exporting,
+            { align, buttonSpacing = 0, verticalAlign, width = 0 } = merge(
                 this.options.navigation?.buttonOptions,
-                this.options.exporting?.buttons?.contextButton
+                exportingOptions?.buttons?.contextButton
             ),
             space = alignTo.width - textPxLength,
-            widthAdjust = 32;
+            widthAdjust = width + buttonSpacing;
 
         if (
-            (this.options.exporting?.enabled ?? true) &&
+            (exportingOptions?.enabled ?? true) &&
             key === 'title' &&
             align === 'right' &&
             verticalAlign === 'top'

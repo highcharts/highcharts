@@ -733,11 +733,14 @@ const navigation: NavigationOptions = {
         align: 'right',
 
         /**
-         * The pixel spacing between buttons.
+         * The pixel spacing between buttons, and between the context button and
+         * the title.
          *
+         * @sample highcharts/title/widthadjust
+         *         Adjust the spacing when using text button
          * @since 2.0
          */
-        buttonSpacing: 3,
+        buttonSpacing: 5,
 
         /**
          * Pixel height of the buttons.

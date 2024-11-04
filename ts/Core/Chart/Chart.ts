@@ -1259,7 +1259,7 @@ class Chart {
         const titleOffset = [0, 0, 0],
             { options, renderer, spacingBox } = this;
 
-        // Lay out the title and the subtitle respectively
+        // Lay out the title, subtitle and caption respectively
         (
             ['title', 'subtitle', 'caption'] as Chart.DescriptionKey[]
         ).forEach((key): void => {
@@ -1320,10 +1320,10 @@ class Chart {
                 if (desc.alignValue !== alignAttr.align) {
                     desc.placed = false;
                 }
-                // Set the width and read the height. Skip the cache for HTML
-                // (#3481, #11666)
+                // Set the width and read the height.
                 const height = desc
                     .css({ width: `${width}px` })
+                    // Skip the cache for HTML (#3481, #11666)
                     .getBBox(descOptions.useHTML).height;
                 alignAttr.height = Math.round(height);
 
@@ -4103,7 +4103,6 @@ namespace Chart {
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
         width?: number;
-        widthAdjust?: number;
         x?: number;
         y?: number;
         zIndex?: number;
@@ -4173,7 +4172,6 @@ namespace Chart {
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
         width?: number;
-        widthAdjust?: number;
         x?: number;
         y?: number;
         zIndex?: number;
@@ -4189,7 +4187,6 @@ namespace Chart {
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
         width?: number;
-        widthAdjust?: number;
         x?: number;
         y?: number;
         zIndex?: number;
