@@ -98,12 +98,14 @@ const EditGlobals: EditGlobals = {
         accordionContainer: PREFIX + 'accordion',
         accordionHeader: PREFIX + 'accordion-header',
         accordionHeaderBtn: PREFIX + 'accordion-header-btn',
+        accordionHeaderWrapper: PREFIX + 'accordion-header-wrapper',
         accordionHeaderIcon: PREFIX + 'accordion-header-icon',
         accordionContent: PREFIX + 'accordion-content',
         accordionNestedWrapper: PREFIX + 'accordion-nested',
         accordionMenuButtonsContainer:
             PREFIX + 'accordion-menu-buttons-container',
         accordionMenuButton: PREFIX + 'accordion-menu-button',
+        accordionStandaloneWrapper: PREFIX + 'accordion-standalone-wrapper',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
         standaloneElement: PREFIX + 'standalone-element',
@@ -181,6 +183,8 @@ namespace EditGlobals {
         accordionMenuButton: string;
         accordionMenuButtonsContainer: string;
         accordionNestedWrapper: string;
+        accordionStandaloneWrapper: string;
+        accordionHeaderWrapper: string;
         button: string;
         cellEditHighlight: string;
         collapsableContentHeader: string;
