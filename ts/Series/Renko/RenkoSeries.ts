@@ -161,7 +161,7 @@ class RenkoSeries extends ColumnSeries {
         modified.setColumn('low', processedLowData);
 
         return {
-            modified: modified,
+            modified,
             cropped: false,
             cropStart: 0,
             closestPointRange: 1
