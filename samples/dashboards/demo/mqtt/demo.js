@@ -429,7 +429,7 @@ async function createDashboard() {
                 autoConnect: true,
                 autoSubscribe: true,
                 autoReset: true, // Clear data table on subscribe
-                maxRows: 24, // Maximum number of rows in the data table
+                maxRows: 10, // Maximum number of rows in the data table
 
                 columnNames: ['time', 'power'],
                 beforeParse: data => dataParser(data),

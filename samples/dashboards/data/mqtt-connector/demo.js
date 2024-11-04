@@ -72,7 +72,7 @@ const dataGridOptions = {
         },
         cells: {
             formatter: function () {
-                return  Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
+                return Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
             }
         }
     }, {
@@ -90,6 +90,7 @@ const dataGridOptions = {
 // Connector configuration
 const connConfig = {
     autoSubscribe: true,
+    maxRows: 10,
     columnNames: [
         'time',
         'value'
@@ -348,7 +349,7 @@ const connectorTable = {};
 
 class MQTTConnector extends DataConnector {
     /**
-     * Constructs an instance of MQTTConnector.
+     * Creates an instance of the MQTTConnector.
      *
      */
     constructor(options) {
@@ -356,12 +357,14 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
+        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
-
+        this.connected = false;
+        console.dir(this.options);
         // Connection status
         this.packetCount = 0;
 
@@ -370,11 +373,21 @@ class MQTTConnector extends DataConnector {
         this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        const connector = this;
-        connectorTable[clientId] = connector;
+        connectorTable[clientId] = this;
 
         // Register events
-        connector.registerEvents();
+        this.registerEvents();
+
+        const connector = this,
+            {
+                host, port
+            } = connector.options;
+
+
+        // Start MQTT client
+        this.mqtt = new MQTTClient(host, port, this.clientId);
+        this.mqtt.onConnectionLost = this.onConnectionLost;
+        this.mqtt.onMessageArrived = this.onMessageArrived;
     }
 
     /* *
@@ -389,17 +402,9 @@ class MQTTConnector extends DataConnector {
      *
      */
     async load() {
-        const connector = this,
-            {
-                host, port, autoConnect
-            } = connector.options;
+        const connector = this;
 
-        // Start MQTT client
-        this.mqtt = new MQTTClient(host, port, this.clientId);
-        this.mqtt.onConnectionLost = this.onConnectionLost;
-        this.mqtt.onMessageArrived = this.onMessageArrived;
-
-        if (autoConnect) {
+        if (connector.options.autoConnect && !connector.connected) {
             await this.connect();
         }
         super.load();
