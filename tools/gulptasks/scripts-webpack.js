@@ -74,7 +74,11 @@ async function scriptsWebpack() {
             }
 
             if (fileMatch.index > 80) {
-                fileContent = fileMatch[0] + '\n' + fileContent;
+                fileContent = (
+                    fileMatch[0] + '\n' +
+                    fileContent.substring(0, fileMatch.index) +
+                    fileContent.substring(fileMatch.index + fileMatch[0].length)
+                );
             }
 
             fileContent = Code.processProductsTags(fileContent);
