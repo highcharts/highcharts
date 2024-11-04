@@ -1141,6 +1141,10 @@
     align-self: stretch;
 }
 
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
+    min-height: unset;
+}
+
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn,
 .highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
     flex-direction: row-reverse;

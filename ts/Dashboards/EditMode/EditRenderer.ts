@@ -157,6 +157,7 @@ function renderCollapseHeader(
         parentElement
     );
 
+
     const header = createElement(
         'div',
         {
@@ -166,16 +167,21 @@ function renderCollapseHeader(
         accordion
     );
 
-    const headerBtn = createElement(
-        isStandalone ? 'span' : 'button',
-        {
-            className: EditGlobals.classNames[
-                isStandalone ? 'accordionHeaderWrapper' : 'accordionHeaderBtn'
-            ]
-        },
-        {},
-        header
-    );
+    let headerBtn;
+
+    if (!isStandalone || showToggle) {
+        headerBtn = createElement(
+            isStandalone && showToggle ? 'span' : 'button',
+            {
+                className: EditGlobals.classNames[
+                    isStandalone ?
+                        'accordionHeaderWrapper' : 'accordionHeaderBtn'
+                ]
+            },
+            {},
+            header
+        );
+    }
 
     createElement(
         'span',
@@ -186,7 +192,7 @@ function renderCollapseHeader(
         headerBtn
     );
 
-    if (showToggle) {
+    if (showToggle && header) {
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
