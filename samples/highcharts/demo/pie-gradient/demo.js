@@ -25,8 +25,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Registered private vehicles in Norway, by type of fuel, 2020',
-        align: 'left'
+        text: 'Registered private vehicles in Norway, by type of fuel, 2020'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
