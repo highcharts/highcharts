@@ -32,7 +32,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
 // Add the export related options
 /**
  * Options for the exporting module. For an overview on the matter, see
- * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview).
+ * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview) and
+ * read our [Fair Usage Policy](https://www.highcharts.com/docs/export-module/privacy-disclaimer-export).
  *
  * @requires     modules/exporting
  * @optionparent exporting

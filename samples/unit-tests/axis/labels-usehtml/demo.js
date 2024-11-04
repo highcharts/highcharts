@@ -647,3 +647,44 @@ QUnit.test(
         assert.ok(visible, 'All xAxis labels are visible');
     }
 );
+
+QUnit.test(
+    'For useHTML, fontSize as a number should also work (#21624)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            xAxis: {
+                labels: {
+                    useHTML: true,
+                    style: {
+                        fontSize: 40
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    useHTML: true,
+                    style: {
+                        fontSize: '40'
+                    }
+                }
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].labelGroup.div.children.item(0).style.fontSize,
+            '40px',
+            'xAxis labels should have font size 40px'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].axisTitle.element.style.fontSize,
+            '40px',
+            'xAxis labels should have font size 40px'
+        );
+    }
+);

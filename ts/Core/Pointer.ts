@@ -2293,6 +2293,10 @@ export default Pointer;
  * @name Highcharts.SelectEventObject#originalEvent
  * @type {global.Event}
  *//**
+ * Prevents the default action for the event, if called.
+ * @name Highcharts.SelectEventObject#preventDefault
+ * @type {Function}
+ *//**
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection
  * @type {boolean|undefined}

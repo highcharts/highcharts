@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Cell Editing class.
+ *  DataGrid Cell Editing class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
