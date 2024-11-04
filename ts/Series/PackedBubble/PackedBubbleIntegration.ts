@@ -23,7 +23,6 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import VerletIntegration from '../Networkgraph/VerletIntegration.js';
-import { DragNodesPoint } from '../DragNodesComposition';
 
 /* *
  *
@@ -36,7 +35,7 @@ import { DragNodesPoint } from '../DragNodesComposition';
  */
 function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
-        gravitationalConstant = layout.options.gravitationalConstant,
+        gravitationalConstant = layout.options.gravitationalConstant || 0,
         box = layout.box,
         nodes = layout.nodes as Array<PackedBubblePoint>;
 
@@ -45,26 +44,26 @@ function barycenter(this: PackedBubbleLayout): void {
 
     for (const node of nodes) {
         if (!node.fixedPosition) {
-            if (layout.options.splitSeries && !node.isParentNode) {
-                centerX = (node.series.parentNode as any).plotX;
-                centerY = (node.series.parentNode as any).plotY;
+            const series = node.series,
+                parentNode = series.parentNode;
+
+            if (layout.options.splitSeries && parentNode) {
+                centerX = parentNode.plotX || 0;
+                centerY = parentNode.plotY || 0;
             } else {
                 centerX = box.width / 2;
                 centerY = box.height / 2;
             }
 
-            (node.plotX as any) -=
-                ((node.plotX as any) - (centerX as any)) *
-                (gravitationalConstant as any) /
+            (node.plotX as number) -=
+                ((node.plotX as number) - centerX) *
+                gravitationalConstant /
                 (node.mass * Math.sqrt(nodes.length));
 
-            (node.plotY as any) -=
-                ((node.plotY as any) - (centerY as any)) *
-                (gravitationalConstant as any) /
+            (node.plotY as number) -=
+                ((node.plotY as number) - centerY) *
+                gravitationalConstant /
                 (node.mass * Math.sqrt(nodes.length));
-
-            const series = node.series;
-
 
             if (
                 series.chart.hoverPoint === node &&
@@ -74,7 +73,7 @@ function barycenter(this: PackedBubbleLayout): void {
                 series.redrawHalo &&
                 series.halo
             ) {
-                series.redrawHalo(node as DragNodesPoint);
+                series.redrawHalo(node);
             }
         }
     }
