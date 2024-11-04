@@ -64,6 +64,16 @@ Dashboards.board('container', {
                             name: 5
                         }]
                     }]
+                }, {
+                    name: 'dataLabels',
+                    propertyPath: [
+                        'chartOptions',
+                        'plotOptions',
+                        'series',
+                        'dataLabels',
+                        'enabled'
+                    ],
+                    showToggle: true
                 }]
             }, {
                 name: 'connectorName',

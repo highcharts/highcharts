@@ -95,7 +95,7 @@ Highcharts.chart('container', {
                 borderColor: '#d3e9f7',
                 padding: 5,
                 borderRadius: 2,
-                verticalAlign: 'center',
+                verticalAlign: 'middle',
                 y: 30,
                 style: {
                     fontWeight: 'normal'

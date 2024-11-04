@@ -28,6 +28,7 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
+import whcm from '../Accessibility/HighContrastMode.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -61,6 +62,7 @@ declare global {
         DataTable: typeof DataTable;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -90,6 +92,7 @@ G.DataPool = DataPool;
 G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.setOptions = Defaults.setOptions;
+G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 
 
 /* *

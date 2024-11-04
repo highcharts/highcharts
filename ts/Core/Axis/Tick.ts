@@ -43,6 +43,7 @@ const {
     destroyObjectProperties,
     extend,
     fireEvent,
+    getAlignFactor,
     isNumber,
     merge,
     objectEach,
@@ -654,13 +655,9 @@ class Tick {
             ),
             label = this.label,
             rotation = this.rotation,
-            factor = ({
-                left: 0,
-                center: 0.5,
-                right: 1
-            } as Record<string, number>)[
+            factor = getAlignFactor(
                 axis.labelAlign || (label as any).attr('align')
-            ],
+            ),
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
             xCorrection = factor,
