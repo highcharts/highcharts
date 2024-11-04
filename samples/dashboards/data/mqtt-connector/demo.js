@@ -72,7 +72,7 @@ const dataGridOptions = {
         },
         cells: {
             formatter: function () {
-                return Highcharts.dateFormat('%H:%M:%S', this.value);
+                return Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
             }
         }
     }, {
@@ -349,7 +349,7 @@ const connectorTable = {};
 
 class MQTTConnector extends DataConnector {
     /**
-     * Creates an instance of the MQTTConnector, including the MQTT client.
+     * Creates an instance of the MQTTConnector.
      *
      **/
     constructor(options) {
@@ -357,6 +357,7 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
+        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
@@ -383,21 +384,21 @@ class MQTTConnector extends DataConnector {
             } = connector.options;
 
 
-        // Create MQTT client
+        // Start MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientId);
         this.mqtt.onConnectionLost = this.onConnectionLost;
         this.mqtt.onMessageArrived = this.onMessageArrived;
     }
 
-    /**
+    /* *
      *
      *  Functions
      *
-     **/
+     * */
 
     /**
-     * Initiates the connection if autoConnect is set to true and
-     * not already connected.
+     * Creates the MQTT client and initiates the connection
+     * if autoConnect is set to true.
      *
      */
     async load() {
