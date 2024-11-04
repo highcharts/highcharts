@@ -13,7 +13,7 @@
         series: [{
             type: 'renko',
             name: 'Renko',
-            data: data
+            data
         }]
     });
 
