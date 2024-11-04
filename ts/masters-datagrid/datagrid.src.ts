@@ -90,9 +90,9 @@ G.dataGrids = _DataGrid.dataGrids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
-G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 G.defaultOptions = Defaults.defaultOptions;
 G.setOptions = Defaults.setOptions;
+G.isHighContrastModeActive = whcm.isHighContrastModeActive;
 
 
 /* *
