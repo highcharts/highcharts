@@ -27,7 +27,6 @@ import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLCom
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
-import DashUtils from '../Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
 const {
@@ -36,10 +35,6 @@ const {
     error,
     fireEvent
 } = U;
-
-const {
-    deepClone
-} = DashUtils;
 
 /* *
  *
@@ -109,11 +104,7 @@ class AccordionMenu {
 
         this.component = component;
 
-        // When refactoring, limit the copied options to the ones that are
-        // actually editable to avoid unnecessary memory usage.
-        this.oldOptionsBuffer = deepClone(component.options, [
-            'dataTable', 'points', 'series', 'data', 'editableOptions'
-        ]);
+        this.oldOptionsBuffer = component.getEditableOptions();
 
         if (editMode) {
             this.confirmationPopup = new ConfirmationPopup(
@@ -145,7 +136,6 @@ class AccordionMenu {
                     options
                 )
             ).content;
-
             this.renderAccordion(options, content, component);
         }
 

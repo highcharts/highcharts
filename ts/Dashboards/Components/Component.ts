@@ -66,7 +66,10 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
-const { uniqueKey } = DU;
+const {
+    deepClone,
+    uniqueKey
+} = DU;
 
 /* *
  *
@@ -927,7 +930,12 @@ abstract class Component {
 
     public getEditableOptions(): Component.Options {
         const component = this;
-        return merge(component.options);
+
+        // When refactoring, limit the copied options to the ones that are
+        // actually editable to avoid unnecessary memory usage.
+        return deepClone(component.options, [
+            'dataTable', 'points', 'series', 'data', 'editableOptions'
+        ]);
     }
 
 
