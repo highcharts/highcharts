@@ -45,7 +45,7 @@
         }, {
             type: 'heikinashi',
             name: 'Heikin Ashi',
-            data
+            data,
             yAxis: 1,
             tooltip: {
                 valueDecimals: 2

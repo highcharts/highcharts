@@ -34,7 +34,7 @@ import type RenkoSeriesOptions from './RenkoSeriesOptions';
  *         Renko series
  *
  *
- * @sample stock/demo/renko-vs-heikinashi-vs-candlestick
+ * @sample stock/series-renko/renko-vs-heikinashi-vs-candlestick
  *         Renko series
  *
  * @extends      plotOptions.column
