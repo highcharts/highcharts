@@ -1,7 +1,15 @@
 Highcharts.chart('container', {
 
     chart: {
-        inverted: true
+        inverted: true,
+        zooming: {
+            type: 'xy'
+        },
+        panning: {
+            enabled: true,
+            type: 'xy'
+        },
+        panKey: 'shift'
     },
 
     title: {

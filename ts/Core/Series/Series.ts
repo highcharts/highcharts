@@ -3370,10 +3370,10 @@ class Series {
             translateY: params.translateY,
             rotation: inverted ? 90 : 0,
             rotationOriginX: inverted ?
-                (horAxis.len - vertAxis.len) / 2 :
+                params.scale * (horAxis.len - vertAxis.len) / 2 :
                 0,
             rotationOriginY: inverted ?
-                (horAxis.len + vertAxis.len) / 2 :
+                params.scale * (horAxis.len + vertAxis.len) / 2 :
                 0,
             scaleX: inverted ? -params.scale : params.scale, // #1623
             scaleY: params.scale

@@ -401,6 +401,10 @@ class WordcloudSeries extends ColumnSeries {
                 Math.max(Math.abs(field.left), Math.abs(field.right)) * 2;
         }
 
+        if (inverted) {
+            [seriesWidth, seriesHeight] = [seriesHeight, seriesWidth];
+        }
+
         if (group && zoomBox) {
             scale += zoomBox.scale - 1;
 

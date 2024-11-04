@@ -165,46 +165,50 @@ function onGetPlotBox(
         name?: string
     }
 ): void {
-    const { chart, group, zoomBox } = this,
-        {
+    const { chart, group, zoomBox } = this;
+
+    let {
             plotSizeX = 0,
             plotSizeY = 0
-        } = chart;
-    let { scale, translateX, translateY, name } = e,
+        } = chart,
+        { scale, translateX, translateY, name } = e,
         left = 0,
-        top = 0,
-        initLeft = translateX,
+        top = 0;
+
+    const initLeft = translateX,
         initTop = translateY;
+
+    if (chart.inverted) {
+        [plotSizeX, plotSizeY] = [plotSizeY, plotSizeX];
+    }
 
     if (group && zoomBox) {
         scale = zoomBox.scale;
-        left = zoomBox.x * (scale - (group.scaleX || 1)) -
+        left = zoomBox.x * (scale - (Math.abs(group.scaleX || 1))) -
             (name === 'series' ? zoomBox.panX : 0);
-        top = zoomBox.y * (scale - (group.scaleY || 1)) -
+        top = zoomBox.y * (scale - (Math.abs(group.scaleY || 1))) -
             (name === 'series' ? zoomBox.panY : 0);
 
-        initLeft = group.translateX || initLeft;
-        initTop = group.translateY || initTop;
-
-        translateX = initLeft - left;
-        translateY = initTop - top;
+        translateX = (group.translateX || initLeft) - left;
+        translateY = (group.translateY || initTop) - top;
 
         // Do not allow to move outside the chart
         // Vertical lock
-        if (translateY > chart.plotTop) {
+        if (translateY > initTop) {
             translateY = initTop;
         } else if (
-            initTop - top < (plotSizeY * (1 - scale) + chart.plotTop)
+            (group.translateY || initTop) - top <
+                (plotSizeY * (1 - scale) + initTop)
         ) {
-            translateY = (plotSizeY * (1 - scale)) + chart.plotTop;
+            translateY = (plotSizeY * (1 - scale)) + initTop;
         }
         // Horizontal lock
-        if (translateX > chart.plotLeft) {
+        if (translateX > initLeft) {
             translateX = initLeft;
         } else if (
-            translateX < (plotSizeX * (1 - scale) + chart.plotLeft)
+            translateX < (plotSizeX * (1 - scale) + initLeft)
         ) {
-            translateX = (plotSizeX * (1 - scale)) + chart.plotLeft;
+            translateX = (plotSizeX * (1 - scale)) + initLeft;
         }
 
         e.scale = scale;
@@ -225,8 +229,10 @@ function onAfterDrawChartBox(this: Chart): void {
             chart.zoomClipRect = chart.renderer.clipRect({
                 x: chart.plotLeft,
                 y: chart.plotTop,
-                width: chart.clipBox.width,
-                height: chart.clipBox.height
+                width: chart.inverted ? chart.clipBox.height :
+                    chart.clipBox.width,
+                height: chart.inverted ? chart.clipBox.width :
+                    chart.clipBox.height
             });
         }
 
