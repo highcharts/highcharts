@@ -3,8 +3,7 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'token'
         }
     }
 };
@@ -34,17 +33,26 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
 
     const firstNav = Highcharts.navigator('navigator-container', {
         series: [{
-            data: price
+            data: price,
+            color: '#0F0F0F'
         }]
     });
 
     const secondNav = Highcharts.navigator('second-navigator-container', {
         series: [{
-            data: price
+            data: price,
+            color: '#0F0F0F'
         }]
     });
 
     const priceChart = Highcharts.stockChart('price-chart', {
+        accessibility: {
+            beforeChartFormat: '<h3>The chart, which xAxis extremes are' +
+               'controlled by a standalone navigator. Displayed series' +
+               'extremes span across 10 years, so There are 2 navigators' +
+                ', that help to accuratly set the extremes. <h3>'
+
+        },
         navigator: {
             enabled: false
         },
@@ -55,7 +63,7 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
             enabled: false
         },
         title: {
-            text: 'AMD Stock Pice'
+            text: 'AMD Stock Price'
         },
         series: [{
             name: 'AMD',
