@@ -7,15 +7,6 @@ describe('Path to arrays in editable options.', () => {
         return cy.get('.highcharts-dashboards-edit-accordion').eq(1).click().get('textarea');
     }
 
-    function cancelChanges() {
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
-        cy.get('.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
-    }
-
-    function submitChanges() {
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
-    }
-
     beforeEach(() => {
         cy.visit('/dashboards/cypress/array-editable-options');
         cy.viewport(1200, 1000);
@@ -27,14 +18,14 @@ describe('Path to arrays in editable options.', () => {
         openTextArea().type(' new text');
         cy.get('.highcharts-dashboards-edit-sidebar-wrapper').click();
         cy.get('.highcharts-dashboards-component p').should('have.text', 'Lorem ipsum... new text');
-        cancelChanges();
+        cy.cancelEditing();
         openTextArea().should('have.value', 'Lorem ipsum...');
     });
 
     it('Changes can be submitted.', () => {
         openTextArea().type(' new text');
         cy.get('.highcharts-dashboards-edit-sidebar-wrapper').click();
-        submitChanges();
+        cy.submitEditing();
         openTextArea().should('have.value', 'Lorem ipsum... new text');
     });
 });
