@@ -193,7 +193,7 @@ namespace ColumnDataLabel {
         // If a large slice is crossing the lowest point, prefer rendering the
         // label on either side (#22100)
         if (distance > 0 && start < halfPI && end > halfPI) {
-            angle = angle < halfPI ? (start + halfPI) / 2 : (halfPI + end) / 2;
+            angle = angle <= halfPI ? (start + halfPI) / 2 : (halfPI + end) / 2;
         }
 
         const { center, options } = this,
