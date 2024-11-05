@@ -33,7 +33,13 @@ const topicMap = {
 // Options for chart
 const chartOptions = {
     chart: {
-        type: 'spline'
+        type: 'spline',
+        // For testing
+        events: {
+            redraw() {
+                console.log('@redraw');
+            }
+        }
     },
     legend: {
         enabled: false

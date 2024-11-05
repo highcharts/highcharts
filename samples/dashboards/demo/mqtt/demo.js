@@ -256,7 +256,13 @@ const chartComponent = {
     chartOptions: {
         ...commonChartOptions,
         chart: {
-            type: 'spline'
+            type: 'spline',
+            // For testing
+            events: {
+                redraw() {
+                    console.log('@redraw');
+                }
+            }
         },
         credits: {
             enabled: false
@@ -370,7 +376,7 @@ async function createDashboard() {
             const hist = aggData.P_hist;
             let ts = new Date(hist.start).valueOf() - tzOffset;
             const interval = hist.res * 1000; // Resolution: seconds
-            const histLen = 1; // hist.values.length;
+            const histLen = hist.values.length;
 
             for (let j = 0; j < histLen; j++) {
                 const power = hist.values[j];
@@ -454,7 +460,7 @@ async function createDashboard() {
                 packetEvent: async event => {
                     const { topic, count } = event.detail;
                     printLog(`Packet #${count} received: ${topic}`);
-                    await dashboardUpdate(event.data, connId);
+                    await dashboardUpdate(event.data, connId, count);
                 },
                 errorEvent: event => {
                     const { code, message } = event.detail;
@@ -503,7 +509,7 @@ function updatePowerPlantList(data, topic) {
 
 
 // Update all Dashboards components
-async function dashboardUpdate(mqttData, connId) {
+async function dashboardUpdate(mqttData, connId, pktCount) {
     function getInfoRecord(item, fields) {
         const ret = [];
         fields.forEach(field => {
@@ -682,7 +688,8 @@ async function dashboardUpdate(mqttData, connId) {
     // Update info component (Custom HTML)
     await updateInfoHtml(mqttData);
 
-    // Update KPI, chart and datagrid
+    // Update KPI, chart and datagrid components
+
     const idx = activeItem.generatorId - 1;
     const aggInfo = mqttData.aggs[idx];
 
@@ -713,6 +720,12 @@ async function dashboardUpdate(mqttData, connId) {
         chartOptions: chartOptions,
         title: aggName + ' (latest)'
     });
+
+    // Chart and data grid get automatically updated on every packet,
+    // so range and title are set only once.
+    if (pktCount > 1) {
+        return;
+    }
 
     // Chart
     const chartComp = dashboard.getComponentByCellId('el-chart');
