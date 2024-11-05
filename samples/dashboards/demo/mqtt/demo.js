@@ -370,7 +370,7 @@ async function createDashboard() {
             const hist = aggData.P_hist;
             let ts = new Date(hist.start).valueOf() - tzOffset;
             const interval = hist.res * 1000; // Resolution: seconds
-            const histLen = hist.values.length;
+            const histLen = 1; // hist.values.length;
 
             for (let j = 0; j < histLen; j++) {
                 const power = hist.values[j];
@@ -1150,7 +1150,7 @@ const connectorTable = {};
 
 class MQTTConnector extends DataConnector {
     /**
-     * Constructs an instance of MQTTConnector.
+     * Creates an instance of the MQTTConnector, including the MQTT client.
      *
      */
     constructor(options) {
@@ -1158,11 +1158,13 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
+        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
+        this.connected = false;
 
         // Connection status
         this.packetCount = 0;
@@ -1172,11 +1174,21 @@ class MQTTConnector extends DataConnector {
         this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        const connector = this;
-        connectorTable[clientId] = connector;
+        connectorTable[clientId] = this;
 
         // Register events
-        connector.registerEvents();
+        this.registerEvents();
+
+        const connector = this,
+            {
+                host, port
+            } = connector.options;
+
+
+        // Create MQTT client
+        this.mqtt = new MQTTClient(host, port, this.clientId);
+        this.mqtt.onConnectionLost = this.onConnectionLost;
+        this.mqtt.onMessageArrived = this.onMessageArrived;
     }
 
     /* *
@@ -1186,22 +1198,14 @@ class MQTTConnector extends DataConnector {
      * */
 
     /**
-     * Creates the MQTT client and initiates the connection
-     * if autoConnect is set to true.
+     * Initiates the connection if autoConnect is set to true and
+     * not already connected.
      *
      */
     async load() {
-        const connector = this,
-            {
-                host, port, autoConnect
-            } = connector.options;
+        const connector = this;
 
-        // Start MQTT client
-        this.mqtt = new MQTTClient(host, port, this.clientId);
-        this.mqtt.onConnectionLost = this.onConnectionLost;
-        this.mqtt.onMessageArrived = this.onMessageArrived;
-
-        if (autoConnect) {
+        if (connector.options.autoConnect && !connector.connected) {
             await this.connect();
         }
         super.load();
@@ -1398,8 +1402,6 @@ class MQTTConnector extends DataConnector {
                 count: connector.packetCount
             }
         });
-
-        return connector;
     }
 
     /**
