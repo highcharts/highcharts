@@ -42,6 +42,7 @@ module.exports = {
             'stock/hollow-candlestick-chart',
             'stock/heikinashi',
             'stock/renko',
+            'stock/pointandfigure',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
