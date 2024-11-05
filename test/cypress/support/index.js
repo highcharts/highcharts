@@ -159,8 +159,31 @@ Cypress.Commands.add('toggleEditMode', () => {
     cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });
 
+Cypress.Commands.add('submitEditing', () => {
+    cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+});
+
+Cypress.Commands.add('cancelEditing', () => {
+    cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
+    cy.get('.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+});
+
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
     return false
 })
+
+Cypress.Commands.add('grabComponent', (name) => {
+    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({ force: true});
+    cy.get('.highcharts-dashboards-edit-grid-items')
+        .children()
+        .contains(name)
+        .trigger('mousedown', { force: true });
+});
+
+Cypress.Commands.add('dropComponent', (elementName) => {
+    cy.get(elementName).first().trigger('mouseenter', {force: true});
+    cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
+    cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
+});

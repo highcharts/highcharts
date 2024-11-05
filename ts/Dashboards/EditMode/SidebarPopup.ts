@@ -22,6 +22,7 @@ import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -52,8 +53,8 @@ const {
  */
 class SidebarPopup extends BaseForm {
 
-    public static readonly addLayout = {
-        text: 'layout',
+    public static readonly addRow = {
+        text: EditGlobals.lang.sidebar.row,
         onDrop: function (
             sidebar: SidebarPopup,
             dropContext: Cell|Row
@@ -100,12 +101,13 @@ class SidebarPopup extends BaseForm {
             void Bindings.addComponent({
                 type: 'HTML',
                 cell: cellId,
-                elements: [
-                    {
-                        tagName: 'div',
-                        textContent: 'Placeholder text'
-                    }
-                ]
+                className: 'highcharts-dashboards-component-placeholder',
+                html: `
+                    <h2> Placeholder </h2>
+                    <span> This placeholder can be deleted when you add extra
+                        components to this row.
+                    </span>
+                    `
             }, board);
 
         }
@@ -173,7 +175,7 @@ class SidebarPopup extends BaseForm {
      * Options used in the sidebar.
      */
     public options: SidebarPopup.Options = {
-        components: ['HTML', 'layout', 'Highcharts', 'DataGrid', 'KPI']
+        components: ['HTML', 'row', 'Highcharts', 'DataGrid', 'KPI']
     };
 
     /**
@@ -185,6 +187,16 @@ class SidebarPopup extends BaseForm {
      * List of components that can be added to the board.
      */
     private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
+
+    /**
+     * Content wrapper for sticking.
+     */
+    private sidebarWrapper?: HTMLElement;
+
+    /**
+     * Content wrapper for the header.
+     */
+    private headerWrapper?: HTMLElement;
 
     /* *
      *
@@ -290,6 +302,8 @@ class SidebarPopup extends BaseForm {
     }
 
     public generateContent(context?: Cell | Row | CellHTML): void {
+        // Reset
+        this.container.innerHTML = AST.emptyHTML;
 
         // Title
         this.renderHeader(
@@ -297,6 +311,16 @@ class SidebarPopup extends BaseForm {
                 this.editMode.lang.settings :
                 this.editMode.lang.addComponent,
             ''
+        );
+
+        // Render content wrapper
+        this.sidebarWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarWrapper
+            },
+            void 0,
+            this.container
         );
 
         if (!context) {
@@ -311,7 +335,11 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordionMenu.renderContent(this.container, component);
+            this.accordionMenu.renderContent(
+                this.sidebarWrapper,
+                component,
+                this.container
+            );
         }
     }
 
@@ -322,7 +350,7 @@ class SidebarPopup extends BaseForm {
 
         const gridWrapper = createElement('div', {
             className: EditGlobals.classNames.editGridItems
-        }, {}, sidebar.container);
+        }, {}, sidebar.sidebarWrapper);
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             gridElement = createElement(
@@ -334,6 +362,7 @@ class SidebarPopup extends BaseForm {
 
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
+                e.preventDefault();
                 if (sidebar.editMode.dragDrop) {
 
                     // Workaround for Firefox, where mouseleave is not triggered
@@ -499,7 +528,23 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderHeader(title: string, iconURL: string): void {
-        const icon = EditRenderer.renderIcon(this.container, {
+        if (!this.container) {
+            return;
+        }
+
+        const headerWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarHeader
+            },
+            {},
+            this.container
+        );
+        this.container.appendChild(headerWrapper);
+
+        this.headerWrapper = headerWrapper;
+
+        const icon = EditRenderer.renderIcon(this.headerWrapper, {
             icon: iconURL,
             className: EditGlobals.classNames.editSidebarTitle
         });
@@ -507,6 +552,8 @@ class SidebarPopup extends BaseForm {
         if (icon) {
             icon.textContent = title;
         }
+
+        this.headerWrapper?.appendChild(this.closeButton);
     }
 
     /**
@@ -549,8 +596,8 @@ class SidebarPopup extends BaseForm {
                         }
                     }
                 });
-            } else if (componentName === 'layout') {
-                componentList.push(SidebarPopup.addLayout);
+            } else if (componentName === 'row') {
+                componentList.push(SidebarPopup.addRow);
             }
         });
 

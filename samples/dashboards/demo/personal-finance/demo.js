@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -218,8 +223,9 @@ Dashboards.board('container', {
         title: 'Transactions',
         type: 'DataGrid',
         dataGridOptions: {
-            cellHeight: 37,
-            editable: false
+            credits: {
+                enabled: false
+            }
         }
     }]
 }, true);

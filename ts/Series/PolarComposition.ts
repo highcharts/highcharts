@@ -367,14 +367,14 @@ function onChartAfterInit(event: any): void {
 /**
  *
  */
-function onChartGetAxes(
+function onChartCreateAxes(
     this: Chart
 ): void {
 
     if (!this.pane) {
         this.pane = [];
     }
-    this.options.pane = splat(this.options.pane);
+    this.options.pane = splat(this.options.pane || {});
     this.options.pane.forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,
@@ -1495,7 +1495,7 @@ class PolarAdditions {
                 seriesProto = SeriesClass.prototype;
 
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
-            addEvent(ChartClass, 'getAxes', onChartGetAxes);
+            addEvent(ChartClass, 'createAxes', onChartCreateAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
 
             wrap(chartProto, 'get', wrapChartGet);

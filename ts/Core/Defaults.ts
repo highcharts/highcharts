@@ -889,6 +889,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -996,6 +999,9 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             color: Palette.neutralColor60,
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -1160,7 +1166,7 @@ const defaultOptions: DefaultOptions = {
          * can be prevented by returning `false` or calling
          * `event.preventDefault()`.
          *
-         * @sample {highcharts} highcharts/legend/series-legend-itemclick/
+         * @sample {highcharts} highcharts/legend/itemclick/
          *         Confirm hiding and showing
          * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
          *         Confirm toggle visibility of pie slices
@@ -1453,6 +1459,9 @@ const defaultOptions: DefaultOptions = {
              * @apioption legend.navigation.style
              */
             style: {
+                /**
+                 * @type {number|string}
+                 */
                 fontSize: '0.8em'
             },
 
@@ -2146,37 +2155,32 @@ const defaultOptions: DefaultOptions = {
          * attribute, but only text-related CSS, that is shared with SVG, is
          * handled.
          *
-         * The available data in the formatter differ a bit depending on whether
-         * the tooltip is shared or split, or belongs to a single point. In a
-         * shared/split tooltip, all properties except `x`, which is common for
-         * all points, are kept in an array, `this.points`.
+         * The context of the formatter (since v12) is the
+         * [Point](https://api.highcharts.com/class-reference/Highcharts.Point)
+         * instance. If the tooltip is shared or split, an array `this.points`
+         * contains all points of the hovered x-value.
          *
-         * Available data are:
+         * Common properties from the Point to use in the formatter include:
          *
-         * - **this.percentage (not shared) /**
-         *   **this.points[i].percentage (shared)**:
+         * - **Point.percentage**:
          *   Stacked series and pies only. The point's percentage of the total.
          *
-         * - **this.point (not shared) / this.points[i].point (shared)**:
-         *   The point object. The point name, if defined, is available through
-         *   `this.point.name`.
+         * - **Point.points**:
+         *   In a shared or split tooltip, this is an array containing all the
+         *   hovered points.
          *
-         * - **this.points**:
-         *   In a shared tooltip, this is an array containing all other
-         *   properties for each point.
-         *
-         * - **this.series (not shared) / this.points[i].series (shared)**:
+         * - **this.series**:
          *   The series object. The series name is available through
          *   `this.series.name`.
          *
-         * - **this.total (not shared) / this.points[i].total (shared)**:
-         *   Stacked series only. The total value at this point's x value.
+         * - **this.total**:
+         *   The total value at this point's x value in a stacked series, or the
+         *   sum of all slices in a pie series.
          *
          * - **this.x**:
-         *   The x value. This property is the same regardless of the tooltip
-         *   being shared or not.
+         *   The x value.
          *
-         * - **this.y (not shared) / this.points[i].y (shared)**:
+         * - **this.y**:
          *   The y value.
          *
          * @sample {highcharts} highcharts/tooltip/formatter-simple/
@@ -2215,7 +2219,10 @@ const defaultOptions: DefaultOptions = {
          * inside the chart area. For small charts, this may result in clipping
          * or overlapping. When `true`, a separate SVG element is created and
          * overlaid on the page, allowing the tooltip to be aligned inside the
-         * page itself.
+         * page itself. Beware that with this option active, CSS classes on the
+         * chart's target container, with classnames matching the pattern
+         * 'highcharts-*', will be set on the tooltip as well. This is done to
+         * support theming for tooltips with this option.
          *
          * Defaults to `true` if `chart.scrollablePlotArea` is activated,
          * otherwise `false`.
@@ -2276,8 +2283,9 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Split the tooltip into one label per series, with the header close
-         * to the axis. This is recommended over [shared](#tooltip.shared)
+         * Shows tooltip for all points with the same X value. Splits the
+         * tooltip into one label per series, with the header close to the axis.
+         * This is recommended over [shared](#tooltip.shared)
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
@@ -2532,11 +2540,12 @@ const defaultOptions: DefaultOptions = {
         shape: 'callout',
 
         /**
-         * When the tooltip is shared, the entire plot area will capture mouse
-         * movement or touch events. Tooltip texts for series types with ordered
-         * data (not pie, scatter, flags etc) will be shown in a single bubble.
-         * This is recommended for single series charts and for tablet/mobile
-         * optimized charts.
+         * Shows information in the tooltip for all points with the same X
+         * value. When the tooltip is shared, the entire plot area will capture
+         * mouse movement or touch events. Tooltip texts for series types with
+         * ordered data (not pie, scatter, flags etc) will be shown in a single
+         * bubble. This is recommended for single series charts and for
+         * tablet/mobile optimized charts.
          *
          * See also [tooltip.split](#tooltip.split), that is better suited for
          * charts with many series, especially line-type series. The
@@ -2579,13 +2588,14 @@ const defaultOptions: DefaultOptions = {
         snap: isTouchDevice ? 25 : 10,
 
         /**
-         * The HTML of the tooltip header line. Variables are enclosed by
-         * curly brackets. Available variables are `point.key`, `series.name`,
-         * `series.color` and other members from the `point` and `series`
-         * objects. The `point.key` variable contains the category name, x
-         * value or datetime string depending on the type of axis. For datetime
-         * axes, the `point.key` date format can be set using
-         * `tooltip.xDateFormat`.
+         * The HTML of the tooltip header line. The context is the
+         * [Point class](https://api.highcharts.com/class-reference/Highcharts.Point).
+         * Variables are enclosed in curly brackets. Examples of common
+         * variables to include are `x`, `y`, `series.name` and `series.color`
+         * and other properties on the same form. The `point.key` variable
+         * contains the category name, x value or datetime string depending on
+         * the type of axis. For datetime axes, the `point.key` date format can
+         * be set using `tooltip.xDateFormat`.
          *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
@@ -2611,16 +2621,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * The HTML of the point's line in the tooltip. Variables are enclosed
-         * by curly brackets. Available variables are `point.x`, `point.y`,
-         * `series.name` and `series.color` and other properties on the same
-         * form. Furthermore, `point.y` can be extended by the
-         * `tooltip.valuePrefix` and `tooltip.valueSuffix` variables. This can
-         * also be overridden for each series, which makes it a good hook for
-         * displaying units.
+         * The HTML of the point's line in the tooltip. The context is the
+         * [Point class](https://api.highcharts.com/class-reference/Highcharts.Point).
+         * Variables are enclosed in curly brackets. Examples of common
+         * variables to include are `x`, `y`, `series.name` and `series.color`
+         * and other properties on the same form. Furthermore, `y` can be
+         * extended by the `tooltip.valuePrefix` and `tooltip.valueSuffix`
+         * variables. This can also be overridden for each series, which makes
+         * it a good hook for displaying units.
          *
-         * In styled mode, the dot is colored by a class name rather
-         * than the point color.
+         * In styled mode, the dot is colored by a class name rather than the
+         * point color.
          *
          * @sample {highcharts} highcharts/tooltip/pointformat/
          *         A different point format with value suffix
@@ -2729,7 +2740,9 @@ const defaultOptions: DefaultOptions = {
             color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -2848,7 +2861,9 @@ const defaultOptions: DefaultOptions = {
             cursor: 'pointer',
             /** @internal */
             color: Palette.neutralColor40,
-            /** @internal */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.6em'
         },
 

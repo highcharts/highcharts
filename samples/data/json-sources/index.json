@@ -1,0 +1,16 @@
+[{
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "population-density.json"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1uj1Gzv3fpH-b0w2tYpuKNp3TrGr43I9XAAqmgVE_jMs/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "election.json"
+}, {
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw/values/A1:ZZ/?alt=json&majorDimension=COLUMNS&valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk",
+    "filename": "fruit-consumption.json"
+}, {
+    "url": "https://cdn.jsdelivr.net/gh/klokantech/roman-empire@master/data/provinces.geojson",
+    "filename": "provinces.geo.json"
+}, {
+    "url": "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774",
+    "filename": "weather-forecast.json"
+}]

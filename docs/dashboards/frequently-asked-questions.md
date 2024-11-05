@@ -180,29 +180,6 @@ afterRender(e) {
 }
 ```
 
-If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
-
-```js
-dataPool: {
-    connectors: [{
-      id: 'Vitamin',
-      type: 'CSV',
-      options: {
-        csv: csvData,
-        firstRowAsNames: true,
-        dataTable: {
-          aliases: {
-            // Workaround for renamed series:
-            // set an alias that matches the series name
-            'customName': 'water',
-            'otherCustomName': 'air'
-          }
-        }
-      }
-    }]
-}
-```
-See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
 How to style the Dashboard?
 -----------------------------------------------------------------------
@@ -211,7 +188,6 @@ Dashboards has a default theme, which is applied to all of its components.
 You need to import the default CSS stylesheet to your project, so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
 ```css
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```

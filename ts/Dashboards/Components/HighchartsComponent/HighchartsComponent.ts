@@ -50,6 +50,7 @@ import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
+import DU from '../../Utilities.js';
 import U from '../../../Core/Utilities.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
 const {
@@ -59,6 +60,7 @@ const {
     merge,
     splat
 } = U;
+const { deepClone } = DU;
 
 /* *
  *
@@ -291,7 +293,7 @@ class HighchartsComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        super.resize(width, height);
+        this.resizeDynamicContent(width, height);
 
         while (this.innerResizeTimeouts.length) {
             const timeoutID = this.innerResizeTimeouts.pop();
@@ -396,7 +398,9 @@ class HighchartsComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
+            this.chartContainer.classList.value =
+                HighchartsComponentDefaults.className + ' ' +
+                this.options.chartClassName;
         }
 
         if (this.options.chartID) {
@@ -580,6 +584,15 @@ class HighchartsComponent extends Component {
                     ...seriesOptions
                 }, false);
             } else {
+
+                // The workaround for the issue with updating the series data
+                // with keys: #20687 - remove when fixed.
+                if (seriesOptions.keys) {
+                    series.update({
+                        keys: seriesOptions.keys
+                    }, false);
+                }
+
                 series.update(seriesOptions, false);
             }
 
@@ -838,7 +851,7 @@ class HighchartsComponent extends Component {
         const chartOptions = chart && chart.options;
         const chartType = chartOptions?.chart?.type || 'line';
 
-        return merge(
+        return deepClone(merge(
             {
                 chartOptions
             },
@@ -853,9 +866,8 @@ class HighchartsComponent extends Component {
                 }
             },
             componentOptions
-        );
+        ), ['dataTable', 'points', 'series', 'data', 'editableOptions']);
     }
-
 
     public getEditableOptionValue(
         propertyPath?: string[]

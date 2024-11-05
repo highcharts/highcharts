@@ -1,22 +1,26 @@
-Highcharts.chart('container', {
-    chart: {
-        events: {
-            load: function () {
-                this.annotations.forEach(function (annotation) {
-                    annotation.setControlPointsVisibility(true);
-                    annotation.cpVisibility = true;
-                });
-            }
-        }
-    },
+const chart = Highcharts.chart('container', {
 
+    title: {
+        text: 'Tunnel annotation'
+    },
     annotations: [{
         type: 'tunnel',
+        controlPointOptions: {
+            style: {
+                fill: 'rgb(255, 69, 221)'
+            },
+            visible: true
+        },
         typeOptions: {
             points: [{
                 x: 4,
                 y: 4,
-                controlPoint: { /* control point options */ }
+                controlPoint: {
+                    /* control point options */
+                    style: {
+                        fill: '#d5ff4c'
+                    }
+                }
             }, {
                 x: 10,
                 y: 5
@@ -27,7 +31,7 @@ Highcharts.chart('container', {
             heightControlPoint: {
                 /* control point options */
                 style: {
-                    fill: 'blue'
+                    fill: '#1d10de'
                 }
             }
             // yAxis: 0,
@@ -42,3 +46,19 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+const applyColors = document.getElementById('applyColors');
+
+applyColors.onclick = function () {
+    chart.annotations[0].update({
+        typeOptions: {
+            line: {
+                stroke: 'rgb(255, 69, 221)',
+                strokeWidth: 4
+            },
+            background: {
+                fill: 'rgba(255, 69, 221, 0.4)'
+            }
+        }
+    });
+};

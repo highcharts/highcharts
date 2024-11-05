@@ -1,0 +1,10 @@
+---
+name: Forecast
+authors:
+  - Hubert Kozik
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Line charts
+...

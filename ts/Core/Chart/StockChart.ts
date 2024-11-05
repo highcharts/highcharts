@@ -299,8 +299,8 @@ class StockChart extends Chart {
 
         // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
-            xAxisOptions: AxisOptions
-        ): AxisOptions => merge(
+            xAxisOptions
+        ): DeepPartial<AxisOptions> => merge(
             getDefaultAxisOptions(
                 'xAxis',
                 xAxisOptions,
@@ -313,8 +313,8 @@ class StockChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
-            yAxisOptions: YAxisOptions
-        ): YAxisOptions => merge(
+            yAxisOptions
+        ): DeepPartial<YAxisOptions> => merge(
             getDefaultAxisOptions(
                 'yAxis',
                 yAxisOptions,
@@ -426,12 +426,12 @@ namespace StockChart {
 
         // Check if the label has to be drawn
         if (
-            !axis.crosshair ||
-            !axis.crosshair.label ||
-            !axis.crosshair.label.enabled ||
-            !axis.cross ||
-            !isNumber(axis.min) ||
-            !isNumber(axis.max)
+            !(
+                axis.crosshair?.label?.enabled &&
+                axis.cross &&
+                isNumber(axis.min) &&
+                isNumber(axis.max)
+            )
         ) {
             return;
         }
@@ -446,7 +446,7 @@ namespace StockChart {
             width = axis.width,
             tickInside = axis.options.tickPosition === 'inside',
             snap = axis.crosshair.snap !== false,
-            e = event.e || (axis.cross && axis.cross.e),
+            e = event.e || (axis.cross?.e),
             point = event.point;
 
         let crossLabel = axis.crossLabel, // The svgElement
@@ -601,8 +601,8 @@ namespace StockChart {
 
         // Show the crosslabel
         crossLabel.attr({
-            x: posx + offset,
-            y: posy,
+            x: Math.max(0, posx + offset),
+            y: Math.max(0, posy),
             // First set x and y, then anchorX and anchorY, when box is actually
             // calculated, #5702
             anchorX: horiz ?
@@ -752,19 +752,15 @@ namespace StockChart {
             // Get the related axes based options.*Axis setting #2810
             axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
             for (const A of axes2) {
-                if (
-                    defined(A.options.id) ?
-                        A.options.id.indexOf('navigator') === -1 :
-                        true
-                ) {
+                if (!A.options.isInternal) {
                     const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-                        rax = (
+                        relatedAxis: Axis = (
                             defined((A.options as any)[a]) ?
                                 (chart as any)[a][(A.options as any)[a]] :
                                 (chart as any)[a][0]
                         );
 
-                    if (axis === rax) {
+                    if (axis === relatedAxis) {
                         axes.push(A);
                     }
                 }

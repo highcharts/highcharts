@@ -22,6 +22,7 @@ For basic usage, Highcharts doesn't refer to any files other than highcharts.js/
 
 *   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](https://highcharts.com/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). 
 *   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](https://highcharts.com/docs/getting-started/optional-dependencies) documentation article.
+* Stock Tools icons. By default the icons are loaded dynamically from https://code.highcharts.com. To change where icons should be loaded from see the [iconsURL](https://api.highcharts.com/highstock/navigation.iconsURL) option.
 
 * * *
 
@@ -70,6 +71,10 @@ When working with series with a high number of data points, there are a few thin
 1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
+4.  If you have a Stock licence, consider using the [Data Grouping module](https://www.highcharts.com/docs/stock/data-grouping). This module packs multiple consecutive values into the same point, and results in considerably fewer points to render. This greatly
+reduces the initial loading time. The following chart compares the loading times of the same data set with and without data grouping.
+
+<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" frameborder="0"></iframe>
 
 * * *
 

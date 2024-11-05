@@ -35,6 +35,8 @@ const {
     createElement,
     defined,
     extend,
+    getAlignFactor,
+    isNumber,
     pInt,
     pushUnique
 } = U;
@@ -294,6 +296,13 @@ class HTMLElement extends SVGElement {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
+
+        // SVG natively supports setting font size as numbers. With HTML, the
+        // font size should behave in the same way (#21624).
+        if (isNumber(Number(styles?.fontSize))) {
+            styles.fontSize = styles.fontSize + 'px';
+        }
+
         extend(this.styles, styles);
         css(element, styles);
 
@@ -349,9 +358,6 @@ class HTMLElement extends SVGElement {
                 x = 0,
                 y = 0
             } = this,
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[textAlign],
             whiteSpace = styles.whiteSpace;
 
         // Get the pixel length of the text
@@ -449,7 +455,7 @@ class HTMLElement extends SVGElement {
                         element.offsetWidth
                     ),
                     baseline,
-                    alignCorrection
+                    getAlignFactor(textAlign)
                 );
             }
 

@@ -21,15 +21,14 @@ Thus, we have to import the Highcharts library and the Dashboards library to bin
 However, this is not the only way to import Dashboards packages. See other ways, e.g. install via npm, [here](https://www.highcharts.com/docs/dashboards/installation).
 
 3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
-If you want to use Highcharts charts, you should also import the charts styles, because the [styled mode](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode) is enabled by default in Dashboards.
 
 ```css
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard.  
-To do so, you have to pass two arguments:  
+4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard.
+
+To do so, you have to pass two arguments:
 * the div’s id where the dashboard should be placed (see point 1).
 * the object with dashboard options.
 

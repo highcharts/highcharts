@@ -175,6 +175,42 @@ function onAxisFoundExtremes(
 
 }
 
+/**
+ * If a user has defined categories, it is necessary to retroactively hide any
+ * ticks added by the 'onAxisFoundExtremes' function above (#21672).
+ *
+ * Otherwise they can show up on the axis, alongside user-defined categories.
+ */
+function onAxisAfterRender(this: Axis): void {
+    const {
+            ticks,
+            tickPositions,
+            dataMin = 0,
+            dataMax = 0,
+            categories
+        } = this,
+        type = this.options.type;
+
+    if (
+        (categories?.length || type === 'category') &&
+        this.series.find((s): boolean | undefined => s.bubblePadding)
+    ) {
+
+        let tickCount = tickPositions.length;
+
+        while (tickCount--) {
+            const tick = ticks[tickPositions[tickCount]],
+                pos = tick.pos || 0;
+
+
+            if (pos > dataMax || pos < dataMin) {
+                tick.label?.hide();
+            }
+        }
+
+    }
+}
+
 /* *
  *
  *  Class
@@ -208,7 +244,7 @@ class BubbleSeries extends ScatterSeries {
 
         dataLabels: {
             formatter: function (
-                this: Point.PointLabelObject
+                this: Point
             ): string { // #2945
                 const { numberFormatter } = this.series.chart;
                 const { z } = (this.point as BubblePoint);
@@ -469,6 +505,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterRender',
+                onAxisAfterRender
+            );
         }
 
     }
@@ -897,7 +938,7 @@ export default BubbleSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bubble
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, legendSymbolColor, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.bubble

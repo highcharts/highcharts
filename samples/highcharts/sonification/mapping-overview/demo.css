@@ -1,3 +1,7 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 #block {
     max-width: 900px;
     min-width: 320px;

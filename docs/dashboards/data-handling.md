@@ -42,7 +42,7 @@ There are several types of the DataConnectors, depending on the data source.
 Each of those types has its own, specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)
 has two data input options. Directly as a string - `options.csv`, or as a URL from which the CSV file is fetched - `options.csvURL`.
 
-### Example
+### Examples
 ```js
 dataPool: {
     connectors: [{
@@ -55,13 +55,50 @@ dataPool: {
 }
 ```
 
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-json-connector',
+        type: 'JSON',
+        options: {
+            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
+        }
+    }]
+}
+```
+
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-google-sheets-connector',
+            type: 'GoogleSheets',
+            options: {
+                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+                googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
+            }
+    }]
+}
+```
+
+```js
+dataPool: {
+    connectors: [{
+        id: 'my-html-table-connector',
+        type: 'HTMLTable',
+        options: {
+            table: 'table-element-id',
+        }
+    }]
+}
+```
+
 ## DataTable
 **The `DataTable` is a storage system for the data in the `DataPool`.**
 Each `DataTable` within the `DataPool` is like a specific section or aisle within the warehouse dedicated to a particular type of product
 where everything is organized and stored.
 
 A `DataTable` is created from `DataConnectors`, `DataModifiers`, or other
-`DataTables`. Each table can contain columns, column aliases, and rows. In
+`DataTables`. Each table can contain columns and rows. In
 addition, DataTable also emits events, when changes on the table happen. Changes
 can be directly done on the table or with DataModifiers.
 
@@ -70,7 +107,6 @@ can be directly done on the table or with DataModifiers.
 **The `DataModifier` is a tool to modify the data in the `DataTables`.**
 When a `DataModifier` is applied to a `DataTable`, it's like assigning a specific team of workers to handle modifications for that batch of products.
 They can make changes to the products as needed, and the modified versions are stored separately.
-
 
 DataTables can provide automatic modification of data during their lifetime with
 the help of modifiers. Each table can have only one modifier, but this modifier

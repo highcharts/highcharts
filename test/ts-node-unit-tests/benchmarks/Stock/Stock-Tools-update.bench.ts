@@ -1,8 +1,7 @@
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
-import { join } from 'node:path';
 import { generateOHLC } from '../../data-generators';
-import { setupDOM } from '../../test-utils';
+import { getHighchartsJSDOM } from '../../test-utils';
 
 
 export const config = {
@@ -17,16 +16,14 @@ export function before(size: number) {
   };
 }
 
-export default async function benchmarkTest(
+export default function benchmarkTest(
     {
         size,
         CODE_PATH,
         data
     }: BenchmarkContext
-): Promise<BenchmarkResult> {
-  const { win, el } = setupDOM();
-  const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
-  require(join(CODE_PATH, '/modules/stock-tools.src.js'))(hc);
+): BenchmarkResult {
+    const { Highcharts: hc, el } = getHighchartsJSDOM('highstock', ['modules/stock-tools']);
 
   const chart = hc.stockChart(el, {
     chart: {
@@ -35,14 +32,6 @@ export default async function benchmarkTest(
     },
     accessibility: {
       enabled: false
-    },
-    plotOptions: {
-        series: {
-            animation: false,
-            dataLabels: {
-                defer: false
-            }
-        }
     },
     series: [{
       data: data,

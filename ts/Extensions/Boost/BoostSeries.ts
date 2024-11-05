@@ -670,6 +670,7 @@ function enterBoost(
     // Destroy existing points after zoom out
     if (
         series.is('scatter') &&
+        !series.is('treemap') &&
         series.data.length
     ) {
         for (const point of series.data) {
@@ -726,6 +727,9 @@ function exitBoost(
             boost.clear();
         }
     }
+
+    // #21106, clean up boost clipping on the series groups.
+    (chart.seriesGroup || series.group)?.clip();
 }
 
 /**
@@ -887,6 +891,7 @@ function getPoint(
             point.x, // @todo simplify
         point.x
     );
+    point.key = point.name ?? point.category;
 
     point.dist = boostPoint.dist;
     point.distX = boostPoint.distX;
@@ -1503,8 +1508,12 @@ function wrapSeriesProcessData(
 
     if (boostEnabled(this.chart) && BoostableMap[this.type]) {
         const series = this as BoostSeriesComposition,
-            isScatter = series.is('scatter') && !series.is('bubble');
-
+            // Flag for code that should run for ScatterSeries and its
+            // subclasses, apart from the enlisted exceptions.
+            isScatter = series.is('scatter') &&
+                !series.is('bubble') &&
+                !series.is('treemap') &&
+                !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
         // do default behaviour.
@@ -1512,6 +1521,7 @@ function wrapSeriesProcessData(
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||
             isScatter ||
+            series.is('treemap') ||
             // Use processedYData for the stack (#7481):
             series.options.stacking ||
             !hasExtremes(series, true)
@@ -1549,7 +1559,11 @@ function wrapSeriesProcessData(
                 firstPoint = series.getFirstValidPoint(
                     series.options.data
                 );
-                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                if (
+                    !isNumber(firstPoint) &&
+                    !isArray(firstPoint) &&
+                    !series.is('treemap')
+                ) {
                     error(12, false, series.chart);
                 }
             }

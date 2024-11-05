@@ -1,0 +1,23 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+div#legend .highcharts-title {
+    font-size: 1.3em;
+}
+
+.highcharts-legend-item > text {
+    font-size: 1.2em;
+}
+
+.highcharts-graph {
+    stroke-width: 3px;
+}
+
+#south-america-chart,
+#north-america-chart,
+#asia-chart {
+    flex: 1 1 33.333%;
+}

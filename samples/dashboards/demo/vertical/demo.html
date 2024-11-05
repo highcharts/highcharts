@@ -1,0 +1,138 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="container">
+    <h1 id="title">Climate Change Over the Last 10 Decades: A Deep Dive into the Data</h1>
+    <img class="illustration" src="https://www.highcharts.com/samples/graphics/skies.jpg" alt="Climate Change Data"/>
+    <figcaption>Amazing climate illustration, courtesy of DALL-E</figcaption>
+    <p>
+        Understanding how the climate has changed over time can help us prepare for the future. By looking at the data
+        from the last 100 years, we can see patterns, learn what’s driving these changes, and start thinking about how
+        we can address them. Let’s break down the numbers, decade by decade, to better understand the impact climate
+        change has had on our planet.
+    </p>
+    <div id="data-grid"></div>
+
+    <h2>Extreme Weather Events</h2>
+    <div>
+        <p>
+            Extreme weather includes events like hurricanes, floods, droughts, and heatwaves. These events become more
+            frequent and severe as the planet warms.
+        </p>
+        <p>
+            <b>- 1920-1950:</b> In the early 20th century, extreme weather events were rare. The planet was relatively
+            stable, and while there were occasional storms and floods, they were not as frequent or intense as today.
+        </p>
+        <p>
+            <b>- 1950-1980:</b> As global temperatures rose, extreme weather events began to occur more often. By the
+            1970s, scientists were noticing an increase in the frequency and intensity of storms and heatwaves.
+        </p>
+        <p>
+            <b>- 1980-2019:</b> From the 1980s to the 2010s, extreme weather events became a regular occurrence.
+            Hurricanes, floods, wildfires, and droughts intensified, causing billions of dollars in damages and
+            affecting millions of lives worldwide. These events are one of the most visible consequences of climate
+            change, and they are projected to worsen as the planet continues to warm.
+        </p>
+    </div>
+
+    <h2>Global Average Temperature Increase (°C)</h2>
+    <div class="section-container">
+        <div id="section-text">
+            <p>
+                The global average temperature is a key indicator of climate change. This column shows how much the Earth's
+                temperature has increased compared to pre-industrial levels.
+            </p>
+            <p>
+                <b>- 1920-1950:</b> For the first half of the century, temperature increases were relatively small.
+                Industrial
+                activity was growing, but it hadn’t yet reached the levels that would drastically impact the climate.
+            </p>
+            <p>
+                <b>- 1950-1980:</b> After World War II, industries boomed, and fossil fuel use increased
+                significantly. By the
+                1970s, the global temperature had increased by 0.3°C. This may seem like a small number, but for the
+                planet’s
+                delicate balance, even slight temperature changes can cause big disruptions.
+            </p>
+            <p>
+                <b>- 1980-2019:</b> From the 1980s onward, the pace of temperature increase accelerated dramatically.
+                By the
+                2010s, the global temperature had increased by 0.8°C. This steady increase is directly linked to human
+                activity,
+                particularly the burning of fossil fuels like coal, oil, and natural gas.
+            </p>
+        </div>
+
+        <div class="chart" id="temp-chart"></div>
+    </div>
+
+    <h2>CO2 Concentration (ppm)</h2>
+    <div>
+        <p>
+            CO2, or carbon dioxide, is one of the main greenhouse gases responsible for trapping heat in the Earth's
+            atmosphere. This column shows the concentration of CO2 in parts per million (ppm).
+        </p>
+        <p>
+            <b>- 1920-1950:</b> CO2 levels hovered around 305-315 ppm during the early 20th century. While industrial
+            activity was
+            increasing, CO2 emissions were not yet significant enough to cause noticeable shifts in climate patterns.
+        </p>
+        <p>
+            <b>- 1950-1980:</b> After the 1950s, CO2 levels started to climb, reaching 327 ppm by the 1970s. The
+            post-war boom in
+            industrialization and the widespread use of cars played a large role in this increase.
+        </p>
+        <p>
+            <b>- 1980-2019:</b> CO2 levels rose dramatically, reaching 400 ppm by the 2010s. The combination of
+            fossil fuel use,
+            deforestation, and industrial emissions led to this unprecedented rise, which is a major contributor to
+            the warming of the planet.
+        </p>
+        <div id="co2-chart"></div>
+    </div>
+
+    <h2>Sea Level Rise (cm)</h2>
+    <div class="section-container">
+        <div class="chart" id="sea-chart"></div>
+        <div>
+            <p>
+                Sea levels rise for two main reasons: melting ice from glaciers and ice sheets, and the expansion of seawater as
+                it warms (thermal expansion). This column shows how much sea levels have risen globally.
+            </p>
+            <p>
+                <b>- 1920-1950:</b> For the first half of the century, sea levels were relatively stable, with only a slight
+                rise of 0.2 cm by the 1930s. The changes were minimal because the Earth’s temperature hadn’t risen
+                significantly yet.
+            </p>
+            <p>
+                <b>- 1950-1980:</b> As temperatures started to rise, glaciers began to melt and oceans expanded. By the
+                1970s, the sea level had risen by about 2 cm. Though small, this rise had started to impact coastal regions.
+            </p>
+            <p>
+                <b>- 1980-2019:</b> From the 1980s onwards, the pace of sea level rise accelerated dramatically. By the
+                2010s, sea levels had risen by 8 cm compared to early 20th-century levels, leading to coastal flooding and
+                erosion in many parts of the world.
+            </p>
+        </div>
+    </div>
+
+    <div>
+        <h2>Conclusion</h2>
+        <p>
+            The past 100 years show a clear and concerning trend: the Earth is warming, CO2 levels are rising, sea levels
+            are climbing, and extreme weather events are becoming more frequent and severe. While these changes might seem
+            gradual when viewed decade by decade, the acceleration in recent years highlights the urgency of addressing
+            climate change.
+        </p>
+    </div>
+</div>
+
+<p class="highcharts-description">
+    This demo shows how to use the Highcharts Dashboards to create a blog-like
+    dashboard. It is based on a few basic components showing the temperature
+    increase, CO2 concentration, sea level rise and extreme weather events.
+    Disclaimer: all data provided by ChatGPT.
+</p>
