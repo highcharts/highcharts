@@ -7,7 +7,13 @@ let controlBar;
 let dashboard;
 
 // Whether or not to use historical data
-const useHistoricalData = true;
+const useHistoricalData = false;
+
+// TBD: Remove this as soon as the input data is fixed
+// Problems as of 5 Nov 2024:
+// - the packet timestamp is never updated
+// - real data interval does not correspond the interval given in 'hist.res
+const dataBugWorkaround = true;
 
 // Default map zoom level
 const defaultZoom = 11;
@@ -272,7 +278,7 @@ const chartComponent = {
         },
         yAxis: {
             min: 0,
-            max: 0, // Populated on update
+            // max: 0, // Populated on update
             title: {
                 text: measInfo.descr('P_gen')
             }
@@ -375,7 +381,7 @@ async function createDashboard() {
             // Get measurement history (24 hours, 10 minute intervals)
             const hist = aggData.P_hist;
             let ts = new Date(hist.start).valueOf() - tzOffset;
-            const interval = hist.res * 1000; // Resolution: seconds
+            const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
             const histLen = hist.values.length;
 
             for (let j = 0; j < histLen; j++) {
@@ -389,7 +395,10 @@ async function createDashboard() {
             }
         } else {
             // Use latest measurement
-            const ts = new Date(data.tst_iso).valueOf() - tzOffset;
+            let ts = new Date(data.tst_iso).valueOf() - tzOffset;
+            if (dataBugWorkaround) {
+                ts = new Date().valueOf() - tzOffset;
+            }
             modifiedData.push([ts, aggData.P_gen]);
         }
 
@@ -1401,7 +1410,7 @@ class MQTTConnector extends DataConnector {
                     rows.splice(0, nRowsParsed - maxRows);
                     connTable.deleteRows();
                 }
-                connTable.setRows(rows, 0);
+                connTable.setRows(rows);
             }
         }
         connector.packetCount++;
