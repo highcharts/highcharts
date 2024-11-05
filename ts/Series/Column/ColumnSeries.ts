@@ -472,7 +472,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart,
             options = series.options,
-            nullHeight = options.nullInteraction && 8 || 0,
+            nullMinSpace = options.nullInteraction && 8 || 0,
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(
@@ -614,9 +614,9 @@ class ColumnSeries extends Series {
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
                 // the middle of the chart.
-                point.isNull ? translatedThreshold - nullHeight : barY,
-                barW,
-                point.isNull ? nullHeight : barH
+                point.isNull ? translatedThreshold - nullMinSpace : barY,
+                barW || point.isNull && nullMinSpace || 0,
+                point.isNull ? nullMinSpace : barH
             );
         });
 
