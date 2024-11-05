@@ -184,9 +184,20 @@ namespace ColumnDataLabel {
         point: PiePoint,
         distance: number
     ): DataLabel.LabelPositionObject {
+
+        const halfPI = Math.PI / 2,
+            { start = 0, end = 0 } = point.shapeArgs || {};
+
+        let angle = point.angle || 0;
+
+        // If a large slice is crossing the lowest point, prefer rendering the
+        // label on either side (#22100)
+        if (distance > 0 && start < halfPI && end > halfPI) {
+            angle = angle < halfPI ? (start + halfPI) / 2 : (halfPI + end) / 2;
+        }
+
         const { center, options } = this,
             r = center[2] / 2,
-            angle = point.angle || 0,
             cosAngle = Math.cos(angle),
             sinAngle = Math.sin(angle),
             x = center[0] + cosAngle * r,
@@ -195,6 +206,7 @@ namespace ColumnDataLabel {
                 (options.slicedOffset || 0) + (options.borderWidth || 0),
                 distance / 5
             ); // #1678
+
         return {
             natural: {
                 // Initial position of the data label - it's utilized for
@@ -211,6 +223,7 @@ namespace ColumnDataLabel {
             // Center - data label overlaps the pie
             alignment: distance < 0 ? 'center' : point.half ? 'right' : 'left',
             connectorPosition: {
+                angle,
                 breakAt: { // Used in connectorShapes.fixedOffset
                     x: x + cosAngle * finalConnectorOffset,
                     y: y + sinAngle * finalConnectorOffset
@@ -388,6 +401,31 @@ namespace ColumnDataLabel {
                     distributionLength,
                     distributionLength / 5
                 );
+
+                // Uncomment this to visualize the boxes
+                /*
+                points.forEach((point): void => {
+                    const box = point.distributeBox;
+                    point.dlBox?.destroy();
+                    if (box?.pos) {
+                        point.dlBox = chart.renderer.rect(
+                            chart.plotLeft + this.center[0] + (
+                                halfIdx ?
+                                    -this.center[2] / 2 - 100 :
+                                    this.center[2] / 2
+                            ),
+                            chart.plotTop + box.pos,
+                            100,
+                            box.size
+                        )
+                            .attr({
+                                stroke: 'silver',
+                                'stroke-width': 1
+                            })
+                            .add();
+                    }
+                });
+                // */
             }
 
             // Now the used slots are sorted, fill them up sequentially
