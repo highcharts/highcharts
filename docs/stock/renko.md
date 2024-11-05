@@ -34,7 +34,7 @@ Time is not a factor in Renko charts but Highcharts allows you to use a `datetim
 
 ## Highcharts Navigator Series
 
-By default, for a brief overview of the price data, smaller Renko chart is beneath the main chart using the `navigator` feature:
+By default, for a brief overview of the price data, a smaller Renko chart is beneath the main chart using the `navigator` feature:
 
 ```javascript
 navigator: {
