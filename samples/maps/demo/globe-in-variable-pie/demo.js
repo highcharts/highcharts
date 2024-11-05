@@ -1,15 +1,15 @@
 const data = [
     // Name, Arrivals (M), Population (M)
-    { name: 'France', z: 93.2, y: 68.0 },
-    { name: 'Spain', z: 71.7, y: 47.8 },
-    { name: 'United States of America', z: 50.9, y: 333.3 },
-    { name: 'Turkey', z: 50.5, y: 85.0 },
-    { name: 'Italy', z: 49.9, y: 58.9 },
-    { name: 'Mexico', z: 38.3, y: 127.5 },
-    { name: 'United Kingdom', z: 30.7, y: 67.0 },
-    { name: 'Germany', z: 28.5, y: 83.8 },
-    { name: 'Greece', z: 27.8, y: 10.4 },
-    { name: 'Austria', z: 26.2, y: 9.0 }
+    { name: 'France', arrivals: 93.2, population: 68.0 },
+    { name: 'Spain', arrivals: 71.7, population: 47.8 },
+    { name: 'United States of America', arrivals: 50.9, population: 333.3 },
+    { name: 'Turkey', arrivals: 50.5, population: 85.0 },
+    { name: 'Italy', arrivals: 49.9, population: 58.9 },
+    { name: 'Mexico', arrivals: 38.3, population: 127.5 },
+    { name: 'United Kingdom', arrivals: 30.7, population: 67.0 },
+    { name: 'Germany', arrivals: 28.5, population: 83.8 },
+    { name: 'Greece', arrivals: 27.8, population: 10.4 },
+    { name: 'Austria', arrivals: 26.2, population: 9.0 }
 ];
 
 const getGraticule = () => {
@@ -142,15 +142,92 @@ Highcharts.getJSON(
                             this.series[1].data.find(
                                 p => p.name === countryName
                             );
-
+                    },
+                    redraw() {
+                        const chart = this;
+                        chart.renderSea?.();
                     },
                     render() {
-                        const chart = this;
+                        const chart = this,
+                            renderer = chart.renderer;
+
+                        // Responsive rules cause the render event to happen
+                        // before load event, therefore we need to create
+                        // these functions on the render event instead.
+
+                        if (!chart.renderSea) {
+                        // Render a circle filled with a radial
+                        // gradient behind the globe to make it
+                        // appear as the sea around the continents
+                            chart.renderSea = () => {
+                                let verb = 'animate';
+                                if (!chart.sea) {
+                                    chart.sea = renderer
+                                        .circle()
+                                        .attr({
+                                            fill: {
+                                                radialGradient: {
+                                                    cx: 0.4,
+                                                    cy: 0.4,
+                                                    r: 1
+                                                },
+                                                stops: [
+                                                    [0, '#fff'],
+                                                    [1, '#FCED33']
+                                                ]
+                                            },
+                                            zIndex: -1
+                                        })
+                                        .add(chart.get('graticule').group);
+                                    verb = 'attr';
+                                }
+
+                                const bounds = chart.get('graticule').bounds,
+                                    p1 = chart.mapView.projectedUnitsToPixels({
+                                        x: bounds.x1,
+                                        y: bounds.y1
+                                    }),
+                                    p2 = chart.mapView.projectedUnitsToPixels({
+                                        x: bounds.x2,
+                                        y: bounds.y2
+                                    });
+                                chart.sea[verb]({
+                                    cx: (p1.x + p2.x) / 2,
+                                    cy: (p1.y + p2.y) / 2,
+                                    r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
+                                });
+                            };
+                            chart.renderSea();
+                        }
+
+                        if (!chart.getStickyLabel) {
+                            chart.getStickyLabel = () => {
+                                const point = chart.getSelectedPoints()[0],
+                                    countryName = point.name,
+                                    text = `<b>${countryName}</b>
+                            <br/>Arrivals: <b>${point.z}M</b>
+                            <br/>Arrivals per capita:
+                            <b>${point.y}</b>`;
+
+                                if (!chart.sticky) {
+                                    chart.sticky = renderer
+                                        .label()
+                                        .css({
+                                            color: '#071436'
+                                        })
+                                        .add();
+                                }
+
+                                chart.sticky.attr({
+                                    text
+                                });
+                            };
+                        }
 
                         // Avoid rerendering while chart is rotating
-                        if (!chart.isRotating) {
-                            const renderer = chart.renderer,
-                                pieSeries = chart.series[2],
+                        if (!chart.isRotating || chart.justSelectedPoint) {
+                            chart.justSelectedPoint = false;
+                            const pieSeries = chart.series[2],
                                 [
                                     centerX, centerY, d, innerD
                                 ] = pieSeries.center,
@@ -213,8 +290,10 @@ Highcharts.getJSON(
                                 })
                                 .add(chart.customAxes);
 
-                            // Align sticky label
-                            if (chart.sticky) {
+                            if (chart.getSelectedPoints().length === 1) {
+                                chart.getStickyLabel();
+
+                                // Align sticky label
                                 chart.sticky.css({
                                     fontSize
                                 });
@@ -265,11 +344,23 @@ Highcharts.getJSON(
                             color: '#071436',
                             fontSize: '1em'
                         }
-                    }
+                    },
+                    includeInDataExport: true
                 },
                 series: {
                     animation: {
                         duration: 1000
+                    },
+                    includeInDataExport: false
+                }
+            },
+
+            exporting: {
+                csv: {
+                    columnHeaderFormatter: function (_, key) {
+                        return key === 'y' ? 'Arrivals per Capita' :
+                            key === 'z' ? 'Arrivals (M)' : 'Country';
+
                     }
                 }
             },
@@ -331,6 +422,7 @@ Highcharts.getJSON(
                             color: '#FCED33'
                         }
                     },
+                    inactiveOtherPoints: false,
                     cursor: 'pointer',
                     innerSize: '45%',
                     size: '100%',
@@ -340,8 +432,12 @@ Highcharts.getJSON(
                     zMin: 25,
                     borderRadius: 5,
                     data: data.map(pointData => ({
-                        ...pointData,
-                        y: Math.round((100 * pointData.z) / pointData.y) / 100,
+                        name: pointData.name,
+                        z: pointData.arrivals,
+                        y: Math.round(
+                            100 * pointData.arrivals /
+                            pointData.population
+                        ) / 100,
                         countryID: countries.find(
                             country => country.properties.name ===
                             pointData.name
@@ -376,34 +472,23 @@ Highcharts.getJSON(
                             },
                             select() {
                                 const point = this,
-                                    renderer = chart.renderer,
+                                    selectedPoints = chart.getSelectedPoints(),
                                     countryName = point.name,
-                                    text = `<b>${countryName}</b>
-                                    <br/>Arrivals: <b>${point.z}M</b>
-                                    <br/>Arrivals per capita:
-                                    <b>${point.y}</b>`,
                                     mapPoint =
                                             chart.findCountry(countryName);
                                 mapPoint.update({
                                     color: '#FCED33'
                                 }, false);
                                 chart.selectedCountry = countryName;
+                                chart.justSelectedPoint = true;
 
-                                // Add sticky label to show data for
-                                // currently selected point
-                                if (!chart.sticky) {
-                                    chart.sticky = renderer
-                                        .label(text)
-                                        .css({
-                                            color: '#071436',
-                                            fontSize: '1em'
-                                        })
-                                        .add();
-                                } else {
-                                    chart.sticky.attr({
-                                        text
-                                    });
-                                }
+                                // Remove previously selected points
+                                // from selectedPoints array
+                                selectedPoints.forEach(point => {
+                                    if (point.name !== countryName) {
+                                        point.select(false);
+                                    }
+                                });
 
                                 // "Reset" view to account for
                                 // manual globe rotation
@@ -441,49 +526,5 @@ Highcharts.getJSON(
                 }]
             }
         });
-
-        // Render a circle filled with a radial gradient behind the globe to
-        // make it appear as the sea around the continents
-        const renderSea = () => {
-            let verb = 'animate';
-            if (!chart.sea) {
-                chart.sea = chart.renderer
-                    .circle()
-                    .attr({
-                        fill: {
-                            radialGradient: {
-                                cx: 0.4,
-                                cy: 0.4,
-                                r: 1
-                            },
-                            stops: [
-                                [0, '#fff'],
-                                [1, '#FCED33']
-                            ]
-                        },
-                        zIndex: -1
-                    })
-                    .add(chart.get('graticule').group);
-                verb = 'attr';
-            }
-
-            const bounds = chart.get('graticule').bounds,
-                p1 = chart.mapView.projectedUnitsToPixels({
-                    x: bounds.x1,
-                    y: bounds.y1
-                }),
-                p2 = chart.mapView.projectedUnitsToPixels({
-                    x: bounds.x2,
-                    y: bounds.y2
-                });
-            chart.sea[verb]({
-                cx: (p1.x + p2.x) / 2,
-                cy: (p1.y + p2.y) / 2,
-                r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
-            });
-        };
-
-        renderSea();
-        Highcharts.addEvent(chart, 'redraw', renderSea);
     }
 );
