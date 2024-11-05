@@ -33,13 +33,7 @@ const topicMap = {
 // Options for chart
 const chartOptions = {
     chart: {
-        type: 'spline',
-        // For testing
-        events: {
-            redraw() {
-                console.log('@redraw');
-            }
-        }
+        type: 'spline'
     },
     legend: {
         enabled: false
@@ -317,18 +311,6 @@ function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
 }
 
-/* *
- *
- * MQTT connector class - a custom DataConnector,
- * interfacing with the Paho MQTT client library.
- *
- *
- * Paho MQTT client documentation
- *
- * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
- *
- */
-
 let MQTTClient;
 try {
     // eslint-disable-next-line no-undef
@@ -355,7 +337,7 @@ const connectorTable = {};
 
 class MQTTConnector extends DataConnector {
     /**
-     * Creates an instance of the MQTTConnector.
+     * Creates an instance of the MQTTConnector, including the MQTT client.
      *
      */
     constructor(options) {
@@ -363,13 +345,13 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
+        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
         this.connected = false;
-        console.dir(this.options);
 
         // Connection status
         this.packetCount = 0;
@@ -389,7 +371,8 @@ class MQTTConnector extends DataConnector {
                 host, port
             } = connector.options;
 
-        // Start MQTT client
+
+        // Create MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientId);
         this.mqtt.onConnectionLost = this.onConnectionLost;
         this.mqtt.onMessageArrived = this.onMessageArrived;
@@ -402,8 +385,8 @@ class MQTTConnector extends DataConnector {
      * */
 
     /**
-     * Creates the MQTT client and initiates the connection
-     * if autoConnect is set to true.
+     * Initiates the connection if autoConnect is set to true and
+     * not already connected.
      *
      */
     async load() {
@@ -592,7 +575,7 @@ class MQTTConnector extends DataConnector {
                     rows.splice(0, nRowsParsed - maxRows);
                     connTable.deleteRows();
                 }
-                connTable.setRows(rows, 0);
+                connTable.setRows(rows);
             }
         }
         connector.packetCount++;

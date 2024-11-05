@@ -262,13 +262,7 @@ const chartComponent = {
     chartOptions: {
         ...commonChartOptions,
         chart: {
-            type: 'spline',
-            // For testing
-            events: {
-                redraw() {
-                    console.log('@redraw');
-                }
-            }
+            type: 'spline'
         },
         credits: {
             enabled: false
