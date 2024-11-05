@@ -472,6 +472,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart,
             options = series.options,
+            nullHeight = options.nullInteraction && 8 || 0,
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(
@@ -613,9 +614,9 @@ class ColumnSeries extends Series {
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
                 // the middle of the chart.
-                point.isNull ? translatedThreshold : barY,
+                point.isNull ? translatedThreshold - nullHeight : barY,
                 barW,
-                point.isNull ? 0 : barH
+                point.isNull ? nullHeight : barH
             );
         });
 
@@ -667,7 +668,9 @@ class ColumnSeries extends Series {
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            opacity = pick(point && point.opacity, options.opacity, 1);
+            opacity = (point?.isNull && this.options.nullInteraction) ?
+                0 :
+                pick(point && point.opacity, options.opacity, 1);
 
         // Handle zone colors
         if (point && this.zones.length) {

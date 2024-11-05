@@ -2747,10 +2747,6 @@ class Series {
                             )
                             .add(markerGroup);
 
-                        if (isNull) {
-                            point.graphic.attr({ visibility: 'hidden' });
-                        }
-
                         // Sliding animation for new points
                         if (
                             series.enabledDataSorting &&
@@ -2926,7 +2922,7 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity = 1;
+            opacity = (point?.isNull && this.options.nullInteraction) ? 0 : 1;
 
         color = (
             pointColorOption ||
