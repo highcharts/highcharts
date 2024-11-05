@@ -363,7 +363,6 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
-        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
@@ -371,6 +370,7 @@ class MQTTConnector extends DataConnector {
         this.options = mergedOptions;
         this.connected = false;
         console.dir(this.options);
+
         // Connection status
         this.packetCount = 0;
 
@@ -388,7 +388,6 @@ class MQTTConnector extends DataConnector {
             {
                 host, port
             } = connector.options;
-
 
         // Start MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientId);
