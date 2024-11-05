@@ -2646,6 +2646,7 @@ class Series {
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
+            nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
@@ -2676,12 +2677,16 @@ class Series {
                 verb = graphic ? 'animate' : 'attr';
                 pointMarkerOptions = point.marker || {};
                 hasPointMarker = !!point.marker;
-                const shouldDrawMarker = (
-                    (
-                        globallyEnabled &&
+                const isNull = point.isNull,
+                    shouldDrawMarker = (
+                        (
+                            globallyEnabled &&
                         typeof pointMarkerOptions.enabled === 'undefined'
-                    ) || pointMarkerOptions.enabled
-                ) && !point.isNull && point.visible !== false;
+                        ) || pointMarkerOptions.enabled
+                    ) && (
+                        !isNull ||
+                    nullInteraction
+                    ) && point.visible !== false;
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
@@ -2741,6 +2746,11 @@ class Series {
                                     seriesMarkerOptions
                             )
                             .add(markerGroup);
+
+                        if (isNull) {
+                            point.graphic.attr({ visibility: 'hidden' });
+                        }
+
                         // Sliding animation for new points
                         if (
                             series.enabledDataSorting &&

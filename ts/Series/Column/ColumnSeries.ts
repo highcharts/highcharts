@@ -737,6 +737,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = this.chart,
             options = series.options,
+            nullInteraction = options.nullInteraction,
             renderer = chart.renderer,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
@@ -749,7 +750,7 @@ class ColumnSeries extends Series {
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
-            if (isNumber(plotY) && point.y !== null) {
+            if (isNumber(plotY) && (point.y !== null || nullInteraction)) {
                 shapeArgs = point.shapeArgs;
 
                 // When updating a series between 2d and 3d or cartesian and
