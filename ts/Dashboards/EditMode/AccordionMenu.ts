@@ -103,7 +103,8 @@ class AccordionMenu {
         let content: HTMLElement;
 
         this.component = component;
-        this.oldOptionsBuffer = merge({}, component.options);
+
+        this.oldOptionsBuffer = component.getEditableOptions();
 
         if (editMode) {
             this.confirmationPopup = new ConfirmationPopup(
@@ -135,7 +136,6 @@ class AccordionMenu {
                     options
                 )
             ).content;
-
             this.renderAccordion(options, content, component);
         }
 
