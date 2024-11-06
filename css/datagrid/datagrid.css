@@ -167,11 +167,6 @@
     border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-resized .highcharts-datagrid-column-resizer::after {
-    border-left: 2px solid var(--highcharts-highlight-color-60);
-    border-right: 2px solid var(--highcharts-highlight-color-60);
-}
-
 /* Sorting */
 .highcharts-datagrid-table thead th.highcharts-datagrid-column-sortable {
     cursor: pointer;
