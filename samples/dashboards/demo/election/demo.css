@@ -20,6 +20,8 @@
     --container-background: var(--highcharts-neutral-color-10);
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
+    --color-axis: #333;
+    --color-axis-labels: #333;
 
     /* Components */
     --color-title: #000;
@@ -54,8 +56,6 @@ body {
 }
 
 #election-chart-historical {
-    --color-axis: #333;
-    --color-axis-labels: #333;
     --color-title: #2f2b38;
     --color-text: #2f2b38;
     --color-tooltip-background: #5352be;
@@ -502,6 +502,9 @@ text.highcharts-data-label {
     text-indent: -9999px;
 }
 
+#election-chart-year .highcharts-axis-labels {
+    color: var(--color-axis-labels);
+}
 
 #election-chart-historical .highcharts-title,
 #election-chart-year .highcharts-title {
@@ -580,7 +583,7 @@ text.highcharts-data-label {
 
 /* *
  *
- *  Selection Grid
+ *  Election Grid
  *
  * */
 
