@@ -75,7 +75,12 @@ async function resolveExternals(info) {
     if (masterName === name) {
         return void 0;
     }
-    console.log(masterName, path);
+
+    // Quick exit on standalone
+    if (masterName.startsWith('standalone')) {
+        return void 0;
+    }
+
     // Check for product-specific additions
     switch (path) {
         case 'Core/Axis/Color/ColorAxis':
@@ -124,8 +129,17 @@ async function resolveExternals(info) {
             }
             break;
         case 'Stock/Navigator/Navigator':
-        case 'Stock/RangeSelector/RangeSelector':
         case 'Stock/Scrollbar/Scrollbar':
+            if (
+                masterName !== 'accessibility' &&
+                masterName !== 'gantt' &&
+                masterName !== 'navigator' &&
+                masterName !== 'stock'
+            ) {
+                return createUMDConfig(name);
+            }
+            break;
+        case 'Stock/RangeSelector/RangeSelector':
             if (
                 masterName !== 'accessibility' &&
                 masterName !== 'gantt' &&
