@@ -396,7 +396,7 @@ class ChartAdditions {
                 { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
                 { color: point.color || oldSeries.color },
             levelNumber = oldSeries.options._levelNumber || 0,
-            pointIndex = oldSeries.points.indexOf(point);
+            pointIndex = oldSeries.data.indexOf(point);
 
         if (!chart.drilldownLevels) {
             chart.drilldownLevels = [];
