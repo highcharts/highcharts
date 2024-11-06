@@ -621,6 +621,25 @@ QUnit.test('Series.update and setData', function (assert) {
         true,
         'Custom property should be available in options after update (#11244)'
     );
+
+    chart.series[0].update({
+        keys: ['x', 'name', 'y'],
+        data: [
+            [0, 'First', 20]
+        ]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        20,
+        'The point value should be updated when using keys'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].name,
+        'First',
+        'The point name should be updated when using keys'
+    );
 });
 
 QUnit.test(
