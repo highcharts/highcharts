@@ -842,17 +842,17 @@ async function onStateClicked(board, state) {
     const stateTitle = state === 'US' ? 'National' : stateName;
     const yearSelector = document.getElementById('election-year');
 
-    // Update chart title
-    const comp = board.getComponentByCellId('election-chart-historical');
-    const barComponent = board.getComponentByCellId('election-chart-year');
+    // Update chart titles
+    const histComp = board.getComponentByCellId('election-chart-historical');
+    const elYearComp = board.getComponentByCellId('election-chart-year');
 
-    // Election data for current state
+    // Election data for currently selected state
     const stateSeries = getHistoricalElectionSeries(state);
     const yearStateSeries = getHistoricalElectionSeries(
         state, yearSelector.value
     );
 
-    await comp.update({
+    await histComp.update({
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">Historic</span>' +
@@ -862,7 +862,7 @@ async function onStateClicked(board, state) {
         }
     });
 
-    await barComponent.update({
+    await elYearComp.update({
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">' + yearSelector.value +
@@ -879,7 +879,7 @@ async function onYearClicked(board, year) {
     // Dashboards components
     const mapComponent = board.getComponentByCellId('election-map');
     const gridComponent = board.getComponentByCellId('election-grid');
-    const barComponent = board.getComponentByCellId('election-chart-year');
+    const elYearComp = board.getComponentByCellId('election-chart-year');
 
     // Get election data
     const electionTable = await getElectionTable(board, year);
@@ -898,7 +898,7 @@ async function onYearClicked(board, year) {
     updateGridComponent(gridComponent, year);
 
     // Update national bar chart
-    updateBarComponent(barComponent, year);
+    updateBarComponent(elYearComp, year);
 }
 
 
