@@ -408,8 +408,8 @@ class WordcloudSeries extends ColumnSeries {
         if (group && zoomBox) {
             scale += zoomBox.scale - 1;
 
-            const newWidth = seriesWidth * scale,
-                newHeight = seriesHeight * scale,
+            const newWidth = Math.max(seriesWidth * scale, width),
+                newHeight = Math.max(seriesHeight * scale, height),
                 newMiddleX = x + newWidth / 2,
                 newMiddleY = y + newHeight / 2,
                 scaleDiff = scale - (group.scaleX || 1);
