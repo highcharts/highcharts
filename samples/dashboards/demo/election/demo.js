@@ -178,7 +178,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            renderTo: 'election-chart-national',
+            renderTo: 'election-chart-year',
             type: 'Highcharts',
             title: {
                 text: 'Historical ' + commonTitle + 's'
@@ -249,7 +249,7 @@ async function setupDashboard() {
                 }
             }
         }, {
-            renderTo: 'election-chart',
+            renderTo: 'election-chart-historical',
             type: 'Highcharts',
             chartOptions: {
                 title: {
@@ -843,8 +843,8 @@ async function onStateClicked(board, state) {
     const yearSelector = document.getElementById('election-year');
 
     // Update chart title
-    const comp = board.getComponentByCellId('election-chart');
-    const barComponent = board.getComponentByCellId('election-chart-national');
+    const comp = board.getComponentByCellId('election-chart-historical');
+    const barComponent = board.getComponentByCellId('election-chart-year');
 
     // Election data for current state
     const stateSeries = getHistoricalElectionSeries(state);
@@ -879,7 +879,7 @@ async function onYearClicked(board, year) {
     // Dashboards components
     const mapComponent = board.getComponentByCellId('election-map');
     const gridComponent = board.getComponentByCellId('election-grid');
-    const barComponent = board.getComponentByCellId('election-chart-national');
+    const barComponent = board.getComponentByCellId('election-chart-year');
 
     // Get election data
     const electionTable = await getElectionTable(board, year);

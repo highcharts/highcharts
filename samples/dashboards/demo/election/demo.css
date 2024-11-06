@@ -53,7 +53,7 @@ body {
     --color-tooltip-text: #336;
 }
 
-#election-chart {
+#election-chart-historical {
     --color-axis: #333;
     --color-axis-labels: #333;
     --color-title: #2f2b38;
@@ -90,7 +90,7 @@ body {
         --color-hover-background: #252052;
     }
 
-    #election-chart {
+    #election-chart-historical {
         --color-axis: #ccc;
         --color-axis-labels: #ccc;
         --color-title: #dadae2;
@@ -106,8 +106,8 @@ body {
         color: #f2f1f4;
     }
 
-    #election-chart .highcharts-column-series path.highcharts-point,
-    #election-chart-national .highcharts-bar-series path.highcharts-point {
+    #election-chart-historical .highcharts-column-series path.highcharts-point,
+    #election-chart-year .highcharts-bar-series path.highcharts-point {
         stroke: none;
     }
 }
@@ -505,47 +505,47 @@ text.highcharts-data-label {
  *
  * */
 
-#election-chart-national,
-#election-chart {
+#election-chart-year,
+#election-chart-historical {
     min-height: 200px;
 }
 
-#election-chart-national h2 {
+#election-chart-year h2 {
     text-indent: -9999px;
 }
 
-#election-chart .highcharts-title,
-#election-chart-national .highcharts-title {
+#election-chart-historical .highcharts-title,
+#election-chart-year .highcharts-title {
     color: #000;
     font-size: 1.2em;
     text-transform: capitalize;
     font-weight: normal;
 }
 
-#election-chart .highcharts-axis {
+#election-chart-historical .highcharts-axis {
     fill: var(--color-axis);
 }
 
-#election-chart .highcharts-axis-line,
-#election-chart .highcharts-tick {
+#election-chart-historical .highcharts-axis-line,
+#election-chart-historical .highcharts-tick {
     stroke: var(--color-axis);
 }
 
-#election-chart .highcharts-axis-labels,
-#election-chart .highcharts-axis-title {
+#election-chart-historical .highcharts-axis-labels,
+#election-chart-historical .highcharts-axis-title {
     fill: var(--color-axis-labels);
 }
 
-#election-chart .highcharts-tooltip {
+#election-chart-historical .highcharts-tooltip {
     fill: none;
     filter: none;
     stroke: none;
 }
 
-#election-chart .highcharts-yaxis-grid .highcharts-grid-line,
-#election-chart-national .highcharts-yaxis-grid .highcharts-grid-line,
-#election-chart .highcharts-axis-line,
-#election-chart-national .highcharts-axis-line {
+#election-chart-historical .highcharts-yaxis-grid .highcharts-grid-line,
+#election-chart-year .highcharts-yaxis-grid .highcharts-grid-line,
+#election-chart-historical .highcharts-axis-line,
+#election-chart-year .highcharts-axis-line {
     stroke-width: 0;
 }
 
@@ -557,7 +557,7 @@ text.highcharts-data-label {
     margin-right: 5px;
 }
 
-#election-chart .highcharts-tooltip-box {
+#election-chart-historical .highcharts-tooltip-box {
     fill: var(--highcharts-neutral-color-10);
     fill-opacity: 1;
     stroke: none;
@@ -567,22 +567,22 @@ text.highcharts-data-label {
     fill: var(--color-text);
 }
 
-#election-chart-national .highcharts-axis-line {
+#election-chart-year .highcharts-axis-line {
     stroke-width: 0;
 }
 
-#election-chart-national .highcharts-data-label {
+#election-chart-year .highcharts-data-label {
     color: #fff;
     font-size: 1em;
 }
 
-#election-chart-national .highcharts-axis-labels {
+#election-chart-year .highcharts-axis-labels {
     font-size: 1.3em;
     font-weight: bold;
 }
 
-#election-chart .highcharts-data-label text,
-#election-chart text.highcharts-data-label {
+#election-chart-historical .highcharts-data-label text,
+#election-chart-historical text.highcharts-data-label {
     paint-order: stroke;
     stroke-width: 2px;
     fill: #000;
@@ -641,7 +641,7 @@ text.highcharts-data-label {
     #html-result,
     #html-control,
     #election-map,
-    #election-chart,
+    #election-chart-historical,
     #election-charts {
         flex: 1 1 50%;
     }
@@ -668,7 +668,7 @@ text.highcharts-data-label {
     #html-result,
     #html-control,
     #election-map,
-    #election-chart,
+    #election-chart-historical,
     #election-grid,
     #election-charts,
     #elections-selector-wrapper select {
@@ -706,7 +706,7 @@ text.highcharts-data-label {
         height: 600px;
     }
 
-    #election-chart-national h2 {
+    #election-chart-year h2 {
         display: none;
     }
 }
@@ -716,7 +716,7 @@ text.highcharts-data-label {
     #html-result,
     #html-control,
     #election-map,
-    #election-chart,
+    #election-chart-historical,
     #election-grid {
         flex: unset;
         width: 100%;
@@ -759,14 +759,14 @@ text.highcharts-data-label {
         padding-left: 3px;
     }
 
-    #election-chart-national .datalabels-wrapper {
+    #election-chart-year .datalabels-wrapper {
         font-size: 0.75em;
         display: inline-block;
         white-space: normal;
         width: 100px;
     }
 
-    #election-chart-national .highcharts-axis-labels {
+    #election-chart-year .highcharts-axis-labels {
         font-size: 0.9em;
     }
 
