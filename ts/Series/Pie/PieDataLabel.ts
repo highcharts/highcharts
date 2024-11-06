@@ -190,10 +190,22 @@ namespace ColumnDataLabel {
 
         let angle = point.angle || 0;
 
-        // If a large slice is crossing the lowest point, prefer rendering the
-        // label on either side (#22100)
-        if (distance > 0 && start < halfPI && end > halfPI) {
-            angle = angle <= halfPI ? (start + halfPI) / 2 : (halfPI + end) / 2;
+        // If a large slice is crossing the lowest point, prefer rendering it 45
+        // degrees out at either lower right or lower left. That's where there's
+        // most likely to be space available and avoid text being truncated
+        // (#22100). Technically this logic should also apply to the top point,
+        // but that is more of an edge case since the default start angle is at
+        // the top.
+        if (
+            distance > 0 &&
+            // Crossing the bottom
+            start < halfPI && end > halfPI &&
+            // Angle within the bottom quadrant
+            angle > halfPI / 2 && angle < halfPI * 1.5
+        ) {
+            angle = angle <= halfPI ?
+                Math.max(halfPI / 2, (start + halfPI) / 2) :
+                Math.min(halfPI * 1.5, (halfPI + end) / 2);
         }
 
         const { center, options } = this,

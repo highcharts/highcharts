@@ -293,7 +293,11 @@ extend(PiePoint.prototype, {
             connectorPosition: DataLabel.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-            const { angle = 0, breakAt, touchingSliceAt } = connectorPosition,
+            const {
+                    angle = this.angle || 0,
+                    breakAt,
+                    touchingSliceAt
+                } = connectorPosition,
                 { series } = this,
                 [cx, cy, diameter] = series.center,
                 r = diameter / 2,
@@ -316,9 +320,7 @@ extend(PiePoint.prototype, {
             // intersection between the radial line in the middle of the slice,
             // and the extension of the label position.
             } else {
-                crookX = cx + (cy - y) * Math.tan(
-                    angle - Math.PI / 2
-                );
+                crookX = cx + (cy - y) * Math.tan(angle - Math.PI / 2);
             }
 
             const path: SVGPath = [['M', x, y]];
