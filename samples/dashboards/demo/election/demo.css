@@ -90,13 +90,6 @@ body {
         --color-hover-background: #252052;
     }
 
-    #election-chart-historical {
-        --color-axis: #ccc;
-        --color-axis-labels: #ccc;
-        --color-title: #dadae2;
-        --color-text: #dadae2;
-    }
-
     #elections-selector-wrapper select {
         color: #f2f1f4;
         background-color: var(--component-background-optional);
@@ -104,11 +97,6 @@ body {
 
     #html-control-div {
         color: #f2f1f4;
-    }
-
-    #election-chart-historical .highcharts-column-series path.highcharts-point,
-    #election-chart-year .highcharts-bar-series path.highcharts-point {
-        stroke: none;
     }
 }
 
@@ -513,6 +501,7 @@ text.highcharts-data-label {
 #election-chart-year h2 {
     text-indent: -9999px;
 }
+
 
 #election-chart-historical .highcharts-title,
 #election-chart-year .highcharts-title {
