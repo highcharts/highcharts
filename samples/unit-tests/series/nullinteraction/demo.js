@@ -18,6 +18,10 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
             }]
         }),
         tt = chart.tooltip,
+        refreshTT = () => tt.refresh([
+            chart.series[0].points[0],
+            chart.series[1].points[0]
+        ]),
         series = chart.series,
         seriesTypes = [
             'bar',
@@ -45,7 +49,7 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
 
     do {
         tt.refresh(chart.series[0].points[0]);
-        console.log(tt);
+
         assert.strictEqual(
             tt.label.text.textStr.includes('Null'),
             true,
@@ -63,12 +67,13 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
                     shared: true
                 }
             });
-            tt.refresh([chart.series[0].points[0], chart.series[1].points[0]]);
+
+            refreshTT();
             testAggregatedMode('Shared', tt.label.text.textStr);
 
             chart.update({ tooltip: { shared: false, split: true } });
 
-            tt.refresh([chart.series[0].points[0], chart.series[1].points[0]]);
+            refreshTT();
             testAggregatedMode('Split', tt.label.element.textContent);
 
             chart.update({ tooltip: { split: false } });
