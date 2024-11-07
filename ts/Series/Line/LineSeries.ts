@@ -379,6 +379,20 @@ export default LineSeries;
  * */
 
 /**
+ * Whether or not data-points with the value of `null` should be interactive.
+ * When this is set to `true`, tooltips may highlight these points, and this
+ * option also enables keyboard navigation for such points. Formatting options
+ * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter)
+ *
+ * @sample {highcharts} highcharts/series/null-interaction/
+ *         Chart with interactive `null` points
+ *
+ * @extends   plotOptions.series
+ * @product   highcharts highstock
+ * @apioption plotOptions.nullInteraction
+ */
+
+/**
  * A line series displays information as a series of data points connected by
  * straight line segments.
  *
@@ -388,7 +402,7 @@ export default LineSeries;
  *         Line chart
  *
  * @extends   plotOptions.series
- * @product   highcharts highstock
+ * @product   highcharts
  * @apioption plotOptions.line
  */
 
