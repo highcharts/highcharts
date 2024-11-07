@@ -58,9 +58,10 @@ export interface LoadingOptions {
 
 export interface NumberFormatterCallbackFunction {
     (
+        this: Chart|Object|void,
         number: number,
         decimals: number,
-        decimalPoint?: string|Chart,
+        decimalPoint?: string,
         thousandsSep?: string
     ): string;
 }

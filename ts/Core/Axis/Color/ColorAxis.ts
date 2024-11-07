@@ -765,17 +765,13 @@ class ColorAxis extends Axis implements AxisLike {
                     name = '> ';
                 }
                 if (typeof from !== 'undefined') {
-                    name += numberFormatter(
-                        from, valueDecimals, chart
-                    ) + valueSuffix;
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
                 if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
                 if (typeof to !== 'undefined') {
-                    name += numberFormatter(
-                        to, valueDecimals, chart
-                    ) + valueSuffix;
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend<ColorAxis.LegendItemObject>(

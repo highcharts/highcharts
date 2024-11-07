@@ -415,9 +415,10 @@ function format(str = '', ctx: any, chart?: Chart): string {
  *         The formatted number.
  */
 function numberFormat(
+    this: Chart|Object|void,
     number: number,
     decimals: number,
-    decimalPoint?: string|Chart,
+    decimalPoint?: string,
     thousandsSep?: string
 ): string {
     number = +number || 0;
@@ -426,8 +427,7 @@ function numberFormat(
     let ret,
         fractionDigits;
 
-    const chart = isObject(decimalPoint) ? decimalPoint : void 0,
-        lang = chart?.options.lang || defaultOptions.lang,
+    const lang = (this as Chart)?.options?.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         exponent = number.toString().split('e'),
         firstDecimals = decimals;

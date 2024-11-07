@@ -159,10 +159,9 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
             )
         ): string {
             const chart = this.series.chart,
-                { numberFormatter } = chart,
                 { value } = this.point as PackedBubblePoint;
 
-            return isNumber(value) ? numberFormatter(value, -1, chart) : '';
+            return isNumber(value) ? chart.numberFormatter(value, -1) : '';
         },
 
         /**

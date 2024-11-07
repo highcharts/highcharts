@@ -3225,10 +3225,7 @@ namespace AxisDefaults {
              * @product highcharts
              */
             formatter: function (this: StackItem): string {
-                const chart = this.axis.chart,
-                    { numberFormatter } = chart;
-                /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total || 0, -1, chart);
+                return this.axis.chart.numberFormatter(this.total || 0, -1);
             },
 
             /**

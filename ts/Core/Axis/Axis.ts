@@ -695,18 +695,17 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(
-                        value / multi, -1, chart
-                    ) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1, chart);
+                ret = numberFormatter(value, -1);
             } else { // Small numbers
-                ret = numberFormatter(value, -1, chart, ''); // #2466
+                ret = numberFormatter(value, -1, void 0, ''); // #2466
             }
         }
 

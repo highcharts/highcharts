@@ -530,11 +530,10 @@ class BubbleLegendItem {
         const options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
-        const { numberFormatter } = this.chart;
 
         return format ? F.format(format, range) :
             formatter ? formatter.call(range) :
-                numberFormatter(range.value, 1, this.chart);
+                this.chart.numberFormatter(range.value, 1);
     }
 
     /**

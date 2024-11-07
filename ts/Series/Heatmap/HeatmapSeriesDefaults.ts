@@ -150,10 +150,9 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     dataLabels: {
         formatter: function (): string { // #2945
             const chart = this.series.chart,
-                { numberFormatter } = chart,
                 { value } = this.point as HeatmapPoint;
 
-            return isNumber(value) ? numberFormatter(value, -1, chart) : '';
+            return isNumber(value) ? chart.numberFormatter(value, -1) : '';
         },
         inside: true,
         verticalAlign: 'middle',
