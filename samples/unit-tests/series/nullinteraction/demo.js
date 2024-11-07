@@ -6,7 +6,8 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
             // Timeline does not use nullFormat but set it here so we only have
             // to do it once.
             tooltip: {
-                nullFormat: '<span>Null</span>'
+                nullFormat: '<span>Null</span>',
+                hideDelay: 500000
             },
             series: [{
                 data: [null],
@@ -19,15 +20,13 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
         tt = chart.tooltip,
         series = chart.series,
         seriesTypes = [
+            'bar',
             'column',
             'line'
         ],
-        p1 = series[0].points[0],
-        p2 = series[1].points[0],
         // 'Aggregated modes' are 'split' or 'shared', i.e. when tt is
         // constructedfrom multiple sources
         testAggregatedMode = (mode, ttContentStr) => {
-            tt.refresh([p1, p2]);
 
             assert.strictEqual(
                 tt.len,
@@ -45,8 +44,8 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
     let seriesIndex = seriesTypes.length - 1;
 
     do {
-        tt.refresh(p1);
-
+        tt.refresh(chart.series[0].points[0]);
+        console.log(tt);
         assert.strictEqual(
             tt.label.text.textStr.includes('Null'),
             true,
@@ -55,7 +54,7 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
 
         // Only run extended tests for line/column, since timeline does not
         // support shared/split
-        if (seriesIndex < 1) {
+        if (seriesIndex < 3) {
             chart.update({
                 chart: {
                     type: seriesTypes[seriesIndex]
@@ -64,12 +63,15 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
                     shared: true
                 }
             });
-
+            tt.refresh([chart.series[0].points[0], chart.series[1].points[0]]);
             testAggregatedMode('Shared', tt.label.text.textStr);
 
             chart.update({ tooltip: { shared: false, split: true } });
 
+            tt.refresh([chart.series[0].points[0], chart.series[1].points[0]]);
             testAggregatedMode('Split', tt.label.element.textContent);
+
+            chart.update({ tooltip: { split: false } });
         }
 
         chart.update({ chart: { type: seriesTypes[--seriesIndex] } });
