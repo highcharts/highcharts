@@ -130,9 +130,6 @@
     overflow: hidden;
     border: none;
     background-color: transparent;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
     text-overflow: ellipsis;
     padding-left: 3px;
     -webkit-user-select: none; /* Safari */
@@ -140,7 +137,14 @@
     user-select: none; /* Standard syntax */
 }
 
-.highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content:hover {
+.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content {
+    color: var(--highcharts-neutral-color-100);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content:hover {
     background-color: transparent;
 }
 
