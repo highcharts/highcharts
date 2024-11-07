@@ -6,10 +6,13 @@
 let controlBar;
 let dashboard;
 
-// Whether or not to use historical data
+// Whether to replace the entire data table with buffered from
+// the MQTT packet or accumulate the newest data into the table.
+// When using buffered data, the table will be filled already on
+// the first packet.
 const useHistoricalData = false;
 
-// TBD: Remove this as soon as the input data is fixed
+// TBD: Remove this as soon as issues in the input data are fixed
 // Problems as of 5 Nov 2024:
 // - the packet timestamp is never updated
 // - real data interval does not correspond the interval given in 'hist.res
@@ -33,7 +36,7 @@ const activeItem = {
 };
 let discoveryConnector;
 
-// MQTT configuration for Sognekraft AS broker
+// Configuration for Sognekraft MQTT broker
 const mqttLinkConfig = {
     host: 'mqtt.sognekraft.no',
     port: 8083,
@@ -388,10 +391,12 @@ async function createDashboard() {
                 ts += interval;
             }
         } else {
-            // Use latest measurement
-            let ts = new Date(data.tst_iso).valueOf() - tzOffset;
+            // Use latest measurement only
+            let ts;
             if (dataBugWorkaround) {
                 ts = new Date().valueOf() - tzOffset;
+            } else {
+                ts = aggData.ts_iso;
             }
             modifiedData.push([ts, aggData.P_gen]);
         }
@@ -438,7 +443,7 @@ async function createDashboard() {
                 autoConnect: true,
                 autoSubscribe: true,
                 autoReset: true, // Clear data table on subscribe
-                maxRows: 10, // Maximum number of rows in the data table
+                maxRows: 24, // Maximum number of rows in the data table
 
                 columnNames: ['time', 'power'],
                 beforeParse: data => dataParser(data),
