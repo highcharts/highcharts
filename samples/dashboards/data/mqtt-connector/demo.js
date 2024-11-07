@@ -72,7 +72,7 @@ const dataGridOptions = {
         },
         cells: {
             formatter: function () {
-                return Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
+                return Highcharts.dateFormat('%H:%M:%S', this.value);
             }
         }
     }, {
