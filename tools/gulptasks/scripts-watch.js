@@ -7,6 +7,26 @@ const gulp = require('gulp');
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+/**
+ * Logs modified status depending on file path.
+ *
+ * @param {string} filePath
+ * File path to consider.
+ */
+function logFileStatus(filePath) {
+    const logLib = require('../libs/log');
+
+    if (!filePath.includes('masters')) {
+        logLib.warn('Modified', filePath);
+    }
+}
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -40,7 +60,7 @@ async function task() {
     let cssHash;
 
     gulp
-        .watch(watchGlobs, { queue: true }, done => {
+        .watch(watchGlobs, { queue: true }, async () => {
 
             const buildTasks = [];
             const newCodeHash = (
@@ -71,15 +91,15 @@ async function task() {
 
             if (buildTasks.length === 0) {
                 logLib.success('No significant changes found.');
-                done();
                 return;
             }
 
-            gulp.series(...buildTasks)(done);
+            await gulp.series(...buildTasks)();
+
         })
-        .on('add', filePath => logLib.warn('Modified', filePath))
-        .on('change', filePath => logLib.warn('Modified', filePath))
-        .on('unlink', filePath => logLib.warn('Modified', filePath))
+        .on('add', logFileStatus)
+        .on('change', logFileStatus)
+        .on('unlink', logFileStatus)
         .on('error', logLib.failure);
 
     logLib.warn('Watching [', watchGlobs.join(', '), '] ...');
