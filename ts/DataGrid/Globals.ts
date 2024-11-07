@@ -80,7 +80,6 @@ namespace Globals {
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         headerCell: classNamePrefix + 'header-cell',
         headerCellContent: classNamePrefix + 'header-cell-content',
-        headerCellResized: classNamePrefix + 'header-cell-resized',
         headerRow: classNamePrefix + 'head-row-content',
         noData: classNamePrefix + 'no-data',
         columnFirst: classNamePrefix + 'column-first',
