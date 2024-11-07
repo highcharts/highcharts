@@ -128,11 +128,20 @@
     width: 100%;
     display: block;
     overflow: hidden;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
     text-overflow: ellipsis;
     padding-left: 3px;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
+}
+
+.highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content:hover {
+    background-color: transparent;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
