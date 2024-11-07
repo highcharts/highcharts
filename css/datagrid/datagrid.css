@@ -128,8 +128,6 @@
     width: 100%;
     display: block;
     overflow: hidden;
-    border: none;
-    background-color: transparent;
     text-overflow: ellipsis;
     padding-left: 3px;
     -webkit-user-select: none; /* Safari */
@@ -138,6 +136,8 @@
 }
 
 .highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content {
+    border: none;
+    background-color: transparent;
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
     font-weight: bold;
