@@ -245,10 +245,11 @@ class BubbleSeries extends ScatterSeries {
             formatter: function (
                 this: Point.PointLabelObject
             ): string { // #2945
-                const { numberFormatter } = this.series.chart;
                 const { z } = (this.point as BubblePoint);
 
-                return isNumber(z) ? numberFormatter(z, -1) : '';
+                return isNumber(z) ?
+                    this.series.chart.numberFormatter(z, -1) :
+                    '';
             },
             inside: true,
             verticalAlign: 'middle'

@@ -695,9 +695,8 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(
-                        value / multi, -1
-                    ) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }

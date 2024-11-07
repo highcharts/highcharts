@@ -63,11 +63,11 @@ const MapSeriesDefaults: MapSeriesOptions = {
     dataLabels: {
         crop: false,
         formatter: function (): string { // #2945
-            const { numberFormatter } = this.series.chart;
-            const { value } = this.point as MapPoint;
+            const chart = this.series.chart,
+                { name, value } = this.point as MapPoint;
             return isNumber(value) ?
-                numberFormatter(value, -1) :
-                this.point.name; // #20231
+                chart.numberFormatter(value, -1) :
+                name; // #20231
         },
         inside: true, // For the color
         overflow: false as any,

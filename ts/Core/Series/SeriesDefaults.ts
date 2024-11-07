@@ -1807,9 +1807,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
         formatter: function (this: Point.PointLabelObject): string {
-            const { numberFormatter } = this.series.chart;
             return typeof this.y !== 'number' ?
-                '' : numberFormatter(this.y, -1);
+                '' : this.series.chart.numberFormatter(this.y, -1);
         },
 
         /**

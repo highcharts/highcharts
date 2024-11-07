@@ -228,14 +228,16 @@ namespace DataModifyComposition {
      */
     function tooltipFormatter(this: Point, pointFormat: string): string {
         const point: any = this,
-            { numberFormatter } = point.series.chart,
+            chart = point.series.chart,
+            { numberFormatter } = chart,
             replace = function (value: string): void {
                 pointFormat = pointFormat.replace(
                     '{point.' + value + '}',
                     (point[value] > 0 && value === 'change' ? '+' : '') +
                         numberFormatter(
                             point[value],
-                            pick(point.series.tooltipOptions.changeDecimals, 2)
+                            pick(point.series.tooltipOptions.changeDecimals, 2),
+                            chart
                         )
                 );
             };
