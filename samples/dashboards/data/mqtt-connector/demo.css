@@ -14,7 +14,7 @@
 
 /**
  *
- *  Layout
+ *  Dashboards/Datagrid specific
  *
  **/
 
@@ -31,15 +31,10 @@
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
     position: relative;
-    margin: 10px;
-    padding: 10px;
+    margin: 5px;
+    padding: 5px;
 }
 
-/**
- *
- *  Dashboards/Datagrid specific
- *
- **/
 .highcharts-dashboards-wrapper {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
@@ -89,11 +84,7 @@
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9em;
     overflow: auto;
-    background-color: var(--highcharts-neutral-color-5);
-}
-
-#log-content span.error {
-    color: #f00;
+    background-color: var(--highcharts-neutral-color-0);
 }
 
 /**
@@ -128,6 +119,7 @@
 #app-control button {
     font-size: 1em;
     padding: 5px 10px;
+    cursor: pointer;
 }
 
 /**
@@ -136,15 +128,25 @@
  *
  **/
 
-div.container {
-    display: flex;
-    flex-direction: row;
+body {
+    background-color: var(--highcharts-neutral-color-10);
 }
 
-div.description {
-    padding: 0 20px;
+div#description {
+    background-color: var(--highcharts-neutral-color-5);
+    color: var(--text-color);
+    padding: 5px 10px;
     max-width: 100%;
     text-align: justify;
+
+    & a {
+        color: var(--highcharts-highlight-color-100);
+    }
+
+    pre.json {
+        padding: 5px;
+        color: var(--highcharts-highlight-color-80);
+    }
 }
 
 /* LARGE */
@@ -174,5 +176,10 @@ div.description {
     #column-chart-2,
     #data-grid-2 {
         flex: 1 1 100%;
+    }
+
+    #app-control #connect-status {
+        white-space: nowrap;
+        display: block;
     }
 }
