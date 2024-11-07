@@ -74,8 +74,6 @@ async function task() {
                 if (argv.assembler) {
                     buildTasks.push('scripts-js');
                     buildTasks.push('scripts-code');
-                } else {
-                    buildTasks.push('scripts-webpack');
                 }
                 if (argv.dts) {
                     buildTasks.task('jsdoc-dts')();
@@ -108,6 +106,15 @@ async function task() {
 
     if (argv.dts) {
         await gulp.task('jsdoc-dts')();
+    }
+
+    if (!argv.assembler) {
+        processLib.exec(
+            'npx webpack watch -c tools/webpacks/highcharts.webpack.mjs',
+            {
+                silent: 2
+            }
+        );
     }
 
     return processLib
