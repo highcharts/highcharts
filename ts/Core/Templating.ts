@@ -78,6 +78,8 @@ const helpers: Record<string, Function> = {
     unless: (condition: string[]|undefined): boolean => !condition
 };
 
+const numberFormatCache: Record<string, Intl.NumberFormat> = {};
+
 /* *
  *
  *  Functions
@@ -477,11 +479,13 @@ function numberFormat(
     /*
     @todo After merging this into v12-staging, use chart.locale
     */
-    const hasSeparators = thousandsSep || decimalPoint;
-    ret = new Intl.NumberFormat(
-        hasSeparators ? 'en' : (this as Chart)?.locale || lang.locale,
-        options
-    ).format(number);
+    const hasSeparators = thousandsSep || decimalPoint,
+        locale = hasSeparators ? 'en' : (this as Chart)?.locale || lang.locale,
+        cacheKey = JSON.stringify(options) + locale,
+        nf = numberFormatCache[cacheKey] ??=
+            new Intl.NumberFormat(locale, options);
+
+    ret = nf.format(number);
 
     // If thousandsSep or decimalPoint are set, fall back to using English
     // format with string replacement for the separators.
