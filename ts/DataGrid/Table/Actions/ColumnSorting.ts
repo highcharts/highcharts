@@ -90,7 +90,6 @@ class ColumnSorting {
             ).setAttribute('aria-hidden', true);
 
             headerCellElement.classList.add(Globals.classNames.columnSortable);
-            headerCellElement.setAttribute('role', 'button');
         }
     }
 

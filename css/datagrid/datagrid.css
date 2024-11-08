@@ -135,6 +135,19 @@
     user-select: none; /* Standard syntax */
 }
 
+.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content {
+    border: none;
+    background-color: transparent;
+    color: var(--highcharts-neutral-color-100);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content:hover {
+    background-color: transparent;
+}
+
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
     flex: 1;
     overflow: hidden;

@@ -135,9 +135,14 @@ class HeaderCell extends Cell {
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.headerContent = makeHTMLElement('span', {
-            className: Globals.classNames.headerCellContent
-        }, this.htmlElement);
+
+        this.headerContent = makeHTMLElement(
+            options.sorting?.sortable && column.data ? 'button' : 'span',
+            {
+                className: Globals.classNames.headerCellContent
+            },
+            this.htmlElement
+        );
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
