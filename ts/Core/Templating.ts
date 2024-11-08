@@ -17,7 +17,6 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 
 import D from './Defaults.js';
 const {
@@ -478,13 +477,9 @@ function numberFormat(
     /*
     @todo After merging this into v12-staging, use chart.locale
     */
-    const locale = lang.locale ??
-        (
-            (this as Chart)?.renderTo?.closest('[lang]') as HTMLDOMElement|null
-        )?.lang;
     const hasSeparators = thousandsSep || decimalPoint;
     ret = new Intl.NumberFormat(
-        hasSeparators ? 'en' : locale,
+        hasSeparators ? 'en' : (this as Chart)?.locale || lang.locale,
         options
     ).format(number);
 
