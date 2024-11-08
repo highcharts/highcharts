@@ -1729,8 +1729,8 @@ class Tooltip {
                 (point.tooltipDateKeys || ['key']).forEach(
                     (key: string): void => {
                         formatString = formatString.replace(
-                            '{point.' + key + '}',
-                            '{point.' + key + ':' + xDateFormat + '}'
+                            new RegExp('point\\.' + key + '([ \\)}])', ''),
+                            `(point.${key}:${xDateFormat as string})$1`
                         );
                     }
                 );
