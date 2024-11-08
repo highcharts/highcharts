@@ -31,7 +31,6 @@ const {
     isArray,
     isNumber,
     isObject,
-    isString,
     pick
 } = U;
 
@@ -437,16 +436,18 @@ function numberFormat(
         options.minimumFractionDigits = decimals;
         options.maximumFractionDigits = decimals;
     }
+    if (thousandsSep === '') {
+        options.useGrouping = false;
+    }
 
     /*
     @todo After merging this into v12-staging, use chart.locale
     */
-    const locale = (this as Chart)?.options?.lang.locale ??
+    const locale = lang.locale ??
         (
             (this as Chart)?.renderTo?.closest('[lang]') as HTMLDOMElement|null
         )?.lang;
-    const hasSeparators = isString(thousandsSep) || isString(decimalPoint);
-
+    const hasSeparators = thousandsSep || decimalPoint;
     ret = new Intl.NumberFormat(
         hasSeparators ? 'en' : locale,
         options
