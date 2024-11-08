@@ -224,11 +224,12 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The default decimal point used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments.
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale decimal point as determined by `lang.locale`.
          *
          * @since 1.2.2
          */
-        decimalPoint: '.',
+        decimalPoint: void 0,
 
         /**
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
@@ -278,14 +279,11 @@ const defaultOptions: DefaultOptions = {
         /**
          * The default thousands separator used in the `Highcharts.numberFormat`
          * method unless otherwise specified in the function arguments. Defaults
-         * to a single space character, which is recommended in
-         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
-         * across Anglo-American and continental European languages.
+         * to the locale thousands separator as determined by `lang.locale`.
          *
-         * @default \u0020
          * @since   1.2.2
          */
-        thousandsSep: ' '
+        thousandsSep: void 0
     },
 
     /**

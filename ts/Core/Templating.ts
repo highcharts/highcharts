@@ -17,6 +17,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 
 import D from './Defaults.js';
 const {
@@ -30,6 +31,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    isString,
     pick
 } = U;
 
@@ -173,7 +175,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = defaultOptions.lang,
+        lang = chart?.options.lang || defaultOptions.lang,
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
 
@@ -378,6 +380,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
  *         The formatted number.
  */
 function numberFormat(
+    this: Chart|Object|void,
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -390,7 +393,7 @@ function numberFormat(
         fractionDigits: number,
         [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = defaultOptions.lang,
+    const lang = (this as Chart)?.options?.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
         firstDecimals = decimals,
         options: Intl.NumberFormatOptions = {};
@@ -435,14 +438,26 @@ function numberFormat(
         options.maximumFractionDigits = decimals;
     }
 
-    ret = new Intl.NumberFormat('en-US', options).format(number);
+    /*
+    @todo After merging this into v12-staging, use chart.locale
+    */
+    const locale = (this as Chart)?.options?.lang.locale ??
+        (
+            (this as Chart)?.renderTo?.closest('[lang]') as HTMLDOMElement|null
+        )?.lang;
+    const hasSeparators = isString(thousandsSep) || isString(decimalPoint);
 
-    if (thousandsSep !== ',') {
-        ret = ret.replace(/\,/g, thousandsSep);
-    }
+    ret = new Intl.NumberFormat(
+        hasSeparators ? 'en' : locale,
+        options
+    ).format(number);
 
-    if (decimalPoint !== '.') {
-        ret = ret.replace('.', decimalPoint);
+    // If thousandsSep or decimalPoint are set, fall back to using English
+    // format with string replacement for the separators.
+    if (hasSeparators) {
+        ret = ret
+            .replace(/\,/g, thousandsSep ?? ',')
+            .replace('.', decimalPoint ?? '.');
     }
 
     if (
