@@ -95,6 +95,44 @@ const RenkoDefaults: RenkoSeriesOptions = {
  * @apioption series.renko
  */
 
+/**
+ * An array of data points for the series. For the `renko` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of arrays with 1 or 2 values correspond to `x,close`. If the
+ * first value is a string, it is applied as the name of the point, and the
+ * `x` value is inferred. The `x` value can also be omitted, in which case
+ * the inner arrays should be of length 4. Then the `x` value is
+ * automatically calculated, either starting at 0 and incremented by 1, or
+ * from `pointStart` and `pointInterval` given in the series options.
+ *    ```js
+ *    data: [
+ *        [0, 7],
+ *        [1, 1],
+ *        [2, 3]
+ *    ]
+ *    ```
+ *
+ * 2. An array of objects with named values. With renko series, the data
+ * does not directly correspond to the points in the series. the reason
+ * is that the points are calculated based on the trends and boxSize.
+ * Setting options for individual point is impossible.
+ *
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 6
+ *    }, {
+ *        x: 1,
+ *        y: 7,
+ *    }]
+ *    ```
+ *
+ * @type      {Array<Array<number,number>|*>}
+ * @extends series.column.data
+ * @product highstock
+ * @apioption series.renko.data
+ */
 (''); // Adds doclets above to transpiled
 
 /* *
