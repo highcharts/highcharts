@@ -204,11 +204,10 @@ class Tooltip {
      * @function Highcharts.Tooltip#bodyFormatter
      */
     public bodyFormatter(
-        items: Array<Tooltip.FormatterContextObject>
+        points: Array<Point>
     ): Array<string> {
-        return items.map((item): string => {
-            const tooltipOptions = item.series.tooltipOptions,
-                point = item.point,
+        return points.map((point): string => {
+            const tooltipOptions = point.series.tooltipOptions,
                 formatPrefix = point.formatPrefix || 'point';
 
             return (
@@ -258,20 +257,20 @@ class Tooltip {
      * or an array of strings (split tooltip)
      */
     public defaultFormatter(
-        this: Tooltip.FormatterContextObject,
+        this: Point,
         tooltip: Tooltip
     ): (string|Array<string>) {
-        const items = this.points || splat(this);
+        const hoverPoints = this.points || splat(this);
         let s: (string|Array<string>);
 
         // Build the header
-        s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
+        s = [tooltip.headerFooterFormatter(hoverPoints[0])];
 
         // Build the values
-        s = s.concat(tooltip.bodyFormatter(items));
+        s = s.concat(tooltip.bodyFormatter(hoverPoints));
 
         // Footer
-        s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
+        s.push(tooltip.headerFooterFormatter(hoverPoints[0], true));
 
         return s;
     }
@@ -989,12 +988,10 @@ class Tooltip {
             { chart, options, pointer, shared } = this,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
-            pointConfig = [] as Array<Tooltip.FormatterContextObject>,
             formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
             styledMode = chart.styledMode;
-        let formatterContext = {} as Tooltip.FormatterContextObject,
-            wasShared = tooltip.allowShared;
+        let wasShared = tooltip.allowShared;
 
         if (!options.enabled || !point.series) { // #16820
             return;
@@ -1025,22 +1022,19 @@ class Tooltip {
             pointer.applyInactiveState(points);
 
             // Now set hover state for the chosen ones:
-            points.forEach(function (item: Point): void {
-                item.setState('hover');
-                pointConfig.push(item.getLabelConfig());
-            });
+            points.forEach((item: Point): void => item.setState('hover'));
 
-            formatterContext = point.getLabelConfig();
-            formatterContext.points = pointConfig;
+            point.points = points;
 
-        // Single point tooltip
-        } else {
-            formatterContext = point.getLabelConfig();
         }
-        this.len = pointConfig.length; // #6128
+
+        this.len = points.length; // #6128
         const text = isString(formatString) ?
-            format(formatString, formatterContext, chart) :
-            formatter.call(formatterContext, tooltip);
+            format(formatString, point, chart) :
+            formatter.call(point, tooltip);
+
+        // Reset the preliminary circular references
+        point.points = void 0;
 
         // Register the current series
         const currentSeries = point.series;
@@ -1691,33 +1685,35 @@ class Tooltip {
      * #3397: abstraction to enable formatting of footer and header
      *
      * @private
-     * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
+     * @function Highcharts.Tooltip#headerFooterFormatter
      */
-    public tooltipFooterHeaderFormatter(
-        labelConfig: Point.PointLabelObject,
+    public headerFooterFormatter(
+        point: Point,
         isFooter?: boolean
     ): string {
-        const series = labelConfig.series,
+        const series = point.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
             dateTime = xAxis && xAxis.dateTime,
-            e = {
-                isFooter: isFooter,
-                labelConfig: labelConfig
-            } as AnyRecord;
+            e: Tooltip.HeaderFormatterEventObject = {
+                isFooter,
+                point
+            };
         let xDateFormat = tooltipOptions.xDateFormat || '',
-            formatString = tooltipOptions[isFooter ? 'footerFormat' : 'headerFormat'];
+            formatString = tooltipOptions[
+                isFooter ? 'footerFormat' : 'headerFormat'
+            ];
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Tooltip,
-            e: AnyRecord
+            e: Tooltip.HeaderFormatterEventObject
         ): void {
 
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
-            if (dateTime && !xDateFormat && isNumber(labelConfig.key)) {
+            if (dateTime && !xDateFormat && isNumber(point.key)) {
                 xDateFormat = dateTime.getXDateFormat(
-                    labelConfig.key,
+                    point.key,
                     tooltipOptions.dateTimeLabelFormats
                 );
             }
@@ -1730,11 +1726,11 @@ class Tooltip {
                         series.chart.time.dateFormat(format, timestamp);
                     xDateFormat = '%0';
                 }
-                (labelConfig.point?.tooltipDateKeys || ['key']).forEach(
+                (point.tooltipDateKeys || ['key']).forEach(
                     (key: string): void => {
                         formatString = formatString.replace(
-                            new RegExp('point\\.' + key + '([ \\)}])', ''),
-                            `(point.${key}:${xDateFormat})$1`
+                            '{point.' + key + '}',
+                            '{point.' + key + ':' + xDateFormat + '}'
                         );
                     }
                 );
@@ -1745,13 +1741,10 @@ class Tooltip {
                 formatString = this.styledModeFormat(formatString);
             }
 
-            (e as any).text = format(formatString, {
-                point: labelConfig,
-                series: series
-            }, this.chart);
+            e.text = format(formatString, point, this.chart);
 
         });
-        return e.text;
+        return e.text || '';
     }
 
     /**
@@ -1866,14 +1859,15 @@ namespace Tooltip {
 
     export interface FormatterCallbackFunction {
         (
-            this: FormatterContextObject,
+            this: Point,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
 
-    export interface FormatterContextObject extends Point.PointLabelObject {
-        points?: Array<FormatterContextObject>;
-
+    export interface HeaderFormatterEventObject {
+        isFooter?: boolean;
+        point: Point;
+        text?: string;
     }
 
     export interface PositionerCallbackFunction {
@@ -1948,31 +1942,21 @@ export default Tooltip;
  * Callback function to format the text of the tooltip from scratch.
  *
  * In case of single or shared tooltips, a string should be returned. In case
- * of splitted tooltips, it should return an array where the first item is the
+ * of split tooltips, it should return an array where the first item is the
  * header, and subsequent items are mapped to the points. Return `false` to
  * disable tooltip for a specific point on series.
  *
  * @callback Highcharts.TooltipFormatterCallbackFunction
  *
- * @param {Highcharts.TooltipFormatterContextObject} this
- * Context to format
+ * @param {Highcharts.Point} this
+ * The formatter's context is the hovered `Point` instance. In case of shared or
+ * split tooltips, all points are available in `this.points`.
  *
  * @param {Highcharts.Tooltip} tooltip
  * The tooltip instance
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  * Formatted text or false
- */
-
-/**
- * Configuration for the tooltip formatters.
- *
- * @interface Highcharts.TooltipFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * Array of points in shared tooltips.
- * @name Highcharts.TooltipFormatterContextObject#points
- * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
  */
 
 /**

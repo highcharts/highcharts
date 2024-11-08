@@ -35,6 +35,7 @@ const {
     createElement,
     defined,
     extend,
+    getAlignFactor,
     isNumber,
     pInt,
     pushUnique
@@ -361,9 +362,6 @@ class HTMLElement extends SVGElement {
                 x = 0,
                 y = 0
             } = this,
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[textAlign],
             { display = 'block', whiteSpace } = styles;
 
         // Get the pixel length of the text
@@ -461,7 +459,7 @@ class HTMLElement extends SVGElement {
                         element.offsetWidth
                     ),
                     baseline,
-                    alignCorrection
+                    getAlignFactor(textAlign)
                 );
             }
 
