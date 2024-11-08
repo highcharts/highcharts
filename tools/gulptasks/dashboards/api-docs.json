@@ -70,6 +70,7 @@
 
         // DataGrid
         "../../../ts/DataGrid/DataGrid.ts",
+        "../../../ts/DataGrid/Defaults.ts",
         "../../../ts/DataGrid/Options.ts",
         "../../../ts/DataGrid/Table/Cell.ts",
         "../../../ts/DataGrid/Table/Column.ts",
@@ -92,6 +93,10 @@
         "../../../ts/DataGrid/Table/Actions/ColumnsResizer.ts",
         "../../../ts/DataGrid/Table/Actions/ColumnSorting.ts",
         "../../../ts/DataGrid/Table/Actions/RowsVirtualizer.ts",
+
+        // DataGrid - A11y
+        "../../../ts/DataGrid/Accessibility/A11yOptions.ts",
+        "../../../ts/DataGrid/Accessibility/Accessibility.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
