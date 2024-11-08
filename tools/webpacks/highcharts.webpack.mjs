@@ -4,16 +4,21 @@
  *
  * */
 
+
 // eslint-disable-next-line node/no-unpublished-import
 // import BundleDeclarationsWebpackPlugin from 'bundle-declarations-webpack-plugin';
 import * as Path from 'node:path';
 import FSLib from '../libs/fs.js';
+
+import Error16Plugin from './plugins/Error16Plugin.mjs';
+
 
 /* *
  *
  *  Constants
  *
  * */
+
 
 const sourceFolder = './code/es-modules/';
 const mastersFolder = Path.join(sourceFolder, 'masters');
@@ -28,11 +33,13 @@ const productMasters = [
     'standalone-navigator'
 ];
 
+
 /* *
  *
  *  Functions
  *
  * */
+
 
 /**
  * Creates a configuration to resolve an external reference via the given path.
@@ -52,6 +59,7 @@ function createUMDConfig(...pathMembers) {
         root: [namespace, ...pathMembers]
     };
 }
+
 
 /**
  * Resolves external references of the binded master file to specific UMD paths.
@@ -204,11 +212,13 @@ async function resolveExternals(info) {
 
 }
 
+
 /* *
  *
  *  Distribution
  *
  * */
+
 
 const webpacks = FSLib
     .getFilePaths(mastersFolder, true)
@@ -253,23 +263,28 @@ const webpacks = FSLib
                 maxAssetSize: 2500000,
                 maxEntrypointSize: 2500000
             },
-            // plugins: [new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
-            //     entry: {
-            //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
-            //         output: {
-            //             sortNodes: false,
-            //             // dts-bundle-generator comments in output
-            //             noBanner: false,
-            //         }
-            //     },
-            //     outFile: Path
-            //         .join(targetFolder, masterPath)
-            //         .replace(/(?:\.src)?\.js$/, '.d.ts'),
-            //     compilationOptions: {
-            //         followSymlinks: false,
-            //         preferredConfigPath: './ts/tsconfig.json'
-            //     }
-            // })],
+            plugins: [
+                new Error16Plugin({
+                    productBundles: productMasters.map(pm => `${pm}.src.js`)
+                })
+                // new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
+                //     entry: {
+                //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),
+                //         output: {
+                //             sortNodes: false,
+                //             // dts-bundle-generator comments in output
+                //             noBanner: false,
+                //         }
+                //     },
+                //     outFile: Path
+                //         .join(targetFolder, masterPath)
+                //         .replace(/(?:\.src)?\.js$/, '.d.ts'),
+                //     compilationOptions: {
+                //         followSymlinks: false,
+                //         preferredConfigPath: './ts/tsconfig.json'
+                //     }
+                // })
+            ],
             resolve: {
                 extensions: ['.js', '.ts']
             }
@@ -283,10 +298,12 @@ const webpacks = FSLib
         return webpackConfig;
     });
 
+
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default webpacks;
