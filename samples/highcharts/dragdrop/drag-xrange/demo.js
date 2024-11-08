@@ -33,8 +33,8 @@ Highcharts.chart('container', {
                 draggableY: true,
                 dragMinY: 0,
                 dragMaxY: 2,
-                dragMinX: Date.UTC(2014, 10, 15),
-                dragMaxX: Date.UTC(2015, 0, 10),
+                dragMinX: '2014-11-17',
+                dragMaxX: '2015-01-05',
                 liveRedraw: false,
                 groupBy: 'groupId' // Group data points with the same groupId
             },

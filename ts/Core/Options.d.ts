@@ -35,16 +35,16 @@ export interface LangOptions {
     decimalPoint?: string;
     invalidDate?: string;
     loading: string;
-    locale?: string;
-    months: Array<string>;
+    locale?: string|Array<string>;
+    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
-    shortMonths: Array<string>;
+    shortMonths?: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
-    weekdays: Array<string>;
+    weekdays?: Array<string>;
     zoomIn?: string;
     zoomOut?: string;
 }

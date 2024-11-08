@@ -1115,8 +1115,8 @@ class SVGElement implements SVGElementLike {
                 // added to the DOM. In styled mode, no CSS should find its way
                 // to the DOM whatsoever (#6173, #6474).
                 (
-                    ['textOutline', 'textOverflow', 'width'] as
-                    ('textOutline'|'textOverflow'|'width')[]
+                    ['textOutline', 'textOverflow', 'whiteSpace', 'width'] as
+                    ('textOutline'|'textOverflow'|'whiteSpace'|'width')[]
                 ).forEach(
                     (key): boolean|undefined => (
                         stylesToApply &&
@@ -1428,6 +1428,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
+                styles.lineClamp,
                 styles.textOverflow, // #5968
                 styles.fontWeight // #12163
             ].join(',');

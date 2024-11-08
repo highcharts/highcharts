@@ -31,7 +31,8 @@ const {
     isArray,
     isNumber,
     isObject,
-    pick
+    pick,
+    ucfirst
 } = U;
 
 interface MatchObject {
@@ -74,6 +75,7 @@ const helpers: Record<string, Function> = {
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
+    ucfirst,
     unless: (condition: string[]|undefined): boolean => !condition
 };
 
@@ -124,7 +126,7 @@ const helpers: Record<string, Function> = {
  * @param {number} timestamp
  *        The JavaScript timestamp.
  *
- * @param {boolean} [capitalize=false]
+ * @param {boolean} [upperCaseFirst=false]
  *        Upper case first letter in the return.
  *
  * @return {string}
@@ -133,9 +135,9 @@ const helpers: Record<string, Function> = {
 function dateFormat(
     format: string,
     timestamp: number,
-    capitalize?: boolean
+    upperCaseFirst?: boolean
 ): string {
-    return defaultTime.dateFormat(format, timestamp, capitalize);
+    return defaultTime.dateFormat(format, timestamp, upperCaseFirst);
 }
 
 /**
@@ -166,11 +168,11 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([\w\:\.\,;\-\/<>%@"'’= #\(\)]+)\}/g,
+    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@"'’= #\(\)]+)\}/gu,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([\w\:\.\,;\-\/<>%@"'= ]+)\)/g,
+        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@"'= ]+)\)/gu,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
@@ -195,6 +197,9 @@ function format(str = '', ctx: any, chart?: Chart): string {
         }
         if ((n = Number(key)).toString() === key) {
             return n;
+        }
+        if (/^["'].+["']$/.test(key)) {
+            return key.slice(1, -1);
         }
 
         // Variables and constants
@@ -302,7 +307,31 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Pass the helpers the amount of arguments defined by the function,
             // then the match as the last argument.
             const args: unknown[] = [match],
-                parts = expression.split(' ');
+                parts: Array<string> = [],
+                len = expression.length;
+
+            let start = 0,
+                startChar;
+            for (i = 0; i <= len; i++) {
+                const char = expression.charAt(i);
+
+                // Start of string
+                if (!startChar && (char === '"' || char === '\'')) {
+                    startChar = char;
+
+                // End of string
+                } else if (startChar === char) {
+                    startChar = '';
+                }
+
+                if (
+                    !startChar &&
+                    (char === ' ' || i === len)
+                ) {
+                    parts.push(expression.substr(start, i - start));
+                    start = i + 1;
+                }
+            }
 
             i = helpers[fn].length;
             while (i--) {
@@ -344,6 +373,12 @@ function format(str = '', ctx: any, chart?: Chart): string {
                     }
                 } else {
                     replacement = time.dateFormat(segment, replacement);
+
+                    // Use string literal in order to be preserved in the outer
+                    // expression
+                    if (hasSub) {
+                        replacement = `"${replacement}"`;
+                    }
                 }
             }
         }
