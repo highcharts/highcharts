@@ -141,7 +141,8 @@ class HeaderCell extends Cell {
             {
                 className: Globals.classNames.headerCellContent
             },
-        this.htmlElement);
+            this.htmlElement
+        );
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
