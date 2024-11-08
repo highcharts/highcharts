@@ -3722,7 +3722,13 @@ class Series {
                 const p2Dist = nPoint1[kdComparer] || 0;
 
                 if (p1Dist < 0 && p2Dist < 0) {
-                    ret = p1Dist >= p2Dist ? point : nPoint1;
+                    ret = p1Dist - (
+                        ret.marker?.radius || 0
+                    ) >= p2Dist - (
+                        nPoint1.marker?.radius || 0
+                    ) ?
+                        point :
+                        nPoint1;
                     more = false;
                 } else {
                     ret = p1Dist < p2Dist ? point : nPoint1;
@@ -3752,7 +3758,13 @@ class Series {
                     const p2Dist = nPoint2[kdComparer] || 0;
 
                     if (p1Dist < 0 && p2Dist < 0) {
-                        ret = p1Dist >= p2Dist ? ret : nPoint2;
+                        ret = p1Dist - (
+                            ret.marker?.radius || 0
+                        ) >= p2Dist - (
+                            nPoint2.marker?.radius || 0
+                        ) ?
+                            point :
+                            nPoint2;
                     } else {
                         ret = p1Dist < p2Dist ? ret : nPoint2;
                     }
