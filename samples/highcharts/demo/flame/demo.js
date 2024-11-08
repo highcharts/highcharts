@@ -54,7 +54,7 @@ const colors = Highcharts.getOptions().colors,
         value: 33116,
         color: colors[2]
     }, {
-        name: 'getAxes',
+        name: 'createAxes',
         id: '30',
         parent: '20',
         value: 33116,
@@ -891,7 +891,7 @@ const colors = Highcharts.getOptions().colors,
         low: 330456,
         high: 397316
     }, {
-        name: 'getAxes',
+        name: 'createAxes',
         id: '30',
         value: 33116,
         color: colors[0],

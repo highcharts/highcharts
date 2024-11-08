@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -194,6 +195,27 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
+// Create JSONSources and write to a temporary file
+const JSONSources = {};
+if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
+    fs.mkdirSync(path.join(__dirname, '../tmp'));
+}
+aliases.forEach(alias => {
+    JSONSources[alias.url] = JSON.parse(fs.readFileSync(
+        path.join(
+            __dirname,
+            '..',
+            'samples/data/json-sources',
+            alias.filename
+        ),
+        'utf8'
+    ));
+});
+fs.writeFileSync(
+    path.join(__dirname, '../tmp/json-sources.js'),
+    `window.JSONSources = ${JSON.stringify(JSONSources)};`
+);
+
 
 module.exports = function (config) {
     const argv = require('yargs').argv;
@@ -233,7 +255,10 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
+    // Adjust karma.browsercount number to bypass disconnect problem on Windows
+    const browserCount = Number(getProperties()['karma.browsercount']) ||
+        argv.browsercount || (Math.max(1, os.cpus().length - 2));
+
     if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
@@ -278,7 +303,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
-            'test/json-sources.js',
+            'tmp/json-sources.js',
 
             // Highcharts
             ...files,

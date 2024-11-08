@@ -4,7 +4,10 @@ describe('Remove the dashboard.', () => {
     });
 
     it('Rows should be visible when datagrid is switched from hidden.', () => {
+        // Act
         cy.get('#show').trigger('click');
-        cy.get('.highcharts-datagrid-row').should('have.length', 4);
+
+        // Assert
+        cy.get('tr').should('have.length', 5);
     });
 });

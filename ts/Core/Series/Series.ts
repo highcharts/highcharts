@@ -1608,6 +1608,10 @@ class Series {
             xAxis = series.xAxis,
             options = series.options,
             cropThreshold = options.cropThreshold,
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                // X-range series etc, #21003
+                series.getExtremesFromAll,
             logarithmic = xAxis?.logarithmic,
             isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
@@ -1636,7 +1640,7 @@ class Series {
         if (
             isCartesian &&
             series.sorted &&
-            !forceExtremesFromAll &&
+            !getExtremesFromAll &&
             (
                 !cropThreshold ||
                 dataLength > cropThreshold ||
@@ -1809,7 +1813,8 @@ class Series {
                 options.dataGrouping.groupAll ?
                     cropStart :
                     0
-            );
+            ),
+            categories = series.xAxis?.categories;
         let dataLength,
             cursor,
             point,
@@ -1875,6 +1880,12 @@ class Series {
                 point.index = hasGroupedData ?
                     (groupCropStartIndex + i) : cursor;
                 points[i] = point;
+
+                // Set point properties for convenient access in tooltip and
+                // data labels
+                point.category = categories?.[point.x] ?? point.x;
+                point.key = point.name ?? point.category;
+
             }
         }
 
@@ -2149,7 +2160,6 @@ class Series {
             options = series.options,
             stacking = options.stacking,
             xAxis = series.xAxis,
-            categories = xAxis.categories,
             enabledDataSorting = series.enabledDataSorting,
             yAxis = series.yAxis,
             points = series.points,
@@ -2325,12 +2335,6 @@ class Series {
 
             // Negative points #19028
             point.negative = (point.y || 0) < (threshold || 0);
-
-            // Some API data
-            point.category = pick(
-                categories && categories[point.x],
-                point.x as any
-            );
 
             // Determine auto enabling of markers (#3635, #5099)
             if (!point.isNull && point.visible !== false) {
@@ -4228,6 +4232,7 @@ class Series {
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
+            typeof options.keys !== 'undefined' ||
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||

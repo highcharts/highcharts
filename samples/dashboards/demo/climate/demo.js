@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 /* eslint-disable jsdoc/require-description */
 const MathModifier = Dashboards.DataModifier.types.Math;
 
@@ -464,46 +469,68 @@ async function setupBoard() {
                 highlight: true
             },
             dataGridOptions: {
-                cellHeight: 38,
-                editable: false,
-                columns: {
-                    time: {
-                        show: false
-                    },
-                    FD: {
-                        headerFormat: 'Days with frost'
-                    },
-                    ID: {
-                        headerFormat: 'Days with ice'
-                    },
-                    RR1: {
-                        headerFormat: 'Days with rain'
-                    },
-                    TN: {
-                        show: false
-                    },
-                    TX: {
-                        show: false
-                    },
-                    TNC: {
-                        headerFormat: 'Average temperature °C',
-                        cellFormat: '{value:.1f}'
-                    },
-                    TNF: {
-                        headerFormat: 'Average temperature °F',
-                        cellFormat: '{value:.1f}',
-                        show: false
-                    },
-                    TXC: {
-                        headerFormat: 'Maximum temperature °C',
-                        cellFormat: '{value:.1f}'
-                    },
-                    TXF: {
-                        headerFormat: 'Maximum temperature °F',
-                        cellFormat: '{value:.1f}',
-                        show: false
+                credits: {
+                    enabled: false
+                },
+                columns: [{
+                    id: 'time',
+                    enabled: false
+                }, {
+                    id: 'FD',
+                    header: {
+                        format: 'Days with frost'
                     }
-                }
+                }, {
+                    id: 'ID',
+                    header: {
+                        format: 'Days with ice'
+                    }
+                }, {
+                    id: 'RR1',
+                    header: {
+                        format: 'Days with rain'
+                    }
+                }, {
+                    id: 'TN',
+                    enabled: false
+                }, {
+                    id: 'TX',
+                    enabled: false
+                }, {
+                    id: 'TNC',
+                    header: {
+                        format: 'Average temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
+                }, {
+                    id: 'TNF',
+                    header: {
+                        format: 'Average temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
+                    enabled: false
+                }, {
+                    id: 'TXC',
+                    header: {
+                        format: 'Maximum temperature °C'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    }
+                }, {
+                    id: 'TXF',
+                    header: {
+                        format: 'Maximum temperature °F'
+                    },
+                    cells: {
+                        format: '{value:.1f}'
+                    },
+                    enabled: false
+                }]
             },
             editable: true
         }, {
@@ -830,23 +857,20 @@ async function updateBoard(board, city, column, scale, newData) {
         const showCelsius = scale === 'C';
 
         // Update city grid selection
-        await selectionGrid.update({
-            dataGridOptions: {
-                columns: {
-                    TNC: {
-                        show: showCelsius
-                    },
-                    TNF: {
-                        show: !showCelsius
-                    },
-                    TXC: {
-                        show: showCelsius
-                    },
-                    TXF: {
-                        show: !showCelsius
-                    }
-                }
-            }
+        await selectionGrid.dataGrid.update({
+            columns: [{
+                id: 'TNC',
+                enabled: showCelsius
+            }, {
+                id: 'TNF',
+                enabled: !showCelsius
+            }, {
+                id: 'TXC',
+                enabled: showCelsius
+            }, {
+                id: 'TXF',
+                enabled: !showCelsius
+            }]
         });
 
         // Update city chart

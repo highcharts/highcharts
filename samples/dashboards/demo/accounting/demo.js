@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const currentMonth = Date.UTC(2023, 9);
 const revTarget = 105;
 const costTarget = 89;
@@ -78,17 +83,6 @@ const commonColumnOptions = {
             <span class="highcharts-color-{colorIndex}">&#9679;</span>&nbsp;
             {series.name}: {(divide y 1000000):.2f}M
         `
-    },
-    plotOptions: {
-        column: {
-            point: {
-                events: {
-                    click: () => {
-                        togglePopup(true);
-                    }
-                }
-            }
-        }
     }
 };
 
@@ -553,103 +547,3 @@ board.then(res => {
         ) / (revTarget - costTarget) * 100)
     });
 });
-
-/**
- * Popup
- */
-
-const popup = document.getElementById('popup');
-
-popup.addEventListener('click', e => {
-    if (e.target === popup || e.target.className === 'close') {
-        togglePopup(false);
-    }
-});
-
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && popup.style.display !== 'none') {
-        popup.style.display = 'none';
-    }
-});
-
-async function togglePopup(open) {
-    if (!open) {
-        popup.style.display = 'none';
-        return;
-    }
-    popup.style.display = 'flex';
-
-    popup.children[0].children['datagrid-container'].innerHTML = '';
-
-    const formatNumbers = function () {
-        return Highcharts.isNumber(this.value) ? `$${(
-            this.value / 1e6
-        ).toFixed(2)}M` : '-';
-    };
-
-    // eslint-disable-next-line no-new
-    new DataGrid.DataGrid('datagrid-container', {
-        dataTable: (await board).dataPool.connectors.data.table,
-        editable: false,
-        columns: {
-            Date: {
-                cellFormatter: function () {
-                    return this.value ? (
-                        new Date(this.value)
-                            .toISOString()
-                            .substring(0, 10)
-                    ) : '?';
-                }
-            },
-            Budget: {
-                show: true,
-                cellFormatter: formatNumbers
-            },
-            Cost: {
-                show: true,
-                cellFormatter: formatNumbers
-            },
-            Revenue: {
-                show: true,
-                cellFormatter: formatNumbers
-            },
-            Result: {
-                show: true,
-                cellFormatter: formatNumbers
-            },
-            CostPredP: {
-                show: false
-            },
-            RevPredP: {
-                show: false
-            },
-            CostPredO: {
-                show: false
-            },
-            RevPredO: {
-                show: false
-            },
-            AccResult: {
-                show: false
-            },
-            CostPredA: {
-                show: false
-            },
-            RevPredA: {
-                show: false
-            },
-            AccResPredP: {
-                show: false
-            },
-            AccResPredO: {
-                show: false
-            },
-            ResPredA: {
-                show: false
-            },
-            AccResPredA: {
-                show: false
-            }
-        }
-    });
-}
