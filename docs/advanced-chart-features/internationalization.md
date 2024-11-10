@@ -15,7 +15,7 @@ All modern browsers reliably support bidirectional text in SVG, though there mig
 
 In Firefox < 4 there is a bug that completely breaks bidi text in SVG. As a convenient workaround for this, we have added a boolean constant, _Highcharts.hasBidiBug_, that can be used to determine when to use HTML in labels:
 
-    
+
     labels: {
         useHTML: Highcharts.hasBidiBug
     }
@@ -33,9 +33,11 @@ Numbers
 
 Numbers can be internationalized by extending the numberFormat function. See the example of [Arabic digits in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/highcharts-numberformat/). 
 
-Live demo
----------
+Live demos
+----------
 
-See a [live Arabic chart](https://jsfiddle.net/highcharts/buYCZ/) demo.  
-See a [live Arabic chart](https://jsfiddle.net/highcharts/ebqj2e19/) demo.  
-See a [live Chinese chart](https://jsfiddle.net/highcharts/u923mpct/) demo.
+Chart in Arabic language
+<iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-arabic' allow="fullscreen"></iframe>
+
+Chart in Chinese language
+<iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-chinese' allow="fullscreen"></iframe>

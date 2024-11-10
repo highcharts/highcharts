@@ -1155,3 +1155,60 @@ QUnit.test(
             'enabled.'
         );
     });
+
+QUnit.test('Range of BrokenAxis', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: [{
+            minorGridLineColor: '#C0C0C0',
+            minorGridLineWidth: 1,
+            minorGridLineDashStyle: 'Dot',
+            minorTickInterval: 40,
+            min: 0,
+            max: 10000,
+            breaks: [{
+                from: 3000,
+                to: 8000,
+                breakSize: 200
+            }]
+        }],
+        series: [{
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1000,
+                y: 2
+            }, {
+                x: 2000,
+                y: 1
+            }, {
+                x: 3000,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 8000,
+                y: 1
+            }, {
+                x: 9000,
+                y: 3
+            }, {
+                x: 10000,
+                y: 2
+            }]
+        }]
+    });
+    const minorGridLines = chart.container.querySelectorAll(
+        '.highcharts-minor-grid-line'
+    );
+
+    assert.notEqual(
+        minorGridLines.length,
+        0,
+        'Minor grid lines should be rendered outside of a break when' +
+        'breaks are set (#21740)'
+    );
+});
