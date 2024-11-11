@@ -27,22 +27,14 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * */
 
 /**
- * Language object. The language object is global and it can't be set
- * on each chart initialization. Instead, use `Highcharts.setOptions` to
- * set it before any chart is initialized.
+ * An object containing language-related strings and settings. A typical setup
+ * uses `Highcharts.setOptions` to make the options apply to all charts in the
+ * same page.
  *
  * ```js
  * Highcharts.setOptions({
  *     lang: {
- *         months: [
- *             'Janvier', 'Février', 'Mars', 'Avril',
- *             'Mai', 'Juin', 'Juillet', 'Août',
- *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
- *         ],
- *         weekdays: [
- *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
- *             'Jeudi', 'Vendredi', 'Samedi'
- *         ]
+ *         locale: 'fr'
  *     }
  * });
  * ```

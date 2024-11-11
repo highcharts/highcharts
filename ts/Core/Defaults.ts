@@ -113,9 +113,9 @@ const defaultOptions: DefaultOptions = {
     symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 
     /**
-     * The language object is global and it can't be set on each chart
-     * initialization. Instead, use `Highcharts.setOptions` to set it before any
-     * chart is initialized.
+     * An object containing language-related strings and settings. A typical
+     * setup uses `Highcharts.setOptions` to make the options apply to all
+     * charts in the same page.
      *
      * ```js
      * Highcharts.setOptions({
@@ -128,8 +128,8 @@ const defaultOptions: DefaultOptions = {
     lang: {
 
         /**
-         * The browser locale to use for date formatting. The actual locale used
-         * for each chart is determined in three steps:
+         * The browser locale to use for date and number formatting. The actual
+         * locale used for each chart is determined in three steps:
          * 1. If this `lang.locale` option is specified, it is used.
          * 2. Else, look for the closest ancestor HTML element with a `lang`
          *    attribute, typically the `<html>` element.
@@ -142,6 +142,8 @@ const defaultOptions: DefaultOptions = {
          *         Set the locale using the `lang.locale` option
          * @sample highcharts/lang/locale-attribute/
          *         Pick up the locale from the HTML `lang` attribute
+         * @sample highcharts/members/highcharts-numberformat
+         *         Arabic locale with digits and dates         *
          *
          * @since next
          * @type {string|Array<string>}
