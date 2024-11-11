@@ -138,7 +138,6 @@ const mapComponent = {
         chart: {
             styledMode: false,
             margin: 0
-            margin: 0
         },
         mapNavigation: {
             enabled: true,
