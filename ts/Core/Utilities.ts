@@ -83,7 +83,7 @@ type NullType = (null|undefined);
  *
  * @return {void}
  */
-function error(
+export function error(
     code: (number|string),
     stop?: boolean,
     chart?: Chart,
@@ -134,16 +134,16 @@ function error(
 
     error.messages.push(message);
 }
-namespace error {
+export namespace error {
     export const messages: Array<string> = [];
 }
 
-function merge<T = object>(
+export function merge<T = object>(
     extend: true,
     a?: T,
     ...n: Array<DeepPartial<T>|undefined>
 ): (T);
-function merge<
+export function merge<
     T1 extends object = object,
     T2 = unknown,
     T3 = unknown,
@@ -183,7 +183,7 @@ function merge<
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T>(
+export function merge<T>(
     extendOrSource: true | T,
     ...sources: Array<DeepPartial<T> | undefined>
 ): T {
@@ -244,7 +244,7 @@ function merge<T>(
  * @param {number} max The upper threshold
  * @return {number} Returns a number value within min and max.
  */
-function clamp(value: number, min: number, max: number): number {
+export function clamp(value: number, min: number, max: number): number {
     return value > min ? value < max ? value : max : min;
 }
 
@@ -259,15 +259,15 @@ function clamp(value: number, min: number, max: number): number {
  *                             is flipped (scaleY is -1)
  * @return {number}            The pixel position to use for a crisp display
  */
-const crisp = (
+export function crisp(
     value: number,
     lineWidth: number = 0,
     inverted?: boolean
-): number => {
+): number {
     const mod = lineWidth % 2 / 2,
         inverter = inverted ? -1 : 1;
     return (Math.round(value * inverter - mod) + mod) * inverter;
-};
+}
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -275,7 +275,7 @@ const crisp = (
  * properties, or optionally return the old values of new properties.
  * @private
  */
-function diffObjects(
+export function diffObjects(
     newer: AnyRecord,
     older: AnyRecord,
     keepOlder?: boolean,
@@ -387,7 +387,7 @@ function diffObjects(
  * @return {number}
  *         number
  */
-function pInt(s: any, mag?: number): number {
+export function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
 }
 
@@ -402,7 +402,7 @@ function pInt(s: any, mag?: number): number {
  * @return {boolean}
  *         True if the argument is a string.
  */
-function isString(s: unknown): s is string {
+export function isString(s: unknown): s is string {
     return typeof s === 'string';
 }
 
@@ -417,14 +417,14 @@ function isString(s: unknown): s is string {
  * @return {boolean}
  *         True if the argument is an array.
  */
-function isArray(obj: unknown): obj is Array<unknown> {
+export function isArray(obj: unknown): obj is Array<unknown> {
     const str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
+export function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+export function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -439,7 +439,7 @@ function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNul
  * @return {boolean}
  *         True if the argument is an object.
  */
-function isObject<T>(
+export function isObject<T>(
     obj: T,
     strict?: boolean
 ): obj is object & NonFunction<NonNullable<T>> {
@@ -461,7 +461,7 @@ function isObject<T>(
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-function isDOMElement(obj: unknown): obj is HTMLDOMElement {
+export function isDOMElement(obj: unknown): obj is HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
 }
 
@@ -476,7 +476,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass<T>(obj: (object|undefined)): obj is Class<T> {
+export function isClass<T>(obj: (object|undefined)): obj is Class<T> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -498,7 +498,7 @@ function isClass<T>(obj: (object|undefined)): obj is Class<T> {
  * @return {boolean}
  *         True if the item is a finite number
  */
-function isNumber(n: unknown): n is number {
+export function isNumber(n: unknown): n is number {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 }
 
@@ -515,7 +515,7 @@ function isNumber(n: unknown): n is number {
  *
  * @return {void}
  */
-function erase(arr: Array<unknown>, item: unknown): void {
+export function erase(arr: Array<unknown>, item: unknown): void {
     let i = arr.length;
 
     while (i--) {
@@ -540,7 +540,7 @@ function erase(arr: Array<unknown>, item: unknown): void {
  *         A collection of items, like `chart.series` or `xAxis.series`.
  * @return {number} The index of the series in the collection.
  */
-function insertItem(
+export function insertItem(
     item: Series|AxisType,
     collection: Array<Series|AxisType>
 ): number {
@@ -593,7 +593,7 @@ function insertItem(
  * @return {boolean}
  * Returns true, if the item was not present and has been added.
  */
-function pushUnique(
+export function pushUnique(
     array: Array<unknown>,
     item: unknown
 ): boolean {
@@ -611,20 +611,20 @@ function pushUnique(
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-function defined<T>(obj: T): obj is NonNullable<T> {
+export function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
 }
 
-function attr(
+export function attr(
     elem: DOMElementType,
     prop: (HTMLAttributes|SVGAttributes)
 ): undefined;
-function attr(
+export function attr(
     elem: DOMElementType,
     prop: string,
     value?: undefined
 ): (string|null);
-function attr(
+export function attr(
     elem: DOMElementType,
     prop: string,
     value: (number|string)
@@ -652,7 +652,7 @@ function attr(
  * @return {string|null|undefined}
  *         When used as a getter, return the value.
  */
-function attr(
+export function attr(
     elem: DOMElementType,
     keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
@@ -708,7 +708,7 @@ function attr(
  * @return {Array}
  *         The produced or original array.
  */
-function splat<T>(obj: T|Array<T>): Array<T> {
+export function splat<T>(obj: T|Array<T>): Array<T> {
     return isArray(obj) ? obj : [obj];
 }
 
@@ -731,7 +731,7 @@ function splat<T>(obj: T|Array<T>): Array<T> {
  *         An identifier for the timeout that can later be cleared with
  *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-function syncTimeout(
+export function syncTimeout(
     fn: Function,
     delay: number,
     context?: unknown
@@ -753,7 +753,7 @@ function syncTimeout(
  * @param {number|undefined} id
  * Id of a timeout.
  */
-function internalClearTimeout(id: (number|undefined)): void {
+export function internalClearTimeout(id: (number|undefined)): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -774,7 +774,7 @@ function internalClearTimeout(id: (number|undefined)): void {
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
+export function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     let n;
 
@@ -787,27 +787,27 @@ function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     return a;
 }
 
-function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+export function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
 T1 extends NullType ?
     T2 extends NullType ?
         T3 extends NullType ?
             T4 extends NullType ?
                 T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+export function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
 T1 extends NullType ?
     T2 extends NullType ?
         T3 extends NullType ?
             T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+export function pick<T1, T2, T3>(...args: [T1, T2, T3]):
 T1 extends NullType ?
     T2 extends NullType ?
         T3 extends NullType ? undefined : T3 : T2 : T1;
-function pick<T1, T2>(...args: [T1, T2]):
+export function pick<T1, T2>(...args: [T1, T2]):
 T1 extends NullType ?
     T2 extends NullType ? undefined : T2 : T1;
-function pick<T1>(...args: [T1]):
+export function pick<T1>(...args: [T1]):
 T1 extends NullType ? undefined : T1;
-function pick<T>(...args: Array<T|null|undefined>): T|undefined;
+export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -820,7 +820,7 @@ function pick<T>(...args: Array<T|null|undefined>): T|undefined;
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-function pick<T>(): T|undefined {
+export function pick<T>(): T|undefined {
     const args = arguments;
     const length = args.length;
     for (let i = 0; i < length; i++) {
@@ -844,7 +844,7 @@ function pick<T>(): T|undefined {
  *
  * @return {void}
  */
-function css(
+export function css(
     el: DOMElementType,
     styles: CSSObject
 ): void {
@@ -874,7 +874,7 @@ function css(
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-function createElement(
+export function createElement(
     tag: string,
     attribs?: HTMLAttributes,
     styles?: CSSObject,
@@ -915,7 +915,7 @@ function createElement(
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-function extendClass <T, TReturn = T>(
+export function extendClass <T, TReturn = T>(
     parent: Class<T>,
     members: any
 ): Class<TReturn> {
@@ -943,7 +943,7 @@ function extendClass <T, TReturn = T>(
  * @return {string}
  *         The padded string.
  */
-function pad(number: number, length?: number, padder?: string): string {
+export function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -971,7 +971,7 @@ function pad(number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-function relativeLength(
+export function relativeLength(
     value: Utilities.RelativeSize,
     base: number,
     offset?: number
@@ -997,7 +997,7 @@ function relativeLength(
  * @return {string}
  * Text with replacements.
  */
-function replaceNested(
+export function replaceNested(
     text: string,
     ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
 ): string {
@@ -1032,7 +1032,7 @@ function replaceNested(
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-function wrap<T, K extends FunctionNamesOf<T>>(
+export function wrap<T, K extends FunctionNamesOf<T>>(
     obj: T,
     method: K,
     func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
@@ -1067,7 +1067,7 @@ function wrap<T, K extends FunctionNamesOf<T>>(
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-function getMagnitude(num: number): number {
+export function getMagnitude(num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
 
@@ -1100,7 +1100,7 @@ function getMagnitude(num: number): number {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-function normalizeTickInterval(
+export function normalizeTickInterval(
     interval: number,
     multiples?: Array<number>,
     magnitude?: number,
@@ -1184,7 +1184,7 @@ function normalizeTickInterval(
  * @param {Function} sortFunction
  *        The function to sort it with, like with regular Array.prototype.sort.
  */
-function stableSort<T>(
+export function stableSort<T>(
     arr: Array<T>,
     sortFunction: (a: T, b: T) => number
 ): void {
@@ -1225,7 +1225,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>|TypedArray): number {
+export function arrayMin(data: Array<any>|TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1250,7 +1250,7 @@ function arrayMin(data: Array<any>|TypedArray): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>|TypedArray): number {
+export function arrayMax(data: Array<any>|TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1275,7 +1275,7 @@ function arrayMax(data: Array<any>|TypedArray): number {
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(
+export function destroyObjectProperties(
     obj: any,
     except?: any,
     destructablesOnly?: boolean
@@ -1303,7 +1303,7 @@ function destroyObjectProperties(
  * @param {Highcharts.HTMLDOMElement} element
  *        The HTML node to discard.
  */
-function discardElement(element?: HTMLDOMElement): void {
+export function discardElement(element?: HTMLDOMElement): void {
     if (element && element.parentElement) {
         element.parentElement.removeChild(element);
     }
@@ -1324,7 +1324,7 @@ function discardElement(element?: HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-function correctFloat(num: number, prec?: number): number {
+export function correctFloat(num: number, prec?: number): number {
 
     // When the number is higher than 1e14 use the number (#16275)
     return num > 1e14 ? num : parseFloat(
@@ -1338,7 +1338,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<Time.TimeUnit, number> = {
+export const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1376,7 +1376,7 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {number | undefined}
  *          The closest distance between values
  */
-function getClosestDistance(
+export function getClosestDistance(
     arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
@@ -1422,7 +1422,7 @@ function getClosestDistance(
  * @return {unknown}
  * The unknown property value.
  */
-function getNestedProperty(path: string, parent: unknown): unknown {
+export function getNestedProperty(path: string, parent: unknown): unknown {
 
     const pathElements = path.split('.');
 
@@ -1465,12 +1465,12 @@ function getNestedProperty(path: string, parent: unknown): unknown {
     return parent;
 }
 
-function getStyle(
+export function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt: true
 ): (number|undefined);
-function getStyle(
+export function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: false
@@ -1494,7 +1494,7 @@ function getStyle(
  * @return {number|string|undefined}
  * The style value.
  */
-function getStyle(
+export function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
@@ -1570,7 +1570,7 @@ function getStyle(
  * @return {T|undefined}
  *         The value of the element.
  */
-const find = (Array.prototype as any).find ?
+export const find = (Array.prototype as any).find ?
     function<T> (
         arr: Array<T>,
         callback: Utilities.FindCallback<T>
@@ -1605,7 +1605,7 @@ const find = (Array.prototype as any).find ?
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-function offset(el: Element): Utilities.OffsetObject {
+export function offset(el: Element): Utilities.OffsetObject {
     const docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -1639,7 +1639,7 @@ function offset(el: Element): Utilities.OffsetObject {
  * @param {T} [ctx]
  *        The context.
  */
-function objectEach<TObject, TContext>(
+export function objectEach<TObject, TContext>(
     obj: TObject,
     fn: Utilities.ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
@@ -1677,7 +1677,7 @@ function objectEach<TObject, TContext>(
  * @return {Function}
  *         A callback function to remove the added event.
  */
-function addEvent<T>(
+export function addEvent<T>(
     el: (Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
@@ -1765,7 +1765,7 @@ function addEvent<T>(
  *
  * @return {void}
  */
-function removeEvent<T>(
+export function removeEvent<T>(
     el: (Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
@@ -1864,7 +1864,7 @@ function removeEvent<T>(
  *
  * @return {void}
  */
-function fireEvent<T>(
+export function fireEvent<T>(
     el: T,
     type: string,
     eventArguments?: (AnyRecord|Event),
@@ -1963,7 +1963,7 @@ function fireEvent<T>(
     }
 }
 
-let serialMode: (boolean|undefined);
+export let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -1977,7 +1977,7 @@ let serialMode: (boolean|undefined);
  * @return {string}
  * A unique key.
  */
-const uniqueKey = (function (): () => string {
+export const uniqueKey = (function (): () => string {
 
     const hash = Math.random().toString(36).substring(2, 9) + '-';
 
@@ -2012,16 +2012,27 @@ const uniqueKey = (function (): () => string {
  * @return {boolean|undefined}
  * State of the serial mode.
  */
-function useSerialIds(mode?: boolean): (boolean|undefined) {
+export function useSerialIds(mode?: boolean): (boolean|undefined) {
     return (serialMode = pick(mode, serialMode));
 }
 
-function isFunction(obj: unknown): obj is Function { // eslint-disable-line
+export function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
-const ucfirst = (s: unknown): string =>
-    (isString(s) ? s.substr(0, 1).toUpperCase() + s.substr(1) : String(s));
+export function ucfirst(s: unknown): string {
+    return (
+        (isString(s) ?
+            s.substring(0, 1).toUpperCase() + s.substring(1) :
+            String(s))
+    );
+}
+
+/* *
+ *
+ *  External
+ *
+ * */
 
 // Register Highcharts as a plugin in jQuery
 if ((win as any).jQuery) {
@@ -2088,7 +2099,7 @@ if ((win as any).jQuery) {
  *
  * */
 
-namespace Utilities {
+export namespace Utilities {
     export type RelativeSize = (number|string);
     export interface ErrorMessageEventObject {
         chart?: Chart;
@@ -2136,7 +2147,7 @@ namespace Utilities {
  * */
 
 // TODO use named exports when supported.
-const Utilities = {
+export const Utilities = {
     addEvent,
     arrayMax,
     arrayMin,
