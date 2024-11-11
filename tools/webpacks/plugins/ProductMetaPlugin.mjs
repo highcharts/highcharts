@@ -56,7 +56,7 @@ export class ProductMetaPlugin {
      * @param {ProductMetaPluginOptions} [options]
      */
     constructor(options = {}) {
-        this.options = {
+        options = this.options = {
             assetPrefix: '',
             productDate: new Date().toISOString().substring(0 , 10),
             ...options
