@@ -122,7 +122,7 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const options = merge(column.options, this.options);
+        const options = merge(column.options, this.options); // ??
         const headerCellOptions = options.header || {};
 
         if (headerCellOptions.formatter) {
@@ -135,9 +135,14 @@ class HeaderCell extends Cell {
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.headerContent = makeHTMLElement('div', {
-            className: Globals.classNames.headerCellContent
-        }, this.htmlElement);
+
+        this.headerContent = makeHTMLElement(
+            options.sorting?.sortable && column.data ? 'button' : 'span',
+            {
+                className: Globals.classNames.headerCellContent
+            },
+            this.htmlElement
+        );
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
@@ -148,9 +153,7 @@ class HeaderCell extends Cell {
             this.headerContent.innerText = this.value;
         }
 
-        // Set the accessibility attributes.
         this.htmlElement.setAttribute('scope', 'col');
-        this.htmlElement.setAttribute('data-column-id', column.id);
 
         if (this.options.className) {
             this.htmlElement.classList.add(
@@ -159,6 +162,8 @@ class HeaderCell extends Cell {
         }
 
         if (this.isMain) {
+            this.htmlElement.setAttribute('data-column-id', column.id);
+
             // Add user column classname
             if (column.options.className) {
                 this.htmlElement.classList.add(
