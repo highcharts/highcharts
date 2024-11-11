@@ -136,7 +136,8 @@ const mapComponent = {
     chartOptions: {
         ...commonChartOptions,
         chart: {
-            styledMode: false
+            styledMode: false,
+            margin: 0
         },
         mapNavigation: {
             enabled: true,
