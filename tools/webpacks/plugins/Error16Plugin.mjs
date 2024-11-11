@@ -101,7 +101,7 @@ export class Error16Plugin {
             return;
         }
 
-        const filepath = Path.join(outputOptions.path, filename);
+        const filepath = Path.join(outputOptions.path, outputOptions.filename);
         const content = FS.readFileSync(filepath, 'utf8');
 
         FS.writeFileSync(

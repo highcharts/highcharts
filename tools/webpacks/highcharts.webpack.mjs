@@ -11,6 +11,7 @@ import * as Path from 'node:path';
 import FSLib from '../libs/fs.js';
 
 import Error16Plugin from './plugins/Error16Plugin.mjs';
+import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 
 
 /* *
@@ -266,7 +267,10 @@ const webpacks = FSLib
             plugins: [
                 new Error16Plugin({
                     productBundles: productMasters.map(pm => `${pm}.src.js`)
-                })
+                }),
+                new ProductMetaPlugin({
+                    productName: 'Highcharts'
+                }),
                 // new BundleDeclarationsWebpackPlugin.BundleDeclarationsWebpackPlugin({
                 //     entry: {
                 //         filePath: `./${masterFile}`.replace(/\.js$/u, '.d.ts'),

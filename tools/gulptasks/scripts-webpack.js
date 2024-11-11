@@ -7,17 +7,6 @@ const FSP = require('node:fs/promises');
 const Gulp = require('gulp');
 const Path = require('node:path');
 
-
-/* *
- *
- *  Constants
- *
- * */
-
-
-const HEADER_PATTERN = /\/\*\*[\s]+\*[\s]+@license.*?\*\//su;
-
-
 /* *
  *
  *  Tasks
@@ -64,27 +53,6 @@ async function scriptsWebpack() {
                 timeout: 60000
             }
         );
-
-        for (const filePath of FSLib.getFilePaths('code', true)) {
-            fileContent = await FSP.readFile(filePath, 'utf8');
-            fileMatch = fileContent.match(HEADER_PATTERN);
-
-            if (!fileMatch) {
-                continue;
-            }
-
-            if (fileMatch.index > 80) {
-                fileContent = (
-                    fileMatch[0] + '\n' +
-                    fileContent.substring(0, fileMatch.index) +
-                    fileContent.substring(fileMatch.index + fileMatch[0].length)
-                );
-            }
-
-            fileContent = Code.processProductsTags(fileContent);
-
-            await FSP.writeFile(filePath, fileContent, 'utf8');
-        }
 
     }
 
