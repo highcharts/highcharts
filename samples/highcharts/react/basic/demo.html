@@ -1,0 +1,21 @@
+<figure class="highcharts-figure">
+                    <div id="container"></div>
+                </figure><details><summary>Code</summary><code><pre>import React from  'https://esm.sh/react@18.3.1';
+import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
+import { Chart, Series } from 'https://esm.sh/gh/highcharts/highcharts-react@v4-dev/index';
+
+export default function ChartComponent() {
+    return (
+        &lt;div&gt;
+            &lt;Chart title="hello"&gt;
+                &lt;Series type="line" data={[1, 2, 3]} /&gt;
+            &lt;/Chart&gt;
+        &lt;/div&gt;
+    );
+}
+
+const root = ReactDOM.createRoot(document.querySelector('#container'));
+root.render(&lt;ChartComponent /&gt;);
+
+
+</pre></code></details>

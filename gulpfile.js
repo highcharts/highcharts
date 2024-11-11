@@ -77,6 +77,7 @@ Gulp.registry(new GulpForwardReference());
     'lint-ts',
     'palette',
     'prep-release',
+    'prepare-react-demos',
     'reset-clone',
     'reset-visual-references',
     'scripts',
