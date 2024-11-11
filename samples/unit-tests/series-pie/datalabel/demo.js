@@ -734,12 +734,12 @@ QUnit.test(
         assert.strictEqual(
             chart.options.plotOptions.pie.dataLabels[0].distance,
             20,
-            'Distance is defined by user, should not be merged with defaults'
+            'Distance should not be merged with defaults'
         );
 
         assert.strictEqual(
             chart.options.plotOptions.pie.dataLabels[0].connectorShape,
             'crookedLine',
-            'ConnectorShape is not defined by user, merged with defaults'
+            'ConnectorShape should be merged with defaults'
         );
     });
