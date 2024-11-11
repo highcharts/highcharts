@@ -949,11 +949,13 @@ input.highcharts-range-selector {
     fill: var(--highcharts-background-color);
 }
 
+.highcharts-renko-series .highcharts-point-down,
 .highcharts-hollowcandlestick-series .highcharts-point-down {
     fill: var(--highcharts-negative-color);
     stroke: var(--highcharts-negative-color);
 }
 
+.highcharts-renko-series .highcharts-point-up,
 .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
     fill: var(--highcharts-positive-color);
     stroke: var(--highcharts-positive-color);
