@@ -169,6 +169,8 @@ class ColumnsResizer {
                 className: Globals.classNames.resizerHandles
             }, cell.htmlElement);
 
+            handle.setAttribute('aria-hidden', true);
+
             vp.columnsResizer?.addHandleListeners(
                 handle, column
             );

@@ -458,7 +458,7 @@ const exporting: ExportingOptions = {
              *         Menu item definitions
              *
              * @type    {Array<string>}
-             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
+             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG"]
              * @since   2.0
              */
             menuItems: [
@@ -467,7 +467,6 @@ const exporting: ExportingOptions = {
                 'separator',
                 'downloadPNG',
                 'downloadJPEG',
-                'downloadPDF',
                 'downloadSVG'
             ]
 

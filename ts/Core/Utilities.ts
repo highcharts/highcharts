@@ -28,6 +28,7 @@ import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
+import type { TypedArray } from './Series/SeriesOptions';
 
 import H from './Globals.js';
 const {
@@ -1224,7 +1225,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>): number {
+function arrayMin(data: Array<any>|TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1249,7 +1250,7 @@ function arrayMin(data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>): number {
+function arrayMax(data: Array<any>|TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1388,7 +1389,7 @@ const getAlignFactor = (align: string = ''): number => ({
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: number[][],
+    arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
     const allowNegative = !onError;
@@ -1564,29 +1565,6 @@ function getStyle(
     return style;
 }
 
-/**
- * Search for an item in an array.
- *
- * @function Highcharts.inArray
- *
- * @deprecated
- *
- * @param {*} item
- *        The item to search for.
- *
- * @param {Array<*>} arr
- *        The array or node collection to search in.
- *
- * @param {number} [fromIndex=0]
- *        The index to start searching from.
- *
- * @return {number}
- *         The index within the array, or -1 if not found.
- */
-function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
-    error(32, false, void 0, { 'Highcharts.inArray': 'use Array.indexOf' });
-    return arr.indexOf(item, fromIndex);
-}
 
 /**
  * Return the value of the first element in the array that satisfies the
@@ -1626,22 +1604,6 @@ const find = (Array.prototype as any).find ?
         }
     };
 
-/**
- * Returns an array of a given object's own properties.
- *
- * @function Highcharts.keys
- * @deprecated
- *
- * @param {*} obj
- *        The object of which the properties are to be returned.
- *
- * @return {Array<string>}
- *         An array of strings that represents all the properties.
- */
-function keys(obj: any): Array<string> {
-    error(32, false, void 0, { 'Highcharts.keys': 'use Object.keys' });
-    return Object.keys(obj);
-}
 
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
@@ -1701,116 +1663,6 @@ function objectEach<TObject, TContext>(
         }
     }
 }
-
-/**
- * Iterate over an array.
- *
- * @deprecated
- * @function Highcharts.each
- *
- * @param {Array<*>} arr
- *        The array to iterate over.
- *
- * @param {Function} fn
- *        The iterator callback. It passes three arguments:
- *        - `item`: The array item.
- *        - `index`: The item's index in the array.
- *        - `arr`: The array that each is being applied to.
- *
- * @param {*} [ctx]
- *        The context.
- *
- * @return {void}
- */
-
-/**
- * Filter an array by a callback.
- *
- * @deprecated
- * @function Highcharts.grep
- *
- * @param {Array<*>} arr
- *        The array to filter.
- *
- * @param {Function} callback
- *        The callback function. The function receives the item as the first
- *        argument. Return `true` if the item is to be preserved.
- *
- * @return {Array<*>}
- *         A new, filtered array.
- */
-
-/**
- * Map an array by a callback.
- *
- * @deprecated
- * @function Highcharts.map
- *
- * @param {Array<*>} arr
- *        The array to map.
- *
- * @param {Function} fn
- *        The callback function. Return the new value for the new array.
- *
- * @return {Array<*>}
- *         A new array item with modified items.
- */
-
-/**
- * Reduce an array to a single value.
- *
- * @deprecated
- * @function Highcharts.reduce
- *
- * @param {Array<*>} arr
- *        The array to reduce.
- *
- * @param {Function} fn
- *        The callback function. Return the reduced value. Receives 4
- *        arguments: Accumulated/reduced value, current value, current array
- *        index, and the array.
- *
- * @param {*} initialValue
- *        The initial value of the accumulator.
- *
- * @return {*}
- *         The reduced value.
- */
-
-/**
- * Test whether at least one element in the array passes the test implemented by
- * the provided function.
- *
- * @deprecated
- * @function Highcharts.some
- *
- * @param {Array<*>} arr
- *        The array to test
- *
- * @param {Function} fn
- *        The function to run on each item. Return truthy to pass the test.
- *        Receives arguments `currentValue`, `index` and `array`.
- *
- * @param {*} ctx
- *        The context.
- *
- * @return {boolean}
- */
-objectEach({
-    map: 'map',
-    each: 'forEach',
-    grep: 'filter',
-    reduce: 'reduce',
-    some: 'some'
-} as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
-    (H as any)[key] = function (arr: Array<unknown>): any {
-        error(32, false, void 0, { [`Highcharts.${key}`]: `use Array.${val}` });
-        return (Array.prototype[val] as any).apply(
-            arr,
-            [].slice.call(arguments, 1)
-        );
-    };
-});
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -2180,6 +2032,9 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
+const ucfirst = (s: unknown): string =>
+    (isString(s) ? s.substr(0, 1).toUpperCase() + s.substr(1) : String(s));
+
 // Register Highcharts as a plugin in jQuery
 if ((win as any).jQuery) {
 
@@ -2319,7 +2174,6 @@ const Utilities = {
     getMagnitude,
     getNestedProperty,
     getStyle,
-    inArray,
     insertItem,
     isArray,
     isClass,
@@ -2328,7 +2182,6 @@ const Utilities = {
     isNumber,
     isObject,
     isString,
-    keys,
     merge,
     normalizeTickInterval,
     objectEach,
@@ -2344,6 +2197,7 @@ const Utilities = {
     stableSort,
     syncTimeout,
     timeUnits,
+    ucfirst,
     uniqueKey,
     useSerialIds,
     wrap
@@ -2470,6 +2324,11 @@ export default Utilities;
  *//**
  * Height of the element.
  * @name Highcharts.CSSObject#height
+ * @type {number|undefined}
+ *//**
+ * The maximum number of lines. If lines are cropped away, an ellipsis will be
+ * added.
+ * @name Highcharts.CSSObject#lineClamp
  * @type {number|undefined}
  *//**
  * Width of the element border.

@@ -222,6 +222,39 @@ function merge<T extends Object>(
 }
 
 /**
+ * Returns a deep copy of an argument. It differs from `merge` in that it copies
+ * also arrays.
+ *
+ * @param value
+ * The value to clone.
+ *
+ * @param excludedKeys
+ * An array of keys to exclude from the clone.
+ */
+function deepClone(value: any, excludedKeys?: string[]): any {
+    if (Array.isArray(value)) {
+        return value.map((v): any => deepClone(v, excludedKeys));
+    }
+
+    if (value && typeof value === 'object') {
+        const clone: Record<string, any> = {};
+        const keys = Object.keys(value);
+
+        for (const key of keys) {
+            if (excludedKeys && excludedKeys.includes(key)) {
+                clone[key] = value[key];
+            } else {
+                clone[key] = deepClone(value[key], excludedKeys);
+            }
+        }
+
+        return clone;
+    }
+
+    return value;
+}
+
+/**
  * Creates a session-dependent unique key string for reference purposes.
  *
  * @function Dashboards.uniqueKey
@@ -529,6 +562,7 @@ namespace Utilities {
 
 const Utilities = {
     addEvent,
+    deepClone,
     error,
     fireEvent,
     merge,

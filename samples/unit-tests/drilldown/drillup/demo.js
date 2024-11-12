@@ -436,8 +436,9 @@ QUnit.test(
 
         chart.series[0].points[1].doDrilldown();
         chart.drillUp();
+        const xData = chart.series[0].getColumn('x');
         assert.strictEqual(
-            chart.series[0].xData[chart.series[0].xData.length - 1],
+            xData[xData.length - 1],
             9,
             `After drilling down and up on the chart with the category axis
             the main series should go back to its original state.`

@@ -18,7 +18,7 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
 
             series: [
                 {
-                    data: [['Point name', 1], 1, 1]
+                    data: [{ name: 'Point name', y: 1 }, 1, 1]
                 },
                 {
                     data: [2, 2, 2]

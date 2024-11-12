@@ -115,7 +115,7 @@ Yes. See our article, [Render charts on the server](https://highcharts.com/docs/
 How do I define irregular time data?
 ------------------------------------
 
-To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [https://jsfiddle.net/highcharts/Jx5n2/](https://jsfiddle.net/highcharts/Jx5n2/).
+To add data points with irregular intervals, instead of defining `pointStart` and `pointInterval` for the series, define an X value (date) for each point. See [demo of irregular time](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/spline-irregular-time).
 
 If you want the line to be broken for missing dates, insert null values instead.
 

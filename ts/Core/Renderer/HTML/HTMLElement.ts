@@ -252,8 +252,6 @@ class HTMLElement extends SVGElement {
             })
         });
 
-        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
-        this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -292,8 +290,14 @@ class HTMLElement extends SVGElement {
             doTransform = true;
         }
 
+        // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
-            styles.whiteSpace = 'nowrap';
+            styles.overflow = 'hidden';
+        }
+        if (styles?.lineClamp) {
+            styles.display = '-webkit-box';
+            styles.WebkitLineClamp = styles.lineClamp;
+            styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
         }
 
@@ -360,7 +364,7 @@ class HTMLElement extends SVGElement {
                 x = 0,
                 y = 0
             } = this,
-            whiteSpace = styles.whiteSpace;
+            { display = 'block', whiteSpace } = styles;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -423,7 +427,7 @@ class HTMLElement extends SVGElement {
                         ) ?
                             textWidth + 'px' :
                             'auto', // #16261
-                        display: 'block',
+                        display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
                     this.oldTextWidth = textWidth;

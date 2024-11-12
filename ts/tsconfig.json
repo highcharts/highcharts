@@ -17,7 +17,8 @@
         // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
         "lib": [
             "DOM",
-            "ES2016"
+            "ES2016",
+            "ES2017.Object"
         ],
         // "jsx": "preserve",                                /* Specify what JSX code is generated. */
         // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
