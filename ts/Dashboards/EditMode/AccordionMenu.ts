@@ -156,7 +156,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
                     await this.confirmChanges();
-                    fireEvent(this, 'confirm');
+                    fireEvent(editMode, 'confirmEditing');
                 }
             }
         );
@@ -169,7 +169,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
                     this.cancelChanges();
-                    fireEvent(this, 'cancel');
+                    fireEvent(editMode, 'cancelEditing');
                 }
             }
         );
