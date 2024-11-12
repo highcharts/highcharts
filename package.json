@@ -60,7 +60,6 @@
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.10",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
-    "@swc/cli": "^0.5.0",
     "@swc/core": "^1.9.2",
     "@types/jquery": "^3.5.30",
     "@types/qunit": "^2.19.10",
