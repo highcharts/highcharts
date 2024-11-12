@@ -1,6 +1,6 @@
 /* *
  *
- *  Replaced Highcharts product tags with meta information.
+ *  Replace Highcharts product tags with meta information.
  *
  *  (c) Highsoft AS
  *

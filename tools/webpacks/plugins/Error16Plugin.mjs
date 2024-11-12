@@ -1,6 +1,6 @@
 /* *
  *
- *  Modifies global namespace assignment to throw error 16.
+ *  Modifies global namespace assignment in UMD to throw error 16.
  *
  *  (c) Highsoft AS
  *
