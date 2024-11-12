@@ -1,13 +1,9 @@
 ---
-name: Basic line
+name: Basic React
 authors:
-  - Torstein Hønsi
+  - Gøran Slettemark
 js_wrap: b
 alt_text: >-
   Highcharts basic line chart JavaScript example displays graph plot of solar
   employment growth areas over time.
-tags:
-  - Highcharts demo
-categories:
-  - Line charts
 ...

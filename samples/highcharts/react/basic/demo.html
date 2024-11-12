@@ -1,8 +1,18 @@
-<figure class="highcharts-figure">
+
+            <script type="importmap">
+            {
+                "imports": {
+                    "react": "https://esm.sh/react@18.3.1",
+                    "react-dom": "https://esm.sh/react-dom@18.3.1/client",
+                    "highcharts-react-official": "https://esm.sh/gh/highcharts/highcharts-react@v4-dev/index.js"
+                }
+            }
+            </script>
+            <figure class="highcharts-figure">
                     <div id="container"></div>
-                </figure><details><summary>Code</summary><code><pre>import React from  'https://esm.sh/react@18.3.1';
-import ReactDOM from 'https://esm.sh/react-dom@18.3.1/client';
-import { Chart, Series } from 'https://esm.sh/gh/highcharts/highcharts-react@v4-dev/index';
+            </figure><details><summary>Code</summary><code><pre>import React from  'react';
+import ReactDOM from 'react-dom';
+import { Chart, Series } from 'highcharts-react-official';
 
 export default function ChartComponent() {
     return (
