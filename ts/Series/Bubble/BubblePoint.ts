@@ -51,13 +51,6 @@ class BubblePoint extends ScatterPoint {
 
     public series!: BubbleSeries;
 
-    public onMouseOver(event: any): void {
-        if (this.series.chart.pointer) {
-            this.series.chart.pointer.runPointActions(event, this);
-        }
-        super.onMouseOver(event);
-    }
-
     /* *
      *
      *  Functions
