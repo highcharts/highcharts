@@ -470,12 +470,18 @@ async function createDashboard() {
                 packetEvent: async event => {
                     const { topic, count } = event.detail;
                     printLog(`Packet #${count} received: ${topic}`);
+
+                    if (count === 1) {
+                        // First packet received, make dashboard visible
+                        setVisibility(true);
+                    }
                     await dashboardUpdate(event.data, connId, count);
                 },
                 errorEvent: event => {
                     const { code, message } = event.detail;
                     printLog(`${message} (error code #${code})`);
                     controlBar.showError(message);
+                    controlBar.setConnectState(false);
                 }
             }
         };
@@ -917,8 +923,6 @@ class ControlBar {
         activeItem.fullName = fullName;
         activeItem.plantName = plant;
         activeItem.connector = connector;
-
-        setVisibility(true);
     }
 
     async clickHandler(event) {
