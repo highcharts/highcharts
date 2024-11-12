@@ -6,11 +6,11 @@
 let controlBar;
 let dashboard;
 
-// Whether to replace the entire data table with buffered from
+// Whether to replace the entire data table with buffered data from
 // the MQTT packet or accumulate the newest data into the table.
 // When using buffered data, the table will be filled already on
 // the first packet.
-const useHistoricalData = false;
+const useHistoricalData = true;
 
 // TBD: Remove this as soon as issues in the input data are fixed
 // Problems as of 5 Nov 2024:
@@ -376,7 +376,7 @@ async function createDashboard() {
         const tzOffset = new Date().getTimezoneOffset() * 60000;
 
         if (useHistoricalData) {
-            // Get measurement history (24 hours, 10 minute intervals)
+            // Get measurement history
             const hist = aggData.P_hist;
             let ts = new Date(hist.start).valueOf() - tzOffset;
             const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
@@ -395,10 +395,11 @@ async function createDashboard() {
             // Use latest measurement only
             let ts;
             if (dataBugWorkaround) {
-                ts = new Date().valueOf() - tzOffset;
+                ts = new Date().valueOf();
             } else {
                 ts = aggData.ts_iso;
             }
+            ts -= tzOffset;
             modifiedData.push([ts, aggData.P_gen]);
         }
 
