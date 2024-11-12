@@ -157,7 +157,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
  *
  * */
 
-interface PackedBubblePoint extends Omit<NetworkgraphPoint, 'onMouseOver' | 'optionsToObject'> {
+interface PackedBubblePoint extends NetworkgraphPoint {
     className: BubblePointType['className'];
     fromNode: NetworkgraphPoint;
     linksFrom: Array<NetworkgraphPoint>;
