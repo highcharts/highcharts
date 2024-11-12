@@ -48,7 +48,6 @@ const {
     arrayMax,
     arrayMin,
     clamp,
-    defined,
     extend,
     isNumber,
     merge,
@@ -80,12 +79,6 @@ declare module '../../Core/Series/SeriesLike' {
 type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
-interface KDNode {
-    [side: string]: (KDNode|Point|undefined);
-    left?: KDNode;
-    point: Point;
-    right?: KDNode;
-}
 
 interface KDPointSearchObject extends KDPointSearchObjectLike {
 }
@@ -872,132 +865,51 @@ class BubbleSeries extends ScatterSeries {
     public searchKDTree(
         point: KDPointSearchObject,
         compareX?: boolean,
-        e?: PointerEvent
+        e?: PointerEvent,
+        suppliedPointEvaluator: Function = noop,
+        suppliedBSideCheckEvaluator: Function = noop
     ): (Point|undefined) {
-        const series = this,
-            [kdX, kdY] = this.kdAxisArray,
-            kdComparer = compareX ? 'distX' : 'dist',
-            kdDimensions = (series.options.findNearestPointBy || '')
-                .indexOf('y') > -1 ? 2 : 1,
-            useRadius = !!series.isBubble;
-            // GetDist = (x, y) => Math.sqrt(x * x, y * y);
 
-        /**
-         * Set the one and two dimensional distance on the point object.
-         * @private
-         */
-        function setDistance(
-            p1: KDPointSearchObject,
-            p2: Point
-        ): void {
-            const p1kdX = p1[kdX],
-                p2kdX = p2[kdX],
-                x = (defined(p1kdX) && defined(p2kdX)) ? p1kdX - p2kdX : null,
-                p1kdY = p1[kdY],
-                p2kdY = p2[kdY],
-                y = (defined(p1kdY) && defined(p2kdY)) ? p1kdY - p2kdY : 0,
-                radius = useRadius ? (p2.marker?.radius || 0) : 0;
+        suppliedPointEvaluator = (
+            p1: Point,
+            p2: Point,
+            comparisonProp: 'dist' | 'distX'
+        ): [Point, boolean] => {
+            const p1Dist = p1[comparisonProp] || 0;
+            const p2Dist = p2[comparisonProp] || 0;
 
-            p2.dist = Math.sqrt(((x && x * x) || 0) + y * y) - radius;
-            p2.distX = defined(x) ? (Math.abs(x) - radius) : Number.MAX_VALUE;
-        }
+            let ret,
+                flip = false;
 
-        /**
-         * @private
-         */
-        function doSearch(
-            search: KDPointSearchObject,
-            tree: KDNode,
-            depth: number,
-            dimensions: number
-        ): Point {
-            const point = tree.point,
-                axis = series.kdAxisArray[depth % dimensions];
-            let nPoint1,
-                nPoint2,
-                ret = point,
-                more = true;
+            if (p1Dist < 0 && p2Dist < 0) {
+                ret = (
+                    p1Dist - (p1.marker?.radius || 0) >=
+                    p2Dist - (p2.marker?.radius || 0)
+                ) ?
+                    p1 :
+                    p2;
 
-            setDistance(search, point);
-
-            // Pick side based on distance to splitting point
-            const tdist = (search[axis] || 0) - (point[axis] || 0) +
-                (useRadius ? (point.marker?.radius || 0) : 0),
-                sideA = tdist < 0 ? 'left' : 'right',
-                sideB = tdist < 0 ? 'right' : 'left';
-
-            // End of tree
-            if (tree[sideA]) {
-                nPoint1 = doSearch(
-                    search, tree[sideA] as any, depth + 1, dimensions
-                );
-
-                const p1Dist = ret[kdComparer] || 0;
-                const p2Dist = nPoint1[kdComparer] || 0;
-
-                if (p1Dist < 0 && p2Dist < 0) {
-                    ret = p1Dist - (
-                        ret.marker?.radius || 0
-                    ) >= p2Dist - (
-                        nPoint1.marker?.radius || 0
-                    ) ?
-                        point :
-                        nPoint1;
-                    more = false;
-                } else {
-                    ret = p1Dist < p2Dist ? point : nPoint1;
-                }
-
-            }
-            if (tree[sideB]) {
-
-                // Compare distance to current best to splitting point to decide
-                // whether to check side B or not
-                if (
-                    more && (
-                        Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]
-                    ) || (
-                        Math.sqrt(tdist * tdist) > (ret as any)[kdComparer]
-                    )
-                ) {
-                    nPoint2 = doSearch(
-                        search,
-                        tree[sideB] as any,
-                        depth + 1,
-                        dimensions
-                    );
-
-                    const p1Dist = ret[kdComparer] || 0;
-
-                    const p2Dist = nPoint2[kdComparer] || 0;
-
-                    if (p1Dist < 0 && p2Dist < 0) {
-                        ret = p1Dist - (
-                            ret.marker?.radius || 0
-                        ) >= p2Dist - (
-                            nPoint2.marker?.radius || 0
-                        ) ?
-                            point :
-                            nPoint2;
-                    } else {
-                        ret = p1Dist < p2Dist ? ret : nPoint2;
-                    }
-                }
+                flip = true;
+            } else {
+                ret = p1Dist < p2Dist ? p1 : p2;
             }
 
-            return ret;
-        }
+            return [ret, flip];
+        };
 
-        if (!this.kdTree && !this.buildingKdTree) {
-            this.buildKDTree(e);
-        }
-
-        if (this.kdTree) {
-            return doSearch(point, this.kdTree, kdDimensions, kdDimensions);
-        }
+        suppliedBSideCheckEvaluator = (
+            a: number,
+            b: number,
+            flip: boolean
+        ): boolean => !flip && (a > b) || (a < b);
+        return super.searchKDTree(
+            point,
+            compareX,
+            e,
+            suppliedPointEvaluator,
+            suppliedBSideCheckEvaluator
+        );
     }
-
-
 }
 
 /* *
