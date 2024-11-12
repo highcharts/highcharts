@@ -65,7 +65,7 @@ abstract class Row {
     /**
      * Flag to determine if the row is being destroyed.
      */
-    private destroyed?: boolean;
+    public destroyed?: boolean;
 
     /* *
     *

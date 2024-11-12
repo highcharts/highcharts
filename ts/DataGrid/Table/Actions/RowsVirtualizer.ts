@@ -268,20 +268,38 @@ class RowsVirtualizer {
 
         const alwaysLastRow = rows.pop();
 
+        // Remove rows that are out of the range except the last row.
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            rows[i].destroy();
+            const row = rows[i];
+            const rowIndex = row.index;
+
+            if (rowIndex < from || rowIndex > to) {
+                !row.destroyed && row.destroy();
+            }
         }
-        rows.length = 0;
 
         for (let i = from; i <= to; ++i) {
-            const newRow = new TableRow(vp, i);
-            newRow.render();
-            vp.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                vp.tbodyElement.lastChild
-            );
+            const row = rows[i];
+            let newRow: TableRow;
 
-            rows.push(newRow);
+            // Recreate row when it is destroyed and it is in the range.
+            if (row && row.destroyed) {
+                newRow = new TableRow(vp, i);
+                newRow.render();
+                vp.tbodyElement.insertBefore(
+                    newRow.htmlElement,
+                    vp.tbodyElement.lastChild
+                );
+                rows[i] = newRow;
+            } else if (!row) {
+                newRow = new TableRow(vp, i);
+                newRow.render();
+                vp.tbodyElement.insertBefore(
+                    newRow.htmlElement,
+                    vp.tbodyElement.lastChild
+                );
+                rows.push(newRow);
+            }
         }
 
         if (alwaysLastRow) {
