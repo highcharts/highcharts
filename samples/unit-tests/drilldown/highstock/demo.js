@@ -113,18 +113,16 @@ QUnit.test(
             chart.xAxis[0].setExtremes(79, 99);
         });
 
-        chart.series[0].data.find(p => p && p.name === '88').doDrilldown();
+        chart.series[0].points.find(p => p && p.name === '88').doDrilldown();
 
-        const breadcrumbs = chart.breadcrumbs.elementList;
-        const lastBreadcrumb = breadcrumbs[
-            Object.keys(breadcrumbs).length - 1
-        ];
-        const breadcrumbText = lastBreadcrumb.button.text.textStr;
+        const breadcrumbs = chart.breadcrumbs.elementList,
+            lastBreadcrumb = breadcrumbs[Object.keys(breadcrumbs).length - 1],
+            breadcrumbText = lastBreadcrumb.button.text.textStr;
 
         assert.strictEqual(
             breadcrumbText,
             '88',
-            'Breadcrumbs should show correct point after drilldown with ' +
+            'Breadcrumbs should show correct point (88) after drilldown with ' +
             'scrolling'
         );
     });
