@@ -174,6 +174,12 @@ function onExit(name, callback) {
                     });
 
                 if (exit) {
+                    // Handle typeErrors
+                    if (typeof code !== 'number') {
+                        LogLib.error(code);
+                        code = 1;
+                    }
+
                     process.exit(code); // eslint-disable-line node/no-process-exit
                 }
             })
