@@ -1214,6 +1214,9 @@ class Chart {
                     'class': 'highcharts-' + key,
                     zIndex: options.zIndex || 4
                 })
+                .css({
+                    whiteSpace: 'nowrap'
+                })
                 .add();
 
             // Update methods, relay to `applyDescription`
@@ -1235,7 +1238,10 @@ class Chart {
                     options.style
                 ));
             }
+
+            // Get unwrapped text length and reset
             elem.textPxLength = elem.getBBox().width;
+            elem.css({ whiteSpace: options.style?.whiteSpace });
 
             /**
              * The chart title. The title has an `update` method that allows
