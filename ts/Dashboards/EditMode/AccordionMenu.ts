@@ -87,8 +87,15 @@ class AccordionMenu {
      *
      * @param component
      * The component to render the menu for.
+
+     * @param sidebarMainContainer
+     * The main container of the sidebar.
      */
-    public renderContent(container: HTMLElement, component: Component): void {
+    public renderContent(
+        container: HTMLElement,
+        component: Component,
+        sidebarMainContainer: HTMLElement
+    ): void {
         const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
@@ -96,7 +103,8 @@ class AccordionMenu {
         let content: HTMLElement;
 
         this.component = component;
-        this.oldOptionsBuffer = merge({}, component.options);
+
+        this.oldOptionsBuffer = component.getEditableOptions();
 
         if (editMode) {
             this.confirmationPopup = new ConfirmationPopup(
@@ -128,7 +136,6 @@ class AccordionMenu {
                     options
                 )
             ).content;
-
             this.renderAccordion(options, content, component);
         }
 
@@ -138,7 +145,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.accordionMenuButtonsContainer
             },
             {},
-            accordionContainer
+            sidebarMainContainer
         );
 
         EditRenderer.renderButton(
@@ -164,6 +171,7 @@ class AccordionMenu {
                 }
             }
         );
+        sidebarMainContainer.appendChild(buttonContainer);
     }
 
     /**
@@ -351,6 +359,7 @@ class AccordionMenu {
             const accordionOptions = nestedOptions[i].options;
             const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
+
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
@@ -359,12 +368,13 @@ class AccordionMenu {
                     showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true,
+                    isNested: !!accordionOptions,
+                    isStandalone: !accordionOptions,
                     lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 
-            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
                     accordionOptions[j] as EditableOptions.Options,
                     collapsedHeader.content,

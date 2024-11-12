@@ -29,11 +29,13 @@ import Component from '../Component.js';
 import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
+import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
     diffObjects
 } = U;
+const { deepClone } = DU;
 
 /* *
  *
@@ -212,11 +214,14 @@ class DataGridComponent extends Component {
         const componentOptions = this.options;
         const dataGridOptions = this.dataGrid?.options;
 
-        return merge(
-            {
-                dataGridOptions: dataGridOptions
-            },
-            componentOptions
+        return deepClone(
+            merge(
+                {
+                    dataGridOptions: dataGridOptions
+                },
+                componentOptions
+            ),
+            ['editableOptions', 'dataTable']
         );
     }
 
@@ -280,7 +285,9 @@ class DataGridComponent extends Component {
      */
     private setOptions(): void {
         if (this.options.dataGridClassName) {
-            this.contentElement.classList.add(this.options.dataGridClassName);
+            this.contentElement.classList.value =
+                DataGridComponentDefaults.className + ' ' +
+                this.options.dataGridClassName;
         }
 
         if (this.options.dataGridID) {

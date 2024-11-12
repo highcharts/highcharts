@@ -244,7 +244,7 @@ class BubbleSeries extends ScatterSeries {
 
         dataLabels: {
             formatter: function (
-                this: Point.PointLabelObject
+                this: Point
             ): string { // #2945
                 const { numberFormatter } = this.series.chart;
                 const { z } = (this.point as BubblePoint);
@@ -938,7 +938,7 @@ export default BubbleSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bubble
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, legendSymbolColor, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.bubble

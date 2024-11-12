@@ -1,0 +1,87 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+:root {
+    --text-color: #4d5156;
+
+    @media (prefers-color-scheme: dark) {
+        --text-color: #fff;
+    }
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+    color: var(--text-color);
+}
+
+h2 {
+    margin-top: 1.5em;
+}
+
+.highcharts-background {
+    fill: var(--highcharts-neutral-color-5);
+}
+
+#container {
+    background-color: var(--highcharts-background-color);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#container p {
+    line-height: 1.3em;
+    margin: 0 0 1.4em;
+}
+
+#container .illustration {
+    width: 100%;
+}
+
+#container figcaption {
+    text-align: right;
+    font-size: 0.9em;
+    margin: 0.5em 0 1em;
+}
+
+#title {
+    font-size: 3em;
+}
+
+.highcharts-datagrid-container {
+    height: 402px;
+}
+
+.section-container {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.chart {
+    height: 400px;
+    border-radius: 5px;
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+.chart,
+.section-text {
+    flex: 1;
+    max-width: 450px;
+}
+
+@media (max-width: 900px) {
+    .section-container {
+        flex-direction: column;
+    }
+
+    .section-container:has(#sea-chart) {
+        flex-direction: column-reverse;
+    }
+
+    .chart,
+    .section-text {
+        max-width: unset;
+    }
+}

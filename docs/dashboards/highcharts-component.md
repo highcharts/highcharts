@@ -11,21 +11,21 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
 1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
     The order of the imports is important, so make sure that the Dashboards module is imported after the Highcharts module.
 
-    ```html
+```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
-    ```
+```
 
-    Alternatively, you can also use the NPM package.
+Alternatively, you can also use the NPM package.
 
-    ```bash
+```bash
     npm install highcharts
-    ```
+```
 
-    Then import the package and the dedicated plug to connect it to the Dashboards.
+Then import the package and the dedicated plug to connect it to the Dashboards.
 
-    ```typescript
+```typescript
     import * as Highcharts from 'highcharts';
     import * as Dashboards from '@highcharts/dashboards';
     import LayoutModule from '@highcharts/dashboards/modules/layout';
@@ -34,14 +34,15 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
 
     Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-    ```
+ ```
 
-2. The Highcharts Component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.
+2. From version v3.0.0 the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, no need to load the set of CSS styles to display Highcharts properly.
+Importing only dashboards CSS file is enough:
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/css/highcharts.css");
     ```
-    You can find more information about styling charts in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+
+    At any time you can enable the styled mode by setting the `styledMode` option to `true` in your chart options and style it accordingly to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 3. After loading the necessary files, define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
 
@@ -50,13 +51,13 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
 4. Declare all of the chart options in the `chartOptions` object.
 For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
-    ```js
+```js
     chartOptions: {
         series: [{
             data: [1, 2, 3, 4]
         }]
     }
-    ```
+```
 
 5. The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. See the full example below.
 

@@ -44,7 +44,7 @@
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
     "prepare": "husky install",
-    "postinstall": "npx gulp update-vendor",
+    "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
     "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
@@ -83,7 +83,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-security": "^2.1.1",
     "fs-extra": "^11.2.0",
-    "gifencoder": "^2.0.1",
+    "gifenc": "^1.0.3",
     "glob": "^10.4.1",
     "gulp": "^5.0.0",
     "gulp-jsdoc3": "^3.0.0",
@@ -132,6 +132,14 @@
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "yargs": "^17.7.2"
+  },
+  "overrides": {
+    "gulp-jsdoc3": {
+      "jsdoc": "^4.0.3"
+    },
+    "dateformat": {
+      "meow": "9.0.0"
+    }
   },
   "engines": {
     "node": ">=14.14.0"

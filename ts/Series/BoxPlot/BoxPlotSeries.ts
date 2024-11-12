@@ -32,7 +32,8 @@ const {
     crisp,
     extend,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 /* *
@@ -87,6 +88,52 @@ class BoxPlotSeries extends ColumnSeries {
         return {};
     }
 
+
+    // Get an SVGPath object for both whiskers
+    public getWhiskerPair(
+        halfWidth: number,
+        stemX: number,
+        upperWhiskerLength: number | string,
+        lowerWhiskerLength: number | string,
+        point: BoxPlotPoint
+    ): SVGPath {
+        const strokeWidth = point.whiskers.strokeWidth(),
+            getWhisker = (
+                xLen: number | string,
+                yPos: number
+            ): SVGPath.Segment[] => {
+                const halfLen = relativeLength(xLen, 2 * halfWidth) / 2,
+                    crispedYPos = crisp(
+                        yPos,
+                        strokeWidth
+                    );
+
+                return [
+                    [
+                        'M',
+                        crisp(stemX - halfLen),
+                        crispedYPos
+                    ],
+                    [
+                        'L',
+                        crisp(stemX + halfLen),
+                        crispedYPos
+                    ]
+                ];
+            };
+
+        return [
+            ...getWhisker(
+                upperWhiskerLength,
+                point.highPlot
+            ),
+            ...getWhisker(
+                lowerWhiskerLength,
+                point.lowPlot
+            )
+        ];
+    }
+
     // Translate data points from raw values x and y to plotX and plotY
     public translate(): void {
         const series = this,
@@ -136,9 +183,7 @@ class BoxPlotSeries extends ColumnSeries {
             graphic: (SVGElement|undefined),
             width,
             x,
-            right,
-            halfWidth,
-            pointWiskerLength;
+            right;
 
         for (const point of points) {
             graphic = point.graphic;
@@ -149,7 +194,11 @@ class BoxPlotSeries extends ColumnSeries {
                 stemAttr: SVGAttributes = {},
                 whiskersAttr: SVGAttributes = {},
                 medianAttr: SVGAttributes = {},
-                color = point.color || series.color;
+                color = point.color || series.color,
+                pointWhiskerLength = (
+                    point.options.whiskerLength ||
+                    whiskerLength
+                );
 
             if (typeof point.plotY !== 'undefined') {
 
@@ -157,7 +206,6 @@ class BoxPlotSeries extends ColumnSeries {
                 width = shapeArgs.width;
                 x = shapeArgs.x;
                 right = x + width;
-                halfWidth = width / 2;
                 q1Plot = doQuartiles ? point.q1Plot : point.lowPlot;
                 q3Plot = doQuartiles ? point.q3Plot : point.lowPlot;
                 highPlot = point.highPlot;
@@ -204,7 +252,7 @@ class BoxPlotSeries extends ColumnSeries {
                     point.stem.attr(stemAttr);
 
                     // Whiskers attributes
-                    if (whiskerLength) {
+                    if (pointWhiskerLength) {
                         whiskersAttr.stroke = (
                             point.whiskerColor ||
                             options.whiskerColor ||
@@ -296,26 +344,25 @@ class BoxPlotSeries extends ColumnSeries {
                 }
 
                 // The whiskers
-                if (whiskerLength) {
-                    const whiskerStrokeWidth = point.whiskers.strokeWidth();
-                    highPlot = crisp(point.highPlot, whiskerStrokeWidth);
-                    lowPlot = crisp(point.lowPlot, whiskerStrokeWidth);
-                    pointWiskerLength = (
-                        typeof whiskerLength === 'string' &&
-                        (/%$/).test(whiskerLength)
-                    ) ?
-                        halfWidth * parseFloat(whiskerLength) / 100 :
-                        Number(whiskerLength) / 2;
-                    d = [
-                        // High whisker
-                        ['M', crisp(stemX - pointWiskerLength), highPlot],
-                        ['L', crisp(stemX + pointWiskerLength), highPlot],
+                if (pointWhiskerLength) {
+                    const halfWidth = width / 2,
+                        whiskers = this.getWhiskerPair(
+                            halfWidth,
+                            stemX,
+                            (
+                                point.upperWhiskerLength ??
+                                options.upperWhiskerLength ??
+                                pointWhiskerLength
+                            ),
+                            (
+                                point.lowerWhiskerLength ??
+                                options.lowerWhiskerLength ??
+                                pointWhiskerLength
+                            ),
+                            point
+                        );
 
-                        // Low whisker
-                        ['M', crisp(stemX - pointWiskerLength), lowPlot],
-                        ['L', crisp(stemX + pointWiskerLength), lowPlot]
-                    ];
-                    point.whiskers[verb]({ d });
+                    point.whiskers[verb]({ d: whiskers });
                 }
 
                 // The median

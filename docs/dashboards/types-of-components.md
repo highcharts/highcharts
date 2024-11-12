@@ -47,8 +47,7 @@ Also please check the [Custom Component](https://www.highcharts.com/docs/dashboa
 You can find more information about HTML Component [here.](https://www.highcharts.com/docs/dashboards/html-component)
 
 ### Highcharts Component
-The option to include a Highcharts chart in one of the components is available out of the box.
-Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.  
+The option to include a Highcharts chart in one of the components is available out of the box.  
 With classic scripts import order matters, so make sure that the Dashboards module is imported after the Highcharts module.
 
 Here is the set of files that need to be included to make the Highcharts component work.
@@ -56,12 +55,6 @@ Here is the set of files that need to be included to make the Highcharts compone
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
-
-Also the set of CSS styles needs to be imported, so that the Highcharts displays correctly.
-```css
-@import url("https://code.highcharts.com/css/highcharts.css");
-```
-More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
@@ -104,12 +97,5 @@ Code snippet:
     thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
 },
 ```
-
-If you use KPIComponent with the chart, the component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.
-The set of CSS styles needs to be imported, so that the Highcharts displays correctly.
-```css
-@import url("https://code.highcharts.com/css/highcharts.css");
-```
-More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 You can find more information about KPIComponent [here](https://www.highcharts.com/docs/dashboards/kpi-component).

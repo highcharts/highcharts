@@ -1044,14 +1044,14 @@ class Chart {
      * Create the Axis instances based on the config options.
      *
      * @private
-     * @function Highcharts.Chart#getAxes
-     * @emits Highcharts.Chart#event:afterGetAxes
-     * @emits Highcharts.Chart#event:getAxes
+     * @function Highcharts.Chart#createAxes
+     * @emits Highcharts.Chart#event:afterCreateAxes
+     * @emits Highcharts.Chart#event:createAxes
      */
-    public getAxes(): void {
+    public createAxes(): void {
         const options = this.userOptions;
 
-        fireEvent(this, 'getAxes');
+        fireEvent(this, 'createAxes');
 
         for (const coll of ['xAxis', 'yAxis'] as Array<'xAxis'|'yAxis'>) {
             const arr = options[coll] = splat(
@@ -1063,7 +1063,7 @@ class Chart {
             }
         }
 
-        fireEvent(this, 'afterGetAxes');
+        fireEvent(this, 'afterCreateAxes');
     }
 
     /**
@@ -2727,7 +2727,7 @@ class Chart {
         chart.propFromSeries();
 
         // Get axes
-        chart.getAxes();
+        chart.createAxes();
 
         // Initialize the series
         const series = isArray(options.series) ? options.series : [];

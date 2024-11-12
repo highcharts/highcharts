@@ -130,3 +130,41 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         'The annotation should stay in the same place after update, #19121.'
     );
 });
+
+QUnit.test('Measure annotation border', function (assert) {
+    const WIDTH = 400;
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        annotations: [
+            {
+                type: 'measure',
+                typeOptions: {
+                    point: {
+                        x: 0
+                    },
+                    selectType: 'x',
+                    background: {
+                        width: `${WIDTH}px`,
+                        fill: 'lightblue',
+                        stroke: 'red',
+                        strokeWidth: 20
+                    }
+                }
+            }
+        ],
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6, 7, 8]
+            }
+        ]
+    });
+    const measure = chart.annotations[0];
+    const { width } = measure.shapes[2].graphic.getBBox();
+    assert.equal(
+        width + measure.shapes[2].options.strokeWidth,
+        WIDTH,
+        'StrokeWidth should be taken into account when drawing annotation'
+    );
+});

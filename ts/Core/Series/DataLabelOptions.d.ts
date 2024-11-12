@@ -50,7 +50,7 @@ export interface DataLabelFilterOptions {
 }
 
 export interface DataLabelFormatterCallback {
-    (this: Point.PointLabelObject): (number|string|null|undefined);
+    (this: Point): (number|string|null|undefined);
 }
 
 export interface DataLabelOptions {
