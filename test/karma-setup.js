@@ -762,6 +762,8 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 var diff = compare(referencePixels, candidatePixels);
 
                 if (diff !== 0) {
+                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
+
                     __karma__.info({
                         filename: './samples/' + path + '/diff.gif',
                         canvasWidth: CANVAS_WIDTH,
@@ -771,7 +773,6 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                             candidatePixels
                         ]
                     });
-                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
                 }
                 resolve(diff);
             })

@@ -470,6 +470,12 @@ class XRangeSeries extends ColumnSeries {
                 height: shapeArgs.height
             };
         }
+
+        // Add formatting keys for tooltip and data labels. Use 'category' as
+        // 'key' to ensure tooltip datetime formatting. Use 'name' only when
+        // 'category' is undefined.
+        point.key = point.category || point.name;
+        point.yCategory = yAxis.categories?.[point.y ?? -1];
     }
 
     /**

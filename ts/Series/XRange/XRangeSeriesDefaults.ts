@@ -97,7 +97,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
 
     dataLabels: {
         formatter: function (): (string|undefined) {
-            let amount = (this.point as XRangePoint).partialFill;
+            let amount = (this as XRangePoint).partialFill;
 
             if (isObject(amount)) {
                 amount = (amount as any).amount;

@@ -22,7 +22,6 @@ const gulp = require('gulp');
 function removeHighcharts() {
     const fsLib = require('../libs/fs');
 
-    fsLib.deleteDirectory('js/Accessibility/', true);
     fsLib.deleteDirectory('js/Core/Axis/', true);
     fsLib.deleteDirectory('js/Core/Legend/', true);
     fsLib.deleteDirectory('js/Core/Renderer/SVG/', true);

@@ -29,10 +29,7 @@ import type { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOption
 
 export interface SankeyDataLabelFormatterCallback {
     (
-        this: (
-            SankeyDataLabelFormatterContext|
-            Point.PointLabelObject
-        )
+        this: (SankeyPoint|Point)
     ): (string|undefined);
 }
 

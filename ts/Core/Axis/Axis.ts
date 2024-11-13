@@ -1196,7 +1196,8 @@ class Axis {
             pointRangePadding = axis.pointRangePadding || 0,
             min = (axis.min || 0) - pointRangePadding, // #1498
             max = (axis.max || 0) + pointRangePadding, // #1498
-            range = max - min;
+            range = axis.brokenAxis?.hasBreaks ?
+                axis.brokenAxis.unitLength : max - min;
 
         let minorTickPositions = [] as Array<number>,
             pos: number;
@@ -1398,7 +1399,7 @@ class Axis {
                 if (xData.length === 1) {
                     singleXs.push(xData[0]);
                 } else if (
-                    !series.noSharedTooltip &&
+                    series.sorted &&
                     defined(seriesClosest) &&
                     series.reserveSpace()
                 ) {
@@ -1955,7 +1956,7 @@ class Axis {
             // In datetime axes, don't go below the data interval, except when
             // there are scatter-like series involved (#13369).
             dateTime &&
-            !axis.series.some((s): boolean|undefined => s.noSharedTooltip) ?
+            !axis.series.some((s): boolean|undefined => !s.sorted) ?
                 axis.closestPointRange : 0
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {

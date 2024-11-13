@@ -1366,6 +1366,18 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Convenience function to get the align factor, used several places for
+ * computing positions
+ * @private
+ */
+const getAlignFactor = (align: string = ''): number => ({
+    center: 0.5,
+    right: 1,
+    middle: 0.5,
+    bottom: 1
+}[align] || 0);
+
+/**
  * Find the closest distance between two values of a two-dimensional array
  * @private
  * @function Highcharts.getClosestDistance
@@ -2168,6 +2180,7 @@ export const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getAlignFactor,
     getClosestDistance,
     getMagnitude,
     getNestedProperty,

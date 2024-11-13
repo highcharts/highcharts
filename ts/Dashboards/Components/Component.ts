@@ -66,7 +66,10 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
-const { uniqueKey } = DU;
+const {
+    deepClone,
+    uniqueKey
+} = DU;
 
 /* *
  *
@@ -927,12 +930,17 @@ abstract class Component {
 
     public getEditableOptions(): Component.Options {
         const component = this;
-        return merge(component.options);
+
+        // When refactoring, limit the copied options to the ones that are
+        // actually editable to avoid unnecessary memory usage.
+        return deepClone(component.options, [
+            'dataTable', 'points', 'series', 'data', 'editableOptions'
+        ]);
     }
 
 
     public getEditableOptionValue(
-        propertyPath?: string[]
+        propertyPath?: (string|number)[]
     ): number | boolean | undefined | string {
         const component = this;
         if (!propertyPath) {
@@ -942,15 +950,12 @@ abstract class Component {
         let result = component.getEditableOptions() as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (isArray(result)) {
-                if (
-                    propertyPath[0] === 'connector' &&
-                    result.length > 1
-                ) {
-                    return 'multiple connectors';
-                }
-
-                result = result[0];
+            if (
+                isArray(result) &&
+                propertyPath[0] === 'connector' &&
+                result.length > 1
+            ) {
+                return 'multiple connectors';
             }
 
             if (!result) {
@@ -969,7 +974,6 @@ abstract class Component {
             ) {
                 result = '';
             }
-
         }
 
         return result;
