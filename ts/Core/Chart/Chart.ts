@@ -1215,6 +1215,7 @@ class Chart {
                     zIndex: options.zIndex || 4
                 })
                 .css({
+                    textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap'
                 })
                 .add();
