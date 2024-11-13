@@ -251,6 +251,7 @@ function onGetAnchor(params: {
 }): void {
     if (
         params.point.series &&
+        !params.point.series.isCartesian &&
         params.point.series.group &&
         params.point.series.zoomBox
     ) {
@@ -282,6 +283,10 @@ function onGetSelectionMarkerAttrs(
             chartY
         } = e.args,
         plotSizeRatio = this.chart.plotWidth / this.chart.plotHeight;
+
+    if (chart.hasCartesianSeries) {
+        return true;
+    }
 
     let sizeX: number | undefined, sizeY: number | undefined;
 
