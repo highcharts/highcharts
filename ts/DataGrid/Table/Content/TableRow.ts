@@ -131,11 +131,7 @@ class TableRow extends Row {
         );
 
         // Indexing from 0, so rows with even index are odd.
-        if (idx % 2) {
-            el.classList.add(Globals.classNames.rowEven);
-        } else {
-            el.classList.add(Globals.classNames.rowOdd);
-        }
+        el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
