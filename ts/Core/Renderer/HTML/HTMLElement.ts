@@ -461,7 +461,11 @@ class HTMLElement extends SVGElement {
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && this.textPxLength) || // #7920
+                        (
+                            !defined(rotation) &&
+                            !this.textWidth &&
+                            this.textPxLength
+                        ) || // #7920
                         element.offsetWidth
                     ),
                     baseline,
