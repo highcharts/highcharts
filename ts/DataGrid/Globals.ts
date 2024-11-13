@@ -71,6 +71,7 @@ namespace Globals {
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
+        rowEven: classNamePrefix + 'row-even',
         rowOdd: classNamePrefix + 'row-odd',
         hoveredRow: classNamePrefix + 'hovered-row',
         columnElement: classNamePrefix + 'column',
