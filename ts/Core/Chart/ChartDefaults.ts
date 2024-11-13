@@ -497,6 +497,10 @@ const ChartDefaults: ChartOptions = {
          * panning action is finished, the axes will adjust to their actual
          * settings.
          *
+         * **Note:** For non-cartesian series, the only supported panning type
+         * is `xy`, as zooming in a single direction is not applicable due to
+         * the radial nature of the coordinate system.
+         *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
@@ -1093,6 +1097,10 @@ const ChartDefaults: ChartOptions = {
         /**
          * Decides in what dimensions the user can zoom by dragging the mouse.
          * Can be one of `x`, `y` or `xy`.
+         *
+         * **Note:** For non-cartesian series, the only supported zooming type
+         * is `xy`, as zooming in a single direction is not applicable due to
+         * the radial nature of the coordinate system.
          *
          * @declare    Highcharts.OptionsChartZoomingTypeValue
          * @type       {string}
