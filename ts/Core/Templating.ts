@@ -476,11 +476,10 @@ function numberFormat(
         options.useGrouping = false;
     }
 
-    /*
-    @todo After merging this into v12-staging, use chart.locale
-    */
     const hasSeparators = thousandsSep || decimalPoint,
-        locale = hasSeparators ? 'en' : (this as Chart)?.locale || lang.locale,
+        locale = hasSeparators ?
+            'en' :
+            ((this as Chart)?.locale || lang.locale),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
