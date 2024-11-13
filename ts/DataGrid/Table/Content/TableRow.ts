@@ -130,7 +130,10 @@ class TableRow extends Row {
             idx + (this.viewport.header?.levels ?? 1) + 1
         );
 
-        if (idx % 2 === 1) {
+        // Indexing from 0, so rows with even index are odd.
+        if (idx % 2) {
+            el.classList.add(Globals.classNames.rowEven);
+        } else {
             el.classList.add(Globals.classNames.rowOdd);
         }
 
