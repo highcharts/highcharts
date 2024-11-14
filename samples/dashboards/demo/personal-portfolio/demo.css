@@ -6,6 +6,18 @@
 
 :root {
     --highcharts-color-0: #c963ff;
+    --highcharts-color-1: #30cbea;
+}
+
+.dashboard-description {
+    background-color: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
+    margin: 0;
+    padding-left: 20px;
+}
+
+.dotted-line {
+    stroke-dasharray: 2, 12;
 }
 
 .highcharts-gauge-chart .highcharts-grid-line {
@@ -82,4 +94,8 @@
 #wallet-chart .highcharts-point {
     fill: none;
     stroke: none;
+}
+
+.hidden-title .highcharts-title {
+    display: none;
 }

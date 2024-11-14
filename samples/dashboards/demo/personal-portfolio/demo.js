@@ -1,73 +1,85 @@
+// Morningstar creds
+const commonMSOptions = {
+    api: {
+        url: 'https://demo-live-data.highcharts.com',
+        access: {
+            url: 'https://demo-live-data.highcharts.com/token/oauth',
+            token: 'your-access-token'
+        }
+    }
+};
+
+
 const basicInvestmentPlan = {
     interval: 30, // Every 30 days
     amount: 200   // Amount in EUR
 };
 
 
-const stockCollection = [
-    {
-        tradingSymbol: 'NFLX',
-        ISIN: 'US64110L1061',
-        SecID: '0P000003UP'
-    }, {
-        tradingSymbol: 'MSFT',
-        ISIN: 'US5949181045',
-        SecID: '0P000003MH'
-    }, {
-        tradingSymbol: 'AMZN',
-        ISIN: 'US0231351067',
-        SecID: '0P000000B7'
-    }, {
-        tradingSymbol: 'GOOGL',
-        ISIN: 'US02079K3059',
-        SecID: '0P000002HD'
-    }
-];
+const stockCollection = [{
+    tradingSymbol: 'NFLX',
+    ISIN: 'US64110L1061',
+    SecID: '0P000003UP'
+}, {
+    tradingSymbol: 'MSFT',
+    ISIN: 'US5949181045',
+    SecID: '0P000003MH'
+}, {
+    tradingSymbol: 'AMZN',
+    ISIN: 'US0231351067',
+    SecID: '0P000000B7'
+}, {
+    tradingSymbol: 'GOOGL',
+    ISIN: 'US02079K3059',
+    SecID: '0P000002HD'
+}];
 
 
+// Simulation of personal portfolio
 const generatePortfolio = (investmentPlan, stockPrices) => {
     const { interval, amount } = investmentPlan,
-        portfolioValues = [];
-    let totalUnits = 0;
+        holding = [],
+        investedAmount = [];
+    let totalUnits = 0,
+        investedSoFar = 0;
     stockPrices.forEach((priceData, day) => {
         // Check if it's an investment day
         if ((day % interval) === 0) {
             totalUnits += amount / priceData[1];
+            investedSoFar += amount;
         }
 
         // Calculate portfolio value for the day
         const value = totalUnits * priceData[1];
-        portfolioValues.push([priceData[0], value]);
+        holding.push(value);
+        investedAmount.push(investedSoFar);
     });
-    return portfolioValues;
+    return {
+        holding, // Values based on units held and price
+        investedAmount // Invested amount accumulated over time
+    };
 };
 
 
-const getHoldings = weight =>  stockCollection.map(stock => ({
+const getHoldings = weight => stockCollection.map(stock => ({
     id: stock.ISIN,
     idType: 'ISIN',
     ...(weight && { weight })
 }));
 
-// Morningstar data fetch
-const commonMSOptions = {
-    api: {
-        url: 'https://demo-live-data.highcharts.com',
-        access: {
-            url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
-        }
-    }
+
+const kpiValueFormatter = t => '€' + Highcharts.numberFormat(t, 2, '.', ',');
+
+
+// Return the sum of the last indices of arrays
+const getCurrentTotal = arrOfArr => {
+    let sum = 0;
+    arrOfArr.forEach(arr => {
+        sum += arr.at(-1);
+    });
+
+    return sum;
 };
-
-
-function sumAllArrays(arr) {
-    return arr.reduce((acc, current) => acc.map((num, idx) =>
-        [num[0], num[1] + current[idx][1]]
-    ));
-}
-
 
 (async () => {
     // eslint-disable-next-line no-undef
@@ -83,8 +95,8 @@ function sumAllArrays(arr) {
             endDate: '2023-12-31'
         });
 
-
     await timeSeriesConnector.load();
+
 
     const { Date: dates, ...companies } =
         timeSeriesConnector.table.getColumns();
@@ -97,43 +109,35 @@ function sumAllArrays(arr) {
     );
 
     const holdings = [],
+        investedAmounts = [],
         dataGridData = [];
 
     stockCollection.forEach(stock => {
-        holdings.push(generatePortfolio(
-            basicInvestmentPlan, processedData[stock.SecID]
-        ));
+        const { holding, investedAmount } = generatePortfolio(
+            basicInvestmentPlan,
+            processedData[stock.SecID]
+        );
+
+        holdings.push(holding);
+        investedAmounts.push(investedAmount);
+
     });
 
-    const walletTotal = sumAllArrays(holdings),
-        lastTotal = walletTotal[walletTotal.length - 1][1],
-        annualInvestment = 200 * 12 * holdings.length,
-        // eslint-disable-next-line no-undef
-        goalAnalysisConnector = new Connectors.Morningstar
-            .GoalAnalysisConnector({
-                ...commonMSOptions,
-                annualInvestment,
-                assetClassWeights: [
-                    1
-                ],
-                currentSavings: lastTotal,
-                includeDetailedInvestmentGrowthGraph: true,
-                target: 100000,
-                timeHorizon: 5
-            });
-
-    await goalAnalysisConnector.load();
+    const investedAmountTotal = getCurrentTotal(investedAmounts),
+        lastHoldingTotal = getCurrentTotal(holdings),
+        annualInvestment = 200 * 12 * holdings.length;
 
     // Generate columns for the datagrid
     stockCollection.forEach((stock, i) => {
         const len = holdings[i].length,
-            lastHolding = holdings[i][len - 1][1],
+            lastHolding = holdings[i][len - 1],
             ISIN = stock.ISIN,
             tradingSymbol = stock.tradingSymbol;
+
         dataGridData.push([
             tradingSymbol,
             ISIN,
-            Math.round(lastHolding / lastTotal * 100)
+            Math.round(lastHolding / lastHoldingTotal * 100)
         ]);
     });
 
@@ -141,7 +145,7 @@ function sumAllArrays(arr) {
     const portfolio = {
         name: 'PersonalPortfolio',
         currency: 'EUR',
-        totalValue: lastTotal,
+        totalValue: lastHoldingTotal,
         // Holdings with equal weights
         holdings: getHoldings(100 / stockCollection.length)
     };
@@ -159,11 +163,13 @@ function sumAllArrays(arr) {
             styledMode: true,
             height: 400
         },
+        accessibility: {
+            description: 'displaying portfolio performance and investments'
+        },
         rangeSelector: {
             animate: false,
             x: 0,
             y: 0,
-            buttonSpacing: 40,
             inputEnabled: false,
             dropdown: 'never',
             selected: 4
@@ -172,14 +178,38 @@ function sumAllArrays(arr) {
             enabled: false
         },
         title: {
-            text: 'Holding over time'
+            text: 'Portfolio performance'
+        },
+        yAxis: {
+            accessibility: {
+                description: 'price in euro'
+            }
         },
         tooltip: {
-            format: '€{y:.2f}'
+            shared: true,
+            xDateFormat: '%Y-%m-%d',
+            formatter: function () {
+                const holdVal = this.points[0].y; // Value of Series 1
+                const investedVal = this.points[1].y; // Value of Series 2
+                const percentageDiff = (
+                    (holdVal - investedVal) / investedVal * 100).toFixed(2);
+
+                return `<b>${Highcharts.dateFormat(
+                    '%e - %b - %Y',
+                    new Date(this.x)
+                )}</b><br/>
+                        Invested: €${investedVal.toFixed(2)}<br/>
+                        Holding: €${holdVal.toFixed(2)}<br/>
+                        Yield: ${percentageDiff}%`;
+            }
         },
         series: [{
-            name: 'Total',
-            data: walletTotal
+            name: 'Holding',
+            id: 'holding'
+        }, {
+            name: 'Invested',
+            id: 'invested',
+            className: 'dotted-line'
         }],
 
         responsive: {
@@ -193,9 +223,6 @@ function sumAllArrays(arr) {
                     },
                     rangeSelector: {
                         enabled: false
-                    },
-                    scrollbar: {
-                        enabled: false
                     }
                 }
             }]
@@ -207,7 +234,12 @@ function sumAllArrays(arr) {
         chart: {
             styledMode: true,
             height: 186,
-            type: 'solidgauge'
+            type: 'solidgauge',
+            className: 'hidden-title'
+        },
+        title: {
+            text: 'Risk score',
+            floating: true
         },
         pane: {
             background: [{
@@ -242,12 +274,16 @@ function sumAllArrays(arr) {
             }
         },
         accessibility: {
+            typeDescription: 'half circular gauge',
+            description: 'displaying the portfolio risk',
             point: {
-                valueDescriptionFormat: 'Risk score.'
+                descriptionFormat: 'risk score {y:.0f}'
             }
         },
-
         yAxis: {
+            accessibility: {
+                description: 'risk score'
+            },
             visible: true,
             tickPositions: [23, 40, 60, 78, 90],
             minorTickWidth: 0,
@@ -264,7 +300,12 @@ function sumAllArrays(arr) {
         chart: {
             styledMode: true,
             height: 186,
-            type: 'solidgauge'
+            type: 'solidgauge',
+            className: 'hidden-title'
+        },
+        title: {
+            text: 'Goal probability',
+            floating: true
         },
         pane: {
             startAngle: 0,
@@ -274,7 +315,18 @@ function sumAllArrays(arr) {
                 outerRadius: '115%'
             }]
         },
+        accessibility: {
+            typeDescription: 'circular gauge',
+            description: 'displaying the probability of reaching the' +
+                'financial goal',
+            point: {
+                descriptionFormat: 'probability {y:.0f}%'
+            }
+        },
         yAxis: {
+            accessibility: {
+                description: 'probability'
+            },
             min: 0,
             max: 100,
             minorTickInterval: null
@@ -287,10 +339,10 @@ function sumAllArrays(arr) {
             dataLabels: {
                 format: '<div style="text-align:center; ' +
                     'margin-top: -20px">' +
-                '<div style="font-size:1.6em;">{y}%</div>' +
-                '<div style="font-size:14px; opacity:0.5; ' +
-                'text-align: center;">Goal probability</div>' +
-                '</div>',
+                    '<div style="font-size:1.6em;">{y}%</div>' +
+                    '<div style="font-size:14px; opacity:0.5; ' +
+                    'text-align: center;">Goal probability</div>' +
+                    '</div>',
                 useHTML: true
             },
             innerRadius: '90%',
@@ -298,19 +350,54 @@ function sumAllArrays(arr) {
         }]
     };
 
+    Highcharts.setOptions({
+        lang: {
+            rangeSelectorZoom: ''
+        }
+    });
+
     // Creating the dashboard
-    Dashboards.board('container', {
+    const board = Dashboards.board('container', {
         dataPool: {
             connectors: [{
+                id: 'investment-data',
                 type: 'JSON',
-                id: 'stock-grid',
                 options: {
-                    columnNames: ['name', 'ISIN', 'percentage'],
+                    data: [dates, ...investedAmounts],
+                    orientation: 'columns',
+                    firstRowAsNames: false,
+                    dataModifier: {
+                        type: 'Math',
+                        columnFormulas: [{
+                            column: 'investmentAccumulation',
+                            formula: '=SUM(B1:ZZ1)'
+                        }]
+                    }
+                }
+            }, {
+                id: 'holding-data',
+                type: 'JSON',
+                options: {
+                    data: [dates, ...holdings],
+                    orientation: 'columns',
+                    firstRowAsNames: false,
+                    dataModifier: {
+                        type: 'Math',
+                        columnFormulas: [{
+                            column: 'holdingAccumulation',
+                            formula: '=SUM(B1:ZZ1)'
+                        }]
+                    }
+                }
+            }, {
+                id: 'stock-grid',
+                type: 'JSON',
+                options: {
+                    columnNames: ['Name', 'ISIN', 'Percentage'],
                     firstRowAsNames: false,
                     data: dataGridData
                 }
-            },
-            {
+            }, {
                 id: 'risk-score',
                 type: 'MorningstarRiskScore',
                 options: {
@@ -318,6 +405,20 @@ function sumAllArrays(arr) {
                     portfolios: [
                         portfolio
                     ]
+                }
+            }, {
+                id: 'goal-analysis',
+                type: 'MorningstarGoalAnalysis',
+                options: {
+                    ...commonMSOptions,
+                    annualInvestment,
+                    assetClassWeights: [
+                        1
+                    ],
+                    currentSavings: lastHoldingTotal,
+                    includeDetailedInvestmentGrowthGraph: true,
+                    target: 100000,
+                    timeHorizon: 5
                 }
             }]
         },
@@ -331,7 +432,7 @@ function sumAllArrays(arr) {
                                 cells: [{
                                     id: 'kpi-holding'
                                 }, {
-                                    id: 'kpi-balance'
+                                    id: 'kpi-invested'
                                 }]
                             }]
                         }
@@ -369,19 +470,32 @@ function sumAllArrays(arr) {
         components: [{
             type: 'KPI',
             renderTo: 'kpi-holding',
-            value: lastTotal,
-            valueFormat: '€{value:.2f}',
+            value: lastHoldingTotal,
+            valueFormatter: kpiValueFormatter,
             title: 'Holding'
         }, {
             type: 'KPI',
-            renderTo: 'kpi-balance',
-            value: 8000,
-            title: 'Balance',
-            valueFormat: '€{value:.2f}'
+            renderTo: 'kpi-invested',
+            value: investedAmountTotal,
+            valueFormatter: kpiValueFormatter,
+            title: 'Invested'
         }, {
             type: 'Highcharts',
             chartConstructor: 'stockChart',
             renderTo: 'wallet-chart',
+            connector: [{
+                id: 'holding-data',
+                columnAssignment: [{
+                    seriesId: 'holding',
+                    data: ['0', 'holdingAccumulation']
+                }]
+            }, {
+                id: 'investment-data',
+                columnAssignment: [{
+                    seriesId: 'invested',
+                    data: ['0', 'investmentAccumulation']
+                }]
+            }],
             chartOptions: walletChartOptions
         }, {
             type: 'DataGrid',
@@ -390,6 +504,20 @@ function sumAllArrays(arr) {
             },
             renderTo: 'data-grid',
             dataGridOptions: {
+                rendering: {
+                    rows: {
+                        strictHeights: true
+                    }
+                },
+                columns: [{
+                    id: 'Percentage',
+                    header: {
+                        format: 'Wallet percentage'
+                    },
+                    cells: {
+                        format: '{value}%'
+                    }
+                }],
                 credits: {
                     enabled: false
                 }
@@ -404,26 +532,59 @@ function sumAllArrays(arr) {
             chartOptions: riskScoreKPIOptions
         }, {
             type: 'KPI',
+            id: 'cpt-goal-target',
             renderTo: 'kpi-goal-target',
-            value: goalAnalysisConnector.metadata.financialGoal,
-            valueFormat: '€{value:.2f}',
+            connector: {
+                id: 'goal-analysis'
+            },
+            valueFormatter: kpiValueFormatter,
             title: 'Financial goal'
         }, {
             type: 'KPI',
+            id: 'cpt-goal-years',
             renderTo: 'kpi-goal-years',
-            value: goalAnalysisConnector.metadata.years,
             title: 'Years'
         }, {
             type: 'KPI',
+            id: 'cpt-goal-annual',
             renderTo: 'kpi-goal-annual',
             value: annualInvestment,
-            valueFormat: '€{value:.2f}',
+            valueFormatter: kpiValueFormatter,
             title: 'Annual investment'
         }, {
             renderTo: 'kpi-gauge-goal',
+            id: 'cpt-goal-prob',
             type: 'KPI',
-            value: goalAnalysisConnector.metadata.probabilityOfReachingTarget,
             chartOptions: goalAnalysisKPIOptions
         }]
+    }, true);
+
+    // Update the goal analysis KPIs after loading the connector
+    board.then(res => {
+
+        // Access relevant metadata
+        const {
+            years,
+            probabilityOfReachingTarget,
+            financialGoal
+        } = res.dataPool.connectors['goal-analysis'].metadata;
+
+        // Get relevant components
+        const goalYearsCpt = res.getComponentById('cpt-goal-years'),
+            goalCpt = res.getComponentById('cpt-goal-prob'),
+            goalTargetCpt = res.getComponentById('cpt-goal-target');
+
+        // Updates
+        goalYearsCpt.update({
+            value: years
+        });
+
+        goalCpt.update({
+            value: probabilityOfReachingTarget
+        });
+
+        goalTargetCpt.update({
+            value: financialGoal
+        });
     });
 })();
