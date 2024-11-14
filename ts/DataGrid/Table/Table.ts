@@ -346,8 +346,21 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop =
-            index * this.rowsVirtualizer.defaultRowHeight;
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.scrollTop =
+                index * this.rowsVirtualizer.defaultRowHeight;
+        } else {
+            const rowClass = '.' + Globals.classNames.rowElement;
+            const firstRowTop = this.tbodyElement
+                .querySelectorAll(rowClass)[0]
+                .getBoundingClientRect().top;
+
+            this.tbodyElement.scrollTop = (
+                this.tbodyElement
+                .querySelectorAll(rowClass)[index]
+                .getBoundingClientRect().top
+            ) - firstRowTop;
+        }
     }
 
     /**
