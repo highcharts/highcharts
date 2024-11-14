@@ -336,11 +336,16 @@ class RowsVirtualizer {
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
+        const firstVisibleRow = rows.find(row => !row.destroyed)
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
+        let translateBuffer = firstVisibleRow?.getDefaultTopOffset() ?? 0;
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
+
+            if (row.destroyed) {
+                continue;
+            }
 
             // Reset row height and cell transforms
             row.htmlElement.style.height = '';
@@ -385,6 +390,10 @@ class RowsVirtualizer {
         }
 
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
+            if (rows[i].destroyed) {
+                continue;
+            }
+
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].htmlElement.style.transform =
                 `translateY(${translateBuffer}px)`;
