@@ -1075,6 +1075,11 @@ const ChartDefaults: ChartOptions = {
     /**
      * Chart zooming options.
      * @since 10.2.1
+     *
+     * @sample     highcharts/plotoptions/sankey-inverted
+     *             Zooming in sankey series
+     * @sample     highcharts/series-treegraph/link-types
+     *             Zooming in treegraph series
      */
     zooming: {
         /**

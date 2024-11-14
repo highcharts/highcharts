@@ -73,7 +73,12 @@ function onTransform(
             selection,
             from = {},
             to = {}
-        } = params;
+        } = params,
+        type = chart.zooming.type;
+
+    if (type !== 'xy') {
+        return;
+    }
 
     if (
         trigger === 'mousewheel' ||
