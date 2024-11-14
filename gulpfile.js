@@ -25,7 +25,6 @@ Gulp.registry(new GulpForwardReference());
     'api',
     'api-docs',
     'api-server',
-    'api-tree',
     'api-upload',
     'dashboards/api',
     'dashboards/api2',
