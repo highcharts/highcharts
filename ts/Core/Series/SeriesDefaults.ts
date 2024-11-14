@@ -1803,7 +1803,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
-        formatter: function (this: Point.PointLabelObject): string {
+        formatter: function (this: Point): string {
             const { numberFormatter } = this.series.chart;
             return typeof this.y !== 'number' ?
                 '' : numberFormatter(this.y, -1);
@@ -2546,6 +2546,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default   rectangle
      * @since     11.0.1
      * @apioption plotOptions.series.legendSymbol
+     */
+
+    /**
+     * Defines the color of the legend symbol for this series. Defaults to
+     * undefined, in which case the series color is used. Does not work with
+     * styled mode.
+     *
+     * @sample {highcharts|highstock} highcharts/series/legend-symbol-color/
+     *         Change the legend symbol color
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @default   undefined
+     * @since     next
+     * @product   highcharts highstock highmaps
+     * @apioption plotOptions.series.legendSymbolColor
      */
 
     /**

@@ -126,6 +126,21 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
     low?: BoxPlotPoint['low'];
 
     /**
+     * The length of a BoxPlot point's lower whisker. Overrides BoxPlot series'
+     * [lowerWhiskerLength](#boxplot.options.lowerWhiskerLength) and
+     * [whiskerLength](#boxplot.options.whiskerLength), as well as
+     * [lowerWhiskerLength](#boxplotPoint.options.whiskerLength)
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker lengths
+     *
+     * @type {number|string}
+     *
+     * @product highcharts
+     */
+    lowerWhiskerLength?: BoxPlotPoint['whiskerLength'];
+
+    /**
      * The median for each data point. This is drawn as a line through the
      * middle area of the box.
      *
@@ -154,6 +169,42 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      */
     q3?: BoxPlotPoint['q3'];
 
+    /**
+     * The length of a BoxPlot point's upper whisker. Overrides BoxPlot series'
+     * [upperWhiskerLength](#boxplot.options.upperWhiskerLength) and
+     * [whiskerLength](#boxplot.options.whiskerLength), as well as
+     * [upperWhiskerLength](#boxplotPoint.options.whiskerLength)
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker length
+     *
+     * @type {number|string}
+     *
+     * @product highcharts
+     */
+    upperWhiskerLength?: BoxPlotPoint['whiskerLength'];
+
+    /**
+     * The length of the whiskers, the horizontal lines marking low and
+     * high values. It can be a numerical pixel value, or a percentage
+     * value of the box width. Set `0` to disable whiskers.
+     *
+     * Individual lengths for upper and lower whiskers can be defined on the
+     * boxplot series and on specific boxplot points. Whisker lengths defined
+     * on points override whisker lengths defined on a boxplot series.
+     *
+     * Overrides [whiskerLength](#boxplot.options.whiskerLength).
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker lengths
+     *
+     * @type {number|string}
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    whiskerLength?: BoxPlotPoint['whiskerLength'];
 }
 
 /* *
