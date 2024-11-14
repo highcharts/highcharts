@@ -303,10 +303,7 @@ class Table {
         this.header?.reflow();
 
         // Reflow rows content dimensions
-
-        // if (this.dataGrid.options?.rendering?.rows?.virtualization) {
-            this.rowsVirtualizer.reflowRows();
-        // }
+        this.rowsVirtualizer.reflowRows();
     }
 
     /**
