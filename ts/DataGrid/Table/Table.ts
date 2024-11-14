@@ -304,9 +304,9 @@ class Table {
 
         // Reflow rows content dimensions
 
-        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+        // if (this.dataGrid.options?.rendering?.rows?.virtualization) {
             this.rowsVirtualizer.reflowRows();
-        }
+        // }
     }
 
     /**
