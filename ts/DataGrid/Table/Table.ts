@@ -267,9 +267,7 @@ class Table {
             column.loadData();
         }
 
-        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
-            this.rowsVirtualizer.rerender();
-        }
+        this.rowsVirtualizer.rerender();
     }
 
     /**

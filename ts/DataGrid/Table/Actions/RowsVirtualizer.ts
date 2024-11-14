@@ -164,11 +164,14 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (oldScrollTop !== void 0) {
-            tbody.scrollTop = oldScrollTop;
-        }
+        if (this.rowSettings?.virtualization) {
 
-        this.scroll();
+            if (oldScrollTop !== void 0) {
+                tbody.scrollTop = oldScrollTop;
+            }
+
+            this.scroll();
+        }
 
         // Reflow the rendered row cells widths (check redundancy)
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
