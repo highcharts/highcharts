@@ -185,7 +185,10 @@ class Table {
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
-        this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        this.tbodyElement = makeHTMLElement('tbody', {
+            className: dgOptions?.rendering?.rows?.virtualization ?
+                Globals.classNames.rowsVirtualization : ''
+        }, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
@@ -203,7 +206,10 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        if (dgOptions?.rendering?.rows?.virtualization) {
+            this.tbodyElement.addEventListener('scroll', this.onScroll);
+        }
 
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
@@ -261,7 +267,9 @@ class Table {
             column.loadData();
         }
 
-        this.rowsVirtualizer.rerender();
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.rowsVirtualizer.rerender();
+        }
     }
 
     /**
@@ -295,7 +303,10 @@ class Table {
         this.header?.reflow();
 
         // Reflow rows content dimensions
-        this.rowsVirtualizer.reflowRows();
+
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.rowsVirtualizer.reflowRows();
+        }
     }
 
     /**
@@ -396,7 +407,9 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.addEventListener('scroll', this.onScroll);
+        }
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 

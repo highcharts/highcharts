@@ -79,6 +79,7 @@ namespace Globals {
         hoveredColumn: classNamePrefix + 'hovered-column',
         editedCell: classNamePrefix + 'edited-cell',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
+        rowsVirtualization: classNamePrefix + 'rows-virtualization',
         headerCell: classNamePrefix + 'header-cell',
         headerCellContent: classNamePrefix + 'header-cell-content',
         headerRow: classNamePrefix + 'head-row-content',

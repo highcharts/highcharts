@@ -22,6 +22,7 @@
  *
  * */
 
+import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
@@ -88,6 +89,10 @@ class RowsVirtualizer {
      */
     public focusAnchorCell?: Cell;
 
+    /**
+     * Rendering row settings.
+     */
+    public rowSettings?: RowsSettings;
 
     /* *
     *
@@ -102,11 +107,12 @@ class RowsVirtualizer {
      * The viewport of the data grid to render rows in.
      */
     constructor(viewport: Table) {
-        const rowSettings = viewport.dataGrid.options?.rendering?.rows;
+        this.rowSettings =
+            viewport.dataGrid.options?.rendering?.rows as RowsSettings
 
         this.viewport = viewport;
-        this.strictRowHeights = rowSettings?.strictHeights as boolean;
-        this.buffer = Math.max(rowSettings?.bufferSize as number, 0);
+        this.strictRowHeights = this.rowSettings.strictHeights as boolean;
+        this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {
@@ -132,7 +138,10 @@ class RowsVirtualizer {
 
         // Load & render rows
         this.renderRows(this.rowCursor);
-        this.adjustRowHeights();
+
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**
@@ -244,9 +253,10 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
-        const rowsPerPage = Math.ceil(
+        const isVirtualization = this.rowSettings?.virtualization;
+        const rowsPerPage = isVirtualization ? Math.ceil(
             vp.tbodyElement.offsetHeight / this.defaultRowHeight
-        );
+        ) : Infinity; // need to be refactored when add pagination
 
         const rows = vp.rows;
 
@@ -255,6 +265,11 @@ class RowsVirtualizer {
             last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
+
+            if (isVirtualization) {
+                last.htmlElement.style.transform =
+                    `translateY(${last.getDefaultTopOffset()}px)`;
+            }
         }
 
         const from = Math.max(0, Math.min(
@@ -280,7 +295,10 @@ class RowsVirtualizer {
                 newRow.htmlElement,
                 vp.tbodyElement.lastChild
             );
-
+            if (isVirtualization) {
+                newRow.htmlElement.style.transform =
+                    `translateY(${newRow.getDefaultTopOffset()}px)`;
+            }
             rows.push(newRow);
         }
 
@@ -397,7 +415,9 @@ class RowsVirtualizer {
             rows[i].reflow();
         }
 
-        this.adjustRowHeights();
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**

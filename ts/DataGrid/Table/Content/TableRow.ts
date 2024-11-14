@@ -113,7 +113,6 @@ class TableRow extends Row {
         const idx = this.index;
         const el = this.htmlElement;
 
-        el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
         el.classList.add(Globals.classNames.rowElement);
 
         // Index of the row in the presentation data table
