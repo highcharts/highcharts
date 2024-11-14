@@ -44,6 +44,7 @@ function barycenter(this: PackedBubbleLayout): void {
         centerY: number;
 
     for (const node of nodes) {
+
         if (!node.fixedPosition) {
             const massTimesNodeCountSqrt = node.mass * nodeCountSqrt,
                 plotX = node.plotX || 0,

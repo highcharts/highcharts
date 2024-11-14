@@ -49,7 +49,6 @@ export interface DragNodesPoint extends Point {
     hasDragged?: boolean;
     inDragMode?: boolean;
     series: DragNodesSeries;
-    isParentNode?: boolean;
 }
 
 export interface DragNodesSeries extends Series {
@@ -59,7 +58,6 @@ export interface DragNodesSeries extends Series {
     layout: ReingoldFruchtermanLayout;
     options: DragNodesSeriesOptions;
     points: Array<DragNodesPoint>;
-    parentNodeLayout?: ReingoldFruchtermanLayout;
     onMouseDown(
         this: DragNodesSeries,
         point: Point,
@@ -245,15 +243,8 @@ function onMouseUp(
 ): void {
     if (point.fixedPosition) {
         if (point.hasDragged) {
-            const parentNodeLayout = this.parentNodeLayout,
-                layout = (
-                    point?.isParentNode && parentNodeLayout ?
-                        parentNodeLayout :
-                        this.layout
-                );
-
-            if (layout.enableSimulation) {
-                layout.start();
+            if (this.layout.enableSimulation) {
+                this.layout.start();
             } else {
                 this.chart.redraw();
             }
