@@ -30,8 +30,9 @@
 }
 /* stylelint-enable max-line-length */
 
-.highcharts-datagrid-row .highlight-column {
-    background-color: #caf2d3;
+.bold-column {
+    font-weight: bold;
+    text-align: center; 
 }
 
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column.highlight-column {
