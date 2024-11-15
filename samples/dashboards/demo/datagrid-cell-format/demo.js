@@ -17,7 +17,7 @@ DataGrid.dataGrid('container', {
     columns: [{
         id: 'ID',
         cells: {
-            className: 'highlight-column'
+            className: 'bold-column'
         }
     }, {
         id: 'Salary',
