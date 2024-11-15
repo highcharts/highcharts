@@ -146,12 +146,18 @@ function renderCollapseHeader(
         {
             className:
                 EditGlobals.classNames[
-                    isNested ? 'accordionNestedWrapper' : 'accordionContainer'
-                ] + ' ' + EditGlobals.classNames.collapsableContentHeader
+                    (isNested ? 'accordionNestedWrapper' : 'accordionContainer')
+                ] + ' ' +
+                (
+                    isStandalone ?
+                        EditGlobals.classNames.accordionStandaloneWrapper : ''
+                ) + ' ' + EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
     );
+
+
     const header = createElement(
         'div',
         {
@@ -162,10 +168,16 @@ function renderCollapseHeader(
     );
 
     let headerBtn;
-    if (!isStandalone) {
+
+    if (!isStandalone || showToggle) {
         headerBtn = createElement(
-            'button',
-            { className: EditGlobals.classNames.accordionHeaderBtn },
+            isStandalone && showToggle ? 'span' : 'button',
+            {
+                className: EditGlobals.classNames[
+                    isStandalone ?
+                        'accordionHeaderWrapper' : 'accordionHeaderBtn'
+                ]
+            },
             {},
             header
         );
@@ -180,7 +192,7 @@ function renderCollapseHeader(
         headerBtn
     );
 
-    if (showToggle) {
+    if (showToggle && header) {
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
@@ -191,16 +203,25 @@ function renderCollapseHeader(
         });
     }
 
-    const headerIcon = createElement(
-        'span',
-        {
-            className:
-                EditGlobals.classNames.accordionHeaderIcon + ' ' +
+    if (!isStandalone) {
+        const headerIcon = createElement(
+            'span',
+            {
+                className:
+                    EditGlobals.classNames.accordionHeaderIcon + ' ' +
+                    EditGlobals.classNames.collapsedElement
+            },
+            {},
+            headerBtn
+        );
+
+        headerBtn?.addEventListener('click', function (): void {
+            content.classList.toggle(EditGlobals.classNames.hiddenElement);
+            headerIcon?.classList.toggle(
                 EditGlobals.classNames.collapsedElement
-        },
-        {},
-        headerBtn
-    );
+            );
+        });
+    }
 
     const content = createElement(
         'div',
@@ -215,11 +236,6 @@ function renderCollapseHeader(
         {},
         accordion
     );
-
-    headerBtn?.addEventListener('click', function (): void {
-        content.classList.toggle(EditGlobals.classNames.hiddenElement);
-        headerIcon.classList.toggle(EditGlobals.classNames.collapsedElement);
-    });
 
     return { outerElement: accordion, content: content };
 }
