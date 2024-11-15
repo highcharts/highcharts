@@ -14,15 +14,13 @@ const Path = require('node:path');
  * */
 
 /**
- * Webpack task
+ * Webpack task.
  *
  * @return {Promise<void>}
- * Promise to keep
+ * Promise to keep.
  */
 async function scriptsWebpack() {
 
-    const Code = require('../code');
-    const FSLib = require('../libs/fs');
     const LogLib = require('../libs/log');
     const ProcessLib = require('../libs/process');
 
@@ -35,8 +33,6 @@ async function scriptsWebpack() {
     };
 
     let config;
-    let fileContent;
-    let fileMatch;
     let log = '';
 
     for (const productName of Object.keys(configs)) {
