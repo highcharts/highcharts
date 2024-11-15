@@ -5,14 +5,8 @@
     margin: 8px;
 }
 
-.high-color {
-    color: #3ea100;
-    font-weight: bold;
-}
-
-.low-color {
-    color: #c11a1a;
-    font-weight: bold;
+.highcharts-description {
+    padding-left: 10px;
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td.highlight-cell),
@@ -30,19 +24,27 @@
 }
 /* stylelint-enable max-line-length */
 
-.bold-column {
-    font-weight: bold;
-    text-align: center; 
-}
-
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column.highlight-column {
     background-color: #b5e0c0;
 }
 
-.highcharts-description {
-    padding-left: 10px;
+/* Custom classes added to the DataGrid */
+.bold-column {
+    font-weight: bold;
+    text-align: center;
+}
+
+.high-color {
+    color: #3ea100;
+    font-weight: bold;
+}
+
+.low-color {
+    color: #c11a1a;
+    font-weight: bold;
 }
 
 .over-30 {
     color: #8c00ff;
+    font-weight: bold;
 }
