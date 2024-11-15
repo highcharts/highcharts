@@ -2,11 +2,11 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-/* *
+/**
  *
  *  Colors
  *
- * */
+ **/
 
 #city-chart {
     --color-axis: #333;
@@ -117,11 +117,11 @@
     }
 }
 
-/* *
+/**
  *
  *  City Chart
  *
- * */
+ **/
 
 #city-chart .highcharts-dashboards-component-content {
     background: var(--color-background);
@@ -166,11 +166,11 @@
     fill: #333;
 }
 
-/* *
+/**
  *
  *  KPI
  *
- * */
+ **/
 
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
@@ -251,11 +251,11 @@
     display: none;
 }
 
-/* *
+/**
  *
  *  HTML geographical information
  *
- * */
+ **/
 
 #html-geo-info .highcharts-dashboards-component {
     cursor: default;
@@ -279,11 +279,11 @@
     font-size: 0.7em;
 }
 
-/* *
+/**
  *
  *  Selection Grid
  *
- * */
+ **/
 
 #selection-grid .highcharts-dashboards-component {
     background-color: var(--color-background);
@@ -302,11 +302,11 @@
     background: none;
 }
 
-/* *
+/**
  *
  *  World Map
  *
- * */
+ **/
 
 #world-map .highcharts-dashboards-component {
     border-radius: 10px;
@@ -425,21 +425,15 @@
     stroke-width: 2px;
 }
 
-/* *
+/**
  *
  *  Demo description
  *
- * */
+ **/
 
 .highcharts-description {
     padding: 0 20px;
 }
-
-/* *
- *
- *  Responsive
- *
- * */
 
 #world-map,
 #kpi-layout,
