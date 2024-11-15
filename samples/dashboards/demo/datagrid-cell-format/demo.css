@@ -11,6 +11,7 @@
 
 .low-color {
     color: #c11a1a;
+    font-weight: bold;
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td.highlight-cell),
