@@ -1412,7 +1412,7 @@ class Chart {
             heightOption = optionsChart.height,
             containerBox = chart.getContainerBox(),
             enableDefaultHeight = containerBox.height <= 1 ||
-                (
+                ( // #21510, prevent infinite reflow
                     !chart.renderTo.parentElement?.style.height &&
                     chart.renderTo.style.height === '100%'
                 );
