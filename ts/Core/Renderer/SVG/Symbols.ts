@@ -64,26 +64,37 @@ function arc(
             ),
             end = (options.end || 0) - (fullCircle ? proximity : 0),
             innerRadius = options.innerR,
+            useInnerRadius = defined(innerRadius),
             open = pick(options.open, fullCircle),
             cosStart = Math.cos(start),
             sinStart = Math.sin(start),
-            cosEnd = Math.cos(end),
-            sinEnd = Math.sin(end),
+            // Skip calculating end coordinates when drawing a full circle.
+            cosEnd = (fullCircle && !useInnerRadius) ? 0 : Math.cos(end),
+            sinEnd = (fullCircle && !useInnerRadius) ? 0 : Math.sin(end),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
                 options.longArc,
                 end - start - Math.PI < proximity ? 0 : 1
-            );
+            ),
+            // Use relative coordinates when drawing a circle to avoid floating
+            // point errors with large numbers. (#21701)
+            arcCommand = fullCircle ? 'a' : 'A',
+            arcEndX = fullCircle ?
+                1 - proximity :
+                cx + rx * cosEnd,
+            arcEndY = fullCircle ?
+                proximity :
+                cy + ry * sinEnd;
 
         let arcSegment: SVGPath.Arc = [
-            'A', // ArcTo
+            arcCommand, // ArcTo
             rx, // X radius
             ry, // Y radius
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
-            cx + rx * cosEnd,
-            cy + ry * sinEnd
+            arcEndX,
+            arcEndY
         ];
         arcSegment.params = { start, end, cx, cy }; // Memo for border radius
         arc.push(
@@ -95,7 +106,7 @@ function arc(
             arcSegment
         );
 
-        if (defined(innerRadius)) {
+        if (useInnerRadius) {
             arcSegment = [
                 'A', // ArcTo
                 innerRadius, // X radius
