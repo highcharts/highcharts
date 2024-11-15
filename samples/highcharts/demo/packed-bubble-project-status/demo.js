@@ -22,6 +22,7 @@ Highcharts.chart('container', {
                 splitSeries: true,
                 parentNodeLimit: true,
                 dragBetweenSeries: true,
+                friction: -0.5,
                 parentNodeOptions: {
                     bubblePadding: 20
                 }
