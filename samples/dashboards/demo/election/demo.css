@@ -187,8 +187,8 @@ text.highcharts-data-label {
     display: none;
 }
 
-#demo-description {
-    padding: 15px;
+.highcharts-description {
+    padding: 0 20px;
 }
 
 /* *
