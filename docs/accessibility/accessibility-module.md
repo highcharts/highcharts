@@ -1,7 +1,7 @@
 Accessibility module
 ===
 
-The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an afterthought. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
+The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an afterthought. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.2 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
 
 We recommend to always include the Accessibility module, unless there is an explicit reason not to do so. Including this module will make your charts compatible with assistive technologies used by people with disabilities, and also improve the usability of your charts, helping you reach a broader audience. Including the Accessibility module will also help with SEO by making your charts more visible to web crawlers.
 
