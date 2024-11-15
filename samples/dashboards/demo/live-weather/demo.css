@@ -115,15 +115,6 @@
         --color-title: #dadae2;
         --color-text: #dadae2;
     }
-
-    div#description {
-        background: #20202c;
-        color: #dadae2;
-    }
-
-    div#description a {
-        color: #fff;
-    }
 }
 
 /* *
@@ -440,9 +431,15 @@
  *
  * */
 
-div#description {
-    padding: 15px;
+.highcharts-description {
+    padding: 0 20px;
 }
+
+/* *
+ *
+ *  Responsive
+ *
+ * */
 
 #world-map,
 #kpi-layout,
