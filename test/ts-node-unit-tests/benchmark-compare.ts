@@ -6,8 +6,6 @@ import { join, resolve } from 'node:path';
 
 const TMP_FILE_PATH = resolve(__dirname, '../../tmp/benchmarks');
 
-console.log(TMP_FILE_PATH)
-
 function regression (yValues: number[], xValues: number[]){
     const yMean = yValues.reduce((a, b) => a + b) / yValues.length;
     const xMean = xValues.reduce((a, b) => a + b) / xValues.length;
