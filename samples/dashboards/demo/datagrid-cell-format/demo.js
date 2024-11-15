@@ -23,7 +23,7 @@ DataGrid.dataGrid('container', {
         id: 'Salary',
         cells: {
             className: '{#if (gt value 50000)}highlight-cell{/if}',
-            format: '{(divide value 1000):.1f}K $'
+            format: '${(divide value 1000):.0f}k'
         }
     }, {
         id: 'PerformanceScore',
