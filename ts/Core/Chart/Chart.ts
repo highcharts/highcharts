@@ -1391,12 +1391,11 @@ class Chart {
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
             containerBox = chart.getContainerBox(),
-            enableDefaultHeight = containerBox.height > 1 &&
-                !( // #21510, prevent infinite reflow
+            enableDefaultHeight = containerBox.height <= 1 ||
+                (
                     !chart.renderTo.parentElement?.style.height &&
-                        chart.renderTo.style.height === '100%'
+                    chart.renderTo.style.height === '100%'
                 );
-
         /**
          * The current pixel width of the chart.
          *
@@ -1419,7 +1418,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (enableDefaultHeight ? containerBox.height : 400)
+            (enableDefaultHeight ? 400 : containerBox.height)
         );
 
         chart.containerBox = containerBox;
