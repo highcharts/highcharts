@@ -160,7 +160,6 @@ const getCurrentTotal = arrOfArr => {
             }
         },
         chart: {
-            styledMode: true,
             height: 400
         },
         accessibility: {
@@ -232,7 +231,6 @@ const getCurrentTotal = arrOfArr => {
 
     const riskScoreKPIOptions = {
         chart: {
-            styledMode: true,
             height: 186,
             type: 'solidgauge',
             className: 'hidden-title'
@@ -298,7 +296,6 @@ const getCurrentTotal = arrOfArr => {
     };
     const goalAnalysisKPIOptions = {
         chart: {
-            styledMode: true,
             height: 186,
             type: 'solidgauge',
             className: 'hidden-title'
@@ -351,6 +348,9 @@ const getCurrentTotal = arrOfArr => {
     };
 
     Highcharts.setOptions({
+        chart: {
+            styledMode: true
+        },
         lang: {
             rangeSelectorZoom: ''
         }
