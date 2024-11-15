@@ -17,8 +17,8 @@ const FOLDERS_TO_DELETE = [
     'build',
     'code',
     'js',
-    'out',
-    'tmp',
+    // 'out', // used by CI
+    // 'tmp', // used by CI
     'vendor'
 ];
 
