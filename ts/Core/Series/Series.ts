@@ -4232,6 +4232,7 @@ class Series {
             // New type requires new point classes
             (newType && newType !== this.type) ||
             // New options affecting how the data points are built
+            typeof options.keys !== 'undefined' ||
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||

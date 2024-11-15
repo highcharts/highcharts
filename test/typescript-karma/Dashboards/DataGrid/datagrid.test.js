@@ -3,6 +3,26 @@ import DataGrid from '/base/code/datagrid/es-modules/masters/datagrid.src.js';
 
 const { test } = QUnit;
 
+test('DataGrid setOptions function', function (assert) {
+    assert.strictEqual(
+        DataGrid.defaultOptions.credits.enabled,
+        true,
+        'The default options should be initially defined.'
+    );
+
+    DataGrid.setOptions({
+        credits: {
+            enabled: false
+        }
+    });
+
+    assert.strictEqual(
+        DataGrid.defaultOptions.credits.enabled,
+        false,
+        'The setOptions function should modify the default options.'
+    );
+});
+
 //@ts-ignore
 test('DataGrid update methods', async function (assert) {
     const parentElement = document.getElementById('container');
