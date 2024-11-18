@@ -1096,7 +1096,8 @@ class Tooltip {
                                 label.x || 0,
                                 0,
                                 this.getPlayingField().width -
-                                (label.width || 0)
+                                (label.width || 0) -
+                                1
                             )
                         });
                     }
