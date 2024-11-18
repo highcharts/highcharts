@@ -1,5 +1,15 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
+:root {
+    --highlight-cell: #f0f2ca;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highlight-cell: #4d4f42;
+    }
+}
+
 #container {
     height: 235px;
     margin: 8px;
@@ -11,7 +21,7 @@
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row:has(td.highlight-cell),
 .highcharts-datagrid-table tbody .highcharts-datagrid-row-odd:has(td.highlight-cell) {
-    background-color: #f0f2ca;
+    background-color: var(--highlight-cell);
 }
 
 /* stylelint-disable max-line-length */
