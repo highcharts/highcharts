@@ -497,6 +497,11 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
+
+        // In sunburst dataLabel may be placed, but this should be reset to
+        // make sure the dataLabel can be aligned to a new position (#21913)
+        dataLabel.placed = false;
+
         return super.alignDataLabel.apply(this, arguments);
     }
 
