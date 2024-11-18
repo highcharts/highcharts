@@ -284,13 +284,17 @@
  *  Weather forecast Datagrid
  *
  **/
+#forecast-grid .highcharts-dashboards-component-title {
+    font-size: 1.1em;
+    text-align: center;
+}
 
 #forecast-grid .highcharts-dashboards-component {
     background-color: var(--color-background);
 }
 
 #forecast-grid .highcharts-datagrid-table thead {
-    font-size: 12px;
+    font-size: 0.7em;
 }
 
 #forecast-grid .highcharts-datagrid-hovered-row {
@@ -300,6 +304,11 @@
 
 #forecast-grid .highcharts-datagrid-hovered-column {
     background: none;
+}
+
+#forecast-grid .highcharts-datagrid-row td {
+    font-size: 0.8em;
+    padding: 0 10px;
 }
 
 /**
