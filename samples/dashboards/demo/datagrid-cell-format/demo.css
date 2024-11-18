@@ -16,19 +16,11 @@
 
 /* stylelint-disable max-line-length */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row:has(td.highlight-cell),
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-odd.highcharts-datagrid-hovered-row:has(td.highlight-cell),
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column.highlight-column,
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row .highlight-column,
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-odd.highcharts-datagrid-hovered-row .highlight-column {
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-odd.highcharts-datagrid-hovered-row:has(td.highlight-cell) {
     background-color: var(--highcharts-highlight-color-10);
 }
 /* stylelint-enable max-line-length */
 
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column.highlight-column {
-    background-color: #b5e0c0;
-}
-
-/* Custom classes added to the DataGrid */
 .bold-column {
     font-weight: bold;
     text-align: center;
