@@ -812,7 +812,6 @@ async function updateBoard(
     board, station, paramName,
     paramChanged = true, stationChanged = true
 ) {
-
     // Parameter info
     const param = paramConfig[paramName];
 
