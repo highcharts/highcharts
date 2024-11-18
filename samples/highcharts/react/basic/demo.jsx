@@ -12,7 +12,8 @@ export default function ChartComponent() {
     );
 }
 
-const root = ReactDOM.createRoot(document.querySelector('#container'));
-root.render(<ChartComponent />);
+ReactDOM.createRoot(
+    document.querySelector('#container')
+)?.render(<ChartComponent />);
 
 

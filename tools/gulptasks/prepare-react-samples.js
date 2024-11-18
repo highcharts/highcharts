@@ -22,6 +22,7 @@ async function transpileJSXSamples() {
             <!---
                 DO NOT EDIT: ${isGeneratedText}
             --->
+
             <script type="importmap">
             {
                 "imports": {
@@ -31,6 +32,7 @@ async function transpileJSXSamples() {
                 }
             }
             </script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/a11y-light.min.css">
             <figure class="highcharts-figure">
                     <div id="container"></div>
             </figure>`;
@@ -39,16 +41,53 @@ async function transpileJSXSamples() {
             str += strings[i];
 
             if (i < strings.length - 1) {
-                str += values[i]
-                    .replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+                str += values[i];
             }
         }
 
         return str;
     }
 
+    const styles = `
+#container {
+    height: 400px;
+}
+
+details {
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px auto;
+
+    >pre {
+        padding: 12px 16px;
+        margin: 0;
+        font-size: 0.95em;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    summary {
+        background-color: #545ecc;
+        color: white;
+        font-weight: bold;
+        font-family: sans-serif;
+        padding: 12px 16px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        user-select: none;
+
+        &:focus {
+            border: 3px dashed yellow;
+        }
+    }
+}
+`;
+
     const { glob } = require('glob');
     const swc = require('@swc/core');
+
+    const hljs = require('highlight.js');
 
     const jsxFiles = glob.iterate('samples/**/demo.jsx');
 
@@ -58,13 +97,21 @@ async function transpileJSXSamples() {
         const originalCode = await readFile(jsxPath, 'utf8');
         const output = await swc.transform(originalCode, config);
 
-        const adjecentHTMLFile = jsxPath.toString().replace('.jsx', '.html');
+        const adjecentHTMLFile = jsxPath.replace('.jsx', '.html');
+        const adjecentCSSFile = jsxPath.replace('.jsx', '.css');
 
         await writeFile(
             adjecentHTMLFile,
-            html`<details><summary>Code</summary><code><pre>${originalCode}</pre></code></details>`,
+            html`<details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
             { force: true }
         );
+
+        await writeFile(
+            adjecentCSSFile,
+            '/* DO NOT EDIT */\n' + styles,
+            { force: true }
+        );
+
         await writeFile(jsxPath.replace('.jsx', '.mjs'), `// DO NOT EDIT, ${isGeneratedText}\n` + output.code);
     }
 
