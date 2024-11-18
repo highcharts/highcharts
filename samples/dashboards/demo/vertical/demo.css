@@ -23,6 +23,11 @@ h2 {
     fill: var(--highcharts-neutral-color-5);
 }
 
+.highcharts-description {
+    padding: 0 20px;
+    color: #000;
+}
+
 #container {
     background-color: var(--highcharts-background-color);
     max-width: 900px;
