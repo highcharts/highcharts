@@ -201,6 +201,17 @@ module.exports = {
             'export-module/privacy-disclaimer-export'
         ],
         'Working with data': [
+            {
+                'Morningstar Connectors': [
+                    'morningstar/morningstar-intro',
+                    'morningstar/goal-analysis',
+                    'morningstar/risk-score',
+                    'morningstar/rna-news',
+                    'morningstar/security-details',
+                    'morningstar/time-series',
+                    'morningstar/xray'
+                ]
+            },
             'working-with-data/data-intro',
             'working-with-data/data-compression',
             'working-with-data/data-module',
