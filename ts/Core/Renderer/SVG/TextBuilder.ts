@@ -401,9 +401,8 @@ class TextBuilder {
 
     /**
      * Get the rendered line height of a <text>, <tspan> or pure text node.
-     *
+     * @private
      * @param {DOMElementType|Text} node The node to check for
-     *
      * @return {number} The rendered line height
      */
     private getLineHeight(node: DOMElementType|Text): number {

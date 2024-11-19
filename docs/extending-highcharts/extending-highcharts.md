@@ -1,5 +1,4 @@
-Extending Highcharts
-====================
+# Extending Highcharts
 
 Since version 2.3, Highcharts is built in a modular way with extensions in mind. 
 
@@ -9,8 +8,9 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
     `Highcharts.addEvent(chart, 'load', someFunction);`
 *   Some, but not all, prototypes and properties are listed at [api.highcharts.com](https://api.highcharts.com/class-reference/classes.list). Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of `highcharts.src.js`.
 
-Wrapping up a plugin
---------------------
+
+
+## Wrapping up a plugin
 
 Highcharts plugins should be wrapped in an anonymous self-executing function in order to prevent variable pollution to the global scope. A good practice is to wrap plugins like this:
 
@@ -24,8 +24,9 @@ Highcharts plugins should be wrapped in an anonymous self-executing function in
 }(Highcharts));
 ```
 
-Initializing an extension when the chart initializes
-----------------------------------------------------
+
+
+## Initializing an extension when the chart initializes
 
 Events can be added to both a class and an instance. In order to add a general listener to initialize the extension on every chart, an event can be added to the `Chart` class.
 
@@ -44,8 +45,9 @@ H.addEvent(H.Chart, 'load', function(e) {
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/events-load-class/)
 
-Wrapping prototype functions
-----------------------------
+
+
+## Wrapping prototype functions
 
 JavaScript with its dynamic nature is extremely powerful when it comes to altering the behaviour of scripts on the fly. In Highcharts we created a utility called `wrap`, which wraps an existing prototype function ("method") and allows you to add your own code before or after it. 
 
@@ -71,27 +73,11 @@ H.wrap(H.Series.types.line.prototype, 'drawGraph', function (proceed) {
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/wrap-drawgraph/)
 
-Since v10 all module functions are available through a `window` event, `HighchartsModuleLoaded`. This includes utility functions and members that are not deliberately exposed. It is a powerful API that was created with the intention of making it easier for the Highcharts developers and support team to provide temporary workarounds for bugs, or for special client requests. It should be warned that the module paths are not canonical, and may be subject to change as the product evolves. The `HighchartsModuleLoaded` event handlers must be defined before Highcharts is loaded. When loading ES modules, this will not work, and is also not necessary because [modules can be accessed directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/extending-members/).
+When loading ES modules, one can [access modules directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/extending-members/) for further modifications.
 
-```js
-window.addEventListener('HighchartsModuleLoaded', function(e) {
-    if (e.detail.path === 'Core/FormatUtilities.js') {
-        // The original function
-        const numberFormat = e.detail.module.numberFormat;
 
-        // A stupid proof of concept - modify all formatted numbers
-        e.detail.module.numberFormat = function () {
-            const n = numberFormat.apply(this, arguments);
-            return '~' + n;
-        }
-    }
-});
-```
 
-[Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/module-loaded-event/)
-
-Example extension
------------------
+## Example extension
 
 In this example the client wanted to use markers ("trackballs") on column type series in Highcharts Stock. Markers is currently only supported in line type series. To get this functionality, a small plugin can be written.
 
