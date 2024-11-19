@@ -203,13 +203,23 @@ module.exports = {
         'Working with data': [
             {
                 'Morningstar Connectors': [
-                    'morningstar/morningstar-intro',
+                    'morningstar/morningstar',
                     'morningstar/goal-analysis',
                     'morningstar/risk-score',
-                    'morningstar/rna-news',
+                    'morningstar/regulatory-news-announcements',
                     'morningstar/security-details',
-                    'morningstar/time-series',
-                    'morningstar/xray'
+                    'morningstar/x-ray',
+                    {
+                        'Time Series': [
+                            'morningstar/time-series',
+                            'morningstar/cumulative-return',
+                            'morningstar/dividend',
+                            'morningstar/growth',
+                            'morningstar/ohlcv',
+                            'morningstar/price'
+
+                        ]
+                    }
                 ]
             },
             'working-with-data/data-intro',
