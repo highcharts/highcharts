@@ -358,32 +358,56 @@ QUnit.test('Stock panning (#6276, #21319)', function (assert) {
 QUnit.test(
     'Ordinal axis panning.',
     function (assert) {
-        const data = [];
-
-        for (let i = 0; i < 100000; i++) {
-            data.push([400 + i, 1]);
-        }
-        const chart = Highcharts.stockChart('container', {
-            chart: {
-                events: {
-                    load: function () {
-                        this.xAxis[0].setExtremes(2000, 45000);
-                    }
-                }
+        var chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: Date.UTC(2020, 1, 6),
+                max: Date.UTC(2020, 1, 9)
             },
-            series: [{
-                type: 'column',
-                data: data,
-                dataGrouping: {
-                    units: [[
-                        'second',
-                        [1]
-                    ]]
+            series: [
+                {
+                    data: [
+                        {
+                            x: Date.UTC(2020, 1, 1),
+                            y: 10
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 2),
+                            y: 11
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 3),
+                            y: 12
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 4),
+                            y: 14
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 5),
+                            y: 15
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 6),
+                            y: 16
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 7),
+                            y: 14
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 8),
+                            y: 15
+                        },
+                        {
+                            x: Date.UTC(2020, 1, 9),
+                            y: 16
+                        }
+                    ]
                 }
-            }]
+            ]
         });
 
-        const controller = new TestController(chart),
+        var controller = new TestController(chart),
             initialMin = chart.xAxis[0].min;
 
         controller.pan([100, 200], [200, 200]);
@@ -393,6 +417,28 @@ QUnit.test(
             chart.xAxis[0].min,
             'Chart should pan horizontally, when data is equally spaced #13334.'
         );
+
+        const data = [];
+
+        for (let i = 0; i < 100000; i++) {
+            data.push([400 + i, 1]);
+        }
+
+        chart.series[0].update({
+            data,
+            type: 'column',
+            dataGrouping: {
+                forced: true,
+                units: [[
+                    'second',
+                    [1]
+                ]]
+            }
+        });
+
+        chart.xAxis[0].setExtremes(2000, 45000);
+
+        controller.pan([100, 200], [200, 200]);
 
         assert.equal(
             chart.xAxis[0].min,
