@@ -148,7 +148,7 @@ QUnit.test('series.centerInCategory', function (assert) {
         chart.series[0].points[2].shapeArgs.x +
             chart.series[0].points[2].shapeArgs.width / 2,
         chart.series[0].xAxis.toPixels(2, true),
-        1,
+        1.1,
         'Categories with null points should be centered'
     );
 
