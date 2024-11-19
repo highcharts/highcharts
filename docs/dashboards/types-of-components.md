@@ -56,9 +56,13 @@ The Highcharts component needs these two files to work:
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
-Note that the import order matters, so make sure that the Dashboards module is imported after the Highcharts module. For a chart to be displayed the type `Highcharts` must be specified, the `renderTo` options given and some data must be provided as part of the chart options. Data can either be static or provided via the Dashboards  [Data Pool](https://www.highcharts.com/docs/dashboards/data-handling).
+Note that the import order matters, so make sure that the Dashboards module is imported after the Highcharts module. For a chart to be displayed the type `Highcharts` must be specified, the `renderTo` options given and some data must be provided as part of the chart options.
 
-Code snippet:
+The `chartOptions` object offers the possibility to configure anything that can be configured in a stand-alone Highcharts chart.
+
+Data may be provided directly in the chart series but in a dashboard context one normally wants to share data between components and in this case the Dashboard [Data Pool](https://www.highcharts.com/docs/dashboards/data-handling) offers the necessary mechanism.
+
+Code snippet with data embedded in the chart series, no data connector used:
 ```js
 {
     renderTo: 'dashboard-1',
@@ -70,11 +74,45 @@ Code snippet:
     }
 },
 ```
+Here is an example [without a data connector](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
-In the `chartOptions` object everything that can be configured in a stand-alone Highcharts chart can be added.
+Code snippet using the Data Connector mechanism. Here the connector ID is the key as it links 
+the component to the Data Pool:
+```js
+    dataPool: {
+        connectors: [{
+            id: 'micro-element',
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                columnNames: ['Food', 'Vitamin A',  'Iron'],
+                data: [
+                    ['Beef Liver', 6421, 6.5],
+                    ['Lamb Liver', 2122, 6.5],
+                    ['Cod Liver Oil', 1350, 0.9],
+                    ['Mackerel', 388, 1],
+                    ['Tuna', 214, 0.6]
+                ]
+            }
+        }]
+    },
+    components: [
+    {
+        renderTo: 'dashboard-col-0',
+        type: 'Highcharts',
+        connector: {
+            id: 'micro-element',
+            columnAssignment: [{
+                seriesId: 'Vitamin A',
+                data: ['Food', 'Vitamin A']
+            }]
+        }
+    }]
+```
+When using a Data Connector the data gets parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
-The data gets parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
+If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
 
 You can find more information about HighchartsComponent [here](https://www.highcharts.com/docs/dashboards/highcharts-component);
 
