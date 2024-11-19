@@ -92,14 +92,6 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
     chart.redraw();
-    /* No longer relevant after refactoring to xAxis-based stacks for
-        centerInCategory
-    assert.strictEqual(
-        Object.keys(chart.yAxis[0].stacking.stacks).length,
-        1,
-        '#14910: Group stack should not be removed on redraw'
-    );
-    */
 
     chart.update({
         chart: {
@@ -132,6 +124,32 @@ QUnit.test('series.centerInCategory', function (assert) {
         chart.series[0].points[0].shapeArgs.y,
         chart.series[1].points[0].shapeArgs.y,
         '#14980: Toggling stacking with centerInCategory enabled should work'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].shapeArgs.x,
+        chart.series[1].points[0].shapeArgs.x,
+        'Points in the same stack should have the same x (#20550)'
+    );
+
+    assert.notEqual(
+        chart.series[1].points[0].shapeArgs.x,
+        chart.series[2].points[0].shapeArgs.x,
+        'Points in different stacks should have different x (#20550)'
+    );
+
+    assert.strictEqual(
+        chart.series[2].points[0].shapeArgs.x,
+        chart.series[3].points[0].shapeArgs.x,
+        'Points in the same stack should have the same x (#20550)'
+    );
+
+    assert.close(
+        chart.series[0].points[2].shapeArgs.x +
+            chart.series[0].points[2].shapeArgs.width / 2,
+        chart.series[0].xAxis.toPixels(2, true),
+        1,
+        'Categories with null points should be centered'
     );
 
     chart.update({
