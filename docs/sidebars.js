@@ -211,13 +211,12 @@ module.exports = {
                     'morningstar/x-ray',
                     {
                         'Time Series': [
-                            'morningstar/time-series',
-                            'morningstar/cumulative-return',
-                            'morningstar/dividend',
-                            'morningstar/growth',
-                            'morningstar/ohlcv',
-                            'morningstar/price'
-
+                            'morningstar/morningstar/time-series/time-series',
+                            'morningstar/morningstar/time-series/cumulative-return',
+                            'morningstar/morningstar/time-series/dividend',
+                            'morningstar/morningstar/time-series/growth',
+                            'morningstar/morningstar/time-series/ohlcv',
+                            'morningstar/morningstar/time-series/price'
                         ]
                     }
                 ]
