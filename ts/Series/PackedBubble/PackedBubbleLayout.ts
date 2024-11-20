@@ -288,7 +288,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     ): boolean {
         return pick(
             node.series?.options?.layoutAlgorithm?.splitSeries,
-            this.options.splitSeries,
+            this.options?.splitSeries,
             false
         );
     }
