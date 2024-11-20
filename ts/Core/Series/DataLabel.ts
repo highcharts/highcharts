@@ -110,6 +110,10 @@ declare module './SeriesLike' {
             alignTo?: BBoxObject,
             isNew?: boolean
         ): (boolean|undefined);
+        mergeArrays(
+            one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
+            two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
+        ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
         setDataLabelStartPos(
             point: ColumnPoint,
@@ -482,6 +486,7 @@ namespace DataLabel {
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }

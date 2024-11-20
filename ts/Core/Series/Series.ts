@@ -816,18 +816,11 @@ class Series {
             ),
             userPlotOptionsType = userPlotOptions[this.type] || {};
 
-        // When plot options have multiple data labels, the default data label
-        // plot options are not merged (#21928).
-        const dataLabelOptions = typeOptions.dataLabels;
-        if (dataLabelOptions instanceof Array) {
-            const dataLabelDefaults = defaultPlotOptionsType.dataLabels || {};
-            for (let i = 0; i < dataLabelOptions.length; i++) {
-                dataLabelOptions[i] = merge(
-                    dataLabelDefaults,
-                    dataLabelOptions[i]
-                );
-            }
-        }
+        // Merge in multiple data label options from the plot option. (#21928)
+        typeOptions.dataLabels = this.mergeArrays(
+            defaultPlotOptionsType.dataLabels,
+            typeOptions.dataLabels
+        );
 
         // Use copy to prevent undetected changes (#9762)
         /**
