@@ -44,6 +44,13 @@ QUnit.test('Tooltip on a boosted chart with categories', function (assert) {
 QUnit.test(
     'Scatter with boost should show correct values in tooltip (#20621)',
     function (assert) {
+
+        Highcharts.addEvent(Highcharts.Series, 'setOptions', e => {
+            const series = e.target;
+            const yAxis = series.chart.axes[1];
+            yAxis.treeGrid = false;
+        });
+
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'scatter',
