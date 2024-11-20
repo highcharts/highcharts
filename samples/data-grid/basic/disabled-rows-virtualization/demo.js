@@ -39,7 +39,7 @@ DataGrid.dataGrid('container', {
     },
     rendering: {
         rows: {
-            virtualization: !false
+            virtualization: false
         }
     }
 });
