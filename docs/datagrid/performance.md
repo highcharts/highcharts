@@ -5,7 +5,8 @@ Row virtualization is a performance optimization technique used in DataGrid. Ins
 
 This technique significantly enhances DataGrid performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
 
-The row virtualization is enabled by default, however you can easly disable it by the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#virtualization) option. 
+The row virtualization is enabled by default, however you can easly disable it by the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#virtualization) option.
+Please note that the large dataset impacts resizing and sorting performance too. Some animations or interactions can not be smooth.
 
 ## Optimizing performance
 ```js

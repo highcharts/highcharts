@@ -263,6 +263,13 @@ class RowsVirtualizer {
 
         const rows = vp.rows;
 
+        if (!isVirtualization && rows.length > 50) {
+            console.warn(
+                'DataGrid: a large dataset can cause performance ' +
+                'issues in sorting or resizing columns'
+            );
+        }
+
         if (!rows.length) {
             const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
             last.render();
