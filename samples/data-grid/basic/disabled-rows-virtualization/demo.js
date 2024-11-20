@@ -36,5 +36,10 @@ function generateRandomData(rows) {
 DataGrid.dataGrid('container', {
     dataTable: {
         columns: generateRandomData(100)
+    },
+    rendering: {
+        rows: {
+            virtualization: !false
+        }
     }
 });

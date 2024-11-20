@@ -185,10 +185,8 @@ class Table {
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
-        this.tbodyElement = makeHTMLElement('tbody', {
-            className: dgOptions?.rendering?.rows?.virtualization ?
-                Globals.classNames.rowsVirtualization : ''
-        }, tableElement);
+        this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
@@ -209,6 +207,7 @@ class Table {
 
         if (dgOptions?.rendering?.rows?.virtualization) {
             this.tbodyElement.addEventListener('scroll', this.onScroll);
+            tableElement.classList.add(Globals.classNames.virtualization);
         }
 
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);

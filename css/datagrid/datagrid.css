@@ -233,7 +233,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     height: 36px;
 }
 
-.highcharts-datagrid-table tbody.highcharts-datagrid-rows-virtualization tr {
+.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
     position: absolute;
 }
 
