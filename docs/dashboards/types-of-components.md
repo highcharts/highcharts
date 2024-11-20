@@ -109,12 +109,18 @@ the component to the Data Pool:
         }
     }]
 ```
-When using a Data Connector the data gets parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
+When using a Data Connector the data is parsed and organised in rows where `columnNames` either are given explicitly
+or the first row is used as column names.
 
-If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
+The chart then uses the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map the values of a specific column to the chart's series.
+Here is an [example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal) that uses column assignment.
 
-You can find more information about HighchartsComponent [here](https://www.highcharts.com/docs/dashboards/highcharts-component);
+If the data connector is connected, you can load the Highcharts' `dragDrop` module, 
+to allow the user to change the value and sync the changes of this value with other 
+components. If a `mathModifier` is applied to the data from the connector,
+chart editing is disabled. See the `dataPool` section for more details.
+
+See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcharts-component) page for more detailed information.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.  
