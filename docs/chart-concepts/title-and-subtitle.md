@@ -21,7 +21,7 @@ By default, since version 12, the title and subtitle have adaptive alignment to 
 * If the title still doesn't fit after scaling down, it is wrapped into multiple lines. Now the text is left-aligned for a cleaner look.
 * The subtitle by default (and dynamically) applies the same alignment as the main title.
 
-All of these rules can be overridden by explicitly setting the title or subtitle `align` property, or setting the `minScale`, for example to 1 to disallow scaling down.
+All of these rules can be overridden by explicitly setting the title or subtitle `align` property, or setting the `title.minScale`, for example to 1 to disallow scaling down.
 
 The title and subtitle can also be moved around by the default attributes of the title and subtitle options (`align`, `float`, `margin`, `verticalAlign`, `x`, `y`). For all available options, see [options.title](https://api.highcharts.com/highcharts/title) and [options.subtitle](https://api.highcharts.com/highcharts/subtitle).
 
