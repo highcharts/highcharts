@@ -233,9 +233,11 @@ const defaultOptions: DefaultOptions = {
          * method unless otherwise specified in the function arguments. Defaults
          * to the locale decimal point as determined by `lang.locale`.
          *
-         * @since 1.2.2
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.decimalPoint
          */
-        decimalPoint: void 0,
 
         /**
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
@@ -269,6 +271,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * The default thousands separator used in the `Highcharts.numberFormat`
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale thousands separator as determined by `lang.locale`.
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.thousandsSep
+         */
+
+        /**
          * The text for the label appearing when a chart is zoomed.
          *
          * @since 1.2.4
@@ -280,16 +293,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
-        resetZoomTitle: 'Reset zoom level 1:1',
-
-        /**
-         * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to the locale thousands separator as determined by `lang.locale`.
-         *
-         * @since   1.2.2
-         */
-        thousandsSep: void 0
+        resetZoomTitle: 'Reset zoom level 1:1'
     },
 
     /**
