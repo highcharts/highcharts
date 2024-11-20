@@ -1,0 +1,6 @@
+---
+ name: Highcharts DataGrid Demo
+ authors:
+   - Karol Kolodziej
+ js_wrap: b
+...
