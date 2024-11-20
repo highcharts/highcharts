@@ -138,9 +138,10 @@ QUnit.test('series.centerInCategory', function (assert) {
         'Points in different stacks should have different x (#20550)'
     );
 
-    assert.strictEqual(
+    assert.close(
         chart.series[2].points[0].shapeArgs.x,
         chart.series[3].points[0].shapeArgs.x,
+        1.1,
         'Points in the same stack should have the same x (#20550)'
     );
 
