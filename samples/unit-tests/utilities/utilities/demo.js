@@ -474,6 +474,12 @@
             'For small numbers and when decimals argument declared as zero, ' +
             'the formatter should return zero, #14023.'
         );
+
+        assert.strictEqual(
+            Highcharts.numberFormat(-0.4999999, 0, '.', ''),
+            '0',
+            'numberFormat should return zero without singed minus, #20564.'
+        );
     });
 
     /**

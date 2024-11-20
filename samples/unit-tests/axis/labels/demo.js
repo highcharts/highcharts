@@ -675,7 +675,7 @@ QUnit.test('Label formatting(#4291)', function (assert) {
 
     assert.strictEqual(
         chart.yAxis[0].ticks['79962.57'].label.textStr,
-        '79 962.57',
+        '79,962.57',
         'Preserved decimals'
     );
 });

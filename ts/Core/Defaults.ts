@@ -113,9 +113,9 @@ const defaultOptions: DefaultOptions = {
     symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 
     /**
-     * The language object is global and it can't be set on each chart
-     * initialization. Instead, use `Highcharts.setOptions` to set it before any
-     * chart is initialized.
+     * An object containing language-related strings and settings. A typical
+     * setup uses `Highcharts.setOptions` to make the options apply to all
+     * charts in the same page.
      *
      * ```js
      * Highcharts.setOptions({
@@ -128,8 +128,8 @@ const defaultOptions: DefaultOptions = {
     lang: {
 
         /**
-         * The browser locale to use for date formatting. The actual locale used
-         * for each chart is determined in three steps:
+         * The browser locale to use for date and number formatting. The actual
+         * locale used for each chart is determined in three steps:
          * 1. If this `lang.locale` option is specified, it is used.
          * 2. Else, look for the closest ancestor HTML element with a `lang`
          *    attribute, typically the `<html>` element.
@@ -142,6 +142,8 @@ const defaultOptions: DefaultOptions = {
          *         Set the locale using the `lang.locale` option
          * @sample highcharts/lang/locale-attribute/
          *         Pick up the locale from the HTML `lang` attribute
+         * @sample highcharts/members/highcharts-numberformat
+         *         Arabic locale with digits and dates         *
          *
          * @since next
          * @type {string|Array<string>}
@@ -228,11 +230,14 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The default decimal point used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments.
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale decimal point as determined by `lang.locale`.
          *
-         * @since 1.2.2
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.decimalPoint
          */
-        decimalPoint: '.',
 
         /**
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
@@ -266,6 +271,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * The default thousands separator used in the `Highcharts.numberFormat`
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale thousands separator as determined by `lang.locale`.
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.thousandsSep
+         */
+
+        /**
          * The text for the label appearing when a chart is zoomed.
          *
          * @since 1.2.4
@@ -277,19 +293,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
-        resetZoomTitle: 'Reset zoom level 1:1',
-
-        /**
-         * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to a single space character, which is recommended in
-         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
-         * across Anglo-American and continental European languages.
-         *
-         * @default \u0020
-         * @since   1.2.2
-         */
-        thousandsSep: ' '
+        resetZoomTitle: 'Reset zoom level 1:1'
     },
 
     /**
