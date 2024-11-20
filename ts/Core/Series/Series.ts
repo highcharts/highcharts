@@ -5331,6 +5331,8 @@ export default Series;
  *
  * @sample {highcharts} highcharts/series/stack/
  *         Stacked and grouped columns
+ * @sample {highcharts} highcharts/series/stack-centerincategory/
+ *         Stacked and grouped, centered in category
  *
  * @type      {number|string}
  * @since     2.1
