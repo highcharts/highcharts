@@ -1,4 +1,4 @@
-Goal Analysis Connector
+Goal Analysis
 =======================
 
 The Morningstar Goal Analysis service calculates the probabilities of an

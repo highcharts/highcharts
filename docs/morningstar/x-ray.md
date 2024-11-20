@@ -1,4 +1,4 @@
-X-Ray Connector
+X-Ray
 ===============
 
 The Morningstar X-Ray capability enables you to quickly analyze a portfolio's
