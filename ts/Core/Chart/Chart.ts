@@ -1305,14 +1305,19 @@ class Chart {
                 const fontMetrics = renderer.fontMetrics(desc),
                     baseline = fontMetrics.b,
                     lineHeight = fontMetrics.h,
-                    minScale = (
+                    verticalAlign = descOptions.verticalAlign || 'top',
+                    topAligned = verticalAlign === 'top',
+                    // Use minScale only for top-aligned titles. It is not
+                    // likely that we will need scaling for other positions, but
+                    // if it is requested, we need to adjust the vertical
+                    // position to the scale.
+                    minScale = topAligned && (
                         descOptions as Chart.TitleOptions
                     ).minScale || 1,
-                    verticalAlign = descOptions.verticalAlign || 'top',
                     offset = key === 'title' ?
-                        verticalAlign === 'top' ? -3 : 0 :
+                        topAligned ? -3 : 0 :
                         // Floating subtitle (#6574)
-                        verticalAlign === 'top' ? titleOffset[0] + 2 : 0,
+                        topAligned ? titleOffset[0] + 2 : 0,
                     uncappedScale = Math.min(alignTo.width / textPxLength, 1),
                     scale = Math.max(minScale, uncappedScale),
                     alignAttr: SVGAttributes = merge(
