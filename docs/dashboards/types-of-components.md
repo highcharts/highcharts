@@ -81,7 +81,7 @@ Code snippet with data embedded in the chart options, no data connector used:
     }
 }
 ```
-The above code snippet used in a [Highcharts Component example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts) that uses embedded data.
+The above code snippet as part of a [Highcharts Component example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts) that uses embedded data.
 
 Code snippet using the Data Connector mechanism.
 ```js
@@ -115,7 +115,7 @@ Code snippet using the Data Connector mechanism.
         }
     }]
 ```
-The above code snippet in a [Hichcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
+The above code snippet as part of a [Hichcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
 
 When using a Data Connector the data is parsed and organized in rows where `columnNames` either are given explicitly or the first row is used as column names.
 
@@ -160,7 +160,7 @@ Code snippet with data embedded in the `DataGrid` data table, no data connector 
     }
 }
 ```
-The above code snippet used in a [DataGrid example](http://utils.highcharts.local/samples/#view/data-grid/demo/your-first-datagrid) that uses embedded data.
+The above code snippet as part of a [DataGrid example](http://utils.highcharts.local/samples/#view/data-grid/demo/your-first-datagrid) that uses embedded data.
 
 Code snippet using a data connector.
 ```js
@@ -190,7 +190,7 @@ dataPool: {
     }
 }
 ```
-The above code snippet used in a [DataGrid example](https://www.highcharts.com/samples/embed/dashboards/components/component-datagrid) that uses data shared via a `DataConnector`.
+The above code snippet as part of a [DataGrid example](https://www.highcharts.com/samples/embed/dashboards/components/component-datagrid) that uses data shared via a `DataConnector`.
 
 When using the data connector the `DataGrid` is automatically populated. If other components are using the same data connector they will be automatically updated when the user edits a datagrid cell. [Here is the example](https://www.highcharts.com/demo/dashboards/datagrid-sync).
 
@@ -214,6 +214,6 @@ Code snippet:
     thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
 },
 ```
-The above code snippet used in a [KPI component example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi).
+The above code snippet as part of a [KPI component example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi).
 
 See the [KPI Component](https://www.highcharts.com/docs/dashboards/kpi-component) page for more information.
