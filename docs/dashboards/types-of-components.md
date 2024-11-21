@@ -115,7 +115,7 @@ Code snippet using the Data Connector mechanism.
         }
     }]
 ```
-The above above code snippet in a [Hichcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
+The above code snippet in a [Hichcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
 
 When using a Data Connector the data is parsed and organized in rows where `columnNames` either are given explicitly or the first row is used as column names.
 
