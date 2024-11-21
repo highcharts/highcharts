@@ -14,6 +14,7 @@
  *
  * */
 
+import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
@@ -31,7 +32,7 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions {
-    decimalPoint: string;
+    decimalPoint?: string;
     invalidDate?: string;
     loading: string;
     locale?: string|Array<string>;
@@ -42,7 +43,7 @@ export interface LangOptions {
     resetZoomTitle: string;
     shortMonths?: Array<string>;
     shortWeekdays?: Array<string>;
-    thousandsSep: string;
+    thousandsSep?: string;
     weekdays?: Array<string>;
     zoomIn?: string;
     zoomOut?: string;
@@ -57,6 +58,7 @@ export interface LoadingOptions {
 
 export interface NumberFormatterCallbackFunction {
     (
+        this: Chart|Object|void,
         number: number,
         decimals: number,
         decimalPoint?: string,

@@ -31,7 +31,6 @@ const {
     isNumber,
     isObject,
     pick,
-    pInt,
     ucfirst
 } = U;
 
@@ -78,6 +77,8 @@ const helpers: Record<string, Function> = {
     ucfirst,
     unless: (condition: string[]|undefined): boolean => !condition
 };
+
+const numberFormatCache: Record<string, Intl.NumberFormat> = {};
 
 /* *
  *
@@ -176,7 +177,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = defaultOptions.lang,
+        lang = chart?.options.lang || defaultOptions.lang,
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
 
@@ -414,6 +415,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
  *         The formatted number.
  */
 function numberFormat(
+    this: Chart|Object|void,
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -422,86 +424,87 @@ function numberFormat(
     number = +number || 0;
     decimals = +decimals;
 
-    let ret,
-        fractionDigits;
+    let ret: string,
+        fractionDigits: number,
+        [mantissa, exp] = number.toString().split('e').map(Number);
 
-    const lang = defaultOptions.lang,
+    const lang = (this as Chart)?.options?.lang || defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
-        exponent = number.toString().split('e'),
-        firstDecimals = decimals;
+        firstDecimals = decimals,
+        options: Intl.NumberFormatOptions = {};
+
+    decimalPoint ??= lang.decimalPoint;
+    thousandsSep ??= lang.thousandsSep;
 
     if (decimals === -1) {
         // Preserve decimals. Not huge numbers (#3793).
         decimals = Math.min(origDec, 20);
     } else if (!isNumber(decimals)) {
         decimals = 2;
-    } else if (decimals && exponent[1] && exponent[1] as any < 0) {
+    } else if (decimals && exp < 0) {
         // Expose decimals from exponential notation (#7042)
-        fractionDigits = decimals + +exponent[1];
+        fractionDigits = decimals + exp;
         if (fractionDigits >= 0) {
             // Remove too small part of the number while keeping the notation
-            exponent[0] = (+exponent[0]).toExponential(fractionDigits)
-                .split('e')[0];
+            mantissa = +mantissa.toExponential(fractionDigits).split('e')[0];
             decimals = fractionDigits;
         } else {
             // `fractionDigits < 0`
-            exponent[0] = exponent[0].split('.')[0] || 0 as any;
+            mantissa = Math.floor(mantissa);
 
             if (decimals < 20) {
                 // Use number instead of exponential notation (#7405)
-                number = (exponent[0] as any * Math.pow(10, exponent[1] as any))
-                    .toFixed(decimals) as any;
+                number = +(mantissa * Math.pow(10, exp)).toFixed(decimals);
             } else {
                 // Or zero
                 number = 0;
             }
-            exponent[1] = 0 as any;
+            exp = 0;
         }
     }
 
-    // Add another decimal to avoid rounding errors of float numbers. (#4573)
-    // Then use toFixed to handle rounding.
-    const roundedNumber = (
-        Math.abs(exponent[1] ? exponent[0] as any : number) +
-        Math.pow(10, -Math.max(decimals, origDec) - 1)
-    ).toFixed(decimals);
-
-    // A string containing the positive integer component of the number
-    const strinteger = String(pInt(roundedNumber));
-
-    // Leftover after grouping into thousands. Can be 0, 1 or 2.
-    const thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
-
-    // Language
-    decimalPoint = pick(decimalPoint, lang.decimalPoint);
-    thousandsSep = pick(thousandsSep, lang.thousandsSep);
-
-    // Start building the return
-    ret = number < 0 ? '-' : '';
-
-    // Add the leftover after grouping into thousands. For example, in the
-    // number 42 000 000, this line adds 42.
-    ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
-
-    if (+exponent[1] < 0 && !firstDecimals) {
-        ret = '0';
-    } else {
-        // Add the remaining thousands groups, joined by the thousands separator
-        ret += strinteger
-            .substr(thousands)
-            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    if (exp) {
+        decimals ??= 2;
+        number = mantissa;
     }
 
-    // Add the decimal point and the decimal component
-    if (decimals) {
-        // Get the decimal component
-        ret += decimalPoint + roundedNumber.slice(-decimals);
-    } else if (+ret === 0) { // Remove signed minus #20564
+    if (isNumber(decimals) && decimals >= 0) {
+        options.minimumFractionDigits = decimals;
+        options.maximumFractionDigits = decimals;
+    }
+    if (thousandsSep === '') {
+        options.useGrouping = false;
+    }
+
+    const hasSeparators = thousandsSep || decimalPoint,
+        locale = hasSeparators ?
+            'en' :
+            ((this as Chart)?.locale || lang.locale),
+        cacheKey = JSON.stringify(options) + locale,
+        nf = numberFormatCache[cacheKey] ??=
+            new Intl.NumberFormat(locale, options);
+
+    ret = nf.format(number);
+
+    // If thousandsSep or decimalPoint are set, fall back to using English
+    // format with string replacement for the separators.
+    if (hasSeparators) {
+        ret = ret
+            .replace(/\,/g, thousandsSep ?? ',')
+            .replace('.', decimalPoint ?? '.');
+    }
+
+    if (
+        // Remove signed zero (#20564)
+        (!decimals && +ret === 0) ||
+        // Small numbers, no decimals (#14023)
+        (exp < 0 && !firstDecimals)
+    ) {
         ret = '0';
     }
 
-    if (exponent[1] && +ret !== 0) {
-        ret += 'e' + exponent[1];
+    if (exp && +ret !== 0) {
+        ret += 'e' + (exp < 0 ? '' : '+') + exp;
     }
 
     return ret;

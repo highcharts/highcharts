@@ -401,9 +401,8 @@ class TextBuilder {
 
     /**
      * Get the rendered line height of a <text>, <tspan> or pure text node.
-     *
+     * @private
      * @param {DOMElementType|Text} node The node to check for
-     *
      * @return {number} The rendered line height
      */
     private getLineHeight(node: DOMElementType|Text): number {
@@ -523,7 +522,7 @@ class TextBuilder {
 
         // Word wrap cannot be truncated to shorter than one word, ellipsis
         // text can be completely blank.
-        let minIndex = words ? 1 : 0;
+        let minIndex = words && !startAt ? 1 : 0;
         let maxIndex = (text || words || '').length;
         let currentIndex = maxIndex;
         let str;
@@ -553,7 +552,7 @@ class TextBuilder {
                         lengths[end] = startAt +
                             (parentNode as any).getSubStringLength(
                                 0,
-                                words ? end + 1 : end
+                                words && !startAt ? end + 1 : end
                             );
 
                     } catch (e) {

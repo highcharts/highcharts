@@ -480,6 +480,7 @@ class HTMLElement extends SVGElement {
                 styles: CSSObject = {
                     left: `${x + xCorr}px`,
                     top: `${y + yCorr}px`,
+                    textAlign,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
 

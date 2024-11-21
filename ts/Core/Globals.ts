@@ -212,10 +212,6 @@ namespace Globals {
         isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
         isWebKit = userAgent.indexOf('AppleWebKit') !== -1,
         deg2rad = Math.PI * 2 / 360,
-        hasBidiBug = (
-            isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // Issue #38
-        ),
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',

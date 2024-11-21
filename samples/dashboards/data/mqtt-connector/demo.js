@@ -1,4 +1,4 @@
-/* *
+/**
  *
  *  Sample application using a MQTT connector (custom connector),
  *  with one MQTT topic per connector. The example uses the public
@@ -13,7 +13,7 @@
  *
  *  Valid MQTT topics: highcharts/topic1, highcharts/topic2
  *
- * */
+ **/
 
 // Global Dashboards instance for use in event handlers.
 let board;
@@ -252,11 +252,11 @@ async function createDashboard() {
     }, true);
 }
 
-/* *
+/**
  *
  *  Event log and application control functions
  *
- * */
+ **/
 let logContent;
 let connectStatus;
 let connectButton;
@@ -310,7 +310,7 @@ function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
 }
 
-/* *
+/**
  *
  * MQTT connector class - a custom DataConnector,
  * interfacing with the Paho MQTT client library.
@@ -320,7 +320,7 @@ function setConnectStatus(connected) {
  *
  * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
  *
- */
+ **/
 
 let MQTTClient;
 try {
@@ -340,17 +340,17 @@ const merge = Highcharts.merge;
 // Connector instances
 const connectorTable = {};
 
-/* *
+/**
  *
  *  Class MQTTConnector
  *
- * */
+ **/
 
 class MQTTConnector extends DataConnector {
     /**
      * Constructs an instance of MQTTConnector.
      *
-     */
+     **/
     constructor(options) {
         const mergedOptions = merge(
             MQTTConnector.defaultOptions,
@@ -377,11 +377,11 @@ class MQTTConnector extends DataConnector {
         connector.registerEvents();
     }
 
-    /* *
+    /**
      *
      *  Functions
      *
-     * */
+     **/
 
     /**
      * Creates the MQTT client and initiates the connection
@@ -410,7 +410,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Clear the data table and reset the packet count.
      *
-     */
+     **/
     async reset() {
         const connector = this,
             table = connector.table;
@@ -422,7 +422,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Connects to the MQTT broker.
      *
-     */
+     **/
     async connect() {
         const { user, password, timeout, useSSL, cleanSession } = this.options;
 
@@ -441,7 +441,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Disconnects from the MQTT broker.
      *
-     */
+     **/
     async disconnect() {
         this.mqtt.disconnect();
     }
@@ -449,7 +449,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Subscribe to an MQTT topic.
      *
-     */
+     **/
     async subscribe() {
         const { topic, qOs, autoReset } = this.options;
 
@@ -480,7 +480,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Unsubscribe from an MQTT topic.
      *
-     */
+     **/
     unsubscribe() {
         const { topic } = this.options;
 
@@ -504,7 +504,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Process connection success
      *
-     */
+     **/
     onConnect() {
         const { host, port, user, autoSubscribe } = this.options;
 
@@ -530,7 +530,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Process incoming message
      *
-     */
+     **/
     async onMessageArrived(mqttPacket) {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
@@ -601,7 +601,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Process lost connection
      *
-     */
+     **/
     onConnectionLost(response) {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId];
@@ -631,7 +631,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Process failure
      *
-     */
+     **/
     onFailure(response) {
         this.connected = false;
         this.packetCount = 0;
@@ -649,7 +649,7 @@ class MQTTConnector extends DataConnector {
     /**
      * Register events
      *
-     */
+     **/
     registerEvents() {
         const connector = this;
         // Register general connector events (load, afterLoad, loadError)
@@ -689,7 +689,7 @@ class MQTTConnector extends DataConnector {
  *
  *  Static Properties
  *
- */
+ **/
 MQTTConnector.defaultOptions = {
     // MQTT client properties
     host: 'broker.hivemq.com',
@@ -716,5 +716,5 @@ MQTTConnector.registerType('MQTT', MQTTConnector);
  *
  *  Launch the application
  *
- */
+ **/
 createDashboard();

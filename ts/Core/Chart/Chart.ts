@@ -333,6 +333,7 @@ class Chart {
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
+    public locale?: string|Array<string>;
     public margin!: Array<number>;
     public marginBottom?: number;
     public numberFormatter!: NumberFormatterCallbackFunction;
@@ -503,6 +504,9 @@ class Chart {
              */
             this.series = [];
 
+            this.locale = options.lang.locale ??
+                (this.renderTo.closest('[lang]') as HTMLDOMElement|null)?.lang;
+
             /**
              * The `Time` object associated with the chart. Since v6.0.5,
              * time settings can be applied individually for each chart. If
@@ -515,11 +519,7 @@ class Chart {
             this.time = new Time(extend(
                 options.time || {},
                 {
-                    locale: (
-                        options.lang.locale ??
-                        (this.renderTo.closest('[lang]') as HTMLDOMElement|null)
-                            ?.lang
-                    )
+                    locale: this.locale
                 }
             ));
             options.time = this.time.options;
@@ -532,7 +532,9 @@ class Chart {
              * @name Highcharts.Chart#numberFormatter
              * @type {Highcharts.NumberFormatterCallbackFunction}
              */
-            this.numberFormatter = optionsChart.numberFormatter || numberFormat;
+            this.numberFormatter = (
+                optionsChart.numberFormatter || numberFormat
+            ).bind(this);
 
             /**
              * Whether the chart is in styled mode, meaning all presentational
@@ -1475,12 +1477,11 @@ class Chart {
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
             containerBox = chart.getContainerBox(),
-            enableDefaultHeight = containerBox.height > 1 &&
-                !( // #21510, prevent infinite reflow
+            enableDefaultHeight = containerBox.height <= 1 ||
+                ( // #21510, prevent infinite reflow
                     !chart.renderTo.parentElement?.style.height &&
-                        chart.renderTo.style.height === '100%'
+                    chart.renderTo.style.height === '100%'
                 );
-
         /**
          * The current pixel width of the chart.
          *
@@ -1503,7 +1504,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (enableDefaultHeight ? containerBox.height : 400)
+            (enableDefaultHeight ? 400 : containerBox.height)
         );
 
         chart.containerBox = containerBox;

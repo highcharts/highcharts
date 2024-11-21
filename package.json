@@ -43,11 +43,11 @@
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install",
+    "prepare": "husky install ; gulp --series clean update-vendor",
     "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
-    "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
-    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
+    "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
+    "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.592.0",
@@ -57,7 +57,7 @@
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.9",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.10",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
     "@swc/core": "^1.5.25",
