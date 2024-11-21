@@ -122,8 +122,8 @@ When using a Data Connector the data is parsed and organized in rows where `colu
 The chart then uses the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map the values of a specific column to the chart's series.
 Here is an [example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal) that uses column assignment.
 
-If the data connector is connected, you can load the Highcharts' `dragDrop` module, 
-to allow the user to change the value and sync the changes of this value with other 
+If the data connector is connected, you can load the Highcharts' `dragDrop` module.
+This allows the user to change the value and sync the changes of this value with other 
 components. If a `mathModifier` is applied to the data from the connector,
 chart editing is disabled. See the `dataPool` section for more details.
 
