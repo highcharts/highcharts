@@ -22,18 +22,17 @@ Remember that each container must be provided rendered to a HTML `div` with a un
 using a custom HTML layout.
 
 ## Importing the CSS
-The CSS is not included in the library but you can import it like that:
+The CSS must be explicitly imported as shown here:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-Note that each component has its own CSS file.
+The file `datagrid.css` is needed only if the DataGrid component is actually used in the dashboard.
 
 ## General classes
 Each of the class name contains a prefix `highcharts-dashboards` and a suffix that
-describes the element.   
-For example, the class name for the dashboard's row is `highcharts-dashboards-row`.
+describes the element. For example, the class name for the dashboard's row is `highcharts-dashboards-row`.
 
 These are the most important elements and their associated CSS classes:
 - `highcharts-dashboards` - the main class for the dashboard
