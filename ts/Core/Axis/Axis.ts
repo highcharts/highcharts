@@ -1594,9 +1594,9 @@ class Axis {
 
                         // The `minPointOffset` is the value padding to the left
                         // of the axis in order to make room for points with a
-                        // pointRange, typically columns. When the
-                        // pointPlacement option is 'between' or 'on', this
-                        // padding does not apply.
+                        // pointRange, typically columns, or line/scatter points
+                        // on a category axis. When the `pointPlacement` option
+                        // is 'between' or 'on', this padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
                             isPointPlacementAxis && isString(pointPlacement) ?
