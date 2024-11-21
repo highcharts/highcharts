@@ -3133,12 +3133,9 @@ class Axis {
                 tick.replaceMovedLabel();
             }
 
-            if (
-                tick &&
-                tick.label &&
-                tick.label.textPxLength > maxLabelLength
-            ) {
-                maxLabelLength = tick.label.textPxLength;
+            const textPxLength = tick.label?.textPxLength || 0;
+            if (textPxLength > maxLabelLength) {
+                maxLabelLength = textPxLength;
             }
         });
         this.maxLabelLength = maxLabelLength;
@@ -3205,7 +3202,7 @@ class Axis {
                     labelStyleOptions.whiteSpace !== 'nowrap' &&
                     (
                         // Speed optimizing, #7656
-                        commonWidth < label.textPxLength ||
+                        commonWidth < (label.textPxLength || 0) ||
                         // Resetting CSS, #4928
                         label.element.tagName === 'SPAN'
                     )

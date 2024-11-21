@@ -78,12 +78,10 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Departamental Strength of the Company',
-        align: 'left'
+        text: 'Departamental Strength of the Company'
     },
     subtitle: {
-        text: 'Custom animation of pie series',
-        align: 'left'
+        text: 'Custom animation of pie series'
     },
     tooltip: {
         headerFormat: '',

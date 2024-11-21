@@ -98,6 +98,7 @@ const {
     extend,
     find,
     fireEvent,
+    getAlignFactor,
     getStyle,
     isArray,
     isNumber,
@@ -1136,9 +1137,7 @@ class Chart {
      *         The currently selected series.
      */
     public getSelectedSeries(): Array<Series> {
-        return this.series.filter(function (serie): (boolean|undefined) {
-            return serie.selected;
-        });
+        return this.series.filter((s): (boolean|undefined) => s.selected);
     }
 
     /**
@@ -1182,40 +1181,44 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#applyDescription
-     * @param name {string}
+     * @param key {string}
      * Either title, subtitle or caption
      * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
      * The options to set, will be merged with default options.
      */
     public applyDescription(
-        name: ('title'|'subtitle'|'caption'),
+        key: Chart.DescriptionKey,
         explicitOptions?: Chart.DescriptionOptionsType
     ): void {
         const chart = this;
 
         // Merge default options with explicit options
-        const options = this.options[name] = merge(
-            this.options[name],
+        const options = this.options[key] = merge(
+            this.options[key],
             explicitOptions
         );
 
-        let elem = this[name];
+        let elem = this[key];
 
         if (elem && explicitOptions) {
-            this[name] = elem = elem.destroy(); // Remove old
+            this[key] = elem = elem.destroy(); // Remove old
         }
 
         if (options && !elem) {
             elem = this.renderer.text(
-                options.text as any,
+                options.text,
                 0,
                 0,
                 options.useHTML
             )
                 .attr({
                     align: options.align,
-                    'class': 'highcharts-' + name,
-                    zIndex: (options as any).zIndex || 4
+                    'class': 'highcharts-' + key,
+                    zIndex: options.zIndex || 4
+                })
+                .css({
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                 })
                 .add();
 
@@ -1224,20 +1227,24 @@ class Chart {
                 updateOptions: (Chart.DescriptionOptionsType),
                 redraw?: boolean
             ): void {
-                chart.applyDescription(name, updateOptions);
+                chart.applyDescription(key, updateOptions);
                 chart.layOutTitles(redraw);
             };
 
             // Presentational
             if (!this.styledMode) {
                 elem.css(extend<CSSObject>(
-                    name === 'title' ? {
+                    key === 'title' ? {
                         // #2944
                         fontSize: this.options.isStock ? '1em' : '1.2em'
                     } : {},
                     options.style
                 ));
             }
+
+            // Get unwrapped text length and reset
+            elem.textPxLength = elem.getBBox().width;
+            elem.css({ whiteSpace: options.style?.whiteSpace });
 
             /**
              * The chart title. The title has an `update` method that allows
@@ -1259,7 +1266,7 @@ class Chart {
              * @name Highcharts.Chart#subtitle
              * @type {Highcharts.SubtitleObject}
              */
-            this[name] = elem;
+            this[key] = elem;
         }
 
     }
@@ -1277,54 +1284,113 @@ class Chart {
      */
     public layOutTitles(redraw = true): void {
         const titleOffset = [0, 0, 0],
-            renderer = this.renderer,
-            spacingBox = this.spacingBox;
+            { options, renderer, spacingBox } = this;
 
-        // Lay out the title and the subtitle respectively
-        ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
-            const title = (this as any)[key],
-                titleOptions: Chart.DescriptionOptionsType = (
-                    (this as any).options[key]
-                ),
-                verticalAlign = titleOptions.verticalAlign || 'top',
-                offset = key === 'title' ?
-                    verticalAlign === 'top' ? -3 : 0 :
-                    // Floating subtitle (#6574)
-                    verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
+        // Lay out the title, subtitle and caption respectively
+        (
+            ['title', 'subtitle', 'caption'] as Chart.DescriptionKey[]
+        ).forEach((key): void => {
+            const desc = this[key],
+                descOptions = this.options[key],
+                alignTo = merge(spacingBox),
+                textPxLength = desc?.textPxLength || 0;
 
-            if (title) {
+            if (desc && descOptions) {
 
-                title
-                    .css({
-                        width: (
-                            (titleOptions as any).width ||
-                            spacingBox.width + (titleOptions.widthAdjust || 0)
-                        ) + 'px'
-                    });
+                // Provide a hook for the exporting button to shift the title
+                fireEvent(
+                    this,
+                    'layOutTitle',
+                    { alignTo, key, textPxLength }
+                );
 
-                const baseline = renderer.fontMetrics(title).b,
-                    // Skip the cache for HTML (#3481, #11666)
-                    height = Math.round(
-                        title.getBBox(titleOptions.useHTML).height
+                const fontMetrics = renderer.fontMetrics(desc),
+                    baseline = fontMetrics.b,
+                    lineHeight = fontMetrics.h,
+                    verticalAlign = descOptions.verticalAlign || 'top',
+                    topAligned = verticalAlign === 'top',
+                    // Use minScale only for top-aligned titles. It is not
+                    // likely that we will need scaling for other positions, but
+                    // if it is requested, we need to adjust the vertical
+                    // position to the scale.
+                    minScale = topAligned && (
+                        descOptions as Chart.TitleOptions
+                    ).minScale || 1,
+                    offset = key === 'title' ?
+                        topAligned ? -3 : 0 :
+                        // Floating subtitle (#6574)
+                        topAligned ? titleOffset[0] + 2 : 0,
+                    uncappedScale = Math.min(alignTo.width / textPxLength, 1),
+                    scale = Math.max(minScale, uncappedScale),
+                    alignAttr: SVGAttributes = merge(
+                        {
+                            y: verticalAlign === 'bottom' ?
+                                baseline :
+                                offset + baseline
+                        },
+                        {
+                            align: key === 'title' ?
+                                // Title defaults to center for short titles,
+                                // left for word-wrapped titles
+                                (uncappedScale < minScale ? 'left' : 'center') :
+                                // Subtitle defaults to the title.align
+                                this.title?.alignValue
+                        },
+                        descOptions
+                    ),
+                    width = descOptions.width || (
+                        (
+                            uncappedScale > minScale ?
+                                // One line
+                                this.chartWidth :
+                                // Allow word wrap
+                                alignTo.width
+                        ) / scale
                     );
 
-                title.align(extend({
-                    y: verticalAlign === 'bottom' ?
-                        baseline :
-                        offset + baseline,
-                    height
-                }, titleOptions), false, 'spacingBox');
+                // No animation when switching alignment
+                if (desc.alignValue !== alignAttr.align) {
+                    desc.placed = false;
+                }
+                // Set the width and read the height.
+                const height = desc
+                    .css({ width: `${width}px` })
+                    // Skip the cache for HTML (#3481, #11666)
+                    .getBBox(descOptions.useHTML).height;
+                alignAttr.height = Math.round(height);
 
-                if (!titleOptions.floating) {
+                // Perform scaling and alignment
+                desc
+                    .align(alignAttr, false, alignTo)
+                    .attr({
+                        align: alignAttr.align,
+                        scaleX: scale,
+                        scaleY: scale,
+                        'transform-origin': `${
+                            alignTo.x +
+                            textPxLength *
+                            scale *
+                            getAlignFactor(alignAttr.align)
+                        } ${lineHeight}`
+                    });
+
+                // Adjust the rendered title offset
+                if (!descOptions.floating) {
+                    const offset = height * (
+                        // When scaling down the title, preserve the offset as
+                        // long as it's only one line, but scale down the offset
+                        // if the title wraps to multiple lines.
+                        height < lineHeight * 1.2 ? 1 : scale
+                    );
                     if (verticalAlign === 'top') {
+
                         titleOffset[0] = Math.ceil(
-                            titleOffset[0] +
-                            height
+                            titleOffset[0] + offset
                         );
+
                     } else if (verticalAlign === 'bottom') {
                         titleOffset[2] = Math.ceil(
-                            titleOffset[2] +
-                            height
+                            titleOffset[2] + offset
                         );
                     }
                 }
@@ -1334,15 +1400,15 @@ class Chart {
         // Handle title.margin and caption.margin
         if (
             titleOffset[0] &&
-            ((this.options.title as any).verticalAlign || 'top') === 'top'
+            (options.title?.verticalAlign || 'top') === 'top'
         ) {
-            titleOffset[0] += (this.options.title as any).margin;
+            titleOffset[0] += options.title?.margin || 0;
         }
         if (
             titleOffset[2] &&
-            (this.options.caption as any).verticalAlign === 'bottom'
+            options.caption?.verticalAlign === 'bottom'
         ) {
-            titleOffset[2] += (this.options.caption as any).margin;
+            titleOffset[2] += options.caption?.margin || 0;
         }
 
         const requiresDirtyBox = (
@@ -4040,9 +4106,10 @@ namespace Chart {
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
+        width?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 
     export interface ChartTransformParams {
@@ -4075,6 +4142,8 @@ namespace Chart {
         TitleOptions|SubtitleOptions|CaptionOptions
     );
 
+    export type DescriptionKey = 'title'|'subtitle'|'caption';
+
     export interface IsInsideOptionsObject {
         axis?: Axis;
         ignoreX?: boolean;
@@ -4089,6 +4158,11 @@ namespace Chart {
         (): (Array<(SVGElement|undefined)>|undefined);
     }
 
+    export interface LayoutTitleEventObject {
+        alignTo: BBoxObject;
+        key: Chart.DescriptionKey;
+        textPxLength: number;
+    }
     export interface Renderer extends SVGRenderer {
         plotBox: BBoxObject;
         spacingBox: BBoxObject;
@@ -4101,22 +4175,25 @@ namespace Chart {
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
+        width?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 
     export interface TitleOptions {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
+        minScale?: number;
         style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
-        widthAdjust?: number;
+        width?: number;
         x?: number;
         y?: number;
+        zIndex?: number;
     }
 }
 

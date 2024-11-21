@@ -354,6 +354,8 @@ class HTMLElement extends SVGElement {
                 rotation,
                 rotationOriginX,
                 rotationOriginY,
+                scaleX,
+                scaleY,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -418,7 +420,11 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     css(element, {
-                        width: (textPxLength > textWidthNum) || rotation ?
+                        width: (
+                            (textPxLength > textWidthNum) ||
+                            rotation ||
+                            scaleX
+                        ) ?
                             textWidth + 'px' :
                             'auto', // #16261
                         display,
@@ -455,7 +461,11 @@ class HTMLElement extends SVGElement {
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && this.textPxLength) || // #7920
+                        (
+                            !defined(rotation) &&
+                            !this.textWidth &&
+                            this.textPxLength
+                        ) || // #7920
                         element.offsetWidth
                     ),
                     baseline,
@@ -473,6 +483,11 @@ class HTMLElement extends SVGElement {
                     textAlign,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
+
+            if (scaleX || scaleY) {
+                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
+            }
+
             css(element, styles);
 
 

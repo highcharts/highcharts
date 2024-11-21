@@ -648,6 +648,11 @@ namespace Exporting {
                 'init',
                 onChartInit
             );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'layOutTitle',
+                onChartLayOutTitle
+            );
 
             if (G.isSafari) {
                 win.matchMedia('print').addListener(
@@ -1624,6 +1629,39 @@ namespace Exporting {
             ): void => {
                 update('navigation', options, redraw);
             });
+    }
+
+    /**
+     * On layout of titles (title, subtitle and caption), adjust the `alignTo``
+     * box to avoid the context menu button.
+     * @private
+     */
+    function onChartLayOutTitle(
+        this: ChartComposition,
+        { alignTo, key, textPxLength }: Chart.LayoutTitleEventObject
+    ): void {
+        const exportingOptions = this.options.exporting,
+            { align, buttonSpacing = 0, verticalAlign, width = 0 } = merge(
+                this.options.navigation?.buttonOptions,
+                exportingOptions?.buttons?.contextButton
+            ),
+            space = alignTo.width - textPxLength,
+            widthAdjust = width + buttonSpacing;
+
+        if (
+            (exportingOptions?.enabled ?? true) &&
+            key === 'title' &&
+            align === 'right' &&
+            verticalAlign === 'top'
+        ) {
+            if (space < 2 * widthAdjust) {
+                if (space < widthAdjust) {
+                    alignTo.width -= widthAdjust;
+                } else {
+                    alignTo.x -= widthAdjust - space / 2;
+                }
+            }
+        }
     }
 
     /**

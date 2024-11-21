@@ -530,6 +530,8 @@ const defaultOptions: DefaultOptions = {
      *
      * @sample {highmaps} maps/title/title/
      *         Title options demonstrated
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      */
     title: {
 
@@ -611,6 +613,10 @@ const defaultOptions: DefaultOptions = {
          * CSS styles for the title. Use this for font styling, but use `align`,
          * `x` and `y` for text alignment.
          *
+         * Note that the default [title.minScale](#title.minScale) option also
+         * affects the rendered font size. In order to keep the font size fixed
+         * regardless of title length, set `minScale` to 1.
+         *
          * In styled mode, the title style is given in the `.highcharts-title`
          * class.
          *
@@ -648,6 +654,13 @@ const defaultOptions: DefaultOptions = {
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
          *
+         * Since v12 it defaults to `undefined`, meaning the alignment is
+         * computed for best fit. If the text fits in one line, it aligned to
+         * the center, but if it is wrapped into multiple lines, it is aligned
+         * to the left.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default alignment, dynamic
          * @sample {highcharts} highcharts/title/align/
          *         Aligned to the plot area (x = 70px = margin left - spacing
          *         left)
@@ -655,10 +668,11 @@ const defaultOptions: DefaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignValue}
-         * @since 2.0
+         * @type      {Highcharts.AlignValue}
+         * @default   undefined
+         * @since     2.0
+         * @apioption title.align
          */
-        align: 'center',
 
         /**
          * The margin between the title and the plot area, or if a subtitle
@@ -676,15 +690,22 @@ const defaultOptions: DefaultOptions = {
         margin: 15,
 
         /**
-         * Adjustment made to the title width, normally to reserve space for
-         * the exporting burger menu.
+         * When the title is too wide to fit in the chart, the default behavior
+         * is to scale it down to fit, or apply word wrap if it is scaled down
+         * to `minScale` and still doesn't fit.
          *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
+         * The default value reflects the scale, when using default font sizes,
+         * when the title font size matches that of the subtitle. The title
+         * still stands out as it is bold by default.
          *
-         * @since 4.2.5
+         * Set `minScale` to 1 to avoid downscaling.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Downscaling demonstrated
+         *
+         * @since next
          */
-        widthAdjust: -44
+        minScale: 0.67
 
     },
 
@@ -694,6 +715,8 @@ const defaultOptions: DefaultOptions = {
      * subtitle can be updated after chart initialization through the
      * `Chart.setTitle` method.
      *
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      * @sample {highmaps} maps/title/subtitle/
      *         Subtitle options demonstrated
      */
@@ -827,34 +850,26 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
          *         Formatted and linked text.
          */
-        text: '',
+        text: ''
 
         /**
          * The horizontal alignment of the subtitle. Can be one of "left",
-         *  "center" and "right".
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
          *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
          * @sample {highcharts} highcharts/subtitle/align/
          *         Footnote at right of plot area
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
          * @type  {Highcharts.AlignValue}
+         * @default undefined
          * @since 2.0
+         * @apioption subtitle.align
          */
-        align: 'center',
-
-        /**
-         * Adjustment made to the subtitle width, normally to reserve space
-         * for the exporting burger menu.
-         *
-         * @see [title.widthAdjust](#title.widthAdjust)
-         *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
-         *
-         * @since 4.2.5
-         */
-        widthAdjust: -44
     },
 
     /**

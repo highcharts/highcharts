@@ -443,15 +443,6 @@ const exporting: ExportingOptions = {
             titleKey: 'contextButtonTitle',
 
             /**
-             * This option is deprecated, use
-             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
-             *
-             * @deprecated
-             * @type      {string}
-             * @apioption exporting.buttons.contextButton._titleKey
-             */
-
-            /**
              * A collection of strings pointing to config options for the menu
              * items. The config options are defined in the
              * `menuItemDefinitions` option.
@@ -478,6 +469,8 @@ const exporting: ExportingOptions = {
                 'downloadJPEG',
                 'downloadSVG'
             ]
+
+            /// y: -5
 
         }
 
@@ -739,11 +732,14 @@ const navigation: NavigationOptions = {
         align: 'right',
 
         /**
-         * The pixel spacing between buttons.
+         * The pixel spacing between buttons, and between the context button and
+         * the title.
          *
+         * @sample highcharts/title/widthadjust
+         *         Adjust the spacing when using text button
          * @since 2.0
          */
-        buttonSpacing: 3,
+        buttonSpacing: 5,
 
         /**
          * Pixel height of the buttons.
