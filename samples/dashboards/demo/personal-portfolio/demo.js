@@ -185,22 +185,11 @@ const getCurrentTotal = arrOfArr => {
             }
         },
         tooltip: {
-            shared: true,
-            xDateFormat: '%Y-%m-%d',
-            formatter: function () {
-                const holdVal = this.points[0].y; // Value of Series 1
-                const investedVal = this.points[1].y; // Value of Series 2
-                const percentageDiff = (
-                    (holdVal - investedVal) / investedVal * 100).toFixed(2);
-
-                return `<b>${Highcharts.dateFormat(
-                    '%e - %b - %Y',
-                    new Date(this.x)
-                )}</b><br/>
-                        Invested: €${investedVal.toFixed(2)}<br/>
-                        Holding: €${holdVal.toFixed(2)}<br/>
-                        Yield: ${percentageDiff}%`;
-            }
+            format: '<b>{x:%e - %b - %Y}</b><br/>' +
+                'Invested: €{points.1.y:,.2f}<br/>' +
+                'Holding: €{points.0.y:,.2f}<br/>' +
+                'Yield: {(multiply (divide (subtract points.0.y points.1.y)' +
+                ' points.1.y) 100):,.0f}%'
         },
         series: [{
             name: 'Holding',
