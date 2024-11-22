@@ -308,9 +308,6 @@ function seriesSetGroupedPoints(
     if (this.is('column') || this.is('columnrange')) {
         if (
             this.options.centerInCategory &&
-            // With stacking enabled, we already have stacks that we can compute
-            // from
-            !this.options.stacking &&
             // With only one series, we don't need to consider centerInCategory
             this.chart.series.length > 1
         ) {
