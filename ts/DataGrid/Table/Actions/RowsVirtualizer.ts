@@ -456,9 +456,16 @@ class RowsVirtualizer {
             innerText: 'mock',
             className: 'outline'
         }, mockRow);
-        this.defaultBorderWidth =
-            2 * (getStyle(mockCell, 'border-width', true) || 0);
 
+        // HC.getStyle does not work when using zoom in / out in browser.
+        const mockStyles = getComputedStyle(mockCell)
+
+        this.defaultBorderWidth =
+            Math.round(
+                parseFloat(mockStyles.getPropertyValue('border-top-width')) +
+                parseFloat(mockStyles.getPropertyValue('border-top-width'))
+            );
+            
         const defaultRowHeight = mockRow.offsetHeight + this.defaultBorderWidth;
         mockRow.remove();
 
