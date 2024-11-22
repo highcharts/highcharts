@@ -51,7 +51,7 @@ QUnit.test(
             yAxis.treeGrid = false;
         });
 
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 type: 'scatter',
                 zooming: {
