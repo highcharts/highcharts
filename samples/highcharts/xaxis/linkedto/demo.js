@@ -7,18 +7,16 @@ Highcharts.chart('container', {
         text: 'Linked axes'
     },
 
-    xAxis: [{ // master axis
+    xAxis: [{ // primary axis
         type: 'datetime',
         tickInterval: 24 * 3600 * 1000
-    }, { // slave axis
+    }, { // linked axis
         type: 'datetime',
         linkedTo: 0,
         opposite: true,
         tickInterval: 24 * 3600 * 1000,
         labels: {
-            formatter: function () {
-                return Highcharts.dateFormat('%a', this.value);
-            }
+            format: '{value:%a}'
         }
     }],
 
