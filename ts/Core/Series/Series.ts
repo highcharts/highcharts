@@ -3170,7 +3170,12 @@ class Series {
 
             // Compute and apply the clips
             let lastLineClip: SVGPath = [],
-                lastTranslated = axis.toPixels(axis.getExtremes().min, true);
+                // Starting point of the first zone. Offset for category axis
+                // (#22188).
+                lastTranslated = axis.toPixels(
+                    axis.getExtremes().min - (axis.minPointOffset || 0),
+                    true
+                );
 
             zones.forEach((zone): void => {
                 const lineClip = zone.lineClip || [],
@@ -3223,7 +3228,8 @@ class Series {
                 }
 
                 /* Debug clip paths
-                chart.renderer.path(adaptivePath)
+                zone.path?.destroy();
+                zone.path = chart.renderer.path(adaptivePath)
                     .attr({
                         stroke: zone.color || this.color || 'gray',
                         'stroke-width': 1,
@@ -5331,6 +5337,8 @@ export default Series;
  *
  * @sample {highcharts} highcharts/series/stack/
  *         Stacked and grouped columns
+ * @sample {highcharts} highcharts/series/stack-centerincategory/
+ *         Stacked and grouped, centered in category
  *
  * @type      {number|string}
  * @since     2.1

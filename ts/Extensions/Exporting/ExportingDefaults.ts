@@ -264,7 +264,7 @@ const exporting: ExportingOptions = {
      *
      * @since 2.0
      */
-    url: 'https://export.highcharts.com/',
+    url: 'https://export-svg.highcharts.com/',
 
     /**
      * Settings for a custom font for the exported PDF, when using the
