@@ -175,6 +175,14 @@ QUnit.test('Symbol tests', function (assert) {
                     ifDone();
 
                     assert.strictEqual(
+                        Math.round(
+                            symbol3.element.pathSegList[1].y
+                        ),
+                        210,
+                        'Circle should not draw with relative coordinates'
+                    );
+
+                    assert.strictEqual(
                         Math.round(circleFloatError.element.getBBox().width),
                         6,
                         'Circles at large positions should be visible (#21701)'
@@ -185,7 +193,7 @@ QUnit.test('Symbol tests', function (assert) {
                             circleFloatError.element.pathSegList[1].y * 10e6
                         ),
                         667,
-                        'Circles should draw with relative coordinates (#21701)'
+                        'Circle should draw with relative coordinates (#21701)'
                     );
                     ifDone();
 

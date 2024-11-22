@@ -22,6 +22,7 @@ import type { SymbolTypeRegistry } from './SymbolType';
 
 import U from '../../Utilities.js';
 const {
+    correctFloat,
     defined,
     isNumber,
     pick
@@ -34,6 +35,13 @@ const {
  * */
 
 /* eslint-disable require-jsdoc, valid-jsdoc */
+
+/**
+ * Returns the closest 32-bit float.
+ */
+const fround: (num: number) => number = Math.fround ?
+    Math.fround :
+    (num: number): number => correctFloat(num, 7);
 
 /**
  *
@@ -68,21 +76,25 @@ function arc(
             open = pick(options.open, fullCircle),
             cosStart = Math.cos(start),
             sinStart = Math.sin(start),
-            // Skip calculating end coordinates when drawing a full circle.
-            cosEnd = (fullCircle && !useInnerRadius) ? 0 : Math.cos(end),
-            sinEnd = (fullCircle && !useInnerRadius) ? 0 : Math.sin(end),
+            cosEnd = Math.cos(end),
+            sinEnd = Math.sin(end),
+            startX = cx + rx * cosStart,
+            startY = cy + ry * sinStart,
+            endX = cx + rx * cosEnd,
+            // Use relative coordinates when drawing a circle where the floating
+            // point number is inaccurate, e.g with large numbers. (#21701)
+            useRelativeCoordinates = fullCircle &&
+                fround(startX) === fround(endX),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
                 options.longArc,
                 end - start - Math.PI < proximity ? 0 : 1
             ),
-            // Use relative coordinates when drawing a circle to avoid floating
-            // point errors with large numbers. (#21701)
-            arcCommand = fullCircle ? 'a' : 'A',
-            arcEndX = fullCircle ?
+            arcCommand = useRelativeCoordinates ? 'a' : 'A',
+            arcEndX = useRelativeCoordinates ?
                 1 - proximity :
-                cx + rx * cosEnd,
-            arcEndY = fullCircle ?
+                endX,
+            arcEndY = useRelativeCoordinates ?
                 proximity :
                 cy + ry * sinEnd;
 
@@ -100,8 +112,8 @@ function arc(
         arc.push(
             [
                 'M',
-                cx + rx * cosStart,
-                cy + ry * sinStart
+                startX,
+                startY
             ],
             arcSegment
         );
