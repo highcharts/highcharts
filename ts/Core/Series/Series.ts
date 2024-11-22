@@ -3050,7 +3050,7 @@ class Series {
             } = series,
             { inverted, renderer } = chart,
             axis = this[`${zoneAxis}Axis`],
-            { isXAxis, len = 0 } = axis || {},
+            { isXAxis, len = 0, minPointOffset = 0 } = axis || {},
             halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
             // Avoid points that are so close to the threshold that the graph
@@ -3082,7 +3082,7 @@ class Series {
             isNumber(axis.min)
         ) {
 
-            const axisMax = axis.getExtremes().max,
+            const axisMax = axis.getExtremes().max + minPointOffset,
                 // Invert the x and y coordinates of inverted charts
                 invertPath = (path: SVGPath): void => {
                     path.forEach((segment, i): void => {
@@ -3148,7 +3148,7 @@ class Series {
                 // Starting point of the first zone. Offset for category axis
                 // (#22188).
                 lastTranslated = axis.toPixels(
-                    axis.getExtremes().min - (axis.minPointOffset || 0),
+                    axis.getExtremes().min - minPointOffset,
                     true
                 );
 
