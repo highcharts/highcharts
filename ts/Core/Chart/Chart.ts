@@ -1352,12 +1352,14 @@ class Chart {
                 if (desc.alignValue !== alignAttr.align) {
                     desc.placed = false;
                 }
-                // Set the width and read the height.
-                const height = desc
-                    .css({ width: `${width}px` })
-                    // Skip the cache for HTML (#3481, #11666)
-                    .getBBox(descOptions.useHTML).height;
-                alignAttr.height = Math.round(height);
+                // Set the width and read the height
+                const height = Math.round(
+                    desc
+                        .css({ width: `${width}px` })
+                        // Skip the cache for HTML (#3481, #11666)
+                        .getBBox(descOptions.useHTML).height
+                );
+                alignAttr.height = height;
 
                 // Perform scaling and alignment
                 desc
