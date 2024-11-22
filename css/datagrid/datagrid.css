@@ -239,12 +239,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody td {
+    border-top: 1px solid transparent;
     border-bottom: 1px solid transparent;
 }
 
 .highcharts-datagrid-table tbody td {
     /* height: inherit; */
-    border-top: 1px solid transparent;
     overflow: hidden;
 }
 
