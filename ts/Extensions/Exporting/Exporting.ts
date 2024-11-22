@@ -1657,7 +1657,7 @@ namespace Exporting {
             if (space < 2 * widthAdjust) {
                 if (space < widthAdjust) {
                     alignTo.width -= widthAdjust;
-                } else {
+                } else if (this.title?.alignValue !== 'left') {
                     alignTo.x -= widthAdjust - space / 2;
                 }
             }
