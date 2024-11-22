@@ -130,9 +130,8 @@ class TableRow extends Row {
             idx + (this.viewport.header?.levels ?? 1) + 1
         );
 
-        if (idx % 2 === 1) {
-            el.classList.add(Globals.classNames.rowOdd);
-        }
+        // Indexing from 0, so rows with even index are odd.
+        el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);

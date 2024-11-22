@@ -12,29 +12,34 @@
     --text-color: var(--highcharts-neutral-color-80);
 }
 
-/* *
+/**
  *
- *  Dashboards/Datagrid specific
+ *  Layout
  *
- * */
+ **/
 
-.highcharts-dashboards-row {
+.row {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
 }
 
-.highcharts-dashboards-cell {
+.cell {
+    flex: 1;
     min-width: 20px;
-    flex: 1 1 50%;
 }
 
-.highcharts-dashboards-cell > .highcharts-dashboards-component {
+.cell > .highcharts-dashboards-component {
     position: relative;
-    margin: 5px;
-    padding: 5px;
+    margin: 10px;
+    padding: 10px;
 }
 
+/**
+ *
+ *  Dashboards/Datagrid specific
+ *
+ **/
 .highcharts-dashboards-wrapper {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
@@ -50,11 +55,11 @@
     max-height: 100%;
 }
 
-/* *
+/**
  *
  *  Message log (outside Dashboard)
  *
- * */
+ **/
 #custom {
     background-color: var(--highcharts-neutral-color-10);
     margin: 0;
@@ -84,14 +89,18 @@
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9em;
     overflow: auto;
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-5);
 }
 
-/* *
+#log-content span.error {
+    color: #f00;
+}
+
+/**
  *
  *  App control - Connect status and clearing log
  *
- * */
+ **/
 #app-control {
     padding: 0;
     font-size: 0.9em;
@@ -119,67 +128,16 @@
 #app-control button {
     font-size: 1em;
     padding: 5px 10px;
-    cursor: pointer;
 }
 
-/* *
+/**
  *
  *  Dashboards container and description
  *
- * */
+ **/
 
-body {
-    background-color: var(--highcharts-neutral-color-10);
-}
-
-div#description {
-    background-color: var(--highcharts-neutral-color-5);
-    color: var(--text-color);
-    padding: 5px 10px;
+div.description {
+    padding: 0 20px;
     max-width: 100%;
     text-align: justify;
-
-    & a {
-        color: var(--highcharts-highlight-color-100);
-    }
-
-    pre.json {
-        padding: 5px;
-        color: var(--highcharts-highlight-color-80);
-    }
-}
-
-/* LARGE */
-@media (max-width: 1200px) {
-    #column-chart-1,
-    #data-grid-1,
-    #column-chart-2,
-    #data-grid-2 {
-        flex: 1 1 50%;
-    }
-}
-
-/* MEDIUM */
-@media (max-width: 992px) {
-    #column-chart-1,
-    #data-grid-1,
-    #column-chart-2,
-    #data-grid-2 {
-        flex: 1 1 100%;
-    }
-}
-
-/* SMALL */
-@media (max-width: 576px) {
-    #column-chart-1,
-    #data-grid-1,
-    #column-chart-2,
-    #data-grid-2 {
-        flex: 1 1 100%;
-    }
-
-    #app-control #connect-status {
-        white-space: nowrap;
-        display: block;
-    }
 }

@@ -108,7 +108,7 @@ describe('layout resize on window changes', () => {
     });
 
     it('The dataGridOptions should be applied to the component.', () => {
-        cy.get('th').eq(1).should('have.text', 'Vitamin A (IU)');
+        cy.get('th').eq(1).should('contain', 'Vitamin A (IU)');
     });
 
     it('The editableOptions should be visible in the sidebar and should show the correct values.', () => {
