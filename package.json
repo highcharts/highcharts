@@ -73,6 +73,7 @@
     "chatgpt": "^5.2.5",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
+    "cspell": "^8.16.0",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
