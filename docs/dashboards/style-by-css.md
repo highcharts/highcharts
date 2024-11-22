@@ -1,7 +1,7 @@
 Style by CSS
 ===
 
-By default each `Dashboard` and most of its element are styled using CSS. This method offers
+By default each **Dashboard** and most of its element are styled using CSS. This method offers
 the possibility to change the look and feel of the dashboard without making changes to its configuration 
 or the underlying application's code. Most of the HTML elements are provided with CSS classes, and it is also 
 possible to use custom classes or element identifiers.
