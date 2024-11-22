@@ -23,6 +23,11 @@ const {
     defaultOptions,
     defaultTime
 } = D;
+import G from './Globals.js';
+const {
+    doc
+} = G;
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import U from './Utilities.js';
 const {
     extend,
@@ -479,7 +484,11 @@ function numberFormat(
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
             'en' :
-            ((this as Chart)?.locale || lang.locale),
+            (
+                (this as Chart)?.locale ||
+                lang.locale ||
+                (doc.body.closest('[lang]') as HTMLDOMElement|null)?.lang
+            ),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
