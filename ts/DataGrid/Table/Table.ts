@@ -351,8 +351,8 @@ class Table {
 
             this.tbodyElement.scrollTop = (
                 this.tbodyElement
-                .querySelectorAll(rowClass)[index]
-                .getBoundingClientRect().top
+                    .querySelectorAll(rowClass)[index]
+                    .getBoundingClientRect().top
             ) - firstRowTop;
         }
     }
