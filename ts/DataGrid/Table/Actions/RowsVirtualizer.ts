@@ -264,6 +264,7 @@ class RowsVirtualizer {
         const rows = vp.rows;
 
         if (!isVirtualization && rows.length > 50) {
+            // eslint-disable-next-line no-console
             console.warn(
                 'DataGrid: a large dataset can cause performance ' +
                 'issues in sorting or resizing columns'
