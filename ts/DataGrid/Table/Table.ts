@@ -343,18 +343,19 @@ class Table {
         if (this.dataGrid.options?.rendering?.rows?.virtualization) {
             this.tbodyElement.scrollTop =
                 index * this.rowsVirtualizer.defaultRowHeight;
-        } else {
-            const rowClass = '.' + Globals.classNames.rowElement;
-            const firstRowTop = this.tbodyElement
-                .querySelectorAll(rowClass)[0]
-                .getBoundingClientRect().top;
-
-            this.tbodyElement.scrollTop = (
-                this.tbodyElement
-                    .querySelectorAll(rowClass)[index]
-                    .getBoundingClientRect().top
-            ) - firstRowTop;
+            return;
         }
+
+        const rowClass = '.' + Globals.classNames.rowElement;
+        const firstRowTop = this.tbodyElement
+            .querySelectorAll(rowClass)[0]
+            .getBoundingClientRect().top;
+
+        this.tbodyElement.scrollTop = (
+            this.tbodyElement
+                .querySelectorAll(rowClass)[index]
+                .getBoundingClientRect().top
+        ) - firstRowTop;
     }
 
     /**

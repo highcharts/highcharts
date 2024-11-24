@@ -180,7 +180,8 @@ class RowsVirtualizer {
     }
 
     /**
-     * Method called on the viewport scroll event.
+     * Method called on the viewport scroll event, only when the virtualization
+     * is enabled.
      */
     public scroll(): void {
         const target = this.viewport.tbodyElement;
@@ -266,8 +267,7 @@ class RowsVirtualizer {
         if (!isVirtualization && rows.length > 50) {
             // eslint-disable-next-line no-console
             console.warn(
-                'DataGrid: a large dataset can cause performance ' +
-                'issues in sorting or resizing columns'
+                'DataGrid: a large dataset can cause performance issues.'
             );
         }
 
