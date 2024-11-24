@@ -259,7 +259,7 @@ class RowsVirtualizer {
         const isVirtualization = this.rowSettings?.virtualization;
         const rowsPerPage = isVirtualization ? Math.ceil(
             vp.tbodyElement.offsetHeight / this.defaultRowHeight
-        ) : Infinity; // need to be refactored when add pagination
+        ) : Infinity; // Need to be refactored when add pagination
 
         const rows = vp.rows;
 
