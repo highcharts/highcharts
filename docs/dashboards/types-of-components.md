@@ -52,7 +52,7 @@ See the [HTML Component](https://www.highcharts.com/docs/dashboards/html-compone
 ### Highcharts Component
 Dashboards support the use of `Highcharts` charts or maps out of the box.
 
-The `Highcharts` module must be imported *before* the **Dashboards** module as shown here:
+The `highcharts` module must be imported *before* the `dashboards` module as shown here:
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
