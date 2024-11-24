@@ -415,7 +415,7 @@ class Table {
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         if (this.dataGrid.options?.rendering?.rows?.virtualization) {
-            this.tbodyElement.addEventListener('scroll', this.onScroll);
+            this.tbodyElement.removeEventListener('scroll', this.onScroll);
         }
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
