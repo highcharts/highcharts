@@ -108,7 +108,7 @@ class RowsVirtualizer {
      */
     constructor(viewport: Table) {
         this.rowSettings =
-            viewport.dataGrid.options?.rendering?.rows as RowsSettings
+            viewport.dataGrid.options?.rendering?.rows as RowsSettings;
 
         this.viewport = viewport;
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
