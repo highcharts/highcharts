@@ -15,6 +15,9 @@
  *
  **/
 
+// MQTT server configuration, depends on the web client protocol
+const mqttUseSSL = window.location.protocol === 'https:';
+
 // Global Dashboards instance for use in event handlers.
 let board;
 
@@ -686,13 +689,13 @@ class MQTTConnector extends DataConnector {
 MQTTConnector.defaultOptions = {
     // MQTT client properties
     host: 'broker.hivemq.com',
-    port: 8000,
+    port: mqttUseSSL ? 8884 : 8000,
     user: '',
     password: '',
     topic: 'highcharts/test',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    useSSL: false,
+    useSSL: mqttUseSSL,
     cleanSession: true,
 
     // Custom connector properties
