@@ -52,7 +52,7 @@ See the [HTML Component](https://www.highcharts.com/docs/dashboards/html-compone
 ### Highcharts Component
 Dashboards support the use of `Highcharts` charts or maps out of the box.
 
-The `Highcharts` module must be imported *before* the `Dashboards` module as shown here:
+The `Highcharts` module must be imported *before* the **Dashboards** module as shown here:
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
@@ -67,7 +67,7 @@ The `Highcharts`CSS file must be included for correct rendering of the chart.
 For a chart to be displayed the type `Highcharts` must be specified, the `renderTo` option set, and data provided as part of the `chartOptions`.
 In addition, the `chartOptions` object offers the possibility to configure anything that can be configured in a stand-alone Highcharts chart.
 
-Data may be provided directly in the chart option but in a `Dashboards` application one often wants to share data between components and in this case the [Data Pool](https://www.highcharts.com/docs/dashboards/data-handling) mechanism offers a convenient solution.
+Data may be provided directly in the chart option but in a **Dashboards** application one often wants to share data between components and in this case the [Data Pool](https://www.highcharts.com/docs/dashboards/data-handling) mechanism offers a convenient solution.
 
 Code snippet with data embedded in the chart options, no data connector used:
 ```js
@@ -130,7 +130,7 @@ chart editing is disabled. See the `dataPool` section for more details.
 See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcharts-component) page for detailed information.
 
 ### DataGrid Component
-To visualize data in a row-column layout you can use the DataGrid component. The `DataGrid` module *must* be imported before the `Dashboards` module as shown here:
+To visualize data in a row-column layout you can use the DataGrid component. The `DataGrid` module *must* be imported before the **Dashboards** module as shown here:
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
@@ -144,7 +144,7 @@ The `DataGrid` module comes supplied with its own set of styles so the CSS file 
 
 For a chart to be displayed the type `DataGrid` must be specified, the `renderTo` option set, and data must be provided, either as an embedded `dataTable`object or via a `DataConnector`. In addition, the `dataGridOptions` object offers the possibility to configure `DataGrid` specific parameters like cell formatting, column assignment etc.
 
-The `DataGrid` may have the series data directly embedded as part of the `dataGridOptions` but a more common usage is the `Dashboards` data pool mechanism, i.e. to share data between the components of the dashboard. In this case the `id` of the `DataConnector` must be included in the datagrid's configuration.
+The `DataGrid` may have the series data directly embedded as part of the `dataGridOptions` but a more common usage is the **Dashboards** data pool mechanism, i.e. to share data between the components of the dashboard. In this case the `id` of the `DataConnector` must be included in the datagrid's configuration.
 
 Code snippet with data embedded in the `DataGrid` data table, no data connector used.
 ```js

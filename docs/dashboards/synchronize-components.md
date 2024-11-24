@@ -1,11 +1,11 @@
-Synchronizing `Dashboards` components
+Synchronizing **Dashboards** components
 ===
 
-In addition to sharing data via the data pool, `Dahsboards` components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
+In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
 
-## How to synchronize `Dashboards` components?
+## How to synchronize Dashboards components?
 
 To synchronize components, you need to specify the event you want to synchronize between each component.
 Additionally, both components must use the same connector from the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling), a prerequisite for all predefined synchronization types to work.
@@ -20,7 +20,7 @@ Not every component supports all synchronization types. This is an overview of w
 |[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.SyncOptions#extremes)|no|no|
 |[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter)|
 
-In addition to the predefined syncs, `Dashboards` offers the possibility to use custom synchronization. This is an [example](#custom-synchronization) of how custom synchronization works.
+In addition to the predefined syncs, **Dashboards** offers the possibility to use custom synchronization. This is an [example](#custom-synchronization) of how custom synchronization works.
 
 
 ### Synchronization declaration
@@ -199,5 +199,5 @@ class CustomComponent extends Component {
 }
 ```
 
-The below example shows how `custom sync` between a `Highcharts Component` and a `custom component` works:
+The below example shows how [custom sync](https://www.highcharts.com/docs/dashboards/synchronize-components) between a [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component) and a [custom component](https://www.highcharts.com/docs/dashboards/custom-component) works:
 <iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/custom-component-sync allow="fullscreen"></iframe>

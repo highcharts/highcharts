@@ -5,8 +5,8 @@ Navigator Component
 
 ## Overview
 
-The `NavigatorComponent` is part of the `Dashboards` plugins. It utilizes the
-navigator of `Highcharts Stock` to provide an overview over the values of a table
+The `NavigatorComponent` is part of the **Dashboards** plugins. It utilizes the
+navigator of [Highcharts Stock](https://www.highcharts.com/docs/stock/navigator) to provide an overview over the values of a table
 column. Users can set a range in the Navigator, which can be synchronized as
 extremes with other Dashboard components for data inspection.
 

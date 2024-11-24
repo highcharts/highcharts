@@ -25,7 +25,7 @@ However, this is not the only way to import Dashboards packages. For alternative
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-4. We are now ready to start working on an actual `Dashboards` configuration. Inside the `script tag`, create a new instance of the dashboard.
+4. We are now ready to start working on an actual **Dashboards** configuration. Inside the `script tag`, create a new instance of the dashboard.
 
 To do so, you have to pass two arguments:
 * the div’s id where the dashboard should be placed (see point 1).
