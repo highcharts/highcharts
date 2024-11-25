@@ -314,6 +314,18 @@ function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
 }
 
+/* *
+ *
+ * MQTT connector class - a custom DataConnector,
+ * interfacing with the Paho MQTT client library.
+ *
+ *
+ * Paho MQTT client documentation
+ *
+ * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
+ *
+ */
+
 let MQTTClient;
 try {
     // eslint-disable-next-line no-undef
@@ -348,7 +360,6 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
-        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
