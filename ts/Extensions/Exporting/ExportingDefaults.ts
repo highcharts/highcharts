@@ -468,9 +468,9 @@ const exporting: ExportingOptions = {
                 'downloadPNG',
                 'downloadJPEG',
                 'downloadSVG'
-            ]
+            ],
 
-            /// y: -5
+            y: -5
 
         }
 
