@@ -3949,7 +3949,7 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(point, i, true);
+        table.setRow(point, i, true, { addColumns: false });
 
         if (names && point.name) {
             names[x as any] = point.name;

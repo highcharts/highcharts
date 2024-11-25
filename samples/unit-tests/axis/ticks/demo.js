@@ -1091,10 +1091,7 @@ QUnit.only(
             // reproducible with Firefox regular or Chrome.
             if (
                 options.chart?.styledMode &&
-                navigator.userAgent.indexOf('Firefox') !== -1 &&
-                // Detect FirefoxHeadless, suggested by ChatGPT, this may not
-                // be reliable in the future
-                window.outerWidth === window.innerWidth
+                navigator.userAgent.indexOf('Firefox') !== -1
             ) {
                 precision = 9;
             }
