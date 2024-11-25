@@ -121,9 +121,9 @@
 
         annotations: [
             fibonacciRetracements(
-                Date.UTC(2016, 10, 14),
+                '2016-11-14',
                 105,
-                Date.UTC(2017, 8, 4), 170
+                '2017-09-04', 170
             )
         ],
 

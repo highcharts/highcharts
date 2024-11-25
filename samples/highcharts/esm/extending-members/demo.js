@@ -33,7 +33,7 @@
             dataLabels: {
                 enabled: true
             },
-            pointStart: Date.UTC(2022, 0, 1),
+            pointStart: '2022-01-01',
             pointIntervalUnit: 'day'
         }]
     });

@@ -32,8 +32,8 @@ Highcharts.chart('container', {
 
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2013, 0, 1),
-        max: Date.UTC(2014, 0, 1),
+        min: '2013-01-01',
+        max: '2014-01-01',
         labels: {
             align: 'left',
             x: 5,

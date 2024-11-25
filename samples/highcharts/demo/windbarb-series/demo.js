@@ -51,7 +51,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2024, 6, 11),
+            pointStart: '2024-07-11',
             pointInterval: 36e5
         }
     },

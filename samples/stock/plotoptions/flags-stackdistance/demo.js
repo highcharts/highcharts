@@ -7,7 +7,7 @@
     Highcharts.stockChart('container', {
 
         xAxis: {
-            max: Date.UTC(2015, 9, 10)
+            max: '2015-10-10'
         },
 
         rangeSelector: {
@@ -21,23 +21,23 @@
         }, {
             type: 'flags',
             data: [{
-                x: Date.UTC(2015, 7, 25),
+                x: '2015-08-25',
                 title: 'E',
                 text: 'Euro Contained by Channel Resistance'
             }, {
-                x: Date.UTC(2015, 7, 25),
+                x: '2015-08-25',
                 title: 'D',
                 text: 'EURUSD: Bulls Clear Path to 1.50 Figure'
             }, {
-                x: Date.UTC(2015, 7, 25),
+                x: '2015-08-25',
                 title: 'C',
                 text: 'EURUSD: Rate Decision to End Standstill'
             }, {
-                x: Date.UTC(2015, 7, 25),
+                x: '2015-08-25',
                 title: 'B',
                 text: 'EURUSD: Enter Short on Channel Break'
             }, {
-                x: Date.UTC(2015, 7, 25),
+                x: '2015-08-25',
                 title: 'A',
                 text: 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. ' +
                     'Dollar Rally Cut Short By Risk Appetite'

@@ -15,8 +15,8 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        min: Date.UTC(2015, 4, 1),
-        max: Date.UTC(2015, 4, 30),
+        min: '2015-05-01',
+        max: '2015-05-30',
         scrollbar: {
             enabled: true
         }
