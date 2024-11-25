@@ -30,7 +30,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2017, 0, 29),
+            pointStart: '2017-01-29',
             pointInterval: 36e5,
             showInLegend: false
         }

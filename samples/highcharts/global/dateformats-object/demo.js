@@ -32,7 +32,7 @@ Highcharts.chart('container', {
             95.6, 54.4
         ],
         pointInterval: 7 * 24 * 36e5,
-        pointStart: Date.UTC(2013, 0, 7)
+        pointStart: '2013-01-07'
 
     }]
 

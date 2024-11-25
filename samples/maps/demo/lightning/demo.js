@@ -1,5 +1,5 @@
 // Start at this time
-let currentTime = Date.UTC(2022, 6, 3, 20);
+let currentTime = '2022-07-03 20:00';
 
 // Get the data class of a lightning strike based on the time ago
 const getDataClass = (now, datetime) => {

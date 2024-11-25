@@ -23,17 +23,17 @@ Highcharts.chart('container', {
         data: [{
             id: '1',
             name: 'Node 1',
-            x: Date.UTC(2014, 10, 18)
+            x: '2014-11-18'
         }, {
             id: '2',
             parent: '1',
             name: 'Node 2',
-            x: Date.UTC(2014, 10, 20)
+            x: '2014-11-20'
         }, {
             id: '3',
             parent: '2',
             name: 'Node 3',
-            x: Date.UTC(2014, 10, 26)
+            x: '2014-11-26'
         }]
     }]
 }, function (chart) {

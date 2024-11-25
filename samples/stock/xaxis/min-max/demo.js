@@ -10,8 +10,8 @@
         },
 
         xAxis: {
-            min: Date.UTC(2010, 8, 1),
-            max: Date.UTC(2014, 8, 1)
+            min: '2010-09-01',
+            max: '2014-09-01'
         },
 
         series: [{

@@ -1,5 +1,5 @@
 const timezone = 'Europe/Oslo',
-    start = Date.UTC(1970, 0, 1),
+    start = '1970-01-01',
     end = Date.now();
 
 const time = new Highcharts.Time({ timezone }),

@@ -31,7 +31,7 @@ Highcharts.chart('container', {
             enabled: true,
             format: '{y:,.1f}'
         },
-        pointStart: Date.UTC(2016, 3, 11),
+        pointStart: '2016-04-11',
         pointIntervalUnit: 'day'
     }]
 });

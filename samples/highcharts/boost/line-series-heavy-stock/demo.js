@@ -1,6 +1,6 @@
 const n = 120,
     s = 600,
-    pointStart = Date.UTC(2017, 0, 1),
+    pointStart = '2017-01-01',
     pointInterval = 24 * 36e5;
 
 function getData(n) {
