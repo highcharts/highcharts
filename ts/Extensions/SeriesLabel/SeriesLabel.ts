@@ -909,7 +909,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
                     deltaX = Math.abs(ctlPoint.chartX - last.chartX);
                     deltaY = Math.abs(ctlPoint.chartY - last.chartY);
                     delta = Math.max(deltaX, deltaY);
-                    if (delta > distance) {
+                    if (delta > distance && delta < 999) {
 
                         n = Math.ceil(delta / distance);
 
