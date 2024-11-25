@@ -32,7 +32,13 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            pointStart: 1990
+            pointStart: 1990,
+            label: {
+                style: {
+                    fontSize: '1.4em',
+                    opacity: 0.4
+                }
+            }
         },
         area: {
             stacking: 'percent',
