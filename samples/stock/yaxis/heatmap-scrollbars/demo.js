@@ -21,6 +21,9 @@ Highcharts.chart('container', {
             enabled: true
         }
     },
+    tooltip: {
+        pointFormat: '{x:%[Ybe]} {y}:00 - <b>{value} ℃</b>'
+    },
     yAxis: {
         minPadding: 0,
         maxPadding: 0,

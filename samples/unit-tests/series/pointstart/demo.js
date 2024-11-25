@@ -4,6 +4,9 @@ QUnit.test(
     'Tooltip shown week formats, should be date (#3418)',
     function (assert) {
         var chart = Highcharts.chart('container', {
+            lang: {
+                locale: 'es' // Consistent between browsers
+            },
             xAxis: {
                 type: 'datetime'
             },
@@ -18,10 +21,10 @@ QUnit.test(
         var controller = new TestController(chart),
             series = chart.series[0],
             expectedTexts = [
-                'Wednesday,  1 Jan 2014',
-                'Friday,  3 Jan 2014',
-                'Sunday,  5 Jan 2014',
-                'Tuesday,  7 Jan 2014'
+                'Miércoles, 1 de ene de 2014',
+                'Viernes, 3 de ene de 2014',
+                'Domingo, 5 de ene de 2014',
+                'Martes, 7 de ene de 2014'
             ],
             texts = [],
             pointX = 0,

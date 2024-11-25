@@ -5,12 +5,10 @@ Highcharts.chart('container', {
         type: 'spline'
     },
     title: {
-        text: 'Snow depth at Vikjafjellet, Norway',
-        align: 'left'
+        text: 'Snow depth at Vikjafjellet, Norway'
     },
     subtitle: {
-        text: 'Irregular time data in Highcharts JS',
-        align: 'left'
+        text: 'Irregular time data in Highcharts JS'
     },
     xAxis: {
         type: 'datetime',

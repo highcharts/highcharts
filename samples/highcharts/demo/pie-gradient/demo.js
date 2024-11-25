@@ -1,7 +1,8 @@
+// eslint-disable-next-line max-len
 // Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
 Highcharts.setOptions({
-    colors: Highcharts.map(Highcharts.getOptions().colors, function (color) {
+    colors: Highcharts.getOptions().colors.map(function (color) {
         return {
             radialGradient: {
                 cx: 0.5,
@@ -25,8 +26,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Registered private vehicles in Norway, by type of fuel, 2020',
-        align: 'left'
+        text: 'Registered private vehicles in Norway, by type of fuel, 2020'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
