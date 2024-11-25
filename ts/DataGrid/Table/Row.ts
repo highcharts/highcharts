@@ -63,9 +63,9 @@ abstract class Row {
     public viewport: Table;
 
     /**
-     * Flag to determine if the row is being destroyed.
+     * Flag to determine if the row is added to the DOM.
      */
-    public destroyed?: boolean;
+    public rendered?: boolean;
 
     /* *
     *
@@ -111,6 +111,8 @@ abstract class Row {
             cell.render();
         }
 
+        this.rendered = true;
+
         this.reflow();
     }
 
@@ -132,8 +134,6 @@ abstract class Row {
      * Destroys the row.
      */
     public destroy(): void {
-        this.destroyed = true;
-
         if (!this.htmlElement) {
             return;
         }
@@ -175,10 +175,6 @@ abstract class Row {
      * The cell to unregister.
      */
     public unregisterCell(cell: Cell): void {
-        if (this.destroyed) {
-            return;
-        }
-
         const index = this.cells.indexOf(cell);
         if (index > -1) {
             this.cells.splice(index, 1);

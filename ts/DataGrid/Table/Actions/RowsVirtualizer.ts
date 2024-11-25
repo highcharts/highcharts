@@ -248,7 +248,7 @@ class RowsVirtualizer {
             vp.tbodyElement.offsetHeight / this.defaultRowHeight
         );
 
-        const rows = vp.rows;
+        let rows = vp.rows;
 
         if (!rows.length) {
             const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
@@ -267,6 +267,7 @@ class RowsVirtualizer {
         );
 
         const alwaysLastRow = rows.pop();
+        const tempRows: TableRow[] = [];
 
         // Remove rows that are out of the range except the last row.
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -274,31 +275,36 @@ class RowsVirtualizer {
             const rowIndex = row.index;
 
             if (rowIndex < from || rowIndex > to) {
-                !row.destroyed && row.destroy();
+                row.destroy();
+            } else {
+                tempRows.push(row);
             }
         }
 
+        rows = tempRows;
+        vp.rows = rows;
+
         for (let i = from; i <= to; ++i) {
-            const row = rows[i];
+            const row = rows[i - (rows[0]?.id || 0)];
             let newRow: TableRow;
 
             // Recreate row when it is destroyed and it is in the range.
-            if (row && row.destroyed) {
+            if (!row) {
                 newRow = new TableRow(vp, i);
-                newRow.render();
-                vp.tbodyElement.insertBefore(
-                    newRow.htmlElement,
-                    vp.tbodyElement.lastChild
-                );
-                rows[i] = newRow;
-            } else if (!row) {
-                newRow = new TableRow(vp, i);
-                newRow.render();
-                vp.tbodyElement.insertBefore(
-                    newRow.htmlElement,
-                    vp.tbodyElement.lastChild
-                );
                 rows.push(newRow);
+                newRow.rendered = false;
+            }
+        }
+
+        rows.sort((a, b) => a.index - b.index);
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (!(rows[i] as any).rendered) {
+                rows[i].render();
+                vp.tbodyElement.insertBefore(
+                    rows[i].htmlElement,
+                    vp.tbodyElement.lastChild
+                );
             }
         }
 
@@ -336,16 +342,11 @@ class RowsVirtualizer {
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
-        const firstVisibleRow = rows.find(row => !row.destroyed)
 
-        let translateBuffer = firstVisibleRow?.getDefaultTopOffset() ?? 0;
+        let translateBuffer = rows[0].getDefaultTopOffset();
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
-
-            if (row.destroyed) {
-                continue;
-            }
 
             // Reset row height and cell transforms
             row.htmlElement.style.height = '';
@@ -390,10 +391,6 @@ class RowsVirtualizer {
         }
 
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            if (rows[i].destroyed) {
-                continue;
-            }
-
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].htmlElement.style.transform =
                 `translateY(${translateBuffer}px)`;
