@@ -288,7 +288,7 @@ li.highcharts-active {
 
 /* Responsive design */
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1330px) {
     .highcharts-stocktools-toolbar li > .highcharts-menu-item-title {
         display: none;
     }
