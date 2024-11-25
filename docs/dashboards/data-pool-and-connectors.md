@@ -321,7 +321,7 @@ Message
 
 #### Reuse
 
-The `MQTTConnector` can be reused for other applications by simply copying the entire class from the demo's Javascript file. The implementation is found at the bottom of the file. It is important to also copy the `MQTTConnector.defaultOptions` and the code line that registers the connector as a `Dashboards` component.
+The `MQTTConnector` can be reused for other applications by simply copying the entire class from the demo's Javascript file. The implementation is found at the bottom of the file. It is important to also copy the `MQTTConnector.defaultOptions` and the code line that registers the connector as a **Dashboards** component.
 
 ```javascript
 // Register the connector
