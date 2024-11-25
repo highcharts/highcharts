@@ -10,6 +10,6 @@ Highcharts.stockChart('container', {
         type: 'line',
         data: Array.from({ length: 50 }, () => Math.random() * 10),
         pointInterval: 24 * 36e5,
-        pointStart: Date.UTC(2024, 0, 1)
+        pointStart: '2024-01-01'
     }]
 });
