@@ -19,6 +19,13 @@
             data: data,
             tooltip: {
                 valueDecimals: 2
+            },
+            lastPrice: {
+                enabled: true,
+                color: '#ff9d41',
+                label: {
+                    enabled: true
+                }
             }
         }]
     });
