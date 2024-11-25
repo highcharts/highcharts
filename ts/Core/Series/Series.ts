@@ -1225,6 +1225,10 @@ class Series {
         return true;
     }
 
+    public dataColumnKeys(): Array<string> {
+        return ['x', ...(this.pointArrayMap || ['y'])];
+    }
+
     /**
      * Apply a new set of data to the series and optionally redraw it. The
      * new data array is passed by reference (except in case of
@@ -1287,7 +1291,7 @@ class Series {
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
             table = this.dataTable,
-            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
+            dataColumnKeys = this.dataColumnKeys(),
             pointValKey = series.pointValKey || 'y',
             pointArrayMap = series.pointArrayMap || [],
             valueCount = pointArrayMap.length,
@@ -1736,7 +1740,6 @@ class Series {
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> || [],
             dataLength = xData.length,
-            dataColumnKeys = ['x', ...(this.pointArrayMap || ['y'])],
             columns: DataTable.ColumnCollection = {};
 
         let i,
@@ -1760,7 +1763,7 @@ class Series {
             }
         }
 
-        for (const key of dataColumnKeys) {
+        for (const key of this.dataColumnKeys()) {
             const column = table.getColumn(key, true);
             if (column) {
                 columns[key] = column.slice(start, end);
@@ -1801,7 +1804,7 @@ class Series {
             categories = series.xAxis?.categories,
             pointArrayMap = series.pointArrayMap || ['y'],
             // Create a configuration object out of a data row
-            dataColumnKeys = ['x', ...pointArrayMap];
+            dataColumnKeys = this.dataColumnKeys();
         let dataLength,
             cursor,
             point,

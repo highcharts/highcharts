@@ -940,7 +940,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         zoom: undefined
     });
 
-    let ruPoint = series.points[148];
+    let ruPoint = series.points.find(p => p['hc-key'] === 'ru');
 
     assert.strictEqual(
         ruPoint['hc-key'],
@@ -961,7 +961,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     const removedPoint = data.splice(148, 1)[0];
     series.setData(data);
 
-    ruPoint = series.points[216]; // null point
+    ruPoint = series.points.find(p => p['hc-key'] === 'ru'); // null point
 
     assert.strictEqual(
         ruPoint['hc-key'],
@@ -985,7 +985,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'The column names should not change after addPoint'
     );
 
-    ruPoint = series.points[199];
+    ruPoint = series.points.find(p => p['hc-key'] === 'ru');
 
     assert.strictEqual(
         ruPoint['hc-key'],

@@ -1041,8 +1041,7 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options,
-            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            seriesOptions = series.options;
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1084,7 +1083,7 @@ class Point {
             // Record changes in the data table
             i = point.index;
             const row: DataTable.RowObject = {};
-            for (const key of dataColumnKeys) {
+            for (const key of series.dataColumnKeys()) {
                 row[key] = (point as any)[key];
             }
             series.dataTable.setRow(row, i);

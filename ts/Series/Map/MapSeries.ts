@@ -718,6 +718,11 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    public dataColumnKeys(): Array<string> {
+        // No x data for maps
+        return this.pointArrayMap;
+    }
+
     /**
      * Extend processData to join in mapData. If the allAreas option is true,
      * all areas from the mapData are used, and those that don't correspond to a
