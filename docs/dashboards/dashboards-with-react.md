@@ -1,7 +1,7 @@
 Highcharts Dashboards with React
 ===
 
-To create a dashboard with React please follow the steps below: <br>
+To create a dashboard with React, please follow the steps below: <br>
 
 1. Install the Dashboards package.
 
@@ -15,14 +15,14 @@ To create a dashboard with React please follow the steps below: <br>
     import * as Dashboards from '@highcharts/dashboards';
     ```
 
-3. To fully utilize the Dashboards potential, consider additional packages like Highcharts or DataGrid.
+3. Consider additional packages like Highcharts or DataGrid to utilise the **Dashboards** potential fully.
 
-    First install the package.
+    First, install the package.
     ```bash
     npm install highcharts
     ```
 
-    Then import the package and the dedicated plug to connect it to the Dashboards.
+    Then, import the package and the dedicated plug to connect it to the Dashboards.
 
     ```typescript
     import Highcharts from 'highcharts';
@@ -36,10 +36,10 @@ To create a dashboard with React please follow the steps below: <br>
     Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
     ```
 
-4. Create a HTML structure for the dashboard.  
+4. Create an HTML structure for the dashboard.  
     There are two ways to do it:
-    #### Use the dashboards layout system.  
-    To do that first import the `layout` module and initialize it:
+    #### Use the **Dashboards** layout system.  
+    To do that, first import the `layout` module and initialize it:
     ```typescript
     import LayoutModule from '@highcharts/dashboards/modules/layout';
 
@@ -50,17 +50,17 @@ To create a dashboard with React please follow the steps below: <br>
     <div id="dashboard"></div>
     ```
 
-    You can refer to the element by its id or you can use the `ElementRef` to get the element.
-    #### Declare your own HTML structure.
+    You can refer to the element by its ID or use the `ElementRef` to get it.
+    #### Declare your HTML structure.
     Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
 5. Create a dashboard using the factory function `Dashboards.board`. The function takes three arguments:
     - `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element
     - `options` - the options object for the dashboard
-    - `isAsync` - whether the dashboard should be rendered asynchronously or not- useful when using external data resources
+    - `isAsync` - whether the dashboard should be rendered asynchronously or not- functional when using external data resources
 
 ## Demos
-See how it works in the demos like below:
+See how it works in the demos below:
 - [basic live example](https://stackblitz.com/edit/stackblitz-starters-xn8e17)
 - [component live example](https://stackblitz.com/edit/stackblitz-starters-sx8crk)
 - [custom layout live example](https://stackblitz.com/edit/stackblitz-starters-g6quez)
