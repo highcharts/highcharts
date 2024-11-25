@@ -299,7 +299,7 @@ class RowsVirtualizer {
         rows.sort((a, b) => a.index - b.index);
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            if (!(rows[i] as any).rendered) {
+            if (!rows[i].rendered) {
                 rows[i].render();
                 vp.tbodyElement.insertBefore(
                     rows[i].htmlElement,
