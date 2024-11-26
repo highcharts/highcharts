@@ -258,7 +258,6 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                     // TODO padding configurable
                     if (distanceR < 0) {
                         (node.degree as any) += 0.01;
-                        // Const neighbours = ++(node.neighbours as any);
                         forceTimesMass = (
                             layout.repulsiveForce(
                                 -distanceR / Math.sqrt(++(node.neighbours)),
