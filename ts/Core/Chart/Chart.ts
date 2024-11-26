@@ -3887,6 +3887,14 @@ class Chart {
                     hasZoomed = true;
                 }
 
+                if (
+                    !this.hasCartesianSeries &&
+                    !reset &&
+                    trigger !== 'mousewheel'
+                ) {
+                    displayButton = true;
+                }
+
                 if (event) {
                     this[horiz ? 'mouseDownX' : 'mouseDownY'] =
                         event[horiz ? 'chartX' : 'chartY'];
