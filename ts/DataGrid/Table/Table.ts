@@ -271,6 +271,10 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
+     *
+     * @param reflowColumns
+     * Force reflow columns and recalculate widths.
+     *
      */
     public reflow(reflowColumns: boolean = false): void {
         const tableEl = this.dataGrid.tableElement;

@@ -614,7 +614,7 @@ class DataGrid {
         }
 
         if (vp?.dataGrid.options?.rendering?.rows?.virtualization) {
-           vp?.reflow();
+            vp?.reflow();
         }
     }
 

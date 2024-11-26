@@ -106,9 +106,7 @@
 .highcharts-datagrid-table {
     width: 100%;
     table-layout: fixed;
-    /* border-collapse: collapse; */
     border-spacing: 0;
-    /* overflow: hidden; */
 }
 
 /* Table Header */
@@ -155,7 +153,7 @@
     text-overflow: ellipsis;
 }
 
-.highcharts-datagrid-resizer-content thead, 
+.highcharts-datagrid-resizer-content thead,
 .highcharts-datagrid-resizer-content tbody {
     display: block;
     overflow: hidden;

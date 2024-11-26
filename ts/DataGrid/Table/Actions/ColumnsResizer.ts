@@ -266,7 +266,7 @@ class ColumnsResizer {
                 vp.dataGrid.contentWrapper?.classList.add(
                     Globals.classNames.resizerWrapper
                 );
-                // apply widths before resizing
+                // Apply widths before resizing
                 this.viewport.reflow(true);
             }
 
