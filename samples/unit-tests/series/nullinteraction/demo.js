@@ -22,7 +22,6 @@ QUnit.test('Null interaction should allow tooltip for null points', assert => {
             chart.series[0].points[0],
             chart.series[1].points[0]
         ]),
-        series = chart.series,
         seriesTypes = [
             'bar',
             'column',

@@ -387,9 +387,9 @@ export default LineSeries;
  * @sample {highcharts} highcharts/series/null-interaction/
  *         Chart with interactive `null` points
  *
- * @extends   plotOptions.series
+ * @type      {boolean|undefined}
  * @product   highcharts highstock
- * @apioption plotOptions.nullInteraction
+ * @apioption plotOptions.line.nullInteraction
  */
 
 /**
@@ -402,7 +402,7 @@ export default LineSeries;
  *         Line chart
  *
  * @extends   plotOptions.series
- * @product   highcharts
+ * @product   highcharts highstock
  * @apioption plotOptions.line
  */
 

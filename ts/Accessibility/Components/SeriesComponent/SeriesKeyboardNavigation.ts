@@ -1031,7 +1031,7 @@ namespace SeriesKeyboardNavigation {
         if (
             (
                 !this.isNull ||
-                (this.series.options as any).nullInteraction
+                this.series.options?.nullInteraction
             ) && highlightVisually
         ) {
             this.onMouseOver(); // Show the hover marker and tooltip

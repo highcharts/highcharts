@@ -1,4 +1,15 @@
 Highcharts.chart('container', {
+    tooltip: {
+        nullFormat: `<span>
+            <b>
+                Null
+            </b> value at position <b>
+                {point.x}
+            </b> in series <b>
+                {series.index}
+            </b>
+        </span>`
+    },
     series: [{
         dataLabels: {
             enabled: true

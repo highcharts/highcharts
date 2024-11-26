@@ -240,12 +240,11 @@ class TimelineSeries extends LineSeries {
 
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
-            userOptions = series.userOptions,
-            nullInteraction = userOptions.nullInteraction,
+            nullInteraction = series.options.nullInteraction,
             map = (
                 series.data.length ?
                     series.data :
-                    userOptions.data || []
+                    series.userOptions.data || []
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (

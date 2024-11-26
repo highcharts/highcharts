@@ -1244,7 +1244,7 @@ function seriesRenderCanvas(this: Series): void {
         const chartDestroyed = typeof chart.index === 'undefined';
 
         let x: number,
-            y: number,
+            y,
             clientX,
             plotY,
             percentage,
@@ -1261,7 +1261,7 @@ function seriesRenderCanvas(this: Series): void {
                 y = (d as any)[1];
             } else {
                 x = d as any;
-                y = yData[i] as any ?? nullYSubstitute ?? null;
+                y = yData[i] ?? nullYSubstitute ?? null;
             }
 
             // Resolve low and high for range series
