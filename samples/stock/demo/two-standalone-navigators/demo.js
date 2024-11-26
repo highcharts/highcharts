@@ -46,13 +46,6 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
     });
 
     const priceChart = Highcharts.stockChart('price-chart', {
-        accessibility: {
-            beforeChartFormat: '<h3>The chart, which xAxis extremes are' +
-               'controlled by a standalone navigator. Displayed series' +
-               'extremes span across 10 years, so There are 2 navigators' +
-                ', that help to accuratly set the extremes. <h3>'
-
-        },
         navigator: {
             enabled: false
         },
