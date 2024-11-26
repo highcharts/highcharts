@@ -587,10 +587,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * Enable or disable Treemap grouping.
          *
          * @type {boolean}
-         * @default false
          * @since next
          * @product highcharts
-         * @apioption series.treemap.groupAreaThreshold.enabled
          */
         enabled: false,
 
@@ -598,10 +596,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * The pixel threshold width of area, which is used in Treemap grouping.
          *
          * @type {number}
-         * @default undefined
          * @since next
          * @product highcharts
-         * @apioption series.treemap.groupAreaThreshold.pixelWidth
          */
         pixelWidth: void 0,
 
@@ -610,10 +606,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouping.
          *
          * @type {number}
-         * @default undefined
          * @since next
          * @product highcharts
-         * @apioption series.treemap.groupAreaThreshold.pixelHeight
          */
         pixelHeight: void 0,
 
@@ -623,12 +617,33 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouped points.
          *
          * @type {string}
-         * @default undefined
          * @since next
          * @product highcharts
-         * @apioption series.treemap.groupAreaThreshold.name
          */
-        name: void 0
+        name: void 0,
+
+
+        /**
+         * A configuration property that specifies the factor by which the value
+         * and size of a grouped node are reduced. This can be particularly
+         * useful when a grouped node occupies a disproportionately large
+         * portion of the graph, ensuring better visual balance and readability.
+         *
+         * @type {number}
+         * @since next
+         * @product highcharts
+         */
+        reductionFactor: void 0,
+
+        /**
+         * Defines the minimum number of child nodes required to create a group
+         * of small nodes.
+         *
+         * @type {number}
+         * @since next
+         * @product highcharts
+         */
+        minAmount: 5
 
     }
 

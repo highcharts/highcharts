@@ -2,6 +2,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Regions',
         type: 'treemap',
+        allowTraversingTree: true,
         groupAreaThreshold: {
             enabled: true,
             pixelWidth: 60,

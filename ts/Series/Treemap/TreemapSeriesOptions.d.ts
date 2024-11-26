@@ -144,6 +144,28 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * @product highcharts
      */
     name?: string;
+
+    /**
+     * A configuration property that specifies the factor by which the value
+     * and size of a grouped node are reduced. This can be particularly useful
+     * when a grouped node occupies a disproportionately large portion of the
+     * graph, ensuring better visual balance and readability.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    reductionFactor?: number;
+
+    /**
+     * Defines the minimum number of child nodes required to create a group of
+     * small nodes.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    minAmount?: number;
 }
 
 

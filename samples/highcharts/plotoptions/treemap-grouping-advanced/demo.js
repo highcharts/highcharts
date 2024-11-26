@@ -96,7 +96,8 @@
             groupAreaThreshold: {
                 enabled: true,
                 pixelWidth: 15,
-                pixelHeight: 30
+                pixelHeight: 30,
+                reductionFactor: 10
             },
             levels: [{
                 level: 1,
