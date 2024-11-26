@@ -613,7 +613,9 @@ class DataGrid {
             this.credits = new Credits(this);
         }
 
-        this.viewport?.reflow();
+        if (vp?.dataGrid.options?.rendering?.rows?.virtualization) {
+           vp?.reflow();
+        }
     }
 
     /**

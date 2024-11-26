@@ -134,7 +134,9 @@ class RowsVirtualizer {
      */
     public initialRender(): void {
         // Initial reflow to set the viewport height
-        this.viewport.reflow();
+        if (this.rowSettings?.virtualization) {
+            this.viewport.reflow();
+        }
 
         // Load & render rows
         this.renderRows(this.rowCursor);

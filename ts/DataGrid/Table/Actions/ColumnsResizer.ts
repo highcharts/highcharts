@@ -220,7 +220,7 @@ class ColumnsResizer {
             this.fixedDistributionResize(diff);
         }
 
-        vp.reflow();
+        vp.reflow(true);
 
         if (vp.dataGrid.options?.rendering?.rows?.virtualization) {
             vp.rowsVirtualizer.adjustRowHeights();
@@ -260,6 +260,16 @@ class ColumnsResizer {
         column: Column
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
+            const vp = column.viewport;
+
+            if (!vp.dataGrid.options?.rendering?.rows?.virtualization) {
+                vp.dataGrid.contentWrapper?.classList.add(
+                    Globals.classNames.resizerWrapper
+                );
+                // apply widths before resizing
+                this.viewport.reflow(true);
+            }
+
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
