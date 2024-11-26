@@ -330,7 +330,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow();
+        this.reflow(true);
     };
 
     /**
