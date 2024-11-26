@@ -5,8 +5,8 @@ Navigator Component
 
 ## Overview
 
-The NavigatorComponent is part of the Dashboards plugins. It utilizes the
-navigator of Highcharts Stock to provide an overview over the values of a table
+The `NavigatorComponent` is part of the **Dashboards** plugins. It utilizes the
+navigator of [Highcharts Stock](https://www.highcharts.com/docs/stock/navigator) to provide an overview over the values of a table
 column. Users can set a range in the Navigator, which can be synchronized as
 extremes with other Dashboard components for data inspection.
 
@@ -47,16 +47,17 @@ Dashboard.board('container', {
 
 The Navigator Component can be synced with other components in Dashboards. Two synchronization types are predefined for the Navigator Component: [`crossfilter`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter) and [`extremes`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes). You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
-Crossfilter sync is specific to the Navigator Component. You can learn more about this below.
+`Crossfilter` sync is specific to the `NavigatorComponent`. You can learn more about this below.
 
 ## Crossfilter
 
-Alternatively to the synchronization of extremes the NavigatorComponent can
-synchronize extremes in a shared crossfilter. This crossfilter is managed by a
-a RangeModifier which sources the table of a connector. All components have to
-share the same connector and table to make the crossfilter work.
+<!-- JH: Needs to be clarified and tested -->
+Alternatively to the synchronization of extremes the `NavigatorComponent` can
+synchronize extremes in a shared `crossfilter`. The crossfilter is managed by a
+a `RangeModifier` which sources the table of a connector. All components have to
+share the same connector and table to make the `crossfilter` work.
 
-For crossfilter sync, you can enable the `affectNavigators` option, which
+For `crossfilter` sync, the `affectNavigators` option must be enabled, which
 causes, in addition to changing the content of the table, also the content of
 other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
 
@@ -66,8 +67,7 @@ Read more about components synchronization [here](https://www.highcharts.com/doc
 
 <iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/crossfilter" allow="fullscreen"></iframe>
 
-In the
-[crossfilter demo](https://highcharts.com/demo/dashboards/crossfilter)
+In the [crossfilter demo](https://highcharts.com/demo/dashboards/crossfilter)
 you see the setup to limit the amount of data points. You have to define column
 ranges with the help of the NavigatorComponent and a shared DataConnector.
 
