@@ -27,12 +27,11 @@ small {
     font-size: 0.6em;
 }
 
-.innerTable {
-    font-size: 0.9em;
-}
-
-table.innerTable td {
+.center-label p {
     padding: 0;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .symbol {

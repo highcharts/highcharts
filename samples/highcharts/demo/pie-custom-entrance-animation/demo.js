@@ -78,7 +78,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Departamental Strength of the Company'
+        text: 'Departmental Strength of a Company'
     },
     subtitle: {
         text: 'Custom animation of pie series'
