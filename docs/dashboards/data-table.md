@@ -8,7 +8,7 @@ Think of a Data Table as a grid where each row represents a record or entry, and
 `DataTable` is an integral part of the **Dashboards** and the **DataGrid** bundle, which means it can be accessed from these two places. There is no need to load any additional modules.
 
 ## Creating a DataTable
-There are a few ways to create a `DataTable`:
+There are multiple ways to create a `DataTable`:
 
 1. **From a DataPool**  
     The `DataPool` is the main entry point for data handling in Highcharts Dashboards. It handles incoming data and creates a `DataTable` to store the imported data.
