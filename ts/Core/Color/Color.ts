@@ -24,10 +24,16 @@ import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
     isNumber,
+    isString,
     merge,
     pInt,
     defined
 } = U;
+
+const supportsColorMix = CSS.supports(
+    'color',
+    'color-mix(in srgb, red, blue 50%)'
+);
 
 /* *
  *
@@ -200,6 +206,7 @@ class Color implements ColorLike {
      * */
 
     public input: ColorType;
+    public output?: string;
     public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
     public stops?: Array<Color>;
 
@@ -223,6 +230,10 @@ class Color implements ColorLike {
     public get(format?: ('a'|'rgb'|'rgba')): ColorType {
         const input = this.input,
             rgba = this.rgba;
+
+        if (this.output) {
+            return this.output;
+        }
 
         if (
             typeof input === 'object' &&
@@ -273,15 +284,19 @@ class Color implements ColorLike {
             });
 
         } else if (isNumber(alpha) && alpha !== 0) {
-            for (let i = 0; i < 3; i++) {
-                rgba[i] += pInt(alpha * 255);
+            if (isNumber(rgba[0])) {
+                for (let i = 0; i < 3; i++) {
+                    rgba[i] += pInt(alpha * 255);
 
-                if (rgba[i] < 0) {
-                    rgba[i] = 0;
+                    if (rgba[i] < 0) {
+                        rgba[i] = 0;
+                    }
+                    if (rgba[i] > 255) {
+                        rgba[i] = 255;
+                    }
                 }
-                if (rgba[i] > 255) {
-                    rgba[i] = 255;
-                }
+            } else if (supportsColorMix) {
+                this.output = `color-mix(in srgb, ${this.input}, white ${alpha * 100}%)`;
             }
         }
 
@@ -325,6 +340,13 @@ class Color implements ColorLike {
 
         // Unsupported color, return to-color (#3920, #7034)
         if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
+            if (
+                supportsColorMix &&
+                isString(this.input) &&
+                isString(to.input)
+            ) {
+                return `color-mix(in srgb, ${this.input}, ${to.input} ${pos * 100}%)`;
+            }
             return to.input || 'none';
         }
 
