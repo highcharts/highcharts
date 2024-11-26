@@ -12,7 +12,7 @@ Then import the package into your project:
 import DataGrid from '@highcharts/dashboards/datagrid';
 ```
 
-## Include DataGrid by script tag
+## Include Highcharts DataGrid by script tag
 Include the JavaScript files in your web page's `<head>` section, as shown below.
 
 ```html
