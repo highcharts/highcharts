@@ -140,9 +140,10 @@ namespace AxisDefaults {
          */
 
         /**
-         * The point where the break starts.
+         * The axis value where the break starts. On datetime axes, this may be
+         * a date string.
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     4.1.0
          * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.from
@@ -160,9 +161,10 @@ namespace AxisDefaults {
          */
 
         /**
-         * The point where the break ends.
+         * The axis value where the break ends. On datetime axes, this may be
+         * a date string.
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     4.1.0
          * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.to
