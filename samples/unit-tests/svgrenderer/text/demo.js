@@ -152,6 +152,16 @@ QUnit.test('Text word wrap with markup', function (assert) {
         text.getBBox().width <= 100,
         'Text directly inside anchor should be wrapped (#16173)'
     );
+
+    text.attr({
+        text: 'Marked-up word <strong>finally</strong>'
+    });
+
+    assert.strictEqual(
+        text.element.querySelectorAll('tspan[x="100"]').length,
+        1,
+        'One line break should be applied (#22187)'
+    );
 });
 
 QUnit.module('whiteSpace: "nowrap"', hooks => {

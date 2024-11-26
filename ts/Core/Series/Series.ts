@@ -3075,7 +3075,7 @@ class Series {
             } = series,
             { inverted, renderer } = chart,
             axis = this[`${zoneAxis}Axis`],
-            { isXAxis, len = 0 } = axis || {},
+            { isXAxis, len = 0, minPointOffset = 0 } = axis || {},
             halfWidth = (graph?.strokeWidth() || 0) / 2 + 1,
 
             // Avoid points that are so close to the threshold that the graph
@@ -3107,7 +3107,7 @@ class Series {
             isNumber(axis.min)
         ) {
 
-            const axisMax = axis.getExtremes().max,
+            const axisMax = axis.getExtremes().max + minPointOffset,
                 // Invert the x and y coordinates of inverted charts
                 invertPath = (path: SVGPath): void => {
                     path.forEach((segment, i): void => {
@@ -3170,7 +3170,12 @@ class Series {
 
             // Compute and apply the clips
             let lastLineClip: SVGPath = [],
-                lastTranslated = axis.toPixels(axis.getExtremes().min, true);
+                // Starting point of the first zone. Offset for category axis
+                // (#22188).
+                lastTranslated = axis.toPixels(
+                    axis.getExtremes().min - minPointOffset,
+                    true
+                );
 
             zones.forEach((zone): void => {
                 const lineClip = zone.lineClip || [],
@@ -3223,7 +3228,8 @@ class Series {
                 }
 
                 /* Debug clip paths
-                chart.renderer.path(adaptivePath)
+                zone.path?.destroy();
+                zone.path = chart.renderer.path(adaptivePath)
                     .attr({
                         stroke: zone.color || this.color || 'gray',
                         'stroke-width': 1,
@@ -5331,6 +5337,8 @@ export default Series;
  *
  * @sample {highcharts} highcharts/series/stack/
  *         Stacked and grouped columns
+ * @sample {highcharts} highcharts/series/stack-centerincategory/
+ *         Stacked and grouped, centered in category
  *
  * @type      {number|string}
  * @since     2.1
