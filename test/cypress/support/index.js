@@ -159,6 +159,15 @@ Cypress.Commands.add('toggleEditMode', () => {
     cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });
 
+Cypress.Commands.add('submitEditing', () => {
+    cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+});
+
+Cypress.Commands.add('cancelEditing', () => {
+    cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
+    cy.get('.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+});
+
 Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test

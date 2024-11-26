@@ -187,6 +187,7 @@ class Table {
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
+
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -203,7 +204,11 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        if (dgOptions?.rendering?.rows?.virtualization) {
+            this.tbodyElement.addEventListener('scroll', this.onScroll);
+            tableElement.classList.add(Globals.classNames.virtualization);
+        }
 
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
@@ -335,8 +340,22 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop =
-            index * this.rowsVirtualizer.defaultRowHeight;
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.scrollTop =
+                index * this.rowsVirtualizer.defaultRowHeight;
+            return;
+        }
+
+        const rowClass = '.' + Globals.classNames.rowElement;
+        const firstRowTop = this.tbodyElement
+            .querySelectorAll(rowClass)[0]
+            .getBoundingClientRect().top;
+
+        this.tbodyElement.scrollTop = (
+            this.tbodyElement
+                .querySelectorAll(rowClass)[index]
+                .getBoundingClientRect().top
+        ) - firstRowTop;
     }
 
     /**
@@ -396,7 +415,9 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        }
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 

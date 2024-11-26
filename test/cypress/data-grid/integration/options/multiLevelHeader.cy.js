@@ -47,7 +47,8 @@ describe('DataGrid events.', () => {
             .should('have.class', 'highcharts-datagrid-column-sortable');
 
         // Click header that group columns
-        cy.get('th[data-column-id="Product"]')
+        cy.get('th')
+            .contains('Product')
             .click()
             .should('not.have.class', 'highcharts-datagrid-column-sortable');
     });

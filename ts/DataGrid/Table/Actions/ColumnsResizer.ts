@@ -169,6 +169,8 @@ class ColumnsResizer {
                 className: Globals.classNames.resizerHandles
             }, cell.htmlElement);
 
+            handle.setAttribute('aria-hidden', true);
+
             vp.columnsResizer?.addHandleListeners(
                 handle, column
             );
@@ -210,16 +212,21 @@ class ColumnsResizer {
         }
 
         const diff = e.pageX - (this.dragStartX || 0);
+        const vp = this.viewport;
 
-        if (this.viewport.columnDistribution === 'full') {
+        if (vp.columnDistribution === 'full') {
             this.fullDistributionResize(diff);
         } else {
             this.fixedDistributionResize(diff);
         }
 
-        this.viewport.reflow();
-        this.viewport.rowsVirtualizer.adjustRowHeights();
-        this.viewport.dataGrid.options?.events?.column?.afterResize?.call(
+        vp.reflow();
+
+        if (vp.dataGrid.options?.rendering?.rows?.virtualization) {
+            vp.rowsVirtualizer.adjustRowHeights();
+        }
+
+        vp.dataGrid.options?.events?.column?.afterResize?.call(
             this.draggedColumn
         );
     };

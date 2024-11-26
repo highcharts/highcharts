@@ -71,6 +71,7 @@ namespace Globals {
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
+        rowEven: classNamePrefix + 'row-even',
         rowOdd: classNamePrefix + 'row-odd',
         hoveredRow: classNamePrefix + 'hovered-row',
         columnElement: classNamePrefix + 'column',
@@ -78,19 +79,21 @@ namespace Globals {
         hoveredColumn: classNamePrefix + 'hovered-column',
         editedCell: classNamePrefix + 'edited-cell',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
+        virtualization: classNamePrefix + 'virtualization',
         headerCell: classNamePrefix + 'header-cell',
         headerCellContent: classNamePrefix + 'header-cell-content',
-        headerCellResized: classNamePrefix + 'header-cell-resized',
         headerRow: classNamePrefix + 'head-row-content',
         noData: classNamePrefix + 'no-data',
         columnFirst: classNamePrefix + 'column-first',
         columnSortable: classNamePrefix + 'column-sortable',
+        columnSortableIcon: classNamePrefix + 'column-sortable-icon',
         columnSortedAsc: classNamePrefix + 'column-sorted-asc',
         columnSortedDesc: classNamePrefix + 'column-sorted-desc',
         resizerHandles: classNamePrefix + 'column-resizer',
         resizedColumn: classNamePrefix + 'column-resized',
         creditsContainer: classNamePrefix + 'credits-container',
-        creditsText: classNamePrefix + 'credits'
+        creditsText: classNamePrefix + 'credits',
+        visuallyHidden: classNamePrefix + 'visually-hidden'
     };
 
     export const win = window;

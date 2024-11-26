@@ -103,7 +103,8 @@ class AccordionMenu {
         let content: HTMLElement;
 
         this.component = component;
-        this.oldOptionsBuffer = merge({}, component.options);
+
+        this.oldOptionsBuffer = component.getEditableOptions();
 
         if (editMode) {
             this.confirmationPopup = new ConfirmationPopup(
@@ -135,7 +136,6 @@ class AccordionMenu {
                     options
                 )
             ).content;
-
             this.renderAccordion(options, content, component);
         }
 
@@ -156,6 +156,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
                     await this.confirmChanges();
+                    fireEvent(editMode, 'confirmEditing');
                 }
             }
         );
@@ -168,6 +169,7 @@ class AccordionMenu {
                 className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
                     this.cancelChanges();
+                    fireEvent(editMode, 'cancelEditing');
                 }
             }
         );

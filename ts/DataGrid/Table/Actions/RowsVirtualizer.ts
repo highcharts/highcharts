@@ -22,6 +22,7 @@
  *
  * */
 
+import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
@@ -88,6 +89,10 @@ class RowsVirtualizer {
      */
     public focusAnchorCell?: Cell;
 
+    /**
+     * Rendering row settings.
+     */
+    public rowSettings?: RowsSettings;
 
     /* *
     *
@@ -102,11 +107,12 @@ class RowsVirtualizer {
      * The viewport of the data grid to render rows in.
      */
     constructor(viewport: Table) {
-        const rowSettings = viewport.dataGrid.options?.rendering?.rows;
+        this.rowSettings =
+            viewport.dataGrid.options?.rendering?.rows as RowsSettings;
 
         this.viewport = viewport;
-        this.strictRowHeights = rowSettings?.strictHeights as boolean;
-        this.buffer = Math.max(rowSettings?.bufferSize as number, 0);
+        this.strictRowHeights = this.rowSettings.strictHeights as boolean;
+        this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {
@@ -132,7 +138,10 @@ class RowsVirtualizer {
 
         // Load & render rows
         this.renderRows(this.rowCursor);
-        this.adjustRowHeights();
+
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**
@@ -155,11 +164,14 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (oldScrollTop !== void 0) {
-            tbody.scrollTop = oldScrollTop;
-        }
+        if (this.rowSettings?.virtualization) {
 
-        this.scroll();
+            if (oldScrollTop !== void 0) {
+                tbody.scrollTop = oldScrollTop;
+            }
+
+            this.scroll();
+        }
 
         // Reflow the rendered row cells widths (check redundancy)
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -168,7 +180,8 @@ class RowsVirtualizer {
     }
 
     /**
-     * Method called on the viewport scroll event.
+     * Method called on the viewport scroll event, only when the virtualization
+     * is enabled.
      */
     public scroll(): void {
         const target = this.viewport.tbodyElement;
@@ -244,17 +257,30 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
-        const rowsPerPage = Math.ceil(
+        const isVirtualization = this.rowSettings?.virtualization;
+        const rowsPerPage = isVirtualization ? Math.ceil(
             vp.tbodyElement.offsetHeight / this.defaultRowHeight
-        );
+        ) : Infinity; // Need to be refactored when add pagination
 
         let rows = vp.rows;
+
+        if (!isVirtualization && rows.length > 50) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                'DataGrid: a large dataset can cause performance issues.'
+            );
+        }
 
         if (!rows.length) {
             const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
             last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
+
+            if (isVirtualization) {
+                last.htmlElement.style.transform =
+                    `translateY(${last.getDefaultTopOffset()}px)`;
+            }
         }
 
         const from = Math.max(0, Math.min(
@@ -293,6 +319,10 @@ class RowsVirtualizer {
                 newRow = new TableRow(vp, i);
                 rows.push(newRow);
                 newRow.rendered = false;
+                if (isVirtualization) {
+                    newRow.htmlElement.style.transform =
+                        `translateY(${newRow.getDefaultTopOffset()}px)`;
+                }
             }
         }
 
@@ -421,7 +451,9 @@ class RowsVirtualizer {
             rows[i].reflow();
         }
 
-        this.adjustRowHeights();
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**

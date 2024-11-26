@@ -138,7 +138,7 @@ abstract class Row {
             return;
         }
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+        for (let i = this.cells.length - 1; i >= 0; --i) {
             this.cells[i].destroy();
         }
 
