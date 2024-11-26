@@ -276,7 +276,7 @@ Sometimes, you may want to create a component that works as if it changes its ty
 
 <iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
 
-Such a component can be implemented very similarly to the previously described `YoutubeComponent`, except that you need to consider replacing the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component like this:
+Such a component can be implemented very similarly to the previously described `YouTubeComponent`, except that you need to consider replacing the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component like this:
 
 ```js
 render() {
