@@ -163,6 +163,7 @@
 
 .highcharts-datagrid-table thead tr,
 .highcharts-datagrid-table tbody td {
+    padding: var(--padding);
     border-radius: var(--cell-border-radius);
     border-bottom: var(--row-border, var(--table-border)) solid var(--highcharts-neutral-color-20);
     border-right: var(--column-border, var(--table-border)) solid var(--highcharts-neutral-color-20);
@@ -385,7 +386,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table tbody td {
     /* border-left: 1px solid var(--highcharts-neutral-color-20); */
-    padding: 0 4px;
+    /* padding: 0 4px; */
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row,
@@ -405,7 +406,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
     box-shadow: inset 0 0 0 1px #0000ed;
-    padding: 0 4px;
+    padding: var(--padding);
     background-color: #b7d4ff;
 }
 
