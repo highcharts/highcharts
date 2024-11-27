@@ -4,22 +4,20 @@
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 
 <div id="demo">
-  <form id="update">
-    <h2>DataGrid</h2>
-    Virtualization: 
-    Yes <input type="radio" value="yes" name="virtualized" checked/>
-    No <input type="radio" value="no" name="virtualized" />
-    <div class="two-cols">
-      <div class="col">
-        <h3>Defined height</h3>
-        <div id="container" class="grid"></div>
-      </div>
-      <div class="col">
-        <h3>Non-defined height</h3>
-        <div id="container-noheight" class="grid"></div>
-      </div>
+  <h2>DataGrid</h2>
+  Virtualization: 
+  Yes <input type="radio" value="yes" name="virtualized" checked/>
+  No <input type="radio" value="no" name="virtualized" />
+  <div class="two-cols">
+    <div class="col">
+      <h3>Defined height</h3>
+      <div id="container" class="grid"></div>
     </div>
-    <h2>DataGrid Component</h2>
-    <div id="dashboard-container"></div>
-  </form>
+    <div class="col">
+      <h3>Non-defined height</h3>
+      <div id="container-noheight" class="grid"></div>
+    </div>
+  </div>
+  <h2>DataGrid Component</h2>
+  <div id="dashboard-container"></div>
 </div>
