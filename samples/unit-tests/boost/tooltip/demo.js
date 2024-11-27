@@ -99,17 +99,27 @@ QUnit.test(
 
         // Since two points are outside the range of the plot,
         // there should be four points in the series.
-        assert.strictEqual(points.length, 4);
-        assert.strictEqual(processedXData.length, 4);
+        assert.strictEqual(points.length, 4, 'Points should be filtered');
+        assert.strictEqual(
+            processedXData.length,
+            4,
+            'Processed points should be filtered'
+        );
 
-        // Check that points have been filtered as expected.
-        assert.deepEqual(processedXData, [0, 40, 80, 100]);
+        assert.deepEqual(
+            processedXData,
+            [0, 40, 80, 100],
+            'Points outside plot range should be removed'
+        );
 
-        // Check that the tooltip receives the correct points
-        assert.deepEqual(tooltipPoints, [
-            [0, 10],
-            [40, 30],
-            [80, 50],
-            [100, 60]
-        ]);
+        assert.deepEqual(
+            tooltipPoints,
+            [
+                [0, 10],
+                [40, 30],
+                [80, 50],
+                [100, 60]
+            ],
+            'Tooltip should use the filtered points'
+        );
     });
