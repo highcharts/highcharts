@@ -176,7 +176,7 @@ QUnit.test('Symbol tests', function (assert) {
 
                     assert.strictEqual(
                         Math.round(
-                            symbol3.element.pathSegList[1].y
+                            symbol3.attr('d').split(' ')[10] // y-end
                         ),
                         210,
                         'Circle should not draw with relative coordinates'
@@ -190,7 +190,7 @@ QUnit.test('Symbol tests', function (assert) {
 
                     assert.strictEqual(
                         Math.round(
-                            circleFloatError.element.pathSegList[1].y * 10e6
+                            circleFloatError.attr('d').split(' ')[10] * 10e6
                         ),
                         667,
                         'Circle should draw with relative coordinates (#21701)'
@@ -198,7 +198,7 @@ QUnit.test('Symbol tests', function (assert) {
                     ifDone();
 
                     assert.strictEqual(
-                        halfCircleSymbol.element.pathSegList[1].y,
+                        +halfCircleSymbol.attr('d').split(' ')[10],
                         290,
                         'Arcs should draw with absolute coordinates (#21701)'
                     );
