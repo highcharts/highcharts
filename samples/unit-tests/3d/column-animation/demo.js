@@ -29,6 +29,9 @@ QUnit.test('Point animation', function (assert) {
                         beta: 0,
                         viewDistance: 25,
                         depth: 0
+                    },
+                    style: {
+                        fontFamily: 'Helvetica, Arial, sans-serif'
                     }
                 },
                 plotOptions: {
