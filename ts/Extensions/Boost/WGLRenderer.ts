@@ -862,7 +862,7 @@ class WGLRenderer {
                 isYInside = y >= yMin && y <= yMax;
             }
 
-            // Scatter points outside zoomed range were visible (#19701)
+            // Do not render points outside the zoomed range (#19701)
             if (!sorted && !isYInside) {
                 continue;
             }
@@ -889,7 +889,7 @@ class WGLRenderer {
 
             // The first point before and first after extremes should be
             // rendered (#9962, 19701)
-            // Boost fails to render scatter series with a single point (#21897)
+            // Make sure series with a single point are rendered (#21897)
             if (
                 sorted && (
                     (nx >= xMin || x >= xMin) &&
