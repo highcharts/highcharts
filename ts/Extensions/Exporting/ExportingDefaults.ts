@@ -77,7 +77,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since next
+     * @since 12.0.0
      * @apioption exporting.applyStyleSheets
      */
 

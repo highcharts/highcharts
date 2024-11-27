@@ -127,7 +127,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *
  *
  * @type      {string|number}
- * @since next
+ * @since 12.0.0
  * @product   highstock
  * @apioption plotOptions.pointandfigure.boxSize
  */
@@ -137,7 +137,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *
  *
  * @type      {number}
- * @since next
+ * @since 12.0.0
  * @product   highstock
  * @apioption plotOptions.pointandfigure.reversalAmount
  */
