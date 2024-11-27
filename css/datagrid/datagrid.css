@@ -184,7 +184,7 @@
 .highcharts-datagrid-table tr td:last-of-type {
   border-right-width: clamp(
     0px,
-    /* var(--border-spacing, 0px), */
+    var(--border-spacing, 0px),
     var(--column-border, var(--table-border))
   );
 }
