@@ -15,6 +15,10 @@
     padding: 10px;
 }
 
+.grid {
+    border: 1px solid red;
+}
+
 #container {
     height: 500px;
 }
