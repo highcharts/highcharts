@@ -35,7 +35,7 @@
     --row-border: 1px;
     --inset: 1px; /* We recommend inset for hightlight borders to avoid content shifting. */
     --padding: 8px;
-    --border-spacing: 0px; /* This is the big one, allowing for more "decorative" tables. */
+    --border-spacing: 10px; /* This is the big one, allowing for more "decorative" tables. */
     --cell-border-radius: 0px; /* Best suited if border-spacing > 0. We need for <table> as well. */
 }
 
