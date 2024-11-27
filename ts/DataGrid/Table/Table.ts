@@ -270,11 +270,15 @@ class Table {
     public reflow(): void {
         const tableEl = this.dataGrid.tableElement;
         const borderWidth = tableEl ? (
-            (getStyle(tableEl, 'border-top-width', true) || 0) +
-            (getStyle(tableEl, 'border-bottom-width', true) || 0)
+            parseFloat(
+                '' + (getStyle(tableEl, 'border-top-width', false) || 0)
+            ) +
+            parseFloat(
+                '' + (getStyle(tableEl, 'border-bottom-width', false) || 0)
+            )
         ) : 0;
 
-        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
+        this.tbodyElement.style.height = `${
             (this.dataGrid.container?.clientHeight || 0) -
             (this.theadElement?.offsetHeight || 0) -
             (this.captionElement?.offsetHeight || 0) -
