@@ -281,8 +281,12 @@ class Table {
         const isVirtualization =
             this.dataGrid.options?.rendering?.rows?.virtualization;
         const borderWidth = tableEl ? (
-            (getStyle(tableEl, 'border-top-width', true) || 0) +
-            (getStyle(tableEl, 'border-bottom-width', true) || 0)
+            parseFloat(
+                '' + (getStyle(tableEl, 'border-top-width', false) || 0)
+            ) +
+            parseFloat(
+                '' + (getStyle(tableEl, 'border-bottom-width', false) || 0)
+            )
         ) : 0;
 
         if (isVirtualization) {
