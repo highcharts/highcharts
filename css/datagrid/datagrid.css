@@ -88,13 +88,22 @@
 /* ==== DataGrid Core ==== */
 .highcharts-datagrid-container * {
     box-sizing: border-box;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 .highcharts-datagrid-container {
     display: block;
     min-height: 200px;
-    font-family: 1em;
     overflow: hidden;
 }
 
