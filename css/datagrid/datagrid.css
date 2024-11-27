@@ -161,7 +161,7 @@
     text-overflow: ellipsis;
 }
 
-.highcharts-datagrid-table thead tr,
+.highcharts-datagrid-table thead th,
 .highcharts-datagrid-table tbody td {
     padding: var(--padding);
     border-radius: var(--cell-border-radius);
@@ -358,7 +358,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table thead th {
-    /* border-left: 1px solid var(--highcharts-neutral-color-20); */
+    border-right: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
