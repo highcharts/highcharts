@@ -14,6 +14,10 @@
             text: 'AAPL Stock Price'
         },
 
+        xAxis: {
+            overscroll: 1000 * 60 * 60 * 24 * 7 // 1 week
+        },
+
         series: [{
             name: 'AAPL',
             data: data,
@@ -22,9 +26,14 @@
             },
             lastPrice: {
                 enabled: true,
-                color: '#ff9d41',
                 label: {
-                    enabled: true
+                    enabled: true,
+                    backgroundColor: '#ffffff',
+                    borderColor: '#2caffe',
+                    borderWidth: 1,
+                    style: {
+                        color: '#000000'
+                    }
                 }
             }
         }]
