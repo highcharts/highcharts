@@ -47,7 +47,6 @@ async function scriptsTS(argv) {
     const fs = require('node:fs');
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
-    const packageJSON = require('../../package.json');
     const processLib = require('../libs/process');
     const {
         bundleTargetFolder,
@@ -93,6 +92,8 @@ async function scriptsTS(argv) {
         } else {
             await processLib
                 .exec('npx tsc -p ts');
+            await processLib
+                .exec('npx tsc -p ts/masters-es5');
         }
 
         if (argv.dashboards) {
