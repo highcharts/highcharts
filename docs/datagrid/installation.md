@@ -1,5 +1,4 @@
-DataGrid installation
-===
+# DataGrid installation
 
 ## Install via NPM
 One way to add Highcharts DataGrid to your web page is via npm script.

@@ -1,5 +1,4 @@
-Data Pool & Connectors
-======================
+# Data Pool & Connectors
 
 The data pool provides central data and data management access in a
 dashboard. It manages connectors and their tables on demand, so a dashboard component only loads data when requested.
@@ -9,8 +8,7 @@ from a source is an asynchronous process as the source is usually a web server.
 
 
 
-DataPool
---------
+## DataPool
 
 Each dashboard has one `DataPool` instance for all components. It is available
 via the `Board.dataPool` class property and can be configured with the

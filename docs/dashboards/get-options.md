@@ -1,5 +1,5 @@
-Export Dashboards to JSON
-===
+# Export Dashboards to JSON
+
 **Dashboards** allows you to convert the current state of the dashboard's options into
 JSON. Please note that the [getOptions()](https://api.highcharts.com/dashboards/#classes/Dashboards_Board.Board-1#getOptions) function does not support converting functions or events into a JSON object.
 

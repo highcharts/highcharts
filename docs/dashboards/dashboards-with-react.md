@@ -1,5 +1,4 @@
-Highcharts Dashboards with React
-===
+# Highcharts Dashboards with React
 
 To create a dashboard with React, please follow the steps below: <br>
 

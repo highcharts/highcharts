@@ -1,5 +1,4 @@
-Highcharts Dashboards with Angular
-===
+# Highcharts Dashboards with Angular
 
 To create a dashboard with Angular, please follow the steps below: <br>
 

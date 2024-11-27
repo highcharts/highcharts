@@ -1,5 +1,4 @@
-Highcharts Component
-===
+# Highcharts Component
 
 The Highcharts Component allows the end-user to define a chart in the dashboard. Charts are most often used to visualize changing data.
 

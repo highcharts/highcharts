@@ -1,5 +1,4 @@
-DataGrid with React
-===
+# DataGrid with React
 
 To create a DataGrid with React, please follow the steps below:
 

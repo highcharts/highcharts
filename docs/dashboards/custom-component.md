@@ -1,5 +1,4 @@
-Custom Dashboards components
-===
+# Custom Dashboards components
 
 ## Custom YouTube Component
 This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.

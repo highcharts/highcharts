@@ -1,5 +1,4 @@
-Highcharts Dashboards with Vue
-===
+# Highcharts Dashboards with Vue
 
 To create a dashboard with Vue, please follow the steps below: <br>
 

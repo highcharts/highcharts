@@ -1,9 +1,6 @@
-Frequently asked questions
-===
+# Frequently asked questions
 
-* * *
-How do you connect `dataPool` to the other components?
----------------------------------------------
+## How do you connect `dataPool` to the other components?
 
 First, you must create the `dataPool`, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-handling)
 
@@ -12,8 +9,8 @@ After that, you need to pass the connector to the component config, and that’s
 
 * * *
 
-How do you connect a component to a cell?
-----------------------------------
+## How do you connect a component to a cell?
+
 1. Enabled layout creator (GUI)
 To use Dashboards with a layout system and edit mode, you first have to load the `layout` module.
 The order of the imports is essential, so make sure that the `layout` module is imported after the Dashboards module.
@@ -133,14 +130,12 @@ components: [{
 }]
 ```
 
-
-
 Check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 See the next question for possible synchronization events.
 
-* * *
-What are the synchronization events available in Highcharts Dashboards?
------------------------------------------------------------------------
+
+## What are the synchronization events available in Highcharts Dashboards?
+
 Check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 The events that can be synchronized between components are:
@@ -148,9 +143,8 @@ The events that can be synchronized between components are:
 * 'extremes'
 * 'highlight'
 
-* * *
-What browsers are supported?
----------------
+## What browsers are supported?
+
 Highcharts Dashboards supports the following browsers:
 
 |  Browser |    Version    |
@@ -161,9 +155,8 @@ Highcharts Dashboards supports the following browsers:
 | Opera    | 42.0+ (2016+) |
 | Edge     | 16.0+ (2017+) |
 
-* * *
-What versions of Highcharts are supported?
----------------
+## What versions of Highcharts are supported?
+
 The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
 
 * * *
@@ -180,9 +173,8 @@ afterRender(e) {
 }
 ```
 
-* * *
-How to style the Dashboard?
------------------------------------------------------------------------
+## How to style the Dashboard?
+
 1. Enabled layout creator (GUI)
 **Dashboards** has a default theme applied to all its components.
 You need to import the default CSS stylesheet to your project so that the dashboard displays correctly. You can do it by importing the following CSS files:

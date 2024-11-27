@@ -1,5 +1,4 @@
-Style by CSS
-===
+# Style by CSS
 
 The DataGrid is rendered as an HTML table, and all table elements are styled using CSS.
 All elements have default CSS classes; you can append your custom classes to each element. This allows you to style the table as per your specific styling needs.

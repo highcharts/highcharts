@@ -1,5 +1,4 @@
-DataGrid Component
-===
+# DataGrid Component
 
 The DataGrid Component can be placed inside a dashboard's cell to allow users to visualize the data in the editable table.
 
