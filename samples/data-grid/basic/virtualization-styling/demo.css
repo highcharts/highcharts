@@ -19,8 +19,7 @@
     border: 1px solid red;
 }
 
-#container,
-#container-noheight {
+#container {
     height: 500px;
 }
 
