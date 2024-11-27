@@ -93,8 +93,6 @@
 
 .highcharts-datagrid-container {
     display: block;
-    min-height: 200px;
-    font-family: 1em;
     overflow: hidden;
 }
 
@@ -106,6 +104,7 @@
 .highcharts-datagrid-table {
     width: 100%;
     table-layout: fixed;
+    border-collapse: separate;
     border-spacing: 0;
 }
 
