@@ -26,6 +26,9 @@ Let's look at a basic example that produces the illustration above:
         },
         {
             format: "Fruit data",
+            accessibility: {
+                description: "Header spanning three sub-headers"
+            },
             columns: [
                 "weight",
                 "price",
@@ -52,7 +55,7 @@ The `header[]` and `header[].columns[]` option arrays can be a mix of strings an
 Walktrough of some important elements:
 
 1. **Renaming a header cell:** The first item in the `header[]` array renames the header cell to "Fruit" instead of the default "products" from the DataTable.
-2. **Creating a new header group:** The second item doesn't have a `columnId` reference, so a new header cell called "Fruit data" is rendered.
+2. **Creating a new header group:** The second item doesn't have a `columnId` reference, so a new header cell called "Fruit data" is rendered. An `aria-description` attribute is added for improved accessibility.
 3. **Defining grouped columns:** In `header[].columns[]`, we define which columns are rendered below the "Fruit data" header cell. These will then be grouped headers.
 4. **Inherit column configuration:** "weight" and "price" are string variants of the reference to the key in DataTable. However, since "weight" is also referenced from the root `columns[]` option array that configuration takes precedence over the default key from the DataTable.
 5. **Exluding columns**: The "in_stock" column from the DataTable is not referenced in `header[]`, so it is not rendered. This means that `header[]` can be used to exclude columns from the original DataTable.
