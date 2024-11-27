@@ -1,4 +1,4 @@
-# Understanding DataGrid
+# Understanding Highcharts DataGrid
 At its core the DataGrid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
 
 ![table](ill_table.png)
@@ -92,8 +92,24 @@ In addition the `header[]` option can be used to change order of headers and gro
 
 You can find more information about `header[]` in our [Header article](https://www.highcharts.com/docs/datagrid/header).
 
+## accessibility
+```js
+{
+  accessibility: {
+    enabled: false,
+    ...
+  }
+}
+```
+The `accessibility` option object can be used to enable/disable accessibility features such as ARIA attributes and ARIA live announcements.
+
+For more information on accessibility options read our documentation article on [accessibility](https://www.highcharts.com/docs/datagrid/accessibility).
+
+## lang
+To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts DataGrid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/datagrid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
+
 ## rendering
-The `rendering` option object can be used to configure options related to performance and the rendering of the DataGrid. E.g. [rendering.rows](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) represents the rows in the DataGrid.
+The `rendering` option object can be used to configure options related to performance and the rendering of the datagrid. E.g. [rendering.rows](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) represents the rows in the datagrid.
 
 ```js
 {
