@@ -106,13 +106,11 @@
 .highcharts-datagrid-table {
     width: 100%;
     table-layout: fixed;
-    border-collapse: collapse;
     border-spacing: 0;
-    overflow: hidden;
 }
 
 /* Table Header */
-.highcharts-datagrid-table thead {
+.highcharts-datagrid-table.highcharts-datagrid-virtualization thead {
     display: block;
 }
 
@@ -122,6 +120,7 @@
 
 .highcharts-datagrid-table thead th {
     position: relative;
+    border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
@@ -152,6 +151,17 @@
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.highcharts-datagrid-resizer-content thead,
+.highcharts-datagrid-resizer-content tbody {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+}
+
+.highcharts-datagrid-resizer-content tr {
+    width: 100%;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer {
@@ -219,7 +229,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Table body */
-.highcharts-datagrid-table tbody {
+.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
     height: 100%;
     min-height: 100%;
@@ -293,7 +303,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 /* Table header */
 .highcharts-datagrid-table thead {
     background-color: var(--highcharts-neutral-color-5);
-    border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-datagrid-table thead tr {

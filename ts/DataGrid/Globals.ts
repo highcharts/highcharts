@@ -89,6 +89,7 @@ namespace Globals {
         columnSortableIcon: classNamePrefix + 'column-sortable-icon',
         columnSortedAsc: classNamePrefix + 'column-sorted-asc',
         columnSortedDesc: classNamePrefix + 'column-sorted-desc',
+        resizerWrapper: classNamePrefix + 'resizer-content',
         resizerHandles: classNamePrefix + 'column-resizer',
         resizedColumn: classNamePrefix + 'column-resized',
         creditsContainer: classNamePrefix + 'credits-container',

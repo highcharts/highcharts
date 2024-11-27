@@ -271,21 +271,29 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
+     *
+     * @param reflowColumns
+     * Force reflow columns and recalculate widths.
+     *
      */
-    public reflow(): void {
+    public reflow(reflowColumns: boolean = false): void {
         const tableEl = this.dataGrid.tableElement;
+        const isVirtualization =
+            this.dataGrid.options?.rendering?.rows?.virtualization;
         const borderWidth = tableEl ? (
             (getStyle(tableEl, 'border-top-width', true) || 0) +
             (getStyle(tableEl, 'border-bottom-width', true) || 0)
         ) : 0;
 
-        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            (this.dataGrid.container?.clientHeight || 0) -
-            (this.theadElement?.offsetHeight || 0) -
-            (this.captionElement?.offsetHeight || 0) -
-            (this.dataGrid.credits?.getHeight() || 0) -
-            borderWidth
-        }px`;
+        if (isVirtualization) {
+            this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
+                (this.dataGrid.container?.clientHeight || 0) -
+                (this.theadElement?.offsetHeight || 0) -
+                (this.captionElement?.offsetHeight || 0) -
+                (this.dataGrid.credits?.getHeight() || 0) -
+                borderWidth
+            }px`;
+        }
 
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
@@ -296,11 +304,13 @@ class Table {
             this.rowsWidth = rowsWidth;
         }
 
-        // Reflow the head
-        this.header?.reflow();
+        if (isVirtualization || reflowColumns) {
+            // Reflow the head
+            this.header?.reflow();
 
-        // Reflow rows content dimensions
-        this.rowsVirtualizer.reflowRows();
+            // Reflow rows content dimensions
+            this.rowsVirtualizer.reflowRows();
+        }
     }
 
     /**
@@ -320,7 +330,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow();
+        this.reflow(true);
     };
 
     /**

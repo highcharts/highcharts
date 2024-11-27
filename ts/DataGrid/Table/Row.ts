@@ -113,7 +113,9 @@ abstract class Row {
 
         this.rendered = true;
 
-        this.reflow();
+        if (this.viewport.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.reflow();
+        }
     }
 
     /**
