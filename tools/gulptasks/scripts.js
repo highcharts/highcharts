@@ -135,6 +135,7 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
+    const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
 
@@ -160,6 +161,7 @@ function task() {
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
+            fsLib.deleteDirectory('code', true);
 
             processLib.isRunning('scripts_incomplete', true, true);
 
