@@ -187,6 +187,7 @@ class Table {
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
+
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -203,7 +204,11 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        if (dgOptions?.rendering?.rows?.virtualization) {
+            this.tbodyElement.addEventListener('scroll', this.onScroll);
+            tableElement.classList.add(Globals.classNames.virtualization);
+        }
 
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
@@ -266,9 +271,15 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
+     *
+     * @param reflowColumns
+     * Force reflow columns and recalculate widths.
+     *
      */
-    public reflow(): void {
+    public reflow(reflowColumns: boolean = false): void {
         const tableEl = this.dataGrid.tableElement;
+        const isVirtualization =
+            this.dataGrid.options?.rendering?.rows?.virtualization;
         const borderWidth = tableEl ? (
             parseFloat(
                 '' + (getStyle(tableEl, 'border-top-width', false) || 0)
@@ -278,13 +289,15 @@ class Table {
             )
         ) : 0;
 
-        this.tbodyElement.style.height = `${
-            (this.dataGrid.container?.clientHeight || 0) -
-            (this.theadElement?.offsetHeight || 0) -
-            (this.captionElement?.offsetHeight || 0) -
-            (this.dataGrid.credits?.getHeight() || 0) -
-            borderWidth
-        }px`;
+        if (isVirtualization) {
+            this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
+                (this.dataGrid.container?.clientHeight || 0) -
+                (this.theadElement?.offsetHeight || 0) -
+                (this.captionElement?.offsetHeight || 0) -
+                (this.dataGrid.credits?.getHeight() || 0) -
+                borderWidth
+            }px`;
+        }
 
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
@@ -295,11 +308,13 @@ class Table {
             this.rowsWidth = rowsWidth;
         }
 
-        // Reflow the head
-        this.header?.reflow();
+        if (isVirtualization || reflowColumns) {
+            // Reflow the head
+            this.header?.reflow();
 
-        // Reflow rows content dimensions
-        this.rowsVirtualizer.reflowRows();
+            // Reflow rows content dimensions
+            this.rowsVirtualizer.reflowRows();
+        }
     }
 
     /**
@@ -319,7 +334,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow();
+        this.reflow(true);
     };
 
     /**
@@ -339,8 +354,22 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop =
-            index * this.rowsVirtualizer.defaultRowHeight;
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.scrollTop =
+                index * this.rowsVirtualizer.defaultRowHeight;
+            return;
+        }
+
+        const rowClass = '.' + Globals.classNames.rowElement;
+        const firstRowTop = this.tbodyElement
+            .querySelectorAll(rowClass)[0]
+            .getBoundingClientRect().top;
+
+        this.tbodyElement.scrollTop = (
+            this.tbodyElement
+                .querySelectorAll(rowClass)[index]
+                .getBoundingClientRect().top
+        ) - firstRowTop;
     }
 
     /**
@@ -400,7 +429,9 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        }
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 

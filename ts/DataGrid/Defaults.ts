@@ -70,7 +70,8 @@ namespace Defaults {
             },
             rows: {
                 bufferSize: 10,
-                strictHeights: false
+                strictHeights: false,
+                virtualization: true
             },
             header: {
                 enabled: true
