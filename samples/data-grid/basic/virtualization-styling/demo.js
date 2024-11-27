@@ -101,7 +101,7 @@ radioButtons.forEach(el => {
             }
         });
 
-        dashboardDataGrid.mountedComponents[1].update({
+        dashboardDataGrid.mountedComponents[1].component.update({
             dataGridOptions: {
                 rendering: {
                     rows: {
