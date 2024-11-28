@@ -171,7 +171,7 @@ class Accessibility {
         const announcementsLang = options?.lang
             ?.accessibility?.sorting?.announcements;
 
-        if (!options?.accessibility?.announcements.sorting) {
+        if (!options?.accessibility?.announcements?.sorting) {
             return;
         }
 
@@ -206,7 +206,7 @@ class Accessibility {
         const announcementsLang = options?.lang
             ?.accessibility?.cellEditing?.announcements;
 
-        if (!options?.accessibility?.announcements.cellEditing) {
+        if (!options?.accessibility?.announcements?.cellEditing) {
             return;
         }
 
