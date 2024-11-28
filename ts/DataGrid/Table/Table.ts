@@ -151,7 +151,6 @@ class Table {
      */
     public focusCursor?: [number, number];
 
-
     /* *
     *
     *  Constructor
@@ -278,12 +277,8 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
-     *
-     * @param reflowColumns
-     * Force reflow columns and recalculate widths.
-     *
      */
-    public reflow(reflowColumns: boolean = false): void {
+    public reflow(): void {
         const tableEl = this.dataGrid.tableElement;
         const isVirtualization =
             this.dataGrid.options?.rendering?.rows?.virtualization;
@@ -316,7 +311,11 @@ class Table {
             this.rowsWidth = rowsWidth;
         }
 
-        if (isVirtualization || reflowColumns) {
+        if (
+            isVirtualization ||
+            this.dataGrid.initContainerHeight ||
+            this.columnsResizer?.resizedColumns
+        ) {
             // Reflow the head
             this.header?.reflow();
 
@@ -342,7 +341,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow(true);
+        this.reflow();
     };
 
     /**

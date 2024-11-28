@@ -305,6 +305,7 @@ class DataGrid {
             'height',
             true
         ) || 0;
+
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;
         this.contentWrapper = makeHTMLElement('div', {

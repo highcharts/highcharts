@@ -83,6 +83,10 @@ class ColumnsResizer {
      */
     private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
 
+    /**
+     * Determinates that columns are resized.
+     */
+    public resizedColumns?: boolean;
 
     /* *
      *
@@ -220,7 +224,7 @@ class ColumnsResizer {
             this.fixedDistributionResize(diff);
         }
 
-        vp.reflow(true);
+        vp.reflow();
 
         if (vp.dataGrid.options?.rendering?.rows?.virtualization) {
             vp.rowsVirtualizer.adjustRowHeights();
@@ -267,7 +271,7 @@ class ColumnsResizer {
                     Globals.classNames.resizerWrapper
                 );
                 // Apply widths before resizing
-                this.viewport.reflow(true);
+                this.viewport.reflow();
             }
 
             this.dragStartX = e.pageX;
@@ -280,6 +284,8 @@ class ColumnsResizer {
             column.header?.htmlElement.classList.add(
                 Globals.classNames.resizedColumn
             );
+
+            this.resizedColumns = true;
         };
 
         this.handles.push([handle, onHandleMouseDown]);
