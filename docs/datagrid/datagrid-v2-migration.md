@@ -1,9 +1,9 @@
-# Upgrade DataGrid from v2.x.x to a newer versions
-The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means that API options and the definition of styles or data source differ from the previous version. We outline all of the changes below.
+# Upgrade DataGrid from v2.x.x to a newer version
+The core of DataGrid has been changed in version 3.0. We have improved the performance and flexibility while adding accessibility support. This means API options and the definition of styles or data sources differ from the previous version. We outline all of the changes below.
 
 ## Data source
 DataGrid v3.0 and higher allows you to define the data source in the `dataTable` option without creating a new instance of the `DataTable` class.  
-The grid will automatically create a new instance of the `DataTable` class if you do not provide your own instance.
+If you do not provide your instance, the datagrid will automatically create a new instance of the `DataTable` class.
 
 ```js
 const grid = DataGrid.dataGrid('container', {
@@ -14,12 +14,12 @@ const grid = DataGrid.dataGrid('container', {
 ```
 
 ## API changes
-Some API options have been renamed or removed, make sure to check the [API reference](https://api.highcharts.com/dashboards/) for the full list of options.
+Some API options have been renamed or removed. For the full list, make sure to check the [API reference](https://api.highcharts.com/dashboards/).
 
 ## Styling
 All styling is now done via CSS instead of the built-in API options.
 
-Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the following example shows how to adjust the height for the rows in `thead` and `tbody` respectively, and also how to override height in selected rows:
+Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the following example shows how to adjust the height for the rows in `thead` and `tbody`, respectively, and also how to override height in selected rows:
 
 ```css
 .highcharts-datagrid-table thead tr {
@@ -34,7 +34,7 @@ Since v3.0, we have removed the `cellHeight` option from the DataGrid, and the f
     height: 150px;
 }
 ```
-We recommend reading our [Style by CSS article](https://www.highcharts.com/docs/datagrid/style-by-css) for information on more CSS naming changes and tips on how to style the DataGrid.
+We recommend reading our [Style by CSS article](https://www.highcharts.com/docs/datagrid/style-by-css) for information on more CSS naming changes and tips on styling the DataGrid.
 
 ## Example of the new DataGrid
 
