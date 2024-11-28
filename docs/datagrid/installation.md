@@ -33,4 +33,4 @@ The CSS is not included in the library by default, but you can import it as belo
 
 ### Get started
 
-Now you are ready to use DataGrid. Check out [Your first DataGrid](/docs/datagrid/your-first-datagrid) to get started.
+Now you are ready to use DataGrid. Check out [Your first DataGrid](your-first-datagrid) to get started.
