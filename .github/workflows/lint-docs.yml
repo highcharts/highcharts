@@ -36,4 +36,4 @@ jobs:
         run: npm i
 
       - name: Check spelling
-        run: npx cspell -c ./tools/cspell/cspell.json "./docs/**"
+        run: npm run lint-docs
