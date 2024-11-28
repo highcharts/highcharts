@@ -280,10 +280,6 @@ class Table {
         const isVirtualization =
             this.dataGrid.options?.rendering?.rows?.virtualization;
 
-        if (isVirtualization) {
-            this.adjustHeight();
-        }
-
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
             let rowsWidth = 0;
@@ -300,33 +296,6 @@ class Table {
             // Reflow rows content dimensions
             this.rowsVirtualizer.reflowRows();
         }
-    }
-
-    /**
-     * Adjusts the height of the table body, therefore the height of the table.
-     */
-    public adjustHeight(): void {
-        const tableEl = this.dataGrid.tableElement;
-        if (!tableEl) {
-            return;
-        }
-
-        const bordersHeight = tableEl ? (
-            parseFloat(
-                '' + (getStyle(tableEl, 'border-top-width', false) || 0)
-            ) +
-            parseFloat(
-                '' + (getStyle(tableEl, 'border-bottom-width', false) || 0)
-            )
-        ) : 0;
-
-        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            (this.dataGrid.container?.clientHeight || 0) -
-            (this.theadElement?.offsetHeight || 0) -
-            (this.captionElement?.offsetHeight || 0) -
-            (this.dataGrid.credits?.getHeight() || 0) -
-            bordersHeight
-        }px`;
     }
 
     /**
