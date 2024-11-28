@@ -40,6 +40,7 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint-docs": "npx cspell -c ./tools/cspell/cspell.json \"docs/**/*.md\"",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
