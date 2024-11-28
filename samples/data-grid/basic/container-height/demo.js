@@ -7,18 +7,18 @@ DataGrid.dataGrid(container, {
     dataTable: {
         columns: {
             no: Array.from({ length: 400 }, (_, i) => i + 1),
-            product: [...Array.from({ length: 100 }, () =>
+            product: Array.from({ length: 100 }, () =>
                 ['Apples', 'Pears', 'Plums', 'Bananas']
-            )].flat(),
-            weight: [...Array.from({ length: 100 }, () =>
+            ).flat(),
+            weight: Array.from({ length: 100 }, () =>
                 [100, 40, 0.5, 200]
-            )].flat(),
-            price: [...Array.from({ length: 100 }, () =>
+            ).flat(),
+            price: Array.from({ length: 100 }, () =>
                 [1.5, 2.53, 5, 4.5]
-            )].flat(),
-            metaData: [...Array.from({ length: 100 }, () =>
+            ).flat(),
+            metaData: Array.from({ length: 100 }, () =>
                 ['a', 'b', 'c', 'd']
-            )].flat()
+            ).flat()
         }
     }
 });
