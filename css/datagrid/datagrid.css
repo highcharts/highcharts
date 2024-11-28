@@ -198,6 +198,7 @@
 
 .highcharts-datagrid-resizer-content thead,
 .highcharts-datagrid-resizer-content tbody {
+    display: block;
     margin-left: calc(var(--border-spacing) * -1);
 }
 

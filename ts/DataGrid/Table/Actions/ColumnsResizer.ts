@@ -266,6 +266,8 @@ class ColumnsResizer {
         const onHandleMouseDown = (e: MouseEvent): void => {
             const vp = column.viewport;
 
+            this.resizedColumns = true;
+
             if (!vp.dataGrid.options?.rendering?.rows?.virtualization) {
                 vp.dataGrid.contentWrapper?.classList.add(
                     Globals.classNames.resizerWrapper
@@ -284,8 +286,6 @@ class ColumnsResizer {
             column.header?.htmlElement.classList.add(
                 Globals.classNames.resizedColumn
             );
-
-            this.resizedColumns = true;
         };
 
         this.handles.push([handle, onHandleMouseDown]);
