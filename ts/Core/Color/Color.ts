@@ -21,6 +21,9 @@ import type { ColorLike, ColorType } from './ColorType';
 import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
+const {
+    win
+} = H;
 import U from '../Utilities.js';
 const {
     isNumber,
@@ -30,9 +33,9 @@ const {
     defined
 } = U;
 
-const supportsColorMix = CSS.supports(
+const supportsColorMix = win.CSS?.supports(
     'color',
-    'color-mix(in srgb, red, blue 50%)'
+    'color-mix(in srgb,red,blue 9%)'
 );
 
 /* *
@@ -41,7 +44,10 @@ const supportsColorMix = CSS.supports(
  *
  * */
 const colorMix = (color1: string, color2: string, weight: number): string =>
-    `color-mix(in srgb, ${color1}, ${color2} ${weight * 100}%)`;
+    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+
+const isStringColor = (color: ColorType): color is ColorString =>
+    isString(color) && color !== 'none' && color !== '';
 
 /* *
  *
@@ -303,7 +309,7 @@ class Color implements ColorLike {
                         rgba[i] = 255;
                     }
                 }
-            } else if (supportsColorMix && isString(this.input)) {
+            } else if (supportsColorMix && isStringColor(this.input)) {
                 this.output = colorMix(
                     this.input,
                     alpha > 0 ? 'white' : 'black',
@@ -354,8 +360,8 @@ class Color implements ColorLike {
         if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
             if (
                 supportsColorMix &&
-                isString(this.input) &&
-                isString(to.input)
+                isStringColor(this.input) &&
+                isStringColor(to.input)
             ) {
                 return colorMix(this.input, to.input, pos);
             }
