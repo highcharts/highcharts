@@ -137,12 +137,6 @@ declare module './SeriesLike' {
     }
 }
 
-declare module './SeriesOptions' {
-    interface SeriesOptions {
-        nullInteraction?: boolean;
-    }
-}
-
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;

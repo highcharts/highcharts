@@ -553,6 +553,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Whether or not data-points with the value of `null` should be interactive.
+     * When this is set to `true`, tooltips may highlight these points, and this
+     * option also enables keyboard navigation for such points. Format options
+     * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter)
+     *
+     * @sample {highcharts} highcharts/series/null-interaction/
+     *         Chart with interactive `null` points
+     *
+     * @type      {boolean|undefined}
+     * @product   highcharts highstock
+     * @apioption plotOptions.line.nullInteraction
+     */
+
+    /**
      * Same as
      * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
      * but for an individual series. Overrides the chart wide configuration.
