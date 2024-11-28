@@ -124,6 +124,7 @@ class HeaderCell extends Cell {
         const column = this.column;
         const options = merge(column.options, this.options); // ??
         const headerCellOptions = options.header || {};
+        const isSortableData = options.sorting?.sortable && column.data;
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
@@ -137,12 +138,16 @@ class HeaderCell extends Cell {
         this.row.htmlElement.appendChild(this.htmlElement);
 
         this.headerContent = makeHTMLElement(
-            options.sorting?.sortable && column.data ? 'button' : 'span',
+            isSortableData ? 'button' : 'span',
             {
                 className: Globals.classNames.headerCellContent
             },
             this.htmlElement
         );
+
+        if (isSortableData) {
+            this.headerContent.setAttribute('type', 'button');
+        }
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
