@@ -6,7 +6,7 @@ Navigator Component
 ## Overview
 
 The `NavigatorComponent` is part of the **Dashboards** plugins. It utilizes the
-navigator of [Highcharts Stock](https://www.highcharts.com/docs/stock/navigator) to provide an overview over the values of a table
+navigator of [Highcharts Stock](https://www.highcharts.com/docs/stock/navigator) to provide an overview of the values of a table
 column. Users can set a range in the Navigator, which can be synchronized as
 extremes with other Dashboard components for data inspection.
 
@@ -16,7 +16,7 @@ extremes with other Dashboard components for data inspection.
 
 A typical use case for the synchronization of extremes can be seen in the
 [climate demo](https://highcharts.com/demo/dashboards/climate).
-In the demo the NavigatorComponent shows the timeline of the selected climate
+In the demo, the NavigatorComponent shows the timeline of the selected climate
 indicator for the active city.
 
 ``` JavaScript
@@ -51,14 +51,14 @@ The Navigator Component can be synced with other components in Dashboards. Two s
 
 ## Crossfilter
 
-<!-- JH: Needs to be clarified and tested -->
-Alternatively to the synchronization of extremes the `NavigatorComponent` can
-synchronize extremes in a shared `crossfilter`. The crossfilter is managed by a
-a `RangeModifier` which sources the table of a connector. All components have to
+
+Alternatively, the `NavigatorComponent` can
+synchronize extremes in a shared `crossfilter`. The crossfilter is managed by 
+a `RangeModifier`, which sources the connector's data table. All components must
 share the same connector and table to make the `crossfilter` work.
 
 For `crossfilter` sync, the `affectNavigators` option must be enabled, which
-causes, in addition to changing the content of the table, also the content of
+causes, in addition to changing the content of the table, the content of
 other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
 
 Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
