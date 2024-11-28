@@ -145,7 +145,7 @@ const defaultOptions: DefaultOptions = {
          * @sample highcharts/members/highcharts-numberformat
          *         Arabic locale with digits and dates         *
          *
-         * @since next
+         * @since 12.0.0
          * @type {string|Array<string>}
          */
         locale: void 0,
@@ -703,7 +703,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/title/align-auto/
          *         Downscaling demonstrated
          *
-         * @since next
+         * @since 12.0.0
          */
         minScale: 0.67
 

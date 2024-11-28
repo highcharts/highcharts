@@ -29,7 +29,8 @@ async function scriptsWebpack() {
     LogLib.message('Packing code...');
 
     const configs = {
-        Highcharts: 'highcharts.webpack.mjs'
+        Highcharts: 'highcharts.webpack.mjs',
+        HighchartsES5: 'highcharts-es5.webpack.mjs'
     };
 
     let config;

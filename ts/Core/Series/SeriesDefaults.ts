@@ -2561,7 +2561,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   undefined
-     * @since     next
+     * @since 12.0.0
      * @product   highcharts highstock highmaps
      * @apioption plotOptions.series.legendSymbolColor
      */
