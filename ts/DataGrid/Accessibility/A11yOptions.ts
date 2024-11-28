@@ -42,7 +42,10 @@ namespace A11yOptions {
          */
         enabled?: boolean;
 
-        announcements: {
+        /**
+         * VoiceOver announcer options for DataGrid actions.
+         */
+        announcements?: {
             /**
              * Enable accessibility announcements for the cell editing.
              *
