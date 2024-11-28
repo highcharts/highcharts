@@ -125,7 +125,6 @@ declare module './SeriesLike' {
 
 declare module './SeriesOptions' {
     interface SeriesOptions {
-        nullInteraction?: boolean;
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }

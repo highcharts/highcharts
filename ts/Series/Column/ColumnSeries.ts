@@ -472,6 +472,9 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart,
             options = series.options,
+            // The value of 8 gives the null point's empty graphic similar
+            // dimensions to a point with the value of 0. This is important for
+            // predictable hovering and appropriate focus borders.
             nullMinSpace = options.nullInteraction && 8 || 0,
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,

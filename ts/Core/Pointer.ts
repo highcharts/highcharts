@@ -62,11 +62,6 @@ const {
  *  Declarations
  *
  * */
-declare module './Series/SeriesOptions'{
-    interface SeriesOptions {
-        nullInteraction?: boolean;
-    }
-}
 declare module './Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;
