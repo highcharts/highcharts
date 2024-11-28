@@ -40,7 +40,8 @@ namespace Defaults {
      */
     export const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
-            enabled: true
+            enabled: true,
+            highContrastMode: 'auto'
         },
         lang: {
             accessibility: {
