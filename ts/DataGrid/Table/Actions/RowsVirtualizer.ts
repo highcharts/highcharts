@@ -313,12 +313,11 @@ class RowsVirtualizer {
         vp.rows = rows;
 
         for (let i = from; i <= to; ++i) {
-            const row = rows[i - (rows[0]?.id || 0)];
-            let newRow: TableRow;
+            const row = rows[i - (rows[0]?.index || 0)];
 
             // Recreate row when it is destroyed and it is in the range.
             if (!row) {
-                newRow = new TableRow(vp, i);
+                const newRow = new TableRow(vp, i);
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
