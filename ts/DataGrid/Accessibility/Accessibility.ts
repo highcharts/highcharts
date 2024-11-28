@@ -167,10 +167,11 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const announcements = this.dataGrid.options?.lang
+        const { options } = this.dataGrid;
+        const announcementsLang = options?.lang
             ?.accessibility?.sorting?.announcements;
 
-        if (!announcements?.enabled) {
+        if (!options?.accessibility?.announcements.sorting) {
             return;
         }
 
@@ -178,13 +179,13 @@ class Accessibility {
 
         switch (order) {
             case 'asc':
-                msg = announcements?.ascending;
+                msg = announcementsLang?.ascending;
                 break;
             case 'desc':
-                msg = announcements?.descending;
+                msg = announcementsLang?.descending;
                 break;
             default:
-                msg = announcements?.none;
+                msg = announcementsLang?.none;
         }
 
         if (!msg) {
@@ -201,14 +202,15 @@ class Accessibility {
      * The type of the edit message.
      */
     public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const messages = this.dataGrid.options?.lang
+        const { options } = this.dataGrid;
+        const announcementsLang = options?.lang
             ?.accessibility?.cellEditing?.announcements;
 
-        if (!messages?.enabled) {
+        if (!options?.accessibility?.announcements.cellEditing) {
             return;
         }
 
-        const msg = messages?.[msgType];
+        const msg = announcementsLang?.[msgType];
         if (!msg) {
             return;
         }
