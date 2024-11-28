@@ -37,6 +37,14 @@ const supportsColorMix = CSS.supports(
 
 /* *
  *
+ *  Helpers
+ *
+ * */
+const colorMix = (color1: string, color2: string, weight: number): string =>
+    `color-mix(in srgb, ${color1}, ${color2} ${weight * 100}%)`;
+
+/* *
+ *
  *  Class
  *
  * */
@@ -295,8 +303,12 @@ class Color implements ColorLike {
                         rgba[i] = 255;
                     }
                 }
-            } else if (supportsColorMix) {
-                this.output = `color-mix(in srgb, ${this.input}, white ${alpha * 100}%)`;
+            } else if (supportsColorMix && isString(this.input)) {
+                this.output = colorMix(
+                    this.input,
+                    alpha > 0 ? 'white' : 'black',
+                    Math.abs(alpha)
+                );
             }
         }
 
@@ -345,7 +357,7 @@ class Color implements ColorLike {
                 isString(this.input) &&
                 isString(to.input)
             ) {
-                return `color-mix(in srgb, ${this.input}, ${to.input} ${pos * 100}%)`;
+                return colorMix(this.input, to.input, pos);
             }
             return to.input || 'none';
         }
