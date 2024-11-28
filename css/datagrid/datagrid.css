@@ -35,7 +35,7 @@
     --row-border: 1px;
     --inset: 1px; /* We recommend inset for hightlight borders to avoid content shifting. */
     --padding: 8px;
-    --border-spacing: 10px; /* This is the big one, allowing for more "decorative" tables. */
+    --border-spacing: 0px; /* This is the big one, allowing for more "decorative" tables. */
     --cell-border-radius: 0px; /* Best suited if border-spacing > 0. We need for <table> as well. */
 }
 
@@ -136,10 +136,6 @@
 }
 
 /* Table Header */
-.highcharts-datagrid-table.highcharts-datagrid-virtualization thead {
-    display: block;
-}
-
 .highcharts-datagrid-table thead tr {
     height: 32px;
 }
@@ -211,7 +207,6 @@
 .highcharts-datagrid-resizer-content thead,
 .highcharts-datagrid-resizer-content tbody {
     display: block;
-    overflow-y: auto;
     margin-left: calc(var(--border-spacing) * -1);
 }
 
@@ -286,6 +281,16 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Table body */
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody,
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content thead {
+    display: block;
+    position: relative;   
+}
+
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody {
+    overflow-y: auto;
+}
+
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
     min-height: 20px;
