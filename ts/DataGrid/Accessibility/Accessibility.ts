@@ -234,6 +234,19 @@ class Accessibility {
         thElement?.setAttribute('aria-sort', state);
     }
 
+    /**
+     * Set the row index attribute for the row element.
+     *
+     * @param el
+     * The row element to set the index to.
+     *
+     * @param idx
+     * The index of the row in the data table.
+     */
+    public setRowIndex(el: HTMLElement, idx: number): void {
+        el.setAttribute('aria-rowindex', idx);
+    }
+
 }
 
 
