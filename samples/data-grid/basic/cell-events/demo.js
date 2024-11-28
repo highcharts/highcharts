@@ -1,3 +1,5 @@
+const msg = document.getElementById('msg');
+
 DataGrid.dataGrid('container', {
     dataTable: {
         columns: {
@@ -9,19 +11,71 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
-    caption: {
-        text: 'Open the console to see the events being logged.'
-    },
+    columns: [{
+        id: 'product',
+        header: {
+            format: 'Product (editable)'
+        },
+        cells: {
+            editable: true
+        }
+    }, {
+        id: 'metaData',
+        header: {
+            format: 'MetaData (unsortable)'
+        },
+        sorting: {
+            sortable: false
+        }
+    }],
     events: {
         cell: {
+            afterEdit: function () {
+                msg.innerText = `Edited a cell in the ${this.row.index} row` +
+                    ` and the '${this.column.id}' column.`;
+            },
             click: function () {
-                console.log('Cell click event', this);
+                msg.innerText = `Clicked on a cell with value '${this.value}'` +
+                    `, in the column '${this.column.id}'.`;
+            },
+            dblClick: function () {
+                msg.innerText = 'Double clicked on a cell with value ' +
+                    `'${this.value}', in the column '${this.column.id}'.`;
             },
             mouseOver: function () {
-                console.log('Cell mouse over event', this);
+                msg.innerText = `Hovered a cell with value '${this.value}'` +
+                    `, in the column '${this.column.id}'.`;
             },
             mouseOut: function () {
-                console.log('Cell mouse out event', this);
+                msg.innerText = `Unhovered a cell with value '${this.value}'` +
+                    `, in the column '${this.column.id}'.`;
+            }
+        },
+        column: {
+            afterResize: function () {
+                msg.innerText = `Resized the column '${this.id}' to ` +
+                    `${Math.round(this.width * 1000) / 10}%.`;
+            },
+            afterSorting: function () {
+                const { order } =
+                    this.viewport.dataGrid.querying.sorting.currentSorting;
+
+                switch (order) {
+                case 'asc':
+                    msg.innerText += ' Sorted in ascending order.';
+                    break;
+                case 'desc':
+                    msg.innerText += ' Sorted in descending order.';
+                    break;
+                default:
+                    msg.innerText += ' Unsorted.';
+                }
+            }
+        },
+        header: {
+            click: function () {
+                msg.innerText =
+                    `Clicked the header of the column '${this.id}'.`;
             }
         }
     }

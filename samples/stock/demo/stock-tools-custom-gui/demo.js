@@ -47,7 +47,7 @@
             }
         );
 
-        // Update an annotaiton from popup
+        // Update an annotation from popup
         Highcharts.addEvent(
             document.querySelectorAll(
                 '.highcharts-popup-annotations ' +
@@ -147,6 +147,9 @@
                 }
             }
         },
+        rangeSelector: {
+            selected: 2
+        },
         yAxis: [{
             labels: {
                 align: 'left'
@@ -234,7 +237,7 @@
             }
         },
         series: [{
-            type: 'ohlc',
+            type: 'candlestick',
             id: 'aapl-ohlc',
             name: 'AAPL Stock Price',
             data: ohlc

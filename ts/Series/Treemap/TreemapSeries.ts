@@ -700,12 +700,12 @@ class TreemapSeries extends ScatterSeries {
 
             // Set dataLabel width to the width of the point shape.
             if (point.shapeArgs) {
-                (options.style as any).width = point.shapeArgs.width;
-                if (point.dataLabel) {
-                    point.dataLabel.css({
-                        width: point.shapeArgs.width + 'px'
-                    });
-                }
+                const css = {
+                    width: `${point.shapeArgs.width || 0}px`,
+                    lineClamp: Math.floor((point.shapeArgs.height || 0) / 16)
+                };
+                extend((options.style as any), css);
+                point.dataLabel?.css(css);
             }
 
             // Merge custom options with point options
@@ -1029,7 +1029,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     public init(
@@ -1675,7 +1675,7 @@ extend(TreemapSeries.prototype, {
     getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
-    pointArrayMap: ['value'],
+    pointArrayMap: ['value', 'colorValue'],
     pointClass: TreemapPoint,
     NodeClass: TreemapNode,
     trackerGroups: ['group', 'dataLabelsGroup'],

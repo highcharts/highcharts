@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Columns Resizer class.
+ *  DataGrid Columns Resizer class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -168,6 +168,8 @@ class ColumnsResizer {
             const handle = makeHTMLElement('div', {
                 className: Globals.classNames.resizerHandles
             }, cell.htmlElement);
+
+            handle.setAttribute('aria-hidden', true);
 
             vp.columnsResizer?.addHandleListeners(
                 handle, column

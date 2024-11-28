@@ -50,7 +50,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        headerFormat: '<span style="font-size: 16px"><b>{point.key}</b>' +
+        headerFormat: '<span style="font-size: 16px"><b>{point.name}</b>' +
             '</span><br>'
     }
 });

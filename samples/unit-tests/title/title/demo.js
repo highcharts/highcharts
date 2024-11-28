@@ -116,7 +116,8 @@ QUnit.test('Title alignment', function (assert) {
     chart.update({
         title: {
             align: 'center',
-            useHTML: false
+            useHTML: false,
+            minScale: 1
         }
     });
 

@@ -1,29 +1,64 @@
-DataGrid with React
-===
+# DataGrid with React
 
-To create a DataGrid with Angular please follow the steps below: <br>
+To create a DataGrid with React, please follow the steps below:
 
-1. Install the Dashboards package, that contains DataGrid
+## 1. Install the Dashboards package
+The Dashboards package contains the DataGrid.
+```bash
+npm install @highcharts/dashboards
+````
 
-    ```bash
-    npm install @highcharts/dashboards
-    ```
+## 2. Create a DataGrid React component:
 
-2. Import the Dashboards package.
+```tsx
+// DataGrid.tsx
 
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    ```
+import { useEffect, useRef } from 'react';
+import DG from '@highcharts/dashboards/datagrid';
+import '@highcharts/dashboards/css/datagrid.css';
 
-3. Create a HTML container.  
+export default function DataGrid(props: { config: DG.Options }) {
+    const { config } = props;
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    Add a div where you want to render the dashboard:
-    ```html
-    <div id="container"></div>
-    ```
+    useEffect(() => {
+        if (containerRef.current) {
+            DG.dataGrid(containerRef.current, config);
+        }
+    }, [config]);
 
-    You can refer to the element by its id or you can use the `ElementRef` to get the element.
+    return (
+        <div ref={containerRef} />
+    );
+}
+```
 
-4. Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes three arguments:
-    - `container` - the element where the DataGrid will be rendered, can be an id of the element or the direct reference to the element
-    - `options` - the options object for the DataGrid
+## 3. Use the component in your application:
+```tsx
+// App.tsx
+
+import DataGrid from "./components/DataGrid";
+
+function App() {
+
+    const config: DataGrid.Options = {
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+            }
+        }
+    }
+
+    return (
+        <div className="App">
+            <DataGrid config={config} />
+        </div>
+    );
+}
+
+export default App;
+```
+
+See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-react-ts?file=src%2FApp.tsx,src%2Fcomponents%2FDataGrid.tsx).

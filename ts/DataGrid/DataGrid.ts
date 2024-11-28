@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -26,15 +26,16 @@ import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './O
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Column from './Table/Column';
 
+import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Credits from './Credits.js';
-import DataGridDefaultOptions from './DefaultOptions.js';
-import Table from './Table/Table.js';
+import Defaults from './Defaults.js';
 import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
-import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
+import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
+import QueryingController from './Querying/QueryingController.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
@@ -127,15 +128,14 @@ class DataGrid {
     * */
 
     /**
-     * Default options for all DataGrid instances.
-     * @internal
-     */
-    public static readonly defaultOptions = DataGridDefaultOptions;
-
-    /**
      * An array containing the current DataGrid objects in the page.
      */
     public static readonly dataGrids: Array<(DataGrid|undefined)> = [];
+
+    /**
+     * The accessibility controller.
+     */
+    public accessibility?: Accessibility;
 
     /**
      * The user options declared for the columns as an object of column ID to
@@ -244,6 +244,7 @@ class DataGrid {
         this.querying = new QueryingController(this);
 
         this.initContainers(renderTo);
+        this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
         this.querying.loadOptions();
@@ -251,6 +252,7 @@ class DataGrid {
             this.renderViewport();
             afterLoadCallback?.(this);
         });
+
         DataGrid.dataGrids.push(this);
     }
 
@@ -260,6 +262,18 @@ class DataGrid {
      *  Methods
      *
      * */
+
+    /**
+     * Initializes the accessibility controller.
+     */
+    private initAccessibility(): void {
+        if (!this.options?.accessibility?.enabled) {
+            return;
+        }
+
+        // Can be moved to a separate module in the future (if needed).
+        this.accessibility = new Accessibility(this);
+    }
 
     /**
      * Initializes the container of the data grid.
@@ -319,7 +333,7 @@ class DataGrid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? DataGrid.defaultOptions,
+            this.options ?? Defaults.defaultOptions,
             this.userOptions
         );
 
@@ -625,7 +639,7 @@ class DataGrid {
     private renderNoData(): void {
         makeHTMLElement('div', {
             className: Globals.classNames.noData,
-            innerText: 'No data to display'
+            innerText: this.options?.lang?.noData
         }, this.contentWrapper);
     }
 

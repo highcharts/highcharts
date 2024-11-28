@@ -53,6 +53,11 @@ export type PlotOptionsOf<T extends Series = Series> = (
     Omit<T['options'], NonPlotOptions>
 );
 
+export type TypedArray = (
+  Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|
+  Uint32Array|Float32Array|Float64Array
+);
+
 export interface SeriesAfterAnimateEvent {
     target: Series;
     type: 'afterAnimate';
@@ -150,6 +155,7 @@ export interface SeriesOptions {
     zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
+    legendSymbolColor?: ColorType;
 }
 
 export interface SeriesPointOptions {

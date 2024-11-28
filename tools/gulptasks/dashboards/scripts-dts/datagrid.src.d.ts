@@ -4,7 +4,9 @@
  *
  *!*/
 
+import DataGrid from "./es-modules/DataGrid/DataGrid";
 import Globals from "./es-modules/DataGrid/Globals";
+import Defaults from "./es-modules/DataGrid/Defaults";
 
 export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
 export { default as Column } from './es-modules/DataGrid/Table/Column';
@@ -20,6 +22,10 @@ export { default as DataModifier } from "./es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from "./es-modules/Data/DataPool";
 export { default as DataTable } from "./es-modules/Data/DataTable";
 
+export const dataGrid: typeof DataGrid.dataGrid;
+export const dataGrids: typeof DataGrid.dataGrids;
+export const defaultOptions: typeof Defaults.defaultOptions;
+export const setOptions: typeof Defaults.setOptions;
 export const win: typeof Globals.win;
 
 export as namespace DataGrid;

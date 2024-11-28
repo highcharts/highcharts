@@ -42,6 +42,7 @@ const {
     defined,
     extend,
     fireEvent,
+    getAlignFactor,
     isArray,
     isString,
     merge,
@@ -185,6 +186,7 @@ namespace DataLabel {
     }
 
     export interface LabelConnectorPositionObject {
+        angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
@@ -305,15 +307,7 @@ namespace DataLabel {
         const pos = point.pos();
         if (visible && pos) {
             const bBox = dataLabel.getBBox(),
-                unrotatedbBox = dataLabel.getBBox(void 0, 0),
-                alignFactor = ({
-                    'right': 1,
-                    'center': 0.5
-                } as Record<string, number>)[options.align || 0] || 0,
-                verticalAlignFactor = ({
-                    'bottom': 1,
-                    'middle': 0.5
-                } as Record<string, number>)[options.verticalAlign || 0] || 0;
+                unrotatedbBox = dataLabel.getBBox(void 0, 0);
 
             // The alignment box is a singular point
             alignTo = extend({
@@ -346,9 +340,9 @@ namespace DataLabel {
                 }
             ), false, alignTo, false);
 
-            dataLabel.alignAttr.x += alignFactor *
+            dataLabel.alignAttr.x += getAlignFactor(options.align) *
                 (unrotatedbBox.width - bBox.width);
-            dataLabel.alignAttr.y += verticalAlignFactor *
+            dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
@@ -599,8 +593,7 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
-                    let labelConfig,
-                        formatString,
+                    let formatString,
                         labelText,
                         rotation,
                         attr: SVGAttributes = {},
@@ -619,15 +612,14 @@ namespace DataLabel {
                             labelOptions.format
                         );
 
-                        labelConfig = point.getLabelConfig();
                         labelText = defined(formatString) ?
-                            format(formatString, labelConfig, chart) :
+                            format(formatString, point, chart) :
                             (
                                 (labelOptions as any)[
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(labelConfig, labelOptions);
+                            ).call(point, labelOptions);
 
                         rotation = labelOptions.rotation;
 
@@ -766,10 +758,13 @@ namespace DataLabel {
                             } else if (style.width) {
                                 // In styled mode with a width property set,
                                 // the width should be applied to the
-                                // dataLabel. (#20499)
+                                // dataLabel. (#20499). These properties affect
+                                // layout and must be applied also in styled
+                                // mode.
                                 dataLabel.css({
                                     width: style.width,
-                                    textOverflow: style.textOverflow
+                                    textOverflow: style.textOverflow,
+                                    whiteSpace: style.whiteSpace
                                 });
                             }
 
@@ -1055,7 +1050,7 @@ export default DataLabel;
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PointLabelObject} this
+ * @param {Highcharts.Point} this
  * Data label context to format
  *
  * @param {Highcharts.DataLabelsOptions} options

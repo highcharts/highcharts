@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const currentMonth = Date.UTC(2023, 9);
 const revTarget = 105;
 const costTarget = 89;

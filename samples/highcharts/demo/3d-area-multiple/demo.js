@@ -9,8 +9,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Visual comparison of Mountains Panorama',
-        align: 'left'
+        text: 'Visual comparison of Mountains Panorama'
     },
     accessibility: {
         description: 'The chart is showing the shapes of three mountain ' +

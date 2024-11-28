@@ -1,25 +1,24 @@
-DataGrid installation
-===
+# DataGrid installation
 
 ## Install via NPM
-One of the ways of adding the DataGrid to your web page is via npm script.
-You can get all of the functionality of the DataGrid through Dashboard packages which can be installed using the following script:
+One way to add Highcharts DataGrid to your web page is via npm script.
+You can get all of the functionality of the datagrid through Highcharts Dashboards packages, which can be installed using the following script:
 ```bash
 npm install @highcharts/dashboards
 ```
-Then import the package in your project:
-```js
+Then import the package into your project:
+``` js
 import DataGrid from '@highcharts/dashboards/datagrid';
 ```
 
-## Include DataGrid by script tag
-Include the JavaScript files in the `<head>` section of your web page as shown below.
+## Include Highcharts DataGrid by script tag
+Include the JavaScript files in your web page's `<head>` section, as shown below.
 
 ```html
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
  ```
 
-In the example above, the Javascript files are loaded from [code.highcharts.com](https://code.highcharts.com) but you can download the files from [highcharts.com](https://www.highcharts.com/download/) and include them on your web page. Here is an example with DataGrid loaded from your own server:
+In the example above, the Javascript files are loaded from [code.highcharts.com](https://code.highcharts.com), but you can download the files from [highcharts.com](https://www.highcharts.com/download/) and include them on your web page. Here is an example with Highcharts DataGrid loaded from your server:
 
 ```html
 <script src="../code/dashboards/datagrid.js"></script>
@@ -33,4 +32,4 @@ The CSS is not included in the library by default, but you can import it as belo
 
 ### Get started
 
-Now you are ready to use DataGrid. Check out [Your first DataGrid](https://highcharts.com/docs/datagrid/your-first-datagrid) to get started.
+Now, you are ready to use Highcharts DataGrid. Check out [Your first Highcharts DataGrid](/docs/datagrid/your-first-datagrid) to get started.

@@ -20,10 +20,11 @@
  *
  * */
 
+import type A11yOptions from './Accessibility/A11yOptions';
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import Column from './Table/Column';
+import type Column from './Table/Column';
 
 
 /* *
@@ -63,6 +64,12 @@ export type ColumnSortingOrder = 'asc' | 'desc' | null;
  * Options to control the content and the user experience of a grid structure.
  */
 export interface Options {
+
+    /**
+     * Accessibility options for the datagrid.
+     */
+    accessibility?: A11yOptions.GeneralA11yOptions;
+
     /**
      * Options for the table caption.
      */
@@ -105,6 +112,11 @@ export interface Options {
     header?: Array<GroupedHeaderOptions|string>;
 
     /**
+     * Language options for the datagrid.
+     */
+    lang?: LangOptions;
+
+    /**
      * Options to control the way datagrid is rendered.
      */
     rendering?: RenderingSettings;
@@ -123,6 +135,11 @@ export interface RenderingSettings {
      * Options to control the rows rendering.
      */
     rows?: RowsSettings;
+
+    /**
+     * Options to control the header rendering.
+     */
+    header?: HeaderSettings;
 
     /**
      * Options to control the table rendering.
@@ -184,6 +201,18 @@ export interface RowsSettings {
 }
 
 /**
+ * Options to control the header rendering.
+ */
+export interface HeaderSettings {
+    /**
+     * Whether the header should be rendered.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+/**
  * Options to control the table rendering.
  */
 export interface TableSettings {
@@ -231,6 +260,7 @@ export interface ColumnOptions {
  * Options for all cells in the column.
  */
 export interface ColumnCellOptions {
+
     /**
      * Allows to define an additional class name to all table cells in the
      * column. Applied only to cell that are in the table, not in the column
@@ -280,6 +310,7 @@ export interface ColumnCellOptions {
  * Options for the header cells in the columns.
  */
 export interface ColumnHeaderOptions {
+
     /**
      * Allows user to define an additional class name only to the column header.
      *
@@ -482,6 +513,12 @@ export interface HeaderEvents {
  * Options to control the structure of table header.
  */
 export interface GroupedHeaderOptions {
+
+    /**
+     * Accessibility options for one of the column header cells.
+     */
+    accessibility?: A11yOptions.HeaderCellA11yOptions;
+
     /**
      * The format of the column header. Use `{id}` to display the column id.
      */
@@ -541,6 +578,24 @@ export interface CreditsOptions {
      * @default 'bottom'
      */
     position?: 'bottom' | 'top';
+}
+
+/**
+ * Language options for the datagrid.
+ */
+export interface LangOptions {
+
+    /**
+     * Configure the accessibility strings in the chart.
+     */
+    accessibility?: A11yOptions.LangAccessibilityOptions;
+
+    /**
+     * The text to display when there is no data to show.
+     *
+     * @default 'No data to display'
+     */
+    noData?: string;
 }
 
 

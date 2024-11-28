@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 const rangeConfig = {
@@ -83,7 +88,7 @@ const locations = {
     mapUrl: 'https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json',
     default: 'New York',
     points: [
-        ['city', 'lat', 'lon', 'elevation', 'timeDifference'],
+        ['station', 'lat', 'lon', 'elevation', 'timeDifference'],
         ['New York', 40.71, -74.01, 10, 5],
         ['San Diego', 32.71, -117.16, 36, 8],
         ['Anchorage', 61.22, -149.89, 0, 9],
@@ -93,9 +98,9 @@ const locations = {
     ]
 };
 
-function getTimeDifference(city) {
-    const location = locations.points.find(point => point[0] === city);
-    return location ? location[4] : 0; // Default to 0 if city is not found
+function getTimeDifference(station) {
+    const location = locations.points.find(point => point[0] === station);
+    return location ? location[4] : 0; // Default to 0 if station not found
 }
 
 // Application configuration (weather station data set + data provider)
@@ -106,10 +111,10 @@ const weatherStationConfig = {
     baseUrl: 'https://api.met.no/weatherapi/locationforecast/2.0/compact',
 
     // Build the full URL for accessing the data
-    buildUrl: function (city) {
+    buildUrl: function (station) {
         for (let i = 1; i < this.location.points.length; i++) {
             const point = this.location.points[i];
-            if (point[0] === city) {
+            if (point[0] === station) {
                 return this.baseUrl +
                     `?lat=${point[1]}&lon=${point[2]}&altitude=${point[3]}`;
             }
@@ -164,14 +169,14 @@ const kpiGaugeOptions = {
 
 // Launches the Dashboards application
 async function setupDashboard() {
-    let activeCity = weatherStationConfig.location.default;
+    let activeStation = weatherStationConfig.location.default;
     let activeParam = paramConfig.temperature;
 
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
                 {
-                    id: 'Cities',
+                    id: 'Stations',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
@@ -186,7 +191,7 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'world-map'
+                        id: 'station-map'
                     }, {
                         // Top right
                         id: 'kpi-layout',
@@ -209,10 +214,10 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Bottom left
-                        id: 'selection-grid'
+                        id: 'forecast-grid'
                     }, {
                         // Bottom right
-                        id: 'city-chart'
+                        id: 'forecast-chart'
                     }]
                 }]
             }]
@@ -220,7 +225,7 @@ async function setupDashboard() {
         // Adapted from https://www.highcharts.com/demo/dashboards/climate
         components: [
             {
-                cell: 'world-map',
+                cell: 'station-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -256,7 +261,7 @@ async function setupDashboard() {
                         name: 'Weather Station Map'
                     }, {
                         type: 'mappoint',
-                        name: 'Cities',
+                        name: 'Stations',
                         data: [],
                         allowPointSelect: true,
                         dataLabels: [{
@@ -279,20 +284,20 @@ async function setupDashboard() {
                         }],
                         events: {
                             click: function (e) {
-                                const city = e.point.name;
-                                if (city !== activeCity) {
-                                    // New city
-                                    activeCity = city;
+                                const station = e.point.name;
+                                if (station !== activeStation) {
+                                    // New station selected
+                                    activeStation = station;
                                     updateBoard(
                                         board,
-                                        activeCity,
+                                        activeStation,
                                         activeParam.name,
-                                        false, // No parameter update
-                                        true // Data set update
+                                        false, // Parameter unchanged
+                                        true // Station changed
                                     );
                                 } else {
                                     // Re-select (otherwise marker is reset)
-                                    selectActiveCity();
+                                    setActiveStation();
                                 }
                             }
                         },
@@ -385,8 +390,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'temperature', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -408,11 +412,11 @@ async function setupDashboard() {
                 },
                 events: {
                     click: function () {
-                        // Update board
+                        // Update dashboard
                         activeParam = paramConfig.temperature;
-                        // Parameter update, city unchanged
+                        // Parameter changed, station unchanged
                         updateBoard(
-                            board, activeCity,
+                            board, activeStation,
                             'temperature', true, false
                         );
                     }
@@ -437,8 +441,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'wind', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -460,8 +463,8 @@ async function setupDashboard() {
                     click: function () {
                         // Update board
                         activeParam = paramConfig.wind;
-                        // Parameter update, city unchanged
-                        updateBoard(board, activeCity, 'wind', true, false);
+                        // Parameter changed, station unchanged
+                        updateBoard(board, activeStation, 'wind', true, false);
                     }
                 },
                 states: {
@@ -483,8 +486,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'precipitation', false
                         ) + ' (next 24 hours)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -508,9 +510,9 @@ async function setupDashboard() {
                     click: function () {
                         // Update board
                         activeParam = paramConfig.precipitation;
-                        // Parameter update, city unchanged
+                        // Parameter changed, station unchanged
                         updateBoard(
-                            board, activeCity,
+                            board, activeStation,
                             'precipitation', true, false
                         );
                     }
@@ -524,7 +526,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'selection-grid',
+                cell: 'forecast-grid',
                 type: 'DataGrid',
                 title: {
                     enabled: true,
@@ -539,7 +541,9 @@ async function setupDashboard() {
                     },
                     columns: [{
                         id: 'time',
-                        headerFormat: 'Local Time',
+                        header: {
+                            format: 'Local Time'
+                        },
                         cells: {
                             formatter: function () {
                                 return Highcharts.dateFormat(
@@ -582,7 +586,7 @@ async function setupDashboard() {
                     }]
                 }
             }, {
-                cell: 'city-chart',
+                cell: 'forecast-chart',
                 type: 'Highcharts',
                 sync: {
                     highlight: true
@@ -675,20 +679,20 @@ async function setupDashboard() {
     }, true);
 
     const dataPool = board.dataPool;
-    const citiesTable = await dataPool.getConnectorTable('Cities');
-    const cityRows = citiesTable.getRowObjects();
+    const stationsTable = await dataPool.getConnectorTable('Stations');
+    const stationRows = stationsTable.getRowObjects();
 
     // Add weather station sources
-    for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
-        const city = cityRows[i].city;
-        const url = weatherStationConfig.buildUrl(city);
+    for (let i = 0, iEnd = stationRows.length; i < iEnd; ++i) {
+        const station = stationRows[i].station;
+        const url = weatherStationConfig.buildUrl(station);
 
         if (!url) {
             continue;
         }
 
         dataPool.setConnectorOptions({
-            id: city,
+            id: station,
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
@@ -698,8 +702,8 @@ async function setupDashboard() {
                     const retData = [];
                     const forecastData = data.properties.timeseries;
 
-                    // Get the time difference for the current city
-                    const timeDifference = getTimeDifference(city);
+                    // Get the time difference for the current station
+                    const timeDifference = getTimeDifference(station);
 
                     for (let i = 0; i < rangeConfig.hours; i++) {
                         const item = forecastData[i];
@@ -732,18 +736,18 @@ async function setupDashboard() {
     // Update map (series 0 is the world map, series 1 the weather data)
     const mapChart = getMapChart(board);
 
-    // Load active city
-    await addCityToMap(board, citiesTable, mapChart, activeCity);
-    await updateBoard(board, activeCity, activeParam.name);
+    // Load active weather station
+    await addStationToMap(board, stationsTable, mapChart, activeStation);
+    await updateBoard(board, activeStation, activeParam.name);
 
-    // Select active city on the map
-    selectActiveCity();
+    // Select active weather station on the map
+    setActiveStation();
 
     // Load additional cities
-    for (let i = 0; i < cityRows.length; i++) {
-        const city = cityRows[i].city;
-        if (city !== activeCity) {
-            await addCityToMap(board, citiesTable, mapChart, city);
+    for (let i = 0; i < stationRows.length; i++) {
+        const station = stationRows[i].station;
+        if (station !== activeStation) {
+            await addStationToMap(board, stationsTable, mapChart, station);
         }
     }
 
@@ -755,11 +759,11 @@ async function setupDashboard() {
         return board.mountedComponents[0].component.chart.series[1];
     }
 
-    // Select a city on the map
-    function selectActiveCity() {
+    // Select a weather station on the map
+    function setActiveStation() {
         const mapData = getMapChart(board).data;
         for (let i = 0; i < mapData.length; i++) {
-            if (mapData[i].name === activeCity) {
+            if (mapData[i].name === activeStation) {
                 mapData[i].select();
                 break;
             }
@@ -767,20 +771,20 @@ async function setupDashboard() {
     }
 }
 
-// Add station to map
-async function addCityToMap(board, citiesTable, worldMap, city) {
-    const forecastTable = await board.dataPool.getConnectorTable(city);
-    const cityInfo = citiesTable.getRowObject(
-        citiesTable.getRowIndexBy('city', city)
+// Add weather station to map
+async function addStationToMap(board, stationsTable, stationMap, station) {
+    const forecastTable = await board.dataPool.getConnectorTable(station);
+    const stationInfo = stationsTable.getRowObject(
+        stationsTable.getRowIndexBy('station', station)
     );
 
-    // Add city to world map
-    worldMap.addPoint({
-        name: cityInfo.city,
-        lat: cityInfo.lat,
-        lon: cityInfo.lon,
+    // Add weather station to world map
+    stationMap.addPoint({
+        name: stationInfo.station,
+        lat: stationInfo.lat,
+        lon: stationInfo.lon,
         custom: {
-            elevation: cityInfo.elevation,
+            elevation: stationInfo.elevation,
             unit: paramConfig.temperature.unit
         },
         // First item in current data set
@@ -800,12 +804,11 @@ function getObservation(forecastTable, param) {
     return forecastTable.columns[param][rangeConfig.first];
 }
 
-// Update board after changing data set (city) or parameter (measurement type)
+// Update board after changing weather station or parameter (measurement type)
 async function updateBoard(
-    board, city, paramName,
-    paramUpdated = true, cityUpdated = true
+    board, station, paramName,
+    paramChanged = true, stationChanged = true
 ) {
-
     // Parameter info
     const param = paramConfig[paramName];
 
@@ -813,12 +816,12 @@ async function updateBoard(
     const dataPool = board.dataPool;
 
     // Geographical information
-    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const stationsTable = await dataPool.getConnectorTable('Stations');
 
     const [
         // The order here must be the same as in the component
         // definition in the Dashboard.
-        worldMap,
+        stationMap,
         htmlGeoInfo,
         kpiTemperature,
         kpiWind,
@@ -834,13 +837,13 @@ async function updateBoard(
         stops: param.colorStops
     };
 
-    // Update city chart
+    // Update forecast chart
     const options = cityChart.chartOptions;
     const isWind = paramName === 'wind';
 
     const title = isWind ?
         'Wind' : paramConfig.getColumnHeader(paramName, false);
-    options.title.text = title + ' forecast for ' + city;
+    options.title.text = title + ' forecast for ' + station;
     options.subtitle.text = currentDay;
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
@@ -857,7 +860,7 @@ async function updateBoard(
 
     await cityChart.update({
         connector: {
-            id: city,
+            id: station,
             columnAssignment: [{
                 seriesId: paramName,
                 data: ['time', paramName]
@@ -868,7 +871,7 @@ async function updateBoard(
 
     if (isWind) {
         // Add Windbarb series
-        const forecastTable = await dataPool.getConnectorTable(city);
+        const forecastTable = await dataPool.getConnectorTable(station);
 
         // Create series data
         const data = [];
@@ -887,19 +890,19 @@ async function updateBoard(
         });
     }
 
-    if (paramUpdated) {
+    if (paramChanged) {
         // Parameters update: e.g. temperature -> precipitation.
         // Affects: map
 
         // Update all map points (series 1: weather data)
-        const mapPoints = worldMap.chart.series[1].data;
+        const mapPoints = stationMap.chart.series[1].data;
 
         for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-            // Forecast for city
-            const city = mapPoints[i].name;
-            const forecastTable = await dataPool.getConnectorTable(city);
-            const elevation = citiesTable.getCellAsNumber(
-                'elevation', citiesTable.getRowIndexBy('city', city)
+            // Forecast for station
+            const station = mapPoints[i].name;
+            const forecastTable = await dataPool.getConnectorTable(station);
+            const elevation = stationsTable.getCellAsNumber(
+                'elevation', stationsTable.getRowIndexBy('station', station)
             );
 
             mapPoints[i].update({
@@ -912,7 +915,7 @@ async function updateBoard(
         }
 
         // Update map properties and redraw
-        worldMap.chart.update({
+        stationMap.chart.update({
             colorAxis: colorAxis,
             title: {
                 text: paramConfig.getColumnHeader(paramName)
@@ -920,10 +923,10 @@ async function updateBoard(
         });
     }
 
-    if (cityUpdated) {
-        // City update: e.g. New York -> Winnipeg
+    if (stationChanged) {
+        // Weather station changed: e.g. New York -> Winnipeg
         // Affects: KPIs and grid.
-        const forecastTable = await dataPool.getConnectorTable(city);
+        const forecastTable = await dataPool.getConnectorTable(station);
 
         await kpiTemperature.update({
             value: getObservation(forecastTable, 'temperature')
@@ -940,14 +943,14 @@ async function updateBoard(
         // Update geo-info HTML
         const options = htmlGeoInfo.getOptions();
         const html = options.elements[0];
-        const cityRow = citiesTable.getRowIndexBy('city', city);
+        const stationRow = stationsTable.getRowIndexBy('station', station);
 
-        html.children[0].textContent = 'Forecast for ' + city;
+        html.children[0].textContent = 'Forecast for ' + station;
 
         const geoInfo = html.children[1].children;
         for (let i = 0; i < geoInfo.length; i++) {
             const attr = geoInfo[i].attributes;
-            const value = citiesTable.getCellAsNumber(attr.id, cityRow);
+            const value = stationsTable.getCellAsNumber(attr.id, stationRow);
             const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
 
             geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;
@@ -958,7 +961,7 @@ async function updateBoard(
         // Update grid
         await selectionGrid.update({
             connector: {
-                id: city
+                id: station
             }
         });
     }

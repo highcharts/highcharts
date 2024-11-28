@@ -1,3 +1,9 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 /* eslint-disable jsdoc/require-description */
 
 // left arrow
@@ -333,8 +339,7 @@ async function setupBoard() {
                 }],
                 title: {
                     text: 'Average Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     labels: {
@@ -404,8 +409,7 @@ async function setupBoard() {
                 }],
                 title: {
                     text: 'Maximal Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     labels: {
@@ -476,8 +480,7 @@ async function setupBoard() {
                 }],
                 title: {
                     text: 'Days with Rain',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     labels: {
@@ -546,8 +549,7 @@ async function setupBoard() {
                 }],
                 title: {
                     text: 'Days with Ice',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     labels: {
@@ -617,8 +619,7 @@ async function setupBoard() {
                 }],
                 title: {
                     text: 'Days with Frost',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     labels: {

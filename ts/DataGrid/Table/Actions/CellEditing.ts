@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Cell Editing class.
+ *  DataGrid Cell Editing class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -85,6 +85,7 @@ class CellEditing {
         cellElement.innerHTML = '';
         cellElement.classList.add(Globals.classNames.editedCell);
 
+        cell.row.viewport.dataGrid.accessibility?.userEditedCell('started');
         this.renderInput();
     }
 
@@ -108,6 +109,8 @@ class CellEditing {
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.editedCell);
 
+        cell.htmlElement.focus();
+
         // Convert to number if possible
         if (!isNaN(+newValue)) {
             newValue = +newValue;
@@ -119,6 +122,9 @@ class CellEditing {
         );
 
         dataGrid.options?.events?.cell?.afterEdit?.call(cell);
+        cell.row.viewport.dataGrid.accessibility?.userEditedCell(
+            submit ? 'edited' : 'cancelled'
+        );
 
         delete this.editedCell;
     }
