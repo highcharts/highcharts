@@ -12,11 +12,11 @@
     --text-color: var(--highcharts-neutral-color-80);
 }
 
-/* *
+/**
  *
  *  Layout
  *
- * */
+ **/
 
 .row {
     display: flex;
@@ -35,11 +35,11 @@
     padding: 10px;
 }
 
-/* *
+/**
  *
  *  Dashboards/Datagrid specific
  *
- * */
+ **/
 .highcharts-dashboards-wrapper {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
@@ -55,11 +55,11 @@
     max-height: 100%;
 }
 
-/* *
+/**
  *
  *  Message log (outside Dashboard)
  *
- * */
+ **/
 #custom {
     background-color: var(--highcharts-neutral-color-10);
     margin: 0;
@@ -96,11 +96,11 @@
     color: #f00;
 }
 
-/* *
+/**
  *
  *  App control - Connect status and clearing log
  *
- * */
+ **/
 #app-control {
     padding: 0;
     font-size: 0.9em;
@@ -130,11 +130,11 @@
     padding: 5px 10px;
 }
 
-/* *
+/**
  *
  *  Dashboards container and description
  *
- * */
+ **/
 
 div.description {
     padding: 0 20px;

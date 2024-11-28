@@ -186,6 +186,7 @@ namespace DataLabel {
     }
 
     export interface LabelConnectorPositionObject {
+        angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }

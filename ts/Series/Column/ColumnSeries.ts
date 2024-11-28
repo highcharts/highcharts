@@ -411,39 +411,61 @@ class ColumnSeries extends Series {
             objectEach(
                 this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
-                    if (typeof point.x === 'number') {
-                        const stackItem = stack[point.x.toString()];
+                    const points = typeof point.x === 'number' ?
+                            stack[point.x.toString()]?.points :
+                            void 0,
+                        pointValues = points?.[this.index],
+                        yStackMap: Record<string, number> = {};
 
-                        if (stackItem) {
-                            const pointValues = stackItem.points[this.index];
+                    // Look for the index
+                    if (points && isArray(pointValues)) {
+                        let baseIndex = this.index;
 
-                            // Look for the index
-                            if (isArray(pointValues)) {
-                                // If there are multiple points with the same X
-                                // then gather all series in category, and
-                                // assign index
-                                const seriesIndexes = Object
-                                    .keys(stackItem.points)
-                                    .filter((pointKey): boolean =>
-                                        // Filter out duplicate X's
-                                        !pointKey.match(',') &&
-                                        // Filter out null points
-                                        stackItem.points[pointKey] &&
-                                        stackItem.points[pointKey].length > 1
-                                    )
-                                    .map(parseFloat)
-                                    .filter((index): boolean =>
-                                        visibleSeries.indexOf(index) !== -1
-                                    )
-                                    .sort((a, b): number => b - a);
+                        // If there are multiple points with the same X then
+                        // gather all series in category, and assign index
+                        const seriesIndexes = Object
+                            .keys(points)
+                            .filter((pointKey): boolean =>
+                                // Filter out duplicate X's
+                                !pointKey.match(',') &&
+                                // Filter out null points
+                                points[pointKey] &&
+                                points[pointKey].length > 1
+                            )
+                            .map(parseFloat)
+                            .filter((index): boolean =>
+                                visibleSeries.indexOf(index) !== -1
+                            )
 
-                                indexInCategory = seriesIndexes.indexOf(
-                                    this.index
-                                );
-                                totalInCategory = seriesIndexes.length;
+                            // When the series `stack` option is defined, assign
+                            // all subsequent column of the same stack to the
+                            // same index as the base column of the stack, then
+                            // filter out the original series index so that
+                            // `seriesIndexes` is shortened to the amount of
+                            // stacks, not the amount of series (#20550).
+                            .filter((index): boolean => {
+                                const otherOptions = this.chart.series[index]
+                                        .options,
+                                    yStack = otherOptions.stacking &&
+                                        otherOptions.stack;
 
-                            }
-                        }
+                                if (defined(yStack)) {
+                                    if (isNumber(yStackMap[yStack])) {
+                                        if (baseIndex === index) {
+                                            baseIndex = yStackMap[yStack];
+                                        }
+
+                                        return false;
+                                    }
+                                    yStackMap[yStack] = index;
+                                }
+                                return true;
+                            })
+                            .sort((a, b): number => b - a);
+
+                        indexInCategory = seriesIndexes.indexOf(baseIndex);
+                        totalInCategory = seriesIndexes.length;
+
                     }
                 }
             );
@@ -572,7 +594,7 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
-            if (options.centerInCategory && !options.stacking) {
+            if (options.centerInCategory) {
                 barX = series.adjustForMissingColumns(
                     barX,
                     pointWidth,

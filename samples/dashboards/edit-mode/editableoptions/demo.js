@@ -43,6 +43,16 @@ Dashboards.board('container', {
                         name: 5
                     }]
                 }]
+            }, {
+                name: 'Datalabels',
+                showToggle: true,
+                propertyPath: [
+                    'chartOptions',
+                    'plotOptions',
+                    'series',
+                    'dataLabels',
+                    'enabled'
+                ]
             }]
         }],
         chartOptions: {
