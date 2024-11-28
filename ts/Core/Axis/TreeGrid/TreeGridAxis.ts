@@ -402,7 +402,7 @@ function onBeforeRender(
             const options = axis.options || {},
                 labelOptions = options.labels,
                 uniqueNames = axis.uniqueNames,
-                max = options.max,
+                max = chart.time.parse(options.max),
                 // Check whether any of series is rendering for the first
                 // time, visibility has changed, or its data is dirty, and
                 // only then update. #10570, #10580. Also check if
@@ -446,7 +446,7 @@ function onBeforeRender(
                     if (s.visible) {
                         // Push all data to array
                         seriesData.forEach(function (
-                            data
+                            pointOptions
                         ): void {
 
                             // For using keys, or when using primitive points,
@@ -455,19 +455,22 @@ function onBeforeRender(
                                 foundPrimitivePoint ||
                                  (s.options.keys && s.options.keys.length)
                             ) {
-                                data = s.pointClass.prototype
+                                pointOptions = s.pointClass.prototype
                                     .optionsToObject
-                                    .call({ series: s }, data);
-                                s.pointClass.setGanttPointAliases(data);
+                                    .call({ series: s }, pointOptions);
+                                s.pointClass.setGanttPointAliases(
+                                    pointOptions,
+                                    chart
+                                );
                             }
 
-                            if (isObject(data, true)) {
+                            if (isObject(pointOptions, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
-                                (data as PointOptions).seriesIndex = (
+                                (pointOptions as PointOptions).seriesIndex = (
                                     numberOfSeries
                                 );
-                                arr.push(data as PointOptions);
+                                arr.push(pointOptions as PointOptions);
                             }
                         });
                         // Increment series index
@@ -809,14 +812,15 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        time = axis.chart.time,
         linkedParent = typeof options.linkedTo === 'number' ?
             this.chart[axis.coll]?.[options.linkedTo] :
             void 0,
         isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
-        axis.min = pick(axis.userMin, options.min, axis.dataMin);
-        axis.max = pick(axis.userMax, options.max, axis.dataMax);
+        axis.min = axis.userMin ?? time.parse(options.min) ?? axis.dataMin;
+        axis.max = axis.userMax ?? time.parse(options.max) ?? axis.dataMax;
 
         fireEvent(axis, 'foundExtremes');
 

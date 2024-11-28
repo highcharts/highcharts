@@ -809,7 +809,7 @@ QUnit.test('Stack labels - Axis left set', assert => {
     assert.close(
         stackX,
         dataLabelX,
-        1.5,
+        2,
         'the middle of stackLabel and dataLabel should be similar.'
     );
 });

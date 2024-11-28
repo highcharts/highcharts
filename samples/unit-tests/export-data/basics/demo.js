@@ -1305,12 +1305,11 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
                 showTable: true
             }
         }),
-        csv =
-            '"Category","Series 1"\n' +
-            '"test",\n' +
-            '"test1",5\n' +
-            '"test2",10\n' +
-            '"test3",15';
+        csv = `"Category","Series 1 (value)","Series 1 (colorValue)"
+"test",,
+"test1",5,
+"test2",10,
+"test3",15,`;
 
     assert.strictEqual(
         chart.getCSV(),

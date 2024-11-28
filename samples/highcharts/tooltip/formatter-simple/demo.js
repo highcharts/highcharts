@@ -2,8 +2,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return 'The value for <b>' + this.x +
-                '</b> is <b>' + this.y + '</b>';
+            return `The value for <b>${this.key}</b> is <b>${this.y}</b>`;
         }
     },
 

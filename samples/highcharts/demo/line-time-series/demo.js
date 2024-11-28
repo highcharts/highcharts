@@ -11,14 +11,12 @@
             }
         },
         title: {
-            text: 'USD to EUR exchange rate over time',
-            align: 'left'
+            text: 'USD to EUR exchange rate over time'
         },
         subtitle: {
             text: document.ontouchstart === undefined ?
                 'Click and drag in the plot area to zoom in' :
-                'Pinch the chart to zoom in',
-            align: 'left'
+                'Pinch the chart to zoom in'
         },
         xAxis: {
             type: 'datetime'

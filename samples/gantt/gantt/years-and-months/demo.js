@@ -11,8 +11,8 @@ Highcharts.ganttChart('container', {
                 fontSize: '8px'
             }
         },
-        min: Date.UTC(2014, 3, 17),
-        max: Date.UTC(2015, 11, 0),
+        min: '2014-04-17',
+        max: '2015-12-00',
         currentDateIndicator: true
     }, {
         tickInterval: 1000 * 60 * 60 * 24 * 365, // Year
@@ -33,20 +33,20 @@ Highcharts.ganttChart('container', {
         },
         data: [{
             name: 'Start prototype',
-            start: Date.UTC(2014, 4, 18),
-            end: Date.UTC(2014, 11, 25)
+            start: '2014-05-18',
+            end: '2014-12-25'
         }, {
             name: 'Test prototype',
-            start: Date.UTC(2015, 0, 0),
-            end: Date.UTC(2015, 3, 0)
+            start: '2015-01-00',
+            end: '2015-04-00'
         }, {
             name: 'Develop',
-            start: Date.UTC(2015, 0, 0),
-            end: Date.UTC(2015, 10, 25)
+            start: '2015-01-00',
+            end: '2015-11-25'
         }, {
             name: 'Run acceptance tests',
-            start: Date.UTC(2015, 9, 23),
-            end: Date.UTC(2015, 10, 26)
+            start: '2015-10-23',
+            end: '2015-11-26'
         }]
     }]
 });

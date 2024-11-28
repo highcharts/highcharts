@@ -75,7 +75,7 @@ const dataGridOptions = {
         },
         cells: {
             formatter: function () {
-                return Highcharts.dateFormat('%H:%M:%S', this.value);
+                return Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
             }
         }
     }, {
@@ -392,11 +392,11 @@ class MQTTConnector extends DataConnector {
         this.mqtt.onMessageArrived = this.onMessageArrived;
     }
 
-    /**
+    /* *
      *
      *  Functions
      *
-     **/
+     * */
 
     /**
      * Initiates the connection if autoConnect is set to true and
