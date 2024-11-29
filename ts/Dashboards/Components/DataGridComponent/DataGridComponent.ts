@@ -185,6 +185,15 @@ class DataGridComponent extends Component {
             this.dataGrid.renderViewport();
         }
 
+        if (this.dataGrid) {
+            this.dataGrid.initContainerHeight =
+                getStyle(
+                    this.parentElement,
+                    'height',
+                    true
+                ) || 0;
+        }
+
         this.sync.start();
         this.emit({ type: 'afterRender' });
         return this;
@@ -292,15 +301,6 @@ class DataGridComponent extends Component {
 
         if (this.options.dataGridID) {
             this.contentElement.id = this.options.dataGridID;
-        }
-
-        if (this.dataGrid) {
-            this.dataGrid.initContainerHeight =
-                getStyle(
-                    this.dataGrid.container as HTMLElement,
-                    'height',
-                    true
-                ) || 0;
         }
     }
 

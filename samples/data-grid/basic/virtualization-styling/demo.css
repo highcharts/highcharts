@@ -19,7 +19,9 @@
     border: 1px solid red;
 }
 
-#container {
+#container,
+#dashboard-col-0,
+#dashboard-col-1 {
     height: 500px;
 }
 
