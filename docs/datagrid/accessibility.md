@@ -52,6 +52,9 @@ To customize the default language or wording for ARIA attributes and announcers,
 
 For a complete list of available options, check out the [API reference](?).
 
+When configuring localization, it typically applies to all datagrids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid#setOptions) for the details.
+
+
 ## Header descriptions
 
 You can add an `aria-description` attribute to individual `<th>` table headers by configuring `header[].accessibility.description`. This is especially useful when [grouped headers](https://www.highcharts.com/docs/datagrid/header) are used, as descriptions of header groups provide additional clarity for users relying on assistive technologies.
