@@ -439,7 +439,10 @@ class RowsVirtualizer {
      */
     private getDefaultRowHeight(): number {
         const mockRow = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement
+            className: Globals.classNames.rowElement,
+            style: {
+                position: 'absolute'
+            }
         }, this.viewport.tbodyElement);
 
         const defaultRowHeight = mockRow.offsetHeight;
