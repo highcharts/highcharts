@@ -34,7 +34,7 @@ async function task() {
 
         fsLib.deleteDirectory('js/', true);
 
-        await processLib.exec('npx tsc --build ts/masters-es5 --outDir js/');
+        await processLib.exec('npx tsc -p ts/masters-es5 --outDir js/');
 
         fsLib.deleteDirectory('js/Dashboards/', true);
         fsLib.deleteDirectory('js/DataGrid/', true);
