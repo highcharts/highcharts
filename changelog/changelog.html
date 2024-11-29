@@ -16,13 +16,22 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-v12.0.1"></a>
+              <span>Highcharts v12.0.1 (2024-11-28)</span>
+              <a class="release-header-hashtag" href="#highcharts-v12.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-12.0.1.zip" title="Download the zip archive for Highcharts v12.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Fixed #22243, compiled files were not available on npm.</li>
+            </ul>
+            <h3 class="release-header">
               <a id="highcharts-v12.0.0"></a>
               <span>Highcharts v12.0.0 (2024-11-27)</span>
               <a class="release-header-hashtag" href="#highcharts-v12.0.0">#</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-12.0.0.zip" title="Download the zip archive for Highcharts v12.0.0"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
-              <li>Refactored the Series class to organize its data in a <a href="https://api.highcharts.com/class-reference/Highcharts.DataTableCore">data table</a> instead of parallel arrays. Removed the internal Series properties <code>xData</code>, <code>yData</code>, <code>processedXData</code> and <code>processedYData</code>, as well as some additional series-specific data arrays, in favor of <code>Series.dataTable</code>.</li>
+              <li>Refactored the Series class to organize its data in a <code>DataTable</code> instead of parallel arrays. Removed the internal Series properties <code>xData</code>, <code>yData</code>, <code>processedXData</code> and <code>processedYData</code>, as well as some additional series-specific data arrays, in favor of <code>Series.dataTable</code>.</li>
               <li>Added support for <a href="https://api.highcharts.com/highcharts/series.line.data.x">data.x</a> values as date strings. These can now be defined for example as <code>&#39;2024-10-03&#39;</code> as a more human readable alternative to timestamps. Also allowed date string in other options referring to x values, like <code>xAxis.min</code>, <code>xAxis.max</code>, <code>series.pointStart</code>, <code>plotLines.value</code>, Gantt series start and end, <code>Axis.setExtremes()</code> etc.</li>
               <li>Refactored all internal time zone handling with functions powered by <code>Intl.DateTimeFormat</code>.</li>
               <li>Added new option, <a href="https://api.highcharts.com/highcharts/lang.locale">lang.locale</a>, to determine in what language dates are rendered.</li>
@@ -61,7 +70,7 @@
                       <li>The &quot;Download PDF&quot; menu item was removed from the default exporting menu, in preparation for a future update where exporting is done on the client side by default. The future update will require PDF download to either run via the export server like before, or to load a third party script. To re-enable the PDF download in the menu, add <code>downloadPDF</code> in the <a href="https://api.highcharts.com/highcharts/exporting.buttons.contextButton.menuItems">contextButton.menuItems</a>.</li>
                       <li>The <code>HighchartModuleLoaded</code> window event is no longer supported as we moved to webpack builds with tree shaking capabilites. Instead, extensions must rely on events and wrapped methods.</li>
                       <li>The <code>title.widthAdjust</code> option is removed. Instead, use <a href="https://api.highcharts.com/highcharts/exporting.buttons.contextButton.buttonSpacing">contextButton.buttonSpacing</a> to make space for non-default context button.</li>
-                      <li>Titles and subtitles now have <a href="https://www.highcharts.com/docs/chart-concepts/title-and-subtitle">adaptive alignment</a>. To revert to the pre-v12 defaults, set <code>title.align</code> and <code>subtitle.align</code> to <code>left</code>, and <code>title.minScale</code> to 1.</li>
+                      <li>Titles and subtitles now have <a href="https://www.highcharts.com/docs/chart-concepts/title-and-subtitle">adaptive alignment</a>. To revert to the pre-v12 defaults, set <code>title.align</code> and <code>subtitle.align</code> to <code>center</code>, and <code>title.minScale</code> to 1.</li>
                       <li>The <a href="https://api.highcharts.com/class-reference/Highcharts.Point">Point</a> instances are now used as context for tooltip and data label formatters and format strings, instead of an abstract context object. In most cases this will cause no changes as the properties of the context object are now moved to the Point itself, but some changes may occur. Specifically the <code>{point.x}</code> key for points on a category axes will no longer return the category name. Instead, use <code>{category}</code>.</li>
                     </ul>
 
@@ -7310,6 +7319,15 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-stock-v12.0.1"></a>
+              <span>Highcharts Stock v12.0.1 (2024-11-28)</span>
+              <a class="release-header-hashtag" href="#highcharts-stock-v12.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-12.0.1.zip" title="Download the zip archive for Highcharts Stock v12.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.0.1 above also apply to Highcharts Stock 12.0.1.</li>
+            </ul>
+            <h3 class="release-header">
               <a id="highcharts-stock-v12.0.0"></a>
               <span>Highcharts Stock v12.0.0 (2024-11-27)</span>
               <a class="release-header-hashtag" href="#highcharts-stock-v12.0.0">#</a>
@@ -11407,6 +11425,15 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-maps-v12.0.1"></a>
+              <span>Highcharts Maps v12.0.1 (2024-11-28)</span>
+              <a class="release-header-hashtag" href="#highcharts-maps-v12.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-12.0.1.zip" title="Download the zip archive for Highcharts Maps v12.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.0.1 above also apply to Highcharts Maps 12.0.1.</li>
+            </ul>
+            <h3 class="release-header">
               <a id="highcharts-maps-v12.0.0"></a>
               <span>Highcharts Maps v12.0.0 (2024-11-27)</span>
               <a class="release-header-hashtag" href="#highcharts-maps-v12.0.0">#</a>
@@ -13453,6 +13480,15 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-gantt-v12.0.1"></a>
+              <span>Highcharts Gantt v12.0.1 (2024-11-28)</span>
+              <a class="release-header-hashtag" href="#highcharts-gantt-v12.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-12.0.1.zip" title="Download the zip archive for Highcharts Gantt v12.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.0.1 above also apply to Highcharts Gantt 12.0.1.</li>
+            </ul>
             <h3 class="release-header">
               <a id="highcharts-gantt-v12.0.0"></a>
               <span>Highcharts Gantt v12.0.0 (2024-11-27)</span>
