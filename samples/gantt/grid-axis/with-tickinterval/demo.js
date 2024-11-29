@@ -26,27 +26,27 @@ Highcharts.ganttChart('container', {
         name: 'Project 1',
         data: [{
             name: 'Start prototype',
-            start: Date.UTC(2014, 10, 18),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-18',
+            end: '2014-11-25',
             completed: 0.25,
             assignee: 'Richards',
             y: 0
         }, {
             name: 'Test prototype',
-            start: Date.UTC(2014, 10, 27),
-            end: Date.UTC(2014, 10, 29),
+            start: '2014-11-27',
+            end: '2014-11-29',
             assignee: 'Richards',
             y: 1
         }, {
             name: 'Develop',
-            start: Date.UTC(2014, 10, 20),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-20',
+            end: '2014-11-25',
             assignee: 'Richards',
             y: 2
         }, {
             name: 'Run acceptance tests',
-            start: Date.UTC(2014, 10, 23),
-            end: Date.UTC(2014, 10, 26),
+            start: '2014-11-23',
+            end: '2014-11-26',
             assignee: 'Richards',
             y: 3
         }]

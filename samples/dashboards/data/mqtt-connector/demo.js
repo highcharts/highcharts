@@ -15,6 +15,9 @@
  *
  **/
 
+// MQTT server configuration, depends on the web client protocol
+const mqttUseSSL = window.location.protocol === 'https:';
+
 // Global Dashboards instance for use in event handlers.
 let board;
 
@@ -72,7 +75,7 @@ const dataGridOptions = {
         },
         cells: {
             formatter: function () {
-                return  Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
+                return Highcharts.dateFormat('%Y-%m-%d, %H:%M:%S', this.value);
             }
         }
     }, {
@@ -90,6 +93,7 @@ const dataGridOptions = {
 // Connector configuration
 const connConfig = {
     autoSubscribe: true,
+    maxRows: 10,
     columnNames: [
         'time',
         'value'
@@ -310,7 +314,7 @@ function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
 }
 
-/**
+/* *
  *
  * MQTT connector class - a custom DataConnector,
  * interfacing with the Paho MQTT client library.
@@ -320,7 +324,7 @@ function setConnectStatus(connected) {
  *
  * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
  *
- **/
+ */
 
 let MQTTClient;
 try {
@@ -348,7 +352,7 @@ const connectorTable = {};
 
 class MQTTConnector extends DataConnector {
     /**
-     * Constructs an instance of MQTTConnector.
+     * Creates an instance of the MQTTConnector, including the MQTT client.
      *
      **/
     constructor(options) {
@@ -361,6 +365,7 @@ class MQTTConnector extends DataConnector {
 
         this.converter = new JSONConverter(mergedOptions);
         this.options = mergedOptions;
+        this.connected = false;
 
         // Connection status
         this.packetCount = 0;
@@ -370,36 +375,38 @@ class MQTTConnector extends DataConnector {
         this.clientId = clientId;
 
         // Store connector instance (for use in callbacks from MQTT client)
-        const connector = this;
-        connectorTable[clientId] = connector;
+        connectorTable[clientId] = this;
 
         // Register events
-        connector.registerEvents();
-    }
+        this.registerEvents();
 
-    /**
-     *
-     *  Functions
-     *
-     **/
-
-    /**
-     * Creates the MQTT client and initiates the connection
-     * if autoConnect is set to true.
-     *
-     */
-    async load() {
         const connector = this,
             {
-                host, port, autoConnect
+                host, port
             } = connector.options;
 
-        // Start MQTT client
+
+        // Create MQTT client
         this.mqtt = new MQTTClient(host, port, this.clientId);
         this.mqtt.onConnectionLost = this.onConnectionLost;
         this.mqtt.onMessageArrived = this.onMessageArrived;
+    }
 
-        if (autoConnect) {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Initiates the connection if autoConnect is set to true and
+     * not already connected.
+     *
+     */
+    async load() {
+        const connector = this;
+
+        if (connector.options.autoConnect && !connector.connected) {
             await this.connect();
         }
         super.load();
@@ -582,7 +589,7 @@ class MQTTConnector extends DataConnector {
                     rows.splice(0, nRowsParsed - maxRows);
                     connTable.deleteRows();
                 }
-                connTable.setRows(rows, 0);
+                connTable.setRows(rows);
             }
         }
         connector.packetCount++;
@@ -693,13 +700,13 @@ class MQTTConnector extends DataConnector {
 MQTTConnector.defaultOptions = {
     // MQTT client properties
     host: 'broker.hivemq.com',
-    port: 8000,
+    port: mqttUseSSL ? 8884 : 8000,
     user: '',
     password: '',
     topic: 'highcharts/test',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    useSSL: false,
+    useSSL: mqttUseSSL,
     cleanSession: true,
 
     // Custom connector properties

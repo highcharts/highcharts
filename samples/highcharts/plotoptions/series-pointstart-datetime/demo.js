@@ -5,9 +5,13 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2010, 0, 1),
-            pointInterval: 24 * 3600 * 1000 // one day
+            pointStart: '2024-07-03',
+            pointInterval: 36e5 // one hour
         }
+    },
+
+    title: {
+        text: 'pointStart and pointInterval demo'
     },
 
     series: [{

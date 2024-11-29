@@ -675,7 +675,7 @@ QUnit.test('Label formatting(#4291)', function (assert) {
 
     assert.strictEqual(
         chart.yAxis[0].ticks['79962.57'].label.textStr,
-        '79 962.57',
+        '79,962.57',
         'Preserved decimals'
     );
 });
@@ -1522,7 +1522,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     );
 });
 
-QUnit.test('Explicit textOverflow setting', function (assert) {
+QUnit.test('Explicit whiteSpace setting', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 250
@@ -1531,7 +1531,7 @@ QUnit.test('Explicit textOverflow setting', function (assert) {
             categories: ['Very long month name', 'Feb', 'Mar'],
             labels: {
                 style: {
-                    textOverflow: 'ellipsis'
+                    whiteSpace: 'nowrap'
                 }
             }
         },
@@ -1560,6 +1560,7 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             polar: true,
             type: 'line',
             width: 800,
+            height: 400,
             borderWidth: 1
         },
         credits: {
@@ -1621,11 +1622,14 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             var bBox = chart.xAxis[0].ticks['1'].label.element.getBBox();
             assert.ok(
                 bBox.x + bBox.width < chart.chartWidth,
-                'Label ' + pos + ' inside right at ' + chart.chartWidth
+                `Label ${pos} should be inside right
+                    (${bBox.x + bBox.width} < ${chart.chartWidth},
+                    chartWidth = ${chart.chartWidth})`
             );
             assert.ok(
                 bBox.x > 0,
-                'Label ' + pos + ' inside left at ' + chart.chartWidth
+                `Label ${pos} should be inside left
+                    (${bBox.x} > 0, chartWidth = ${chart.chartWidth}`
             );
         });
     }

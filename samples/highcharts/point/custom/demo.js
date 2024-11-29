@@ -12,14 +12,16 @@ Highcharts.chart('container', {
 
     xAxis: [{
         labels: {
-            autoRotation: 0
+            autoRotation: 0,
+            padding: 0
         },
         opposite: true,
         reversed: true,
         type: 'category'
     }, {
         labels: {
-            autoRotation: 0
+            autoRotation: 0,
+            padding: 0
         },
         reversed: true,
         type: 'category'

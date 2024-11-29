@@ -5,7 +5,7 @@
         "declaration": false,
         "module": "es6",
         "moduleResolution": "node",
-        "outDir": "../../js/",
+        "outDir": "../../code/es5/es-modules/",
         "rootDir": "../",
         "target": "es5",
         "lib": [

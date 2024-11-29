@@ -100,13 +100,11 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'United States of America\'s Inflation-related statistics',
-        align: 'left'
+        text: 'United States of America\'s Inflation-related statistics'
     },
 
     subtitle: {
-        text: 'Source: <a href="https://www.worldbank.org/en/home">The World Bank</a>',
-        align: 'left'
+        text: 'Source: <a href="https://www.worldbank.org/en/home">The World Bank</a>'
     },
 
     data: {
