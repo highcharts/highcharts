@@ -126,3 +126,17 @@ For more information on rendering options, please read our article on [Performan
 
 ## events
 The DataGrid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the DataGrid. Read more about events in the [Events article](https://www.highcharts.com/docs/datagrid/events).
+
+## setOptions()
+When adding multiple datagrids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each datagrid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/DataGrid_Defaults.Defaults.defaultOptions).
+
+```js
+DataGrid.setOptions({
+    columnDefaults: {
+        sorting: {
+            sortable: false
+        }
+    }
+})
+```
+This example disables end user sorting for every datagrid on the page.
