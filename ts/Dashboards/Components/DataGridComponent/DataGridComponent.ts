@@ -33,7 +33,8 @@ import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
 const {
     merge,
-    diffObjects
+    diffObjects,
+    getStyle
 } = U;
 const { deepClone } = DU;
 
@@ -186,7 +187,6 @@ class DataGridComponent extends Component {
 
         this.sync.start();
         this.emit({ type: 'afterRender' });
-
         return this;
     }
 
@@ -292,6 +292,15 @@ class DataGridComponent extends Component {
 
         if (this.options.dataGridID) {
             this.contentElement.id = this.options.dataGridID;
+        }
+
+        if (this.dataGrid) {
+            this.dataGrid.initContainerHeight =
+                getStyle(
+                    this.dataGrid.container as HTMLElement,
+                    'height',
+                    true
+                ) || 0;
         }
     }
 
