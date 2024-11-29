@@ -149,7 +149,8 @@ class DataGrid {
     public container?: HTMLElement;
 
     /**
-     * The init container height
+     * The initial height of the container, defined in styles. Can be 0 also if
+     * not defined.
      */
     public initContainerHeight: number;
 
@@ -300,11 +301,8 @@ class DataGrid {
             `);
             return;
         }
-        this.initContainerHeight = getStyle(
-            container,
-            'height',
-            true
-        ) || 0;
+
+        this.initContainerHeight = getStyle(container, 'height', true) || 0;
 
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;

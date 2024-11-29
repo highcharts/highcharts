@@ -111,6 +111,7 @@
 }
 
 .highcharts-datagrid-container {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -296,7 +297,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
-    min-height: 20px;
     display: block;
     flex: 1;
     position: relative;

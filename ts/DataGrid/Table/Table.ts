@@ -38,7 +38,7 @@ import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
+const { getStyle, defined } = Utils;
 
 /* *
  *
@@ -151,6 +151,7 @@ class Table {
      */
     public focusCursor?: [number, number];
 
+
     /* *
     *
     *  Constructor
@@ -188,6 +189,9 @@ class Table {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        if (isVirtualization) {
+            tableElement.classList.add(Globals.classNames.virtualization);
+        }
 
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -209,7 +213,6 @@ class Table {
 
         if (isVirtualization) {
             this.tbodyElement.addEventListener('scroll', this.onScroll);
-            tableElement.classList.add(Globals.classNames.virtualization);
         }
 
         if (isScrollable) {
@@ -229,6 +232,8 @@ class Table {
      * Initializes the data grid table.
      */
     private init(): void {
+        this.setTbodyMinHeight();
+
         // Load columns
         this.loadColumns();
 
@@ -243,6 +248,24 @@ class Table {
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
+    }
+
+    /**
+     * Sets the minimum height of the table body.
+     */
+    private setTbodyMinHeight(): void {
+        const { options } = this.dataGrid;
+        const minVisibleRows = options?.rendering?.rows?.minVisibleRows;
+
+        const tbody = this.tbodyElement;
+        if (
+            defined(minVisibleRows) &&
+            !getStyle(tbody, 'min-height', true)
+        ) {
+            tbody.style.minHeight = (
+                minVisibleRows * this.rowsVirtualizer.defaultRowHeight
+            ) + 'px';
+        }
     }
 
     /**

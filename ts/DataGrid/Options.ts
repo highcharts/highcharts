@@ -178,11 +178,24 @@ export interface RowsSettings {
      * the bottom while scrolling. The bigger the buffer, the less flicker will
      * be seen while scrolling, but the more rows will have to be rendered.
      *
-     * Cannot be lower than 0.
+     * Works only when `virtualization` is enabled. Cannot be lower than 0.
      *
      * @default 10
      */
     bufferSize?: number;
+
+    /**
+     * Defines the minimum height of the table body (`tbody`) based on the
+     * number of rows that should be visible without scrolling.
+     *
+     * If set to `null`, the minimum height will not be enforced.
+     *
+     * It's ignored when height of the container is set or the `min-height`
+     * style is set on the `tbody` by the user.
+     *
+     * @default 2
+     */
+    minVisibleRows?: number | null;
 
     /**
      * Whether the height of the rows should be calculated automatically based

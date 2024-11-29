@@ -70,6 +70,7 @@ namespace Defaults {
             },
             rows: {
                 bufferSize: 10,
+                minVisibleRows: 2,
                 strictHeights: false,
                 virtualization: true
             },
