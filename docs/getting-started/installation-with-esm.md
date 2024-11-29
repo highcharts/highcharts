@@ -199,7 +199,9 @@ import Highcharts from 'highcharts';
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
 // Initialize exporting module. (CommonJS only)
-Exporting(Highcharts);
+if (typeof Exporting === 'function') {
+  Exporting(Highcharts);
+}
 
 // Generate the chart
 Highcharts.chart('container', {

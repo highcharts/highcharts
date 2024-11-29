@@ -163,7 +163,9 @@ additional functionality, for example to provide A11y controls.
 - For server-side (target: Node.js) projects use:
   ```ts
   import Accessibility from 'highcharts/modules/accessibility';
-  Accessibility(Highcharts);
+  if(typeof Accessibility === 'function') {
+    Accessibility(Highcharts);
+  }
   ```
 
 
