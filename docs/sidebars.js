@@ -118,6 +118,7 @@ module.exports = {
             'datagrid/events',
             'datagrid/performance',
             'datagrid/style-by-css',
+            'datagrid/accessibility',
             'datagrid/datagrid-v2-migration',
             'datagrid/datagrid-with-angular',
             'datagrid/datagrid-with-react',
