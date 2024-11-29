@@ -111,7 +111,9 @@
 }
 
 .highcharts-datagrid-container {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -125,6 +127,7 @@
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: var(--border-spacing);
+    flex: 1;
 }
 
 /* Table Header */
@@ -267,14 +270,20 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-container:has(.highcharts-datagrid-no-data) {
-    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    text-align: center;
+    padding: 16px;
     height: 100%;
 }
 
 /* Table body */
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody,
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content thead {
     display: block;
@@ -287,10 +296,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
-    height: 100%;
-    min-height: 100%;
-    /* display: block;
-    position: relative; */
+    min-height: 20px;
+    display: block;
+    flex: 1;
+    position: relative;
 }
 
 .highcharts-datagrid-table tbody tr {
@@ -301,7 +310,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
     position: absolute;
-    /* display: flex; */
     left: var(--border-spacing);
     gap: var(--border-spacing);
 }
