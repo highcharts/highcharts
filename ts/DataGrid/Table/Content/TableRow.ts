@@ -112,6 +112,7 @@ class TableRow extends Row {
     public setRowAttributes(): void {
         const idx = this.index;
         const el = this.htmlElement;
+        const a11y = this.viewport.dataGrid.accessibility;
 
         el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
         el.classList.add(Globals.classNames.rowElement);
@@ -125,10 +126,7 @@ class TableRow extends Row {
         }
 
         // Calculate levels of header, 1 to avoid indexing from 0
-        el.setAttribute(
-            'aria-rowindex',
-            idx + (this.viewport.header?.levels ?? 1) + 1
-        );
+        a11y?.setRowIndex(el, idx + (this.viewport.header?.levels ?? 1) + 1);
 
         // Indexing from 0, so rows with even index are odd.
         el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);

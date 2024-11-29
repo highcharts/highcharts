@@ -161,14 +161,16 @@ function task() {
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
-            fsLib.deleteDirectory('code', true);
-
             processLib.isRunning('scripts_incomplete', true, true);
 
+            fsLib.deleteDirectory('code', true);
+
             gulp.series(
-                'scripts-ts',
                 'scripts-css',
-                argv.assembler ? 'scripts-js' : 'scripts-webpack'
+                'scripts-ts',
+                'scripts-es5',
+                argv.assembler ? 'scripts-js' : 'scripts-webpack',
+                'scripts-code'
             )(
                 function (error) {
 
