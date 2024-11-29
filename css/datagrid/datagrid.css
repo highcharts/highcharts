@@ -130,11 +130,6 @@
     flex: 1;
 }
 
-.highcharts-datagrid-table.highcharts-datagrid-virtualization {
-    display: flex;
-    flex-direction: column;
-}
-
 /* Table Header */
 .highcharts-datagrid-table thead tr {
     height: 32px;
@@ -281,6 +276,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Table body */
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody,
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content thead {
     display: block;
@@ -307,7 +308,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
     position: absolute;
-    /* display: flex; */
     left: var(--border-spacing);
     gap: var(--border-spacing);
 }
