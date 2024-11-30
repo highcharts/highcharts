@@ -944,7 +944,7 @@ class Axis {
         paneCoordinates?: boolean
     ): number {
         return this.translate(
-            this.chart.time.parse(value) ?? NaN,
+            this.chart?.time.parse(value) ?? NaN,
             false,
             !this.horiz,
             void 0,
