@@ -165,13 +165,22 @@ function task() {
 
             fsLib.deleteDirectory('code', true);
 
-            gulp.series(
-                'scripts-css',
-                'scripts-ts',
-                'scripts-es5',
-                argv.assembler ? 'scripts-js' : 'scripts-webpack',
-                'scripts-code'
-            )(
+            gulp.series(...(
+                argv.assembler ?
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-es5',
+                        'scripts-js',
+                        'scripts-code'
+                    ] :
+                    [
+                        'scripts-css',
+                        'scripts-ts',
+                        'scripts-webpack',
+                        'scripts-code'
+                    ]
+            ))(
                 function (error) {
 
                     processLib.isRunning('scripts_incomplete', false, true);
