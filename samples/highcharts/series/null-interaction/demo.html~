@@ -1,0 +1,11 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<<<<<<<< HEAD:samples/highcharts/series/null-interaction/demo.html
+<script src="https://code.highcharts.com/modules/accessiblity.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+========
+
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+>>>>>>>> master:samples/unit-tests/title/align/demo.html
+
+<div id="container"></div>

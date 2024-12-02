@@ -1,13 +1,13 @@
 Style by CSS
 ===
 
-By default each **Dashboard** and most of its element are styled using CSS. This method offers
-the possibility to change the look and feel of the dashboard without making changes to its configuration 
+Each **Dashboard** and most child elements are styled using CSS by default. This method offers
+the possibility to change the dashboard's look and feel without changing its configuration 
 or the underlying application's code. Most of the HTML elements are provided with CSS classes, and it is also 
 possible to use custom classes or element identifiers.
 
-If you prefer to use a custom layout in HTML you need is disable the `gui` or leave it out altogether.
-Remember that each container must be provided rendered to a HTML `div` with a unique `id`.
+If you prefer to use a custom layout in HTML, you need to disable the `GUI` or leave it out altogether.
+Remember that each container must be rendered to an HTML `div` with a unique `id`.
 
 ```js
     gui: {
@@ -22,19 +22,19 @@ Remember that each container must be provided rendered to a HTML `div` with a un
 using a custom HTML layout.
 
 ## Importing the CSS
-The CSS must be explicitly imported as shown here:
+The CSS must be explicitly imported, as shown here:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
-The file `datagrid.css` is needed only if the DataGrid component is actually used in the dashboard.
+The file `datagrid.css` is needed only if the DataGrid component is used in the dashboard.
 
 ## General classes
-Each of the class name contains a prefix `highcharts-dashboards` and a suffix that
+Each class name contains the prefix `highcharts-dashboards` and a suffix that
 describes the element. For example, the class name for the dashboard's row is `highcharts-dashboards-row`.
 
-These are the most important elements and their associated CSS classes:
+These are the most essential elements and their associated CSS classes:
 - `highcharts-dashboards` - the main class for the dashboard
 - `highcharts-dashboards-row` - the class for the dashboard's rows
 - `highcharts-dashboards-cell` - the class for the dashboard's cells
@@ -42,7 +42,7 @@ These are the most important elements and their associated CSS classes:
 
 The rest of the classes are specific for each component or element.
 
-To access and style the whole dashboard, its background and component you can use:
+To access and style the whole dashboard, its background and its components, you can use the following:
 ```css
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
@@ -73,7 +73,7 @@ To style the dashboard's component `div` and its content:
 
 ## Component classes
 Each component has the generic component CSS class `highcharts-dashboards-component`
-and its own CSS class specific for the component. For example, the KPI component
+and its own CSS class specific to the component. For example, the KPI component
 has the class `highcharts-dashboards-component-kpi`.
 
 To style the dashboard's component title:
@@ -143,7 +143,7 @@ To style the chart element of the Highcharts component, you need to set the `sty
 }
 ```
 
-Information on how to individually style the dashboard's `Highcharts chart` see the article [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+For information on how to individually style the dashboard's `Highcharts chart` see the article [style Highcharts Chart.](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
 
 ### DataGrid Component
 To style the dashboard's `DataGrid` component `div` and its content:
@@ -175,14 +175,13 @@ Note that you can use the `child selector` to style even and odd rows:
 ```
 
 ### HTML Component
-Since the whole structure of the HTML component is defined by the user, it differs between the use cases.
-In effect, the HTML can styled the same way as any HTML `div` with its child elements
-and it is recommended to use the custom classes and IDs to style it.
+Since the user defines the whole structure of the HTML component, it differs between use cases.
+In effect, HTML can be styled the same way as any HTML `div` with its child elements, and it is recommended that you use custom classes and IDs to style it.
 
 More information is in the section below.
 
 ## Custom classes
-In the dashboard config each component or its element can have a custom class or id.
+Each component or element can have a custom class or ID in the dashboard config.
 You can use it to define better CSS selectors and style the dashboard.
 
 See how the HTML component was configured and how the `id` and `class` were used:
@@ -214,7 +213,7 @@ See how the HTML component was configured and how the `id` and `class` were used
 },
 ```
 
-Custom classes and ids can be used to style the dashboard:
+Custom classes and IDs can be used to style the dashboard:
 ```css
 #saving-button {
     border: none;
@@ -228,7 +227,7 @@ The final result might look like:
 
 ## Edit Mode classes
 You can also change how the Edit Mode looks like. The Edit mode is based on the
-elements like the sidebar, toolbar, popup, etc. Each of them has its own class
+elements like the sidebar, toolbar, popup, etc. Each has its class
 that you can use to style it.
 
 ### Confirmation popup

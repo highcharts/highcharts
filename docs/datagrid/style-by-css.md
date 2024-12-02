@@ -1,8 +1,7 @@
-Style by CSS
-===
+# Style by CSS
 
-The DataGrid is rendered as a HTML table and all table elements are styled via CSS.
-All elements have default CSS classes, and you can also append your own custom classes to each element. This allows you to style the table as per your specific styling needs.
+The DataGrid is rendered as an HTML table, and all table elements are styled using CSS.
+All elements have default CSS classes; you can append your custom classes to each element. This allows you to style the table as per your specific styling needs.
 
 General structure:
 ```html
@@ -51,7 +50,7 @@ The text in the cell will not wrap then, and anything that exceeds the width wil
 
 
 ## General classes
-Each of the class name contains a prefix `highcharts-datagrid` and a suffix that
+Each of the class names contains the prefix `highcharts-datagrid` and a suffix that
 describes the element.
 
 We can distinguish a few main elements and their classes:
@@ -132,7 +131,7 @@ To style column sorting option
 ```
 
 ## Custom classes
-In the DataGrid config you can add a custom class.
+In the DataGrid configuration, you can add a custom class.
 
 See how the `CSS class` can be added to the column:
 
