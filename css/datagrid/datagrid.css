@@ -158,6 +158,7 @@
     cursor: pointer;
     font-weight: bold;
     font-size: 1em;
+    margin: 0px;
 }
 
 .highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content:hover {
