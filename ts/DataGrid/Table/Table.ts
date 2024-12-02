@@ -38,7 +38,6 @@ import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
 
 /* *
  *
