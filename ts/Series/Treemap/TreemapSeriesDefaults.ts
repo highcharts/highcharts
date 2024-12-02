@@ -580,7 +580,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since next
      *
      * @product highcharts
-     * @apioption plotOptions.treemap.groupAreaThreshold
      */
     groupAreaThreshold: {
         /**
