@@ -25,6 +25,33 @@ QUnit.test('NaN in graphs', function (assert) {
     assert.notEqual(chart.series[0].graph.attr('d'), 'M 0 0', 'Path is ok');
 });
 
+QUnit.test('Date stings and turbo threshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [
+            {
+                data: [
+                    ['2015-01-01', 1],
+                    ['2015-01-02', 2],
+                    ['2015-01-03', 3],
+                    ['2015-01-04', 4]
+                ],
+                turboThreshold: 1
+            }
+        ],
+        xAxis: {
+            type: 'datetime',
+            minPadding: 0,
+            maxPadding: 0
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        Date.UTC(2015, 0, 1),
+        'The x-axis should reflect the series data'
+    );
+});
+
 QUnit.test('Zeroes on log axis', function (assert) {
     var chart = Highcharts.chart('container', {
         yAxis: {

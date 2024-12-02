@@ -48,7 +48,7 @@ describe('layout resize on window changes', () => {
             assert.strictEqual(
                 chart.series[0].points[1].y,
                 2000,
-                'After updating the Data Grid the chart should be updated.'
+                'After updating the DataGrid the chart should be updated.'
             );
         });
     });
@@ -108,6 +108,6 @@ describe('layout resize on window changes', () => {
     });
 
     it('The dataGridOptions should be applied to the component.', () => {
-        cy.get('th').eq(1).should('have.text', 'Vitamin A (IU)');
+        cy.get('th').eq(1).should('contain', 'Vitamin A (IU)');
     });
 });

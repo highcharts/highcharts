@@ -44,8 +44,8 @@ To create a dashboard with Vue, please follow the steps below: <br>
     `Vue: Max File Size` value.
 
 4. Create a HTML structure for the dashboard.  
-There are two ways to do it:
-    - Use the `dashboards` layout system.  
+    There are two ways to do it:
+    #### Use the dashboards layout system.  
     To do that first import the `layout` module and initialize it:
     ```typescript
     import LayoutModule from '@highcharts/dashboards/modules/layout';
@@ -56,7 +56,8 @@ There are two ways to do it:
     ```html
     <div ref="dashboardContainer"></div>
     ```
-    - Declare your own HTML structure. Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
+    #### Declare your own HTML structure.
+    Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
 5. Create a dashboard using the factory function `Dashboards.board`. The function takes three arguments:
     - `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element

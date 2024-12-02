@@ -6,12 +6,10 @@ Highcharts.chart('container', {
     },
     title: {
         text: 'Evaluating the energy consumed for water use in the United ' +
-            'States',
-        align: 'left'
+            'States'
     },
     subtitle: {
-        text: 'Data source: <a href="https://iopscience.iop.org/article/10.1088/1748-9326/7/3/034034/pdf">The University of Texas at Austin</a>',
-        align: 'left'
+        text: 'Data source: <a href="https://iopscience.iop.org/article/10.1088/1748-9326/7/3/034034/pdf">The University of Texas at Austin</a>'
     },
     accessibility: {
         point: {

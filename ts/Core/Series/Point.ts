@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -119,17 +120,21 @@ class Point {
     public dataLabels?: Array<SVGElement|SVGLabel>;
     public destroyed?: boolean;
     public formatPrefix: string = 'point';
+    public formattedValue?: string;
     public graphic?: SVGElement;
     public graphics?: Array<SVGElement|undefined>;
     public hiddenInDataClass?: boolean;
     public id!: string;
     public isNew?: boolean;
     public isNull?: boolean;
+    public key?: string|number;
     public marker?: PointMarkerOptions;
     public name!: string;
     public nonZonedColor?: ColorType;
     public options!: PointOptions;
     public percentage?: number;
+    public point: Point;
+    public points?: Array<Point>;
     public selected?: boolean;
     public series!: Series;
     public shapeArgs?: SVGAttributes;
@@ -171,6 +176,14 @@ class Point {
      *
      * @name Highcharts.Point#name
      * @type {string}
+     */
+
+    /**
+     * The point's name if it is defined, or its category in case of a category,
+     * otherwise the x value. Convenient for tooltip and data label formatting.
+     *
+     * @name Highcharts.Point#key
+     * @type {number|string}
      */
 
     /**
@@ -355,6 +368,13 @@ class Point {
             point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
+
+        // If x is a string, try to parse it to a datetime
+        } else if (typeof point.x === 'string') {
+            x ??= series.chart.time.parse(point.x);
+            if (isNumber(x)) {
+                point.x = x;
+            }
         }
 
         point.isNull = this.isValid && !this.isValid();
@@ -582,29 +602,6 @@ class Point {
     }
 
     /**
-     * Return the configuration hash needed for the data label and tooltip
-     * formatters.
-     *
-     * @function Highcharts.Point#getLabelConfig
-     *
-     * @return {Highcharts.PointLabelObject}
-     *         Abstract object used in formatters and formats.
-     */
-    public getLabelConfig(): Point.PointLabelObject {
-        return {
-            x: this.category,
-            y: this.y,
-            color: this.color,
-            colorIndex: this.colorIndex,
-            key: this.name || this.category,
-            series: this.series,
-            point: this as any,
-            percentage: this.percentage,
-            total: this.total || (this as any).stackTotal
-        };
-    }
-
-    /**
      * Returns the value of the point property for a given value.
      * @private
      */
@@ -689,6 +686,9 @@ class Point {
         options: (PointOptions|PointShortOptions),
         x?: number
     ) {
+        // For tooltip and data label formatting
+        this.point = this;
+
         this.series = series;
 
         this.applyOptions(options, x);
@@ -726,7 +726,6 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
-     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
@@ -752,26 +751,30 @@ class Point {
 
         } else if (isArray(options)) {
             // With leading x value
-            if (!keys && (options as any).length > valueCount) {
-                firstItemType = typeof (options as any)[0];
+            if (!keys && options.length > valueCount) {
+                firstItemType = typeof options[0];
                 if (firstItemType === 'string') {
-                    ret.name = (options as any)[0];
+                    if (series.xAxis?.dateTime) {
+                        ret.x = series.chart.time.parse(options[0]);
+                    } else {
+                        ret.name = options[0];
+                    }
                 } else if (firstItemType === 'number') {
-                    ret.x = (options as any)[0];
+                    ret.x = options[0];
                 }
                 i++;
             }
             while (j < valueCount) {
                 // Skip undefined positions for keys
-                if (!keys || typeof (options as any)[i] !== 'undefined') {
+                if (!keys || typeof options[i] !== 'undefined') {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
                         Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
+                            ret, options[i], pointArrayMap[j]
                         );
                     } else {
-                        ret[pointArrayMap[j]] = (options as any)[i];
+                        ret[pointArrayMap[j]] = options[i];
                     }
                 }
                 i++;
@@ -959,22 +962,26 @@ class Point {
     public tooltipFormatter(pointFormat: string): string {
 
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
-        const series = this.series,
-            seriesTooltipOptions = series.tooltipOptions,
-            valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
-            valuePrefix = seriesTooltipOptions.valuePrefix || '',
-            valueSuffix = seriesTooltipOptions.valueSuffix || '';
-
+        const {
+                chart,
+                pointArrayMap = ['y'],
+                tooltipOptions
+            } = this.series,
+            {
+                valueDecimals = '',
+                valuePrefix = '',
+                valueSuffix = ''
+            } = tooltipOptions;
 
         // Replace default point style with class name
-        if (series.chart.styledMode) {
-            pointFormat =
-                (series.chart.tooltip as any).styledModeFormat(pointFormat);
+        if (chart.styledMode) {
+            pointFormat = chart.tooltip?.styledModeFormat(pointFormat) ||
+                pointFormat;
         }
 
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
-        (series.pointArrayMap || ['y']).forEach(function (key: string): void {
+        pointArrayMap.forEach((key: string): void => {
             key = '{point.' + key; // Without the closing bracket
             if (valuePrefix || valueSuffix) {
 
@@ -989,10 +996,7 @@ class Point {
             );
         });
 
-        return format(pointFormat, {
-            point: this,
-            series: this.series
-        }, series.chart);
+        return format(pointFormat, this, chart);
     }
 
     /**
@@ -1076,9 +1080,13 @@ class Point {
                 }
             }
 
-            // Record changes in the parallel arrays
-            i = point.index as any;
-            series.updateParallelArrays(point, i);
+            // Record changes in the data table
+            i = point.index;
+            const row: DataTable.RowObject = {};
+            for (const key of series.dataColumnKeys()) {
+                row[key] = (point as any)[key];
+            }
+            series.dataTable.setRow(row, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
@@ -1513,7 +1521,11 @@ class Point {
                                         markerAttribs.x,
                                         markerAttribs.y,
                                         markerAttribs.width,
-                                        markerAttribs.height
+                                        markerAttribs.height,
+                                        merge(
+                                            markerOptions,
+                                            markerStateOptions
+                                        )
                                     )
                                     .add(series.markerGroup);
                             stateMarkerGraphic.currentSymbol = newSymbol;
@@ -1654,17 +1666,6 @@ namespace Point {
         singular: Array<string>;
         plural: Array<string>;
     }
-    export interface PointLabelObject {
-        x?: (number|string);
-        y?: (number|null);
-        color?: ColorType;
-        colorIndex?: number;
-        key?: number|string;
-        series: Series;
-        point: Point;
-        percentage?: number;
-        total?: number;
-    }
     export interface SeriesPointsOptions {
         events?: PointEventsOptions;
     }
@@ -1712,52 +1713,6 @@ export default Point;
  * Clicked point.
  * @name Highcharts.PointClickEventObject#point
  * @type {Highcharts.Point}
- */
-
-/**
- * Configuration for the data label and tooltip formatters.
- *
- * @interface Highcharts.PointLabelObject
- *//**
- * The point's current color.
- * @name Highcharts.PointLabelObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- *//**
- * The point's current color index, used in styled mode instead of `color`. The
- * color index is inserted in class names used for styling.
- * @name Highcharts.PointLabelObject#colorIndex
- * @type {number}
- *//**
- * The name of the related point.
- * @name Highcharts.PointLabelObject#key
- * @type {string|undefined}
- *//**
- * The percentage for related points in a stacked series or pies.
- * @name Highcharts.PointLabelObject#percentage
- * @type {number}
- *//**
- * The related point. The point name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.PointLabelObject#point
- * @type {Highcharts.Point}
- *//**
- * The related series. The series name is available through `this.series.name`.
- * @name Highcharts.PointLabelObject#series
- * @type {Highcharts.Series}
- *//**
- * The total of values in either a stack for stacked series, or a pie in a pie
- * series.
- * @name Highcharts.PointLabelObject#total
- * @type {number|undefined}
- *//**
- * For categorized axes this property holds the category name for the point. For
- * other axes it holds the X value.
- * @name Highcharts.PointLabelObject#x
- * @type {number|string|undefined}
- *//**
- * The y value of the point.
- * @name Highcharts.PointLabelObject#y
- * @type {number|null|undefined}
  */
 
 /**

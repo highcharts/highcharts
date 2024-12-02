@@ -1,7 +1,7 @@
 QUnit.test('Tooltip on a boosted chart with categories', function (assert) {
     var chart = Highcharts.chart('container', {
             xAxis: {
-                categories: ['categoryName', 'B', 'C']
+                categories: ['CategoryName', 'B', 'C']
             },
             series: [
                 {
@@ -17,8 +17,8 @@ QUnit.test('Tooltip on a boosted chart with categories', function (assert) {
     assert.ok(
         document
             .getElementsByClassName('highcharts-tooltip')[0]
-            .textContent.match('categoryName') !== null,
-        '`categoryName` found in the tooltip (#10432).'
+            .textContent.match('CategoryName') !== null,
+        '`CategoryName` found in the tooltip (#10432).'
     );
 
     chart.update({
@@ -90,7 +90,7 @@ QUnit.test(
         });
 
         const series = chart.series[0];
-        const processedXData = series.processedXData;
+        const processedXData = series.getColumn('x', true);
         const points = series.points;
         const tooltipPoints = points.map(point => {
             const boostPoint = series.boost.getPoint(point);

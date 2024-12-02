@@ -13,13 +13,11 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Wind rose for South Shore Met Station, Oregon',
-        align: 'left'
+        text: 'Wind rose for South Shore Met Station, Oregon'
     },
 
     subtitle: {
-        text: 'Source: or.water.usgs.gov',
-        align: 'left'
+        text: 'Source: or.water.usgs.gov'
     },
 
     pane: {

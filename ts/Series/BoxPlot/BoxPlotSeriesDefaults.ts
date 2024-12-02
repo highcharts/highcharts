@@ -70,7 +70,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * value of the box width. Set `0` to disable whiskers.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         True by default
+     *         Box plot styling
      *
      * @type    {number|string}
      * @since   3.0

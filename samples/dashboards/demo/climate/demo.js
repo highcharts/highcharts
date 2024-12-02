@@ -32,7 +32,6 @@ const KPIChartOptions = {
         height: 166,
         margin: [8, 8, 16, 8],
         spacing: [8, 8, 8, 8],
-        styledMode: true,
         type: 'solidgauge'
     },
     pane: {
@@ -51,8 +50,6 @@ const KPIChartOptions = {
             format: '{y:.0f}',
             y: -34
         },
-        animation: false,
-        animationLimit: 0,
         enableMouseTracking: false,
         innerRadius: '90%',
         radius: '120%'
@@ -248,7 +245,9 @@ async function setupBoard() {
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
                     ).then(response => response.json()),
-                    styledMode: true
+                    // NB! Workaround for issue #22144 (#21982)
+                    // "Map animation on zoom broken". Remove when fixed.
+                    animation: false
                 },
                 colorAxis: {
                     startOnTick: false,
@@ -380,8 +379,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Average Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -410,8 +408,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Maximum Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -440,8 +437,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Days with Rain',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -546,7 +542,6 @@ async function setupBoard() {
             chartOptions: {
                 chart: {
                     spacing: [40, 40, 40, 10],
-                    styledMode: true,
                     type: 'spline',
                     animation: false,
                     animationLimit: 0

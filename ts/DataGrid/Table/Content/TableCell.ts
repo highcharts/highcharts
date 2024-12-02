@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -243,6 +243,11 @@ class TableCell extends Cell {
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
+
+        if (this.column.options.cells?.editable) {
+            vp.dataGrid.accessibility?.addEditableCellHint(this.htmlElement);
+        }
+
         vp.dataGrid.options?.events?.cell?.afterSetValue?.call(this);
 
         if (!updateTable) {

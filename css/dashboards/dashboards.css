@@ -186,7 +186,17 @@
     min-height: 300px;
     transition: 0.5s;
     overflow-x: hidden;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
     font-size: 1rem;
 }
 
@@ -1132,7 +1142,8 @@
     border-radius: 5px;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
     min-height: 30px;
     display: flex;
     flex-direction: row;
@@ -1140,7 +1151,12 @@
     align-self: stretch;
 }
 
-.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn {
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header {
+    min-height: unset;
+}
+
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn,
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
     flex-direction: row-reverse;
     justify-content: left;
     align-items: center;
@@ -1153,6 +1169,11 @@
     cursor: pointer;
     text-transform: capitalize;
     font-size: 0.75rem;
+}
+
+.highcharts-dashboards-edit-accordion-standalone-wrapper .highcharts-dashboards-edit-accordion-header-wrapper {
+    cursor: unset;
+    padding-left: 8px;
 }
 
 .highcharts-dashboards-edit-accordion-header-icon.highcharts-dashboards-edit-collapsed-element {

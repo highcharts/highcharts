@@ -74,7 +74,7 @@ When working with series with a high number of data points, there are a few thin
 4.  If you have a Stock licence, consider using the [Data Grouping module](https://www.highcharts.com/docs/stock/data-grouping). This module packs multiple consecutive values into the same point, and results in considerably fewer points to render. This greatly
 reduces the initial loading time. The following chart compares the loading times of the same data set with and without data grouping.
 
-<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison/" frameborder="0"></iframe>
+<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/blog/dg-performance-comparison" frameborder="0"></iframe>
 
 * * *
 
@@ -115,7 +115,7 @@ Yes. See our article, [Render charts on the server](https://highcharts.com/docs/
 How do I define irregular time data?
 ------------------------------------
 
-To add data points with irregular intervals, instead of defining pointStart and pointInterval for the series, define an X value (date) for each point. See [https://jsfiddle.net/highcharts/Jx5n2/](https://jsfiddle.net/highcharts/Jx5n2/).
+To add data points with irregular intervals, instead of defining `pointStart` and `pointInterval` for the series, define an X value (date) for each point. See [demo of irregular time](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/spline-irregular-time).
 
 If you want the line to be broken for missing dates, insert null values instead.
 

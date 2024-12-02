@@ -127,7 +127,7 @@ namespace ColorAxisComposition {
                 chartProto.addColorAxis
             ];
 
-            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
+            addEvent(ChartClass, 'afterCreateAxes', onChartAfterCreateAxes);
 
             wrapChartCreateAxis(ChartClass);
 
@@ -168,10 +168,10 @@ namespace ColorAxisComposition {
     }
 
     /**
-     * Extend the chart getAxes method to also get the color axis.
+     * Extend the chart createAxes method to also make the color axis.
      * @private
      */
-    function onChartAfterGetAxes(
+    function onChartAfterCreateAxes(
         this: Chart
     ): void {
         const { userOptions } = this;

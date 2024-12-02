@@ -726,7 +726,9 @@ class ChartAdditions {
                         }
                     }
                 }
-                oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+                // Overcome problems with minRange (#2898)
+                oldSeries.dataTable.setColumn('x', []);
 
                 // Reset the names to start new series from the beginning.
                 // Do it once to preserve names when multiple
@@ -1141,7 +1143,7 @@ namespace Drilldown {
         (this.xAxis || []).forEach((axis): void => {
             axis.ddPoints = {};
             axis.series.forEach((series): void => {
-                const xData = series.xData || [],
+                const xData = series.getColumn('x'),
                     points = series.points;
 
                 for (let i = 0, iEnd = xData.length, p; i < iEnd; i++) {

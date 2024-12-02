@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -68,7 +68,7 @@ class TableRow extends Row {
      * Constructs a row in the data grid.
      *
      * @param viewport
-     * The Data Grid Table instance which the row belongs to.
+     * The DataGrid Table instance which the row belongs to.
      *
      * @param index
      * The index of the row in the data table.
@@ -130,9 +130,8 @@ class TableRow extends Row {
             idx + (this.viewport.header?.levels ?? 1) + 1
         );
 
-        if (idx % 2 === 1) {
-            el.classList.add(Globals.classNames.rowOdd);
-        }
+        // Indexing from 0, so rows with even index are odd.
+        el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
