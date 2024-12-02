@@ -49,7 +49,8 @@ const {
     doc,
     svg,
     SVG_NS,
-    win
+    win,
+    isFirefox
 } = H;
 import U from '../../Utilities.js';
 const {
@@ -65,6 +66,7 @@ const {
     getAlignFactor,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -1101,11 +1103,24 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
+
             // Store object
             extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
+            }
+
+            const fontSize = isFirefox && styles.fontSize || null;
+
+            // Necessary in firefox to be able to set font-size, #22124
+            if (
+                fontSize && (
+                    isNumber(fontSize) ||
+                    /^\d+$/.test(fontSize)
+                )
+            ) {
+                styles.fontSize += 'px';
             }
 
             const stylesToApply = merge(styles);
