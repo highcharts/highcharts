@@ -886,7 +886,7 @@ class ChartAdditions {
             }
         }
 
-        if (!chart.mapView) {
+        if (!chart.mapView && !isMultipleDrillUp) {
             chart.redraw();
         }
 
