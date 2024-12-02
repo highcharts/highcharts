@@ -34,11 +34,9 @@ import DataGrid from '../DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
 
 /* *
  *

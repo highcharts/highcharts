@@ -305,7 +305,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table tbody tr {
     overflow: hidden;
     width: 100%;
-    height: 36px;
+    /* height: 36px; */
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
