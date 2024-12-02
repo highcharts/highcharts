@@ -95,6 +95,7 @@ hollowcandlestick
 contextbutton
 drillup
 datagrid
+datagrids
 unsets
 editmode
 formular
