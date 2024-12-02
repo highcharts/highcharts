@@ -41,6 +41,25 @@ namespace A11yOptions {
          * @default true
          */
         enabled?: boolean;
+
+        /**
+         * VoiceOver announcer options for DataGrid actions.
+         */
+        announcements?: {
+            /**
+             * Enable accessibility announcements for the cell editing.
+             *
+             * @default true
+             */
+            cellEditing?: boolean;
+
+            /**
+             * Enable accessibility announcements for the sorting.
+             *
+             * @default true
+             */
+            sorting?: boolean;
+        }
     }
 
     /**
@@ -75,13 +94,6 @@ namespace A11yOptions {
         announcements?: {
 
             /**
-             * Enable accessibility announcements for the cell editing.
-             *
-             * @default true
-             */
-            enabled?: boolean;
-
-            /**
              * The message when the cell editing started.
              *
              * @default 'Entered cell editing mode.'
@@ -113,13 +125,6 @@ namespace A11yOptions {
          * Accessibility lang options for the sorting announcements.
          */
         announcements?: {
-
-            /**
-             * Enable accessibility announcements for the sorting.
-             *
-             * @default true
-             */
-            enabled?: boolean;
 
             /**
              * The message when the column was sorted in ascending order.

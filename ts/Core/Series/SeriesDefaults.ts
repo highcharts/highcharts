@@ -684,9 +684,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * If no x values are given for the points in a series, pointStart
+     * If no x values are given for the points in a series, `pointStart`
      * defines on what value to start. For example, if a series contains one
-     * yearly value starting from 1945, set pointStart to 1945.
+     * yearly value starting from 1945, set `pointStart` to 1945.
+     *
+     * The `pointStart` setting can be a number, or a datetime string that is
+     * parsed according to the `time.timezone` setting.
      *
      * If combined with `relativeXValue`, an x value can be set on each
      * point. The x value from the point options is multiplied by
@@ -704,7 +707,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highstock} stock/plotoptions/relativexvalue/
      *         Relative x value
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   0
      * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointStart
@@ -2572,7 +2575,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   undefined
-     * @since     next
+     * @since 12.0.0
      * @product   highcharts highstock highmaps
      * @apioption plotOptions.series.legendSymbolColor
      */

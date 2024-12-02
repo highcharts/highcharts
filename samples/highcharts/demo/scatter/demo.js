@@ -57,13 +57,11 @@ getData().then(data => {
             }
         },
         title: {
-            text: 'Olympics athletes by height and weight',
-            align: 'left'
+            text: 'Olympics athletes by height and weight'
         },
         subtitle: {
             text:
-          'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>',
-            align: 'left'
+          'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>'
         },
         xAxis: {
             title: {
