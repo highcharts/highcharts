@@ -67,6 +67,7 @@ abstract class Row {
      */
     public rendered?: boolean;
 
+
     /* *
     *
     *  Constructor

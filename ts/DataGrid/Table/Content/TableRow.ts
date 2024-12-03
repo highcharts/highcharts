@@ -24,6 +24,7 @@
 
 import type Cell from '../Cell';
 import type Column from '../Column';
+import type DataTable from '../../../Data/DataTable';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -46,6 +47,11 @@ class TableRow extends Row {
     *  Properties
     *
     * */
+
+    /**
+     * The row values from the data table in the original column order.
+     */
+    public data: DataTable.Row = [];
 
     /**
      * The local index of the row in the presentation data table.
@@ -77,6 +83,8 @@ class TableRow extends Row {
         super(viewport);
         this.index = index;
         this.id = viewport.dataTable.getOriginalRowIndex(index);
+
+        this.loadData();
         this.setRowAttributes();
     }
 
@@ -88,6 +96,18 @@ class TableRow extends Row {
 
     public override createCell(column: Column): Cell {
         return new TableCell(column, this);
+    }
+
+    /**
+     * Loads the row data from the data table.
+     */
+    private loadData(): void {
+        const data = this.viewport.dataTable.getRow(this.index);
+        if (!data) {
+            return;
+        }
+
+        this.data = data;
     }
 
     /**
