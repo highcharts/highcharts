@@ -874,7 +874,7 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const isScatter = series.type === 'scatter',
+    const isScatter = series.is('scatter'),
         xData = (
             (isScatter && series.getColumn('x', true).length ?
                 series.getColumn('x', true) :
@@ -886,7 +886,6 @@ function getPoint(
         ),
         yData = (
             series.getColumn('y', true) ||
-            series.getColumn('y') ||
             seriesOptions.yData ||
             false
         ),
