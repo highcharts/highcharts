@@ -482,6 +482,8 @@ class RowsVirtualizer {
         mockRow.remove();
         mockCell.remove();
 
+        console.log(defaultRowHeight);
+
         return defaultRowHeight;
     }
 }
