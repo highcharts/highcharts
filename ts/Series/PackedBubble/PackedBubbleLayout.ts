@@ -211,12 +211,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 ...layout.nodes as Array<PackedBubblePoint>,
                 ...layout?.chart?.allParentNodes || []
             ],
-            k = layout.k,
-            resolveSplitSeries = this.resolveSplitSeries;
+            k = layout.k;
 
         for (const node of nodes) {
-            const hasSplitSeries = resolveSplitSeries(node),
-                nodeSeries = node.series,
+            const nodeSeries = node.series,
                 fixedPosition = node.fixedPosition,
                 paddedNodeRadius = (
                     (node.marker?.radius || 0) +
@@ -241,7 +239,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                     // Avoiding collision of parentNodes and parented points
                     !(
                         nodeSeries === repNode.series &&
-                        hasSplitSeries &&
+                        // HasSplitSeries &&
                         repNode.isParentNode
                     )
                 ) {
@@ -286,6 +284,12 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         node: PackedBubblePoint
     ): boolean {
         return pick(
+            node.series.chart
+                ?.options
+                ?.plotOptions
+                ?.packedbubble
+                ?.layoutAlgorithm
+                ?.splitSeries,
             node.series?.options?.layoutAlgorithm?.splitSeries,
             this?.options?.splitSeries,
             false
