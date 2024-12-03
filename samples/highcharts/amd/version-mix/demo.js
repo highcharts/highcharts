@@ -34,12 +34,9 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
-        if (typeof ExportingModule === 'function') {
-            ExportingModule(Highcharts);
-        }
-        if (typeof AccessibilityModule === 'function') {
-            AccessibilityModule(Highcharts);
-        }
+        // Legacy factories
+        ExportingModule(Highcharts);
+        AccessibilityModule(Highcharts);
 
         Highcharts.chart('container1', {
             title: {
@@ -64,12 +61,9 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
-        if (typeof ExportingModule === 'function') {
-            ExportingModule(Highcharts);
-        }
-        if (typeof AccessibilityModule === 'function') {
-            AccessibilityModule(Highcharts);
-        }
+        // Legacy factories
+        ExportingModule(Highcharts);
+        AccessibilityModule(Highcharts);
 
         Highcharts.chart('container2', {
             title: {
@@ -92,14 +86,7 @@ require(
         'highcharts/modules/accessibility'
     ],
 
-    function (Highcharts, ExportingModule, AccessibilityModule) {
-
-        if (typeof ExportingModule === 'function') {
-            ExportingModule(Highcharts);
-        }
-        if (typeof AccessibilityModule === 'function') {
-            AccessibilityModule(Highcharts);
-        }
+    function (Highcharts) {
 
         Highcharts.chart('container3', {
             title: {
