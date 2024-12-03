@@ -8,21 +8,21 @@
 
 :root,
 .highcharts-light {
-    --highcharts-background-color: #ffffff;
+    --highcharts-background-color: #fff;
 
     /* Neutral colors */
-    --highcharts-neutral-color-100: #000000;
-    --highcharts-neutral-color-80: #333333;
-    --highcharts-neutral-color-60: #666666;
-    --highcharts-neutral-color-40: #999999;
-    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-100: #000;
+    --highcharts-neutral-color-80: #333;
+    --highcharts-neutral-color-60: #666;
+    --highcharts-neutral-color-40: #999;
+    --highcharts-neutral-color-20: #cccc;
     --highcharts-neutral-color-10: #e6e6e6;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #ffffff;
+    --highcharts-neutral-color-0: #fff;
 
     /* Highlight colors */
-    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-100: #02f;
     --highcharts-highlight-color-80: #334eff;
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
@@ -35,14 +35,14 @@
     --row-border: 1px;
     --inset: 1px; /* We recommend inset for hightlight borders to avoid content shifting. */
     --padding: 8px;
-    --border-spacing: 0px; /* This is the big one, allowing for more "decorative" tables. */
-    --cell-border-radius: 0px; /* Best suited if border-spacing > 0. We need for <table> as well. */
+    --border-spacing: 0; /* This is the big one, allowing for more "decorative" tables. */
+    --cell-border-radius: 0; /* Best suited if border-spacing > 0. We need for <table> as well. */
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
-        --highcharts-background-color: #333333;
+        --highcharts-background-color: #333;
 
         /*
             Neutral color variations
@@ -69,7 +69,7 @@
 
 .highcharts-dark {
     /* UI colors */
-    --highcharts-background-color: #333333;
+    --highcharts-background-color: #333;
 
     /*
         Neutral color variations
@@ -137,7 +137,6 @@
 
 .highcharts-datagrid-table thead th {
     position: relative;
-    /* border-bottom: 1px solid var(--highcharts-neutral-color-20); */
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
@@ -157,7 +156,7 @@
     cursor: pointer;
     font-weight: bold;
     font-size: 1em;
-    margin: 0px;
+    margin: 0;
 }
 
 .highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content:hover {
@@ -192,11 +191,11 @@
 
 .highcharts-datagrid-table tr th:last-of-type,
 .highcharts-datagrid-table tr td:last-of-type {
-  border-right-width: clamp(
-    0px,
-    var(--border-spacing, 0px),
-    var(--column-border, var(--table-border))
-  );
+    border-right-width: clamp(
+        0px,
+        var(--border-spacing, 0px),
+        var(--column-border, var(--table-border))
+    );
 }
 
 .highcharts-datagrid-resizer-content thead,
@@ -209,7 +208,6 @@
     width: 100%;
     display: table;
     table-layout: fixed;
-    width: inherit;
     margin-top: calc(var(--border-spacing) * -1);
 }
 
@@ -287,7 +285,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody,
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content thead {
     display: block;
-    position: relative;   
+    position: relative;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody {
@@ -405,11 +403,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row.highcharts-datagrid-row-even {
     background-color: var(--highcharts-neutral-color-3);
-}
-
-.highcharts-datagrid-table tbody td {
-    /* border-left: 1px solid var(--highcharts-neutral-color-20); */
-    /* padding: 0 4px; */
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row,
