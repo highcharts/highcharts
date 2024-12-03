@@ -62,6 +62,7 @@ const {
  *  Declarations
  *
  * */
+
 declare module './Chart/ChartLike'{
     interface ChartLike {
         cancelClick?: boolean;

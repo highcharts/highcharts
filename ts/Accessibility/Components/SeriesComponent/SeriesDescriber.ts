@@ -63,12 +63,6 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        nullInteraction?: boolean;
-    }
-}
-
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/accessibility */

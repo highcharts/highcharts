@@ -244,7 +244,6 @@ namespace DataLabel {
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
             plotY = point.plotY,
-
             rotation = options.rotation || 0,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&

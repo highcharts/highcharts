@@ -2718,7 +2718,6 @@ class Series {
                                     seriesMarkerOptions
                             )
                             .add(markerGroup);
-
                         // Sliding animation for new points
                         if (
                             series.enabledDataSorting &&
