@@ -174,8 +174,8 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
+                min: '2021-06-02',
+                max: '2021-09-04',
                 visible: true
 
             }
@@ -759,8 +759,8 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
+                min: '2021-06-02',
+                max: '2021-09-04',
                 visible: false
 
             },

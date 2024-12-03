@@ -68,31 +68,37 @@ function exec(command, options = {}) {
 
     return new Promise((resolve, reject) => {
 
-        const cli = ChildProcess.exec(command, options, (error, stdout) => {
+        try {
+            const cli = ChildProcess.exec(command, options, (error, stdout) => {
 
-            if (error) {
-                LogLib.failure(error);
-                reject(error);
-                return;
+                if (error) {
+                    LogLib.failure(error);
+                    reject(error);
+                    return;
+                }
+
+                if (silent !== 2) {
+                    LogLib.success(
+                        (
+                            silent ?
+                                'Command finished (silent):' :
+                                'Command finished:'
+                        ),
+                        command
+                    );
+                }
+
+                resolve(stdout);
+            });
+
+            if (!silent) {
+                cli.stdout.on('data', data => process.stdout.write(data));
             }
-
-            if (silent !== 2) {
-                LogLib.success(
-                    (
-                        silent ?
-                            'Command finished (silent):' :
-                            'Command finished:'
-                    ),
-                    command
-                );
-            }
-
-            resolve(stdout);
-        });
-
-        if (!silent) {
-            cli.stdout.on('data', data => process.stdout.write(data));
+        } catch (error) {
+            LogLib.failure(error);
+            reject(error);
         }
+
     });
 }
 
@@ -112,7 +118,7 @@ function isRunning(name, runningFlag) {
 
     const config = readConfig();
     const dictionary = config.isRunning;
-    const key = name.replace(/[^-\w]+/g, '_');
+    const key = name.replace(/[^-\w]+/gu, '_');
 
     if (typeof runningFlag === 'undefined') {
         runningFlag = dictionary[key];
@@ -186,7 +192,7 @@ function onExit(name, callback) {
         ));
     }
 
-    const key = name.replace(/[^-\w]+/g, '_');
+    const key = name.replace(/[^-\w]+/gu, '_');
 
     onExitCallbacks[key] = callback;
 }

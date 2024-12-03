@@ -27,7 +27,6 @@ import type PackedBubbleChart from './PackedBubbleChart';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
-import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import Color from '../../Core/Color/Color.js';
@@ -159,20 +158,18 @@ class PackedBubbleSeries extends BubbleSeries {
         const chart = this.chart,
             allDataPoints = [] as Array<PackedBubbleSeries.Data>;
 
-        let yData: SeriesType['yData'];
-
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
                 series.reserveSpace()
             ) {
-                yData = series.yData || [];
+                const valueData = series.getColumn('value');
 
                 // Add data to array only if series is visible
-                for (let j = 0; j < yData.length; j++) {
+                for (let j = 0; j < valueData.length; j++) {
                     allDataPoints.push([
                         null, null,
-                        yData[j] as (number|null),
+                        valueData[j],
                         series.index,
                         j,
                         {
@@ -323,10 +320,10 @@ class PackedBubbleSeries extends BubbleSeries {
         if (zMin && zMax) {
             return [zMin, zMax];
         }
-        // It is needed to deal with null
-        // and undefined values
+
+        // It is needed to deal with null and undefined values
         allSeries.forEach((series): void => {
-            series.yData.forEach((y): void => {
+            series.getColumn('value').forEach((y): void => {
                 if (defined(y)) {
                     if (y > valMax) {
                         valMax = y;
@@ -1162,7 +1159,6 @@ class PackedBubbleSeries extends BubbleSeries {
             radius: number|undefined,
             positions;
 
-        this.processedXData = this.xData;
         this.generatePoints();
 
         // Merged data is an array with all of the data from all series

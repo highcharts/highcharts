@@ -17,8 +17,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in February, 2022',
-        align: 'left'
+        text: 'Browser market shares in February, 2022'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
