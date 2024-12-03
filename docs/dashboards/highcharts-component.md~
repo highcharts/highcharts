@@ -36,7 +36,11 @@ Then, import the package and the dedicated plug to connect it to the Dashboards.
  ```
 
 2. From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
+<<<<<<< HEAD
+Importing only Dashbpards' CSS file is enough:
+=======
 Importing only Dashboards' CSS file is enough:
+>>>>>>> master
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
     ```

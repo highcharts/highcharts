@@ -55,7 +55,11 @@ The `header[]` and `header[].columns[]` option arrays can be a mix of strings an
 Walkthrough of some important elements:
 
 1. **Renaming a header cell:** The first item in the `header[]` array renames the header cell to "Fruit" instead of the default "products" from the DataTable.
+<<<<<<< HEAD
+2. **Creating a new header group:** Since the second item doesn't have a `columnId` reference, a new header cell called "Fruit data" is rendered.
+=======
 2. **Creating a new header group:** The second item doesn't have a `columnId` reference, so a new header cell called "Fruit data" is rendered. An `aria-description` attribute is added for improved [accessibility](https://www.highcharts.com/docs/datagrid/accessibility).
+>>>>>>> master
 3. **Defining grouped columns:** In `header[].columns[]`, we define which columns are rendered below the "Fruit data" header cell. These will then be grouped headers.
 4. **Inherit column configuration:** "weight" and "price" are string variants of the reference to the key in DataTable. However, since "weight" is also referenced from the root `columns[]` option array, the configuration takes precedence over the default key from the DataTable.
 5. **Exluding columns**: The "in_stock" column from the DataTable is not referenced in `header[]`, so it is not rendered. This means that `header[]` can exclude columns from the original DataTable.

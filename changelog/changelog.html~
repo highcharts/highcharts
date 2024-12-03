@@ -72,7 +72,10 @@
                       <li>The <code>title.widthAdjust</code> option is removed. Instead, use <a href="https://api.highcharts.com/highcharts/exporting.buttons.contextButton.buttonSpacing">contextButton.buttonSpacing</a> to make space for non-default context button.</li>
                       <li>Titles and subtitles now have <a href="https://www.highcharts.com/docs/chart-concepts/title-and-subtitle">adaptive alignment</a>. To revert to the pre-v12 defaults, set <code>title.align</code> and <code>subtitle.align</code> to <code>center</code>, and <code>title.minScale</code> to 1.</li>
                       <li>The <a href="https://api.highcharts.com/class-reference/Highcharts.Point">Point</a> instances are now used as context for tooltip and data label formatters and format strings, instead of an abstract context object. In most cases this will cause no changes as the properties of the context object are now moved to the Point itself, but some changes may occur. Specifically the <code>{point.x}</code> key for points on a category axes will no longer return the category name. Instead, use <code>{category}</code>.</li>
+<<<<<<< HEAD
+=======
                       <li>When importing Highcharts as a node module, additional modules no longer requires initialization. See <a href="https://github.com/highcharts/highcharts/issues/22251#issuecomment-2507396579">comment on GitHub</a>.</li>
+>>>>>>> master
                     </ul>
 
                   </div>

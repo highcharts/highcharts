@@ -1,5 +1,10 @@
+<<<<<<< HEAD
+# Understanding DataGrid
+At its core, the DataGrid consists of a data source rendered in x number of columns and rows. Many of the available configuration options apply to the columns and their corresponding row and header cells.
+=======
 # Understanding Highcharts DataGrid
 At its core the DataGrid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
+>>>>>>> master
 
 ![table](ill_table.png)
 

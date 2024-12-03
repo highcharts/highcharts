@@ -259,7 +259,11 @@ export function clamp(value: number, min: number, max: number): number {
  *                             is flipped (scaleY is -1)
  * @return {number}            The pixel position to use for a crisp display
  */
+<<<<<<< HEAD
+export function crisp(
+=======
 function crisp(
+>>>>>>> master
     value: number,
     lineWidth: number = 0,
     inverted?: boolean
@@ -1225,7 +1229,11 @@ export function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
+<<<<<<< HEAD
+export function arrayMin(data: Array<any>|TypedArray): number {
+=======
 function arrayMin(data: Array<any>|TypedArray): number {
+>>>>>>> master
     let i = data.length,
         min = data[0];
 
@@ -1250,7 +1258,11 @@ function arrayMin(data: Array<any>|TypedArray): number {
  * @return {number}
  *         The highest number.
  */
+<<<<<<< HEAD
+export function arrayMax(data: Array<any>|TypedArray): number {
+=======
 function arrayMax(data: Array<any>|TypedArray): number {
+>>>>>>> master
     let i = data.length,
         max = data[0];
 
@@ -1388,7 +1400,11 @@ const getAlignFactor = (align: string = ''): number => ({
  * @return {number | undefined}
  *          The closest distance between values
  */
+<<<<<<< HEAD
+export function getClosestDistance(
+=======
 function getClosestDistance(
+>>>>>>> master
     arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
@@ -2032,10 +2048,11 @@ export function isFunction(obj: unknown): obj is Function { // eslint-disable-li
     return typeof obj === 'function';
 }
 
-/**
- *
- */
+<<<<<<< HEAD
+export function ucfirst(s: unknown): string {
+=======
 function ucfirst(s: unknown): string {
+>>>>>>> master
     return (
         (isString(s) ?
             s.substring(0, 1).toUpperCase() + s.substring(1) :
