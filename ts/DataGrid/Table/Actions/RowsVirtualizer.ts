@@ -264,7 +264,7 @@ class RowsVirtualizer {
             vp.tbodyElement.offsetHeight / this.defaultRowHeight
         ) : Infinity; // Need to be refactored when add pagination
 
-        const rows = vp.rows;
+        let rows = vp.rows;
 
         if (!isVirtualization && rows.length > 50) {
             // eslint-disable-next-line no-console
@@ -295,24 +295,48 @@ class RowsVirtualizer {
         );
 
         const alwaysLastRow = rows.pop();
+        const tempRows: TableRow[] = [];
 
+        // Remove rows that are out of the range except the last row.
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            rows[i].destroy();
+            const row = rows[i];
+            const rowIndex = row.index;
+
+            if (rowIndex < from || rowIndex > to) {
+                row.destroy();
+            } else {
+                tempRows.push(row);
+            }
         }
-        rows.length = 0;
+
+        rows = tempRows;
+        vp.rows = rows;
 
         for (let i = from; i <= to; ++i) {
-            const newRow = new TableRow(vp, i);
-            newRow.render();
-            vp.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                vp.tbodyElement.lastChild
-            );
-            if (isVirtualization) {
-                newRow.htmlElement.style.transform =
-                    `translateY(${newRow.getDefaultTopOffset()}px)`;
+            const row = rows[i - (rows[0]?.index || 0)];
+
+            // Recreate row when it is destroyed and it is in the range.
+            if (!row) {
+                const newRow = new TableRow(vp, i);
+                rows.push(newRow);
+                newRow.rendered = false;
+                if (isVirtualization) {
+                    newRow.htmlElement.style.transform =
+                        `translateY(${newRow.getDefaultTopOffset()}px)`;
+                }
             }
-            rows.push(newRow);
+        }
+
+        rows.sort((a, b) => a.index - b.index);
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (!rows[i].rendered) {
+                rows[i].render();
+                vp.tbodyElement.insertBefore(
+                    rows[i].htmlElement,
+                    vp.tbodyElement.lastChild
+                );
+            }
         }
 
         if (alwaysLastRow) {
