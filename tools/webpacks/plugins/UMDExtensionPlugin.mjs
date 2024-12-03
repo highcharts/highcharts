@@ -37,6 +37,57 @@ const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+/**
+ * @param {string} _
+ * @param {string} amdPrefix
+ * @param {string} amdRequires
+ * @param {string} amdSuffix
+ * @return {string}
+ */
+function convertAMD(_, amdPrefix, amdRequires, amdSuffix) {
+    const requireToArgMap = {};
+    const factoryArgs = [];
+
+    amdRequires = amdRequires
+        .replace(/^\[\[|\]\]$/gu, '')
+        .split(/\],\s*?\[/gu);
+
+    let factoryArg, // inner args
+        pathItems,  // original args
+        requireKey; // outer args
+
+    for (const amdPath of amdRequires) {
+        pathItems = amdPath
+            .replace(/\[|\]/gu, '')
+            .split(/,/gu);
+        requireKey = pathItems.shift();
+        factoryArg = requireToArgMap[requireKey];
+
+        if (!factoryArg) {
+            factoryArg = 'amd' + (Object.keys(requireToArgMap).length + 1);
+            requireToArgMap[requireKey] = factoryArg;
+        }
+
+        factoryArgs.push(factoryArg + pathItems.map(pi => `[${pi}]`).join());
+    }
+
+    return (
+        amdPrefix +
+        `[${Object.keys(requireToArgMap).join(',')}], ` +
+        `function (${Object.values(requireToArgMap).join(',')}) {` +
+        `return factory(${factoryArgs});` +
+        '})'
+    );
+}
+
+
+/* *
+ *
  *  Classes
  *
  * */
@@ -131,15 +182,29 @@ export class UMDExtensionPlugin {
                                 `,$1root["${nodeNamespaceReplacement}"]` +
                                 ');'
                             ) +
-                        umdSuffix.replace('(this,', '(typeof window === \'undefined\' ? this : window,')
+                        umdSuffix
+                            .replace(
+                                '(this,',
+                                '(typeof window === \'undefined\' ?' +
+                                ' this : window,'
+                            )
                     ) : (
                         umdPrefix +
                         umdBridge
                             .replace(
+                                /(define\(".*?", )(\[.*?\])(, factory\))/su,
+                                convertAMD
+                            )
+                            .replace(
                                 /require\(".*?"\)/gu,
                                 `root["${nodeNamespaceReplacement}"]`
                             ) +
-                        umdSuffix.replace('(this,', '(typeof window === \'undefined\' ? this : window,')
+                        umdSuffix
+                            .replace(
+                                '(this,',
+                                '(typeof window === \'undefined\' ?' +
+                                ' this : window,'
+                            )
                     )
                 )
             ),
