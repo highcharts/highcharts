@@ -106,6 +106,7 @@ export class UMDExtensionPlugin {
 
         const nodeNamespaceReplacement = '_' + content
             .match(/root\["(.*?)"\]/su)[1]
+            .replace(/\\/gu, '\\\\')
             .replace(/\$/gu, '\\$');
 
         FS.writeFileSync(
