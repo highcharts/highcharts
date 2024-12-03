@@ -27,6 +27,7 @@ import type TableCell from './Content/TableCell';
 import type TableRow from './Content/TableRow';
 
 import DGUtils from '../Utils.js';
+import Utils from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
@@ -34,7 +35,6 @@ import DataGrid from '../DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
