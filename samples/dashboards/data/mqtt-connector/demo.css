@@ -18,21 +18,21 @@
  *
  **/
 
-.row {
+.highcharts-dashboards-row {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
 }
 
-.cell {
-    flex: 1;
+.highcharts-dashboards-cell {
     min-width: 20px;
+    flex: 1 1 50%;
 }
 
-.cell > .highcharts-dashboards-component {
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
     position: relative;
-    margin: 10px;
-    padding: 10px;
+    margin: 5px;
+    padding: 5px;
 }
 
 /**
@@ -92,10 +92,6 @@
     background-color: var(--highcharts-neutral-color-5);
 }
 
-#log-content span.error {
-    color: #f00;
-}
-
 /**
  *
  *  App control - Connect status and clearing log
@@ -130,14 +126,69 @@
     padding: 5px 10px;
 }
 
+#app-control button:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
 /**
  *
  *  Dashboards container and description
  *
  **/
 
-div.description {
-    padding: 0 20px;
+body {
+    background-color: var(--highcharts-neutral-color-10);
+}
+
+div#description {
+    background-color: var(--highcharts-neutral-color-3);
+    color: var(--text-color);
+    padding: 5px 10px;
     max-width: 100%;
     text-align: justify;
+
+    & a {
+        color: var(--highcharts-highlight-color-80);
+    }
+
+    pre.json {
+        padding: 5px;
+        color: var(--highcharts-highlight-color-80);
+        border-radius: 5px;
+    }
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 100%;
+    }
+
+    #app-control #connect-status {
+        white-space: nowrap;
+        display: block;
+    }
 }

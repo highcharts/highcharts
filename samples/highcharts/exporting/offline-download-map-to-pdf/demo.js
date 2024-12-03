@@ -11,7 +11,20 @@
         },
 
         exporting: {
-            fallbackToExportServer: false
+            fallbackToExportServer: false,
+            buttons: {
+                contextButton: {
+                    menuItems: [
+                        'viewFullscreen',
+                        'printChart',
+                        'separator',
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadSVG',
+                        'downloadPDF'
+                    ]
+                }
+            }
         },
 
         title: {

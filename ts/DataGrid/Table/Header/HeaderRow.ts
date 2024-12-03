@@ -233,8 +233,8 @@ class HeaderRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', this.level);
+        const a11y = this.viewport.dataGrid.accessibility;
+        a11y?.setRowIndex(this.htmlElement, this.level);
     }
 }
 

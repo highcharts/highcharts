@@ -458,8 +458,9 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
-
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", ' +
+                'Roboto, Helvetica, Arial, "Apple Color Emoji", ' +
+                '"Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
             fontSize: '1rem'
 
         }, style);

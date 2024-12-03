@@ -407,7 +407,8 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         browserConsoleLogOptions: {
             path: `${process.cwd()}/test/console.log`,
-            terminal: false
+            // Show in terminal only when running specific tests for debugging
+            terminal: Boolean(argv.tests)
         },
         browsers: browsers,
         autoWatch: false,
@@ -423,15 +424,18 @@ module.exports = function (config) {
         },
 
         formatError: function (s) {
-            let ret = s.replace(
-                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
-                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
-                }
-            );
+            let ret = s
+                .replace(
+                    /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                    (a, b, c) => (
+                        `http://localhost:3030/samples/#test/${c}`.cyan + '\n\t' +
+                        a.replace(/^@/, '@ ')
+                    )
+                )
+                .replace(/\@code\//g, '@ code/');
 
             // Insert link to utils
+            /*
             let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
             let match = s.match(regex);
 
@@ -444,9 +448,10 @@ module.exports = function (config) {
 
                 ret = ret.replace(regex, a => a.cyan);
             }
+            */
 
             // Skip the call stack, it's internal QUnit stuff
-            ret = ret.split('<<<splitter>>>')[0];
+            // ret = ret.split('<<<splitter>>>')[0];
 
             return ret;
         },

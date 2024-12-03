@@ -15,6 +15,9 @@
  *
  **/
 
+// MQTT server configuration, depends on the web client protocol
+const mqttUseSSL = window.location.protocol === 'https:';
+
 // Global Dashboards instance for use in event handlers.
 let board;
 
@@ -311,6 +314,18 @@ function setConnectStatus(connected) {
     connectStatus.innerText = connected ? 'connected' : 'disconnected';
 }
 
+/* *
+ *
+ * MQTT connector class - a custom DataConnector,
+ * interfacing with the Paho MQTT client library.
+ *
+ *
+ * Paho MQTT client documentation
+ *
+ * https://bito.ai/resources/paho-mqtt-javascript-javascript-explained/
+ *
+ */
+
 let MQTTClient;
 try {
     // eslint-disable-next-line no-undef
@@ -345,7 +360,6 @@ class MQTTConnector extends DataConnector {
             MQTTConnector.defaultOptions,
             options
         );
-        console.dir(mergedOptions);
         super(mergedOptions);
         mergedOptions.firstRowAsNames = false;
 
@@ -378,11 +392,11 @@ class MQTTConnector extends DataConnector {
         this.mqtt.onMessageArrived = this.onMessageArrived;
     }
 
-    /**
+    /* *
      *
      *  Functions
      *
-     **/
+     * */
 
     /**
      * Initiates the connection if autoConnect is set to true and
@@ -686,13 +700,13 @@ class MQTTConnector extends DataConnector {
 MQTTConnector.defaultOptions = {
     // MQTT client properties
     host: 'broker.hivemq.com',
-    port: 8000,
+    port: mqttUseSSL ? 8884 : 8000,
     user: '',
     password: '',
     topic: 'highcharts/test',
     timeout: 10,
     qOs: 0,  // Quality of Service
-    useSSL: false,
+    useSSL: mqttUseSSL,
     cleanSession: true,
 
     // Custom connector properties

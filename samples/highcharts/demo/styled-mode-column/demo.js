@@ -6,15 +6,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Average weight and BMI in some countries, women',
-        align: 'left'
+        text: 'Average weight and BMI in some countries, women'
     },
 
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.worlddata.info/average-bodyheight.php"' +
-            'target="_blank">WorldData</a>',
-        align: 'left'
+            'target="_blank">WorldData</a>'
     },
 
     xAxis: {

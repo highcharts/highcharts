@@ -106,35 +106,22 @@ QUnit.test('dateFormats', function (assert) {
         { date: new Date(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
     ];
 
-    Highcharts.setOptions({
-        global: {
-            useUTC: false,
-            timezone: undefined
-        }
-    });
+    const timeLocal = new Highcharts.Time({ locale: 'en', useUTC: false });
 
     dates.forEach(function (dateObject) {
         const { date, expectedWeek, expectedDay } = dateObject;
 
         assert.equal(
-            Highcharts.dateFormat('%W', date.valueOf()),
+            timeLocal.dateFormat('%W', date.valueOf()),
             expectedWeek,
             `Week format produces correct output for ${date}`
         );
 
         assert.equal(
-            Highcharts.dateFormat('%E', date.valueOf()),
+            timeLocal.dateFormat('%E', date.valueOf()),
             expectedDay,
             'Single character week day format produces correct output'
         );
-    });
-
-    /* Teardown */
-    Highcharts.setOptions({
-        global: {
-            timezone: undefined,
-            useUTC: undefined
-        }
     });
 
     const UTCDates = [
@@ -143,17 +130,12 @@ QUnit.test('dateFormats', function (assert) {
         { date: Date.UTC(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
     ];
 
-    Highcharts.setOptions({
-        global: {
-            useUTC: true,
-            timezone: undefined
-        }
-    });
+    const timeUTC = new Highcharts.Time({ locale: 'en', useUTC: true });
 
     UTCDates.forEach(function (dateObject) {
         const { date, expectedWeek, expectedDay } = dateObject;
         assert.equal(
-            Highcharts.dateFormat('%W', date),
+            timeUTC.dateFormat('%W', date),
             expectedWeek,
             `Week format produces correct output when using UTC for ${new Date(
                 date
@@ -161,19 +143,11 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormat('%E', date),
+            timeUTC.dateFormat('%E', date),
             expectedDay,
             'Single character week day format produces correct output when ' +
             'using UTC'
         );
-    });
-
-    /* Teardown */
-    Highcharts.setOptions({
-        global: {
-            timezone: undefined,
-            useUTC: undefined
-        }
     });
 });
 
@@ -1199,8 +1173,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 });
 
 QUnit.module('labels alignment', function () {
-    var map = Highcharts.map,
-        categories = ['Category 1', 'Category 2', 'Category 3'],
+    var categories = ['Category 1', 'Category 2', 'Category 3'],
         optionsAxis = {
             showEmpty: true,
             type: 'category',
@@ -1310,7 +1283,7 @@ QUnit.module('labels alignment', function () {
         /**
          * Test label positions on the x and yAxis with a second line.
          */
-        optionsAxis.categories = map(categories, function (str) {
+        optionsAxis.categories = categories.map(function (str) {
             return str + '<br/>Second Line';
         });
 
@@ -1334,7 +1307,7 @@ QUnit.module('labels alignment', function () {
          * NOTE: options and chart must be set again, due to tests running
          * async.
          */
-        optionsAxis.categories = map(categories, function (str) {
+        optionsAxis.categories = categories.map(function (str) {
             return '<span>' + str + '<span>';
         });
         optionsAxis.labels.useHTML = true;
@@ -1353,7 +1326,7 @@ QUnit.module('labels alignment', function () {
         /**
          * Test label positions on the x and yAxis with a second line.
          */
-        optionsAxis.categories = map(categories, function (str) {
+        optionsAxis.categories = categories.map(function (str) {
             return '<span>' + str + '</span><br/><span>Second Line</span>';
         });
 
@@ -1812,6 +1785,9 @@ QUnit.test(
     'Secondary tick interval when years in primary (#11427)',
     assert => {
         const chart = Highcharts.ganttChart('container', {
+            time: {
+                locale: 'en'
+            },
             chart: {
                 width: 1200
             },
@@ -2130,6 +2106,7 @@ QUnit.test(
                 width: 500
             },
             time: {
+                locale: 'en',
                 timezoneOffset: -4 * 60
             },
             xAxis: [
