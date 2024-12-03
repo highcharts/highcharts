@@ -88,7 +88,7 @@ async function resolveExternals(info) {
     }
 
     // Quick exit on standalone
-    if (masterName.startsWith('standalone')) {
+    if (masterName.includes('standalone')) {
         return void 0;
     }
 
@@ -97,44 +97,44 @@ async function resolveExternals(info) {
         case 'Core/Axis/Color/ColorAxis':
         case 'Series/ColorMapComposition':
             if (
-                masterName !== 'coloraxis' &&
-                masterName !== 'heatmap' &&
-                masterName !== 'map' &&
-                masterName !== 'sunburst' &&
-                masterName !== 'treemap'
+                masterName !== 'modules/coloraxis' &&
+                masterName !== 'modules/heatmap' &&
+                masterName !== 'modules/map' &&
+                masterName !== 'modules/sunburst' &&
+                masterName !== 'modules/treemap'
             ) {
                 return createUMDConfig(name);
             }
             break;
         case 'Core/HttpUtilities':
             if (
-                masterName !== 'data' &&
-                masterName !== 'exporting'
+                masterName !== 'modules/data' &&
+                masterName !== 'modules/exporting'
             ) {
                 return createUMDConfig(name);
             }
             break;
         case 'Extensions/Annotations/NavigationBindings':
             if (
-                masterName !== 'annotations' &&
-                masterName !== 'annotations-advanced' &&
-                masterName !== 'stock-tools'
+                masterName !== 'modules/annotations' &&
+                masterName !== 'modules/annotations-advanced' &&
+                masterName !== 'modules/stock-tools'
             ) {
                 return createUMDConfig(name);
             }
             break;
         case 'Extensions/DataGrouping/ApproximationRegistry':
             if (
-                masterName !== 'datagrouping' &&
-                masterName !== 'stock'
+                masterName !== 'modules/datagrouping' &&
+                masterName !== 'modules/stock'
             ) {
                 return createUMDConfig('dataGrouping', 'approximations');
             }
             break;
         case 'Gantt/Pathfinder':
             if (
-                masterName !== 'gantt' &&
-                masterName !== 'pathfinder'
+                masterName !== 'modules/gantt' &&
+                masterName !== 'modules/pathfinder'
             ) {
                 return createUMDConfig(name);
             }
@@ -142,19 +142,19 @@ async function resolveExternals(info) {
         case 'Stock/Navigator/Navigator':
         case 'Stock/Scrollbar/Scrollbar':
             if (
-                masterName !== 'accessibility' &&
-                masterName !== 'gantt' &&
-                masterName !== 'navigator' &&
-                masterName !== 'stock'
+                masterName !== 'modules/accessibility' &&
+                masterName !== 'modules/gantt' &&
+                masterName !== 'modules/navigator' &&
+                masterName !== 'modules/stock'
             ) {
                 return createUMDConfig(name);
             }
             break;
         case 'Stock/RangeSelector/RangeSelector':
             if (
-                masterName !== 'accessibility' &&
-                masterName !== 'gantt' &&
-                masterName !== 'stock'
+                masterName !== 'modules/accessibility' &&
+                masterName !== 'modules/gantt' &&
+                masterName !== 'modules/stock'
             ) {
                 return createUMDConfig(name);
             }
@@ -227,8 +227,8 @@ const webpacks = FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
-        const masterName = Path.basename(masterFile, '.src.js');
-        const masterPath = Path.relative(mastersFolder, masterFile);
+        const masterPath = Path.relative(mastersFolder, masterFile)
+        const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
         const webpackConfig = {
             // path to the main file
             entry: `./${masterFile}`,
@@ -285,9 +285,7 @@ const webpacks = FSLib
                 //             noBanner: false,
                 //         }
                 //     },
-                //     outFile: Path
-                //         .join(targetFolder, masterPath)
-                //         .replace(/(?:\.src)?\.js$/, '.d.ts'),
+                //     outFile: Path.join(targetFolder, masterName) + '.d.ts',
                 //     compilationOptions: {
                 //         followSymlinks: false,
                 //         preferredConfigPath: './ts/tsconfig.json'
