@@ -7,8 +7,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from './highcharts.src.js';
-import './modules/stock.src.js';
+import './highcharts.src.js';
+import Highcharts from './modules/stock.src.js';
 
 (Highcharts as any).product = 'Highstock';
 export default Highcharts;

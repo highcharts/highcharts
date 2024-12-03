@@ -32,6 +32,9 @@ import Webpack from 'webpack';
 const HOOKS_NAME = 'Highcharts.UMDExtensionPlugin';
 
 
+const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\) \{\s+)(.*?)(\s+\}\)\(this, \()/su;
+
+
 /* *
  *
  *  Classes
@@ -94,19 +97,51 @@ export class UMDExtensionPlugin {
         const productBundles = this.options.productBundles;
         const filename = Path.basename(outputOptions.filename || '');
 
-        if (
-            !filename ||
-            productBundles.includes(filename)
-        ) {
+        if (!filename) {
             return;
         }
 
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
         const content = FS.readFileSync(filepath, 'utf8');
 
+        const nodeNamespaceReplacement = '_' + content
+            .match(/root\["(.*?)"\]/su)[1]
+            .replace('$', '\\$');
+
         FS.writeFileSync(
             filepath,
-            content.replace(/(?<=else\s+)root\[\S+?\] = (factory\(root\[.+?\));/su, '$1;'),
+            content.replace(
+                UMD_REGEXP,
+                (_, umdPrefix, umdBridge, umdSuffix) => (
+                    productBundles.includes(filename) ? (
+                        umdPrefix +
+                        umdBridge
+                            .replace(
+                                /(module\.exports = )factory\(\);/su,
+                                '(' +
+                                `root["${nodeNamespaceReplacement}"] = factory()` +
+                                `,$1root["${nodeNamespaceReplacement}"]` +
+                                ');'
+                            )
+                            .replace(
+                                /(exports\[".*?"\] = )factory\(\);/su,
+                                '(' +
+                                `root["${nodeNamespaceReplacement}"] = factory()` +
+                                `,$1root["${nodeNamespaceReplacement}"]` +
+                                ');'
+                            ) +
+                        umdSuffix.replace('(this,', '(typeof window === \'undefined\' ? this : window,')
+                    ) : (
+                        umdPrefix +
+                        umdBridge
+                            .replace(
+                                /require\(".*?"\)/gu,
+                                `root["${nodeNamespaceReplacement}"]`
+                            ) +
+                        umdSuffix.replace('(this,', '(typeof window === \'undefined\' ? this : window,')
+                    )
+                )
+            ),
             'utf8'
         );
 
