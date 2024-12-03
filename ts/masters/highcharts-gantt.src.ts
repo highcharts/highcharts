@@ -8,7 +8,7 @@
  */
 'use strict';
 import Highcharts from './highcharts.src.js';
-import HighchartsGantt from './modules/gantt.src.js';
+import './modules/gantt.src.js';
 
 (Highcharts as any).product = 'Highcharts Gantt';
-export default HighchartsGantt;
+export default Highcharts;
