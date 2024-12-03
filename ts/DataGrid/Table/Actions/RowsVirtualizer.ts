@@ -430,7 +430,11 @@ class RowsVirtualizer {
         // Set the proper offset for the last row
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
-        if (preLastRow && preLastRow.index === lastRow.index - 1) {
+        if (
+            preLastRow && preLastRow.index === lastRow.index - 1 &&
+            /* eslint-disable-next-line max-len */
+            lastRow.htmlElement.offsetHeight !== preLastRow.htmlElement.offsetHeight
+        ) {
             lastRow.htmlElement.style.transform = `translateY(${
                 preLastRow.htmlElement.offsetHeight +
                 getTranslateY(preLastRow.htmlElement)
