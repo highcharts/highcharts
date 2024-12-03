@@ -20,7 +20,14 @@ require(
     ],
 
     // This function runs when the above files have been loaded.
-    function (Highcharts) {
+    function (Highcharts, ExportingModule, AccessibilityModule) {
+
+        if (typeof ExportingModule === 'function') {
+            ExportingModule(Highcharts);
+        }
+        if (typeof AccessibilityModule === 'function') {
+            AccessibilityModule(Highcharts);
+        }
 
         // Create a test chart.
         Highcharts.chart('container', {

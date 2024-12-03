@@ -34,8 +34,12 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
-        ExportingModule(Highcharts);
-        AccessibilityModule(Highcharts);
+        if (typeof ExportingModule === 'function') {
+            ExportingModule(Highcharts);
+        }
+        if (typeof AccessibilityModule === 'function') {
+            AccessibilityModule(Highcharts);
+        }
 
         Highcharts.chart('container1', {
             title: {
@@ -60,8 +64,12 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
-        ExportingModule(Highcharts);
-        AccessibilityModule(Highcharts);
+        if (typeof ExportingModule === 'function') {
+            ExportingModule(Highcharts);
+        }
+        if (typeof AccessibilityModule === 'function') {
+            AccessibilityModule(Highcharts);
+        }
 
         Highcharts.chart('container2', {
             title: {
@@ -86,12 +94,16 @@ require(
 
     function (Highcharts, ExportingModule, AccessibilityModule) {
 
-        ExportingModule(Highcharts);
-        AccessibilityModule(Highcharts);
+        if (typeof ExportingModule === 'function') {
+            ExportingModule(Highcharts);
+        }
+        if (typeof AccessibilityModule === 'function') {
+            AccessibilityModule(Highcharts);
+        }
 
         Highcharts.chart('container3', {
             title: {
-                text: 'My chart in the latest version'
+                text: 'My chart in v' + Highcharts.version
             },
             series: [{
                 data: [1, 2, 3, 4, 5]
