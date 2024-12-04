@@ -204,6 +204,14 @@ module.exports = {
             'export-module/privacy-disclaimer-export'
         ],
         'Working with data': [
+            'working-with-data/data-intro',
+            'working-with-data/data-compression',
+            'working-with-data/data-module',
+            'working-with-data/custom-preprocessing',
+            'working-with-data/live-data',
+            'working-with-data/data-from-a-database',
+            'working-with-data/getting-data-across-domains-jsonp',
+            'working-with-data/server-side-data-grouping',
             {
                 'Morningstar Connectors': [
                     'morningstar/morningstar',
@@ -226,15 +234,7 @@ module.exports = {
                         ]
                     }
                 ]
-            },
-            'working-with-data/data-intro',
-            'working-with-data/data-compression',
-            'working-with-data/data-module',
-            'working-with-data/custom-preprocessing',
-            'working-with-data/live-data',
-            'working-with-data/data-from-a-database',
-            'working-with-data/getting-data-across-domains-jsonp',
-            'working-with-data/server-side-data-grouping'
+            }
         ],
         'Chart design and style': [
             'chart-design-and-style/design-and-style',
