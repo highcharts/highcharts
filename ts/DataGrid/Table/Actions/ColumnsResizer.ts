@@ -264,10 +264,11 @@ class ColumnsResizer {
         column: Column
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
-            const vp = column.viewport;
+            /// const vp = column.viewport;
 
             this.resizedColumns = true;
 
+            /* Rething the resize wrapper class.
             if (!vp.dataGrid.options?.rendering?.rows?.virtualization) {
                 vp.dataGrid.contentWrapper?.classList.add(
                     Globals.classNames.resizerWrapper
@@ -275,6 +276,7 @@ class ColumnsResizer {
                 // Apply widths before resizing
                 this.viewport.reflow();
             }
+            */
 
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
