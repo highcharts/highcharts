@@ -83,7 +83,7 @@ function arc(
             endX = cx + rx * cosEnd,
             // Use relative coordinates when drawing a circle where the floating
             // point number is inaccurate, e.g with large numbers. (#21701)
-            useRelativeCoordinates = fullCircle &&
+            useRelativeCoordinates = fullCircle && !useInnerRadius &&
                 fround(startX) === fround(endX),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
