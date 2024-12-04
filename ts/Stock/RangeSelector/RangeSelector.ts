@@ -663,9 +663,15 @@ class RangeSelector {
         if (selectedIndex !== null) {
             buttonStates[selectedIndex] = 2;
             rangeSelector.setSelected(selectedIndex);
+            if (this.dropdown) {
+                this.dropdown.selectedIndex = selectedIndex + 1;
+            }
         } else {
             rangeSelector.setSelected();
 
+            if (this.dropdown) {
+                this.dropdown.selectedIndex = -1;
+            }
             if (dropdownLabel) {
                 dropdownLabel.setState(0);
                 dropdownLabel.attr({
