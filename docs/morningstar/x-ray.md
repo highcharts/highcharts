@@ -20,7 +20,7 @@ columns might be added to the table.
 In order to fetch a benchmark, you can request for example:
 
 ```js
-const xRayConnector = MC.XRayConnector({
+const xRayConnector = new HighchartsConnectors.Morningstar.XRayConnector({
     postman: {
         environmentJSON: postmanJSON
     },

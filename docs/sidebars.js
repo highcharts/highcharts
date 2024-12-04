@@ -214,12 +214,15 @@ module.exports = {
                     'morningstar/x-ray',
                     {
                         'Time Series': [
-                            'morningstar/morningstar/time-series/time-series',
-                            'morningstar/morningstar/time-series/cumulative-return',
-                            'morningstar/morningstar/time-series/dividend',
-                            'morningstar/morningstar/time-series/growth',
-                            'morningstar/morningstar/time-series/ohlcv',
-                            'morningstar/morningstar/time-series/price'
+                            'morningstar/time-series/time-series',
+                            'morningstar/time-series/cumulative-return',
+                            'morningstar/time-series/dividend',
+                            'morningstar/time-series/growth',
+                            'morningstar/time-series/ohlcv',
+                            'morningstar/time-series/price'
+                        ],
+                        'Screeners': [
+                            'morningstar/screeners/investment-screener',
                         ]
                     }
                 ]
