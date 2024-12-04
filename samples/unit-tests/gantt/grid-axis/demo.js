@@ -851,10 +851,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            width: 800,
-            style: {
-                fontFamily: 'Helvetica, Arial, sans-serif'
-            }
+            width: 800
         },
         xAxis: [
             {
