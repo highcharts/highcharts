@@ -50,7 +50,7 @@ To customize the default language or wording for ARIA attributes and announcers,
 }
 ```
 
-For a complete list of available options, check out the [API reference](?).
+For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.LangOptions).
 
 When configuring localization, it typically applies to all datagrids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid#setOptions) for the details.
 
