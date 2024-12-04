@@ -38,6 +38,7 @@ const {
 
 /**
  * Returns the closest 32-bit float.
+ * @private
  */
 const fround: (num: number) => number = Math.fround ?
     Math.fround :
