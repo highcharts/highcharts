@@ -29,6 +29,7 @@ import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     pick
 } = U;
 
@@ -283,17 +284,23 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public resolveSplitSeries(
         node: PackedBubblePoint
     ): boolean {
-        return pick(
+        const specificSeriesOpt = node
+            .series
+            ?.options
+            ?.layoutAlgorithm
+            ?.splitSeries;
+
+        return (
+            !defined(specificSeriesOpt) &&
             node.series.chart
                 ?.options
                 ?.plotOptions
                 ?.packedbubble
                 ?.layoutAlgorithm
-                ?.splitSeries,
-            node.series?.options?.layoutAlgorithm?.splitSeries,
-            this?.options?.splitSeries,
-            false
-        );
+                ?.splitSeries
+        ) ||
+        specificSeriesOpt ||
+        false;
     }
 
     public applyLimitBox(
