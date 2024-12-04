@@ -1,14 +1,14 @@
 # Data Table
 
-A Data Table is a structured representation of data, consisting of columns and rows.
-It offers methods for adding, removing, and manipulating columns and rows, as well as for accessing data from specific cells.  
+A Data Table is a structured representation of data consisting of columns and rows.
+It offers methods for adding, removing, and manipulating columns and rows and for accessing data from specific cells.  
 Think of a Data Table as a grid where each row represents a record or entry, and each column represents a specific attribute or piece of information.
 
 
-`DataTable` is an integral part of the `Dashboards` and the `DataGrid` bundle, which means it can be accessed from these two places. There is no need to load any additional modules.
+`DataTable` is an integral part of the **Dashboards** and the **DataGrid** bundle, which means it can be accessed from these two places. There is no need to load any additional modules.
 
 ## Creating a DataTable
-There are a few ways to create a DataTable:
+There are multiple ways to create a `DataTable`:
 
 1. **From a DataPool**  
     The `DataPool` is the main entry point for data handling in Highcharts Dashboards. It handles incoming data and creates a `DataTable` to store the imported data.
@@ -98,10 +98,10 @@ There are a few ways to create a DataTable:
 A DataTable offers several methods to access data, among some of the most common are:
 
 - `getRow`- Returns a row with the specified index from the DataTable.
-- `getRows`- Returns all or a number of rows.
+- `getRows`- Returns all or several rows.
 - `getRowIndexBy`- Returns the index of the first row that matches the specified condition.
 - `getColumn`- Returns a column with the specified name or alias from the DataTable.
-- `getColumns`- Returns all or a number of columns.
+- `getColumns`- Returns all or several columns.
 - `getModifier`- Returns the modifier for the table.
 
 And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).

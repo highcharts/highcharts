@@ -61,7 +61,7 @@ QUnit.test('Test OBV calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[2].yData,
+        chart.series[2].getColumn('y'),
         [
             0,
             30000,

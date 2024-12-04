@@ -6,6 +6,9 @@
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
+        title: {
+            text: 'AAPL Stock Price'
+        },
         rangeSelector: {
             selected: 1
         },

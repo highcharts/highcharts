@@ -138,6 +138,12 @@ class HeaderRow extends Row {
                 )
             );
 
+            if (typeof column !== 'string') {
+                vp.dataGrid.accessibility?.addHeaderCellDescription(
+                    headerCell.htmlElement, column.accessibility?.description
+                );
+            }
+
             if (headerFormat) {
                 if (!headerCell.options.header) {
                     headerCell.options.header = {};
@@ -186,7 +192,7 @@ class HeaderRow extends Row {
      * Get all headers that should be rendered in a level.
      *
      * @param scope
-     * Level that we start
+     * Level that we start from
      *
      * @param targetLevel
      * Max level
@@ -227,8 +233,8 @@ class HeaderRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', this.level);
+        const a11y = this.viewport.dataGrid.accessibility;
+        a11y?.setRowIndex(this.htmlElement, this.level);
     }
 }
 

@@ -534,7 +534,7 @@ Highcharts.stockChart('container', {
     xAxis: {
         visible: false,
         ordinal: false,
-        min: Date.UTC(1900, 0, 1),
+        min: '1900-01-01',
         reversed: false
     },
     yAxis: {
@@ -555,7 +555,7 @@ Highcharts.stockChart('container', {
     },
     series: [{
         type: 'timeline',
-        pointStart: Date.UTC(1600, 0, 1),
+        pointStart: '1600-01-01',
         pointIntervalUnit: 'year',
         marker: {
             enabled: true,

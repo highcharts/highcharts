@@ -252,8 +252,6 @@ class HTMLElement extends SVGElement {
             })
         });
 
-        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
-        this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -292,8 +290,14 @@ class HTMLElement extends SVGElement {
             doTransform = true;
         }
 
+        // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
-            styles.whiteSpace = 'nowrap';
+            styles.overflow = 'hidden';
+        }
+        if (styles?.lineClamp) {
+            styles.display = '-webkit-box';
+            styles.WebkitLineClamp = styles.lineClamp;
+            styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
         }
 
@@ -350,6 +354,8 @@ class HTMLElement extends SVGElement {
                 rotation,
                 rotationOriginX,
                 rotationOriginY,
+                scaleX,
+                scaleY,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -358,7 +364,7 @@ class HTMLElement extends SVGElement {
                 x = 0,
                 y = 0
             } = this,
-            whiteSpace = styles.whiteSpace;
+            { display = 'block', whiteSpace } = styles;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -414,10 +420,14 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     css(element, {
-                        width: (textPxLength > textWidthNum) || rotation ?
+                        width: (
+                            (textPxLength > textWidthNum) ||
+                            rotation ||
+                            scaleX
+                        ) ?
                             textWidth + 'px' :
                             'auto', // #16261
-                        display: 'block',
+                        display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
                     this.oldTextWidth = textWidth;
@@ -451,7 +461,11 @@ class HTMLElement extends SVGElement {
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && this.textPxLength) || // #7920
+                        (
+                            !defined(rotation) &&
+                            !this.textWidth &&
+                            this.textPxLength
+                        ) || // #7920
                         element.offsetWidth
                     ),
                     baseline,
@@ -466,8 +480,14 @@ class HTMLElement extends SVGElement {
                 styles: CSSObject = {
                     left: `${x + xCorr}px`,
                     top: `${y + yCorr}px`,
+                    textAlign,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
+
+            if (scaleX || scaleY) {
+                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
+            }
+
             css(element, styles);
 
 

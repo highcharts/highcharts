@@ -60,7 +60,9 @@ QUnit.module('Styled mode for series types', function () {
             // Complains about a missing axis
             type !== 'scatter3d' &&
             // Uses CSS for HTML data label positioning
-            type !== 'organization'
+            type !== 'organization' &&
+            // Error because of missing data
+            type !== 'renko'
         ) {
             QUnit.test('Styled mode for ' + type, function (assert) {
                 var cfg = {

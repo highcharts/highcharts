@@ -24,6 +24,18 @@ export interface IndicatorLike extends Series {
     useCommonDataGrouping?: boolean;
 }
 
+export interface IndicatorLinkedSeriesLike {
+    processedYData?: (
+        Array<(number|null)>|
+        Array<Array<(number|null)>>
+    );
+    xData?: Array<number>;
+    yData?: (
+        Array<(number|null)>|
+        Array<Array<(number|null)>>
+    );
+}
+
 /* *
  *
  *  Default Export

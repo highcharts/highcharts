@@ -72,7 +72,7 @@ class SVGLabel extends SVGElement {
      */
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
+        'fontWeight', 'lineClamp', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'whiteSpace', 'width'
     ];
 

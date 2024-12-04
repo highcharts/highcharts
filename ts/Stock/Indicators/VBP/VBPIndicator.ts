@@ -23,6 +23,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -32,6 +33,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
+import type { TypedArray } from '../../../Core/Series/SeriesOptions';
 import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
@@ -558,12 +560,12 @@ class VBPIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,
-            xValues: Array<number> = series.processedXData,
-            yValues: Array<Array<number>> = (series.processedYData as any),
+            xValues = series.getColumn('x', true),
+            yValues = series.processedYData as Array<Array<number>>,
             chart = indicator.chart,
             ranges: number = (params.ranges as any),
             VBP: Array<Array<number>> = [],
@@ -587,10 +589,11 @@ class VBPIndicator extends SMAIndicator {
         // Checks if volume series exists and if it has data
         if (
             !volumeSeries ||
-            !volumeSeries.processedXData.length
+            !volumeSeries.getColumn('x', true).length
         ) {
             const errorMessage =
-                volumeSeries && !volumeSeries.processedXData.length ?
+                volumeSeries &&
+                !volumeSeries.getColumn('x', true).length ?
                     ' does not contain any data.' :
                     ' not found! Check `volumeSeriesID`.';
 
@@ -648,7 +651,7 @@ class VBPIndicator extends SMAIndicator {
     // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
-        xValues: Array<number>,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>,
         ranges: number,
         volumeSeries: LineSeries
@@ -727,14 +730,12 @@ class VBPIndicator extends SMAIndicator {
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
         volumeSeries: LineSeries,
-        xValues: Array<number>,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,
-            volumeXData: Array<number> = volumeSeries.processedXData,
-            volumeYData: Array<number> = (
-                volumeSeries.processedYData as any
-            ),
+            volumeXData = volumeSeries.getColumn('x', true),
+            volumeYData = volumeSeries.getColumn('y', true),
             lastZoneIndex: number = priceZones.length - 1,
             baseSeriesLength: number = yValues.length,
             volumeSeriesLength: number = volumeYData.length;
