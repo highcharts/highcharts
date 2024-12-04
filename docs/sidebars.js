@@ -204,6 +204,14 @@ module.exports = {
             'export-module/privacy-disclaimer-export'
         ],
         'Working with data': [
+            'working-with-data/data-intro',
+            'working-with-data/data-compression',
+            'working-with-data/data-module',
+            'working-with-data/custom-preprocessing',
+            'working-with-data/live-data',
+            'working-with-data/data-from-a-database',
+            'working-with-data/getting-data-across-domains-jsonp',
+            'working-with-data/server-side-data-grouping',
             {
                 'Morningstar Connectors': [
                     'morningstar/morningstar',
@@ -214,24 +222,19 @@ module.exports = {
                     'morningstar/x-ray',
                     {
                         'Time Series': [
-                            'morningstar/morningstar/time-series/time-series',
-                            'morningstar/morningstar/time-series/cumulative-return',
-                            'morningstar/morningstar/time-series/dividend',
-                            'morningstar/morningstar/time-series/growth',
-                            'morningstar/morningstar/time-series/ohlcv',
-                            'morningstar/morningstar/time-series/price'
+                            'morningstar/time-series/time-series',
+                            'morningstar/time-series/cumulative-return',
+                            'morningstar/time-series/dividend',
+                            'morningstar/time-series/growth',
+                            'morningstar/time-series/ohlcv',
+                            'morningstar/time-series/price'
+                        ],
+                        'Screeners': [
+                            'morningstar/screeners/investment-screener',
                         ]
                     }
                 ]
-            },
-            'working-with-data/data-intro',
-            'working-with-data/data-compression',
-            'working-with-data/data-module',
-            'working-with-data/custom-preprocessing',
-            'working-with-data/live-data',
-            'working-with-data/data-from-a-database',
-            'working-with-data/getting-data-across-domains-jsonp',
-            'working-with-data/server-side-data-grouping'
+            }
         ],
         'Chart design and style': [
             'chart-design-and-style/design-and-style',
