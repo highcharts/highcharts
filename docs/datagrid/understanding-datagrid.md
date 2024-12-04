@@ -91,6 +91,8 @@ While the format and visibility of individual columns and their header cells can
 In addition, the `header[]` option can change the order of headers and group headers in a hierarchical structure.
 
 The [Header article](https://www.highcharts.com/docs/datagrid/header) provides more information about `header[]`.
+<<<<<<< HEAD
+=======
 
 ## accessibility
 ```js
@@ -107,6 +109,7 @@ For more information on accessibility options read our documentation article on 
 
 ## lang
 To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts DataGrid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/datagrid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-dashboards) and [roadmap](https://www.highcharts.com/blog/roadmap/).
+>>>>>>> master
 
 ## rendering
 The `rendering` option object can be used to configure options related to performance and the rendering of the DataGrid. Example: [Rendering.rows](https://api.highcharts.com/dashboards/#classes/DataGrid_Table_Row.Row-1) represents the rows in the DataGrid.
@@ -126,6 +129,8 @@ For more information on rendering options, please read our article on [Performan
 
 ## events
 The DataGrid supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of the DataGrid. Read more about events in the [Events article](https://www.highcharts.com/docs/datagrid/events).
+<<<<<<< HEAD
+=======
 
 ## setOptions()
 When adding multiple datagrids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each datagrid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/dashboards/#variables/DataGrid_Defaults.Defaults.defaultOptions).
@@ -140,3 +145,4 @@ DataGrid.setOptions({
 })
 ```
 This example disables end user sorting for every datagrid on the page.
+>>>>>>> master

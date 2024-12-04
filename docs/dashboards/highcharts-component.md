@@ -134,7 +134,11 @@ Dashboards.board('container', {
 
 The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
 You can also declare which columns will be the point's parameters. This is useful for series like OHLC, candlestick, column range, or arrange. The `seriesId` field is mandatory for properly displaying series (for instance, in the legend).
+<<<<<<< HEAD
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment). 
+=======
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment).
+>>>>>>> master
 
 The `data` option can take three different types:
 1. `string` - column name containing the one-dimensional data.
