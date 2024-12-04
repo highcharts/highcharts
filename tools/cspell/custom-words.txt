@@ -191,3 +191,7 @@ gzipping
 datatable
 Bcctlbee
 Renko
+BLGZ
+CUSIP
+MSID
+OHLCV
