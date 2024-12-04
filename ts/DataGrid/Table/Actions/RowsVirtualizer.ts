@@ -327,7 +327,7 @@ class RowsVirtualizer {
             }
         }
 
-        rows.sort((a, b) => a.index - b.index);
+        rows.sort((a, b): number => a.index - b.index);
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             if (!rows[i].rendered) {
