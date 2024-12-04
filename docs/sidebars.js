@@ -204,6 +204,26 @@ module.exports = {
             'export-module/privacy-disclaimer-export'
         ],
         'Working with data': [
+            {
+                'Morningstar Connectors': [
+                    'morningstar/morningstar',
+                    'morningstar/goal-analysis',
+                    'morningstar/risk-score',
+                    'morningstar/regulatory-news-announcements',
+                    'morningstar/security-details',
+                    'morningstar/x-ray',
+                    {
+                        'Time Series': [
+                            'morningstar/morningstar/time-series/time-series',
+                            'morningstar/morningstar/time-series/cumulative-return',
+                            'morningstar/morningstar/time-series/dividend',
+                            'morningstar/morningstar/time-series/growth',
+                            'morningstar/morningstar/time-series/ohlcv',
+                            'morningstar/morningstar/time-series/price'
+                        ]
+                    }
+                ]
+            },
             'working-with-data/data-intro',
             'working-with-data/data-compression',
             'working-with-data/data-module',
