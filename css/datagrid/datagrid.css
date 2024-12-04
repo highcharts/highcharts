@@ -292,9 +292,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     overflow-y: auto;
 }
 
-/* .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tr {
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tr {
     display: block;
-} */
+}
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
