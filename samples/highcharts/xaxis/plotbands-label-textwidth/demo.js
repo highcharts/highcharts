@@ -16,9 +16,12 @@ Highcharts.chart('container', {
             from: 3,
             to: 4,
 
-            // 'inside' defaults to 'true' and adds ellipsis by default
+            // 'inside' defaults to 'true' and adds ellipsis when lineClamp
             label: {
-                text: 'Ellipsis by default'
+                text: 'Ellipsis by line clamp',
+                style: {
+                    lineClamp: 1
+                }
             }
         }, {
             from: 5,

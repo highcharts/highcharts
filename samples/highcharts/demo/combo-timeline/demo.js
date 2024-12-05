@@ -227,72 +227,72 @@ function onChartLoad() {
 }
 
 const employees = [
-    { x: Date.UTC(2009, 10, 1), y: 1 },
-    { x: Date.UTC(2010, 10, 20), y: 2 },
-    { x: Date.UTC(2011, 3, 1), y: 3 },
-    { x: Date.UTC(2011, 7, 1), y: 4 },
-    { x: Date.UTC(2011, 7, 5), y: 5 },
-    { x: Date.UTC(2012, 5, 1), y: 6 },
-    { x: Date.UTC(2012, 8, 10), y: 5 },
-    { x: Date.UTC(2012, 8, 15), y: 6 },
-    { x: Date.UTC(2013, 7, 1), y: 7 },
-    { x: Date.UTC(2013, 7, 20), y: 8 },
-    { x: Date.UTC(2013, 9, 1), y: 9 },
-    { x: Date.UTC(2014, 7, 8), y: 10 },
-    { x: Date.UTC(2014, 10, 1), y: 11 },
-    { x: Date.UTC(2015, 1, 1), y: 12 },
-    { x: Date.UTC(2015, 4, 1), y: 13 },
-    { x: Date.UTC(2015, 7, 1), y: 15 },
-    { x: Date.UTC(2016, 0, 1), y: 16 },
-    { x: Date.UTC(2016, 1, 1), y: 18 },
-    { x: Date.UTC(2016, 4, 1), y: 17 },
-    { x: Date.UTC(2016, 6, 1), y: 16 },
-    { x: Date.UTC(2016, 7, 1), y: 19 },
-    { x: Date.UTC(2016, 8, 1), y: 20 },
-    { x: Date.UTC(2017, 0, 1), y: 21 },
-    { x: Date.UTC(2017, 2, 1), y: 20 },
-    { x: Date.UTC(2017, 7, 1), y: 19 },
-    { x: Date.UTC(2017, 8, 1), y: 21 },
-    { x: Date.UTC(2017, 10, 1), y: 20 },
-    { x: Date.UTC(2018, 0, 1), y: 23 },
-    { x: Date.UTC(2018, 7, 1), y: 26 },
-    { x: Date.UTC(2019, 1, 1), y: 27 },
-    { x: Date.UTC(2019, 2, 1), y: 28 },
-    { x: Date.UTC(2019, 5, 1), y: 29 },
-    { x: Date.UTC(2019, 7, 1), y: 31 },
-    { x: Date.UTC(2020, 0, 1), y: 29 },
-    { x: Date.UTC(2020, 1, 1), y: 28 },
-    { x: Date.UTC(2020, 5, 1), y: 27 },
-    { x: Date.UTC(2020, 6, 1), y: 26 },
-    { x: Date.UTC(2020, 8, 1), y: 28 },
-    { x: Date.UTC(2020, 9, 1), y: 29 },
-    { x: Date.UTC(2020, 10, 1), y: 30 },
-    { x: Date.UTC(2021, 0, 1), y: 31 },
-    { x: Date.UTC(2021, 1, 1), y: 32 },
-    { x: Date.UTC(2021, 2, 1), y: 33 },
-    { x: Date.UTC(2021, 3, 1), y: 34 },
-    { x: Date.UTC(2021, 5, 1), y: 33 },
-    { x: Date.UTC(2021, 6, 1), y: 34 },
-    { x: Date.UTC(2021, 8, 1), y: 33 },
-    { x: Date.UTC(2021, 9, 1), y: 32 },
-    { x: Date.UTC(2021, 10, 1), y: 33 },
-    { x: Date.UTC(2021, 11, 1), y: 34 },
-    { x: Date.UTC(2022, 1, 1), y: 35 },
-    { x: Date.UTC(2022, 2, 1), y: 34 },
-    { x: Date.UTC(2022, 4, 1), y: 36 },
-    { x: Date.UTC(2022, 5, 1), y: 37 },
-    { x: Date.UTC(2022, 6, 1), y: 36 },
-    { x: Date.UTC(2022, 7, 1), y: 39 },
-    { x: Date.UTC(2022, 8, 1), y: 38 },
-    { x: Date.UTC(2022, 10, 1), y: 39 },
-    { x: Date.UTC(2022, 11, 1), y: 39 },
-    { x: Date.UTC(2023, 0, 1), y: 39 },
-    { x: Date.UTC(2023, 1, 1), y: 39 },
-    { x: Date.UTC(2023, 2, 1), y: 40 },
-    { x: Date.UTC(2023, 3, 1), y: 41 },
-    { x: Date.UTC(2023, 4, 1), y: 41 },
-    { x: Date.UTC(2023, 5, 1), y: 40 },
-    { x: Date.UTC(2023, 6, 1), y: 38 }
+    { x: '2009-11-01', y: 1 },
+    { x: '2010-11-20', y: 2 },
+    { x: '2011-04-01', y: 3 },
+    { x: '2011-08-01', y: 4 },
+    { x: '2011-08-05', y: 5 },
+    { x: '2012-06-01', y: 6 },
+    { x: '2012-09-10', y: 5 },
+    { x: '2012-09-15', y: 6 },
+    { x: '2013-08-01', y: 7 },
+    { x: '2013-08-20', y: 8 },
+    { x: '2013-10-01', y: 9 },
+    { x: '2014-08-08', y: 10 },
+    { x: '2014-11-01', y: 11 },
+    { x: '2015-02-01', y: 12 },
+    { x: '2015-05-01', y: 13 },
+    { x: '2015-08-01', y: 15 },
+    { x: '2016-01-01', y: 16 },
+    { x: '2016-02-01', y: 18 },
+    { x: '2016-05-01', y: 17 },
+    { x: '2016-07-01', y: 16 },
+    { x: '2016-08-01', y: 19 },
+    { x: '2016-09-01', y: 20 },
+    { x: '2017-01-01', y: 21 },
+    { x: '2017-03-01', y: 20 },
+    { x: '2017-08-01', y: 19 },
+    { x: '2017-09-01', y: 21 },
+    { x: '2017-11-01', y: 20 },
+    { x: '2018-01-01', y: 23 },
+    { x: '2018-08-01', y: 26 },
+    { x: '2019-02-01', y: 27 },
+    { x: '2019-03-01', y: 28 },
+    { x: '2019-06-01', y: 29 },
+    { x: '2019-08-01', y: 31 },
+    { x: '2020-01-01', y: 29 },
+    { x: '2020-02-01', y: 28 },
+    { x: '2020-06-01', y: 27 },
+    { x: '2020-07-01', y: 26 },
+    { x: '2020-09-01', y: 28 },
+    { x: '2020-10-01', y: 29 },
+    { x: '2020-11-01', y: 30 },
+    { x: '2021-01-01', y: 31 },
+    { x: '2021-02-01', y: 32 },
+    { x: '2021-03-01', y: 33 },
+    { x: '2021-04-01', y: 34 },
+    { x: '2021-06-01', y: 33 },
+    { x: '2021-07-01', y: 34 },
+    { x: '2021-09-01', y: 33 },
+    { x: '2021-10-01', y: 32 },
+    { x: '2021-11-01', y: 33 },
+    { x: '2021-12-01', y: 34 },
+    { x: '2022-02-01', y: 35 },
+    { x: '2022-03-01', y: 34 },
+    { x: '2022-05-01', y: 36 },
+    { x: '2022-06-01', y: 37 },
+    { x: '2022-07-01', y: 36 },
+    { x: '2022-08-01', y: 39 },
+    { x: '2022-09-01', y: 38 },
+    { x: '2022-11-01', y: 39 },
+    { x: '2022-12-01', y: 39 },
+    { x: '2023-01-01', y: 39 },
+    { x: '2023-02-01', y: 39 },
+    { x: '2023-03-01', y: 40 },
+    { x: '2023-04-01', y: 41 },
+    { x: '2023-05-01', y: 41 },
+    { x: '2023-06-01', y: 40 },
+    { x: '2023-07-01', y: 38 }
 ];
 
 const options = {
@@ -313,8 +313,8 @@ const options = {
         },
         plotBands: [
             {
-                from: Date.UTC(2009, 10, 27),
-                to: Date.UTC(2010, 11, 1),
+                from: '2009-11-27',
+                to: '2010-12-01',
                 color: '#EFFFFF',
                 label: {
                     text: '<em>Offices:</em><br>Torstein´s<br>basement',
@@ -326,8 +326,8 @@ const options = {
                 }
             },
             {
-                from: Date.UTC(2010, 11, 1),
-                to: Date.UTC(2013, 9, 1),
+                from: '2010-12-01',
+                to: '2013-10-01',
                 color: '#FFFFEF',
                 label: {
                     text: '<em>Offices:</em><br> Tomtebu',
@@ -338,8 +338,8 @@ const options = {
                 }
             },
             {
-                from: Date.UTC(2013, 9, 1),
-                to: Date.UTC(2016, 2, 1),
+                from: '2013-10-01',
+                to: '2016-03-01',
                 color: '#FFEFFF',
                 label: {
                     text: '<em>Offices:</em><br> VikØrsta',
@@ -350,8 +350,8 @@ const options = {
                 }
             },
             {
-                from: Date.UTC(2016, 2, 10),
-                to: Date.UTC(2022, 11, 30),
+                from: '2016-03-10',
+                to: '2022-12-30',
                 color: '#dff9e7',
                 label: {
                     text: '<em>Offices</em>:<br>Blix Hotel',
@@ -637,7 +637,7 @@ if (Highcharts.Series.types.flags) {
             y: -80,
             data: [
                 {
-                    x: Date.UTC(2014, 4, 1),
+                    x: '2014-05-01',
                     text: 'Highcharts Cloud Beta',
                     title: 'Cloud',
                     shape: 'squarepin'
@@ -653,7 +653,7 @@ if (Highcharts.Series.types.flags) {
             y: -55,
             data: [
                 {
-                    x: Date.UTC(2014, 5, 13),
+                    x: '2014-06-13',
                     text: 'Highmaps version 1.0 released',
                     title: 'Maps'
                 }
@@ -668,7 +668,7 @@ if (Highcharts.Series.types.flags) {
             y: -55,
             data: [
                 {
-                    x: Date.UTC(2018, 9, 17),
+                    x: '2018-10-17',
                     text: 'Highcharts Gantt version 1.0 released',
                     title: 'Gantt'
                 }
@@ -683,7 +683,7 @@ if (Highcharts.Series.types.flags) {
             y: -55,
             data: [
                 {
-                    x: Date.UTC(2023, 4, 5),
+                    x: '2023-05-05',
                     text: 'Highcharts GPT (powered by ChatGPT) released',
                     title: 'Highcharts GPT'
                 }
@@ -697,76 +697,76 @@ if (Highcharts.Series.types.flags) {
             shape: 'circlepin',
             data: [
                 {
-                    x: Date.UTC(2009, 10, 27),
+                    x: '2009-11-27',
                     text: 'Highcharts version 1.0 released',
                     title: '1.0'
                 },
                 {
-                    x: Date.UTC(2010, 6, 13),
+                    x: '2010-07-13',
                     text: 'Ported from canvas to SVG rendering',
                     title: '2.0'
                 },
                 {
-                    x: Date.UTC(2010, 10, 23),
+                    x: '2010-11-23',
                     text: 'Dynamically resize and scale to text labels',
                     title: '2.1'
                 },
                 {
-                    x: Date.UTC(2011, 9, 18),
+                    x: '2011-10-18',
                     text: 'Highcharts Stock version 1.0 released',
                     title: 'Stock',
                     shape: 'squarepin'
                 },
                 {
-                    x: Date.UTC(2012, 7, 24),
+                    x: '2012-08-24',
                     text: 'Gauges, polar charts and range series',
                     title: '2.3'
                 },
                 {
-                    x: Date.UTC(2013, 2, 22),
+                    x: '2013-03-22',
                     text: 'Multitouch support, more series types',
                     title: '3.0'
                 },
                 {
-                    x: Date.UTC(2014, 3, 22),
+                    x: '2014-04-22',
                     text: '3D charts, heatmaps',
                     title: '4.0'
                 },
                 {
-                    x: Date.UTC(2016, 8, 29),
+                    x: '2016-09-29',
                     text: 'Styled mode, responsive options, accessibility, ' +
                         'chart.update',
                     title: '5.0'
                 },
                 {
-                    x: Date.UTC(2017, 9, 4),
+                    x: '2017-10-04',
                     text: 'Annotations, Boost, Series labels, new series types',
                     title: '6.0'
                 },
                 {
-                    x: Date.UTC(2018, 11, 11),
+                    x: '2018-12-11',
                     text: 'Sonification, TypeScript (beta), new series types',
                     title: '7.0'
                 },
                 {
-                    x: Date.UTC(2019, 11, 10),
+                    x: '2019-12-10',
                     text: 'Accessibility, data sorting, marker clusters',
                     title: '8.0'
                 },
                 {
-                    x: Date.UTC(2021, 1, 2),
+                    x: '2021-02-02',
                     text: 'Improved security, accessibility options, zoom by ' +
                         'single touch',
                     title: '9.0'
                 },
                 {
-                    x: Date.UTC(2022, 2, 7),
+                    x: '2022-03-07',
                     text: 'Bread crumbs, improved Boost pixel ratio, ' +
                         'threshold alignment in charts with multiple axes',
                     title: '10.0'
                 },
                 {
-                    x: Date.UTC(2023, 3, 27),
+                    x: '2023-04-27',
                     text: 'Design upgrade, Faster codebase, Flow maps, ' +
                         'Pictorial charts, Treegraphs, Geographical heatmaps,' +
                         ' Audio charts',
@@ -782,37 +782,37 @@ if (Highcharts.Series.types.flags) {
             fillColor: 'rgba(255,255,255,0.8)',
             data: [
                 {
-                    x: Date.UTC(2012, 10, 1),
+                    x: '2012-11-01',
                     text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
                         'Fjordane, Norway',
                     title: 'Award'
                 },
                 {
-                    x: Date.UTC(2012, 11, 25),
+                    x: '2012-12-25',
                     text: 'Packt Publishing published <em>Learning ' +
                         'Highcharts by Example</em>. Since then, many other ' +
                         'books are written about Highcharts.',
                     title: 'First book'
                 },
                 {
-                    x: Date.UTC(2013, 4, 25),
+                    x: '2013-05-25',
                     text: 'Highsoft nominated Norway`s Startup of the Year',
                     title: 'Award'
                 },
                 {
-                    x: Date.UTC(2014, 4, 25),
+                    x: '2014-05-25',
                     text: 'Highsoft nominated Best Startup in Nordic Startup ' +
                         'Awards',
                     title: 'Award'
                 },
                 {
-                    x: Date.UTC(2018, 11, 13),
+                    x: '2018-12-13',
                     text: 'Highsoft nominated Best Startup in Nordic Startup ' +
                         'Awards',
                     title: 'Award'
                 },
                 {
-                    x: Date.UTC(2017, 9, 20),
+                    x: '2017-10-20',
                     text: 'Highsoft nominated Best Startup in Nordic Startup ' +
                         'Awards',
                     title: 'Award'

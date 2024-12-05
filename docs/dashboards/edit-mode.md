@@ -1,5 +1,4 @@
-Edit mode
-===
+# Edit mode
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).  
 When the dashboard is declared with custom HTML structure, the edit mode is limited to the component settings only.

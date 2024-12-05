@@ -26,35 +26,35 @@ Highcharts.chart('container', {
         type: 'datetime',
         plotLines: [{
             color: Highcharts.defaultOptions.colors[0],
-            value: Date.UTC(1981, 0, 1),
+            value: '1981-01-01',
             label: {
                 text: '1G',
                 rotation: 0
             }
         }, {
             color: Highcharts.defaultOptions.colors[1],
-            value: Date.UTC(1991, 0, 1),
+            value: '1991-01-01',
             label: {
                 text: '2G',
                 rotation: 0
             }
         }, {
             color: Highcharts.defaultOptions.colors[2],
-            value: Date.UTC(1998, 0, 1),
+            value: '1998-01-01',
             label: {
                 text: '3G',
                 rotation: 0
             }
         }, {
             color: Highcharts.defaultOptions.colors[3],
-            value: Date.UTC(2007, 0, 1),
+            value: '2007-01-01',
             label: {
                 text: '4G',
                 rotation: 0
             }
         }, {
             color: Highcharts.defaultOptions.colors[4],
-            value: Date.UTC(2017, 0, 1),
+            value: '2017-01-01',
             label: {
                 text: '5G',
                 rotation: 0
@@ -74,19 +74,19 @@ Highcharts.chart('container', {
         name: 'Download Speed',
         zoneAxis: 'x',
         zones: [{
-            value: Date.UTC(1991, 0, 1), // 1G
+            value: '1991-01-01', // 1G
             color: Highcharts.defaultOptions.colors[0],
             className: 'g1'
         }, {
-            value: Date.UTC(1998, 0, 1), // 2G
+            value: '1998-01-01', // 2G
             color: Highcharts.defaultOptions.colors[1],
             className: 'g2'
         }, {
-            value: Date.UTC(2007, 0, 1), // 3G
+            value: '2007-01-01', // 3G
             color: Highcharts.defaultOptions.colors[2],
             className: 'g3'
         }, {
-            value: Date.UTC(2017, 0, 1), // 4G
+            value: '2017-01-01', // 4G
             color: Highcharts.defaultOptions.colors[3],
             className: 'g4'
         }, {

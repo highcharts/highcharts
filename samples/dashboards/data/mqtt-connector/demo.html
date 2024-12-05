@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div class="description">
+<div id="description">
     <p>This demo shows how to connect to an <a href="https://mqtt.org/" target="-blank">MQTT</a>
         broker and subscribe to a topic. The data is then displayed in a <i>Highcharts chart</i> and a <i>Dashboards datagrid</i>.
         The demo also shows how to implement a <i>Custom Connector</i> in Javascript, in his case MQTT. The Custom
@@ -35,7 +35,7 @@
         by the chart and datagrid.
     </p>
     <p>MQTT data is delivered from a Highcharts server. It uses the broker
-        <i>broker.hivemq.com</i>, port <i>8000</i> and data is send every five seconds to the topics
+        <i>broker.hivemq.com</i>, port <i>8000 or 8884 (secure)</i> and data is send every five seconds to the topics
         <i>highcharts/topic1</i> and <i>highcharts/topic2</i>. The data is random and represents the wind speed in the
         North Sea and the Baltic Sea. The data is sent in JSON format and has the following structure:</p>
     </p>

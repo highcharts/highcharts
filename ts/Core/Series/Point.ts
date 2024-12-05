@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -367,6 +368,13 @@ class Point {
             point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
+
+        // If x is a string, try to parse it to a datetime
+        } else if (typeof point.x === 'string') {
+            x ??= series.chart.time.parse(point.x);
+            if (isNumber(x)) {
+                point.x = x;
+            }
         }
 
         point.isNull = this.isValid && !this.isValid();
@@ -718,7 +726,6 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
-     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
@@ -744,26 +751,30 @@ class Point {
 
         } else if (isArray(options)) {
             // With leading x value
-            if (!keys && (options as any).length > valueCount) {
-                firstItemType = typeof (options as any)[0];
+            if (!keys && options.length > valueCount) {
+                firstItemType = typeof options[0];
                 if (firstItemType === 'string') {
-                    ret.name = (options as any)[0];
+                    if (series.xAxis?.dateTime) {
+                        ret.x = series.chart.time.parse(options[0]);
+                    } else {
+                        ret.name = options[0];
+                    }
                 } else if (firstItemType === 'number') {
-                    ret.x = (options as any)[0];
+                    ret.x = options[0];
                 }
                 i++;
             }
             while (j < valueCount) {
                 // Skip undefined positions for keys
-                if (!keys || typeof (options as any)[i] !== 'undefined') {
+                if (!keys || typeof options[i] !== 'undefined') {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
                         Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
+                            ret, options[i], pointArrayMap[j]
                         );
                     } else {
-                        ret[pointArrayMap[j]] = (options as any)[i];
+                        ret[pointArrayMap[j]] = options[i];
                     }
                 }
                 i++;
@@ -1069,9 +1080,13 @@ class Point {
                 }
             }
 
-            // Record changes in the parallel arrays
-            i = point.index as any;
-            series.updateParallelArrays(point, i);
+            // Record changes in the data table
+            i = point.index;
+            const row: DataTable.RowObject = {};
+            for (const key of series.dataColumnKeys()) {
+                row[key] = (point as any)[key];
+            }
+            series.dataTable.setRow(row, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options

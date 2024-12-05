@@ -1,15 +1,14 @@
-Custom Dashboards components
-===
+# Custom Dashboards components
 
 ## Custom YouTube Component
-This article shows how to create custom Dashboards Component, in this example YouTube Component.
+This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" allow="fullscreen" allow="fullscreen"></iframe>
 
-Note, that to create the custom component we are using ES6, to use the `class` and `extends` keywords, which makes creating custom class much easier.
+Note that to create the custom component, we are using ES6 and using the `class` and `extends` keywords, which makes creating a custom class much easier.
 
-We start by importing the default `Component` class and `ComponentRegistry` from `Dashboards` namespace. We can use destructuring syntax to retrieve this 2 classes. The next step is creating the class which will inherit from the imported `Component` class.
-The name of the class will automatically be the string, that will be used to reference this component type e.g. the class `YouTubeComponent` will be referenced by name: "`YouTube`".
+We start by importing the default `Component` class and `ComponentRegistry` from the `Dashboards` namespace. We can use destructuring syntax to retrieve these two classes. The next step is creating the class that will inherit from the imported `Component` class.
+The class name will automatically be the string used to reference this component type. For example, the class `YouTubeComponent` will be referenced by the name "`YouTube`."
 
 ```js
 const { Component, ComponentRegistry } = Dashboards;
@@ -19,9 +18,9 @@ class YouTubeComponent extends Component {
 }
 ```
 
-Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
+Then, depending on what the component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, `videoId`. Since the iframe element needs its size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new `YouTubeComponent` class needs to be added to the registry, using the `ComponentRegistry.registerComponent` method.
+The new `YouTubeComponent` class must be added to the registry using the `ComponentRegistry.registerComponent` method.
 
 The custom code looks like below:
 
@@ -118,12 +117,12 @@ Dashboards.board({
 });
 ```
 
-### Adding custom component to the sidebar
+### Adding a custom component to the sidebar
 To add the custom component to the sidebar, you need to add the two things:
 1. Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
-2. For the `editMode` `sidebar` define the list of the components that will be available in the sidebar.
-Use the exact name which was used to register the component in the `ComponentRegistry`.
-3. To properly display the component name in the sidebar, you can to add the `lang` options to the `editMode` object. If not specified, the component name will be displayed as `[YourComponentName]Component` in this case `YouTubeComponent`.
+2. For the `editMode` sidebar, define the list of the components that will be available in it.
+Use the exact name to register the component in the `ComponentRegistry`.
+3. To properly display the component name in the sidebar, add the `lang` options to the `editMode` object. If not specified, the component name will be displayed as `[YourComponentName]Component`; in this case, it is `YouTubeComponent`.
 ```js
     editMode: {
         enabled: true,
@@ -144,8 +143,8 @@ Use the exact name which was used to register the component in the `ComponentReg
     },
 ```
 
-### Making custom component editable
-To make the custom component editable, you need to define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
+### Making custom components editable
+To make the custom component editable, you must define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
 The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
 In the example below, the `videoId`, `title` and `caption` are editable options.
 ```js
@@ -163,7 +162,7 @@ In the example below, the `videoId`, `title` and `caption` are editable options.
         type: 'input'
     }];
 ```
-Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
+Also, the `update` method should be extended to update the component with new options. Here, we have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after the update is performed.  
 ```js
     async update(newOptions, shouldRerender) {
         super.update.call(this, newOptions, shouldRerender);
@@ -192,13 +191,13 @@ Additionally the `lang` options for the new option can be added.
 
 
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow to reuse the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow the reuse of the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component" allow="fullscreen"></iframe>
 
-This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Dashboards.AST` class, which will be used to parse the string type HTML into the AST-like object.  In case something is missing in the AST class you can extend it the same as in Highcharts, see the documentation for [AST](https://api.highcharts.com/class-reference/Highcharts.AST).
+This custom component will extend the basic HTML component, so we must import the `HTMLComponent` class. The easiest way is through the `ComponentRegistry`, as shown below. We will also use the `Dashboards.AST` class, which will be used to parse the string-type HTML into an AST-like object. In case something is missing in the AST class, you can extend it the same way as in Highcharts. See the documentation for [AST](https://api.highcharts.com/class-reference/Highcharts.AST).
 
-Then we can create our custom class, which extends the `HTMLComponent` class. The only thing we need to do, is to create a method to extract the HTML from the options and parse it into the AST-like object. In the example this method is called `getCustomHTML` and it assigns the element generated by the AST to the `elements` property. The only thing left is to register the new component in the `ComponentRegistry` and we are ready to use it.
+Then, we can create our custom class, which extends the `HTMLComponent` class. The only thing we need to do is create a method to extract the HTML from the options and parse it into an AST-like object. In the example, this method is called `getCustomHTML,` and it assigns the element generated by the AST to the `elements` property. The only thing left is to register the new component in the `ComponentRegistry,` and we are ready to use it.
 
 ```js
 const { ComponentRegistry } = Dashboards,
@@ -226,7 +225,7 @@ class CustomHTML extends HTMLComponent {
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
 
-Use of this component is shown below:
+The use of this component is shown below:
 
 ```js
 Dashboards.board('container', {
@@ -272,11 +271,11 @@ Dashboards.board('container', {
 
 
 ## Custom Threshold Component
-In some cases, you may want to create a component that works as if it changes its type or/and options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
+Sometimes, you may want to create a component that works as if it changes its type and/or options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
 
 <iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
 
-Such a component can be implemented very similarly to the previously described `YoutubeComponent`, except that you need to take into account the need to replace the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component, like that:
+Such a component can be implemented very similarly to the previously described `YouTubeComponent`, except that you need to consider replacing the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component like this:
 
 ```js
 render() {
@@ -398,13 +397,13 @@ Dashboards.board('container', {
 
 The example below shows how to develop a custom component that fetches data from the DataConnector, processes and displays it on the dashboard.
 
-The custom component is created by extending the `HTMLComponent` class and it displays the total revenue.
+The custom component is created by extending the `HTMLComponent` class, which displays the total revenue.
 
 <iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
 
-The DataConnector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
+The DataConnector is registered on the `load`, so we need to execute and await the `super.load()` method first to ensure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
 
-When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
+When the data is ready, the `getTotalRevenue` method calculates the total revenue. The `getElementsFromString` method parses the HTML string into an AST-like object. The `render` method renders the component on the dashboard.
 
 ```js
 const { ComponentRegistry } = Dashboards,
@@ -445,7 +444,7 @@ class TotalRevenueHTML extends HTMLComponent {
 ComponentRegistry.registerComponent('TotalRevenueHTML', TotalRevenueHTML);
 ```
 
-Later on the component can be used in the dashboard by referencing the name it was registered with, in this case, `TotalRevenueHTML`.
+Later on, the component can be used in the dashboard by referencing the name it was registered with, which, in this case, is `TotalRevenueHTML`.
 
 ```js
 ...

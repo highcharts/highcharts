@@ -8,23 +8,23 @@ Highcharts.ganttChart('container', {
         data: [{
             id: 's',
             name: 'Start prototype',
-            start: Date.UTC(2014, 10, 18),
-            end: Date.UTC(2014, 10, 20)
+            start: '2014-11-18',
+            end: '2014-11-20'
         }, {
             id: 'b',
             name: 'Develop',
-            start: Date.UTC(2014, 10, 20),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-20',
+            end: '2014-11-25',
             dependency: 's'
         }, {
             id: 'a',
             name: 'Run acceptance tests',
-            start: Date.UTC(2014, 10, 23),
-            end: Date.UTC(2014, 10, 26)
+            start: '2014-11-23',
+            end: '2014-11-26'
         }, {
             name: 'Prototype finished',
-            start: Date.UTC(2014, 10, 27),
-            end: Date.UTC(2014, 10, 29),
+            start: '2014-11-27',
+            end: '2014-11-29',
             dependency: ['a', 'b'],
             milestone: true
         }]
