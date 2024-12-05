@@ -2,9 +2,9 @@ name: Highcharts
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     paths:
       - 'css/**'
       - 'samples/**'

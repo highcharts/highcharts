@@ -2,7 +2,7 @@ name: Dashboards benchmark
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'

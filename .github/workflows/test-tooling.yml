@@ -2,7 +2,7 @@ name: Test tooling
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     paths:
       - 'tools/**/*'
       - '.github/workflows/test-tooling.yml'

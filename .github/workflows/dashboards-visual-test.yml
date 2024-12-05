@@ -2,7 +2,7 @@ name: Dashboards visual comparison tests
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
