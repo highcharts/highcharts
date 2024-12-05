@@ -2,7 +2,7 @@ name: Linting docs
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     paths:
       - 'docs/**'
       - 'tools/cspell/*'

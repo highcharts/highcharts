@@ -2,7 +2,7 @@ name: Dashboards lighthouse tests
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'

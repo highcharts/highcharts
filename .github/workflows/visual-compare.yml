@@ -2,7 +2,7 @@ name: Highcharts Visual Comparison
 on:
   pull_request:
     branches:
-      - 'master'
+      - 'main'
     paths:
       - 'samples/**'
       - 'ts/**'
