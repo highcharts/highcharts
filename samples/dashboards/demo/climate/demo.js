@@ -379,8 +379,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Average Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -409,8 +408,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Maximum Temperature',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {
@@ -439,8 +437,7 @@ async function setupBoard() {
                 ...KPIChartOptions,
                 title: {
                     text: 'Days with Rain',
-                    verticalAlign: 'bottom',
-                    widthAdjust: 0
+                    verticalAlign: 'bottom'
                 },
                 yAxis: {
                     accessibility: {

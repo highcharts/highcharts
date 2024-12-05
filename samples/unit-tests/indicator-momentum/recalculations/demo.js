@@ -30,7 +30,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Initial number of Momentum points is correct'
     );
 
-    assert.deepEqual(chart.series[1].yData, [1.5, 2.5], 'Correct values');
+    assert.deepEqual(
+        chart.series[1].getColumn('y'), [1.5, 2.5], 'Correct values'
+    );
 
     chart.series[0].addPoint([51, 53, 51, 55]);
 
@@ -58,7 +60,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         }
     });
 
-    assert.deepEqual(chart.series[1].yData, [-3.5, 1], 'Correct values');
+    assert.deepEqual(
+        chart.series[1].getColumn('y'), [-3.5, 1], 'Correct values'
+    );
 
     assert.strictEqual(
         chart.series[1].graph.attr('stroke'),
@@ -69,7 +73,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[2].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [0],
         'Correct values after point.remove()'
     );

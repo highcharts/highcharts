@@ -386,9 +386,9 @@ class Tick {
         xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
-            chart = axis.chart,
+            { renderer, styledMode } = axis.chart,
             label = defined(str) && labelOptions.enabled ?
-                chart.renderer
+                renderer
                     .text(
                         str,
                         xy?.x,
@@ -400,12 +400,15 @@ class Tick {
 
         // Un-rotated length
         if (label) {
+            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
             // Without position absolute, IE export sometimes is wrong
-            if (!chart.styledMode) {
-                label.css(merge(labelOptions.style));
+            if (!styledMode) {
+                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
             }
-
             label.textPxLength = label.getBBox().width;
+            if (!styledMode) {
+                label.css({ whiteSpace });
+            }
         }
 
         return label;
@@ -727,16 +730,14 @@ class Tick {
             );
         }
 
-        if (textWidth) {
+        if (textWidth && label) {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = Math.floor(textWidth) + 'px';
-                if (!(labelOptions.style || {}).textOverflow) {
-                    css.textOverflow = 'ellipsis';
-                }
-                (label as any).css(css);
-
+                label.css(extend(css, {
+                    width: Math.floor(textWidth) + 'px',
+                    lineClamp: axis.isRadial ? 0 : 1
+                }));
             }
         }
     }

@@ -19,6 +19,7 @@
  * */
 
 import type Chart from '../../../Core/Chart/Chart';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -107,7 +108,7 @@ class VWAPIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,
@@ -181,8 +182,8 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        const volumeValues: Array<number> = (volumeSeries.yData as any),
-            volumeLength: number = (volumeSeries.xData as any).length,
+        const volumeValues: Array<number> = volumeSeries.getColumn('y'),
+            volumeLength: number = volumeValues.length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],
             cumulativeVolume: Array<number> = [],

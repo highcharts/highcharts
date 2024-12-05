@@ -40,14 +40,17 @@ namespace Defaults {
      */
     export const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
-            enabled: true
+            enabled: true,
+            announcements: {
+                cellEditing: true,
+                sorting: true
+            }
         },
         lang: {
             accessibility: {
                 cellEditing: {
                     editable: 'Editable.',
                     announcements: {
-                        enabled: true,
                         started: 'Entered cell editing mode.',
                         edited: 'Edited cell value.',
                         cancelled: 'Editing canceled.'
@@ -55,7 +58,6 @@ namespace Defaults {
                 },
                 sorting: {
                     announcements: {
-                        enabled: true,
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'

@@ -121,6 +121,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
             40
         )
         .css({
+            fontFamily: 'Helvetica, Arial, sans-serif',
             fontSize: '12px',
             width: width + 'px'
         })
@@ -249,7 +250,7 @@ QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
 
 QUnit.test('titleSetter', function (assert) {
     var chart = Highcharts.chart('container', {}),
-        str = 'The quick brown fox<br> jumps over the lazy dog',
+        str = 'TheQuickBrownFox<br>JumpsOverTheLazyDog',
         newTitle = 'Quick brown fox',
         text = chart.renderer
             .text(str, 100, 100)
@@ -259,10 +260,10 @@ QUnit.test('titleSetter', function (assert) {
     assert.strictEqual(
         text.element.getElementsByTagName(
             'title'
-        )[0].textContent, // Ideally there should be a
+        )[0]?.textContent, // Ideally there should be a
         // titleGetter. text.attr('title')
         str.replace('<br>', ''),
-        'Text element has a correct title. #5211'
+        'Text element title should match the original string. #5211'
     );
 
     // Update the title tag with a shorter text
@@ -407,7 +408,8 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         .text('The quick brown fox jumps over the lazy dog', 30, 30)
         .css({
             width: '100px',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         })
         .add();
     assert.strictEqual(
@@ -415,6 +417,77 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         1,
         'Ellipsis text should have a title tag'
     );
+
+    text1.destroy();
+    text1 = ren
+        .text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            width: '100px',
+            textOverflow: 'ellipsis'
+        })
+        .add();
+    assert.ok(
+        text1.getBBox().width <= 100,
+        'Multiline ellipsis, the width should be constrained'
+    );
+    assert.close(
+        text1.element.querySelectorAll('tspan[dy]').length,
+        3,
+        1.00001,
+        'Three line breaks should be applied'
+    );
+
+    text1.destroy();
+    text1 = ren
+        .text('Datavisualiseringsprodusent søkjer grafikkmedarbeidar', 30, 30)
+        .css({
+            width: '100px',
+            textOverflow: 'ellipsis'
+        })
+        .add();
+    assert.ok(
+        text1.getBBox().width <= 100,
+        'Multiline ellipsis, the width should be constrained'
+    );
+    assert.notEqual(
+        text1.element.textContent.indexOf('\u2026'),
+        -1,
+        'Ellipsis should be present'
+    );
+    assert.notEqual(
+        text1.element.textContent.lastIndexOf('\u2026'),
+        -1,
+        'Ellipsis should be present'
+    );
+    assert.notEqual(
+        text1.element.textContent.indexOf('\u2026'),
+        text1.element.textContent.lastIndexOf('\u2026'),
+        'Two ellipsis should be present'
+    );
+
+});
+
+
+QUnit.test('lineClamp', function (assert) {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const text = ren.text('The quick brown fox jumps over the lazy dog', 30, 30)
+        .css({
+            lineClamp: 2,
+            width: '100px'
+        })
+        .add();
+
+    assert.strictEqual(
+        text.element.querySelectorAll('tspan[dy]').length,
+        1,
+        'Exactly one line break should be applied'
+    );
+
 });
 
 QUnit.test('BBox for mulitiple lines', function (assert) {
@@ -935,7 +1008,8 @@ QUnit.test('textPath', assert => {
     text.css({
         width: '100px',
         overflow: 'hidden',
-        textOverflow: 'ellipsis'
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
     });
     assert.ok(
         text.element.textContent.indexOf('\u2026') !== -1,

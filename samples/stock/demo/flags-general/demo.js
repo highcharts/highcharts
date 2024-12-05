@@ -69,11 +69,11 @@
                 type: 'flags',
                 onSeries: undefined,
                 data: [{
-                    x: Date.UTC(2016, 6, 9),
+                    x: '2016-07-09',
                     title: '2nd'
                 },
                 {
-                    x: Date.UTC(2020, 4, 11),
+                    x: '2020-05-11',
                     title: '3rd'
                 }]
             },
@@ -82,12 +82,12 @@
                 description: 'Bitcoin Halving Events'
             },
             data: [{
-                x: Date.UTC(2016, 6, 9),
+                x: '2016-07-09',
                 title: '2nd Halving',
                 text: 'Reward down: 25 BTC to 12.5 BTC per block'
             },
             {
-                x: Date.UTC(2020, 4, 11),
+                x: '2020-05-11',
                 title: '3rd Halving',
                 text: 'Reward down: 12.5 BTC to 6.25 BTC per block'
             }]
@@ -99,7 +99,7 @@
             navigatorOptions: {
                 type: 'flags',
                 data: [{
-                    x: Date.UTC(2024, 3, 19),
+                    x: '2024-04-19',
                     title: '4th'
                 }]
             },
@@ -108,7 +108,7 @@
                 description: 'Bitcoin Halving Events'
             },
             data: [{
-                x: Date.UTC(2024, 3, 19),
+                x: '2024-04-19',
                 title: '4th Halving',
                 text: 'Reward down: 6.25 BTC to 3.125 BTC per block'
             }]

@@ -14,10 +14,10 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return this.points.reduce(function (s, point) {
-                return s + '<br/>' + point.series.name + ': ' +
-                    point.y + 'm';
-            }, '<b>' + this.x + '</b>');
+            return this.points.reduce(
+                (s, point) => `${s}<br/>${point.series.name}: ${point.y}m`,
+                `<b>${this.key}</b>`
+            );
         },
         shared: true
     },

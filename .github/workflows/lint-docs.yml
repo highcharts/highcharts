@@ -1,0 +1,39 @@
+name: Linting docs
+
+on:
+  pull_request:
+    branches: [ 'master' ]
+    paths:
+      - 'docs/**'
+      - 'tools/cspell/*'
+      - '.github/workflows/lint-docs.yml'
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint_hc:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/iron]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Check spelling
+        run: npm run lint-docs

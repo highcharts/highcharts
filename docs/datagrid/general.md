@@ -1,6 +1,6 @@
 # Introduction to DataGrid
 
-DataGrid is a versatile tool for displaying and managing tabular data, offering developers a customizable and interactive table format for data visualization.
+DataGrid is a versatile tool for displaying and managing tabular data. It offers developers a customizable and interactive table format for data visualization.
 
 Integrated with the Highcharts Dashboards package, DataGrid can be used either as a standalone component or within a dashboard as a [Dashboards DataGrid Component](https://www.highcharts.com/docs/dashboards/datagrid-component). **However, its usage requires a Dashboards license**. This flexibility allows developers to incorporate DataGrid into various web applications for seamless data interaction and management.
 
@@ -51,9 +51,9 @@ Let's dive right in with a bare minimum example of a fully functional DataGrid:
 />
 ```
 
-Import the required JS and CSS from our public CDN. You can find more information and other installation options in the [Installation article](https://www.highcharts.com/docs/datagrid/installation).
+Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/datagrid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for the DataGrid to function properly, in addition to the default style theme. Find information on custom styling in [Style by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
+The CSS includes the necessary styles for the DataGrid to function correctly and the default style theme. For information on custom styling, see [Style by CSS](https://www.highcharts.com/docs/datagrid/style-by-css).
 
 ### 2. Configure the DataGrid
 
@@ -74,7 +74,7 @@ Inside the `<script>` tag, create a new instance of the DataGrid by utilizing th
 1. The ID of the HTML element where the DataGrid should be rendered.
 2. The DataGrid configuration object.
 
-The `dataTable` option is the only option required for a DataGrid to be rendered. Read the [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) article for more information on the configuration object.
+Only the `dataTable` option is required for a DataGrid to be rendered. For more information on the configuration object, read the [Understanding DataGrid](https://www.highcharts.com/docs/datagrid/understanding-datagrid) article.
 
 ### 3. Add the HTML Element
 

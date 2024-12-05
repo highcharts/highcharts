@@ -51,11 +51,10 @@ const {
     extend,
     fireEvent,
     isNumber,
+    isString,
     merge,
     objectEach,
-    pad,
     pick,
-    pInt,
     splat
 } = U;
 
@@ -101,17 +100,29 @@ declare module './RangeSelectorOptions' {
  * @private
  * @function preferredInputType
  */
-function preferredInputType(format: string): string {
-    const ms = format.indexOf('%L') !== -1;
+function preferredInputType(format: Time.DateTimeFormat): string {
+    const ms = isString(format) ?
+        format.indexOf('%L') !== -1 :
+        // Implemented but not typed as of 2024
+        format.fractionalSecondDigits;
 
     if (ms) {
         return 'text';
     }
 
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
-    const time = ['H', 'k', 'I', 'l', 'M', 'S']
-        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
+    const date = isString(format) ?
+        ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        format.dateStyle || format.day || format.month || format.year;
+
+    const time = isString(format) ?
+        ['H', 'k', 'I', 'l', 'M', 'S']
+            .some((char: string): boolean =>
+                format.indexOf('%' + char) !== -1
+            ) :
+        format.timeStyle || format.hour || format.minute || format.second;
 
     if (date && time) {
         return 'datetime-local';
@@ -237,11 +248,9 @@ class RangeSelector {
         let dataMin = unionExtremes.dataMin,
             dataMax = unionExtremes.dataMax,
             newMin,
-            newMax = baseAxis && Math.round(
-                Math.min(
-                    baseAxis.max as any, pick(dataMax, baseAxis.max as any)
-                )
-            ), // #1568
+            newMax = isNumber(baseAxis?.max) ? Math.round(
+                Math.min(baseAxis.max, dataMax ?? baseAxis.max)
+            ) : void 0, // #1568
             baseXAxisOptions: DeepPartial<AxisOptions>,
             range = rangeOptions._range,
             rangeMin: (number|undefined),
@@ -293,9 +302,11 @@ class RangeSelector {
 
         // Fixed times like minutes, hours, days
         } else if (range) {
-            newMin = Math.max(newMax - range, dataMin as any);
-            newMax = Math.min(newMin + range, dataMax as any);
-            addOffsetMin = false;
+            if (isNumber(newMax)) {
+                newMin = Math.max(newMax - range, dataMin as any);
+                newMax = Math.min(newMin + range, dataMax as any);
+                addOffsetMin = false;
+            }
 
         } else if (type === 'ytd') {
 
@@ -308,15 +319,17 @@ class RangeSelector {
                 // the chart is rendered, we have access to the xData array
                 // (#942).
                 if (
-                    typeof dataMax === 'undefined' ||
-                    typeof dataMin === 'undefined'
+                    baseAxis.hasData() && (
+                        !isNumber(dataMax) ||
+                        !isNumber(dataMin)
+                    )
                 ) {
                     dataMin = Number.MAX_VALUE;
-                    dataMax = Number.MIN_VALUE;
+                    dataMax = -Number.MAX_VALUE;
                     chart.series.forEach((series): void => {
                         // Reassign it to the last item
-                        const xData = series.xData;
-                        if (xData) {
+                        const xData = series.getColumn('x');
+                        if (xData.length) {
                             dataMin = Math.min(xData[0], dataMin as any);
                             dataMax = Math.max(
                                 xData[xData.length - 1],
@@ -326,14 +339,15 @@ class RangeSelector {
                     });
                     redraw = false;
                 }
-                ytdExtremes = rangeSelector.getYTDExtremes(
-                    dataMax,
-                    dataMin,
-                    chart.time.useUTC
-                );
-                newMin = rangeMin = ytdExtremes.min;
-                newMax = ytdExtremes.max;
 
+                if (isNumber(dataMax) && isNumber(dataMin)) {
+                    ytdExtremes = rangeSelector.getYTDExtremes(
+                        dataMax,
+                        dataMin
+                    );
+                    newMin = rangeMin = ytdExtremes.min;
+                    newMax = ytdExtremes.max;
+                }
             // "ytd" is pre-selected. We don't yet have access to processed
             // point and extremes data (things like pointStart and pointInterval
             // are missing), so we delay the process (#942)
@@ -385,7 +399,7 @@ class RangeSelector {
                 xAxis.options.min = baseXAxisOptions.min;
                 axisRangeUpdateEvent(); // Remove event
             });
-        } else {
+        } else if (isNumber(newMin) && isNumber(newMax)) {
             // Existing axis object. Set extremes after render time.
             baseAxis.setExtremes(
                 newMin,
@@ -523,8 +537,7 @@ class RangeSelector {
             dataMax = unionExtremes.dataMax,
             ytdExtremes = rangeSelector.getYTDExtremes(
                 dataMax as any,
-                dataMin as any,
-                chart.time.useUTC
+                dataMin as any
             ),
             ytdMin = ytdExtremes.min,
             ytdMax = ytdExtremes.max,
@@ -748,7 +761,7 @@ class RangeSelector {
             return (
                 (input.type === 'text' && options.inputDateParser) ||
                 this.defaultInputDateParser
-            )(input.value, time.useUTC, time);
+            )(input.value, time.timezone === 'UTC', time);
         }
         return 0;
     }
@@ -907,40 +920,7 @@ class RangeSelector {
         useUTC: boolean,
         time?: Time
     ): number {
-        const hasTimezone = (str: string): boolean =>
-            str.length > 6 &&
-            (str.lastIndexOf('-') === str.length - 6 ||
-            str.lastIndexOf('+') === str.length - 6);
-
-        let input = inputDate.split('/').join('-').split(' ').join('T');
-        if (input.indexOf('T') === -1) {
-            input += 'T00:00';
-        }
-        if (useUTC) {
-            input += 'Z';
-        } else if (H.isSafari && !hasTimezone(input)) {
-            const offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? `+${pad(-offset)}:00` : `-${pad(offset)}:00`;
-        }
-        let date = Date.parse(input);
-
-        // If the value isn't parsed directly to a value by the
-        // browser's Date.parse method, try
-        // parsing it a different way
-        if (!isNumber(date)) {
-            const parts = inputDate.split('-');
-            date = Date.UTC(
-                pInt(parts[0]),
-                pInt(parts[1]) - 1,
-                pInt(parts[2])
-            );
-        }
-
-        if (time && useUTC && isNumber(date)) {
-            date += time.getTimezoneOffset(date);
-        }
-
-        return date;
+        return time?.parse(inputDate) || 0;
     }
 
     /**
@@ -1177,21 +1157,15 @@ class RangeSelector {
      */
     public getYTDExtremes(
         dataMax: number,
-        dataMin: number,
-        useUTC?: boolean
+        dataMin: number
     ): RangeSelector.RangeObject {
         const time = this.chart.time,
-            now = new time.Date(dataMax),
-            year = time.get('FullYear', now),
-            startOfYear = useUTC ?
-                time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
-                +new time.Date(year, 0, 1),
-            min = Math.max(dataMin, startOfYear),
-            ts = now.getTime();
+            year = time.toParts(dataMax)[0],
+            startOfYear = time.makeTime(year, 0);
 
         return {
-            max: Math.min(dataMax || ts, ts),
-            min
+            max: dataMax,
+            min: Math.max(dataMin, startOfYear)
         };
     }
 
@@ -1672,9 +1646,8 @@ class RangeSelector {
 
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
-                this.handleCollision(xOffsetForExportButton);
             }
-
+            this.handleCollision(xOffsetForExportButton);
 
             // Vertical align
             group.align({
