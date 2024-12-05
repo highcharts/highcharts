@@ -874,17 +874,28 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const xData = (
+    const isScatter = series.is('scatter'),
+        xData = (
+            (isScatter && series.getColumn('x', true).length ?
+                series.getColumn('x', true) :
+                void 0) ||
             (series.getColumn('x').length ? series.getColumn('x') : void 0) ||
             seriesOptions.xData ||
             series.getColumn('x', true) ||
             false
         ),
+        yData = (
+            series.getColumn('y', true) ||
+            seriesOptions.yData ||
+            false
+        ),
         point = new PointClass(
             series as BoostSeriesComposition,
-            (
-                isArray(series.options.data) ? series.options.data : []
-            )[boostPoint.i],
+            (isScatter && xData && yData) ?
+                [xData[boostPoint.i], yData[boostPoint.i]] :
+                (
+                    isArray(series.options.data) ? series.options.data : []
+                )[boostPoint.i],
             xData ? xData[boostPoint.i] : void 0
         ) as BoostPointComposition;
 
