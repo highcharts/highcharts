@@ -121,6 +121,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
             40
         )
         .css({
+            fontFamily: 'Helvetica, Arial, sans-serif',
             fontSize: '12px',
             width: width + 'px'
         })
