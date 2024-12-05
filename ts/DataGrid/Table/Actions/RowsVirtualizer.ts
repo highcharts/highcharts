@@ -30,7 +30,7 @@ import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
 import TableRow from '../Content/TableRow.js';
 
-const { makeHTMLElement, getTranslateY } = DGUtils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -225,13 +225,13 @@ class RowsVirtualizer {
 
         const lastRow = rows[rowsLn - 1];
 
-        let rowTop = getTranslateY(lastRow.htmlElement);
+        let rowTop = lastRow.translateY;
         const rowBottom = rowTop + lastRow.htmlElement.offsetHeight;
         let newHeight = lastRow.cells[0].htmlElement.offsetHeight;
         rowTop = rowBottom - newHeight;
 
         lastRow.htmlElement.style.height = newHeight + 'px';
-        lastRow.htmlElement.style.transform = `translateY(${rowTop}px)`;
+        lastRow.setTranslateY(rowTop);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
             lastRow.cells[j].htmlElement.style.transform = '';
         }
@@ -243,7 +243,7 @@ class RowsVirtualizer {
             rowTop -= newHeight;
 
             row.htmlElement.style.height = newHeight + 'px';
-            row.htmlElement.style.transform = `translateY(${rowTop}px)`;
+            row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
             }
@@ -280,8 +280,7 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
 
             if (isVirtualization) {
-                last.htmlElement.style.transform =
-                    `translateY(${last.getDefaultTopOffset()}px)`;
+                last.setTranslateY(last.getDefaultTopOffset());
             }
         }
 
@@ -321,13 +320,12 @@ class RowsVirtualizer {
                 rows.push(newRow);
                 newRow.rendered = false;
                 if (isVirtualization) {
-                    newRow.htmlElement.style.transform =
-                        `translateY(${newRow.getDefaultTopOffset()}px)`;
+                    newRow.setTranslateY(newRow.getDefaultTopOffset());
                 }
             }
         }
 
-        rows.sort((a, b) => a.index - b.index);
+        rows.sort((a, b): number => a.index - b.index);
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             if (!rows[i].rendered) {
@@ -423,18 +421,16 @@ class RowsVirtualizer {
 
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
-            rows[i].htmlElement.style.transform =
-                `translateY(${translateBuffer}px)`;
+            rows[i].setTranslateY(translateBuffer);
         }
 
         // Set the proper offset for the last row
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
-            lastRow.htmlElement.style.transform = `translateY(${
-                preLastRow.htmlElement.offsetHeight +
-                getTranslateY(preLastRow.htmlElement)
-            }px)`;
+            lastRow.setTranslateY(
+                preLastRow.htmlElement.offsetHeight + translateBuffer
+            );
         }
     }
 
