@@ -177,10 +177,27 @@ QUnit.test('timezone', function (assert) {
         'Non full-hour timezone - UTC midnight should render 05:45 in Katmandu'
     );
 
+    chart.update({
+        time: {
+            timezone: undefined
+        }
+    });
+    assert.equal(
+        chart.time.timezone,
+        undefined,
+        'Undefined time zone should be supported and fall back to local'
+    );
+    const ts = Date.UTC(2024, 11, 5, 6, 7);
+    assert.equal(
+        chart.time.dateFormat('%k:00', ts),
+        new Date(ts).getHours() + ':00',
+        'Undefined timezone should fall back to local time'
+    );
+
     // Tear down
     Highcharts.setOptions({
         time: {
-            timezone: undefined,
+            timezone: 'UTC',
             getTimezoneOffset: undefined
         }
     });
