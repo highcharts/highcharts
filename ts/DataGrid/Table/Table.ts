@@ -34,11 +34,9 @@ import DataGrid from '../DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
 
 /* *
  *
@@ -277,27 +275,8 @@ class Table {
      *
      */
     public reflow(reflowColumns: boolean = false): void {
-        const tableEl = this.dataGrid.tableElement;
         const isVirtualization =
             this.dataGrid.options?.rendering?.rows?.virtualization;
-        const borderWidth = tableEl ? (
-            parseFloat(
-                '' + (getStyle(tableEl, 'border-top-width', false) || 0)
-            ) +
-            parseFloat(
-                '' + (getStyle(tableEl, 'border-bottom-width', false) || 0)
-            )
-        ) : 0;
-
-        if (isVirtualization) {
-            this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-                (this.dataGrid.container?.clientHeight || 0) -
-                (this.theadElement?.offsetHeight || 0) -
-                (this.captionElement?.offsetHeight || 0) -
-                (this.dataGrid.credits?.getHeight() || 0) -
-                borderWidth
-            }px`;
-        }
 
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {

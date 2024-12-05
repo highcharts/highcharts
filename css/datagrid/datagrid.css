@@ -102,7 +102,9 @@
 }
 
 .highcharts-datagrid-container {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -116,6 +118,12 @@
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
+    flex: 1;
+}
+
+.highcharts-datagrid-table.highcharts-datagrid-virtualization {
+    display: flex; /* Move to scrollable */
+    flex-direction: column; /* Move to scrollable */
 }
 
 /* Table Header */
@@ -241,9 +249,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     overflow: auto;
     height: 100%;
-    min-height: 100%;
     display: block;
     position: relative;
+    min-height: 0; /* Move to scrollable, should the 100% be restored here? */
+    flex: 1; /* Move to scrollable */
 }
 
 .highcharts-datagrid-table tbody tr {
