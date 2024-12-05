@@ -15,7 +15,7 @@
         },
 
         xAxis: {
-            overscroll: 1000 * 60 * 60 * 24 * 7 // 1 week
+            overscroll: '10px'
         },
 
         series: [{
