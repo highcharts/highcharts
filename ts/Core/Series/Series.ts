@@ -3642,14 +3642,30 @@ class Series {
     public searchKDTree(
         point: KDPointSearchObject,
         compareX?: boolean,
-        e?: PointerEvent
+        e?: PointerEvent,
+        suppliedPointEvaluator?: Function,
+        suppliedBSideCheckEvaluator?: Function
     ): (Point|undefined) {
         const series = this,
             [kdX, kdY] = this.kdAxisArray,
             kdComparer = compareX ? 'distX' : 'dist',
             kdDimensions = (series.options.findNearestPointBy || '')
                 .indexOf('y') > -1 ? 2 : 1,
-            useRadius = !!series.isBubble;
+            useRadius = !!series.isBubble,
+            pointEvaluator = suppliedPointEvaluator || ((
+                p1: Point,
+                p2: Point,
+                comparisonProp: 'distX' | 'dist'
+            ): [Point, boolean] => [
+                (p1[comparisonProp] || 0) < (p2[comparisonProp] || 0) ?
+                    p1 :
+                    p2,
+                false
+            ]),
+            bSideCheckEvaluator = suppliedBSideCheckEvaluator || ((
+                a: number,
+                b: number
+            ): boolean => a < b);
 
         /**
          * Set the one and two dimensional distance on the point object.
@@ -3682,9 +3698,8 @@ class Series {
         ): Point {
             const point = tree.point,
                 axis = series.kdAxisArray[depth % dimensions];
-            let nPoint1,
-                nPoint2,
-                ret = point;
+            let ret = point,
+                flip = false;
 
             setDistance(search, point);
 
@@ -3696,33 +3711,37 @@ class Series {
 
             // End of tree
             if (tree[sideA]) {
-                nPoint1 = doSearch(
-                    search, tree[sideA] as any, depth + 1, dimensions
-                );
 
-                ret = (
-                    (nPoint1 as any)[kdComparer] <
-                    (ret as any)[kdComparer] ?
-                        nPoint1 :
-                        point
-                );
-            }
-            if (tree[sideB]) {
-                // Compare distance to current best to splitting point to decide
-                // whether to check side B or not
-                if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
-                    nPoint2 = doSearch(
+                [ret, flip] = pointEvaluator(
+                    point,
+                    doSearch(
                         search,
-                        tree[sideB] as any,
+                        tree[sideA] as any,
                         depth + 1,
                         dimensions
-                    );
-                    ret = (
-                        (nPoint2 as any)[kdComparer] <
-                        (ret as any)[kdComparer] ?
-                            nPoint2 :
-                            ret
-                    );
+                    ),
+                    kdComparer
+                );
+
+            }
+            if (tree[sideB]) {
+
+                const sqrtTDist = Math.sqrt(tdist * tdist),
+                    retDist = (ret as any)[kdComparer];
+
+                // Compare distance to current best to splitting point to decide
+                // whether to check side B or no
+                if (bSideCheckEvaluator(sqrtTDist, retDist, flip)) {
+                    ret = pointEvaluator(
+                        ret,
+                        doSearch(
+                            search,
+                            tree[sideB] as any,
+                            depth + 1,
+                            dimensions
+                        ),
+                        kdComparer
+                    )[0];
                 }
             }
 

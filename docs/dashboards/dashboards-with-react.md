@@ -37,7 +37,7 @@ To create a dashboard with React, please follow the steps below: <br>
 
 4. Create an HTML structure for the dashboard.  
     There are two ways to do it:
-    #### Use the **Dashboards** layout system.  
+    #### Use the Dashboards layout system.  
     To do that, first import the `layout` module and initialize it:
     ```typescript
     import LayoutModule from '@highcharts/dashboards/modules/layout';

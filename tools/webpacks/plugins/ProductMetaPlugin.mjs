@@ -148,10 +148,10 @@ export class ProductMetaPlugin {
 
         if (productMatch >= 0) {
             content = content
-                .replace(/@product.name@/g, () => options.productName)
-                .replace(/@product.version@/g, () => options.productVersion)
-                .replace(/@product.assetPrefix@/g, () => options.assetPrefix)
-                .replace(/@product.date@/g, () => options.productDate);
+                .replace(/@product\.name@/gu, () => options.productName)
+                .replace(/@product\.version@/gu, () => options.productVersion)
+                .replace(/@product\.assetPrefix@/gu, () => options.assetPrefix)
+                .replace(/@product\.date@/gu, () => options.productDate);
         }
 
 

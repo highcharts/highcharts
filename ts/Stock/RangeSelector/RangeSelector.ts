@@ -1646,9 +1646,8 @@ class RangeSelector {
 
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
-                this.handleCollision(xOffsetForExportButton);
             }
-
+            this.handleCollision(xOffsetForExportButton);
 
             // Vertical align
             group.align({

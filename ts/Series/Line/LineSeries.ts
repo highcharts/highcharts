@@ -161,10 +161,8 @@ class LineSeries extends Series {
                 }
 
                 graph[verb](attribs)
-                // Add shadow to normal series (0) or to first
-                // zone (1) #3932
+                    // Add shadow to normal series as well as zones
                     .shadow(
-                        (i < 2) &&
                         options.shadow &&
                         // If shadow is defined, call function with
                         // `filterUnits: 'userSpaceOnUse'` to avoid known
