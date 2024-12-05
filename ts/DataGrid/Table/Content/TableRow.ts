@@ -57,6 +57,11 @@ class TableRow extends Row {
      */
     public id?: number;
 
+    /**
+     * The vertical translation of the row.
+     */
+    public translateY: number = 0;
+
 
     /* *
     *
@@ -135,6 +140,17 @@ class TableRow extends Row {
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
         }
+    }
+
+    /**
+     * Sets the vertical translation of the row. Used for virtual scrolling.
+     *
+     * @param value
+     * The vertical translation of the row.
+     */
+    public setTranslateY(value: number): void {
+        this.translateY = value;
+        this.htmlElement.style.transform = `translateY(${value}px)`;
     }
 
     /**
