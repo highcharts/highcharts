@@ -106,6 +106,68 @@ export interface TreemapSeriesLevelColorVariationOptions {
     to?: number;
 }
 
+export interface TreemapSeriesGroupAreaThresholdOptions {
+
+    /**
+     * Enable or disable Treemap grouping.
+     *
+     * @type {boolean}
+     * @since next
+     * @product highcharts
+     */
+    enabled: boolean;
+
+    /**
+     * The pixel threshold width of area, which is used in Treemap grouping.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    pixelWidth?: number;
+
+    /**
+     * The pixel threshold height of area, which is used in Treemap grouping.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    pixelHeight?: number;
+
+    /**
+     * The name of the point of grouped nodes shown in the tooltip, dataLabels,
+     * etc. By default it is set to '+ n', where n is number of grouped points.
+     *
+     * @type {string}
+     * @since next
+     * @product highcharts
+     */
+    name?: string;
+
+    /**
+     * A configuration property that specifies the factor by which the value
+     * and size of a grouped node are reduced. This can be particularly useful
+     * when a grouped node occupies a disproportionately large portion of the
+     * graph, ensuring better visual balance and readability.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    reductionFactor?: number;
+
+    /**
+     * Defines the minimum number of child nodes required to create a group of
+     * small nodes.
+     *
+     * @type {number}
+     * @since next
+     * @product highcharts
+     */
+    minAmount?: number;
+}
+
 
 /**
  * Set options on specific levels. Takes precedence over series options,
@@ -213,7 +275,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
      */
-    layoutAlgorithm?: string;
+    layoutAlgorithm?: TreemapSeriesLayoutAlgorithmValue;
 
     /**
      * Can set the layoutStartingDirection option on a specific level.
@@ -224,7 +286,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      *
      * @validvalue ["vertical", "horizontal"]
      */
-    layoutStartingDirection?: string;
+    layoutStartingDirection?: TreemapSeriesLayoutStartingDirectionValue;
 
     /**
      * Decides which level takes effect from the options set in the levels
@@ -443,6 +505,26 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     drillUpButton?: TreemapSeriesUpButtonOptions;
 
     /**
+     * An option to optimize treemap series rendering by grouping smaller leaf
+     * nodes below a certain square area threshold in pixels. If the square area
+     * of a point becomes smaller than the specified threshold, determined by
+     * the `pixelWidth` and/or `pixelHeight` options, then this point is moved
+     * into group point per series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-simple
+     *         Simple demo of Treemap grouping
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-multiple-parents
+     *         Treemap grouping with multiple parents
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
+     *         Advanced demo of Treemap grouping
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    groupAreaThreshold?: TreemapSeriesGroupAreaThresholdOptions;
+
+    /**
      * Whether to ignore hidden points when the layout algorithm runs.
      * If `false`, hidden points will leave open spaces.
      *
@@ -591,7 +673,20 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @apioption series.treemap.states.hover
      */
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TreemapSeriesTooltipOptions;
+
+    /**
+     * The HTML of the grouped nodes point's in the tooltip. Works only for
+     * Treemap series grouping and analogously to
+     * [pointFormat](#tooltip.pointFormat).
+     *
+     * The grouped nodes point tooltip can be also formatted using
+     * `tooltip.formatter` callback function and `point.isGroupNode` flag.
+     *
+     * @type      {string}
+     * @default   '+ {point.groupedPointsAmount} more...'
+     * @apioption tooltip.groupedNodesFormat
+     */
 
     /**
      * Options for the button appearing when traversing down in a treemap.
@@ -626,6 +721,10 @@ export interface TreemapSeriesUpButtonPositionOptions {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
+}
+
+export interface TreemapSeriesTooltipOptions extends Partial<TooltipOptions> {
+    groupedNodesFormat?: string;
 }
 
 /* *
