@@ -55,21 +55,6 @@
     padding-left: 14px;
 }
 
-@media (max-width: 800px) {
-    #data-grid,
-    #kpi-gauge-risk {
-        flex: 1 1 100%;
-    }
-
-    #kpi-goal-target,
-    #kpi-goal-years,
-    #kpi-goal-annual,
-    #kpi-gauge-goal {
-        flex: 1 1 50%;
-        height: 186px;
-    }
-}
-
 #goal-analysis-wrapper .highcharts-dashboards-component-title {
     margin-top: 48px;
     margin-bottom: 8px;
@@ -98,4 +83,25 @@
 
 .hidden-title .highcharts-title {
     display: none;
+}
+
+@media (max-width: 800px) {
+    #data-grid,
+    #kpi-gauge-risk {
+        flex: 1 1 100%;
+    }
+
+    #kpi-goal-target,
+    #kpi-goal-years,
+    #kpi-goal-annual,
+    #kpi-gauge-goal {
+        flex: 1 1 50%;
+        height: 186px;
+    }
+}
+
+@media (max-width: 500px) {
+    .highcharts-dashboards-component-kpi-value {
+        font-size: 1.2rem;
+    }
 }

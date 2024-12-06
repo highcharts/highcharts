@@ -68,9 +68,6 @@ const getHoldings = weight => stockCollection.map(stock => ({
 }));
 
 
-const kpiValueFormatter = t => '€' + Highcharts.numberFormat(t, 2, '.', ',');
-
-
 // Return the sum of the last indices of arrays
 const getCurrentTotal = arrOfArr => {
     let sum = 0;
@@ -166,11 +163,7 @@ const getCurrentTotal = arrOfArr => {
             description: 'displaying portfolio performance and investments'
         },
         rangeSelector: {
-            animate: false,
-            x: 0,
-            y: 0,
             inputEnabled: false,
-            dropdown: 'never',
             selected: 4
         },
         navigator: {
@@ -230,7 +223,6 @@ const getCurrentTotal = arrOfArr => {
         },
         pane: {
             background: [{
-                backgroundColor: '#EEE',
                 borderRadius: 30,
                 borderWidth: 0,
                 outerRadius: '100%',
@@ -324,8 +316,8 @@ const getCurrentTotal = arrOfArr => {
             borderRadius: 30,
             dataLabels: {
                 format: '<div style="text-align:center; ' +
-                    'margin-top: -20px">' +
-                    '<div style="font-size:1.6em;">{y}%</div>' +
+                    'margin-top: -40px">' +
+                    '<div style="font-size:1.4em;">{y}%</div>' +
                     '<div style="font-size:14px; opacity:0.5; ' +
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
@@ -460,13 +452,13 @@ const getCurrentTotal = arrOfArr => {
             type: 'KPI',
             renderTo: 'kpi-holding',
             value: lastHoldingTotal,
-            valueFormatter: kpiValueFormatter,
+            valueFormat: '€{value:,.2f}',
             title: 'Holding'
         }, {
             type: 'KPI',
             renderTo: 'kpi-invested',
             value: investedAmountTotal,
-            valueFormatter: kpiValueFormatter,
+            valueFormat: '€{value:,.2f}',
             title: 'Invested'
         }, {
             type: 'Highcharts',
@@ -526,7 +518,7 @@ const getCurrentTotal = arrOfArr => {
             connector: {
                 id: 'goal-analysis'
             },
-            valueFormatter: kpiValueFormatter,
+            valueFormat: '€{value:,.2f}',
             title: 'Financial goal'
         }, {
             type: 'KPI',
@@ -538,7 +530,7 @@ const getCurrentTotal = arrOfArr => {
             id: 'cpt-goal-annual',
             renderTo: 'kpi-goal-annual',
             value: annualInvestment,
-            valueFormatter: kpiValueFormatter,
+            valueFormat: '€{value:,.2f}',
             title: 'Annual investment'
         }, {
             renderTo: 'kpi-gauge-goal',
