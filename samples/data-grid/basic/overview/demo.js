@@ -18,6 +18,11 @@ DataGrid.dataGrid('container', {
     caption: {
         text: 'Fruit market'
     },
+    rendering: {
+        rows: {
+            minVisibleRows: 5
+        }
+    },
     columnDefaults: {
         cells: {
             editable: true
