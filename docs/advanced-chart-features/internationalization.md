@@ -29,8 +29,53 @@ Since v12, date and number formatting can be applied through the [lang.locale](h
 Live demos
 ----------
 
+
 Chart in Arabic language
 <iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-arabic' allow="fullscreen"></iframe>
 
 Chart in Chinese language
 <iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-chinese' allow="fullscreen"></iframe>
+
+
+## Language modules (preview)
+
+The Highcharts language modules contains translations for texts in the
+[lang](https://api.highcharts.com/highcharts/lang) option. They are meant to
+provide a convenient way to set the default texts of series, tooltips, axes,
+chart descriptions for accessibility, and more.
+
+The following language modules are available:
+
+* [Chinese (Simplified)](https://code.highcharts.com/i18n/zh-CN.js)
+* [French](https://code.highcharts.com/i18n/fr-FR.js)
+* [Norwegian, Bokmål](https://code.highcharts.com/i18n/nb-NO.js)
+
+They can be used by adding the module alongside the main Highcharts script in HTML:
+
+```html
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<!-- Other Highcharts modules -->
+
+<script src="https://code.highcharts.com/i18n/nb-NO.js"></script>
+```
+
+or by loading the JSON file in JavaScript:
+
+```js
+const langOptions = await fetch('https://code.highcharts.com/i18n/nb-NO.json')
+    .then(response => response.json());
+
+Highcharts.setOptions({
+    lang: langOptions
+});
+
+```
+
+Note that the language options have to be set before initializing the chart with `Highcharts.chart()`.
+
+<iframe
+    style="width: 100%; height: 450px; border: none;"
+    src="https://www.highcharts.com/samples/embed/highcharts/demo/i18n"
+    allow="fullscreen"
+></iframe>
+
