@@ -277,7 +277,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody td {
-    height: inherit;
+    height: 36px;
     overflow: hidden;
 }
 
