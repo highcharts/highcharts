@@ -465,8 +465,14 @@ class RowsVirtualizer {
             }
         }, this.viewport.tbodyElement);
 
+        const mockCell = makeHTMLElement('td', {
+            innerText: 'mock',
+            className: 'outline'
+        }, mockRow);
+
         const defaultRowHeight = mockRow.offsetHeight;
         mockRow.remove();
+        mockCell.remove();
 
         return defaultRowHeight;
     }
