@@ -94,6 +94,7 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+
     /* *
     *
     *  Constructor
@@ -151,8 +152,8 @@ class RowsVirtualizer {
      * re-rendered, e.g., after a sort or filter operation.
      */
     public rerender(): void {
-        const rows = this.viewport.rows;
         const tbody = this.viewport.tbodyElement;
+        let rows = this.viewport.rows;
 
         let oldScrollTop: number | undefined;
 
@@ -174,6 +175,8 @@ class RowsVirtualizer {
 
             this.scroll();
         }
+
+        rows = this.viewport.rows;
 
         // Reflow the rendered row cells widths (check redundancy)
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -465,8 +468,14 @@ class RowsVirtualizer {
             }
         }, this.viewport.tbodyElement);
 
+        const mockCell = makeHTMLElement('td', {
+            innerText: 'mock',
+            className: 'outline'
+        }, mockRow);
+
         const defaultRowHeight = mockRow.offsetHeight;
         mockRow.remove();
+        mockCell.remove();
 
         return defaultRowHeight;
     }
