@@ -243,6 +243,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     align-items: center;
     flex-direction: column;
     height: 100%;
+    padding: 16px;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 /* Table body */
