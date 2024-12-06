@@ -185,6 +185,19 @@ export interface RowsSettings {
     bufferSize?: number;
 
     /**
+     * Defines the minimum height of the table body (`tbody`) based on the
+     * number of rows that should be visible without scrolling.
+     *
+     * If set to `null`, the minimum height will not be enforced.
+     *
+     * It's ignored when height of the container is set or the `min-height`
+     * style is set on the `tbody` by the user.
+     *
+     * @default 2
+     */
+    minVisibleRows?: number | null;
+
+    /**
      * Whether the height of the rows should be calculated automatically based
      * on the content of the cells. If `true`, the ellipsis will be used to
      * indicate that the content is too long to fit in the cell.
