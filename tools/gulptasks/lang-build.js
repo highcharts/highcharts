@@ -88,7 +88,7 @@ setOptions({
             `Keys in ${langFile} do not match keys in lang.json`
         );
 
-        const tsContent = template(jsonContent, jsonContent.language);
+        const tsContent = template(jsonContent, jsonContent.locale);
         const outputFile = resolve(
             TS_FOLDER,
             `${langFile.replace('.json', '')}.src.ts`

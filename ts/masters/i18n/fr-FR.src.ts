@@ -16,7 +16,7 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 
 const languageOptions = {
-    "language": "fr-FR",
+    "locale": "fr-FR",
     "chartTitle": "Titre du graphique",
     "pieSliceName": "Part",
     "seriesName": "Série {add series.index 1}",

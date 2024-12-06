@@ -16,7 +16,7 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 
 const languageOptions = {
-    "language": "zh-CN",
+    "locale": "zh-CN",
     "chartTitle": "图表标题",
     "pieSliceName": "扇区",
     "seriesName": "系列 {add series.index 1}",

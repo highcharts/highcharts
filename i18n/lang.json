@@ -1,5 +1,5 @@
 {
-    "language": "en-US",
+    "locale": "en-US",
     "chartTitle": "Chart title",
     "pieSliceName": "Slice",
     "seriesName": "Series {add series.index 1}",

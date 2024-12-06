@@ -16,7 +16,7 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 
 const languageOptions = {
-    "language": "nb-NO",
+    "locale": "nb-NO",
     "chartTitle": "Diagramtittel",
     "pieSliceName": "Skive",
     "seriesName": "Serie {add series.index 1}",
