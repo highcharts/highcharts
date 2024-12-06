@@ -8,21 +8,21 @@
 
 :root,
 .highcharts-light {
-    --highcharts-background-color: #ffffff;
+    --highcharts-background-color: #fff;
 
     /* Neutral colors */
-    --highcharts-neutral-color-100: #000000;
-    --highcharts-neutral-color-80: #333333;
-    --highcharts-neutral-color-60: #666666;
-    --highcharts-neutral-color-40: #999999;
-    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-100: #000;
+    --highcharts-neutral-color-80: #333;
+    --highcharts-neutral-color-60: #666;
+    --highcharts-neutral-color-40: #999;
+    --highcharts-neutral-color-20: #ccc;
     --highcharts-neutral-color-10: #e6e6e6;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #ffffff;
+    --highcharts-neutral-color-0: #fff;
 
     /* Highlight colors */
-    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-100: #02f;
     --highcharts-highlight-color-80: #334eff;
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
@@ -33,7 +33,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
-        --highcharts-background-color: #333333;
+        --highcharts-background-color: #333;
 
         /*
             Neutral color variations
@@ -60,7 +60,7 @@
 
 .highcharts-dark {
     /* UI colors */
-    --highcharts-background-color: #333333;
+    --highcharts-background-color: #333;
 
     /*
         Neutral color variations
