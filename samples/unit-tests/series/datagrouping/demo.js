@@ -4,7 +4,7 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    QUnit.skip('General dataGrouping options', function (assert) {
+    QUnit.test('General dataGrouping options', function (assert) {
         let calledWithNaN = false;
 
         var chart = Highcharts.stockChart('container', {
@@ -22,7 +22,7 @@
             },
 
             xAxis: {
-                min: 1
+                min: 1.1
             },
 
             series: [
@@ -84,9 +84,7 @@
             ],
             time: {
                 getTimezoneOffset: timestamp => {
-                    if (Number.isNaN(timestamp)) {
-                        calledWithNaN = true;
-                    }
+                    calledWithNaN = Number.isNaN(timestamp);
                     return new Date().getTimezoneOffset();
                 }
             }
@@ -396,13 +394,13 @@
         });
 
         assert.strictEqual(
-            chart.series[0].processedXData.join(','),
+            chart.series[0].getColumn('x', true).join(','),
             '80,85,90',
             'Preserve X positions for shoulder points' // keyword: cropShoulder
         );
     });
 
-    QUnit.skip('Switch from grouped to non-grouped', function (assert) {
+    QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 600,
@@ -480,7 +478,7 @@
                 '.highcharts-series-0 ' +
                 'path'
             ).length,
-            32,
+            33,
             'Daily columns, monthlies should be removed (#7547) (Timezone: ' +
             'UTC ' +
             Math.round(new Date().getTimezoneOffset() / -60) +
@@ -651,8 +649,9 @@
         expectedMax = chart.xAxis[0].max;
         panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
 
-        assert.ok(
-            chart.xAxis[0].getExtremes().max !== expectedMax,
+        assert.notEqual(
+            chart.xAxis[0].getExtremes().max,
+            expectedMax,
             'DataGrouping should not prevent panning to the LEFT (#12099)'
         );
 
@@ -688,7 +687,7 @@
         });
 
         assert.strictEqual(
-            chart.series[0].yData[0],
+            chart.series[0].getColumn('y')[0],
             1000,
             'Correct yData (#8544).'
         );
@@ -744,6 +743,7 @@
                         return data;
                     }()),
                     tooltip: {
+                        headerFormat: '{point.key}',
                         pointFormat:
                         'name: {point.name} <br>' +
                         'myName: {point.myName} <br>' +
@@ -762,7 +762,7 @@
         assert.strictEqual(
             chart.tooltip.tt.text.textStr.indexOf('a121') > -1,
             true,
-            'Custom name in label is correct (#9928).'
+            'Custom name "a121" should be part of the tooltip (#9928).'
         );
 
         assert.strictEqual(
@@ -833,7 +833,7 @@
             );
         });
 
-    QUnit.skip(
+    QUnit.test(
         'When groupAll: true, group point should have the same start ' +
         'regardless of axis extremes, #15005.',
         function (assert) {
@@ -875,7 +875,7 @@
             'group should start from the beginning (0).'
             );
 
-            chart.xAxis[0].setExtremes(1);
+            chart.xAxis[0].setExtremes(1.1);
 
             assert.strictEqual(
                 groupAllFirstGroupStart,
@@ -974,7 +974,7 @@
             );
         });
 
-    QUnit.skip(
+    QUnit.test(
         'Panning with dataGrouping and ordinal axis, #3825.',
         function (assert) {
             const chart = Highcharts.stockChart('container', {
@@ -1023,14 +1023,15 @@
             chart.xAxis[0].ordinal.getExtendedPositions();
             assert.ok(
                 chart.xAxis[0].ordinal.index[
-                    Object.keys(chart.xAxis[0].ordinal.index)[1]],
+                    Object.keys(chart.xAxis[0].ordinal.index)[1]
+                ],
                 `After updating data grouping units to an equally spaced
-             (like weeks), the ordinal positions should be recalculated-
-             allows panning.`
+                (like weeks), the ordinal positions should be recalculated-
+                allows panning.`
             );
         });
 
-    QUnit.skip('The dataGrouping enabling/disabling.', function (assert) {
+    QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         const chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400
@@ -1055,7 +1056,7 @@
 
         // Grouping each series when the only one requires that, #6765.
         assert.strictEqual(
-            chart.series[0].processedXData.length,
+            chart.series[0].getColumn('x', true).length,
             2,
             `Even if the first series doesn't require grouping,
         It should be grouped the same as the second one is.
@@ -1118,5 +1119,6 @@
                 `After zooming to a point where groupinng is no longer needed,
                 it should not be applied.`
             );
-        });
+        }
+    );
 })();

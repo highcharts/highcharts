@@ -14,6 +14,7 @@
  *
  * */
 
+import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
@@ -37,21 +38,22 @@ export interface LangOptions {
     stockClose: string;
     weekFrom: string;
     chartTitle: string;
-    decimalPoint: string;
+    decimalPoint?: string;
     invalidDate?: string;
     loading: string;
-    months: Array<string>;
+    locale?: string|Array<string>;
+    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
     seriesName: string;
-    shortMonths: Array<string>;
-    shortWeekdays?: Array<string>;
-    thousandsSep: string;
-    weekdays: Array<string>;
     yAxisTitle: string;
+    shortMonths?: Array<string>;
+    shortWeekdays?: Array<string>;
+    thousandsSep?: string;
+    weekdays?: Array<string>;
     zoomIn?: string;
     zoomOut?: string;
 }
@@ -65,6 +67,7 @@ export interface LoadingOptions {
 
 export interface NumberFormatterCallbackFunction {
     (
+        this: Chart|Object|void,
         number: number,
         decimals: number,
         decimalPoint?: string,

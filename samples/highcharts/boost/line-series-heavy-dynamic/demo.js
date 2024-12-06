@@ -22,7 +22,6 @@ function getSeries(n, s) {
             animation: false,
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true,
             requireSorting: false
         });
@@ -43,11 +42,13 @@ Highcharts.setOptions({
 });
 
 console.time('line');
-const chart =  Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
 
     chart: {
         animation: false,
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {

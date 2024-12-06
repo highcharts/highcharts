@@ -23,7 +23,14 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface HLCPointOptions extends ColumnPointOptions {
-    // Nothing to add
+
+    /**
+     * The closing value of each data point.
+     *
+     * @product highstock
+     */
+    close?: number;
+
 }
 
 export default HLCPointOptions;

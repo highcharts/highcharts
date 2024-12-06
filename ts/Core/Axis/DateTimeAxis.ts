@@ -110,7 +110,7 @@ namespace DateTimeAxis{
 
             axisProto.getTimeTicks = getTimeTicks;
 
-            addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
+            addEvent(AxisClass, 'afterSetType', onAfterSetType);
         }
 
         return AxisClass as (typeof Composition&T);
@@ -142,10 +142,10 @@ namespace DateTimeAxis{
     /**
      * @private
      */
-    function onAfterSetOptions(
+    function onAfterSetType(
         this: Axis
     ): void {
-        if (this.options.type !== 'datetime') {
+        if (this.type !== 'datetime') {
             this.dateTime = void 0;
             return;
         }
@@ -290,7 +290,7 @@ namespace DateTimeAxis{
         public getXDateFormat(
             x: number,
             dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
-        ): string {
+        ): Time.DateTimeFormat {
             const { axis } = this,
                 time = axis.chart.time;
 

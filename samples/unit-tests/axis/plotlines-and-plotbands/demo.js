@@ -234,15 +234,22 @@ QUnit.test('General tests', function (assert) {
             marginRight: 50
         },
         xAxis: {
+            type: 'datetime',
             plotBands: [
                 {
-                    // mark the weekend
                     color: '#FCFFC5',
-                    from: 3,
-                    to: 5,
+                    from: '2024-02-01',
+                    to: '2024-04-01',
                     zIndex: 10,
                     borderWidth: 3,
                     borderColor: 'black'
+                }
+            ],
+            plotLines: [
+                {
+                    color: 'red',
+                    value: '2024-05-01',
+                    width: 3
                 }
             ]
         },
@@ -283,7 +290,9 @@ QUnit.test('General tests', function (assert) {
                     135.6,
                     148.5,
                     21006.4
-                ]
+                ],
+                pointStart: '2024-01-01',
+                pointIntervalUnit: 'month'
             }
         ]
     });
@@ -295,12 +304,27 @@ QUnit.test('General tests', function (assert) {
         'Class name should be applied to plot lines (#8415, #20586)'
     );
 
-    var line = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' ');
+    var plPath = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' '),
+        pbPath = chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ');
 
     assert.strictEqual(
-        line[line.length - 1],
+        pbPath[pbPath.length - 1],
         'Z',
-        'Border should be rendered around the shape (#5909)'
+        'A border should be rendered around the shape (#5909)'
+    );
+
+    assert.close(
+        plPath[1],
+        chart.xAxis[0].toPixels(Date.UTC(2024, 4, 1)),
+        1,
+        'Datetime input for plot line should be converted to pixels'
+    );
+
+    assert.close(
+        pbPath[1],
+        chart.xAxis[0].toPixels(Date.UTC(2024, 1, 1)),
+        1,
+        'Datetime input for plot band should be converted to pixels'
     );
 
     assert.ok(
@@ -314,6 +338,7 @@ QUnit.test('General tests', function (assert) {
         `Plot label with clip: true should not be able to render outside plot
         area #15777.`
     );
+
 
     // Radial Axes plot lines
     var plotLineValue = 27,
@@ -513,7 +538,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 18, 4, 20),
                     label: {
                         rotation: 90,
-                        text: 'Wide Enough'
+                        text: 'Wide Enough',
+                        inside: false
                     }
                 },
                 {
@@ -522,7 +548,8 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
                     to: Date.UTC(2016, 0, 25, 8),
                     label: {
                         rotation: 90,
-                        text: 'Too Narrow'
+                        text: 'Too Narrow',
+                        inside: false
                     }
                 }
             ]
@@ -850,3 +877,80 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         'plotBand with acrossPanes = true has greater height'
     );
 });
+
+QUnit.test(
+    '#21521: Hiding overlapping plotBand/plotLine labels ',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                xAxis: {
+                    plotBands: [{
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '0000000000000000'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '================'
+                        }
+                    },
+                    {
+                        from: 0,
+                        to: 1,
+                        label: {
+                            text: '%%%%%%%%%%%%%%%%'
+                        }
+                    }]
+                },
+
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            xAxis = chart.series[0].xAxis,
+            opacityTester = vals => {
+                const plotLinesAndBands = xAxis.plotLinesAndBands;
+
+                for (let i = 0; i < 3; i++) {
+                    assert.strictEqual(
+                        plotLinesAndBands[i].label.opacity,
+                        vals[i],
+                        `Opacity of label number ${i} should be ${vals[i]}`
+                    );
+                }
+            };
+
+        opacityTester([1, 0, 0]);
+
+        chart.series[0].xAxis.update({
+            plotBands: [{
+                from: 0,
+                to: 1,
+                label: {
+                    text: '0000000000000000',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '================',
+                    allowOverlap: true
+                }
+            },
+            {
+                from: 0,
+                to: 1,
+                label: {
+                    text: '%%%%%%%%%%%%%%%%'
+                }
+            }]
+        });
+
+        opacityTester([1, 1, 1]);
+    }
+);

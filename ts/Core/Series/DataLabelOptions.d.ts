@@ -50,12 +50,13 @@ export interface DataLabelFilterOptions {
 }
 
 export interface DataLabelFormatterCallback {
-    (this: Point.PointLabelObject): (number|string|null|undefined);
+    (this: Point): (number|string|null|undefined);
 }
 
 export interface DataLabelOptions {
     animation?: (boolean|Partial<AnimationOptions>);
     align?: AlignValue;
+    alignTo?: 'connectors'|'plotEdges';
     allowOverlap?: boolean;
     backgroundColor?: ColorType;
     borderColor?: ColorType;

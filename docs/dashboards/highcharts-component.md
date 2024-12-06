@@ -1,31 +1,30 @@
-Highcharts Component
-===
+# Highcharts Component
 
-The Highcharts Component allows the end-user to define a chart in the dashboard. Charts are most often used to visualize data that changes over time.
+The Highcharts Component allows the end-user to define a chart in the dashboard. Charts are most often used to visualize changing data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts allow="fullscreen"></iframe>
 
 ## How to start
-To get started quickly we need to load the JavaScript and CSS files in the following order.
+We need to load the JavaScript and CSS files in the following order to get started quickly.
 
-1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
-    The order of the imports is important, so make sure that the Dashboards module is imported after the Highcharts module.
+1. To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
+    The order of the imports is essential, so ensure the Dashboards module is imported after the Highcharts module.
 
-    ```html
+```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
-    ```
+```
 
-    Alternatively, you can also use the NPM package.
+Alternatively, you can also use the NPM package.
 
-    ```bash
+```bash
     npm install highcharts
-    ```
+```
 
-    Then import the package and the dedicated plug to connect it to the Dashboards.
+Then, import the package and the dedicated plug to connect it to the Dashboards.
 
-    ```typescript
+```typescript
     import * as Highcharts from 'highcharts';
     import * as Dashboards from '@highcharts/dashboards';
     import LayoutModule from '@highcharts/dashboards/modules/layout';
@@ -34,31 +33,32 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
 
     Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-    ```
+ ```
 
-2. The Highcharts Component uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.
+2. From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
+Importing only Dashboards' CSS file is enough:
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/css/highcharts.css");
     ```
-    You can find more information about styling charts in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-3. After loading the necessary files, define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
+    You can enable the styled mode at any time by setting the `styledMode` option to `true` in your chart options and styling it according to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-    You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
+3. After loading the necessary files, define a cell using a unique identifier, such as `renderTo: 'dashboard-col-0'`.
 
-4. Declare all of the chart options in the `chartOptions` object.
+    You can find more information on creating a layout in the dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
+
+4. Declare all the chart options in the `chartOptions` object.
 For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
-    ```js
+```js
     chartOptions: {
         series: [{
             data: [1, 2, 3, 4]
         }]
     }
-    ```
+```
 
-5. The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. See the full example below.
+5. The last thing you have to do is specify the `type: 'Highcharts'` in the component’s config. See the full example below.
 
     ```js
     Dashboards.board('container', {
@@ -86,7 +86,7 @@ For the full set of available options, see the [Highcharts API](https://api.high
 
 ## Working with data
 You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If data connector is connected, you can load the Highcharts' `dragDrop` module, to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default, if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more in the `dataPool` section.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If the data connector is connected, you can load the Highcharts' `dragDrop` module to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more about it in the `dataPool` section.
 
 Example of working with connector.
 ```js
@@ -133,11 +133,11 @@ Dashboards.board('container', {
 ### Assigning column data to series data
 
 The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
-You can declare which columns will be parameter of the point as well. Specifically, it is useful for series like OHLC, candlestick, columnrange or arearange. The `seriesId` field is mandatory for displaying series (for instance in the legend) properly.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment). 
+You can also declare which columns will be the point's parameters. This is useful for series like OHLC, candlestick, column range, or arrange. The `seriesId` field is mandatory for properly displaying series (for instance, in the legend).
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment).
 
 The `data` option can take three different types:
-1. `string` - name of the column that contains the one-dimensional data.
+1. `string` - column name containing the one-dimensional data.
 ```js
 columnAssignment: [{
     seriesId: 'mySeriesId',
@@ -177,6 +177,27 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data allow="fullscreen"></iframe>
 
+### Multiple connectors
+
+The Highcharts Component also supports more than one data source. Therefore, the connector option should be configured as an array of objects rather than a single object.
+
+Code sample:
+```js
+components: [{
+    type: 'Highcharts',
+    connector: [{
+        id: 'connector-1',
+        columnAssignment: [ ... ]
+    }, {
+        id: 'connector-2',
+        columnAssignment: [ ... ]
+    }]
+}]
+```
+
+Example:
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/highcharts-components/multiple-connectors" allow="fullscreen"></iframe>
+
 
 ## Components synchronization
 
@@ -190,6 +211,33 @@ See demos of `sync` types below:
 * [Extremes Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
 * [Highlight Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
 * [Visibility Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
+
+
+### Highlight sync options
+
+Highlight sync can have additional options:
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        affectedSeriesId: 'series-1',
+        highlightPoint: true,
+        showTooltip: false,
+        showCrosshair: true
+    }
+}
+```
+
+If you want to force highlight sync to always affect one specific series, use the [`affectedSeriesId`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId) option in the argument specifying the ID of that series. When undefined, empty or set to null, option assignment works by default based on the hovered column and column assignment.
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/highcharts-highlight-affected-series allow="fullscreen"></iframe>
+
+If you want to determine how the highlight of points on the chart should work (i.e. whether the hover state should be set for a marker, whether the crosshair should be synced and whether the tooltip should be shown), use the `highlightPoint`, `showCrosshair` and `showTooltip` options. Read more in the [API docs](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId).
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+
 
 
 ## API options

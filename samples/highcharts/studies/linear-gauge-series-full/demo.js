@@ -5,8 +5,7 @@
  */
 
 'use strict';
-// import H from '../Core/Globals.js';
-// import '../Core/Utilities.js';
+/* eslint-disable jsdoc/check-tag-names */
 const H = Highcharts;
 
 const pick = H.pick,

@@ -32,6 +32,11 @@ import type AST from '../../../Core/Renderer/HTML/AST';
 
 export interface Options extends Component.Options {
     /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
+    /**
      * Array of HTML elements, declared as string or node.
      * ```
      * Example:
@@ -51,7 +56,7 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/nested-elements/ | HTML component with nested images.}
      *
      */
-    elements?: (AST.Node | string)[];
+    elements?: (AST.Node)[];
 
     /**
      * The HTML content of the component. If the `elements` option is set, the

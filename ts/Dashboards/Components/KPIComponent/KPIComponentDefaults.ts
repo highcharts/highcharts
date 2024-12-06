@@ -25,7 +25,6 @@ import type Globals from '../../Globals';
 import type Options from './KPIComponentOptions';
 
 import Component from '../Component.js';
-import KPISyncHandlers from './KPISyncHandlers.js';
 
 
 /* *
@@ -41,24 +40,28 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
         `${Component.defaultOptions.className}-kpi`
     ].join(' '),
     minFontSize: 20,
-    syncHandlers: KPISyncHandlers,
     thresholdColors: ['#f45b5b', '#90ed7d'],
-    editableOptions:
-        (Component.defaultOptions.editableOptions || []).concat(
-            [{
-                name: 'Value',
-                type: 'input',
-                propertyPath: ['value']
-            }, {
-                name: 'Column name',
-                type: 'input',
-                propertyPath: ['columnName']
-            }, {
-                name: 'Value format',
-                type: 'input',
-                propertyPath: ['valueFormat']
-            }]
-        ),
+    editableOptions: [
+        {
+            name: 'connectorName',
+            propertyPath: ['connector', 'id'],
+            type: 'select'
+        },
+        ...Component.defaultOptions.editableOptions || [],
+        {
+            name: 'Value',
+            type: 'input',
+            propertyPath: ['value']
+        }, {
+            name: 'Column name',
+            type: 'input',
+            propertyPath: ['columnName']
+        }, {
+            name: 'Value format',
+            type: 'input',
+            propertyPath: ['valueFormat']
+        }
+    ],
     linkedValueTo: {
         enabled: true,
         seriesIndex: 0,

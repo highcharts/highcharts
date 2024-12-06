@@ -77,6 +77,9 @@ Highcharts.chart('container', {
                 maxWidth: 500
             },
             chartOptions: {
+                title: {
+                    x: 0
+                },
                 legend: {
                     align: 'center',
                     verticalAlign: 'bottom',

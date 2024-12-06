@@ -17,12 +17,11 @@
  * */
 
 import type OrganizationPoint from './OrganizationPoint';
-import type OrganizationSeries from './OrganizationSeries';
 import type Point from '../../Core/Series/Point';
 import type {
-    SankeyDataLabelFormatterContext,
     SankeyDataLabelOptions
 } from '../Sankey/SankeyDataLabelOptions';
+import type SankeyPoint from '../Sankey/SankeyPoint';
 
 /* *
  *
@@ -32,18 +31,10 @@ import type {
 
 export interface OrganizationDataLabelsFormatterCallbackFunction {
     (
-        this: (
-            OrganizationDataLabelFormatterContext|
-            SankeyDataLabelFormatterContext|
-            Point.PointLabelObject
-        )
+        this: (Point|OrganizationPoint|SankeyPoint)
     ): (string|undefined);
 }
 
-export interface OrganizationDataLabelFormatterContext extends SankeyDataLabelFormatterContext {
-    point: OrganizationPoint;
-    series: OrganizationSeries;
-}
 
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;

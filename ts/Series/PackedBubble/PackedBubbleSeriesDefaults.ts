@@ -4,9 +4,6 @@
  *
  * */
 
-import type {
-    PackedBubbleDataLabelFormatterObject
-} from './PackedBubbleDataLabelOptions';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point';
@@ -33,10 +30,10 @@ const { isNumber } = U;
  *         Split packed bubble chart
  *
  * @extends      plotOptions.bubble
- * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
- *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
- *               yAxis, zMax, zMin, dataSorting, boostThreshold,
- *               boostBlending
+ * @excluding    boostThreshold, boostBlending,connectEnds, connectNulls,
+ *               cropThreshold, dataSorting, dragDrop, jitter,
+ *               legendSymbolColor, keys, pointPlacement, sizeByAbsoluteValue,
+ *               step, xAxis, yAxis, zMax, zMin
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more
@@ -122,7 +119,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          */
         allowPointSelect: false
     },
-    /**
+
     /**
      *
      * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
@@ -149,14 +146,10 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          * Note that if a `format` is defined, the format takes precedence
          * and the formatter is ignored.
          *
-         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.0.0
          */
         formatter: function (
-            this: (
-                Point.PointLabelObject|
-                PackedBubbleDataLabelFormatterObject
-            )
+            this: (Point|PackedBubblePoint)
         ): string {
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as PackedBubblePoint;
@@ -172,16 +165,12 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
 
         // eslint-disable-next-line valid-jsdoc
         /**
-         * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
         parentNodeFormatter: function (
-            this: (
-                Point.PointLabelObject|
-                PackedBubbleDataLabelFormatterObject
-            )
+            this: (Point|PackedBubblePoint)
         ): string {
-            return (this as any).name;
+            return this.name || '';
         },
 
         /**

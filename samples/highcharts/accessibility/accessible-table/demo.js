@@ -24,6 +24,12 @@ Highcharts.chart('container', {
     accessibility: {
         landmarkVerobsity: 'one'
     },
+    plotOptions: {
+        column: {
+            borderWidth: 2,
+            borderColor: '#000000'
+        }
+    },
     series: [{
         name: 'John',
         data: [5, 3, 4, 7, 2]

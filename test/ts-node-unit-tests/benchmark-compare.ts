@@ -4,7 +4,7 @@ import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
 import type { Dir } from 'fs';
 import { join, resolve } from 'node:path';
 
-const TMP_FILE_PATH = '../../tmp/benchmarks';
+const TMP_FILE_PATH = resolve(__dirname, '../../tmp/benchmarks');
 
 function regression (yValues: number[], xValues: number[]){
     const yMean = yValues.reduce((a, b) => a + b) / yValues.length;
@@ -177,12 +177,12 @@ async function compare (base: BenchResults, actual: BenchResults){
 
     // test, averages, diff
     const markdownTableRows = actual.map((entry, i) =>{
-        const diff = entry.avg - base[i].avg;
+        const diff = base[i].avg - entry.avg;
 
-        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / base[i].avg) / 100}%`;
+        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / entry.avg) * 100}%`;
     });
 
-    const markdownTableHeader = `| Sample size | Base avg (ms) | Actual avg (ms) | Diff | Percent diff |
+    const markdownTableHeader = `| Sample size | This PR avg (ms) | master avg (ms) | Diff | Percent diff |
 | --- | --- | --- | --- | --- |`;
 
     await appendFile(

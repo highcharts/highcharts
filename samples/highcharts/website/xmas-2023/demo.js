@@ -2,12 +2,6 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-
-function randomNum(min, max) { // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-
 const berry = {
     enabled: true,
     fillColor: '#DC2626',

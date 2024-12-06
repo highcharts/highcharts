@@ -160,7 +160,11 @@ Highcharts.ganttChart('container', {
         }
     },
     xAxis: {
-        currentDateIndicator: true
+        currentDateIndicator: {
+            label: {
+                allowOverlap: true
+            }
+        }
     },
     yAxis: {
         type: 'category',

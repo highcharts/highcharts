@@ -19,11 +19,10 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { OrganizationDataLabelFormatterContext } from './OrganizationDataLabelOptions';
 import type OrganizationPoint from './OrganizationPoint';
 import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
+import type SankeyPoint from '../Sankey/SankeyPoint';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -162,11 +161,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
          * @since 6.0.2
          */
         nodeFormatter: function (
-            this: (
-                Point.PointLabelObject|
-                OrganizationDataLabelFormatterContext|
-                SankeyDataLabelFormatterContext
-            )
+            this: (Point|OrganizationPoint|SankeyPoint)
         ): string {
             const outerStyle: CSSObject = {
                     width: '100%',
@@ -223,10 +218,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
 
             // PhantomJS doesn't support flex, roll back to absolute
             // positioning
-            if (
-                (this as OrganizationDataLabelFormatterContext)
-                    .series.chart.renderer.forExport
-            ) {
+            if (this.series.chart.renderer.forExport) {
                 outerStyle.display = 'block';
                 innerStyle.position = 'absolute';
                 innerStyle.left = image ? '30%' : 0;
@@ -484,7 +476,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * Layout for the node's children. If `hanging`, this node's children will hang
  * below their parent, allowing a tighter packing of nodes in the diagram.
  *
- * Note: Since @next version, the `hanging` layout is set by default for
+ * Note: Since version 10.0.0, the `hanging` layout is set by default for
  * children of a parent using `hanging` layout.
  *
  * @sample highcharts/demo/organization-chart

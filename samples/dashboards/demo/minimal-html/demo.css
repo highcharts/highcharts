@@ -1,9 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
-
-body {
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-}
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 #container {
     padding: 10px;

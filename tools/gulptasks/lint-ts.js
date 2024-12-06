@@ -28,8 +28,8 @@ const SOURCE_GLOB = './**/*.ts';
  *         Promise to keep with console output
  */
 function lintTS(argv) {
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     return new Promise((resolve, reject) => {
         let product = 'highcharts';

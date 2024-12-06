@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'line',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     xAxis: {

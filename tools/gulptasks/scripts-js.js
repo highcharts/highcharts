@@ -34,9 +34,9 @@ async function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     const BuildScripts = buildTool.getBuildScripts({
         debug: (argv.d || argv.debug || false),

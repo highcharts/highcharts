@@ -8,15 +8,15 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['no-ag-4207', 10], ['no-ag-4201', 11], ['no-ag-4217', 12],
-        ['no-ag-4203', 13], ['no-ag-4222', 14], ['no-ag-4219', 15],
-        ['no-ag-4224', 16], ['no-ag-4202', 17], ['no-ag-4228', 18],
-        ['no-ag-4225', 19], ['no-ag-4205', 20], ['no-ag-4227', 21],
-        ['no-ag-4214', 22], ['no-ag-4204', 23], ['no-ag-4216', 24],
-        ['no-ag-4226', 25], ['no-ag-4223', 26], ['no-ag-4220', 27],
-        ['no-ag-4218', 28], ['no-ag-4213', 29], ['no-ag-4211', 30],
-        ['no-ag-4206', 31], ['no-ag-4212', 32], ['no-ag-4215', 33],
-        ['no-ag-4221', 34]
+        ['no-ag-4207', 10], ['no-ag-4228', 11], ['no-ag-4227', 12],
+        ['no-ag-4224', 13], ['no-ag-4223', 14], ['no-ag-4206', 15],
+        ['no-ag-4226', 16], ['no-ag-4201', 17], ['no-ag-4213', 18],
+        ['no-ag-4222', 19], ['no-ag-4221', 20], ['no-ag-4220', 21],
+        ['no-ag-4217', 22], ['no-ag-4219', 23], ['no-ag-4218', 24],
+        ['no-ag-4216', 25], ['no-ag-4215', 26], ['no-ag-4202', 27],
+        ['no-ag-4203', 28], ['no-ag-4212', 29], ['no-ag-4211', 30],
+        ['no-ag-4214', 31], ['no-ag-4225', 32], ['no-ag-4204', 33],
+        ['no-ag-4205', 34]
     ];
 
     // Create the chart
@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-ag-all.topo.json">Agder</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-ag-all.topo.json">Agder</a>'
         },
 
         mapNavigation: {

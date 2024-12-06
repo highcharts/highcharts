@@ -7,8 +7,13 @@
     --highcharts-color-1: #9689e6;
 }
 
+.highcharts-figure {
+    margin: 0;
+}
+
 #container {
     height: 730px;
+    margin: 0 auto;
 }
 
 .highcharts-candlestick-series .highcharts-point {
@@ -127,4 +132,8 @@ button.highcharts-menu-item-btn-active {
 
 .highcharts-bindings-wrapper .highcharts-submenu-wrapper {
     background-color: var(--highcharts-background-color);
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

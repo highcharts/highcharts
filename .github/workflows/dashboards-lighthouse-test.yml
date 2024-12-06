@@ -25,14 +25,14 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v3
         with:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -48,15 +48,24 @@ jobs:
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         continue-on-error: true
         with:
           browser: chrome
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
           config-file: test/cypress/dashboards/lighthouse.config.mjs
@@ -82,14 +91,11 @@ jobs:
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
-
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
           config-file: test/cypress/dashboards/lighthouse.config.mjs

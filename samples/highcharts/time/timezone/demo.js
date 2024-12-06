@@ -30,7 +30,7 @@ Highcharts.chart('container', {
             enabled: true,
             format: '{x:%H:%M}'
         },
-        pointStart: Date.UTC(2016, 9, 22),
+        pointStart: '2016-10-22',
         pointInterval: 24 * 36e5,
         name: 'UTC Midnight',
         tooltip: {

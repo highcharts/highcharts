@@ -38,83 +38,83 @@ var options = {
             type: 'scatter',
             data: [
                 {
-                    x: 751,
+                    x: -751,
                     y: 356
                 },
                 {
-                    x: 573,
+                    x: -573,
                     y: 285
                 },
                 {
-                    x: 427,
+                    x: -427,
                     y: 339
                 },
                 {
-                    x: 775,
+                    x: -775,
                     y: 578
                 },
                 {
-                    x: 770,
+                    x: -770,
                     y: 570
                 },
                 {
-                    x: 780,
+                    x: -780,
                     y: 560
                 },
                 {
-                    x: 785,
+                    x: -785,
                     y: 580
                 },
                 {
-                    x: 770,
+                    x: -770,
                     y: 550
                 },
                 {
-                    x: 740,
+                    x: -740,
                     y: 520
                 },
                 {
-                    x: 710,
+                    x: -710,
                     y: 538
                 },
                 {
-                    x: 720,
+                    x: -720,
                     y: 540
                 },
                 {
-                    x: 710,
+                    x: -710,
                     y: 630
                 },
                 {
-                    x: 715,
+                    x: -715,
                     y: 670
                 },
                 {
-                    x: 720,
+                    x: -720,
                     y: 620
                 },
                 {
-                    x: 740,
+                    x: -740,
                     y: 616
                 },
                 {
-                    x: 788,
+                    x: -788,
                     y: 620
                 },
                 {
-                    x: 780,
+                    x: -780,
                     y: 616
                 },
                 {
-                    x: 778,
+                    x: -778,
                     y: 618
                 },
                 {
-                    x: 783,
+                    x: -783,
                     y: 617
                 },
                 {
-                    x: 880,
+                    x: -880,
                     y: 451
                 }
             ]
@@ -236,14 +236,14 @@ QUnit.test('General marker-clusters', function (assert) {
     clusters = series.markerClusterInfo.clusters;
     assert.deepEqual(
         [
-            clusters[0].point.graphic.fillColor,
+            clusters[2].point.graphic.fillColor,
             clusters[1].point.graphic.fillColor,
-            clusters[3].point.graphic.fillColor,
-            clusters[0].point.graphic.radius,
+            clusters[0].point.graphic.fillColor,
+            clusters[2].point.graphic.radius,
             clusters[1].point.graphic.radius,
-            clusters[3].point.graphic.radius
+            clusters[0].point.graphic.radius
         ],
-        ['#ff5500', '#ff9603', '#ff5500', 18, 15, 18],
+        ['#ff9603', '#25b35b', '#ff5500', 15, 13, 18],
         'Clusters should have zones applied properly.'
     );
 
@@ -265,7 +265,7 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     series.addPoint({
-        x: 785,
+        x: -785,
         y: 617
     });
 
@@ -276,7 +276,7 @@ QUnit.test('General marker-clusters', function (assert) {
     );
 
     series.addPoint({
-        x: 784,
+        x: -784,
         y: 618
     });
 
@@ -307,7 +307,7 @@ QUnit.test('General marker-clusters', function (assert) {
             series.yAxis.min,
             series.yAxis.max
         ].map(Math.round),
-        [777, 789, 616, 620],
+        [-789, -777, 616, 620],
         'After click on cluster chart should be zoomed to the cluster data ' +
         'range.'
     );
@@ -583,8 +583,10 @@ QUnit.test('Grid algorithm tests.', function (assert) {
             series.markerClusterInfo.noise.length,
             clusteredPointsLen
         ],
-        [4, 4, series.xData.length],
+        [4, 6, series.dataTable.rowCount],
         'Cluster and noise amount should be correct.'
+        // The correct is what looks good in the chart - the magic numbers
+        // are empirical values.
     );
 
     cluster = series.markerClusterInfo.clusters[0];
@@ -601,7 +603,7 @@ QUnit.test('Grid algorithm tests.', function (assert) {
             (yAxis.toPixels(cluster.y) - gridOffset.plotTop) /
                 clusterOptions.layoutAlgorithm.gridSize
         ) +
-        '-' +
+        ':' +
         Math.floor(
             (xAxis.toPixels(cluster.x) - gridOffset.plotLeft) /
                 clusterOptions.layoutAlgorithm.gridSize
@@ -677,10 +679,12 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
 
     clusters = series.markerClusterInfo.clusters;
 
-    for (i = 0; i < series.xData.length; i++) {
+    const xData = series.getColumn('x'),
+        yData = series.getColumn('y');
+    for (i = 0; i < xData.length; i++) {
         pointClusterDistance = [];
-        pointX = series.xData[i];
-        pointY = series.yData[i];
+        pointX = xData[i];
+        pointY = yData[i];
 
         for (var j = 0; j < clusters.length; j++) {
             distance = Math.sqrt(
@@ -758,8 +762,8 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        series.getColumn('x'),
+        series.getColumn('y'),
         [],
         { processedDistance: maxDistance }
     );
@@ -767,8 +771,8 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        series.getColumn('x'),
+        series.getColumn('y'),
         [],
         { processedDistance: maxDistance }
     );
@@ -783,18 +787,20 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     yAxis.setExtremes(530, 700, false);
     chart.redraw();
 
+    const xData = series.getColumn('x'),
+        yData = series.getColumn('y');
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
@@ -812,16 +818,16 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );

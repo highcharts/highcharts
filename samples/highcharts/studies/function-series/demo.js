@@ -4,8 +4,7 @@
     const defaultOptions = Highcharts.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
         seriesTypes = Highcharts.Series.types,
-        merge = Highcharts.merge,
-        each = Highcharts.each;
+        merge = Highcharts.merge;
 
     defaultPlotOptions.functionseries = merge(defaultPlotOptions.line, {
         marker: {
@@ -45,7 +44,7 @@
                 const series = this,
                     xAxis = this.xAxis;
 
-                xAxis.setExtremes = function ()  {
+                xAxis.setExtremes = function () {
                     Highcharts.Axis.prototype.setExtremes
                         .apply(this, arguments);
                     series.setData([]);
@@ -58,7 +57,7 @@
     Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
         proceed.apply(this, [].slice.call(arguments, 1));
 
-        each(this.series, function (serie) {
+        this.series.forEach(function (serie) {
             if (serie.type === 'functionseries') {
                 serie.setData([]);
             }
@@ -76,7 +75,9 @@ for (let i = 0; i < 100; i += 0.1) {
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Measured vs Expected Data'

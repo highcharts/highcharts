@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'spline',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'NASA Budget as a % of Fed Budget'

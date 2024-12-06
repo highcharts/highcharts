@@ -73,7 +73,7 @@ async function writeProducts(products) {
  *         Promise to keep
  */
 async function distProductsJS(options) {
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
     const { dashboards, release } = options;
 
     LogLib.message(`Creating ${TARGET_FILE} for ${dashboards ? 'dashboards' : 'highcharts'} ...`);

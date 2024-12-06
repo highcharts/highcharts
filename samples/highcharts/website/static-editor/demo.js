@@ -9,6 +9,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-len */
+/* eslint-disable jsdoc/check-alignment */
 /** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft

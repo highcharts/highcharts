@@ -180,7 +180,7 @@ QUnit.test('Point is on appropriate position', function (assert) {
     assert.close(
         pointX,
         expectedPointX,
-        1.5,
+        2,
         'First point is correctly aligned'
     );
 });

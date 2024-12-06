@@ -613,7 +613,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -716,6 +716,11 @@ class MapSeries extends ScatterSeries {
         if (redraw) {
             this.chart.redraw(animation);
         }
+    }
+
+    public dataColumnKeys(): Array<string> {
+        // No x data for maps
+        return this.pointArrayMap;
     }
 
     /**
@@ -899,8 +904,8 @@ class MapSeries extends ScatterSeries {
             }
         }
         // The processedXData array is used by general chart logic for checking
-        // data length in various scanarios
-        this.processedXData = new Array(processedData.length);
+        // data length in various scanarios.
+        this.dataTable.rowCount = processedData.length;
 
         return void 0;
     }
@@ -918,9 +923,11 @@ class MapSeries extends ScatterSeries {
         if (options.joinBy === null) {
             joinBy = '_i';
         }
-        joinBy = this.joinBy = splat(joinBy);
-        if (!joinBy[1]) {
-            joinBy[1] = joinBy[0];
+        if (joinBy) {
+            this.joinBy = splat(joinBy);
+            if (!this.joinBy[1]) {
+                this.joinBy[1] = this.joinBy[0];
+            }
         }
 
         return options;

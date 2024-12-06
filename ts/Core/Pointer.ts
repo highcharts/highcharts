@@ -35,7 +35,8 @@ const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
-    composed
+    composed,
+    isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -106,7 +107,8 @@ class Pointer {
 
     public static hoverChartIndex: (number|undefined);
 
-    public static unbindDocumentMouseUp: (Function|undefined);
+    public static unbindDocumentMouseUp:
+    Array<{ doc: Document, unbind: Function }> = [];
 
     public static unbindDocumentTouchEnd: (Function|undefined);
 
@@ -130,6 +132,8 @@ class Pointer {
 
     public hasPinched?: boolean;
 
+    public hasPointerCapture?: boolean;
+
     public hasZoom?: boolean;
 
     public initiated?: boolean;
@@ -141,6 +145,8 @@ class Pointer {
     public options: Options;
 
     public pinchDown?: Array<PointerEvent>;
+
+    public pointerCaptureEventsToUnbind: Array<Function> = [];
 
     public res?: boolean;
 
@@ -231,9 +237,10 @@ class Pointer {
         this.eventsToUnbind = [];
 
         if (!H.chartCount) {
-            if (Pointer.unbindDocumentMouseUp) {
-                Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
-            }
+            Pointer.unbindDocumentMouseUp.forEach(
+                (el): void => el.unbind()
+            );
+            Pointer.unbindDocumentMouseUp.length = 0;
             if (Pointer.unbindDocumentTouchEnd) {
                 Pointer.unbindDocumentTouchEnd = (
                     Pointer.unbindDocumentTouchEnd()
@@ -1102,7 +1109,6 @@ class Pointer {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             pointer &&
-            e.relatedTarget &&
             !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
         ) {
             pointer.reset();
@@ -1227,8 +1233,10 @@ class Pointer {
             !(
                 tooltip &&
                 tooltip.shouldStickOnContact(pEvt)
-            ) &&
-            !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            ) && (
+                pEvt.target === chart.container.ownerDocument ||
+                !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            )
         ) {
             this.reset();
         }
@@ -1295,6 +1303,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
+            chart.mouseDownX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {
@@ -1781,7 +1790,6 @@ class Pointer {
      * @function Highcharts.Pointer#setDOMEvents
      */
     public setDOMEvents(): void {
-
         const container = this.chart.container,
             ownerDoc = container.ownerDocument;
 
@@ -1800,12 +1808,18 @@ class Pointer {
                 this.onContainerMouseLeave.bind(this)
             )
         );
-        if (!Pointer.unbindDocumentMouseUp) {
-            Pointer.unbindDocumentMouseUp = addEvent(
-                ownerDoc,
-                'mouseup',
-                this.onDocumentMouseUp.bind(this)
-            );
+
+        if (!Pointer.unbindDocumentMouseUp.some(
+            (el): boolean => el.doc === ownerDoc
+        )) {
+            Pointer.unbindDocumentMouseUp.push({
+                doc: ownerDoc,
+                unbind: addEvent(
+                    ownerDoc,
+                    'mouseup',
+                    this.onDocumentMouseUp.bind(this)
+                )
+            });
         }
 
         // In case we are dealing with overflow, reset the chart position when
@@ -1840,6 +1854,96 @@ class Pointer {
                 { passive: false }
             );
         }
+
+        this.setPointerCapture();
+        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
+    }
+
+    /**
+     * Sets, or removes on update, pointer events using pointer capture for
+     * tooltip.followTouchMove if any series has findNearestPointBy that
+     * includes the y dimension.
+     * @private
+     * @function Highcharts.Pointer#setPointerCapture
+    */
+    public setPointerCapture(): void {
+        // Only for touch
+        if (!isTouchDevice) {
+            return;
+        }
+
+        const pointer = this,
+            events = pointer.pointerCaptureEventsToUnbind,
+            chart = pointer.chart,
+            container = chart.container,
+            followTouchMove = pick(
+                chart.options.tooltip?.followTouchMove,
+                true
+            ),
+            shouldHave = followTouchMove && chart.series.some(
+                (series): boolean => (series.options.findNearestPointBy as any)
+                    .indexOf('y') > -1
+            );
+
+        if (!pointer.hasPointerCapture && shouldHave) {
+            // Add
+
+            // Bind
+            events.push(
+                addEvent(
+                    container,
+                    'pointerdown',
+                    (e: PointerEvent): void => {
+                        if (
+                            (e.target as Element)?.hasPointerCapture(
+                                e.pointerId
+                            )
+                        ) {
+                            (e.target as Element)?.releasePointerCapture(
+                                e.pointerId
+                            );
+                        }
+                    }
+                ),
+                addEvent(
+                    container,
+                    'pointermove',
+                    (e: PointerEvent): void => {
+                        chart.pointer?.getPointFromEvent(e)?.onMouseOver(e);
+                    }
+                )
+            );
+
+            if (!chart.styledMode) {
+                css(container, { 'touch-action': 'none' });
+            }
+            // Mostly for styled mode
+            container.className += ' highcharts-no-touch-action';
+
+            pointer.hasPointerCapture = true;
+        } else if (pointer.hasPointerCapture && !shouldHave) {
+            // Remove
+
+            // Unbind
+            events.forEach((e: Function): void => e());
+            events.length = 0;
+
+            if (!chart.styledMode) {
+                css(container, {
+                    'touch-action': pick(
+                        chart.options.chart.style?.['touch-action'],
+                        'manipulation'
+                    )
+                });
+            }
+            // Mostly for styled mode
+            container.className = container.className.replace(
+                ' highcharts-no-touch-action',
+                ''
+            );
+
+            pointer.hasPointerCapture = false;
+        }
     }
 
     /**
@@ -1856,8 +1960,14 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
+            const relatedTargetObj = { relatedTarget: chart.container };
+
+            if (e && !e?.relatedTarget) {
+                e = { ...relatedTargetObj, ...e };
+            }
+
             hoverChart.pointer?.onContainerMouseLeave(
-                e || { relatedTarget: chart.container } as any
+                e || relatedTargetObj as any
             );
         }
 
@@ -1882,9 +1992,9 @@ class Pointer {
 
         this.setHoverChartIndex();
 
-        if ((e as any).touches.length === 1) {
+        e = this.normalize(e);
 
-            e = this.normalize(e);
+        if ((e as any).touches.length === 1) {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
@@ -2182,6 +2292,10 @@ export default Pointer;
  * The related browser event.
  * @name Highcharts.SelectEventObject#originalEvent
  * @type {global.Event}
+ *//**
+ * Prevents the default action for the event, if called.
+ * @name Highcharts.SelectEventObject#preventDefault
+ * @type {Function}
  *//**
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection

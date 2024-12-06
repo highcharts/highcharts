@@ -447,7 +447,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type      {number}
      * @default   2
-     * @since     @next
+     * @since     11.3.0
      * @apioption chart.axisLayoutRuns
      */
 
@@ -491,8 +491,11 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
-         * When this option is set to `y` or `xy`, [yAxis.startOnTick](#yAxis.startOnTick)
-         * and [yAxis.endOnTick](#yAxis.endOnTick) are overwritten to `false`.
+         * During panning, all axes will behave as if
+         * [`startOnTick`](#yAxis.startOnTick) and
+         * [`endOnTick`](#yAxis.endOnTick) were set to `false`. After the
+         * panning action is finished, the axes will adjust to their actual
+         * settings.
          *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
@@ -500,7 +503,6 @@ const ChartDefaults: ChartOptions = {
          * @declare    Highcharts.OptionsChartPanningTypeValue
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
-         * @default    {highcharts|highstock} x
          * @product    highcharts highstock gantt
          */
         type: 'x'
@@ -991,7 +993,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"1rem"}
+     * @default   {"fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif", "fontSize":"1rem"}
      * @apioption chart.style
      */
 
@@ -1240,13 +1242,15 @@ const ChartDefaults: ChartOptions = {
      * element's height is 0.
      *
      * @sample {highcharts} highcharts/chart/height/
-     *         500px height
+     *         Forced 200px height
      * @sample {highstock} stock/chart/height/
      *         300px height
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
      * @sample highcharts/chart/height-percent/
      *         Highcharts with percentage height
+     * @sample highcharts/chart/height-inherited/
+     *         Chart with inherited height
      *
      * @type {null|number|string}
      */

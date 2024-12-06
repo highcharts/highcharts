@@ -3,7 +3,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     legend: {
@@ -121,7 +123,7 @@ Highcharts.chart('container', {
                 y: 126.4,
                 z: 35.3,
                 name:
-                'US',
+                    'US',
                 country: 'United States'
             },
             { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },

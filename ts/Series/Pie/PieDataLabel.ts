@@ -184,9 +184,32 @@ namespace ColumnDataLabel {
         point: PiePoint,
         distance: number
     ): DataLabel.LabelPositionObject {
+
+        const halfPI = Math.PI / 2,
+            { start = 0, end = 0 } = point.shapeArgs || {};
+
+        let angle = point.angle || 0;
+
+        // If a large slice is crossing the lowest point, prefer rendering it 45
+        // degrees out at either lower right or lower left. That's where there's
+        // most likely to be space available and avoid text being truncated
+        // (#22100). Technically this logic should also apply to the top point,
+        // but that is more of an edge case since the default start angle is at
+        // the top.
+        if (
+            distance > 0 &&
+            // Crossing the bottom
+            start < halfPI && end > halfPI &&
+            // Angle within the bottom quadrant
+            angle > halfPI / 2 && angle < halfPI * 1.5
+        ) {
+            angle = angle <= halfPI ?
+                Math.max(halfPI / 2, (start + halfPI) / 2) :
+                Math.min(halfPI * 1.5, (halfPI + end) / 2);
+        }
+
         const { center, options } = this,
             r = center[2] / 2,
-            angle = point.angle || 0,
             cosAngle = Math.cos(angle),
             sinAngle = Math.sin(angle),
             x = center[0] + cosAngle * r,
@@ -195,6 +218,7 @@ namespace ColumnDataLabel {
                 (options.slicedOffset || 0) + (options.borderWidth || 0),
                 distance / 5
             ); // #1678
+
         return {
             natural: {
                 // Initial position of the data label - it's utilized for
@@ -211,6 +235,7 @@ namespace ColumnDataLabel {
             // Center - data label overlaps the pie
             alignment: distance < 0 ? 'center' : point.half ? 'right' : 'left',
             connectorPosition: {
+                angle,
                 breakAt: { // Used in connectorShapes.fixedOffset
                     x: x + cosAngle * finalConnectorOffset,
                     y: y + sinAngle * finalConnectorOffset
@@ -363,6 +388,9 @@ namespace ColumnDataLabel {
                             );
                             size = dataLabel.getBBox().height || 21;
 
+                            dataLabel.lineHeight = chart.renderer.fontMetrics(
+                                dataLabel.text || dataLabel
+                            ).h + 2 * dataLabel.padding;
                             point.distributeBox = {
                                 target: (
                                     (
@@ -370,12 +398,11 @@ namespace ColumnDataLabel {
                                             ?.natural.y || 0
                                     ) -
                                     labelPosition.top +
-                                    size / 2
+                                    dataLabel.lineHeight / 2
                                 ),
                                 size,
                                 rank: point.y
                             };
-
                             positions.push(point.distributeBox);
                         }
                     });
@@ -386,6 +413,31 @@ namespace ColumnDataLabel {
                     distributionLength,
                     distributionLength / 5
                 );
+
+                // Uncomment this to visualize the boxes
+                /*
+                points.forEach((point): void => {
+                    const box = point.distributeBox;
+                    point.dlBox?.destroy();
+                    if (box?.pos) {
+                        point.dlBox = chart.renderer.rect(
+                            chart.plotLeft + this.center[0] + (
+                                halfIdx ?
+                                    -this.center[2] / 2 - 100 :
+                                    this.center[2] / 2
+                            ),
+                            chart.plotTop + box.pos,
+                            100,
+                            box.size
+                        )
+                            .attr({
+                                stroke: 'silver',
+                                'stroke-width': 1
+                            })
+                            .add();
+                    }
+                });
+                // */
             }
 
             // Now the used slots are sorted, fill them up sequentially
@@ -399,7 +451,11 @@ namespace ColumnDataLabel {
                         labelPosition = dataLabel.dataLabelPosition,
                         naturalY = labelPosition?.natural.y || 0,
                         connectorPadding = dataLabelOptions
-                            .connectorPadding || 0;
+                            .connectorPadding || 0,
+                        lineHeight = dataLabel.lineHeight || 21,
+                        bBox = dataLabel.getBBox(),
+                        topOffset = (lineHeight - bBox.height) / 2;
+
 
                     let x = 0,
                         y = naturalY,
@@ -460,7 +516,7 @@ namespace ColumnDataLabel {
                                     ).radialDistributionX(
                                         series,
                                         point,
-                                        y,
+                                        y - topOffset,
                                         naturalY,
                                         dataLabel
                                     );
@@ -484,11 +540,11 @@ namespace ColumnDataLabel {
                             y: y +
                                 (dataLabelOptions.y || 0) - // (#12985)
                                 // Vertically center
-                                dataLabel.getBBox().height / 2
+                                lineHeight / 2
                         };
 
                         labelPosition.computed.x = x;
-                        labelPosition.computed.y = y;
+                        labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
                         if (pick(dataLabelOptions.crop, true)) {

@@ -309,7 +309,7 @@ QUnit.test('Shared tooltip with pointPlacement and stickOnContact', assert => {
 
     assert.close(
         predictedTooltipX,
-        chart.tooltip.now.x,
+        chart.tooltip.getLabel().x,
         1,
         `#17948: Tooltip should be displayed at the end of the bar,
             when reversedStacks is set to false.`

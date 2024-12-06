@@ -90,7 +90,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since 10.0.0
      * @product   highcharts
      * @extends   navigation.breadcrumbs
-     * @optionparent plotOptions.treemap.breadcrumbs
+     * @apioption plotOptions.treemap.breadcrumbs
      */
 
     /**
@@ -527,7 +527,22 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         }
     },
 
-    legendSymbol: 'rectangle'
+    legendSymbol: 'rectangle',
+
+    /**
+     * This option enables automatic traversing to the last child level upon
+     * node interaction. This feature simplifies navigation by immediately
+     * focusing on the deepest layer of the data structure without intermediate
+     * steps.
+     *
+     * @sample {highcharts} highcharts/plotoptions/treemap-traverse-to-leaf/
+     *         Traverse to leaf enabled
+     *
+     * @since   11.4.4
+     *
+     * @product highcharts
+     */
+    traverseToLeaf: false
 
 };
 

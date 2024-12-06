@@ -29,7 +29,6 @@ const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
-import Point from '../../Core/Series/Point';
 const {
     addEvent,
     extend,
@@ -71,20 +70,19 @@ function compose(
  */
 function onTooltipHeaderFormatter(
     this: Tooltip,
-    e: Event&AnyRecord
+    e: Event&Tooltip.HeaderFormatterEventObject
 ): void {
 
     const chart = this.chart,
         time = chart.time,
-        labelConfig = e.labelConfig,
-        series = labelConfig.series as Series,
-        point = labelConfig.point as Point,
+        point = e.point,
+        series = point.series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
         xAxis = series.xAxis;
 
-    let xDateFormat = tooltipOptions.xDateFormat,
+    let xDateFormat = tooltipOptions.xDateFormat || '',
         xDateFormatEnd,
         currentDataGrouping: (TimeTicksInfoObject|undefined),
         dateTimeLabelFormats,
@@ -99,7 +97,7 @@ function onTooltipHeaderFormatter(
         xAxis &&
         xAxis.options.type === 'datetime' &&
         dataGroupingOptions &&
-        isNumber(labelConfig.key)
+        isNumber(point.key)
     ) {
 
         // Set variables
@@ -125,28 +123,19 @@ function onTooltipHeaderFormatter(
         // it, but if the least distance is one day, skip hours and minutes etc.
         } else if (!xDateFormat && dateTimeLabelFormats && xAxis.dateTime) {
             xDateFormat = xAxis.dateTime.getXDateFormat(
-                labelConfig.x,
+                point.x,
                 tooltipOptions.dateTimeLabelFormats
 
             );
         }
 
-        if (xDateFormat?.includes('{')) {
-            xDateFormat = format(xDateFormat, {
-                lang: chart.options.lang
-            });
-        }
-
         const groupStart = pick(
                 series.groupMap?.[point.index].groupStart,
-                labelConfig.key
+                point.key
             ),
-            groupEnd = groupStart + currentDataGrouping?.totalRange - 1;
+            groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
 
-        formattedKey = time.dateFormat(
-            xDateFormat as any,
-            groupStart
-        );
+        formattedKey = time.dateFormat(xDateFormat, groupStart);
         if (xDateFormatEnd) {
             formattedKey += time.dateFormat(
                 xDateFormatEnd,
@@ -162,8 +151,9 @@ function onTooltipHeaderFormatter(
         // Return the replaced format
         e.text = format(
             formatString, {
-                point: extend(labelConfig.point, { key: formattedKey }),
-                series: series
+                point: extend(point, { key: formattedKey }),
+                series: series,
+                lang: chart.options.lang
             },
             chart
         );
@@ -287,8 +277,7 @@ export default DataGroupingComposition;
  *
  * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
- * @requires  product:highstock
- * @requires  module:modules/datagrouping
+ * @requires  modules/stock
  * @apioption plotOptions.series.dataGrouping
  */
 

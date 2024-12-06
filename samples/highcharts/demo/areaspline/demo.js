@@ -4,12 +4,10 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: 'Moose and deer hunting in Norway, 2000 - 2021',
-        align: 'left'
+        text: 'Moose and deer hunting in Norway, 2000 - 2024'
     },
     subtitle: {
-        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>',
-        align: 'left'
+        text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
     },
     legend: {
         layout: 'vertical',
@@ -23,9 +21,10 @@ Highcharts.chart('container', {
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
     xAxis: {
-        plotBands: [{ // Highlight the two last years
-            from: 2019,
-            to: 2020,
+        // Highlight the last years where moose hunting quickly deminishes
+        plotBands: [{
+            from: 2020,
+            to: 2023,
             color: 'rgba(68, 170, 213, .2)'
         }]
     },
@@ -73,7 +72,10 @@ Highcharts.chart('container', {
                 31611,
                 30666,
                 30319,
-                31766
+                31766,
+                29278,
+                27487,
+                26007
             ]
     }, {
         name: 'Deer',
@@ -99,7 +101,10 @@ Highcharts.chart('container', {
                 42556,
                 43820,
                 46445,
-                50048
+                50048,
+                52804,
+                49317,
+                52490
             ]
     }]
 });

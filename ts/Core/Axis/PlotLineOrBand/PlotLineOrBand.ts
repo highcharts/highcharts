@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-
+import type Chart from '../../Chart/Chart';
 import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
@@ -34,6 +34,7 @@ import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     defined,
@@ -72,8 +73,30 @@ class PlotLineOrBand {
      * */
 
     public static compose<T extends typeof Axis>(
+        ChartClass: Chart,
         AxisClass: T
     ): ReturnType<typeof PlotLineOrBandAxis.compose> {
+
+        addEvent(ChartClass, 'afterInit', function (): void {
+            this.labelCollectors.push((): SVGElement[] => {
+                const labels: SVGElement[] = [];
+
+                for (const axis of this.axes) {
+
+                    for (const { label, options } of axis.plotLinesAndBands) {
+                        if (label && !(
+                            options as PlotBandOptions)?.label?.allowOverlap
+                        ) {
+                            labels.push(label);
+                        }
+                    }
+                }
+
+                return labels;
+            });
+        });
+
+
         return PlotLineOrBandAxis.compose(PlotLineOrBand, AxisClass);
     }
 
@@ -145,13 +168,13 @@ class PlotLineOrBand {
         const { axis, options } = this,
             { horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
+            { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
-            renderer = axis.chart.renderer,
 
             // These properties only exist on either band or line
-            to = (options as PlotBandOptions).to,
-            from = (options as PlotBandOptions).from,
-            value = (options as PlotLineOptions).value,
+            to = time.parse((options as PlotBandOptions).to),
+            from = time.parse((options as PlotBandOptions).from),
+            value = time.parse((options as PlotLineOptions).value),
             borderWidth = (options as PlotBandOptions).borderWidth;
 
         let optionsLabel = options.label,
@@ -275,7 +298,8 @@ class PlotLineOrBand {
                 x: horiz ? !isBand && 4 : 10,
                 verticalAlign: !horiz && isBand ? 'middle' : void 0,
                 y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
-                rotation: horiz && !isBand ? 90 : 0
+                rotation: horiz && !isBand ? 90 : 0,
+                ...(isBand ? { inside: true } : {})
             } as PlotLineLabelOptions, optionsLabel);
 
             this.renderLabel(optionsLabel, path, isBand, zIndex);
@@ -302,7 +326,8 @@ class PlotLineOrBand {
     ): void {
         const plotLine = this,
             axis = plotLine.axis,
-            renderer = axis.chart.renderer;
+            renderer = axis.chart.renderer,
+            inside = (optionsLabel as PlotBandLabelOptions).inside;
 
         let label = plotLine.label;
 
@@ -332,7 +357,7 @@ class PlotLineOrBand {
             if (!axis.chart.styledMode) {
                 label.css(merge({
                     fontSize: '0.8em',
-                    textOverflow: 'ellipsis'
+                    textOverflow: (isBand && !inside) ? '' : 'ellipsis'
                 }, optionsLabel.style));
             }
 
@@ -346,23 +371,40 @@ class PlotLineOrBand {
             yBounds = path.yBounds ||
                 [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])],
             x = arrayMin(xBounds),
-            y = arrayMin(yBounds);
+            y = arrayMin(yBounds),
+            bBoxWidth = arrayMax(xBounds) - x;
 
         label.align(optionsLabel, false, {
             x,
             y,
-            width: arrayMax(xBounds) - x,
+            width: bBoxWidth,
             height: arrayMax(yBounds) - y
         });
-        if (!label.alignValue || label.alignValue === 'left') {
-            const width = optionsLabel.clip ?
-                axis.width : axis.chart.chartWidth;
 
+        if (
+            !label.alignValue ||
+            label.alignValue === 'left' ||
+            defined(inside)
+        ) {
             label.css({
                 width: (
-                    label.rotation === 90 ?
-                        axis.height - (label.alignAttr.y - axis.top) :
-                        width - (label.alignAttr.x - axis.left)
+                    optionsLabel.style?.width || (
+                        (
+                            !isBand ||
+                            !inside
+                        ) ? (
+                                label.rotation === 90 ?
+                                    axis.height - (
+                                        label.alignAttr.y -
+                                        axis.top
+                                    ) : (
+                                        optionsLabel.clip ?
+                                            axis.width :
+                                            axis.chart.chartWidth
+                                    ) - (label.alignAttr.x - axis.left)
+                            ) :
+                            bBoxWidth
+                    )
                 ) + 'px'
             });
         }
@@ -500,6 +542,17 @@ export default PlotLineOrBand;
  */
 
 /**
+ * Border radius for the plot band. Applies only to gauges. Can be a pixel
+ * value or a percentage, for example `50%`.
+ *
+ * @type      {number|string}
+ * @since 11.4.2
+ * @sample    {highcharts} highcharts/xaxis/plotbands-gauge-borderradius
+ *            Angular gauge with rounded plot bands
+ * @apioption xAxis.plotBands.borderRadius
+ */
+
+/**
  * Border width for the plot band. Also requires `borderColor` to be set.
  *
  * @type      {number}
@@ -571,6 +624,8 @@ export default PlotLineOrBand;
 /**
  * The start position of the plot band in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotbands-color/
  *         Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/
@@ -578,7 +633,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotBands.from
  */
 
@@ -597,6 +652,8 @@ export default PlotLineOrBand;
 /**
  * The end position of the plot band in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotbands-color/
  *         Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/
@@ -604,7 +661,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotBands.to
  */
 
@@ -646,6 +703,31 @@ export default PlotLineOrBand;
  * @default   center
  * @since     2.1
  * @apioption xAxis.plotBands.label.align
+ */
+
+/**
+ * Whether or not the label can be hidden if it overlaps with another label.
+ *
+ * @sample {highcharts} highcharts/xaxis/plotbands-label-allowoverlap/
+ *         A Plotband label overlapping another
+ *
+ * @type      {boolean}
+ * @default   undefined
+ * @since     11.4.8
+ * @apioption xAxis.plotBands.label.allowOverlap
+ */
+
+/**
+ * Wether or not the text of the label can exceed the width of the label.
+ *
+ * @type      {boolean}
+ * @product   highcharts highstock gantt
+ * @sample {highcharts} highcharts/xaxis/plotbands-label-textwidth/
+ *         Displaying text with text-wrapping/ellipsis, or the full text.
+ *
+ * @default   true
+ * @since     11.4.6
+ * @apioption xAxis.plotBands.label.inside
  */
 
 /**
@@ -867,12 +949,14 @@ export default PlotLineOrBand;
 /**
  * The position of the line in axis units.
  *
+ * On datetime axes, the value can be given as a timestamp or a date string.
+ *
  * @sample {highcharts} highcharts/xaxis/plotlines-color/
  *         Between two categories on X axis
  * @sample {highstock} stock/xaxis/plotlines/
  *         Plot line on Y axis
  *
- * @type      {number}
+ * @type      {number|string}
  * @apioption xAxis.plotLines.value
  */
 

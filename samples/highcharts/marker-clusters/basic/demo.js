@@ -11,7 +11,9 @@ for (let i = 0; i < n; i += 1) {
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         height: '100%'
     },
     title: {

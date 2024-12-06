@@ -53,8 +53,9 @@ function scriptsCode() {
 
     const codeTool = require('../code');
     const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const assembler = process.argv.includes('--assembler');
     const verbose = process.argv.includes('--verbose');
 
     return new Promise((resolve, reject) => {
@@ -86,6 +87,21 @@ function scriptsCode() {
             fs.writeFileSync('code/package.json', developerPackageJson);
 
             logLib.success('Processed code sources');
+
+            if (assembler) {
+                fsLib.getFilePaths('code/es-modules', true).forEach(filePath => {
+                    const content = fs.readFileSync(filePath).toString();
+
+                    if (content) {
+                        const buildTool = require('../build');
+
+                        fs.writeFileSync(
+                            filePath,
+                            buildTool.replaceMeta(content)
+                        );
+                    }
+                });
+            }
 
             resolve();
 

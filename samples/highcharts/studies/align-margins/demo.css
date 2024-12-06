@@ -1,0 +1,19 @@
+.flex-container {
+    display: flex;
+    width: 800px;
+    margin: 0 auto;
+}
+
+#container {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.button-container {
+    width: 800px;
+    margin: 0 auto;
+}
+
+button {
+    margin: 10px;
+}

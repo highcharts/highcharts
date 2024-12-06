@@ -124,17 +124,17 @@ QUnit.module('Format', () => {
         assert.strictEqual(
             format(
                 '{value:<span style="font-size: 12px; font-weight: bold">' +
-                '%a</span> %b %e}',
+                '%Y</span>-%m-%d}',
                 { value: Date.UTC(2023, 5, 5, 12) }
             ),
-            '<span style="font-size: 12px; font-weight: bold">Mon</span> Jun ' +
-            ' 5',
+            '<span style="font-size: 12px; font-weight: bold">' +
+                '2023</span>-06-05',
             'HTML inside format should be preserved'
         );
 
         assert.strictEqual(
-            '',
             Highcharts.format('{point.y}', {}),
+            '',
             'Do not choke on undefined objects (node-export-server#31)'
         );
 
@@ -178,6 +178,25 @@ QUnit.module('Format', () => {
             format('{point.proto.__proto__}', { point }),
             '',
             'Prototypes should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{ucfirst (point.date:søndag %Y-%m-%d)}', { point }),
+            'Søndag 2012-01-01',
+            'Non-ASCII characters should be preserved in formats'
+        );
+
+        assert.strictEqual(
+            format('{ucfirst (point.date:%[Ymd])}', { point }),
+            '01/01/2012',
+            'Locale-aware date formats should work in expressions'
+        );
+
+        assert.strictEqual(
+            format('{value:%b \u2019%y}', { value: 1706745600000 }),
+            'Feb ’24',
+            `Right single quotation mark shouldn't disable the format method,
+            #21124.`
         );
 
         // Reset
@@ -233,6 +252,24 @@ QUnit.module('Format', () => {
             ).replace(/\s\s+/g, ' ').trim(),
             'Value: Deep, deeper: 123',
             'Nested conditions'
+        );
+
+        const f = `
+        {#if (lt value 3)}
+            Green
+        {else}
+            {#if (lt value 7)}
+                Yellow
+            {else}
+                Red
+            {/if}
+        {/if}
+        `;
+
+        assert.deepEqual(
+            [2, 5, 8].map(value => format(f, { value }).trim()),
+            ['Green', 'Yellow', 'Red'],
+            'Nested conditions with sub expression'
         );
 
     });
@@ -317,6 +354,7 @@ QUnit.module('Format', () => {
     });
 
     QUnit.test('Relational helpers', assert => {
+
         assert.strictEqual(
             format(
                 '{#if (lt one 2)}true{/if}',
@@ -367,6 +405,51 @@ QUnit.module('Format', () => {
             ),
             'equal',
             'Shorthand relational'
+        );
+
+        assert.strictEqual(
+            format(
+                '{#eq foo "bar"}equal{else}not equal{/eq}',
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, double quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                // eslint-disable-next-line quotes
+                "{#eq foo 'bar'}equal{else}not equal{/eq}",
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, single quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                '{#eq musketeer "D\'Artagnan"}equal{else}not equal{/eq}',
+                {
+                    musketeer: 'D\'Artagnan'
+                }
+            ),
+            'equal',
+            'String comparison, mixed quotes'
+        );
+
+        assert.strictEqual(
+            format(
+                '{#if (eq foo "bar")}equal{else}not equal{/if}',
+                {
+                    foo: 'bar'
+                }
+            ),
+            'equal',
+            'String comparison, sub expression'
         );
     });
 
@@ -427,6 +510,32 @@ QUnit.module('Format', () => {
             ),
             'Task 50% completed',
             'Subexpression in conditional body should work'
+        );
+
+        assert.strictEqual(
+            format(
+                '{ucfirst "hello world"}',
+                {
+                    point: {
+                        key: Date.UTC(2024, 0, 1)
+                    }
+                }
+            ),
+            'Hello world',
+            'String literal argument'
+        );
+
+        assert.strictEqual(
+            format(
+                '{ucfirst (point.key:date %Y-%m-%d)}',
+                {
+                    point: {
+                        key: Date.UTC(2024, 7, 23)
+                    }
+                }
+            ),
+            'Date 2024-08-23',
+            'Date formatting with string output should be preserved'
         );
 
     });

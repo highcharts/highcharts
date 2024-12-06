@@ -1305,12 +1305,11 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
                 showTable: true
             }
         }),
-        csv =
-            '"Category","Series 1"\n' +
-            '"test",\n' +
-            '"test1",5\n' +
-            '"test2",10\n' +
-            '"test3",15';
+        csv = `"Category","Series 1 (value)","Series 1 (colorValue)"
+"test",,
+"test1",5,
+"test2",10,
+"test3",15,`;
 
     assert.strictEqual(
         chart.getCSV(),
@@ -1591,5 +1590,24 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         series,
         `Exported data of multiple series with xAxis type set to category
         should be same as actual, #17639.`
+    );
+});
+
+
+QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [5, 10]
+                ],
+                keys: ['y', 'custom.test']
+            }]
+        }),
+        csv = '"Category","Series 1 (y)","Series 1 (custom.test)"\n0,5,10';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'Key notation values should be visible in exported data, #20470.'
     );
 });

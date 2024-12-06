@@ -547,13 +547,6 @@ namespace GeoJSONComposition {
     ): void {
 
         credits = merge(true, this.options.credits, credits);
-
-        // Disable credits link if map credits enabled. This to allow for
-        // in-text anchors.
-        if (this.mapCredits) {
-            credits.href = void 0;
-        }
-
         proceed.call(this, credits);
 
         // Add full map credits to hover

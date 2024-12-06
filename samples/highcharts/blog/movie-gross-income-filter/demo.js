@@ -29,7 +29,9 @@ Highcharts.chart('container', {
         }
     },
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         marginRight: 120
     },
     tooltip: {

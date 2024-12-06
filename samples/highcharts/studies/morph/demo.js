@@ -8,7 +8,6 @@
         Series,
         seriesTypes,
         SVGElement,
-        Tick,
         wrap
     } = H;
 
@@ -79,8 +78,7 @@
 
         // Add a temporary morpher path element next to this element
         setTimeout(() => {
-            const morpher = new Morpher();
-            morpher.init(this.renderer, 'path');
+            const morpher = new Morpher(this.renderer, 'path');
             morpher
                 .attr({
                     d: getPath(morphFrom),
@@ -218,7 +216,7 @@
 
 // /////////////////////////////////////////////////////////////////////////////
 
-const chart = Highcharts.chart('chart-container', {
+const chart = Highcharts.chart('container', {
     chart: {
         animation: {
             duration: 1000

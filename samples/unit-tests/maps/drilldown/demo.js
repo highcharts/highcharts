@@ -153,6 +153,48 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
                 );
             }, duration / 2);
         }, duration * 3);
+
+        setTimeout(function () {
+            chart.update({
+                chart: {
+                    animation: false
+                },
+                mapNavigation: {
+                    enabled: true
+                }
+            }, false);
+            chart.series[0].points[0].doDrilldown();
+
+            setTimeout(function () {
+                // Calculate scales before and after zooming in for test
+                const scaleXBefore = chart.series[0].transformGroups[0].scaleX;
+                chart.mapNavigation.navButtons[0].element
+                    .dispatchEvent(new Event('click'));
+                const scaleXAfter = chart.series[0].transformGroups[0].scaleX;
+                chart.mapNavigation.navButtons[1].element
+                    .dispatchEvent(new Event('click'));
+
+                // Enable animation during zooming in
+                chart.update({
+                    chart: {
+                        animation: true
+                    }
+                });
+                chart.mapNavigation.navButtons[0].element
+                    .dispatchEvent(new Event('click'));
+
+                setTimeout(function () {
+                    assert.ok(
+                        scaleXBefore <
+                            chart.series[0].transformGroups[0].scaleX &&
+                        chart.series[0].transformGroups[0].scaleX < scaleXAfter,
+                        `Map zooming animation should work correctly after
+                        drilldown into series (#20857).`
+                    );
+                }, 100);
+            }, duration * 3);
+        }, duration * 5);
+
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
 
@@ -317,3 +359,165 @@ QUnit.test('Map drilldown animation for GeoJSON maps', async assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test(
+    '#21546, One series should be visible after drilldown',
+    async assert => {
+        const world = await fetch(
+                'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+            ).then(response => response.json()),
+            worldMapView = world.objects.default['hc-recommended-mapview'],
+            africa = await fetch(
+                'https://code.highcharts.com/mapdata/custom/africa.topo.json'
+            ).then(response => response.json()),
+            africaMapView = africa.objects.default['hc-recommended-mapview'];
+
+        let clock = null;
+        try {
+            clock = TestUtilities.lolexInstall();
+            const chart = Highcharts.mapChart('container', {
+                colorAxis: {
+                    min: 0,
+                    max: 4,
+                    minColor: '#E6E7E8',
+                    maxColor: '#005645'
+                },
+                mapView: worldMapView,
+                mapNavigation: {
+                    enabled: true
+                },
+                series: [{
+                    mapData: world,
+                    custom: {
+                        startPos: void 0
+                    },
+                    data: [{
+                        'hc-key': 'af',
+                        value: 1,
+                        drilldown: 'africa',
+                        mapView: africaMapView
+                    }]
+                }, {
+                    name: 'second',
+                    data: [{
+                        'hc-key': 'sa',
+                        value: 2
+                    }]
+                }],
+                drilldown: {
+                    animation: {
+                        duration
+                    },
+                    mapZooming: true,
+                    series: [{
+                        id: 'africa',
+                        mapData: africa
+                    }]
+                }
+            });
+            chart.series[0].points[0].doDrilldown();
+
+            setTimeout(() => {
+                assert.ok(
+                    chart.series.length === 1,
+                    'After drilldown, only one series should be visible.'
+                );
+            }, duration * 3);
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+
+            // Clear cache for other tests
+            delete africa.objects.default['hc-decoded-geojson'];
+            delete world.objects.default['hc-decoded-geojson'];
+        }
+    }
+);
+
+QUnit.test(
+    '#20886, Map drilldown datalabel mouse tracking',
+    async assert => {
+        const world = await fetch(
+                'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
+            ).then(response => response.json()),
+            africa = await fetch(
+                'https://code.highcharts.com/mapdata/custom/africa.geo.json'
+            ).then(response => response.json()),
+            duration = 50;
+
+        // Create the chart
+        const chart = Highcharts.mapChart('container', {
+                chart: {
+                    animation: {
+                        duration: duration
+                    },
+                    events: {
+                        drillupall() {
+                            const chart = this;
+                            assert.notOk(
+                                // eslint-disable-next-line no-underscore-dangle
+                                chart.get('world_map')._hasTracking,
+                                `Tracking should be false before chart
+                                re-renders on \"drillupall\" event and
+                                animations are enabled.`
+                            );
+                        }
+                    }
+                },
+                mapNavigation: {
+                    enabled: true,
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    }
+                },
+                plotOptions: {
+                    map: {
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    id: 'world_map',
+                    mapData: world,
+                    custom: {
+                        startPos: void 0
+                    },
+                    data: [{
+                        'hc-key': 'af',
+                        value: 1,
+                        drilldown: 'africa'
+                    }]
+                }],
+                drilldown: {
+                    animation: {
+                        duration: duration
+                    },
+                    mapZooming: true,
+                    series: [{
+                        id: 'africa',
+                        mapData: africa
+                    }]
+                }
+            }),
+            done = assert.async();
+
+        chart.series[0].points
+            .find(p => p['hc-key'] === 'af').firePointEvent('click');
+
+        setTimeout(() => {
+            chart.drillUp();
+
+            setTimeout(() => {
+                assert.ok(
+                    chart.get('world_map').dataLabelsGroup
+                        .hasClass('highcharts-tracker'),
+                    'Data label group should have tracking after drillup.'
+                );
+
+                done();
+            }, duration * 1.5);
+        }, duration * 1.5);
+    }
+);

@@ -82,8 +82,8 @@ function wrapSeriesGeneratePoints(
         cropStart = this.cropStart || 0,
         data = this.data || [],
         points = [],
-        processedXData = this.processedXData,
-        processedYData = this.processedYData;
+        processedXData = this.getColumn('x', true),
+        processedYData = this.getColumn('y', true);
 
     let cursor: number,
         point: typeof PointClass.prototype;
@@ -474,8 +474,6 @@ export default DataSeriesAdditions;
 
 /* *
  * Indicates data is structured as columns instead of rows.
- *
- * @requires  es-modules/Data/DataSeriesComposition.js
  *
  * @type      {boolean}
  * @since     Future

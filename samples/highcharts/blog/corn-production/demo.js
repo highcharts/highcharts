@@ -24,7 +24,9 @@ const chart = Highcharts.chart('production', {
         '#9F8170'
     ],
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         type: 'column'
     },
     title: {
@@ -71,7 +73,7 @@ const chart = Highcharts.chart('production', {
     tooltip: {
         formatter: function () {
             return '<b>Region: </b>' + this.series.name + '<br>' +
-                '<b>Year: </b>' + this.x + ' <br>' +
+                '<b>Year: </b>' + this.key + ' <br>' +
                 '<b>Production: </b>' +
                 Highcharts.numberFormat(this.y, 0, '.', ',') + ' tonnes<br>' +
                 '<b>Total: </b>' +
@@ -143,7 +145,9 @@ for (const [key, value] of Object.entries(countries)) {
 Highcharts.chart('production_heatmap', {
 
     chart: {
-        // zoomType: 'xy',
+        // zooming: {
+        //     type: 'xy'
+        // },
         type: 'heatmap',
         marginTop: 60,
         marginBottom: 80,
@@ -260,7 +264,9 @@ const chart2 = Highcharts.chart('trade', {
         '#9F8170', '#9F8170'
     ],
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         type: 'column'
     },
 

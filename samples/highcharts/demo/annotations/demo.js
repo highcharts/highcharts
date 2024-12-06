@@ -1886,7 +1886,9 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'area',
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift',
         scrollablePlotArea: {
@@ -1901,8 +1903,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: '2017 Tour de France Stage 8: Dole - Station des Rousses',
-        align: 'left'
+        text: '2017 Tour de France Stage 8: Dole - Station des Rousses'
     },
 
     accessibility: {

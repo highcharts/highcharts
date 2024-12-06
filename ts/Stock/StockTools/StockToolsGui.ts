@@ -107,7 +107,6 @@ function compose(
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
         addEvent(ChartClass, 'destroy', onChartDestroy);
         addEvent(ChartClass, 'getMargins', onChartGetMargins, { order: 0 });
-        addEvent(ChartClass, 'redraw', onChartRedraw);
         addEvent(ChartClass, 'render', onChartRender);
 
         chartProto.setStockTools = chartSetStockTools;
@@ -141,40 +140,51 @@ function onChartAfterGetContainer(
  * Handle beforeRedraw and beforeRender
  * @private
  */
-function onChartBeforeRedraw(
-    this: Chart
-): void {
+function onChartBeforeRedraw(this: Chart): void {
     if (this.stockTools) {
-        const optionsChart = this.options.chart as ChartOptions;
-        const listWrapper = this.stockTools.listWrapper,
-            offsetWidth = listWrapper && (
-                (
-                    (listWrapper as any).startWidth +
-                    getStyle(listWrapper, 'padding-left') +
-                    getStyle(listWrapper, 'padding-right')
-                ) || listWrapper.offsetWidth
-            );
+        this.stockTools.redraw();
+        setOffset(this);
+    }
+}
+
+/**
+ * Function to calculate and set the offset width for stock tools.
+ * @private
+ */
+function setOffset(chart: Chart): void {
+    if (chart.stockTools?.guiEnabled) {
+        const optionsChart = chart.options.chart as ChartOptions;
+        const listWrapper = chart.stockTools.listWrapper;
+        const offsetWidth = listWrapper && (
+            (
+                (listWrapper as any).startWidth +
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')
+            ) || listWrapper.offsetWidth
+        );
+
+        chart.stockTools.width = offsetWidth;
 
         let dirty = false;
 
-        if (offsetWidth && offsetWidth < this.plotWidth) {
+        if (offsetWidth < chart.plotWidth) {
             const nextX = pick(
                 optionsChart.spacingLeft,
                 optionsChart.spacing && optionsChart.spacing[3],
                 0
             ) + offsetWidth;
-            const diff = nextX - this.spacingBox.x;
-            this.spacingBox.x = nextX;
-            this.spacingBox.width -= diff;
+            const diff = nextX - chart.spacingBox.x;
+            chart.spacingBox.x = nextX;
+            chart.spacingBox.width -= diff;
             dirty = true;
         } else if (offsetWidth === 0) {
             dirty = true;
         }
 
-        if (offsetWidth !== this.stockTools.prevOffsetWidth) {
-            this.stockTools.prevOffsetWidth = offsetWidth;
+        if (offsetWidth !== chart.stockTools.prevOffsetWidth) {
+            chart.stockTools.prevOffsetWidth = offsetWidth;
             if (dirty) {
-                this.isDirtyLegend = true;
+                chart.isDirtyLegend = true;
             }
         }
     }
@@ -197,29 +207,12 @@ function onChartDestroy(
 function onChartGetMargins(
     this: Chart
 ): void {
-    const listWrapper = this.stockTools && this.stockTools.listWrapper,
-        offsetWidth = listWrapper && (
-            (
-                (listWrapper as any).startWidth +
-                getStyle(listWrapper, 'padding-left') +
-                getStyle(listWrapper, 'padding-right')
-            ) || listWrapper.offsetWidth
-        );
+    const offsetWidth = this.stockTools?.visible && this.stockTools.guiEnabled ?
+        this.stockTools.width : 0;
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
-    }
-}
-
-/**
- * @private
- */
-function onChartRedraw(
-    this: Chart
-): void {
-    if (this.stockTools && this.stockTools.guiEnabled) {
-        this.stockTools.redraw();
     }
 }
 
@@ -274,8 +267,8 @@ function onNavigationBindingsDeselectButton(
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        // Set active class on the current button
-        gui.toggleButtonActiveClass(button);
+
+        button.classList.remove('highcharts-active');
     }
 }
 

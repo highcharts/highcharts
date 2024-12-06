@@ -1,16 +1,12 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 const registeredEvents = [];
 const eventTypes = [
@@ -19,7 +15,8 @@ const eventTypes = [
     'render',
     'afterRender',
     'tableChanged',
-    'setConnector',
+    'setConnectors',
+    'afterSetConnectors',
     'update',
     'afterUpdate'
 ];
@@ -155,6 +152,13 @@ test('Board with data connectors and HighchartsComponent update', async function
                         csv: '1,2,3',
                         firstRowAsNames: false
                     }
+                }, {
+                    id: 'connector-2',
+                    type: 'CSV',
+                    options: {
+                        csv: '4,5,6',
+                        firstRowAsNames: false
+                    }
                 }
             ]
         },
@@ -195,6 +199,9 @@ test('Board with data connectors and HighchartsComponent update', async function
     emptyArray(registeredEvents);
     registerEvents(componentWithConnector);
     await componentWithConnector.update({
+        connector: {
+            id: 'connector-2'
+        },
         chartOptions: {
             title: {
                 text: 'Hello World',
@@ -207,7 +214,8 @@ test('Board with data connectors and HighchartsComponent update', async function
         registeredEvents,
         [
             'update',
-            'setConnector',
+            'setConnectors',
+            'afterSetConnectors',
             'afterUpdate',
             'render',
             'afterRender',
@@ -566,7 +574,7 @@ test('Data columnAssignment', async function (assert) {
 
     assert.ok(
         // @ts-ignore
-        mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
+        mountedComponents[3].component.chart.series[2].dataTable.modified.rowCount > 0,
         'OHLC point is an array of open/low/high/close'
     );
 
@@ -735,14 +743,14 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
 
     assert.deepEqual(
         // @ts-ignore
-        mountedComponents[0].component.chart.series[0].yData,
+        mountedComponents[0].component.chart.series[0].getColumn('y'),
         [30, 20, 50],
         'Each server instance should be rendered as a column.'
     );
 
     assert.deepEqual(
         // @ts-ignore
-        mountedComponents[0].component.chart.series[1].yData,
+        mountedComponents[0].component.chart.series[1].getColumn('y'),
         [1500, 500, 400],
         'Each server instance should be rendered as a column.'
     );
@@ -792,12 +800,12 @@ test('Crossfilter with string values', async function (assert) {
             }]
         },
         components: [{
-            cell: 'top-left',
+            renderTo: 'top-left',
             type: 'Navigator',
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Revenue: 'y'
             },
             sync: {
@@ -812,12 +820,12 @@ test('Crossfilter with string values', async function (assert) {
                 }
             }
         }, {
-            cell: 'top-middle',
+            renderTo: 'top-middle',
             type: 'Navigator',
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Category: 'y'
             },
             sync: {
@@ -831,37 +839,32 @@ test('Crossfilter with string values', async function (assert) {
                     text: 'Category'
                 }
             }
-        }, {
-            cell: 'bottom',
-            type: 'DataGrid',
-            connector: {
-                id: 'data'
-            }
         }]
     }, true);
 
     const numbersNavigator = dashboard.mountedComponents[0].component;
     const stringsNavigator = dashboard.mountedComponents[1].component;
-    const dataGrid = dashboard.mountedComponents[2].component;
 
     assert.ok(
-        numbersNavigator.chart.series[0].yData.length === 7,
+        numbersNavigator.chart.series[0].dataTable.rowCount === 7,
         'Numbers navigator should have 7 points.'
     );
 
     assert.ok(
-        stringsNavigator.chart.series[0].yData.length === 3,
+        stringsNavigator.chart.series[0].dataTable.rowCount === 3,
         'Strings navigator should have 3 points.'
     );
 
     const countPoints = (series) => (
-        series.yData.filter(data => data !== null).length
+        series.getColumn('y').filter(data => data !== null).length
     );
 
     const done = assert.async();
-    dataGrid.on('tableChanged', e => {
+    numbersNavigator.on('tableChanged', e => {
+        const table = e.connector.table;
+
         // Assert only on the last event
-        if (e.modifier.options.ranges.length > 1) {
+        if (table?.modifier?.options?.ranges?.length > 1) {
 
             assert.equal(
                 countPoints(stringsNavigator.chart.series[0]),
@@ -876,9 +879,9 @@ test('Crossfilter with string values', async function (assert) {
             );
 
             assert.equal(
-                e.modified.rowCount,
+                table.modified.rowCount,
                 1,
-                'DataGrid should have 2 rows after extremes changed.'
+                'DataTable should have 2 rows after extremes changed.'
             );
 
             done();

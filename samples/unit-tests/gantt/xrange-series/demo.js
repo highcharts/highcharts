@@ -6,6 +6,9 @@
             chart: {
                 type: 'xrange'
             },
+            time: {
+                locale: 'en-US'
+            },
             xAxis: {
                 type: 'datetime',
                 min: Date.UTC(2014, 11, 1),
@@ -139,23 +142,14 @@
             i,
             points,
             point,
-            $graphic,
-            $graphOrig,
-            $graphOver,
-            clipRectID,
-            $clipRect,
-            graphOverBox,
             origX,
             overX,
             origY,
             overY,
             origWidth,
             overWidth,
-            clipWidth,
             origHeight,
             overHeight,
-            clipHeight,
-            partialFill,
             error = 1;
 
         // THE CHART

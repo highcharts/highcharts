@@ -20,7 +20,7 @@
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type { SankeyDataLabelFormatterContext } from './SankeyDataLabelOptions';
+import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
 
 /* *
@@ -43,14 +43,14 @@ import type SankeySeries from './SankeySeries';
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    animationLimit, boostThreshold, borderRadius,
- *               crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
- *               edgeColor, edgeWidth, findNearestPointBy, grouping,
- *               groupPadding, groupZPadding, maxPointWidth, negativeColor,
- *               pointInterval, pointIntervalUnit, pointPadding,
- *               pointPlacement, pointRange, pointStart, pointWidth,
- *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength, dataSorting, boostBlending
+ * @excluding    animationLimit, boostBlending, boostThreshold, borderRadius,
+ *               crisp, cropThreshold, colorAxis, colorKey, dataSorting, depth,
+ *               dragDrop, edgeColor, edgeWidth, findNearestPointBy, grouping,
+ *               groupPadding, groupZPadding, legendSymbolColor, maxPointWidth,
+ *               minPointLength, negativeColor, pointInterval,
+ *               pointIntervalUnit, pointPadding, pointPlacement, pointRange,
+ *               pointStart, pointWidth, shadow, softThreshold, stacking,
+ *               threshold, zoneAxis, zones
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  *
@@ -112,10 +112,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * @since 6.0.2
          */
         nodeFormatter: function (
-            this: (
-                SankeyDataLabelFormatterContext|
-                Point.PointLabelObject
-            )
+            this: (SankeyPoint|Point)
         ): (string|undefined) {
             return this.point.name;
         },
@@ -227,7 +224,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *         Sankey diagram with gradients and explanation
      *
      * @type      {('from'|'gradient'|'to')}
-     * @since     @next
+     * @since     11.2.0
      */
     linkColorMode: 'from',
 

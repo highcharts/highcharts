@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'area',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'ETH-BTC Market Depth'

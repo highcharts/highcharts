@@ -64,6 +64,7 @@ export interface PointMarkerOptions {
     enabled?: boolean;
     enabledThreshold?: number;
     fillColor?: ColorType;
+    fillOpacity?: number;
     height?: number;
     lineColor?: ColorType;
     lineWidth?: number;
@@ -96,8 +97,9 @@ export interface PointOptions {
     selected?: boolean;
     states?: PointStatesOptions<Point>;
     visible?: boolean;
-    x?: number;
-    y?: (null|number);
+    x?: number|string;
+    y?: null|number;
+    legendSymbolColor?: ColorType;
 }
 
 export interface PointSelectEvent extends Event {

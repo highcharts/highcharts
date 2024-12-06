@@ -6,7 +6,9 @@ Highcharts.chart('container', {
     chart: {
         animation: false,
         type: 'xrange',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -31,8 +33,8 @@ Highcharts.chart('container', {
                 draggableY: true,
                 dragMinY: 0,
                 dragMaxY: 2,
-                dragMinX: Date.UTC(2014, 10, 15),
-                dragMaxX: Date.UTC(2015, 0, 10),
+                dragMinX: '2014-11-17',
+                dragMaxX: '2015-01-05',
                 liveRedraw: false,
                 groupBy: 'groupId' // Group data points with the same groupId
             },
@@ -41,7 +43,7 @@ Highcharts.chart('container', {
                     dragStart: function (e) {
                         setDragStatus(
                             'Drag started at page coordinates ' +
-                                e.chartX + '/' + e.chartY + (
+                            e.chartX + '/' + e.chartY + (
                                 e.updateProp ?
                                     '. Updating ' + e.updateProp :
                                     ''
@@ -92,8 +94,8 @@ Highcharts.chart('container', {
 
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2014, 10, 15),
-        max: Date.UTC(2015, 0, 10)
+        min: '2014-11-15',
+        max: '2015-01-10'
     },
 
     yAxis: {
@@ -107,18 +109,18 @@ Highcharts.chart('container', {
         name: 'Project 1',
         cursor: 'move',
         data: [{
-            x: Date.UTC(2014, 11, 1),
-            x2: Date.UTC(2014, 11, 4),
+            x: '2014-12-01',
+            x2: '2014-12-04',
             y: 0,
             name: 'Task 1'
         }, {
-            x: Date.UTC(2014, 11, 2),
-            x2: Date.UTC(2014, 11, 5),
+            x: '2014-12-02',
+            x2: '2014-12-05',
             y: 1,
             name: 'Task 2'
         }, {
-            x: Date.UTC(2014, 11, 9),
-            x2: Date.UTC(2014, 11, 19),
+            x: '2014-12-09',
+            x2: '2014-12-19',
             y: 1,
             name: 'No drag Y',
             // Disable draggable Y for this point
@@ -126,8 +128,8 @@ Highcharts.chart('container', {
                 draggableY: false
             }
         }, {
-            x: Date.UTC(2014, 11, 8),
-            x2: Date.UTC(2014, 11, 9),
+            x: '2014-12-08',
+            x2: '2014-12-09',
             y: 2,
             groupId: 'Group A',
             dragDrop: {
@@ -135,8 +137,8 @@ Highcharts.chart('container', {
                 draggableX2: false
             }
         }, {
-            x: Date.UTC(2014, 11, 10),
-            x2: Date.UTC(2014, 11, 23),
+            x: '2014-12-10',
+            x2: '2014-12-23',
             y: 2,
             name: 'Grouped, no prototyping',
             groupId: 'Group A',
@@ -145,8 +147,8 @@ Highcharts.chart('container', {
                 draggableX2: false
             }
         }, {
-            x: Date.UTC(2014, 11, 25),
-            x2: Date.UTC(2014, 11, 26),
+            x: '2014-12-25',
+            x2: '2014-12-26',
             y: 2,
             groupId: 'Group A',
             dragDrop: {
@@ -154,8 +156,8 @@ Highcharts.chart('container', {
                 draggableX2: false
             }
         }, {
-            x: Date.UTC(2014, 11, 24),
-            x2: Date.UTC(2014, 11, 26),
+            x: '2014-12-24',
+            x2: '2014-12-26',
             y: 1,
             groupId: 'Group B',
             dragDrop: {
@@ -163,8 +165,8 @@ Highcharts.chart('container', {
                 draggableX2: false
             }
         }, {
-            x: Date.UTC(2014, 11, 26),
-            x2: Date.UTC(2014, 11, 28),
+            x: '2014-12-26',
+            x2: '2014-12-28',
             y: 1,
             name: 'Grouped',
             groupId: 'Group B',
@@ -173,8 +175,8 @@ Highcharts.chart('container', {
                 draggableX2: false
             }
         }, {
-            x: Date.UTC(2014, 11, 28),
-            x2: Date.UTC(2014, 11, 30),
+            x: '2014-12-28',
+            x2: '2014-12-30',
             y: 1,
             groupId: 'Group B',
             dragDrop: {

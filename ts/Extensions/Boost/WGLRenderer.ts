@@ -198,9 +198,13 @@ class WGLRenderer {
         if (series.boosted) {
             isStacked = !!series.options.stacking;
             xData = (
-                series.xData ||
+                (
+                    series.getColumn('x').length ?
+                        series.getColumn('x') :
+                        void 0
+                ) ||
                 (series.options as any).xData ||
-                series.processedXData
+                series.getColumn('x', true)
             );
             s = (isStacked ? series.data : (xData || series.options.data))
                 .length;
@@ -254,7 +258,10 @@ class WGLRenderer {
     // Opengl context
     private gl?: WebGLRenderingContext;
 
-    // The data to render - array of coordinates
+    /**
+     * The data to render - array of coordinates.
+     * Repeating sequence of [x, y, checkThreshold, pointSize].
+     */
     private data: Array<number> = [];
 
     // Height of our viewport in pixels
@@ -391,14 +398,15 @@ class WGLRenderer {
             yExtremes = series.yAxis.getExtremes(),
             yMin = yExtremes.min - (series.yAxis.minPointOffset || 0),
             yMax = yExtremes.max + (series.yAxis.minPointOffset || 0),
-            xData =
-                series.xData || (options as any).xData || series.processedXData,
-            yData =
-                series.yData || (options as any).yData || series.processedYData,
+            xData = (
+                series.getColumn('x').length ? series.getColumn('x') : void 0
+            ) || (options as any).xData || series.getColumn('x', true),
+            yData = (
+                series.getColumn('y').length ? series.getColumn('y') : void 0
+            ) || (options as any).yData || series.getColumn('y', true),
             zData = (
-                series.zData || (options as any).zData ||
-                (series as any).processedZData
-            ),
+                series.getColumn('z').length ? series.getColumn('z') : void 0
+            ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
@@ -443,7 +451,7 @@ class WGLRenderer {
             i = -1,
             px: number = false as any,
             nx: number = false as any,
-            low: (number|undefined),
+            low: number|undefined|null,
             nextInside = false,
             prevInside = false,
             pcolor: Color.RGBA = false as any,
@@ -800,7 +808,7 @@ class WGLRenderer {
 
             } else {
                 x = d as any;
-                y = yData[i];
+                y = yData?.[i];
 
                 if (sdata[i + 1]) {
                     nx = sdata[i + 1];
@@ -841,8 +849,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = (y as any)[0];
-                y = (y as any)[1];
+                low = series.getColumn('low', true)?.[i];
+                y = series.getColumn('high', true)?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;
@@ -857,6 +865,11 @@ class WGLRenderer {
                 typeof yMax !== 'undefined'
             ) {
                 isYInside = y >= yMin && y <= yMax;
+            }
+
+            // Do not render points outside the zoomed range (#19701)
+            if (!sorted && !isYInside) {
+                continue;
             }
 
             if (x > xMax && closestRight.x < xMax) {
@@ -881,10 +894,15 @@ class WGLRenderer {
 
             // The first point before and first after extremes should be
             // rendered (#9962, 19701)
+            // Make sure series with a single point are rendered (#21897)
             if (
-                sorted &&
-                (nx >= xMin || x >= xMin) &&
-                (px <= xMax || x <= xMax)
+                sorted && (
+                    (nx >= xMin || x >= xMin) &&
+                    (px <= xMax || x <= xMax)
+                ) ||
+                !sorted && (
+                    (x >= xMin) && (x <= xMax)
+                )
             ) {
                 isXInside = true;
             }
@@ -1008,7 +1026,7 @@ class WGLRenderer {
             }
 
             if (drawAsBar) {
-                minVal = low;
+                minVal = low || 0;
 
                 if ((low as any) === false || typeof low === 'undefined') {
                     if (y < 0) {
@@ -1362,11 +1380,24 @@ class WGLRenderer {
             }
 
             if (chart.styledMode) {
-                fillColor = (
-                    s.series.markerGroup &&
-                    s.series.markerGroup.getStyle('fill')
-                );
-
+                if (
+                    s.series.markerGroup === s.series.chart.boost?.markerGroup
+                ) {
+                    // Create a temporary markerGroup to get the fill color
+                    delete s.series.markerGroup;
+                    s.series.markerGroup = s.series.plotGroup(
+                        'markerGroup',
+                        'markers',
+                        'visible',
+                        1,
+                        chart.seriesGroup
+                    ).addClass('highcharts-tracker');
+                    fillColor = s.series.markerGroup.getStyle('fill');
+                    s.series.markerGroup.destroy();
+                    s.series.markerGroup = s.series.chart.boost?.markerGroup;
+                } else {
+                    fillColor = s.series.markerGroup?.getStyle('fill');
+                }
             } else {
                 fillColor =
                     (
@@ -1391,15 +1422,6 @@ class WGLRenderer {
 
             if (!settings.useAlpha) {
                 scolor[3] = 1.0;
-            }
-
-            // This is very much temporary
-            if (
-                s.drawMode === 'LINES' &&
-                settings.useAlpha &&
-                (scolor[3] as any) < 1
-            ) {
-                (scolor[3] as any) /= 10;
             }
 
             // Blending

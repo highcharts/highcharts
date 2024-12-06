@@ -1,24 +1,57 @@
 QUnit.test('Selection event', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x',
+                events: {
+                    selection: evt => {
+                        assert.ok(
+                            evt.xAxis[0].min > 3.65 && evt.xAxis[0].min < 3.75,
+                            `Min extreme from selection event should be lower
+                            than 4 and in correct scope (#20784).`
+                        );
+                        assert.ok(
+                            evt.xAxis[0].max < 4.5 && evt.xAxis[0].max > 4.4,
+                            `Max extreme from selection event should be higher
+                            than 4 and in correct scope (#20784).`
+                        );
+                        return false;
+                    }
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [{
+                    x: 3,
+                    y: 1
+                }, {
+                    x: 4,
+                    y: 2
+                }, {
+                    x: 5,
+                    y: 3
+                }]
+            }]
+        }),
+        controller = new TestController(chart);
+
+    controller.pan([270, 100], [400, 100], void 0, true);
+
+    chart.series[0].update({
+        type: 'column',
+        name: 'USD to EUR',
+        data: [1, 3, 2, 4, 3, 5, 4, 6, 5, 7]
+    }, false);
+
+    chart.update({
         chart: {
-            zoomType: 'x',
             events: {
                 selection: function () {
                     this.destroy();
                     return false;
                 }
             }
-        },
-        series: [
-            {
-                type: 'area',
-                name: 'USD to EUR',
-                data: [1, 3, 2, 4, 3, 5, 4, 6, 5, 7]
-            }
-        ]
+        }
     });
-
-    var controller = new TestController(chart);
 
     // Pan
     controller.pan([200, 100], [150, 100], { shiftKey: true });

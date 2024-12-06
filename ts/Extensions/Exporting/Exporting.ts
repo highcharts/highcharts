@@ -49,7 +49,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -188,7 +188,7 @@ namespace Exporting {
             chartOptions?: Options
         ): void;
         /** @requires modules/exporting */
-        getChartHTML(): string;
+        getChartHTML(applyStyleSheets?: boolean): string;
         /** @requires modules/exporting */
         getFilename(): string;
         /** @requires modules/exporting */
@@ -255,7 +255,7 @@ namespace Exporting {
         /TapHighlightColor/,
         /^transition/,
         /^length$/, // #7700
-        /^[0-9]+$/ // #17538
+        /^\d+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
@@ -330,16 +330,11 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme;
+        const theme = chart.styledMode ? {} : btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
         );
-
-        if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
 
         if (onclick) {
             callback = function (
@@ -376,21 +371,14 @@ namespace Exporting {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 30);
+            theme.paddingLeft = pick(theme.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
-            extend(attr, {
+            extend(theme, {
                 width: btnOptions.width,
                 height: btnOptions.height,
                 padding: 0
             });
-        }
-
-
-        if (!chart.styledMode) {
-            attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
         }
 
         const button: SVGElement = renderer
@@ -399,7 +387,7 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr,
+                theme,
                 void 0,
                 void 0,
                 void 0,
@@ -422,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)
@@ -655,6 +647,11 @@ namespace Exporting {
                 ChartClass as typeof ChartComposition,
                 'init',
                 onChartInit
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'layOutTitle',
+                onChartLayOutTitle
             );
 
             if (G.isSafari) {
@@ -895,15 +892,15 @@ namespace Exporting {
         const menuStyle: CSSObject = { display: 'block' };
 
         // If outside right, right align it
-        if (x + (chart.exportMenuWidth as any) > chartWidth) {
+        if (x + (chart.exportMenuWidth || 0) > chartWidth) {
             menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
         } else {
             menuStyle.left = (x - menuPadding) + 'px';
         }
         // If outside bottom, bottom align it
         if (
-            y + height + (chart.exportMenuHeight as any) > chartHeight &&
-            button.alignOptions.verticalAlign !== 'top'
+            y + height + (chart.exportMenuHeight || 0) > chartHeight &&
+            button.alignOptions?.verticalAlign !== 'top'
         ) {
             menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {
@@ -1056,9 +1053,10 @@ namespace Exporting {
      * @requires modules/exporting
      */
     function getChartHTML(
-        this: ChartComposition
+        this: ChartComposition,
+        applyStyleSheets?: boolean
     ): string {
-        if (this.styledMode) {
+        if (applyStyleSheets) {
             this.inlineStyles();
         }
 
@@ -1090,7 +1088,7 @@ namespace Exporting {
                 .toLowerCase()
                 .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
                 .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '') // Preserve only latin
+                .replace(/[^a-z\d\-]/g, '') // Preserve only latin
                 .replace(/^[\-]+/g, '') // Dashes in the start
                 .replace(/[\-]+/g, '-') // Dashes in a row
                 .substr(0, 24)
@@ -1209,7 +1207,12 @@ namespace Exporting {
                 }
 
                 (options as any)[axis.coll].push(merge(axis.userOptions, {
-                    visible: axis.visible
+                    visible: axis.visible,
+
+                    // Force some options that could have be set directly on
+                    // the axis while missing in the userOptions or options.
+                    type: axis.type,
+                    uniqueNames: axis.uniqueNames
                 }));
             }
         });
@@ -1263,7 +1266,11 @@ namespace Exporting {
         });
 
         // Get the SVG from the container's innerHTML
-        svg = chartCopy.getChartHTML();
+        svg = chartCopy.getChartHTML(
+            chart.styledMode ||
+            options.exporting?.applyStyleSheets
+        );
+
         fireEvent(this, 'getSVG', { chartCopy: chartCopy });
 
         svg = chart.sanitizeSVG(svg, options);
@@ -1317,9 +1324,9 @@ namespace Exporting {
      */
     function hyphenate(prop: string): string {
         return prop.replace(
-            /([A-Z])/g,
-            function (a: string, b: string): string {
-                return '-' + b.toLowerCase();
+            /[A-Z]/g,
+            function (match: string): string {
+                return '-' + match.toLowerCase();
             }
         );
     }
@@ -1412,6 +1419,9 @@ namespace Exporting {
 
                 i = denylist.length;
                 while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
                     denylisted = (
                         denylist[i].test(prop) ||
                         typeof val === 'function'
@@ -1478,8 +1488,9 @@ namespace Exporting {
                         defaults: Record<string, string> = {};
                     for (const key in s) {
                         if (
+                            key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
-                            !/^[0-9]+$/.test(key)
+                            !/^\d+$/.test(key)
                         ) {
                             defaults[key] = s[key];
                         }
@@ -1621,6 +1632,39 @@ namespace Exporting {
     }
 
     /**
+     * On layout of titles (title, subtitle and caption), adjust the `alignTo``
+     * box to avoid the context menu button.
+     * @private
+     */
+    function onChartLayOutTitle(
+        this: ChartComposition,
+        { alignTo, key, textPxLength }: Chart.LayoutTitleEventObject
+    ): void {
+        const exportingOptions = this.options.exporting,
+            { align, buttonSpacing = 0, verticalAlign, width = 0 } = merge(
+                this.options.navigation?.buttonOptions,
+                exportingOptions?.buttons?.contextButton
+            ),
+            space = alignTo.width - textPxLength,
+            widthAdjust = width + buttonSpacing;
+
+        if (
+            (exportingOptions?.enabled ?? true) &&
+            key === 'title' &&
+            align === 'right' &&
+            verticalAlign === 'top'
+        ) {
+            if (space < 2 * widthAdjust) {
+                if (space < widthAdjust) {
+                    alignTo.width -= widthAdjust;
+                } else if (this.title?.alignValue !== 'left') {
+                    alignTo.x -= widthAdjust - space / 2;
+                }
+            }
+        }
+    }
+
+    /**
      * Exporting module required. Clears away other elements in the page and
      * prints the chart as it is displayed. By default, when the exporting
      * module is enabled, a context button with a drop down menu in the upper
@@ -1751,18 +1795,18 @@ namespace Exporting {
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
-            .replace(/jQuery[0-9]+="[^"]+"/g, '')
+            .replace(/jQuery\d+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
             .replace(/url\([^#]+#/g, 'url(#')
             .replace(
                 /<svg /,
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
-            .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
+            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
             // Batik doesn't support rgba fills and strokes (#3095)
             .replace(
-                /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
+                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
                 '$1="rgb($2)" $1-opacity="$3"'
             )
 

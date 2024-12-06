@@ -76,6 +76,7 @@ export interface SVGAttributes {
     offset?: number;
     opacity?: number;
     open?: boolean;
+    operator?: string;
     padding?: number;
     paddingLeft?: number|'unset';
     paddingRight?: number|'unset';
@@ -84,6 +85,7 @@ export interface SVGAttributes {
     patternUnits?: 'userSpaceOnUse';
     preserveAspectRatio?: string;
     r?: number;
+    radius?: number;
     refX?: number;
     refY?: number;
     rx?: number;
@@ -116,6 +118,7 @@ export interface SVGAttributes {
     'text-anchor'?: string;
     title?: string;
     transform?: string;
+    'transform-origin'?: string;
     translateX?: number;
     translateY?: number;
     type?: string;

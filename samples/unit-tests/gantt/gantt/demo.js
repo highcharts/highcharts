@@ -290,7 +290,7 @@
         click(chart.yAxis[0].ticks['0'].label.element);
 
         spaceCollapsed = getSpacing(chart);
-        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
+        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
 
         assert.equal(
             axisLineLength,
@@ -773,13 +773,13 @@
         });
 
         assert.strictEqual(
-            chart.series[0].processedXData[0] !== undefined,
+            chart.series[0].getColumn('x', true)[0] !== undefined,
             true,
             'The processedXData should be applied by using the keys feature ' +
             '#13768'
         );
         assert.strictEqual(
-            chart.series[0].processedYData[0] !== undefined,
+            chart.series[0].getColumn('y', true)[0] !== undefined,
             true,
             'The processedYData should be applied by using the keys feature ' +
             '#13768'
@@ -823,6 +823,71 @@
             assert.ok(
                 true,
                 'There should be no errors in the console.'
+            );
+        });
+
+    QUnit.test(
+        'Gantt rangeSelector with scrollablePlotArea is fixed, #20940',
+        function (assert) {
+
+            const chart = Highcharts.ganttChart('container', {
+                chart: {
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                rangeSelector: {
+                    enabled: true
+                },
+                series: [
+                    {
+                        data: [
+                            {
+                                name: 'Task 1',
+                                start: 2,
+                                end: 3
+                            },
+                            {
+                                name: 'Task 2',
+                                start: 3,
+                                end: 4
+                            },
+                            {
+                                name: 'Task 3',
+                                start: 1,
+                                end: 2
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            assert.ok(
+                chart.rangeSelector.buttonGroup
+                    .element.closest('.highcharts-fixed'),
+                'rangeSelector is a part of fixed elements.'
+            );
+        });
+
+    QUnit.test(
+        'Gantt using array-based points, #17738',
+        function (assert) {
+            const chart = Highcharts.ganttChart('container', {
+                series: [
+                    {
+                        data: [
+                            [Date.UTC(2014, 10, 20), Date.UTC(2014, 10, 25)],
+                            [Date.UTC(2014, 10, 21), Date.UTC(2014, 10, 26)],
+                            [Date.UTC(2014, 10, 23), Date.UTC(2014, 10, 29)]
+                        ]
+                    }
+                ]
+            });
+
+            assert.strictEqual(
+                chart.series[0].yAxis.tickPositions.length,
+                3,
+                'Array-based points are loaded into the chart'
             );
         });
 }());

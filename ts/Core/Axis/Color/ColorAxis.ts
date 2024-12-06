@@ -352,6 +352,13 @@ class ColorAxis extends Axis implements AxisLike {
             legend.render();
             this.chart.getMargins(true);
 
+            // If not drilling down/up
+            if (!this.chart.series.some((series): boolean | undefined =>
+                series.isDrilling
+            )) {
+                axis.isDirty = true; // Flag to fire drawChartBox
+            }
+
             // First time only
             if (!axis.added) {
 
@@ -471,13 +478,9 @@ class ColorAxis extends Axis implements AxisLike {
 
         let colorValArray,
             colorKey,
-            colorValIndex,
-            pointArrayMap,
             calculatedExtremes,
             cSeries,
-            i = series.length,
-            yData,
-            j;
+            i = series.length;
 
         this.dataMin = Infinity;
         this.dataMax = -Infinity;
@@ -492,34 +495,18 @@ class ColorAxis extends Axis implements AxisLike {
                 'y'
             );
 
-            pointArrayMap = cSeries.pointArrayMap;
             calculatedExtremes = (cSeries as any)[colorKey + 'Min'] &&
                 (cSeries as any)[colorKey + 'Max'];
 
-            if ((cSeries as any)[colorKey + 'Data']) {
-                colorValArray = (cSeries as any)[colorKey + 'Data'];
-
-            } else {
-                if (!pointArrayMap) {
-                    colorValArray = cSeries.yData;
-
-                } else {
-                    colorValArray = [];
-                    colorValIndex = pointArrayMap.indexOf(colorKey);
-                    yData = cSeries.yData;
-
-                    if (colorValIndex >= 0 && yData) {
-                        for (j = 0; j < yData.length; j++) {
-                            colorValArray.push(
-                                pick(
-                                    (yData[j] as any)[colorValIndex],
-                                    yData[j]
-                                )
-                            );
-                        }
-                    }
+            // Find the first column that has values
+            for (const key of [colorKey, 'value', 'y']) {
+                colorValArray = cSeries.getColumn(key);
+                if (colorValArray.length) {
+                    break;
                 }
             }
+
+
             // If color key extremes are already calculated, use them.
             if (calculatedExtremes) {
                 cSeries.minColorValue = (cSeries as any)[colorKey + 'Min'];
@@ -847,10 +834,12 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz
             } = axis,
             {
-                legend: legendOptions,
                 height: colorAxisHeight,
                 width: colorAxisWidth
             } = axis.options,
+            {
+                legend: legendOptions
+            } = chart.options,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
@@ -919,7 +908,7 @@ namespace ColorAxis {
 
     export interface Options extends ColorAxisLike.Options {
         dataClasses?: Array<DataClassesOptions>;
-        layout?: string;
+        layout?: 'horizontal'|'vertical';
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;

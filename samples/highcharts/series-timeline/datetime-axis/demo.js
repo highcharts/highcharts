@@ -1,6 +1,8 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         type: 'timeline'
     },
     xAxis: {
@@ -39,7 +41,7 @@ Highcharts.chart('container', {
             symbol: 'circle'
         },
         data: [{
-            x: Date.UTC(1951, 5, 22),
+            x: '1951-06-22',
             name: 'First dogs in space',
             label: 'First dogs in space',
             description: 'Dezik and Tsygan were the first dogs to make a ' +
@@ -47,7 +49,7 @@ Highcharts.chart('container', {
                 'recovered unharmed after travelling to a maximum altitude ' +
                 'of 110 km.'
         }, {
-            x: Date.UTC(1957, 9, 4),
+            x: '1957-10-04',
             name: 'First artificial satellite',
             label: 'First artificial satellite',
             description: 'Sputnik 1 was the first artificial Earth ' +
@@ -56,14 +58,14 @@ Highcharts.chart('container', {
                 'before its batteries died, then silently for two more ' +
                 'months before falling back into the atmosphere.'
         }, {
-            x: Date.UTC(1959, 0, 4),
+            x: '1959-01-04',
             name: 'First artificial satellite to reach the Moon',
             label: 'First artificial satellite to reach the Moon',
             description: 'Luna 1 was the first artificial satellite to reach ' +
                 'the Moon vicinity and first artificial satellite in ' +
                 'heliocentric orbit.'
         }, {
-            x: Date.UTC(1961, 3, 12),
+            x: '1961-04-12',
             name: 'First human spaceflight',
             label: 'First human spaceflight',
             description: 'Yuri Gagarin was a Soviet pilot and cosmonaut. He ' +
@@ -71,7 +73,7 @@ Highcharts.chart('container', {
                 'Vostok spacecraft completed one orbit of the Earth on 12 ' +
                 'April 1961.'
         }, {
-            x: Date.UTC(1966, 1, 3),
+            x: '1966-02-03',
             name: 'First soft landing on the Moon',
             label: 'First soft landing on the Moon',
             description: 'Yuri Gagarin was a Soviet pilot and cosmonaut. He ' +
@@ -79,7 +81,7 @@ Highcharts.chart('container', {
                 'Vostok spacecraft completed one orbit of the Earth on 12 ' +
                 'April 1961.'
         }, {
-            x: Date.UTC(1969, 6, 20),
+            x: '1969-07-20',
             name: 'First human on the Moon',
             label: 'First human on the Moon',
             description: 'Apollo 11 was the spaceflight that landed the ' +
@@ -87,7 +89,7 @@ Highcharts.chart('container', {
                 'lunar module pilot Buzz Aldrin, both American, landed the ' +
                 'Apollo Lunar Module Eagle on July 20, 1969, at 20:17 UTC.'
         }, {
-            x: Date.UTC(1971, 3, 19),
+            x: '1971-04-19',
             name: 'First space station',
             label: 'First space station',
             description: 'Salyute 1 was the first space station of any kind, ' +
@@ -95,7 +97,7 @@ Highcharts.chart('container', {
                 '19, 1971. The Salyut program followed this with five more ' +
                 'successful launches out of seven more stations.'
         }, {
-            x: Date.UTC(1971, 11, 2),
+            x: '1971-12-02',
             name: 'First soft Mars landing',
             label: 'First soft Mars landing',
             description: 'Mars 3 was an unmanned space probe of the Soviet ' +
@@ -105,7 +107,7 @@ Highcharts.chart('container', {
                 'spacecraft launched by Proton-K rockets with a Blok D upper ' +
                 'stage, each consisting of an orbiter and an attached lander.'
         }, {
-            x: Date.UTC(1976, 3, 17),
+            x: '1976-04-17',
             name: 'Closest flyby of the Sun',
             label: 'Closest flyby of the Sun',
             description: 'Helios-A and Helios-B (also known as Helios 1 and ' +
@@ -115,7 +117,7 @@ Highcharts.chart('container', {
                 'share) and NASA (30 percent), the probes were launched from ' +
                 'Cape Canaveral Air Force Station, Florida.'
         }, {
-            x: Date.UTC(1978, 11, 4),
+            x: '1978-12-04',
             name: 'First orbital exploration of Venus',
             label: 'First orbital exploration of Venus',
             description: 'The Pioneer Venus Orbiter entered orbit around ' +
@@ -123,7 +125,7 @@ Highcharts.chart('container', {
                 'characterize the atmosphere and surface of Venus. It ' +
                 'continued to transmit data until October 1992.'
         }, {
-            x: Date.UTC(1986, 1, 19),
+            x: '1986-02-19',
             name: 'First inhabited space station',
             label: 'First inhabited space station',
             description: 'was a space station that operated in low Earth ' +
@@ -132,7 +134,7 @@ Highcharts.chart('container', {
                 'and was assembled in orbit from 1986 to 1996. It had a ' +
                 'greater mass than any previous spacecraft.'
         }, {
-            x: Date.UTC(1989, 7, 8),
+            x: '1989-08-08',
             name: 'First astrometric satellite',
             label: 'First astrometric satellite',
             description: 'Hipparcos was a scientific satellite of the ' +
@@ -141,7 +143,7 @@ Highcharts.chart('container', {
                 'precision astrometry, the accurate measurement of the ' +
                 'positions of celestial objects on the sky.'
         }, {
-            x: Date.UTC(1998, 10, 20),
+            x: '1998-11-20',
             name: 'First multinational space station',
             label: 'First multinational space station',
             description: 'The International Space Station (ISS) is a space ' +

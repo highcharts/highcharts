@@ -67,7 +67,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.xAxis[0].min,
-            Date.UTC(2000, 0, 1),
+            startDate,
             'xAxis minimum correct'
         );
 
@@ -557,7 +557,13 @@ QUnit.test('#13205, #14544: Timezone issues', assert => {
         'The input value should not change'
     );
 
-    assert.ok(chart.xAxis[0].min > min, 'Extremes should have been updated');
+    assert.ok(
+        chart.xAxis[0].min > min,
+        `New min should be less than the old min.
+        Old: ${new Date(min)},
+        New: ${new Date(chart.xAxis[0].min)},
+        Time zone offset: ${new Date().getTimezoneOffset()}`
+    );
 });
 
 QUnit.test(

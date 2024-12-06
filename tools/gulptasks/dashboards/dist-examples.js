@@ -108,7 +108,7 @@ async function transformExampleDir(examplesDir) {
  * Promise to keep.
  */
 async function dashboardsDistExamples() {
-    const fsLib = require('../lib/fs');
+    const fsLib = require('../../libs/fs');
 
     const {
         helpme

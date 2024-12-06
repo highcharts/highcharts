@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Kulbir Kainth
+ js_wrap: b
+...

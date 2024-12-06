@@ -21,10 +21,8 @@
  * */
 
 
+import type ConnectorHandler from '../ConnectorHandler.js';
 import type Component from '../Component';
-import type {
-    ComponentConnectorOptions
-} from '../../Components/ComponentOptions';
 import type Sync from '../Sync/Sync';
 import type {
     Options as HighchartsOptions
@@ -71,7 +69,7 @@ export interface Options extends Component.Options {
     /**
      * Connector options for the component.
      */
-    connector?: ConnectorOptions;
+    connector?: (ConnectorOptions|Array<ConnectorOptions>);
 
     /**
      * Type of the component.
@@ -97,7 +95,9 @@ export interface Options extends Component.Options {
     /**
      * @deprecated
      * This option is deprecated and does not work anymore.
-     * Use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
+     *
+     * Use [`connector.columnAssignment`](Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
+     *
     */
     columnAssignment?: Record<string, string | Record<string, string>>;
 
@@ -129,7 +129,7 @@ export interface Options extends Component.Options {
 /**
  * Highcharts component connector options.
  */
-export interface ConnectorOptions extends ComponentConnectorOptions {
+export interface ConnectorOptions extends ConnectorHandler.ConnectorOptions {
     /**
      * It allows to assign the data from the connector to specific series in the
      * chart in different ways using series IDs and column names.
@@ -244,7 +244,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.HighlightSyncOptions;
+    highlight?: boolean|HighchartsHighlightSyncOptions;
     /**
      * Visibility sync is available for Highcharts and DataGrid components.
      * Synchronizes the visibility of data from a hidden/shown series.
@@ -256,6 +256,60 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      * @default false
      */
     visibility?: boolean|Sync.OptionsEntry;
+}
+
+/**
+ * Highcharts component highlight sync options.
+ *
+ * Example:
+ * ```
+ * {
+ *     enabled: true,
+ *     highlightPoint: true,
+ *     showTooltip: false,
+ *     showCrosshair: true
+ * }
+ * ```
+ */
+export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
+    /**
+     * ID of the series that should be affected by the highlight. If not
+     * defined, the appropriate series will be found according to the column
+     * assignment. This option only makes sense with `tooltip.shared: false`.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/highcharts-highlight-affected-series | Affected Series ID Option }
+     *
+     * @default null
+     */
+    affectedSeriesId?: string|null;
+    /**
+     * Whether the marker should be synced. When hovering over a point in
+     * other component in the same group, the 'hover' state is enabled at
+     * the corresponding point in this component.
+     *
+     * @default true
+     */
+    highlightPoint?: boolean;
+    /**
+     * Whether the tooltip should be synced. When hovering over a point in
+     * other component in the same group, in this component the tooltip
+     * should be also shown.
+     *
+     * @default true
+     */
+    showTooltip?: boolean;
+    /**
+     * Whether the crosshair should be synced. When hovering over a point in
+     * other component in the same group, in this component the crosshair
+     * should be also shown.
+     *
+     * Works only for axes that have crosshair enabled.
+     *
+     * @default true
+     */
+    showCrosshair?: boolean;
 }
 
 

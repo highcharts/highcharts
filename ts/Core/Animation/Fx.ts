@@ -351,7 +351,10 @@ class Fx {
             endX = elem.endX,
             end = toD.slice(), // Copy
             isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1;
+            positionFactor = isArea ? 2 : 1,
+            disableAnimation = fromD &&
+                toD.length > fromD.length &&
+                toD.hasStackedCliffs; // #16925
 
         let shift,
             fullLength: number,
@@ -359,7 +362,7 @@ class Fx {
             reverse,
             start = fromD && fromD.slice(); // Copy
 
-        if (!start) {
+        if (!start || disableAnimation) {
             return [end, end];
         }
 

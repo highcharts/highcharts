@@ -23,14 +23,14 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v3
         with:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -42,7 +42,7 @@ jobs:
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Stock/
+        run: node --import tsx test/ts-node-unit-tests/bench.ts --context base --pattern Stock/
 
       - name: Checkout current branch
         uses: actions/checkout@v3
@@ -54,10 +54,10 @@ jobs:
         run: npx gulp scripts
 
       - name: Benchmark
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Stock/
+        run: node --import tsx test/ts-node-unit-tests/bench.ts --context actual --pattern Stock/
 
       - name: Benchmark comparison
-        run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
+        run: node --import tsx test/ts-node-unit-tests/benchmark-compare.ts
 
       - name: Store artifacts
         uses: actions/upload-artifact@v3

@@ -27,9 +27,7 @@ import type PackedBubbleChart from './PackedBubbleChart';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
-import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -66,6 +64,9 @@ const {
     merge,
     pick
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -102,10 +103,9 @@ class PackedBubbleSeries extends BubbleSeries {
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        LegendClass: typeof Legend,
-        SeriesClass: typeof SeriesType
+        LegendClass: typeof Legend
     ): void {
-        BubbleSeries.compose(AxisClass, ChartClass, LegendClass, SeriesClass);
+        BubbleSeries.compose(AxisClass, ChartClass, LegendClass);
         DragNodesComposition.compose(ChartClass);
         PackedBubbleLayout.compose(ChartClass);
     }
@@ -158,20 +158,18 @@ class PackedBubbleSeries extends BubbleSeries {
         const chart = this.chart,
             allDataPoints = [] as Array<PackedBubbleSeries.Data>;
 
-        let yData: SeriesType['yData'];
-
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
                 series.reserveSpace()
             ) {
-                yData = series.yData || [];
+                const valueData = series.getColumn('value');
 
                 // Add data to array only if series is visible
-                for (let j = 0; j < yData.length; j++) {
+                for (let j = 0; j < valueData.length; j++) {
                     allDataPoints.push([
                         null, null,
-                        yData[j] as (number|null),
+                        valueData[j],
                         series.index,
                         j,
                         {
@@ -322,10 +320,10 @@ class PackedBubbleSeries extends BubbleSeries {
         if (zMin && zMax) {
             return [zMin, zMax];
         }
-        // It is needed to deal with null
-        // and undefined values
+
+        // It is needed to deal with null and undefined values
         allSeries.forEach((series): void => {
-            series.yData.forEach((y): void => {
+            series.getColumn('value').forEach((y): void => {
                 if (defined(y)) {
                     if (y > valMax) {
                         valMax = y;
@@ -396,11 +394,12 @@ class PackedBubbleSeries extends BubbleSeries {
         });
 
         this.calculateParentRadius();
-        parentNodeLayout.nodes.forEach((node): void => {
-            if (node.seriesIndex === this.index) {
-                nodeAdded = true;
-            }
-        });
+        (parentNodeLayout.nodes as Array<PackedBubblePoint>)
+            .forEach((node): void => {
+                if (node.seriesIndex === this.index) {
+                    nodeAdded = true;
+                }
+            });
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
@@ -473,7 +472,8 @@ class PackedBubbleSeries extends BubbleSeries {
             this.parentNodeLayout
         ) {
             this.parentNodeLayout.removeElementFromCollection(
-                this.parentNode, this.parentNodeLayout.nodes
+                this.parentNode,
+                this.parentNodeLayout.nodes as Array<PackedBubblePoint>
             );
             if (this.parentNode.dataLabel) {
                 this.parentNode.dataLabel =
@@ -726,7 +726,8 @@ class PackedBubbleSeries extends BubbleSeries {
                                 plotY: point.plotY
                             }), false);
                             layout.removeElementFromCollection(
-                                point, layout.nodes
+                                point,
+                                layout.nodes as Array<PackedBubblePoint>
                             );
                             point.remove();
                         }
@@ -1118,10 +1119,10 @@ class PackedBubbleSeries extends BubbleSeries {
                 }
             } else {
                 series.graph.hide();
-                series.parentNodeLayout
-                    .removeElementFromCollection(
-                        series.parentNode, series.parentNodeLayout.nodes
-                    );
+                series.parentNodeLayout.removeElementFromCollection(
+                    series.parentNode,
+                    series.parentNodeLayout.nodes as Array<PackedBubblePoint>
+                );
                 if ((series.parentNode as any).dataLabel) {
                     (series.parentNode as any).dataLabel.hide();
                 }
@@ -1134,7 +1135,8 @@ class PackedBubbleSeries extends BubbleSeries {
             } else {
                 series.points.forEach((node): void => {
                     series.layout.removeElementFromCollection(
-                        node, series.layout.nodes
+                        node,
+                        series.layout.nodes as Array<PackedBubblePoint>
                     );
                 });
             }
@@ -1156,7 +1158,6 @@ class PackedBubbleSeries extends BubbleSeries {
             radius: number|undefined,
             positions;
 
-        this.processedXData = this.xData;
         this.generatePoints();
 
         // Merged data is an array with all of the data from all series
@@ -1320,48 +1321,3 @@ SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
  * */
 
 export default PackedBubbleSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * Formatter callback function.
- *
- * @callback Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject} this
- *        Data label context to format
- *
- * @return {string}
- *         Formatted data label text
- */
-
-/**
- * Context for the formatter function.
- *
- * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- * @since 7.0.0
- *//**
- * The color of the node.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#color
- * @type {Highcharts.ColorString}
- * @since 7.0.0
- *//**
- * The point (node) object. The node name, if defined, is available through
- * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
- * contains all nodes connected to this point.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- * @since 7.0.0
- *//**
- * The ID of the node.
- * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#key
- * @type {string}
- * @since 7.0.0
- */
-
-''; // Detach doclets above

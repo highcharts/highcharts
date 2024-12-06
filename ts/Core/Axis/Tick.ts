@@ -43,6 +43,7 @@ const {
     destroyObjectProperties,
     extend,
     fireEvent,
+    getAlignFactor,
     isNumber,
     merge,
     objectEach,
@@ -322,7 +323,7 @@ class Tick {
                     if (
                         (label as any).getBBox().width <
                         axis.getSlotWidth(tick as any) - 2 *
-                            labelOptions.padding
+                            (labelOptions.padding || 0)
                     ) {
                         return;
                     }
@@ -385,9 +386,9 @@ class Tick {
         xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
-            chart = axis.chart,
+            { renderer, styledMode } = axis.chart,
             label = defined(str) && labelOptions.enabled ?
-                chart.renderer
+                renderer
                     .text(
                         str,
                         xy?.x,
@@ -399,12 +400,15 @@ class Tick {
 
         // Un-rotated length
         if (label) {
+            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
             // Without position absolute, IE export sometimes is wrong
-            if (!chart.styledMode) {
-                label.css(merge(labelOptions.style));
+            if (!styledMode) {
+                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
             }
-
             label.textPxLength = label.getBBox().width;
+            if (!styledMode) {
+                label.css({ whiteSpace });
+            }
         }
 
         return label;
@@ -494,7 +498,7 @@ class Tick {
             };
 
         // Chrome workaround for #10516
-        pos.y = clamp(pos.y, -1e5, 1e5);
+        pos.y = clamp(pos.y, -1e9, 1e9);
 
         fireEvent(this, 'afterGetPosition', { pos: pos });
 
@@ -613,7 +617,7 @@ class Tick {
         y: number,
         tickLength: number,
         tickWidth: number,
-        horiz: boolean,
+        horiz: boolean = false,
         renderer: SVGRenderer
     ): SVGPath {
         return renderer.crispLine([[
@@ -654,13 +658,9 @@ class Tick {
             ),
             label = this.label,
             rotation = this.rotation,
-            factor = ({
-                left: 0,
-                center: 0.5,
-                right: 1
-            } as Record<string, number>)[
+            factor = getAlignFactor(
                 axis.labelAlign || (label as any).attr('align')
-            ],
+            ),
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
             xCorrection = factor,
@@ -730,16 +730,14 @@ class Tick {
             );
         }
 
-        if (textWidth) {
+        if (textWidth && label) {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = Math.floor(textWidth) + 'px';
-                if (!(labelOptions.style || {}).textOverflow) {
-                    css.textOverflow = 'ellipsis';
-                }
-                (label as any).css(css);
-
+                label.css(extend(css, {
+                    width: Math.floor(textWidth) + 'px',
+                    lineClamp: axis.isRadial ? 0 : 1
+                }));
             }
         }
     }
@@ -822,10 +820,6 @@ class Tick {
             y = xy.y,
             axisStart = axis.pos,
             axisEnd = axisStart + axis.len,
-            reverseCrisp = (
-                (horiz && x === axisEnd) ||
-                (!horiz && y === axisStart)
-            ) ? -1 : 1, // #1480, #1687
             pxPos = horiz ? x : y;
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
@@ -848,10 +842,10 @@ class Tick {
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old, opacity, reverseCrisp);
+        this.renderGridLine(old, opacity);
 
         // Create the tick mark
-        this.renderMark(xy, opacity, reverseCrisp);
+        this.renderMark(xy, opacity);
 
         // The label is created on init - now move it into place
         this.renderLabel(xy, old, labelOpacity, index);
@@ -868,12 +862,10 @@ class Tick {
      * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
-     * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      */
     public renderGridLine(
         old: boolean|undefined,
-        opacity: number,
-        reverseCrisp: number
+        opacity: number
     ): void {
         const tick = this,
             axis = tick.axis,
@@ -926,7 +918,7 @@ class Tick {
             gridLinePath = axis.getPlotLinePath(
                 {
                     value: pos + tickmarkOffset,
-                    lineWidth: gridLine.strokeWidth() * reverseCrisp,
+                    lineWidth: gridLine.strokeWidth(),
                     force: 'pass',
                     old: old,
                     acrossPanes: false // #18025
@@ -951,12 +943,10 @@ class Tick {
      * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
-     * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      */
     public renderMark(
         xy: PositionObject,
-        opacity: number,
-        reverseCrisp: number
+        opacity: number
     ): void {
         const tick = this,
             axis = tick.axis,
@@ -1009,8 +999,8 @@ class Tick {
                     x,
                     y,
                     tickSize[0],
-                    mark.strokeWidth() * reverseCrisp,
-                    axis.horiz as any,
+                    mark.strokeWidth(),
+                    axis.horiz,
                     renderer
                 ),
                 opacity: opacity

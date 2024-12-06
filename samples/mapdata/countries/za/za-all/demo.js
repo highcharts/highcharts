@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/za/za-all.topo.json">South Africa</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/za/za-all.topo.json">South Africa</a>'
         },
 
         mapNavigation: {

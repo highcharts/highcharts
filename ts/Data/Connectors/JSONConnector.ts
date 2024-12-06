@@ -142,6 +142,7 @@ class JSONConnector extends DataConnector {
                     // If already loaded, clear the current rows
                     table.deleteColumns();
                     converter.parse({ data });
+
                     table.setColumns(converter.getTable().getColumns());
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);

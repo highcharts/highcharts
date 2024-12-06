@@ -42,6 +42,7 @@ const {
     createElement,
     css,
     defined,
+    erase,
     merge,
     pushUnique
 } = U;
@@ -177,7 +178,11 @@ class ScrollablePlotArea {
                 for (const axis of chart.axes) {
                     // Apply the corrected plot size to the axes of the other
                     // orientation than the scrolling direction
-                    if (axis.horiz === recalculateHoriz) {
+                    if (
+                        axis.horiz === recalculateHoriz ||
+                        // Or parallel axes
+                        (chart.hasParallelCoordinates && axis.coll === 'yAxis')
+                    ) {
                         axis.setAxisSize();
                         axis.setAxisTranslation();
                     }
@@ -185,6 +190,25 @@ class ScrollablePlotArea {
             }
         }
     }
+
+    static fixedSelectors: string[] = [
+        '.highcharts-breadcrumbs-group',
+        '.highcharts-contextbutton',
+        '.highcharts-caption',
+        '.highcharts-credits',
+        '.highcharts-drillup-button',
+        '.highcharts-legend',
+        '.highcharts-legend-checkbox',
+        '.highcharts-navigator-series',
+        '.highcharts-navigator-xaxis',
+        '.highcharts-navigator-yaxis',
+        '.highcharts-navigator',
+        '.highcharts-range-selector-group',
+        '.highcharts-reset-zoom',
+        '.highcharts-scrollbar',
+        '.highcharts-subtitle',
+        '.highcharts-title'
+    ];
 
     public chart: Chart;
     public fixedDiv: HTMLDOMElement;
@@ -425,23 +449,7 @@ class ScrollablePlotArea {
                 scrollablePixelsY
             } = this.chart,
             fixedRenderer = this.fixedRenderer,
-            fixedSelectors = [
-                '.highcharts-breadcrumbs-group',
-                '.highcharts-contextbutton',
-                '.highcharts-caption',
-                '.highcharts-credits',
-                '.highcharts-legend',
-                '.highcharts-legend-checkbox',
-                '.highcharts-navigator-series',
-                '.highcharts-navigator-xaxis',
-                '.highcharts-navigator-yaxis',
-                '.highcharts-navigator',
-                '.highcharts-reset-zoom',
-                '.highcharts-drillup-button',
-                '.highcharts-scrollbar',
-                '.highcharts-subtitle',
-                '.highcharts-title'
-            ];
+            fixedSelectors = ScrollablePlotArea.fixedSelectors;
 
         let axisClass: (string|undefined);
 
@@ -455,11 +463,32 @@ class ScrollablePlotArea {
             axisClass = '.highcharts-yaxis';
         }
 
-        if (axisClass) {
-            fixedSelectors.push(
+        if (
+            axisClass && !(
+                this.chart.hasParallelCoordinates &&
+                axisClass === '.highcharts-yaxis'
+            )
+        ) {
+            // Add if not added yet
+            for (const className of [
                 `${axisClass}:not(.highcharts-radial-axis)`,
                 `${axisClass}-labels:not(.highcharts-radial-axis-labels)`
-            );
+            ]) {
+                pushUnique(fixedSelectors, className);
+            }
+        } else {
+            // Clear all axis related selectors
+            for (const classBase of [
+                '.highcharts-xaxis',
+                '.highcharts-yaxis'
+            ]) {
+                for (const className of [
+                    `${classBase}:not(.highcharts-radial-axis)`,
+                    `${classBase}-labels:not(.highcharts-radial-axis-labels)`
+                ]) {
+                    erase(fixedSelectors, className);
+                }
+            }
         }
 
         for (const className of fixedSelectors) {

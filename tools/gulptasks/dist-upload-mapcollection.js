@@ -5,8 +5,8 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const glob = require('glob');
-const log = require('./lib/log');
-const { isDirectory, isDotEntry } = require('./lib/fs');
+const log = require('../libs/log');
+const { isDirectory, isDotEntry } = require('../libs/fs');
 const { uploadFiles, getVersionPaths } = require('./lib/uploadS3');
 
 

@@ -44,7 +44,8 @@ const getBuildOptions = input => {
         product = 'Highcharts',
         output = './code/',
         version = getProductVersion(),
-        assetPrefix = void 0
+        assetPrefix = void 0,
+        date = new Date().toISOString().split('T')[0]
     } = input;
     const files = (
         isArray(input.files) ?
@@ -66,7 +67,8 @@ const getBuildOptions = input => {
         version,
         mapTypeToSource,
         product,
-        assetPrefix
+        assetPrefix,
+        date
     };
 };
 
@@ -264,8 +266,20 @@ const getBuildScripts = params => {
     return result;
 };
 
+function replaceMeta(text, input = {}) {
+    const { product, assetPrefix, version, date } = getBuildOptions(input);
+
+    const safeReplace = x => () => x;
+
+    return text.replace(/@product.name@/g, safeReplace(product))
+        .replace(/@product.assetPrefix@/g, safeReplace(assetPrefix))
+        .replace(/@product.version@/g, safeReplace(version))
+        .replace(/@product.date@/g, safeReplace(date));
+}
+
 module.exports = {
     getBuildScripts,
     getProductVersion,
-    scripts
+    scripts,
+    replaceMeta
 };

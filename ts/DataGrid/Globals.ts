@@ -7,12 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
+ *  - Dawid Dragula
  *  - Sebastian Bochan
- *  - Wojciech Chmiel
- *  - Gøran Slettemark
- *  - Sophie Bremer
- *  - Pawel Lysy
- *  - Karol Kolodziej
  *
  * */
 
@@ -52,6 +48,14 @@ namespace Globals {
         [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
     };
 
+    /**
+     * Utility type to mark recursively all properties and sub-properties
+     * required.
+     */
+    export type DeepRequired<T> = {
+        [K in keyof T]-?: DeepRequired<T[K]>;
+    };
+
     /* *
      *
      *  Constants
@@ -61,14 +65,34 @@ namespace Globals {
     export const classNamePrefix = 'highcharts-datagrid-';
 
     export const classNames = {
-        gridContainer: classNamePrefix + 'container',
-        outerContainer: classNamePrefix + 'outer-container',
-        scrollContainer: classNamePrefix + 'scroll-container',
-        innerContainer: classNamePrefix + 'inner-container',
-        cell: classNamePrefix + 'cell',
-        cellInput: classNamePrefix + 'cell-input',
-        row: classNamePrefix + 'row',
-        columnHeader: classNamePrefix + 'column-header'
+        container: classNamePrefix + 'container',
+        tableElement: classNamePrefix + 'table',
+        captionElement: classNamePrefix + 'caption',
+        theadElement: classNamePrefix + 'thead',
+        tbodyElement: classNamePrefix + 'tbody',
+        rowElement: classNamePrefix + 'row',
+        rowEven: classNamePrefix + 'row-even',
+        rowOdd: classNamePrefix + 'row-odd',
+        hoveredRow: classNamePrefix + 'hovered-row',
+        columnElement: classNamePrefix + 'column',
+        hoveredCell: classNamePrefix + 'hovered-cell',
+        hoveredColumn: classNamePrefix + 'hovered-column',
+        editedCell: classNamePrefix + 'edited-cell',
+        rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
+        headerCell: classNamePrefix + 'header-cell',
+        headerCellContent: classNamePrefix + 'header-cell-content',
+        headerRow: classNamePrefix + 'head-row-content',
+        noData: classNamePrefix + 'no-data',
+        columnFirst: classNamePrefix + 'column-first',
+        columnSortable: classNamePrefix + 'column-sortable',
+        columnSortableIcon: classNamePrefix + 'column-sortable-icon',
+        columnSortedAsc: classNamePrefix + 'column-sorted-asc',
+        columnSortedDesc: classNamePrefix + 'column-sorted-desc',
+        resizerHandles: classNamePrefix + 'column-resizer',
+        resizedColumn: classNamePrefix + 'column-resized',
+        creditsContainer: classNamePrefix + 'credits-container',
+        creditsText: classNamePrefix + 'credits',
+        visuallyHidden: classNamePrefix + 'visually-hidden'
     };
 
     export const win = window;

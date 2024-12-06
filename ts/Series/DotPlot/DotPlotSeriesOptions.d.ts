@@ -26,6 +26,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
     itemPadding?: number;
+    slotsPerBar?: number;
     states?: SeriesStatesOptions<DotPlotSeries>;
 }
 

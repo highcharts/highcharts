@@ -46,7 +46,7 @@ const global = [
 
         if (
             mainChart.options.chart.otherChartsFollowAxes &&
-        Highcharts.lastChartRender
+            Highcharts.lastChartRender
         ) {
             mainChart.xAxis[0].setExtremes(
                 mainChart.xAxis[0].min,
@@ -97,7 +97,9 @@ Highcharts.setOptions({
 Highcharts.chart('container1', {
     chart: {
         otherChartsFollowAxes: true,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Polio (Pol3) immunization coverage among 1-year-olds (%) '

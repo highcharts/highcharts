@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-mq-all.topo.json">Martinique</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-mq-all.topo.json">Martinique</a>'
         },
 
         mapNavigation: {

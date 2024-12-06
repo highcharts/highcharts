@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const log = require('./lib/log');
+const log = require('../libs/log');
 
 /**
  * Crete language ts files from JSON

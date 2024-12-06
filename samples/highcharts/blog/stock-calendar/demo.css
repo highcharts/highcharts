@@ -1,8 +1,23 @@
 @import url("https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css");
 
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 .wrapper {
     max-width: 800px;
     margin: 0 auto;
+    padding: 10px;
 }
 
 .chart {
@@ -18,6 +33,10 @@
 #date-picker {
     display: inline-block;
     float: left;
+}
+
+#chart-container {
+    margin: 0 -10px;
 }
 
 .custom-tooltip {

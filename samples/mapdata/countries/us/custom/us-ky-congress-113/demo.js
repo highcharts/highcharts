@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ky-congress-113.topo.json">Kentucky congressional districts</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ky-congress-113.topo.json">Kentucky congressional districts</a>'
         },
 
         mapNavigation: {

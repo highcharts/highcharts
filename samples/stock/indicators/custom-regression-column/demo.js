@@ -67,7 +67,9 @@ Highcharts.seriesType(
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Average Monthly Temperature and Rainfall in Tokyo'
