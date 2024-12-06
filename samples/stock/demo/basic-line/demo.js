@@ -26,6 +26,7 @@
             },
             lastPrice: {
                 enabled: true,
+                color: 'transparent',
                 label: {
                     enabled: true,
                     backgroundColor: '#ffffff',
