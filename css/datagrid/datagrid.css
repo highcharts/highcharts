@@ -146,7 +146,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-    padding-left: 3px;
+    padding-left: 18px;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
