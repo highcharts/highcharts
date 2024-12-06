@@ -106,6 +106,7 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .highcharts-datagrid-column {
@@ -245,7 +246,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     height: 100%;
     padding: 16px;
     text-align: center;
-    box-sizing: border-box;
 }
 
 /* Table body */
