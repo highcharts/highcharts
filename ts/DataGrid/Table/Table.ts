@@ -156,6 +156,11 @@ class Table {
      */
     public virtualRows: boolean;
 
+    /**
+     * The flag that indicates if the table is scrollable vertically.
+     */
+    public scrollable: boolean;
+
 
     /* *
     *
@@ -185,6 +190,9 @@ class Table {
         this.columnDistribution =
             dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
         this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
+        this.scrollable = !!(
+            this.dataGrid.initialContainerHeight || this.virtualRows
+        );
 
         this.renderCaption();
 
@@ -214,8 +222,14 @@ class Table {
         this.resizeObserver.observe(tableElement);
 
         if (this.virtualRows) {
+            // For now, scroll event is only needed for virtualization.
             this.tbodyElement.addEventListener('scroll', this.onScroll);
         }
+
+        if (this.scrollable) {
+            tableElement.classList.add(Globals.classNames.scrollableContent);
+        }
+
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
 
