@@ -186,7 +186,7 @@ export interface RowsSettings {
 
     /**
      * Defines the minimum height of the table body (`tbody`) based on the
-     * number of rows that should be visible without scrolling.
+     * number of rows that should be visible in the viewport.
      *
      * If set to `null`, the minimum height will not be enforced.
      *
