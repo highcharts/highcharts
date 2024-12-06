@@ -158,7 +158,9 @@ class Time {
      *
      * */
 
-    public options: Time.TimeOptions = {};
+    public options: Time.TimeOptions = {
+        timezone: 'UTC'
+    };
 
     public timezone?: string;
 
@@ -195,8 +197,6 @@ class Time {
         options: Time.TimeOptions = {}
     ): void {
 
-        let timezone: string|undefined = options.timezone ?? 'UTC';
-
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
@@ -205,6 +205,8 @@ class Time {
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
+        // Assign the time zone. Handle the legacy, deprecated `useUTC` option.
+        let timezone = options.timezone;
         if (defined(useUTC)) {
             timezone = useUTC ? 'UTC' : void 0;
         }
@@ -776,7 +778,7 @@ class Time {
         } else if (isObject(format)) {
             const tzHours = (this.getTimezoneOffset(timestamp) || 0) /
                     (60000 * 60),
-                timeZone = this.options.timezone || (
+                timeZone = this.timezone || (
                     'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
                 ),
                 { prefix = '', suffix = '' } = format;
