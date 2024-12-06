@@ -39,7 +39,7 @@ import QueryingController from './Querying/QueryingController.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
-const { merge } = U;
+const { merge, getStyle } = U;
 
 
 /* *
@@ -216,6 +216,12 @@ class DataGrid {
      */
     public querying: QueryingController;
 
+    /**
+     * The initial height of the container. Can be 0 also if not set.
+     */
+    public initialContainerHeight: number = 0;
+
+
     /* *
     *
     *  Constructor
@@ -295,6 +301,8 @@ class DataGrid {
             `);
             return;
         }
+
+        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
 
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;

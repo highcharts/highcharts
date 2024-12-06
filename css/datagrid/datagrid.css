@@ -122,9 +122,10 @@
     flex: 1;
 }
 
-.highcharts-datagrid-table.highcharts-datagrid-virtualization {
-    display: flex; /* Move to scrollable */
-    flex-direction: column; /* Move to scrollable */
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 /* Table Header */
@@ -250,13 +251,16 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Table body */
-.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
-    overflow: auto;
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody {
     height: 100%;
+    overflow: auto;
+    min-height: 0;
+    flex: 1;
+}
+
+.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     display: block;
     position: relative;
-    min-height: 0; /* Move to scrollable, should the 100% be restored here? */
-    flex: 1; /* Move to scrollable */
 }
 
 .highcharts-datagrid-table tbody tr {
