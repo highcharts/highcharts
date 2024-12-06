@@ -558,6 +558,10 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
+            const nullLabel = (
+                seriesOptions?.nullInteraction &&
+                'Null'
+            );
             dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
@@ -583,7 +587,12 @@ namespace DataLabel {
                             labelOptions.enabled &&
                             (point.visible || point.dataLabelOnHidden) &&
                             // #2282, #4641, #7112, #10049
-                            (!point.isNull || point.dataLabelOnNull) &&
+                            (
+                                !point.isNull ||
+                                point.dataLabelOnNull ||
+                                // A 'nullLabel' means 'nullInteraction' is true
+                                nullLabel
+                            ) &&
                             applyFilter(point, labelOptions)
                         ),
                         {
@@ -615,11 +624,13 @@ namespace DataLabel {
                         labelText = defined(formatString) ?
                             format(formatString, point, chart) :
                             (
-                                (labelOptions as any)[
-                                    point.formatPrefix + 'Formatter'
-                                ] ||
-                                labelOptions.formatter
-                            ).call(point, labelOptions);
+                                (point.isNull && nullLabel) || (
+                                    (labelOptions as any)[
+                                        point.formatPrefix + 'Formatter'
+                                    ] ||
+                                    labelOptions.formatter
+                                ).call(point, labelOptions)
+                            );
 
                         rotation = labelOptions.rotation;
 
