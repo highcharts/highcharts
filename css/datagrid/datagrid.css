@@ -8,21 +8,21 @@
 
 :root,
 .highcharts-light {
-    --highcharts-background-color: #ffffff;
+    --highcharts-background-color: #fff;
 
     /* Neutral colors */
-    --highcharts-neutral-color-100: #000000;
-    --highcharts-neutral-color-80: #333333;
-    --highcharts-neutral-color-60: #666666;
-    --highcharts-neutral-color-40: #999999;
-    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-100: #000;
+    --highcharts-neutral-color-80: #333;
+    --highcharts-neutral-color-60: #666;
+    --highcharts-neutral-color-40: #999;
+    --highcharts-neutral-color-20: #ccc;
     --highcharts-neutral-color-10: #e6e6e6;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #ffffff;
+    --highcharts-neutral-color-0: #fff;
 
     /* Highlight colors */
-    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-100: #02f;
     --highcharts-highlight-color-80: #334eff;
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
@@ -33,7 +33,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
-        --highcharts-background-color: #333333;
+        --highcharts-background-color: #333;
 
         /*
             Neutral color variations
@@ -60,7 +60,7 @@
 
 .highcharts-dark {
     /* UI colors */
-    --highcharts-background-color: #333333;
+    --highcharts-background-color: #333;
 
     /*
         Neutral color variations
@@ -122,9 +122,10 @@
     flex: 1;
 }
 
-.highcharts-datagrid-table.highcharts-datagrid-virtualization {
-    display: flex; /* Move to scrollable */
-    flex-direction: column; /* Move to scrollable */
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 /* Table Header */
@@ -146,7 +147,8 @@
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 3px;
+    margin: 0;
+    padding-left: 18px;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
@@ -249,13 +251,16 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Table body */
-.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
-    overflow: auto;
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody {
     height: 100%;
+    overflow: auto;
+    min-height: 0;
+    flex: 1;
+}
+
+.highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
     display: block;
     position: relative;
-    min-height: 0; /* Move to scrollable, should the 100% be restored here? */
-    flex: 1; /* Move to scrollable */
 }
 
 .highcharts-datagrid-table tbody tr {
