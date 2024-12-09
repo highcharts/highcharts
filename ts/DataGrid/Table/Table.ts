@@ -128,11 +128,6 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The caption of the data grid.
-     */
-    public captionElement?: HTMLElement;
-
-    /**
      * The input element of a cell after mouse focus.
      * @internal
      */
@@ -193,8 +188,6 @@ class Table {
         this.scrollable = !!(
             this.dataGrid.initialContainerHeight || this.virtualRows
         );
-
-        this.renderCaption();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -421,28 +414,6 @@ class Table {
      */
     public getWidthFromRatio(ratio: number): number {
         return this.tbodyElement.clientWidth * ratio;
-    }
-
-    /**
-     * Render caption above the datagrid
-     * @internal
-     */
-    public renderCaption(): void {
-        const captionOptions = this.dataGrid.options?.caption;
-        if (!captionOptions?.text) {
-            return;
-        }
-
-        this.captionElement = makeHTMLElement('caption', {
-            innerText: captionOptions.text,
-            className: Globals.classNames.captionElement
-        }, this.dataGrid.tableElement);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
     }
 
     /**

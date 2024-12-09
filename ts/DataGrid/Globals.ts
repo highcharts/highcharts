@@ -68,6 +68,7 @@ namespace Globals {
         container: classNamePrefix + 'container',
         tableElement: classNamePrefix + 'table',
         captionElement: classNamePrefix + 'caption',
+        descriptionElement: classNamePrefix + 'description',
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
