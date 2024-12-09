@@ -2,7 +2,7 @@ import type { AssertionError } from 'assert';
 import * as PosixPath from 'node:path/posix';
 import { failure } from '../../tools/libs/log.js';
 
-const codePath = PosixPath.join(__dirname, '../../code/');
+const codePath = PosixPath.join(__dirname, '..', '..', 'code');
 
 const defaultHTML = (
     '<!DOCTYPE html><html><head><meta charset="UTF-8" /></head>' +
@@ -189,8 +189,10 @@ export function wrapRequire() {
             if (!id.endsWith('.js')) {
                 id += '.src.js';
             }
-            id = codePath + id;
+            id = PosixPath.join(codePath, id);
         }
         return originalRequire.call(this, id);
     };
 }
+
+wrapRequire();

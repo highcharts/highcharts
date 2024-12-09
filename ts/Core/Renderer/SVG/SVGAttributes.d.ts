@@ -118,6 +118,7 @@ export interface SVGAttributes {
     'text-anchor'?: string;
     title?: string;
     transform?: string;
+    'transform-origin'?: string;
     translateX?: number;
     translateY?: number;
     type?: string;

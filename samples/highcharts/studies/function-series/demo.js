@@ -4,8 +4,7 @@
     const defaultOptions = Highcharts.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
         seriesTypes = Highcharts.Series.types,
-        merge = Highcharts.merge,
-        each = Highcharts.each;
+        merge = Highcharts.merge;
 
     defaultPlotOptions.functionseries = merge(defaultPlotOptions.line, {
         marker: {
@@ -58,7 +57,7 @@
     Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
         proceed.apply(this, [].slice.call(arguments, 1));
 
-        each(this.series, function (serie) {
+        this.series.forEach(function (serie) {
             if (serie.type === 'functionseries') {
                 serie.setData([]);
             }

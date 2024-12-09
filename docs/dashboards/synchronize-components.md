@@ -1,4 +1,4 @@
-Synchronizing **Dashboards** components
+Synchronizing Dashboards components
 ===
 
 In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
@@ -31,7 +31,7 @@ sync: {
 }
 ```
 
-The above is a shortened way that in which you cannot set additional options if
+The above is a shortened way in which you cannot set additional options if
 a given type of synchronization provides them. Only those enabled by default are
 set.
 
@@ -46,7 +46,7 @@ sync: {
 }
 ```
 
-The options above are only available for the [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component#crossfilter). Each component can have its own options for the predefined syncs. You can find their descriptions in the articles about these components (eg. the [Highlight Sync options for the Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component#highlight-sync-options)).
+The options above are only available for the [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component#crossfilter). Each component can have its options for the predefined syncs. You can find their descriptions in the articles about these components (eg. the [Highlight Sync options for the Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component#highlight-sync-options)).
 
 An example of synchronized components:
 
@@ -94,7 +94,7 @@ Dashboards.board('container', {
 
 Each synchronization has also `handler` and `emitter` options. The `handler` handles events coming to the component, while the `emitter` sends events from the component. In the case of synchronization types that communicate bilaterally (e.g. highlight), you can disable `emitter` or `handler` by setting their values to `false`. You can read about it more in [API docs](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry).
 
-For example, a component with this set of highlight options will cause other components with this synchronization enabled to respond to hover, but this component will not respond to the hover of the others:
+For example, a component with this set of highlight options will cause other components with this synchronization enabled to respond to hover. Still, this component will not respond to the hover of the others:
 ```js
 sync: {
     highlight: {
@@ -116,7 +116,7 @@ sync: {
 
 ### Sync groups
 
-By default, all components with a given type of synchronization enabled and sharing the same connector are synchronized. If you want to synchronize only certain components, you can do so using the [`group`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group) option, which is available for each type of synchronization.
+By default, all components with a given type of synchronization enabled and sharing the same connector are synchronized. If you want to synchronize only specific components, you can do so using the [`group`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group) option, which is available for each type of synchronization.
 
 Example:
 ```js
@@ -134,9 +134,9 @@ Demo:
 
 ## Custom synchronization
 
-Each type of synchronization works thanks to defined functions such as `handler` and `emitter`. These functions are called when the component is loaded. Their main task is to register sending (`emitter`) and receiving (`handler`) events for a given component. The `this` keyword refers to the reference of the component for which sync is registered. The `emitter` and `handler` functions should return a function containing event unregistering to enable disabling sync or re-registering it with changed options after `component.update` method.
+Each type of synchronization works thanks to defined functions such as `handler` and `emitter`. These functions are called when the component is loaded. Their main task is to register send (`emitter`) and receive (`handler`) events for a given component. The `this` keyword refers to the reference of the component for which sync is registered. The `emitter` and `handler` functions should return a function containing event unregistering to enable disabling sync or re-registering it with changed options after `component.update` method.
 
-For each component, you can add or overwrite a custom [definition of the existing synchronization](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry) `handler` and/or `emitter` to expand its functionality. You can also define your own synchronization from scratch.
+For each component, you can add or overwrite a custom [definition of the existing synchronization](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry) `handler` and/or `emitter` to expand its functionality. You can also define your synchronization from scratch.
 
 ```js
 sync: {
@@ -157,7 +157,7 @@ sync: {
 }
 ```
 
-Synchronization generally uses the `dataCursor` object, an entity that is common to the entire `Dashboard`. It is associated with the data table and allows you to create a relationship between the states of the user interface and the table cells, columns, or rows. The data cursor can emit and receive events.
+Synchronization generally uses the `dataCursor` object, an entity common to the entire `Dashboard`. It is associated with the data table and allows you to create a relationship between the user interface states and the table cells, columns, or rows. The data cursor can emit and receive events.
 
 To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define a static field `predefinedSyncConfig` which should contain two options:
 * `defaultSyncOptions` - a record of default options per synchronization type (can be empty if we do not want to define options).

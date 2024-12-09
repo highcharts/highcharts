@@ -113,27 +113,42 @@ const defaultOptions: DefaultOptions = {
     symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 
     /**
-     * The language object is global and it can't be set on each chart
-     * initialization. Instead, use `Highcharts.setOptions` to set it before any
-     * chart is initialized.
+     * An object containing language-related strings and settings. A typical
+     * setup uses `Highcharts.setOptions` to make the options apply to all
+     * charts in the same page.
      *
      * ```js
      * Highcharts.setOptions({
      *     lang: {
-     *         months: [
-     *             'Janvier', 'Février', 'Mars', 'Avril',
-     *             'Mai', 'Juin', 'Juillet', 'Août',
-     *             'Septembre', 'Octobre', 'Novembre', 'Décembre'
-     *         ],
-     *         weekdays: [
-     *             'Dimanche', 'Lundi', 'Mardi', 'Mercredi',
-     *             'Jeudi', 'Vendredi', 'Samedi'
-     *         ]
+     *         locale: 'fr'
      *     }
      * });
      * ```
      */
     lang: {
+
+        /**
+         * The browser locale to use for date and number formatting. The actual
+         * locale used for each chart is determined in three steps:
+         * 1. If this `lang.locale` option is specified, it is used.
+         * 2. Else, look for the closest ancestor HTML element with a `lang`
+         *    attribute, typically the `<html>` element.
+         * 3. If no 'lang' attribute is found, use the default browser locale.
+         *
+         * Use `en-GB`, British English, for approximate consistency with
+         * Highcharts v < 12.
+         *
+         * @sample highcharts/lang/locale/
+         *         Set the locale using the `lang.locale` option
+         * @sample highcharts/lang/locale-attribute/
+         *         Pick up the locale from the HTML `lang` attribute
+         * @sample highcharts/members/highcharts-numberformat
+         *         Arabic locale with digits and dates         *
+         *
+         * @since 12.0.0
+         * @type {string|Array<string>}
+         */
+        locale: void 0,
 
         /**
          * The loading text that appears when the chart is set into the loading
@@ -143,46 +158,37 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * An array containing the months names. Corresponds to the `%B` format
-         * in `Highcharts.dateFormat()`.
+         * in `Highcharts.dateFormat()`. Defaults to 'undefined',
+         * meaning the default month names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["January", "February", "March", "April", "May", "June",
-         *          "July", "August", "September", "October", "November",
-         *          "December"]
          */
-        months: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
-        ],
+        months: void 0,
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
-         * to the `%b` format in `Highcharts.dateFormat()`.
+         * to the `%b` format in `Highcharts.dateFormat()`. Defaults to
+         * 'undefined', meaning the default short month names are used according
+         * to the `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
          */
-        shortMonths: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
+        shortMonths: void 0,
 
         /**
-         * An array containing the weekday names.
+         * An array containing the weekday names. Defaults to 'undefined',
+         * meaning the default weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @type    {Array<string>}
-         * @default ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-         *          "Friday", "Saturday"]
          */
-        weekdays: [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday'
-        ],
+        weekdays: void 0,
 
         /**
-         * Short week days, starting Sunday. If not specified, Highcharts uses
-         * the first three letters of the `lang.weekdays` option.
+         * Short week days, starting Sunday. Defaults to 'undefined', meaning
+         * the default short weekday names are used according to the
+         * `lang.locale` setting.
          *
          * @sample highcharts/lang/shortweekdays/
          *         Finnish two-letter abbreviations
@@ -224,11 +230,14 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The default decimal point used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments.
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale decimal point as determined by `lang.locale`.
          *
-         * @since 1.2.2
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.decimalPoint
          */
-        decimalPoint: '.',
 
         /**
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
@@ -262,6 +271,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * The default thousands separator used in the `Highcharts.numberFormat`
+         * method unless otherwise specified in the function arguments. Defaults
+         * to the locale thousands separator as determined by `lang.locale`.
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since     1.2.2
+         * @apioption lang.thousandsSep
+         */
+
+        /**
          * The text for the label appearing when a chart is zoomed.
          *
          * @since 1.2.4
@@ -273,19 +293,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
-        resetZoomTitle: 'Reset zoom level 1:1',
-
-        /**
-         * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Defaults
-         * to a single space character, which is recommended in
-         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
-         * across Anglo-American and continental European languages.
-         *
-         * @default \u0020
-         * @since   1.2.2
-         */
-        thousandsSep: ' '
+        resetZoomTitle: 'Reset zoom level 1:1'
     },
 
     /**
@@ -304,84 +312,6 @@ const defaultOptions: DefaultOptions = {
      * ```
      */
     global: {
-        /**
-         * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-         * Use the [libURL](#exporting.libURL) option to configure exporting._
-         *
-         * The URL to the additional file to lazy load for Android 2.x devices.
-         * These devices don't support SVG, so we download a helper file that
-         * contains [canvg](https://github.com/canvg/canvg), its dependency
-         * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-         * our site, you can install canvas-tools.js on your own server and
-         * change this option accordingly.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
-         * @product   highcharts highmaps
-         * @apioption global.canvasToolsURL
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.useUTC](#time.useUTC) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {boolean}
-         * @apioption global.useUTC
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.Date](#time.Date) that supports individual time settings
-         * per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.Date
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-         * individual time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {Function}
-         * @product   highcharts highstock
-         * @apioption global.getTimezoneOffset
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezone](#time.timezone) that supports individual time
-         * settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {string}
-         * @product   highcharts highstock
-         * @apioption global.timezone
-         */
-
-        /**
-         * This option is deprecated since v6.0.5. Instead, use
-         * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-         * time settings per chart.
-         *
-         * @deprecated
-         *
-         * @type      {number}
-         * @product   highcharts highstock
-         * @apioption global.timezoneOffset
-         */
-
         /**
          * General theme for buttons. This applies to the zoom button, exporting
          * context menu, map navigation, range selector buttons and custom
@@ -480,7 +410,7 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * // Apply time settings by instance
-     * let chart = Highcharts.chart('container', {
+     * const chart = Highcharts.chart('container', {
      *     time: {
      *         timezone: 'America/New_York'
      *     },
@@ -523,26 +453,6 @@ const defaultOptions: DefaultOptions = {
          * @product   highcharts highstock gantt
          */
         Date: void 0,
-        /**
-         * A callback to return the time zone offset for a given datetime. It
-         * takes the timestamp in terms of milliseconds since January 1 1970,
-         * and returns the timezone offset in minutes. This provides a hook
-         * for drawing time based charts in specific time zones using their
-         * local DST crossover dates, with the help of external libraries.
-         *
-         * This option is deprecated as of v11.4.1 and will be removed in a
-         * future release. Use the [time.timezone](#time.timezone) option
-         * instead.
-         *
-         * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
-         *         Use moment.js to draw Oslo time regardless of browser locale
-         *
-         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
-         * @since     4.1.0
-         * @deprecated 11.4.2
-         * @product   highcharts highstock gantt
-         */
-        getTimezoneOffset: void 0,
 
         /**
          * A named time zone. Supported time zone names rely on the browser
@@ -552,6 +462,12 @@ const defaultOptions: DefaultOptions = {
          * provides a warning and falls back to returning a 0 offset,
          * corresponding to the UTC time zone.
          *
+         * The time zone affects axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`.
+         *
+         * Setting `timezone` to `undefined` falls back to the default browser
+         * timezone setting.
+         *
          * Until v11.2.0, this option depended on moment.js.
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
@@ -560,7 +476,7 @@ const defaultOptions: DefaultOptions = {
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
-        timezone: void 0,
+        timezone: 'UTC',
 
         /**
          * The timezone offset in minutes. Positive values are west, negative
@@ -591,12 +507,20 @@ const defaultOptions: DefaultOptions = {
          * in real time or when correct Daylight Saving Time transitions are
          * required.
          *
+         * Setting `useUTC` to true is equivalent to setting `time.timezone` to
+         * `"UTC"`. Setting `useUTC` to false is equivalent to setting
+         * `time.timezone` to `undefined`.
+         *
+         * @see [time.timezone](#timezone)
+         *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default
          * @sample {highcharts} highcharts/time/useutc-false/
          *         False
+         *
+         * @deprecated
          */
-        useUTC: true
+        useUTC: void 0
     },
 
     chart: ChartDefaults,
@@ -606,6 +530,8 @@ const defaultOptions: DefaultOptions = {
      *
      * @sample {highmaps} maps/title/title/
      *         Title options demonstrated
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      */
     title: {
 
@@ -687,6 +613,10 @@ const defaultOptions: DefaultOptions = {
          * CSS styles for the title. Use this for font styling, but use `align`,
          * `x` and `y` for text alignment.
          *
+         * Note that the default [title.minScale](#title.minScale) option also
+         * affects the rendered font size. In order to keep the font size fixed
+         * regardless of title length, set `minScale` to 1.
+         *
          * In styled mode, the title style is given in the `.highcharts-title`
          * class.
          *
@@ -724,6 +654,13 @@ const defaultOptions: DefaultOptions = {
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
          *
+         * Since v12 it defaults to `undefined`, meaning the alignment is
+         * computed for best fit. If the text fits in one line, it aligned to
+         * the center, but if it is wrapped into multiple lines, it is aligned
+         * to the left.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default alignment, dynamic
          * @sample {highcharts} highcharts/title/align/
          *         Aligned to the plot area (x = 70px = margin left - spacing
          *         left)
@@ -731,10 +668,11 @@ const defaultOptions: DefaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignValue}
-         * @since 2.0
+         * @type      {Highcharts.AlignValue}
+         * @default   undefined
+         * @since     2.0
+         * @apioption title.align
          */
-        align: 'center',
 
         /**
          * The margin between the title and the plot area, or if a subtitle
@@ -752,15 +690,22 @@ const defaultOptions: DefaultOptions = {
         margin: 15,
 
         /**
-         * Adjustment made to the title width, normally to reserve space for
-         * the exporting burger menu.
+         * When the title is too wide to fit in the chart, the default behavior
+         * is to scale it down to fit, or apply word wrap if it is scaled down
+         * to `minScale` and still doesn't fit.
          *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
+         * The default value reflects the scale, when using default font sizes,
+         * when the title font size matches that of the subtitle. The title
+         * still stands out as it is bold by default.
          *
-         * @since 4.2.5
+         * Set `minScale` to 1 to avoid downscaling.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Downscaling demonstrated
+         *
+         * @since 12.0.0
          */
-        widthAdjust: -44
+        minScale: 0.67
 
     },
 
@@ -770,6 +715,8 @@ const defaultOptions: DefaultOptions = {
      * subtitle can be updated after chart initialization through the
      * `Chart.setTitle` method.
      *
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
      * @sample {highmaps} maps/title/subtitle/
      *         Subtitle options demonstrated
      */
@@ -903,34 +850,26 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
          *         Formatted and linked text.
          */
-        text: '',
+        text: ''
 
         /**
          * The horizontal alignment of the subtitle. Can be one of "left",
-         *  "center" and "right".
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
          *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
          * @sample {highcharts} highcharts/subtitle/align/
          *         Footnote at right of plot area
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
          * @type  {Highcharts.AlignValue}
+         * @default undefined
          * @since 2.0
+         * @apioption subtitle.align
          */
-        align: 'center',
-
-        /**
-         * Adjustment made to the subtitle width, normally to reserve space
-         * for the exporting burger menu.
-         *
-         * @see [title.widthAdjust](#title.widthAdjust)
-         *
-         * @sample highcharts/title/widthadjust/
-         *         Wider menu, greater padding
-         *
-         * @since 4.2.5
-         */
-        widthAdjust: -44
     },
 
     /**
@@ -2392,7 +2331,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/tooltip/xdateformat/
          *         A different format
          *
-         * @type      {string}
+         * @type      {string|Highcharts.DateTimeFormatOptions}
          * @product   highcharts highstock gantt
          * @apioption tooltip.xDateFormat
          */
@@ -2448,29 +2387,29 @@ const defaultOptions: DefaultOptions = {
          * For series on datetime axes, the date format in the tooltip's
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
-         * each unit. For an overview of the replacement codes, see
+         * each unit. For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
-         * @type    {Highcharts.Dictionary<string>}
+         * @type    {Highcharts.Dictionary<string|Highcharts.DateTimeFormatOptions>}
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             /** @internal */
-            millisecond: '%A, %e %b, %H:%M:%S.%L',
+            millisecond: '%[AebHMSL]',
             /** @internal */
-            second: '%A, %e %b, %H:%M:%S',
+            second: '%[AebHMS]',
             /** @internal */
-            minute: '%A, %e %b, %H:%M',
+            minute: '%[AebHM]',
             /** @internal */
-            hour: '%A, %e %b, %H:%M',
+            hour: '%[AebHM]',
             /** @internal */
-            day: '%A, %e %b %Y',
+            day: '%[AebY]',
             /** @internal */
-            week: 'Week from %A, %e %b %Y',
+            week: 'Week from %[AebY]',
             /** @internal */
-            month: '%B %Y',
+            month: '%[BY]',
             /** @internal */
             year: '%Y'
         },
@@ -2607,7 +2546,7 @@ const defaultOptions: DefaultOptions = {
          * @type      {string}
          * @apioption tooltip.headerFormat
          */
-        headerFormat: '<span style="font-size: 0.8em">{point.key}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
 
         /**
          * The HTML of the null point's line in the tooltip. Works analogously
@@ -2914,7 +2853,6 @@ function getOptions(): DefaultOptions {
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
  *
- * @sample highcharts/global/useutc-false Setting a global option
  * @sample highcharts/members/setoptions Applying a global theme
  *
  * @function Highcharts.setOptions
@@ -2934,26 +2872,13 @@ function setOptions(
     merge(true, defaultOptions, options);
 
     // Update the time object
-    if (options.time || options.global) {
-        if (H.time) {
-            H.time.update(merge(
-                defaultOptions.global,
-                defaultOptions.time,
-                options.global,
-                options.time
-            ));
-        } else {
-            /**
-             * Global `Time` object with default options. Since v6.0.5, time
-             * settings can be applied individually for each chart. If no
-             * individual settings apply, this `Time` object is shared by all
-             * instances.
-             *
-             * @name Highcharts.time
-             * @type {Highcharts.Time}
-             */
-            H.time = defaultTime;
-        }
+    if (options.time) {
+        defaultTime.update(defaultOptions.time);
+    }
+    if (options.lang && 'locale' in options.lang) {
+        defaultTime.update({
+            locale: options.lang.locale as string|Array<string>
+        });
     }
 
     return defaultOptions;

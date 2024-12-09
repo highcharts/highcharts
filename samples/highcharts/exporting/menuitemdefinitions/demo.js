@@ -56,7 +56,7 @@ Highcharts.chart('container', {
         },
         buttons: {
             contextButton: {
-                menuItems: ['downloadPNG', 'downloadSVG', 'separator', 'label']
+                menuItems: ['downloadPNG', 'downloadPDF', 'separator', 'label']
             }
         }
     }

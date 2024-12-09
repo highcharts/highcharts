@@ -395,8 +395,7 @@ class ChartAdditions {
             colorProp: SeriesOptions = chart.styledMode ?
                 { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
                 { color: point.color || oldSeries.color },
-            levelNumber = oldSeries.options._levelNumber || 0,
-            pointIndex = oldSeries.points.indexOf(point);
+            levelNumber = oldSeries.options._levelNumber || 0;
 
         if (!chart.drilldownLevels) {
             chart.drilldownLevels = [];
@@ -457,8 +456,8 @@ class ChartAdditions {
                 Color.parse(colorProp.color).setOpacity(0).get() :
                 colorProp.color,
             lowerSeriesOptions: ddOptions,
-            pointOptions: (oldSeries.options.data as any)[pointIndex],
-            pointIndex: pointIndex,
+            pointOptions: point.options,
+            pointIndex: point.index,
             oldExtremes: {
                 xMin: xAxis && xAxis.userMin,
                 xMax: xAxis && xAxis.userMax,
@@ -726,7 +725,9 @@ class ChartAdditions {
                         }
                     }
                 }
-                oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+                // Overcome problems with minRange (#2898)
+                oldSeries.dataTable.setColumn('x', []);
 
                 // Reset the names to start new series from the beginning.
                 // Do it once to preserve names when multiple
@@ -1141,7 +1142,7 @@ namespace Drilldown {
         (this.xAxis || []).forEach((axis): void => {
             axis.ddPoints = {};
             axis.series.forEach((series): void => {
-                const xData = series.xData || [],
+                const xData = series.getColumn('x'),
                     points = series.points;
 
                 for (let i = 0, iEnd = xData.length, p; i < iEnd; i++) {

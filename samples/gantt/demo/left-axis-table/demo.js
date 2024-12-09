@@ -84,33 +84,33 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            start: Date.UTC(2017, 10, 18, 8),
-            end: Date.UTC(2017, 10, 25, 16),
+            start: '2017-11-18 08:00',
+            end: '2017-11-25 16:00',
             name: 'Start prototype',
             assignee: 'Richards',
             y: 0
         }, {
-            start: Date.UTC(2017, 10, 20, 8),
-            end: Date.UTC(2017, 10, 24, 16),
+            start: '2017-11-20 08:00',
+            end: '2017-11-24 16:00',
             name: 'Develop',
             assignee: 'Michaels',
             y: 1
         }, {
-            start: Date.UTC(2017, 10, 25, 16),
-            end: Date.UTC(2017, 10, 25, 16),
+            start: '2017-11-25 16:00',
+            end: '2017-11-25 16:00',
             name: 'Prototype done',
             assignee: 'Richards',
             milestone: true,
             y: 2
         }, {
-            start: Date.UTC(2017, 10, 27, 8),
-            end: Date.UTC(2017, 11, 3, 16),
+            start: '2017-11-27 08:00',
+            end: '2017-12-03 16:00',
             name: 'Test prototype',
             assignee: 'Richards',
             y: 3
         }, {
-            start: Date.UTC(2017, 10, 23, 8),
-            end: Date.UTC(2017, 11, 15, 16),
+            start: '2017-11-23 08:00',
+            end: '2017-12-15 16:00',
             name: 'Run acceptance tests',
             assignee: 'Halliburton',
             y: 4

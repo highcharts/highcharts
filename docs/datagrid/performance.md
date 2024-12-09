@@ -17,12 +17,12 @@ This technique significantly enhances DataGrid performance, leading to faster lo
 }
 ```
 
-The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) and [`strictHeights`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your spesific use case and preferences. 
+The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) and [`strictHeights`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your specific use case and preferences.
 
 ### buffersize
-Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering and increased performance on sorting and scroll. A larger buffer means slower initial rendering, but might decrease the flicker effect on fast scrolling.
+Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering and increased performance on sorting and scrolling. A larger buffer means slower initial rendering but might decrease the flicker effect on fast scrolling.
 
-The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) of 10 should be optimal in most cases. 
+The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.RowsSettings#bufferSize) of 10 should be optimal in most cases.
 
 ### strictHeights
 By default, rows adjust their height to fit all content, which can reduce performance and scrolling smoothness. Setting `strictHeights: true` ensures all rows have a uniform height, truncating multiline text with an ellipsis. This skips height calculations and boosts performance.
