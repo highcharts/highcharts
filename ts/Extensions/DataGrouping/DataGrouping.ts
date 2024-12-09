@@ -152,7 +152,8 @@ function onTooltipHeaderFormatter(
         e.text = format(
             formatString, {
                 point: extend(point, { key: formattedKey }),
-                series: series
+                series: series,
+                lang: chart.options.lang
             },
             chart
         );
@@ -357,7 +358,7 @@ export default DataGroupingComposition;
  *     minute: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
  *     hour: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
  *     day: ['%A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
- *     week: ['Week from %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
+ *     week: ['{lang.weekFrom} %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
  *     year: ['%Y', '%Y', '-%Y']
  * }
