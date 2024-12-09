@@ -326,6 +326,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-caption {
     padding: 5px;
+    text-align: center;
 }
 
 /* Table header */

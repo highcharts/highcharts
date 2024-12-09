@@ -433,10 +433,12 @@ class Table {
             return;
         }
 
-        this.captionElement = makeHTMLElement('caption', {
+        this.captionElement = makeHTMLElement('div', {
             innerText: captionOptions.text,
             className: Globals.classNames.captionElement
-        }, this.dataGrid.tableElement);
+        });
+
+        this.dataGrid.contentWrapper?.prepend(this.captionElement);
 
         if (captionOptions.className) {
             this.captionElement.classList.add(
@@ -456,6 +458,7 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 
+        this.captionElement?.remove();
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
