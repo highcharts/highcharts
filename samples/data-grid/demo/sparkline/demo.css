@@ -4,7 +4,8 @@
     height: 800px;
 }
 
-.highcharts-datagrid-table tbody tr {
+.highcharts-datagrid-table tbody td {
+    padding: 0 4px;
     height: 50px;
 }
 

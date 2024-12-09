@@ -8,21 +8,21 @@
 
 :root,
 .highcharts-light {
-    --highcharts-background-color: #fff;
+    --highcharts-background-color: #ffffff;
 
     /* Neutral colors */
-    --highcharts-neutral-color-100: #000;
-    --highcharts-neutral-color-80: #333;
-    --highcharts-neutral-color-60: #666;
-    --highcharts-neutral-color-40: #999;
-    --highcharts-neutral-color-20: #ccc;
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-40: #999999;
+    --highcharts-neutral-color-20: #cccccc;
     --highcharts-neutral-color-10: #e6e6e6;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #fff;
+    --highcharts-neutral-color-0: #ffffff;
 
     /* Highlight colors */
-    --highcharts-highlight-color-100: #02f;
+    --highcharts-highlight-color-100: #0022ff;
     --highcharts-highlight-color-80: #334eff;
     --highcharts-highlight-color-60: #667aff;
     --highcharts-highlight-color-20: #ccd3ff;
@@ -33,7 +33,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
-        --highcharts-background-color: #333;
+        --highcharts-background-color: #333333;
 
         /*
             Neutral color variations
@@ -60,7 +60,7 @@
 
 .highcharts-dark {
     /* UI colors */
-    --highcharts-background-color: #333;
+    --highcharts-background-color: #333333;
 
     /*
         Neutral color variations
@@ -266,7 +266,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table tbody tr {
     overflow: hidden;
     width: 100%;
-    height: 36px;
+}
+
+.highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody tr {
+    display: block;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
@@ -274,7 +277,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody td {
-    height: inherit;
     overflow: hidden;
 }
 
@@ -368,7 +370,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table tbody td {
     border-left: 1px solid var(--highcharts-neutral-color-20);
-    padding: 0 4px;
+    padding: 9px 4px;
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row,
