@@ -40,7 +40,7 @@ const { isString } = U;
  *         Treemap
  *
  * @extends      plotOptions.scatter
- * @excluding    cluster, connectEnds, connectNulls, dataSorting, dragDrop, jitter, marker
+ * @excluding    connectEnds, connectNulls, dataSorting, dragDrop, jitter, marker
  * @product      highcharts
  * @requires     modules/treemap
  * @optionparent plotOptions.treemap
@@ -211,9 +211,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     },
 
     tooltip: {
-        /**
-         * @excluding clusterFormat
-         */
         headerFormat: '',
         pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
         /**
@@ -226,9 +223,9 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          *
          * @type      {string}
          * @default   '+ {point.groupedPointsAmount} more...'
-         * @apioption tooltip.groupedNodesFormat
+         * @apioption tooltip.clusterFormat
          */
-        groupedNodesFormat: '<span>+ {point.groupedPointsAmount} more...' +
+        clusterFormat: '<span>+ {point.groupedPointsAmount} more...' +
             '</span><br/>'
     },
 
@@ -579,9 +576,12 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @since next
      *
+     * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
+     * layoutAlgorithm, marker, states, zones
+     *
      * @product highcharts
      */
-    groupAreaThreshold: {
+    cluster: {
         /**
          * Enable or disable Treemap grouping.
          *
@@ -642,8 +642,17 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * @since next
          * @product highcharts
          */
-        minAmount: 5
+        minimumClusterSize: 5,
 
+        layoutAlgorithm: {
+            distance: 0,
+            gridSize: 0,
+            kmeansThreshold: 0
+        },
+        marker: {
+            lineWidth: 0,
+            radius: 0
+        }
     }
 
 };

@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         name: 'Regions',
         type: 'treemap',
         allowTraversingTree: true,
-        groupAreaThreshold: {
+        cluster: {
             enabled: true,
             pixelWidth: 60,
             pixelHeight: 25

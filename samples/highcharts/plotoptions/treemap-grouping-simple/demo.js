@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         name: 'Regions',
         type: 'treemap',
         layoutAlgorithm: 'squarified',
-        groupAreaThreshold: {
+        cluster: {
             enabled: true,
             pixelWidth: 30,
             pixelHeight: 30

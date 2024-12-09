@@ -93,7 +93,7 @@
                     fontSize: '0.8em'
                 }
             },
-            groupAreaThreshold: {
+            cluster: {
                 enabled: true,
                 pixelWidth: 15,
                 pixelHeight: 30,

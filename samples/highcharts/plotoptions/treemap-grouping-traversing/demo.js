@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'treemap',
         layoutAlgorithm: 'squarified',
         allowTraversingTree: true,
-        groupAreaThreshold: {
+        cluster: {
             enabled: true,
             pixelWidth: 30,
             pixelHeight: 30

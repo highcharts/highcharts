@@ -201,7 +201,7 @@ And each point needs its own colorValue.
 
 Treemap series grouping simplifies the visualization of large datasets by organizing data points into larger blocks, enhancing both readability and performance. This approach is particularly useful for presenting vast amounts of information in a compact, easy-to-understand format.
 
-To configure treemap series grouping, the `groupAreaThreshold` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.groupAreaThreshold) for details about its options.
+To configure treemap series grouping, the `cluster` option is used. Within this option, you can specify `pixelWidth` and `pixelHeight`, which set the minimum pixel size for areas before they are grouped. These thresholds ensure that smaller sections are consolidated into larger, more visible areas for better clarity. The `name` parameter allows you to define a custom label for the grouped nodes, which will appear in tooltips, data labels, and other chart elements. Read the [API](https://api.highcharts.com/highcharts/series.treemap.cluster) for details about its options.
 
 
     const chart = new Highcharts.Chart({
@@ -209,7 +209,7 @@ To configure treemap series grouping, the `groupAreaThreshold` option is used. W
         series: [{
             ...
             type: "treemap",
-            groupAreaThreshold: {
+            cluster: {
                 enabled: true,
                 pixelHeight: 20,
                 pixelWidth: 10

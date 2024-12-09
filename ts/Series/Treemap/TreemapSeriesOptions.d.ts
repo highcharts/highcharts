@@ -36,6 +36,7 @@ import type {
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
+import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
 
 /* *
  *
@@ -106,7 +107,7 @@ export interface TreemapSeriesLevelColorVariationOptions {
     to?: number;
 }
 
-export interface TreemapSeriesGroupAreaThresholdOptions {
+export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
 
     /**
      * Enable or disable Treemap grouping.
@@ -165,7 +166,7 @@ export interface TreemapSeriesGroupAreaThresholdOptions {
      * @since next
      * @product highcharts
      */
-    minAmount?: number;
+    minimumClusterSize?: number;
 }
 
 
@@ -318,7 +319,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
  *
  * @extends series,plotOptions.treemap
  *
- * @excluding cluster, connectEnds, connectNulls, dataSorting, dragDrop,
+ * @excluding connectEnds, connectNulls, dataSorting, dragDrop,
  *  jitter, marker
  *
  * @excluding dataParser, dataURL, stack, dataSorting
@@ -520,9 +521,12 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @since next
      *
+     * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
+     * layoutAlgorithm, marker, states, zones
+     *
      * @product highcharts
      */
-    groupAreaThreshold?: TreemapSeriesGroupAreaThresholdOptions;
+    cluster?: TreemapSeriesClusterOptions;
 
     /**
      * Whether to ignore hidden points when the layout algorithm runs.
@@ -673,7 +677,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @apioption series.treemap.states.hover
      */
 
-    tooltip?: TreemapSeriesTooltipOptions;
+    tooltip?:Partial<TooltipOptions>;
 
     /**
      * The HTML of the grouped nodes point's in the tooltip. Works only for
@@ -685,7 +689,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @type      {string}
      * @default   '+ {point.groupedPointsAmount} more...'
-     * @apioption tooltip.groupedNodesFormat
+     * @apioption tooltip.clusterFormat
      */
 
     /**
@@ -721,10 +725,6 @@ export interface TreemapSeriesUpButtonPositionOptions {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
-}
-
-export interface TreemapSeriesTooltipOptions extends Partial<TooltipOptions> {
-    groupedNodesFormat?: string;
 }
 
 /* *

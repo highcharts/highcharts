@@ -27,7 +27,7 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
         chart = Highcharts.chart('container', {
             plotOptions: {
                 treemap: {
-                    groupAreaThreshold: {
+                    cluster: {
                         enabled: true,
                         pixelWidth: 30,
                         pixelHeight: 30
@@ -59,9 +59,9 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
     );
 
     series.update({
-        groupAreaThreshold: {
+        cluster: {
             pixelWidth: 80,
-            minAmount: 2
+            minimumClusterSize: 2
         }
     });
 
@@ -164,7 +164,7 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
     }], false);
 
     series.update({
-        groupAreaThreshold: {
+        cluster: {
             enabled: true,
             pixelWidth: 60,
             pixelHeight: 25
@@ -179,7 +179,7 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
     );
 
     series.update({
-        groupAreaThreshold: {
+        cluster: {
             enabled: false
         }
     });
@@ -192,7 +192,7 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
 
     series.update({
         allowTraversingTree: true,
-        groupAreaThreshold: {
+        cluster: {
             enabled: true
         }
     });
@@ -213,7 +213,7 @@ QUnit.test('Treemap Grouping, #20692.', assert => {
 
     chart.update({
         tooltip: {
-            groupedNodesFormat: tooltipText
+            clusterFormat: tooltipText
         }
     });
 

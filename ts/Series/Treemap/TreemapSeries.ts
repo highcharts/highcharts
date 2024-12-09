@@ -434,10 +434,10 @@ class TreemapSeries extends ScatterSeries {
     public applyTreeGrouping(): void {
         const series = this,
             parentList = series.parentList || {},
-            { groupAreaThreshold } = series.options,
-            minAmount = groupAreaThreshold?.minAmount || 5;
+            { cluster } = series.options,
+            minimumClusterSize = cluster?.minimumClusterSize || 5;
 
-        if (groupAreaThreshold?.enabled) {
+        if (cluster?.enabled) {
             const parentGroups: {[key: string]: TreemapNode[]} = {};
 
             const checkIfHide = (node: TreemapNode): void => {
@@ -448,7 +448,7 @@ class TreemapSeries extends ScatterSeries {
                     const {
                             pixelWidth = 0,
                             pixelHeight = 0
-                        } = groupAreaThreshold,
+                        } = cluster,
                         compareHeight = defined(pixelHeight),
                         thresholdArea = pixelHeight ?
                             pixelWidth * pixelHeight :
@@ -478,7 +478,7 @@ class TreemapSeries extends ScatterSeries {
 
             for (const parent in parentGroups) {
                 if (parentGroups[parent]) {
-                    if (parentGroups[parent].length > minAmount) {
+                    if (parentGroups[parent].length > minimumClusterSize) {
                         parentGroups[parent].forEach((node): void => {
                             const index = parentList[parent].indexOf(node.i);
                             if (index !== -1) {
@@ -500,7 +500,7 @@ class TreemapSeries extends ScatterSeries {
                                         value: 0
                                     } as TreemapPointOptions);
                                     extend(groupPoint, {
-                                        formatPrefix: 'groupedNodes'
+                                        formatPrefix: 'cluster'
                                     });
                                     series.points.push(groupPoint);
                                     parentList[parent].push(pointIndex);
@@ -511,7 +511,7 @@ class TreemapSeries extends ScatterSeries {
                                     groupPoint.groupedPointsAmount + 1,
                                     val = series.points[groupPoint.index]
                                         .options.value || 0,
-                                    name = groupAreaThreshold.name ||
+                                    name = cluster.name ||
                                         `+ ${amount}`;
 
                                 // Update the point directly in points array to
@@ -1461,8 +1461,8 @@ class TreemapSeries extends ScatterSeries {
             point.value = val;
         }
 
-        if (point?.isGroup && options.groupAreaThreshold?.reductionFactor) {
-            val /= options.groupAreaThreshold.reductionFactor;
+        if (point?.isGroup && options.cluster?.reductionFactor) {
+            val /= options.cluster.reductionFactor;
         }
 
         if (
