@@ -7,4 +7,5 @@
 
 .highcharts-datagrid-container tbody td {
     height: 70px;
+    padding: 0 4px;
 }

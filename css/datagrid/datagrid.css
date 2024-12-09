@@ -277,7 +277,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody td {
-    height: 36px;
     overflow: hidden;
 }
 
@@ -371,7 +370,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table tbody td {
     border-left: 1px solid var(--highcharts-neutral-color-20);
-    padding: 0 4px;
+    padding: 9px 4px;
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-hovered-row,
