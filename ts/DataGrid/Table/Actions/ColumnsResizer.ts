@@ -28,7 +28,9 @@ import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import DGUtils from '../../Utils.js';
 import Cell from '../Cell.js';
+import Utils from '../../../Core/Utilities.js';
 const { makeHTMLElement } = DGUtils;
+const { getStyle } = Utils;
 
 
 /* *
@@ -125,7 +127,12 @@ class ColumnsResizer {
 
         const leftColW = this.columnStartWidth ?? 0;
         const rightColW = this.nextColumnStartWidth ?? 0;
-        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
+        const colHtmlElement = column.cells[1].htmlElement;
+        const MIN_WIDTH = (
+            ((getStyle(colHtmlElement, 'padding-left') || 0) as number) +
+            ((getStyle(colHtmlElement, 'padding-right') || 0) as number) +
+            ((getStyle(colHtmlElement, 'border-left') || 0)  as number)
+        ) || Column.MIN_COLUMN_WIDTH;
 
         let newLeftW = leftColW + diff;
         let newRightW = rightColW - diff;
