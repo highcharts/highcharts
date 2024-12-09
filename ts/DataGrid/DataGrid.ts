@@ -231,6 +231,11 @@ class DataGrid {
      */
     public initialContainerHeight: number = 0;
 
+    /**
+     * The unique ID of the data grid.
+     */
+    public id: string;
+
 
     /* *
     *
@@ -258,6 +263,7 @@ class DataGrid {
         this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
+        this.id = this.options?.id || U.uniqueKey();
 
         this.initContainers(renderTo);
         this.initAccessibility();
@@ -600,7 +606,8 @@ class DataGrid {
     }
 
     /**
-     * Render caption above the datagrid
+     * Render caption above the datagrid.
+     *
      * @internal
      */
     public renderCaption(): void {
@@ -611,7 +618,8 @@ class DataGrid {
 
         this.captionElement = makeHTMLElement('div', {
             innerText: captionOptions.text,
-            className: Globals.classNames.captionElement
+            className: Globals.classNames.captionElement,
+            id: this.id + '-caption'
         }, this.contentWrapper);
 
         if (captionOptions.className) {
@@ -622,7 +630,8 @@ class DataGrid {
     }
 
     /**
-     * Render description under the datagrid
+     * Render description under the datagrid.
+     *
      * @internal
      */
     public renderDescription(): void {
@@ -633,7 +642,8 @@ class DataGrid {
 
         this.descriptionElement = makeHTMLElement('div', {
             innerText: descriptionOptions.text,
-            className: Globals.classNames.descriptionElement
+            className: Globals.classNames.descriptionElement,
+            id: this.id + '-description'
         }, this.contentWrapper);
 
         if (descriptionOptions.className) {
@@ -679,6 +689,8 @@ class DataGrid {
             this.credits = new Credits(this);
         }
 
+        this.accessibility?.initTableA11yAttrs();
+
         if (vp?.virtualRows) {
             vp?.reflow();
         }
@@ -693,12 +705,6 @@ class DataGrid {
         }, this.contentWrapper);
 
         this.viewport = new Table(this, this.tableElement);
-
-        // Accessibility
-        this.tableElement.setAttribute(
-            'aria-rowcount',
-            this.dataTable?.getRowCount() ?? 0
-        );
     }
 
     /**

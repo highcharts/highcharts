@@ -117,6 +117,11 @@ export interface Options {
     header?: Array<GroupedHeaderOptions|string>;
 
     /**
+     * The unique id of the datagrid. It is generated automatically, if not set.
+     */
+    id?: string;
+
+    /**
      * Language options for the datagrid.
      */
     lang?: LangOptions;

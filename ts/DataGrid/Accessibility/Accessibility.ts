@@ -247,6 +247,37 @@ class Accessibility {
         el.setAttribute('aria-rowindex', idx);
     }
 
+    /**
+     * Set aria attributes for the table element.
+     */
+    public initTableA11yAttrs(): void {
+        const dataGrid = this.dataGrid;
+        const tableEl = dataGrid.tableElement;
+
+        if (!tableEl) {
+            return;
+        }
+
+        tableEl.setAttribute(
+            'aria-rowcount',
+            dataGrid.dataTable?.getRowCount() || 0
+        );
+
+        if (dataGrid.captionElement) {
+            tableEl.setAttribute(
+                'aria-labelledby',
+                dataGrid.captionElement.id
+            );
+        }
+
+        if (dataGrid.descriptionElement) {
+            tableEl.setAttribute(
+                'aria-describedby',
+                dataGrid.descriptionElement.id
+            );
+        }
+    }
+
 }
 
 
