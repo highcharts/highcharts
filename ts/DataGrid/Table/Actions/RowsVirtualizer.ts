@@ -264,7 +264,8 @@ class RowsVirtualizer {
         const { viewport: vp, buffer } = this;
         const isVirtualization = this.rowSettings?.virtualization;
         const rowsPerPage = isVirtualization ? Math.ceil(
-            vp.tbodyElement.offsetHeight / this.defaultRowHeight
+            (vp.dataGrid.tableElement?.clientHeight || 0) /
+            this.defaultRowHeight
         ) : Infinity; // Need to be refactored when add pagination
 
         let rows = vp.rows;
