@@ -99,6 +99,11 @@ export interface Options {
     dataTable?: DataTable | DataTableOptions;
 
     /**
+     * Options for the description of the datagrid.
+     */
+    description?: DescriptionOptions;
+
+    /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
@@ -442,6 +447,18 @@ export interface CaptionOptions {
      * The caption of the datagrid.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Caption}
+     */
+    text?: string;
+}
+
+export interface DescriptionOptions {
+    /**
+     * The custom CSS class name for the description.
+     */
+    className?: string;
+
+    /**
+     * The description of the datagrid.
      */
     text?: string;
 }

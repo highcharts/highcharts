@@ -128,11 +128,6 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The caption of the data grid.
-     */
-    public captionElement?: HTMLElement;
-
-    /**
      * The input element of a cell after mouse focus.
      * @internal
      */
@@ -193,8 +188,6 @@ class Table {
         this.scrollable = !!(
             this.dataGrid.initialContainerHeight || this.virtualRows
         );
-
-        this.renderCaption();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -424,30 +417,6 @@ class Table {
     }
 
     /**
-     * Render caption above the datagrid
-     * @internal
-     */
-    public renderCaption(): void {
-        const captionOptions = this.dataGrid.options?.caption;
-        if (!captionOptions?.text) {
-            return;
-        }
-
-        this.captionElement = makeHTMLElement('div', {
-            innerText: captionOptions.text,
-            className: Globals.classNames.captionElement
-        });
-
-        this.dataGrid.contentWrapper?.prepend(this.captionElement);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
-    }
-
-    /**
      * Destroys the data grid table.
      */
     public destroy(): void {
@@ -458,7 +427,6 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 
-        this.captionElement?.remove();
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }

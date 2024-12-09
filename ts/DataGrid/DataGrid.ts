@@ -138,6 +138,11 @@ class DataGrid {
     public accessibility?: Accessibility;
 
     /**
+     * The caption element of the data grid.
+     */
+    public captionElement?: HTMLElement;
+
+    /**
      * The user options declared for the columns as an object of column ID to
      * column options.
      */
@@ -163,6 +168,11 @@ class DataGrid {
      * that was passed to the data grid.
      */
     public dataTable?: DataTable;
+
+    /**
+     * The description element of the data grid.
+     */
+    public descriptionElement?: HTMLElement;
 
     /**
      * The presentation table of the data grid. It contains a modified version
@@ -590,6 +600,50 @@ class DataGrid {
     }
 
     /**
+     * Render caption above the datagrid
+     * @internal
+     */
+    public renderCaption(): void {
+        const captionOptions = this.options?.caption;
+        if (!captionOptions?.text) {
+            return;
+        }
+
+        this.captionElement = makeHTMLElement('div', {
+            innerText: captionOptions.text,
+            className: Globals.classNames.captionElement
+        }, this.contentWrapper);
+
+        if (captionOptions.className) {
+            this.captionElement.classList.add(
+                ...captionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
+     * Render description under the datagrid
+     * @internal
+     */
+    public renderDescription(): void {
+        const descriptionOptions = this.options?.description;
+        if (!descriptionOptions?.text) {
+            return;
+        }
+
+        this.descriptionElement = makeHTMLElement('div', {
+            innerText: descriptionOptions.text,
+            className: Globals.classNames.descriptionElement
+        }, this.contentWrapper);
+
+        if (descriptionOptions.className) {
+            this.descriptionElement.classList.add(
+                ...descriptionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
@@ -607,6 +661,8 @@ class DataGrid {
             this.contentWrapper.innerHTML = AST.emptyHTML;
         }
 
+        this.renderCaption();
+
         if (this.enabledColumns.length > 0) {
             this.renderTable();
             vp = this.viewport;
@@ -617,11 +673,13 @@ class DataGrid {
             this.renderNoData();
         }
 
+        this.renderDescription();
+
         if (this.options?.credits?.enabled) {
             this.credits = new Credits(this);
         }
 
-        if (vp?.dataGrid.options?.rendering?.rows?.virtualization) {
+        if (vp?.virtualRows) {
             vp?.reflow();
         }
     }

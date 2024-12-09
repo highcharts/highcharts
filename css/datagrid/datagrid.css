@@ -324,11 +324,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-datagrid-caption {
-    padding: 5px;
-    text-align: center;
-}
-
 /* Table header */
 .highcharts-datagrid-table thead {
     background-color: var(--highcharts-neutral-color-5);
@@ -418,6 +413,18 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-credits-container {
     text-align: right;
     padding-bottom: 2px;
+}
+
+/* Caption */
+.highcharts-datagrid-caption {
+    padding: 5px;
+    text-align: center;
+}
+
+/* Description */
+.highcharts-datagrid-description {
+    padding: 5px;
+    text-align: center;
 }
 
 /* End Default Theme */

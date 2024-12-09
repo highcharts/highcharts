@@ -18,6 +18,10 @@ DataGrid.dataGrid('container', {
     caption: {
         text: 'Fruit market'
     },
+    description: {
+        text: 'This is a table presenting a list of fruits with their weight' +
+            ' and price.'
+    },
     rendering: {
         rows: {
             minVisibleRows: 5
