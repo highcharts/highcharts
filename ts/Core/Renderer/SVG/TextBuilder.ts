@@ -552,7 +552,7 @@ class TextBuilder {
                         lengths[end] = startAt +
                             (parentNode as any).getSubStringLength(
                                 0,
-                                words && !startAt ? end + 1 : end
+                                words ? end + 1 : end
                             );
 
                     } catch (e) {

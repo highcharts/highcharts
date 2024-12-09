@@ -1,11 +1,11 @@
-Synchronizing **Dashboards** components
+Synchronizing Dashboards components
 ===
 
 In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
 
-## How to synchronize **Dashboards** components?
+## How to synchronize Dashboards components?
 
 To synchronize components, you need to specify the event you want to synchronize between each component.
 Additionally, both components must use the same connector from the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling), a prerequisite for all predefined synchronization types to work.
