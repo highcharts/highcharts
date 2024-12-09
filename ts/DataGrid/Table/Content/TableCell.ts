@@ -23,6 +23,7 @@
  * */
 
 import type DataTable from '../../../Data/DataTable';
+
 import Cell from '../Cell.js';
 import Column from '../Column';
 import TableRow from './TableRow';
