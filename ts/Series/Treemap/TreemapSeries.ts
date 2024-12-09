@@ -494,6 +494,8 @@ class TreemapSeries extends ScatterSeries {
                                         pointIndex = series.points.length;
 
                                     groupPoint = new PointClass(series, {
+                                        className: cluster.className,
+                                        color: cluster.color,
                                         id,
                                         index: pointIndex,
                                         isGroup: true,

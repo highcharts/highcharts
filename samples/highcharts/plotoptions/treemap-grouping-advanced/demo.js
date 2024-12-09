@@ -83,6 +83,12 @@
             borderRadius: 6,
             borderColor: '#fff',
             colorKey: 'value',
+            cluster: {
+                enabled: true,
+                pixelWidth: 15,
+                pixelHeight: 30,
+                reductionFactor: 10
+            },
             dataLabels: {
                 enabled: true,
                 useHTML: true,
@@ -90,14 +96,9 @@
                     textOutline: false,
                     fontWeight: 400,
                     color: '#fff',
-                    fontSize: '0.8em'
+                    fontSize: '0.8em',
+                    'pointer-events': 'none'
                 }
-            },
-            cluster: {
-                enabled: true,
-                pixelWidth: 15,
-                pixelHeight: 30,
-                reductionFactor: 10
             },
             levels: [{
                 level: 1,

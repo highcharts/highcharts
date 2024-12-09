@@ -24,6 +24,8 @@ import type BreadcrumbsOptions from '../../Extensions/Breadcrumbs/BreadcrumbsOpt
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
+import type GradientColor from '../../Core/Color/GradientColor';
+import { PatternObject } from '../../Extensions/PatternFill';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
@@ -108,6 +110,23 @@ export interface TreemapSeriesLevelColorVariationOptions {
 }
 
 export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
+    /**
+     * An additional, individual class name for the grouped point's graphic
+     * representation.
+     *
+     * @type      string
+     * @product   highcharts
+     */
+    className?: string;
+
+    /**
+     * Individual color for the grouped point. By default the color is pulled
+     * from the parent color.
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @product   highcharts
+     */
+    color?: ColorString|GradientColor|PatternObject;
 
     /**
      * Enable or disable Treemap grouping.

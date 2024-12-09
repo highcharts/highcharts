@@ -583,6 +583,24 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
     cluster: {
         /**
+         * An additional, individual class name for the grouped point's graphic
+         * representation.
+         *
+         * @type      string
+         * @product   highcharts
+         */
+        className: void 0,
+
+        /**
+         * Individual color for the grouped point. By default the color is
+         * pulled from the parent color.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts
+         */
+        color: void 0,
+
+        /**
          * Enable or disable Treemap grouping.
          *
          * @type {boolean}
