@@ -246,6 +246,7 @@ class RowsVirtualizer {
             rowTop -= newHeight;
 
             row.htmlElement.style.height = newHeight + 'px';
+
             row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
@@ -423,6 +424,7 @@ class RowsVirtualizer {
             }
         }
 
+        rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].setTranslateY(translateBuffer);
