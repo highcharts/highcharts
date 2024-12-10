@@ -399,27 +399,11 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         dataLabel: SVGLabel,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         labelOptions: DataLabelOptions
     ): void {
-        const style = labelOptions.style;
-
-        // #8160: Prevent the label from exceeding the point's
-        // boundaries in treemaps by applying ellipsis overflow.
-        // The issue was happening when datalabel's text contained a
-        // long sequence of characters without a whitespace.
-        if (
-            style &&
-            !defined(style.textOverflow) &&
-            dataLabel.text &&
-            dataLabel.getBBox().width > (dataLabel.text.textWidth || 0)
-        ) {
-            dataLabel.css({
-                textOverflow: 'ellipsis',
-                // Unit (px) is required when useHTML is true
-                width: style.width += 'px'
-            });
-        }
         ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
             // `point.node.zIndex` could be undefined (#6956)

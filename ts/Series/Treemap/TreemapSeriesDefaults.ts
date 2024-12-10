@@ -205,7 +205,10 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             return name;
         },
         inside: true,
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        style: {
+            textOverflow: 'ellipsis'
+        }
     },
 
     tooltip: {
