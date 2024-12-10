@@ -14,7 +14,7 @@ Note that this library also includes [Highcharts DataGrid](https://www.highchart
 
 - Licensing: [shop.highcharts.com](https://shop.highcharts.com/)
 - Support: [www.highcharts.com/support](http://www.highcharts.com/support)
-- Issues: [Repo guidelines](repo-guidelines.md)
+- Issues: [Repo guidelines](/repo-guidelines.md)
 
 Highcharts Dashboards is a [source available](https://en.wikipedia.org/wiki/Source-available_software) product. Please refer to [shop.highcharts.com](https://shop.highcharts.com/) for details on licensing.
 
