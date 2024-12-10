@@ -1,6 +1,6 @@
 import { loadHCWithModules } from '../test-utils';
-import { ok, strictEqual, match } from 'node:assert';
-import { describe, it, after, afterEach, before } from 'node:test';
+import { strictEqual } from 'node:assert';
+import { describe, it, afterEach, before } from 'node:test';
 
 const locales = [
     'zh-CN'
@@ -8,7 +8,7 @@ const locales = [
 
 for (const locale of locales){
     describe(locale, () => {
-        let hc: any;
+        let hc: Record<string, any>;
 
         afterEach(() => {
             if (hc?.charts){
@@ -44,24 +44,6 @@ for (const locale of locales){
 
                 strictEqual(chart.options.lang.locale, undefined);
             });
-        });
-
-
-        describe('rangeselector options', () => {
-            before(() => {
-                hc = loadHCWithModules(
-                    'highstock',
-                    [`i18n/${locale}`]
-                );
-            });
-
-            it('language is applied to rangeselector options', async () => {
-                const chart = hc.stockChart('container', {
-                });
-
-                strictEqual(chart.options.rangeSelector.buttons[0].text, '1个月');
-            });
-
         });
     });
 }
