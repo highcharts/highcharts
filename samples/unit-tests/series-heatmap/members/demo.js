@@ -226,9 +226,10 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         `${chart.renderer.url}#${point.graphic.element.id}`,
         'State is hover, state marker graphic should refer to the point'
     );
-    assert.strictEqual(
+    assert.closeTo(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
         point.series.options.borderRadius,
+        0.000000000001, // safari 18
         `The point's border radius should be correct (value set in options)
         when the point is in a 'hover' state, #16165.`
     );
