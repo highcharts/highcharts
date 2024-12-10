@@ -76,6 +76,7 @@ const {
     merge,
     pick,
     pushUnique,
+    splat,
     stableSort
 } = U;
 
@@ -542,7 +543,8 @@ class TreemapSeries extends ScatterSeries {
                 n: TreemapPoint
             ): boolean {
                 return n.node.visible;
-            });
+            }),
+            padding = splat(series.options.dataLabels || {})[0]?.padding;
 
         let options: DataLabelOptions,
             level: TreemapSeriesLevelOptions;
@@ -563,10 +565,14 @@ class TreemapSeries extends ScatterSeries {
                 series.hasDataLabels = (): boolean => true;
             }
 
-            // Set dataLabel width to the width of the point shape.
+            // Set dataLabel width to the width of the point shape minus the
+            // padding
             if (point.shapeArgs) {
                 const css = {
-                    width: `${point.shapeArgs.width || 0}px`,
+                    width: (
+                        (point.shapeArgs.width || 0) -
+                        2 * (options.padding || padding || 0)
+                    ) + 'px',
                     lineClamp: Math.floor((point.shapeArgs.height || 0) / 16)
                 };
                 extend((options.style as any), css);

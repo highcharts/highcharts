@@ -205,6 +205,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             return name;
         },
         inside: true,
+        padding: 2,
         verticalAlign: 'middle',
         style: {
             textOverflow: 'ellipsis'
