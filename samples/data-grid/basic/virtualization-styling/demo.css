@@ -13,6 +13,7 @@
 .col {
     flex: 1;
     padding: 10px;
+    min-width: 0;
 }
 
 .grid {
