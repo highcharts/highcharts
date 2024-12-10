@@ -102,7 +102,7 @@ declare module './RangeSelectorOptions' {
  */
 function preferredInputType(format: Time.DateTimeFormat): string {
     const hasTimeKey = (char: string): boolean =>
-        new RegExp(`%[\[a-zA-Z]*${char}`).test(format as string);
+        new RegExp(`%[[a-zA-Z]*${char}`).test(format as string);
     const ms = isString(format) ?
         format.indexOf('%L') !== -1 :
         // Implemented but not typed as of 2024
