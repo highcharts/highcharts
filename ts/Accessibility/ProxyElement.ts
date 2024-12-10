@@ -39,7 +39,7 @@ type Nullable<T> = {
 export type NullableHTMLAttributes = Nullable<HTMLAttributes>;
 
 import H from '../Core/Globals.js';
-const { doc } = H;
+const { doc, win } = H;
 import U from '../Core/Utilities.js';
 const {
     attr,
@@ -309,8 +309,8 @@ class ProxyElement {
             pointer = this.chart.pointer;
 
         if (chartDiv && posElement?.getBoundingClientRect && pointer) {
-            const scrollTop = window.scrollY ||
-                document.documentElement.scrollTop,
+            const scrollTop = win.scrollY ||
+                doc.documentElement.scrollTop,
                 rectEl = posElement.getBoundingClientRect(),
                 chartPos = pointer.getChartPosition();
 
