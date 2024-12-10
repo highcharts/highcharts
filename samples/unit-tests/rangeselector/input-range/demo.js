@@ -712,6 +712,18 @@ QUnit.test('Input types', assert => {
                 'text',
                 'Format with milliseconds should result in text input'
             );
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%[ebY]'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'default format should result in date input'
+            );
         }
+
     });
 });
