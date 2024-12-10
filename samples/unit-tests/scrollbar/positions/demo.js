@@ -297,6 +297,11 @@ QUnit.test('Overlapping scrollbars', assert => {
 
 QUnit.test('Positioning the scrollbar (opposite), #16017.', function (assert) {
     const chart = Highcharts.chart('container', {
+        chart: {
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
+        },
         xAxis: {
             min: 0,
             max: 5,
