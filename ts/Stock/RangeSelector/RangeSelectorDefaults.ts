@@ -135,32 +135,20 @@ const rangeSelector: RangeSelectorOptions = {
      */
     buttons: [{
         type: 'month',
-        count: 1,
-        text: '1m',
-        title: 'View 1 month'
+        count: 1
     }, {
         type: 'month',
-        count: 3,
-        text: '3m',
-        title: 'View 3 months'
+        count: 3
     }, {
         type: 'month',
-        count: 6,
-        text: '6m',
-        title: 'View 6 months'
+        count: 6
     }, {
-        type: 'ytd',
-        text: 'YTD',
-        title: 'View year to date'
+        type: 'ytd'
     }, {
         type: 'year',
-        count: 1,
-        text: '1y',
-        title: 'View 1 year'
+        count: 1
     }, {
-        type: 'all',
-        text: 'All',
-        title: 'View all'
+        type: 'all'
     }],
 
     /**

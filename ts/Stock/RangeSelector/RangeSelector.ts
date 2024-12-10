@@ -692,6 +692,7 @@ class RangeSelector {
             if (dropdownLabel) {
                 dropdownLabel.setState(0);
                 dropdownLabel.attr({
+                    // TODO:
                     text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
                 });
 
@@ -1471,11 +1472,28 @@ class RangeSelector {
         delete buttonTheme.width;
         delete buttonTheme.states;
 
+        const langOptions = this.chart.options.lang;
+
 
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
+            if (rangeOptions.type) {
+                rangeOptions.text ??= langOptions.rangeSelector[`${rangeOptions.type}Text`];
+                rangeOptions.title ??= langOptions.rangeSelector[`${rangeOptions.type}Title`];
+            }
+
+            rangeOptions.text = format(rangeOptions.text, {
+                count: rangeOptions.count || 1
+            });
+
+            rangeOptions.title = format(rangeOptions.title, {
+                count: rangeOptions.count || 1
+            });
+
+            console.log(rangeOptions);
+
             this.createButton(rangeOptions, i, width, states);
         });
     }
@@ -2305,27 +2323,6 @@ interface RangeSelector {
 }
 
 extend(RangeSelector.prototype, {
-    /**
-     * The default buttons for pre-selecting time frames.
-     * @private
-     */
-    defaultButtons: [{
-        type: 'month',
-        count: 1
-    }, {
-        type: 'month',
-        count: 3
-    }, {
-        type: 'month',
-        count: 6
-    }, {
-        type: 'ytd'
-    }, {
-        type: 'year',
-        count: 1
-    }, {
-        type: 'all'
-    }],
     /**
      * The date formats to use when setting min, max and value on date inputs.
      * @private
