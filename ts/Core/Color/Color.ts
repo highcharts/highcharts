@@ -21,13 +21,33 @@ import type { ColorLike, ColorType } from './ColorType';
 import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
+const {
+    win
+} = H;
 import U from '../Utilities.js';
 const {
     isNumber,
+    isString,
     merge,
     pInt,
     defined
 } = U;
+
+const supportsColorMix = win.CSS?.supports(
+    'color',
+    'color-mix(in srgb,red,blue 9%)'
+);
+
+/* *
+ *
+ *  Helpers
+ *
+ * */
+const colorMix = (color1: string, color2: string, weight: number): string =>
+    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+
+const isStringColor = (color: ColorType): color is ColorString =>
+    isString(color) && color !== 'none' && color !== '';
 
 /* *
  *
@@ -200,6 +220,7 @@ class Color implements ColorLike {
      * */
 
     public input: ColorType;
+    public output?: string;
     public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
     public stops?: Array<Color>;
 
@@ -223,6 +244,10 @@ class Color implements ColorLike {
     public get(format?: ('a'|'rgb'|'rgba')): ColorType {
         const input = this.input,
             rgba = this.rgba;
+
+        if (this.output) {
+            return this.output;
+        }
 
         if (
             typeof input === 'object' &&
@@ -273,15 +298,23 @@ class Color implements ColorLike {
             });
 
         } else if (isNumber(alpha) && alpha !== 0) {
-            for (let i = 0; i < 3; i++) {
-                rgba[i] += pInt(alpha * 255);
+            if (isNumber(rgba[0])) {
+                for (let i = 0; i < 3; i++) {
+                    rgba[i] += pInt(alpha * 255);
 
-                if (rgba[i] < 0) {
-                    rgba[i] = 0;
+                    if (rgba[i] < 0) {
+                        rgba[i] = 0;
+                    }
+                    if (rgba[i] > 255) {
+                        rgba[i] = 255;
+                    }
                 }
-                if (rgba[i] > 255) {
-                    rgba[i] = 255;
-                }
+            } else if (supportsColorMix && isStringColor(this.input)) {
+                this.output = colorMix(
+                    this.input,
+                    alpha > 0 ? 'white' : 'black',
+                    Math.abs(alpha)
+                );
             }
         }
 
@@ -325,6 +358,13 @@ class Color implements ColorLike {
 
         // Unsupported color, return to-color (#3920, #7034)
         if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
+            if (
+                supportsColorMix &&
+                isStringColor(this.input) &&
+                isStringColor(to.input)
+            ) {
+                return colorMix(this.input, to.input, pos);
+            }
             return to.input || 'none';
         }
 
