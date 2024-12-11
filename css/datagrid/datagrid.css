@@ -102,6 +102,8 @@
     --column-synced-background-color: rgba(255, 0, 0, 0.06);
     --header-column-synced-background-color: rgba(255, 0, 0, 0.1);
 
+    --header-text-align: center;
+
     --credits-font-size: 0.6em;
     --credits-text-align: right;
 }
@@ -258,11 +260,8 @@
     border-right: var(--hcdg-header-column-border);
     border-bottom: var(--hcdg-header-row-border);
     background-color: var(--hcdg-header-row-background-color);
-    font: var(--hcdg-header-font);
     color: var(--hcdg-header-color);
-    text-align: var(--hcdg-header-text-align);
     padding: var(--hcdg-header-padding);
-    overflow: hidden;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
@@ -475,6 +474,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: 0 0 1px;
 }
 
+.highcharts-datagrid-table tbody td:focus,
+.highcharts-datagrid-table thead th:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
+}
+
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
     border-width: 0;
@@ -483,6 +488,9 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     outline: none;
     float: left;
     font: var(--hcdg-header-font);
+    box-shadow: inset 0 0 0 1px #0000ed;
+    padding: var(--hcdg-body-padding);
+    background-color: #b7d4ff;
 }
 
 /* Accessibility */
@@ -513,7 +521,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: var(--hcdg-description-padding);
 }
 
-/* ==== Default Theme ==== */
 .highcharts-datagrid-table th.highcharts-datagrid-hovered-column {
     background-color: var(--hcdg-header-column-hovered-background-color);
 }
@@ -532,20 +539,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: none;
 }
 
-/* Table body */
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
-    box-shadow: inset 0 0 0 1px #0000ed;
-    padding: 0 4px;
-    background-color: #b7d4ff;
-}
-
-.highcharts-datagrid-table tbody td:focus,
-.highcharts-datagrid-table thead th:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
-}
-
 /* Credits */
 .highcharts-datagrid-credits {
     color: var(--hcdg-credits-color);
@@ -562,4 +555,3 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-align: var(--hcdg-credits-text-align);
     padding: var(--hcdg-credits-padding);
 }
-/* End Default Theme */
