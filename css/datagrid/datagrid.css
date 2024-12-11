@@ -443,7 +443,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tr:last-of-type td {
-    border-bottom: none;
+    border-bottom-color: transparent;
 }
 
 .highcharts-datagrid-table tbody tr:nth-child(even) td {
