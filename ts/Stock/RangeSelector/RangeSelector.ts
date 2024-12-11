@@ -1492,8 +1492,6 @@ class RangeSelector {
                 count: rangeOptions.count || 1
             });
 
-            console.log(rangeOptions);
-
             this.createButton(rangeOptions, i, width, states);
         });
     }
