@@ -578,6 +578,23 @@ QUnit.module('Format', () => {
             'Strings with multiple expressions, sub in one, should resolve'
         );
 
+        assert.strictEqual(
+            format(
+                '<span>{categories.(point.key)}</span>',
+                {
+                    categories: {
+                        one: 'First',
+                        two: 'Second'
+                    },
+                    point: {
+                        key: 'two'
+                    }
+                }
+            ),
+            '<span>Second</span>',
+            'String properties inside deep objects should resolve'
+        );
+
     });
 
     QUnit.test('Error handling', assert => {
