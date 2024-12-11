@@ -44,7 +44,7 @@
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install ; gulp --series clean update-vendor",
+    "prepare": "husky install && gulp --series clean update-vendor",
     "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
