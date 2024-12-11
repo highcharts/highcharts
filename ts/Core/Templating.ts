@@ -389,7 +389,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
             // Use string literal in order to be preserved in the outer
             // expression
-            if (hasSub && isString(replacement)) {
+            subRegex.lastIndex = 0;
+            if (subRegex.test(match.find) && isString(replacement)) {
                 replacement = `"${replacement}"`;
             }
         }

@@ -566,6 +566,18 @@ QUnit.module('Format', () => {
                 'resolve (#22316)'
         );
 
+        assert.strictEqual(
+            format(
+                'How people with {type} see {ucfirst (color)}',
+                {
+                    type: 'Tritanopia',
+                    color: 'red'
+                }
+            ),
+            'How people with Tritanopia see Red',
+            'Strings with multiple expressions, sub in one, should resolve'
+        );
+
     });
 
     QUnit.test('Error handling', assert => {
