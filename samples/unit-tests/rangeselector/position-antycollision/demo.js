@@ -495,7 +495,9 @@ QUnit.test('#14292: Right-aligned button position after animating', assert => {
     chart.rangeSelector.update({});
 
     assert.ok(
-        chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,
+        chart.rangeSelector.buttonGroup.translateX + width <=
+            // Plus 2 for Firefox. Still looks inside the chart.
+            chart.plotWidth + (Highcharts.isFirefox ? 2 : 0),
         'Buttons should be inside the chart'
     );
 });

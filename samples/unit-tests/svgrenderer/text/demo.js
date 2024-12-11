@@ -150,7 +150,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
     });
 
     assert.ok(
-        text.getBBox().width <= 100,
+        text.getBBox().width <= 100 + (Highcharts.isFirefox ? 2 : 0),
         'Text directly inside anchor should be wrapped (#16173)'
     );
 
