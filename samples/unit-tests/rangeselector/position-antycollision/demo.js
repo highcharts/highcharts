@@ -70,7 +70,10 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     chart = Highcharts.stockChart('container', {
         chart: {
-            spacing: [10, 21, 10, 52]
+            spacing: [10, 21, 10, 52],
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             title: {
