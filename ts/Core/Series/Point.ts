@@ -996,12 +996,11 @@ class Point {
             );
         });
 
-        // Return format(pointFormat, {
-        //     point: this,
-        //     series: this.series,
-        //     lang: this.series.chart.options.lang
-        // }, series.chart);
-        return format(pointFormat, this, chart);
+        return format(
+            pointFormat,
+            { ...this, lang: chart.options.lang },
+            chart
+        );
     }
 
     /**
