@@ -361,6 +361,7 @@ class DataGrid {
             this.userOptions
         );
 
+        // Generate column options map
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
             return;
@@ -369,7 +370,6 @@ class DataGrid {
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
         }
-
         this.columnOptionsMap = columnOptionsObj;
     }
 
@@ -654,6 +654,23 @@ class DataGrid {
     }
 
     /**
+     * Resets the content wrapper of the data grid. It clears the content and
+     * resets the class names.
+     */
+    public resetContentWrapper(): void {
+        if (!this.contentWrapper) {
+            return;
+        }
+
+        this.contentWrapper.innerHTML = AST.emptyHTML;
+
+        const theme = this.options?.rendering?.theme;
+        this.contentWrapper.className = Globals.classNames.container + (
+            theme ? ' ' + theme : ''
+        );
+    }
+
+    /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
@@ -667,10 +684,7 @@ class DataGrid {
         this.credits?.destroy();
         vp?.destroy();
 
-        if (this.contentWrapper) {
-            this.contentWrapper.innerHTML = AST.emptyHTML;
-        }
-
+        this.resetContentWrapper();
         this.renderCaption();
 
         if (this.enabledColumns.length > 0) {
