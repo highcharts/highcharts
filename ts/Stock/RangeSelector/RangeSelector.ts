@@ -692,7 +692,6 @@ class RangeSelector {
             if (dropdownLabel) {
                 dropdownLabel.setState(0);
                 dropdownLabel.attr({
-                    // TODO:
                     text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
                 });
 
@@ -1474,7 +1473,6 @@ class RangeSelector {
 
         const langOptions = this.chart.options.lang;
 
-
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
@@ -1517,7 +1515,7 @@ class RangeSelector {
                 rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event|AnyRecord)): void => {
+                (e: (Event | AnyRecord)): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (
