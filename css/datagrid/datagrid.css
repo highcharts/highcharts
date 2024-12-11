@@ -475,7 +475,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell {
-    padding: 0 0 1px;
+    padding: 0;
 }
 
 .highcharts-datagrid-table tbody td:focus,
@@ -491,7 +491,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     height: 100%;
     outline: none;
     float: left;
-    font: var(--hcdg-header-font);
+    font: var(--hcdg-font);
     box-shadow: inset 0 0 0 1px #0000ed;
     padding: var(--hcdg-body-padding);
     background-color: #b7d4ff;
