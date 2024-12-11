@@ -116,7 +116,7 @@
 
     --hcdg-font-weight: var(--font-weight, normal);
     --hcdg-font-size: var(--font-size, 1rem);
-    --hcdg-font-family: var(--font-family, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif);
+    --hcdg-font-family: var(--font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif);
     --hcdg-color: var(--color, #000);
     --hcdg-font: var(--hcdg-font-weight) var(--hcdg-font-size) var(--hcdg-font-family);
 
@@ -233,7 +233,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    border: var( --hcdg-table-border);
+    border: var(--hcdg-table-border);
     background-color: var(--hcdg-table-background-color);
     table-layout: fixed;
     border-radius: var(--hcdg-table-border-radius);
