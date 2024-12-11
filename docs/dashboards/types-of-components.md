@@ -1,5 +1,4 @@
-Types of Dashboards components
-===
+# Types of Dashboards components
 
 Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and DataGrid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components. 
 
@@ -12,37 +11,38 @@ This is an overview of the most critical parameters of a component:
 * `events` - an object containing a pair of names for the event and a callback function that should be called on a given event. The list of events can be found in the API Reference, but the most common is `mount`.
 * `sync` - list of events that should be synchronized between components.
 
-### HTML Component
+## HTML Component
 The most basic and generic component type allows you to add everything that could be defined as HTML, as well as some custom events.
 
 The HTML component can be defined in two ways:  
-1. **Abstract Syntax Tree (AST) style**  
-    Defines the HTML code as a nested tree structure.
+### **Abstract Syntax Tree (AST) style**  
+Defines the HTML code as a nested tree structure.
 
-    Code snippet:
-    ```js
-    {
-        type: 'HTML',
-        renderTo: 'dashboard-1',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-            }
-        }]
-    }
-    ```
-2. **HTML string**  
-    Defines the HTML code as a standard HTML string.
+Code snippet:
+```js
+{
+    type: 'HTML',
+    renderTo: 'dashboard-1',
+    elements: [{
+        tagName: 'img',
+        attributes: {
+            src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+        }
+    }]
+}
+```
+### **HTML string**  
+Defines the HTML code as a standard HTML string.
 
-    Code snippet:
-    ```js
-    {
-        type: 'HTML',
-        renderTo: 'dashboard-1',
-        html: '<img src="https://www.highcharts.com/samples/graphics/stock-dark.svg">'
-    }
-    ```
+Code snippet:
+```js
+{
+    type: 'HTML',
+    renderTo: 'dashboard-1',
+    html: '<img src="https://www.highcharts.com/samples/graphics/stock-dark.svg">'
+}
+```
+
 This [example](https://www.highcharts.com/samples/embed/dashboards/components/component-html) exhibits both approaches to defining HTML components.
 
 Custom HTML components are explained in the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below.
@@ -85,37 +85,37 @@ The above code snippet is part of a [Highcharts Component example](https://www.h
 
 Code snippet using the Data Connector mechanism.
 ```js
-    dataPool: {
-        connectors: [{
-            id: 'micro-element',
-            type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['Food', 'Vitamin A',  'Iron'],
-                data: [
-                    ['Beef Liver', 6421, 6.5],
-                    ['Lamb Liver', 2122, 6.5],
-                    ['Cod Liver Oil', 1350, 0.9],
-                    ['Mackerel', 388, 1],
-                    ['Tuna', 214, 0.6]
-                ]
-            }
-        }]
-    },
-    components: [
-    {
-        renderTo: 'dashboard-col-0',
-        type: 'Highcharts',
-        connector: {
-            id: 'micro-element',
-            columnAssignment: [{
-                seriesId: 'Vitamin A',
-                data: ['Food', 'Vitamin A']
-            }]
+dataPool: {
+    connectors: [{
+        id: 'micro-element',
+        type: 'JSON',
+        options: {
+            firstRowAsNames: false,
+            columnNames: ['Food', 'Vitamin A',  'Iron'],
+            data: [
+                ['Beef Liver', 6421, 6.5],
+                ['Lamb Liver', 2122, 6.5],
+                ['Cod Liver Oil', 1350, 0.9],
+                ['Mackerel', 388, 1],
+                ['Tuna', 214, 0.6]
+            ]
         }
     }]
+},
+components: [
+{
+    renderTo: 'dashboard-col-0',
+    type: 'Highcharts',
+    connector: {
+        id: 'micro-element',
+        columnAssignment: [{
+            seriesId: 'Vitamin A',
+            data: ['Food', 'Vitamin A']
+        }]
+    }
+}]
 ```
-The above code snippet is part of a [Hichcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
+The above code snippet is part of a [Highcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
 
 When using a Data Connector, the data is parsed and organized in rows, with `columnNames` either given explicitly or used as column names in the first row.
 
@@ -144,7 +144,7 @@ The `DataGrid` module has its own style set, so the CSS file must be imported fo
 
 For a chart to be displayed, the type `DataGrid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `dataGridOptions` object allows you to configure `DataGrid` specific parameters like cell formatting, column assignment, etc.
 
-The `DataGrid` may have the series data directly embedded as part of the `dataGridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
+The **DataGrid** may have the series data directly embedded as part of the `dataGridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
 
 Code snippet with data embedded in the `DataGrid` data table; no data connector used.
 ```js
