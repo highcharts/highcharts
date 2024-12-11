@@ -49,10 +49,17 @@ Please also follow the directions in our [ticket submission template](https://gi
 When an issue is resolved, we commit a fix and mark the issue closed. This
 doesn't mean that a new release is available with the fix applied, but that it
 is fixed in the development code and will be added to the next stable release.
-Stable versions are typically released every 1-3 months. To try out the fix
-immediately, you can run http://github.highcharts.com/highcharts.js or
+Stable versions are typically released every 1-3 months.
+
+To try out the fix immediately, using the official CDN, you can run
+http://github.highcharts.com/highcharts.js or
 http://github.highcharts.com/highstock.js from any website, but do not use these
 URLs in production.
+
+A nightly build is available as a Node module and is fully described in the
+[documentation](https://www.highcharts.com/docs/getting-started/install-from-npm#installing-nightly-builds-of-highcharts).
+It can also be access by a CDN, like jsdelivr, (e.g.
+`https://cdn.jsdelivr.net/gh/highcharts/highcharts-dist@nightly/highcharts.js`).
 
 ### Writing a Clear Bug Report
 
