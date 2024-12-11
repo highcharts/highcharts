@@ -225,8 +225,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * @default   '+ {point.groupedPointsAmount} more...'
          * @apioption tooltip.clusterFormat
          */
-        clusterFormat: '<span>+ {point.groupedPointsAmount} more...' +
-            '</span><br/>'
+        clusterFormat: '+ {point.groupedPointsAmount} more...<br/>'
     },
 
     /**
@@ -565,7 +564,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * nodes below a certain square area threshold in pixels. If the square area
      * of a point becomes smaller than the specified threshold, determined by
      * the `pixelWidth` and/or `pixelHeight` options, then this point is moved
-     * into group point per series.
+     * into one group point per series.
      *
      * @sample {highcharts} highcharts/plotoptions/treemap-grouping-simple
      *         Simple demo of Treemap grouping

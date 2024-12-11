@@ -1,6 +1,6 @@
 (async () => {
 
-    const dataJson = await fetch(
+    const data = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8a1f8f0eb4/samples/data/africa-export-2021.json'
     ).then(response => response.json());
 
@@ -111,7 +111,7 @@
                 level: 2,
                 borderWidth: 1
             }],
-            data: dataJson
+            data
         }]
     });
 })();
