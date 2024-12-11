@@ -38,6 +38,8 @@ import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import T from '../../Core/Templating.js';
+const { format } = T;
 import U from '../../Core/Utilities.js';
 import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 const {
@@ -445,7 +447,13 @@ class RangeSelector {
             options = (
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
-            buttonOptions = options.buttons,
+            langOptions = chart.options.lang,
+            buttonOptions = (
+                options.buttons || this.defaultButtons.map(
+                    // Deep copy to avoid modifying the class property
+                    (opt): RangeSelectorButtonOptions => ({ ...opt })
+                )
+            ),
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -464,7 +472,22 @@ class RangeSelector {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
-        rangeSelector.buttonOptions = buttonOptions;
+        rangeSelector.buttonOptions = buttonOptions
+            .map((opt): RangeSelectorButtonOptions => {
+                if (opt.type) {
+                    opt.text ??= langOptions.rangeSelector[`${opt.type}Text`];
+                    opt.title ??= langOptions.rangeSelector[`${opt.type}Title`];
+                }
+
+                opt.text = format(opt.text, {
+                    count: opt.count || 1
+                });
+                opt.title = format(opt.title, {
+                    count: opt.count || 1
+                });
+
+                return opt;
+            });
 
         this.eventsToUnbind = [];
         this.eventsToUnbind.push(addEvent(
@@ -675,6 +698,7 @@ class RangeSelector {
             if (dropdownLabel) {
                 dropdownLabel.setState(0);
                 dropdownLabel.attr({
+                    // TODO:
                     text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
                 });
 
@@ -1454,11 +1478,26 @@ class RangeSelector {
         delete buttonTheme.width;
         delete buttonTheme.states;
 
+        const langOptions = this.chart.options.lang;
+
 
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
+            if (rangeOptions.type) {
+                rangeOptions.text ??= langOptions.rangeSelector[`${rangeOptions.type}Text`];
+                rangeOptions.title ??= langOptions.rangeSelector[`${rangeOptions.type}Title`];
+            }
+
+            rangeOptions.text = format(rangeOptions.text, {
+                count: rangeOptions.count || 1
+            });
+
+            rangeOptions.title = format(rangeOptions.title, {
+                count: rangeOptions.count || 1
+            });
+
             this.createButton(rangeOptions, i, width, states);
         });
     }
@@ -1481,10 +1520,10 @@ class RangeSelector {
 
         buttons[i] = renderer
             .button(
-                rangeOptions.text,
+                rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event | AnyRecord)): void => {
+                (e: (Event|AnyRecord)): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (
