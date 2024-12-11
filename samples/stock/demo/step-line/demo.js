@@ -2,7 +2,7 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/investment-simulator.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a9dcb12aad/samples/data/investment-simulator.json'
     ).then(response => response.json());
 
     // Create the chart
