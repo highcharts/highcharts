@@ -410,7 +410,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody tr:nth-child(even):hover td {
-    background-color: var(--hcdg-row-even-hovered-background-color);
+    background-color: var(--hcdg-row-even-hovered-background-color) !important;
 }
 
 .highcharts-datagrid-table td.highcharts-datagrid-hovered-column {
@@ -434,7 +434,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row:nth-child(even) td {
-    background-color: var(--hcdg-row-even-synced-background-color);
+    background-color: var(--hcdg-row-even-synced-background-color) !important;
 }
 
 .highcharts-datagrid-table th:last-of-type,
@@ -444,6 +444,10 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 
 .highcharts-datagrid-table tr:last-of-type td {
     border-bottom: none;
+}
+
+.highcharts-datagrid-table tbody tr:nth-child(even) td {
+    background-color: var(--hcdg-row-even-background-color);
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody tr {
