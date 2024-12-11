@@ -260,13 +260,13 @@
     border-right: var(--hcdg-header-column-border);
     border-bottom: var(--hcdg-header-row-border);
     background-color: var(--hcdg-header-row-background-color);
-    color: var(--hcdg-header-color);
     padding: var(--hcdg-header-padding);
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
     width: calc(100% - 15px); /* 12px width of sorting icon, 3px padding */
     font: var(--hcdg-header-font);
+    color: var(--hcdg-header-color);
     text-align: var(--hcdg-header-text-align);
     display: block;
     overflow: hidden;
