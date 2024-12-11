@@ -12,16 +12,13 @@ on:
 permissions:
    contents: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   notify:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
         node-version: ['lts/*', 'latest']
+
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -37,5 +34,5 @@ jobs:
         run: npm i
 
       - name: Run test
-        run: node --test ./tools/gulptasks-tests/
+        run: node --test "./tools/gulptasks-tests/*.mjs"
 
