@@ -133,7 +133,7 @@
     --hcdg-caption-font-weight: var(--caption-font-weight, var(--hcdg-font-weight));
     --hcdg-caption-font-size: var(--caption-font-size, var(--hcdg-font-size));
     --hcdg-caption-font-family: var(--caption-font-family, var(--hcdg-font-family));
-    --hcdg-caption-color: var(--caption-color, var(--hcdg-color));
+    --hcdg-caption-color: var(--caption-color, #000);
     --hcdg-caption-font: var(--hcdg-caption-font-weight) var(--hcdg-caption-font-size) var(--hcdg-caption-font-family);
 
     --hcdg-caption-text-align: var(--caption-text-align, var(--hcdg-text-align));
@@ -141,7 +141,7 @@
     --hcdg-description-font-weight: var(--description-font-weight, var(--hcdg-font-weight));
     --hcdg-description-font-size: var(--description-font-size, var(--hcdg-font-size));
     --hcdg-description-font-family: var(--description-font-family, var(--hcdg-font-family));
-    --hcdg-description-color: var(--description-color, var(--hcdg-color));
+    --hcdg-description-color: var(--description-color, #000);
     --hcdg-description-font: var(--hcdg-description-font-weight) var(--hcdg-description-font-size) var(--hcdg-description-font-family);
 
     --hcdg-description-text-align: var(--description-text-align, var(--hcdg-text-align));
@@ -205,7 +205,7 @@
     --hcdg-description-padding: var(--hcdg-description-vertical-padding) var(--hcdg-description-horizontal-padding) 0 var(--hcdg-description-horizontal-padding);
 
     --hcdg-credits-font-size: var(--credits-font-size, var(--hcdg-font-size));
-    --hcdg-credits-color: var(--credits-color, var(--hcdg-color));
+    --hcdg-credits-color: var(--credits-color, #000);
     --hcdg-credits-horizontal-padding: var(--credits-horizontal-padding, var(--credits-padding, var(--hcdg-horizontal-padding)));
     --hcdg-credits-vertical-padding: var(--credits-vertical-padding, var(--credits-padding, var(--hcdg-vertical-padding)));
     --hcdg-credits-padding: var(--hcdg-credits-vertical-padding) var(--hcdg-credits-horizontal-padding) 0 var(--hcdg-credits-horizontal-padding);
