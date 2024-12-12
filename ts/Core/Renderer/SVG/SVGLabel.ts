@@ -511,11 +511,7 @@ class SVGLabel extends SVGElement {
                     align: this.textAlign,
                     x: textX
                 });
-                // #8159 - prevent misplaced data labels in treemap
-                // (useHTML: true)
-                if (text.hasBoxWidthChanged) {
-                    this.bBox = text.getBBox(true);
-                }
+
                 if (typeof textY !== 'undefined') {
                     text.attr('y', textY);
                 }

@@ -166,7 +166,6 @@ class SVGElement implements SVGElementLike {
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
-    public hasBoxWidthChanged?: boolean;
     public height?: number;
     public imgwidth?: number;
     public imgheight?: number;
