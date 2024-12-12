@@ -551,10 +551,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     text-decoration: none;
 }
 
-.highcharts-datagrid-credits:hover {
-    color: var(--highcharts-neutral-color-100);
-}
-
 .highcharts-datagrid-credits-container {
     text-align: var(--hcdg-credits-text-align);
     padding: var(--hcdg-credits-padding);
