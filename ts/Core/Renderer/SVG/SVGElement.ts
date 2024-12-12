@@ -411,7 +411,9 @@ class SVGElement implements SVGElementLike {
         alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs: SVGAttributes = {},
+        const attribs: SVGAttributes = {
+                textAlign: alignOptions?.align
+            },
             renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             initialAlignment = Boolean(alignOptions);

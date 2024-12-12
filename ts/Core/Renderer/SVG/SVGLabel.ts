@@ -165,6 +165,7 @@ class SVGLabel extends SVGElement {
 
     public alignSetter(value: AlignValue): void {
         const alignFactor = getAlignFactor(value);
+        this.textAlign = value;
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -392,8 +393,9 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    public 'text-alignSetter'(value: string): void {
+    public textAlignSetter(value: string): void {
         this.textAlign = value;
+        this.updateTextPadding();
     }
 
     public textSetter(text?: string): void {
@@ -507,11 +509,15 @@ class SVGLabel extends SVGElement {
                             getAlignFactor(this.textAlign) *
                                 (this.widthSetting - this.bBox.width) :
                             0
-                    );
+                    ) +
+                    getAlignFactor(this.textAlign) * this.bBox.width;
 
             // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
-                text.attr('x', textX);
+                text.attr({
+                    align: this.textAlign,
+                    x: textX
+                });
                 // #8159 - prevent misplaced data labels in treemap
                 // (useHTML: true)
                 if (text.hasBoxWidthChanged) {
