@@ -1,23 +1,25 @@
 # Theming in Highcharts DataGrid
 
+![An illustration showing theming](ill_theming.png)
+
 Highcharts DataGrid is built with theming in mind, allowing you to easily adapt its styles to match your brand and preferences. While it’s possible to customize the grid using standard CSS overrides, we **strongly recommend** leveraging [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) (variables) for a more robust and flexible approach. Highcharts DataGrid ships with a [selection of predefined variables](https://www.highcharts.com/docs/datagrid/theming-variables).
 
-Using CSS variables ensures consistent theming while avoiding common issues like CSS specificity conflicts. Overriding default styles directly can disrupt functionality, as some styles are critical to the datagrid’s operation. CSS variables provide a safe, efficient, and reliable way to customize the datagrid without compromising performance.
+Using CSS variables ensures consistent theming while avoiding common issues like CSS specificity conflicts. Overriding default styles directly can disrupt functionality, as some styles are critical to the datagrid’s operation. Using variables also **limits the chance of breaking changes** to your styles when upgrading to new versions of Highcharts DataGrid. CSS variables provide a safe, efficient, and reliable way to customize the datagrid without compromising performance.
 
 ## Variable Inheritance
 
-CSS variables naturally inherit through the datagrid’s structure in a logical cascade: from `<table>` to `<tbody>` and `<thead>`. For example, the variable `--hcdg-table-border-width` applies to the entire table by default and cascades to rows, columns, and cells unless overridden by more specific variables like `--hcdg-row-border-width`.
+CSS variables naturally inherit through the datagrid’s structure in a logical cascade: from `<table>` to `<tbody>` and `<thead>`. For example, the variable `--border-width` applies to the entire table by default and cascades to rows, columns, and cells unless overridden by more specific variables like `--row-border-width`.
 
-In the example below, a custom theme renders a 3px solid black border around the table and between rows and columns. The last two variables override the row border’s width and style, but the row border color inherits from `--hcdg-table-border-color`.
+In the example below, a custom theme renders a 3px solid black border around the table and between rows and columns. The last two variables override the row border’s width and style, but the row border color inherits from `--border-color`.
 
 ```css
 .theme-custom {
-  --hcdg-table-border-width: 3px;
-  --hcdg-table-border-style: solid;
-  --hcdg-table-border-color: #000;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #000;
 
-  --hcdg-row-border-width: 1px;
-  --hcdg-row-border-style: dashed;
+  --row-border-width: 1px;
+  --row-border-style: dashed;
 }
 ```
 
@@ -31,12 +33,12 @@ In the example below, a base theme defines a custom font and font size. The exte
 
 ```css
 .theme-brand {
-  --hcdg-table-font-family: "Brand Font", Arial, sans-serif;
-  --hcdg-table-font-size: 12px;
+  --font-family: "Brand Font", Arial, sans-serif;
+  --font-size: 12px;
 }
 
 .theme-brand-big {
-  --hcdg-table-font-size: 16px;
+  --font-size: 16px;
 }
 ```
 
@@ -74,14 +76,14 @@ If you create a theme from scratch or modify color variables, you should define 
 
 ```css
 .theme-custom {
-  --hcdg-table-border-width: 3px;
-  --hcdg-table-border-style: solid;
-  --hcdg-table-border-color: #000;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
   .theme-custom {
-    --hcdg-table-border-color: #fff;
+    --border-color: #fff;
   }
 }
 ```
