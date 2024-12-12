@@ -411,7 +411,7 @@ class SVGElement implements SVGElementLike {
         redraw: boolean = true
     ): this {
         const attribs: SVGAttributes = {
-                textAlign: alignOptions?.align
+                'text-align': alignOptions?.align
             },
             renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,

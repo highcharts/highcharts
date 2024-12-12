@@ -393,7 +393,7 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    public textAlignSetter(value: string): void {
+    public 'text-alignSetter'(value: string): void {
         this.textAlign = value;
         this.updateTextPadding();
     }
@@ -495,7 +495,7 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        const text = this.text;
+        const { text, textAlign } = this;
         if (!text.textPath) {
 
             this.updateBoxSize();
@@ -503,12 +503,15 @@ class SVGLabel extends SVGElement {
             // Determine y based on the baseline
             const textY = this.baseline ? 0 : this.baselineOffset,
                 textX = (this.paddingLeft ?? this.padding) +
-                    getAlignFactor(this.textAlign) * this.bBox.width;
+                    // Compensate for alignment
+                    getAlignFactor(textAlign) * (
+                        this.widthSetting ?? this.bBox.width
+                    );
 
             // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr({
-                    align: this.textAlign,
+                    align: textAlign,
                     x: textX
                 });
 
