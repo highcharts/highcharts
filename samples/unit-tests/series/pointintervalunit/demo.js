@@ -123,7 +123,7 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
     // Reset
     Highcharts.setOptions({
         time: {
-            timezone: undefined
+            timezone: 'UTC'
         }
     });
 });

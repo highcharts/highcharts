@@ -737,22 +737,22 @@ class DataGrid {
      * @internal
      */
     public renderViewport(): void {
-        let vp = this.viewport;
-        const viewportMeta = vp?.getStateMeta();
+        const viewportMeta = this.viewport?.getStateMeta();
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
         this.credits?.destroy();
-        vp?.destroy();
+
+        this.viewport?.destroy();
+        delete this.viewport;
 
         this.resetContentWrapper();
         this.renderCaption();
 
         if (this.enabledColumns.length > 0) {
-            this.renderTable();
-            vp = this.viewport;
-            if (viewportMeta && vp) {
-                vp.applyStateMeta(viewportMeta);
+            this.viewport = this.renderTable();
+            if (viewportMeta && this.viewport) {
+                this.viewport.applyStateMeta(viewportMeta);
             }
         } else {
             this.renderNoData();
@@ -766,20 +766,23 @@ class DataGrid {
 
         this.accessibility?.initTableA11yAttrs();
 
-        if (vp?.virtualRows) {
-            vp?.reflow();
+        if (this.viewport?.virtualRows) {
+            this.viewport.reflow();
         }
     }
 
     /**
      * Renders the table (viewport) of the data grid.
+     *
+     * @returns
+     * The newly rendered table (viewport) of the data grid.
      */
-    private renderTable(): void {
+    private renderTable(): Table {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.classNames.tableElement
         }, this.contentWrapper);
 
-        this.viewport = new Table(this, this.tableElement);
+        return new Table(this, this.tableElement);
     }
 
     /**
