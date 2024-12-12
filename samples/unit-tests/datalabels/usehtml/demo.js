@@ -185,7 +185,7 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
             assert.close(
                 htmlBox[property],
                 standardBox[property],
-                3,
+                Highcharts.isFirefox ? 5 : 1,
                 `For rotation ${rotation}, the ${property} property should be` +
                 ' similar for HTML and non-HTML label'
             );
