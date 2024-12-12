@@ -248,6 +248,7 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
+        padding: 5,
         style: {
             textOverflow: 'none'
         }
