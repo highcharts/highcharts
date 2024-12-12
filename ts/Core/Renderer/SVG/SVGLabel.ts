@@ -503,13 +503,6 @@ class SVGLabel extends SVGElement {
             // Determine y based on the baseline
             const textY = this.baseline ? 0 : this.baselineOffset,
                 textX = (this.paddingLeft ?? this.padding) +
-                    // Compensate for alignment
-                    (
-                        (defined(this.widthSetting) && this.bBox) ?
-                            getAlignFactor(this.textAlign) *
-                                (this.widthSetting - this.bBox.width) :
-                            0
-                    ) +
                     getAlignFactor(this.textAlign) * this.bBox.width;
 
             // Update if anything changed
