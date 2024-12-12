@@ -689,6 +689,8 @@ class DataGrid {
             this.credits = new Credits(this);
         }
 
+        this.accessibility?.initTableA11yAttrs();
+
         if (this.viewport?.virtualRows) {
             this.viewport.reflow();
         }
