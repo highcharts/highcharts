@@ -39,7 +39,7 @@
                 tooltip: {
                     valueDecimals: 2
                 },
-                pointStart: '2024-01-01',
+                pointStart: '2023-01-01',
                 pointInterval: 86400000, // One day
                 lastPrice: {
                     enabled: true,
