@@ -39,7 +39,8 @@
                     backgroundColor: 'contrast',
                     borderRadius: 3,
                     style: {
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        textOutline: 'none'
                     },
                     // Only show dataLabels for areas with high label rank
                     format: '{#if (lt point.properties.labelrank 5)}' +

@@ -17,7 +17,10 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 backgroundColor: 'contrast',
-                inside: true
+                inside: true,
+                style: {
+                    textOutline: 'none'
+                }
             },
             stacking: 'normal'
         }

@@ -53,9 +53,9 @@
                 enabled: true,
                 backgroundColor: 'contrast',
                 borderRadius: 2,
-                padding: [2, 4],
                 format: '{point.code}',
                 style: {
+                    textOutline: 'none',
                     textTransform: 'uppercase'
                 }
             },

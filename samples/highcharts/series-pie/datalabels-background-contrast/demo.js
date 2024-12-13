@@ -11,11 +11,9 @@ Highcharts.chart('container', {
                 backgroundColor: 'contrast',
                 borderRadius: 3,
                 distance: '-30%',
-                /*
-                padding: 0,
-                paddingLeft: 3,
-                paddingRight: 3
-                */
+                style: {
+                    textOutline: 'none'
+                }
             }
         }
     },
