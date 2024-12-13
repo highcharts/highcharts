@@ -51,8 +51,8 @@
                 maxZoom: 0.1
             },
             tooltip: {
-                format: '<b>{series.name}</b><br/>{x:%A %B %e %Y}:<br/>' +
-                        '1 USD = {y:.2f} EUR',
+                format: '<b>{series.name}</b><br/>{x:%a, %b %e, %Y}:<br/>' +
+                    '1 USD = {y:.2f} EUR',
                 shared: true
             },
             legend: {
@@ -95,7 +95,9 @@
                 backgroundColor: null,
                 marginLeft: 50,
                 marginRight: 20,
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 events: {
 
                     // listen to the selection event on the master chart to

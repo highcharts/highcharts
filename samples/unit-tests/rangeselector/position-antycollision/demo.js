@@ -70,7 +70,10 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
 
     chart = Highcharts.stockChart('container', {
         chart: {
-            spacing: [10, 21, 10, 52]
+            spacing: [10, 21, 10, 52],
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             title: {
@@ -116,13 +119,12 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         }
     });
 
-    selectorGroupBBox = chart.rangeSelector.group.getBBox();
+    selectorGroupBBox = chart.rangeSelector.buttonGroup.getBBox();
 
-    assert.ok(
-        (chart.plotWidth - selectorGroupBBox.width) / 2 +
-            chart.plotLeft -
-            selectorGroupBBox.x <=
-            1,
+    assert.close(
+        chart.plotLeft + chart.plotWidth / 2,
+        (chart.plotLeft + selectorGroupBBox.x) + selectorGroupBBox.width / 2,
+        5,
         'rangeSelector buttons should be centered correctly (#13014).'
     );
 
@@ -490,10 +492,12 @@ QUnit.test('#14292: Right-aligned button position after animating', assert => {
 
     const width = chart.rangeSelector.buttonGroup.getBBox().width;
 
-    chart.rangeSelector.update();
+    chart.rangeSelector.update({});
 
     assert.ok(
-        chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,
+        chart.rangeSelector.buttonGroup.translateX + width <=
+            // Plus 2 for Firefox. Still looks inside the chart.
+            chart.plotWidth + (Highcharts.isFirefox ? 2 : 0),
         'Buttons should be inside the chart'
     );
 });

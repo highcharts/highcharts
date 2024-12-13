@@ -1,6 +1,8 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         styledMode: true
     },
     title: {

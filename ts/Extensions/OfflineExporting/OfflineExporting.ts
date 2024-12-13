@@ -49,6 +49,7 @@ const {
     fireEvent,
     merge
 } = U;
+import RegexLimits from '../RegexLimits.js';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -177,7 +178,6 @@ namespace OfflineExporting {
      *
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
-     *
      * - **libURL:** URL pointing to location of dependency scripts to download
      * on demand. Default is the exporting.libURL option of the global
      * Highcharts options pointing to our server.
@@ -386,9 +386,13 @@ namespace OfflineExporting {
                 outlineElements =
                     el.getElementsByClassName('highcharts-text-outline');
                 while (outlineElements.length > 0) {
-                    el.removeChild(outlineElements[0]);
+                    const outline = outlineElements[0];
+                    if (outline.parentNode) {
+                        outline.parentNode.removeChild(outline);
+                    }
                 }
             });
+
 
             const svgNode = dummySVGContainer.querySelector('svg');
             if (svgNode) {
@@ -473,51 +477,58 @@ namespace OfflineExporting {
                         failCallback(e);
                     }
                 }, function (): void {
+                    if (svg.length > RegexLimits.svgLimit) {
+                        throw new Error('Input too long');
+                    }
                     // Failed due to tainted canvas
                     // Create new and untainted canvas
                     const canvas = doc.createElement('canvas'),
-                        ctx: CanvasRenderingContext2D =
-                            canvas.getContext('2d') as any,
-                        imageWidth = (svg.match(
-                            /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
-                        ) as any)[1] * scale,
-                        imageHeight = (svg.match(
-                            /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
-                        ) as any)[1] * scale,
-                        downloadWithCanVG = function (): void {
-                            const v = win.canvg.Canvg.fromString(ctx, svg);
-                            v.start();
-                            try {
-                                downloadURL(
-                                    win.navigator.msSaveOrOpenBlob as any ?
-                                        canvas.msToBlob() :
-                                        canvas.toDataURL(imageType),
-                                    filename
-                                );
-                                if (successCallback) {
-                                    successCallback();
-                                }
-                            } catch (e) {
-                                failCallback(e);
-                            } finally {
-                                finallyHandler();
-                            }
-                        };
+                        ctx = canvas.getContext('2d'),
+                        matchedImageWidth = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        ),
+                        matchedImageHeight = svg.match(
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
+                        );
 
-                    canvas.width = imageWidth;
-                    canvas.height = imageHeight;
-                    if (win.canvg) {
-                        // Use preloaded canvg
-                        downloadWithCanVG();
-                    } else {
-                        // Must load canVG first. // Don't destroy the object
-                        // URL yet since we are doing things asynchronously. A
-                        // cleaner solution would be nice, but this will do for
-                        // now.
-                        objectURLRevoke = true;
-                        getScript(libURL + 'canvg.js', function (): void {
+                    if (ctx && matchedImageWidth && matchedImageHeight) {
+                        const imageWidth = +matchedImageWidth[1] * scale,
+                            imageHeight = +matchedImageHeight[1] * scale,
+                            downloadWithCanVG = (): void => {
+                                const v = win.canvg.Canvg.fromString(ctx, svg);
+                                v.start();
+                                try {
+                                    downloadURL(
+                                        win.navigator.msSaveOrOpenBlob ?
+                                            canvas.msToBlob() :
+                                            canvas.toDataURL(imageType),
+                                        filename
+                                    );
+                                    if (successCallback) {
+                                        successCallback();
+                                    }
+                                } catch (e) {
+                                    failCallback(e);
+                                } finally {
+                                    finallyHandler();
+                                }
+                            };
+
+                        canvas.width = imageWidth;
+                        canvas.height = imageHeight;
+                        if (win.canvg) {
+                            // Use preloaded canvg
                             downloadWithCanVG();
-                        });
+                        } else {
+                            // Must load canVG first.
+                            // Don't destroy the object URL yet since we are
+                            // doing things asynchronously. A cleaner solution
+                            // would be nice, but this will do for now.
+                            objectURLRevoke = true;
+                            getScript(libURL + 'canvg.js', downloadWithCanVG);
+                        }
                     }
                 },
                 // No canvas support

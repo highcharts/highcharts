@@ -23,9 +23,9 @@ const gulp = require('gulp');
 async function task() {
     const argv = require('yargs').argv;
     const buildTool = require('../build');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     logLib.message('Generating ES5 code...');
 
@@ -34,7 +34,7 @@ async function task() {
 
         fsLib.deleteDirectory('js/', true);
 
-        await processLib.exec('npx tsc --build ts/masters-es5');
+        await processLib.exec('npx tsc -p ts/masters-es5 --outDir js/');
 
         fsLib.deleteDirectory('js/Dashboards/', true);
         fsLib.deleteDirectory('js/DataGrid/', true);

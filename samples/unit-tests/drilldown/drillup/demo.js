@@ -370,9 +370,34 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
 QUnit.test(
     'Drilldown on the chart with category axis and cropThreshold set, #16135.',
     function (assert) {
+        let redraws = 0,
+            drillupall = 0;
+
         const chart = Highcharts.chart('container', {
             chart: {
-                type: 'column'
+                type: 'column',
+                events: {
+                    drillupall: function () {
+                        drillupall++;
+
+                        assert.strictEqual(
+                            redraws,
+                            2,
+                            `After drilldown and drillup there should be only
+                            two redraws events called (#20876).`
+                        );
+
+                        assert.strictEqual(
+                            drillupall,
+                            1,
+                            `After drilldown and drillup there should be only
+                            one drillupall event called (#20876).`
+                        );
+                    },
+                    redraw: function () {
+                        redraws++;
+                    }
+                }
             },
             xAxis: {
                 type: 'category'
@@ -394,27 +419,26 @@ QUnit.test(
                 ]
             }],
             drilldown: {
-                drilldown: {
-                    breadcrumbs: {
-                        showFullPath: false
-                    },
-                    series: [{
-                        data: [
-                            ['x-0', 1],
-                            ['x-1', 2],
-                            ['x-2', 3]
-                        ],
-                        name: 'DrillSeries',
-                        id: 'DrillSeries'
-                    }]
-                }
+                breadcrumbs: {
+                    showFullPath: false
+                },
+                series: [{
+                    data: [
+                        ['x-0', 1],
+                        ['x-1', 2],
+                        ['x-2', 3]
+                    ],
+                    name: 'DrillSeries',
+                    id: 'DrillSeries'
+                }]
             }
         });
 
         chart.series[0].points[1].doDrilldown();
         chart.drillUp();
+        const xData = chart.series[0].getColumn('x');
         assert.strictEqual(
-            chart.series[0].xData[chart.series[0].xData.length - 1],
+            xData[xData.length - 1],
             9,
             `After drilling down and up on the chart with the category axis
             the main series should go back to its original state.`

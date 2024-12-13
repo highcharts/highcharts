@@ -70,7 +70,7 @@ export interface RangeSelectorClickCallbackFunction {
 export interface RangeSelectorOptions {
     allButtonsEnabled: boolean;
     buttonPosition: RangeSelectorPositionOptions;
-    buttons?: Array<RangeSelectorButtonOptions>;
+    buttons: Array<RangeSelectorButtonOptions>;
     buttonSpacing: number;
     buttonTheme: ButtonThemeObject;
     dropdown: 'always'|'never'|'responsive';
@@ -80,7 +80,7 @@ export interface RangeSelectorOptions {
     inputBoxBorderColor: ColorString;
     inputBoxHeight: number;
     inputBoxWidth?: number;
-    inputDateFormat: string;
+    inputDateFormat: Time.DateTimeFormat;
     inputDateParser?: RangeSelectorParseCallbackFunction;
     inputEditDateFormat: string;
     inputEnabled: boolean;

@@ -35,7 +35,7 @@ import type Types from '../../../Shared/Types';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
-import KPISyncHandlers from './KPISyncHandlers.js';
+import KPISyncs from './KPISyncs/KPISyncs.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
 import Templating from '../../../Core/Templating.js';
 const {
@@ -122,8 +122,10 @@ class KPIComponent extends Component {
         KPIComponentDefaults
     );
 
-    /** @internal */
-    public static syncHandlers = KPISyncHandlers;
+    /**
+     * Predefined sync config for the KPI component.
+     */
+    public static predefinedSyncConfig = KPISyncs;
 
     /**
      * Default options of the KPI component.
@@ -131,7 +133,6 @@ class KPIComponent extends Component {
      * @default {
         chart: {
             type: 'spline',
-            styledMode: true,
             zooming: {
                 mouseWheel: {
                     enabled: false
@@ -171,7 +172,6 @@ class KPIComponent extends Component {
     public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
         chart: {
             type: 'spline',
-            styledMode: true,
             zooming: {
                 mouseWheel: {
                     enabled: false
@@ -242,13 +242,6 @@ class KPIComponent extends Component {
     public chart?: Chart;
 
     /**
-     * Reference to sync component that allows to sync.
-     *
-     * @internal
-     */
-    public sync: Component['sync'];
-
-    /**
      * Previous value of KPI.
      *
      * @internal
@@ -284,10 +277,6 @@ class KPIComponent extends Component {
         this.options = options as Options;
 
         this.type = 'KPI';
-        this.sync = new KPIComponent.Sync(
-            this,
-            this.syncHandlers
-        );
 
         this.value = createElement(
             'span',
@@ -383,15 +372,6 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Internal method for handling option updates.
-     *
-     * @private
-     */
-    private setOptions(): void {
-        this.filterAndAssignSyncOptions(KPISyncHandlers);
-    }
-
-    /**
      * Handles updating via options.
      *
      * @param options
@@ -402,7 +382,7 @@ class KPIComponent extends Component {
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
-        this.setOptions();
+
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }
@@ -436,8 +416,10 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        if (this.connector && this.options.columnName) {
-            const table = this.connector?.table.modified,
+        const connector = this.getFirstConnector();
+
+        if (connector && this.options.columnName) {
+            const table = connector.table.modified,
                 column = table.getColumn(this.options.columnName),
                 length = column?.length || 0;
 

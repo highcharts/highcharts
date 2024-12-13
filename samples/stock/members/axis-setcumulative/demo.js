@@ -1,9 +1,5 @@
 Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 4
-    },
-
     tooltip: {
         changeDecimals: 2,
         valueDecimals: 2

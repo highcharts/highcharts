@@ -50,6 +50,7 @@ const { doc } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    isArray,
     merge,
     pick
 } = U;
@@ -387,7 +388,7 @@ function getGroupedPoints(point: Point): Array<Point> {
         groupKey = (series.options.dragDrop as any).groupBy;
     let points: Array<Point> = [];
 
-    if (series.boosted) { // #11156
+    if (series.boosted && isArray(data)) { // #11156
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             points.push(
                 new series.pointClass( // eslint-disable-line new-cap

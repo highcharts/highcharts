@@ -176,6 +176,66 @@ QUnit.test(
     }
 );
 
+QUnit.test(
+    'The parallel coordinates axes should have the ability to scroll.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                scrollablePlotArea: {
+                    minWidth: 700
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'yAxis should be fixed on scroll.'
+        );
+
+        chart.update({
+            chart: {
+                parallelCoordinates: true
+            },
+            yAxis: [{}, {}, {}, {}, {}],
+            xAxis: [{
+                opposite: true
+            }],
+            legend: {
+                enabled: false
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }, {
+                data: [2, 3, 4, 7, 1]
+            }, {
+                data: [3, 4, 1, 6, 7]
+            }]
+        }, true, true, false);
+
+        assert.notOk(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'parallel yAxis should not be fixed on scroll.'
+        );
+
+        chart.update({
+            chart: {
+                parallelCoordinates: false
+            }
+        }, true, true, false);
+
+        assert.ok(
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
+                .contains('highcharts-fixed'),
+            'yAxis should be fixed on scroll.'
+        );
+    }
+);
+
 QUnit.test('#12517: Reset zoom button', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
@@ -199,3 +259,66 @@ QUnit.test('#12517: Reset zoom button', assert => {
         'Reset zoom button should be within chart'
     );
 });
+
+QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minHeight: 500
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[1].gridGroup.getBBox().height,
+        chart.yAxis[1].height,
+        'Grid lines should not exceed navigator height, #20354'
+    );
+});
+
+QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minHeight: 500
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[1].gridGroup.getBBox().height,
+        chart.yAxis[1].height,
+        'Grid lines should not exceed navigator height, #20354'
+    );
+});
+
+QUnit.test(
+    'Pointer events on points outside of plotArea, #21136', assert => {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'bar',
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseOver(60, 330, undefined, true);
+
+        assert.ok(
+            chart.tooltip.isHidden,
+            `Tooltip should be hidden when pointer appears on point outside of
+            visible plot area, #21136.`
+        );
+    }
+);

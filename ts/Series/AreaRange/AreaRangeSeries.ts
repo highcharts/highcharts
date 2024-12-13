@@ -20,11 +20,11 @@ import type Axis from '../../Core/Axis/Axis';
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
+import type PointMarkerOptions from '../../Core/Series/PointOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type PointMarkerOptions from '../../Core/Series/PointOptions';
-import { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -362,7 +362,7 @@ class AreaRangeSeries extends AreaSeries {
         options.step = step;
 
         // Create a line on both top and bottom of the range
-        const linePath = ([] as SVGPath).concat(lowerPath, higherPath);
+        const linePath: SVGPath = ([] as SVGPath).concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement into
         // 'lineTo'
@@ -383,8 +383,8 @@ class AreaRangeSeries extends AreaSeries {
         this.areaPath = lowerPath.concat(higherAreaPath);
 
         // Prepare for sideways animation
-        (linePath as any).isArea = true;
-        (linePath as any).xMap = lowerPath.xMap;
+        linePath.isArea = true;
+        linePath.xMap = lowerPath.xMap;
         this.areaPath.xMap = lowerPath.xMap;
 
         return linePath;
@@ -562,7 +562,7 @@ class AreaRangeSeries extends AreaSeries {
 
     public modifyMarkerSettings(): {
         marker?: PointMarkerOptions;
-        symbol?: keyof SymbolTypeRegistry;
+        symbol?: SymbolKey;
     } {
         const series = this,
             originalMarkerSettings = {
@@ -587,7 +587,7 @@ class AreaRangeSeries extends AreaSeries {
 
     public restoreMarkerSettings(originalSettings: {
         marker?: PointMarkerOptions;
-        symbol?: keyof SymbolTypeRegistry;
+        symbol?: SymbolKey;
     }): void {
         const series = this;
 
@@ -807,148 +807,3 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  * */
 
 export default AreaRangeSeries;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `arearange` series. If the [type](#series.arearange.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- *
- *
- * @extends   series,plotOptions.arearange
- * @excluding dataParser, dataURL, stack, stacking
- * @product   highcharts highstock
- * @requires  highcharts-more
- * @apioption series.arearange
- */
-
-/**
- * @see [fillColor](#series.arearange.fillColor)
- * @see [fillOpacity](#series.arearange.fillOpacity)
- *
- * @apioption series.arearange.color
- */
-
-/**
- * An array of data points for the series. For the `arearange` series type,
- * points can be given in the following ways:
- *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- *     correspond to `x,low,high`. If the first value is a string, it is
- *     applied as the name of the point, and the `x` value is inferred.
- *     The `x` value can also be omitted, in which case the inner arrays
- *     should be of length 2\. Then the `x` value is automatically calculated,
- *     either starting at 0 and incremented by 1, or from `pointStart`
- *     and `pointInterval` given in the series options.
- *     ```js
- *     data: [
- *         [0, 8, 3],
- *         [1, 1, 1],
- *         [2, 6, 8]
- *     ]
- *     ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- *     few settings, see the complete options set below. If the total number of
- *     data points exceeds the series'
- *     [turboThreshold](#series.arearange.turboThreshold),
- *     this option is not available.
- *     ```js
- *     data: [{
- *         x: 1,
- *         low: 9,
- *         high: 0,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         low: 3,
- *         high: 4,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *     ```
- *
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- *
- * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
- * @extends   series.line.data
- * @excluding marker, y
- * @product   highcharts highstock
- * @apioption series.arearange.data
- */
-
-/**
- * @extends   series.arearange.dataLabels
- * @product   highcharts highstock
- * @apioption series.arearange.data.dataLabels
- */
-
-/**
- * @see [color](#series.arearange.color)
- * @see [fillOpacity](#series.arearange.fillOpacity)
- *
- * @apioption series.arearange.fillColor
- */
-
-/**
- * @see [color](#series.arearange.color)
- * @see [fillColor](#series.arearange.fillColor)
- *
- * @default   {highcharts} 0.75
- * @default   {highstock} 0.75
- * @apioption series.arearange.fillOpacity
- */
-
-/**
- * Options for the lower markers of the arearange-like series. When `lowMarker`
- * is not defined, options inherit form the marker.
- *
- * @see [marker](#series.arearange.marker)
- *
- * @declare   Highcharts.PointMarkerOptionsObject
- * @extends   plotOptions.series.marker
- * @default   undefined
- * @product   highcharts highstock
- * @apioption plotOptions.arearange.lowMarker
- */
-
-/**
- *
- * @sample {highcharts} highcharts/series-arearange/lowmarker/
- *         Area range chart with `lowMarker` option
- *
- * @declare   Highcharts.PointMarkerOptionsObject
- * @extends   plotOptions.series.marker.symbol
- * @product   highcharts highstock
- * @apioption plotOptions.arearange.lowMarker.symbol
- */
-
-/**
- * The high or maximum value for each data point.
- *
- * @type      {number}
- * @product   highcharts highstock
- * @apioption series.arearange.data.high
- */
-
-/**
- * The low or minimum value for each data point.
- *
- * @type      {number}
- * @product   highcharts highstock
- * @apioption series.arearange.data.low
- */
-
-''; // Adds doclets above to transpiled file

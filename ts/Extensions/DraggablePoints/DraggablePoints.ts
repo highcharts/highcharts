@@ -49,8 +49,7 @@ const {
     addEvent,
     clamp,
     isNumber,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -136,7 +135,7 @@ export interface PointDropEventObject {
 }
 
 export interface SeriesDragDropPropsObject {
-    axis: string;
+    axis: 'x'|'y';
     beforeResize?: Function;
     handleOptions?: DragDropHandleOptions;
     move: boolean;
@@ -233,6 +232,7 @@ function compose(
             'bullet',
             'column',
             'columnrange',
+            'errorbar',
             'flags',
             'gantt',
             'ohlc',
@@ -501,22 +501,17 @@ function pointGetDropValues(
      */
     const limitToRange = (
         val: number,
-        direction: string
+        dir: 'x'|'y'
     ): number => {
-        const defaultPrecision =
-            (series as any)[direction.toLowerCase() + 'Axis']
-                .categories ? 1 : 0,
-            precision = pick<number|undefined, number>(
-                (options as any)['dragPrecision' + direction], defaultPrecision
-            ),
-            min = pick<number|undefined, number>(
-                (options as any)['dragMin' + direction] as any,
-                -Infinity
-            ),
-            max = pick<number|undefined, number>(
-                (options as any)['dragMax' + direction] as number,
-                Infinity
-            );
+        const direction = dir.toUpperCase() as 'X'|'Y',
+            time = series.chart.time,
+            defaultPrecision = series[`${dir}Axis`].categories ? 1 : 0,
+            precision = options[`dragPrecision${direction}`] ??
+                defaultPrecision,
+            min = time.parse(options[`dragMin${direction}`]) ??
+                -Infinity,
+            max = time.parse(options[`dragMax${direction}`]) ??
+                Infinity;
 
         let res = val;
 
@@ -541,14 +536,12 @@ function pointGetDropValues(
      */
     const limitToMapRange = (
         newPos: PointerEvent,
-        direction: string,
+        dir: 'x'|'y',
         key: string
     ): (number|undefined) => {
         if (mapView) {
-            const precision = pick<number|undefined, number>(
-                    (options as any)['dragPrecision' + direction],
-                    0
-                ),
+            const direction = dir.toUpperCase() as 'X'|'Y',
+                precision = options[`dragPrecision${direction}`] ?? 0,
                 lonLatMin = mapView.pixelsToLonLat({
                     x: 0,
                     y: 0
@@ -557,18 +550,12 @@ function pointGetDropValues(
                     x: chart.plotBox.width,
                     y: chart.plotBox.height
                 });
-            let min = pick(
-                    (options as any)['dragMin' + direction] as any,
-                    lonLatMin &&
-                        lonLatMin[key as keyof MapLonLatObject],
-                    -Infinity
-                ),
-                max = pick(
-                    (options as any)['dragMax' + direction] as number,
-                    lonLatMax &&
-                        lonLatMax[key as keyof MapLonLatObject],
-                    Infinity
-                ),
+            let min = options[`dragMin${direction}`] ??
+                    lonLatMin?.[key as keyof MapLonLatObject] ??
+                    -Infinity,
+                max = options[`dragMax${direction}`] ??
+                    lonLatMax?.[key as keyof MapLonLatObject] ??
+                    Infinity,
                 res = newPos[key as keyof typeof newPos] as number;
 
             if (mapView.projection.options.name === 'Orthographic') {
@@ -617,13 +604,13 @@ function pointGetDropValues(
             oldVal = (pointOrigin.point as any)[key],
             axis: Axis = (series as any)[val.axis + 'Axis'],
             newVal = mapView ?
-                limitToMapRange(newPos, val.axis.toUpperCase(), key) :
+                limitToMapRange(newPos, val.axis, key) :
                 limitToRange(
                     axis.toValue(
                         (axis.horiz ? newPos.chartX : newPos.chartY) +
                         (pointOrigin as any)[key + 'Offset']
                     ),
-                    val.axis.toUpperCase()
+                    val.axis
                 );
 
         // If we are updating a single prop, and it has a validation function

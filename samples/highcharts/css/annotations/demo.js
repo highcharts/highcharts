@@ -1887,7 +1887,9 @@ Highcharts.chart('container', {
     chart: {
         styledMode: true,
         type: 'area',
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift'
     },

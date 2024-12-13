@@ -41,13 +41,13 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            start: Date.UTC(2018, 11, 1),
-            end: Date.UTC(2018, 11, 2),
+            start: '2018-12-01',
+            end: '2018-12-02',
             y: 0,
             assignee: 'bre1470'
         }, {
-            start: Date.UTC(2018, 11, 2),
-            end: Date.UTC(2018, 11, 5),
+            start: '2018-12-02',
+            end: '2018-12-05',
             y: 1,
             assignee: 'oysteinmoseng',
             fontSymbol: 'exclamation',
@@ -55,18 +55,18 @@ Highcharts.ganttChart('container', {
                 description: 'Exclamation symbol.'
             }
         }, {
-            start: Date.UTC(2018, 11, 8),
-            end: Date.UTC(2018, 11, 9),
+            start: '2018-12-08',
+            end: '2018-12-09',
             y: 2,
             assignee: 'TorsteinHonsi'
         }, {
-            start: Date.UTC(2018, 11, 9),
-            end: Date.UTC(2018, 11, 19),
+            start: '2018-12-09',
+            end: '2018-12-19',
             y: 1,
             assignee: 'bre1470'
         }, {
-            start: Date.UTC(2018, 11, 10),
-            end: Date.UTC(2018, 11, 23),
+            start: '2018-12-10',
+            end: '2018-12-23',
             y: 2,
             assignee: 'TorsteinHonsi',
             fontSymbol: 'smile-o',

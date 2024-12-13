@@ -42,7 +42,9 @@ Dashboards.board('container', {
             chart: {
                 animation: false,
                 type: 'column',
-                zoomType: 'x',
+                zooming: {
+                    type: 'x'
+                },
                 panning: {
                     enabled: true
                 },
@@ -79,8 +81,10 @@ Dashboards.board('container', {
             chart: {
                 type: 'column',
                 animation: false,
-                zoomType: 'x',
-                zoomBySingleTouch: true
+                zooming: {
+                    singleTouch: true,
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -106,8 +110,10 @@ Dashboards.board('container', {
                 inverted: true,
                 type: 'column',
                 animation: false,
-                zoomType: 'x',
-                zoomBySingleTouch: true
+                zooming: {
+                    singleTouch: true,
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {

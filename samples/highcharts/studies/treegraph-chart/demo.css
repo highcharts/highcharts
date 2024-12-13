@@ -1,3 +1,17 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 figure {
     margin: 0;
 }
@@ -5,4 +19,8 @@ figure {
 #container {
     min-height: 800px;
     min-width: 360px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

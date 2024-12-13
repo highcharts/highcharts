@@ -1,16 +1,18 @@
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x',
         borderWidth: 1,
-        resetZoomButton: {
-            position: {
-                // align: 'right', // by default
-                // verticalAlign: 'top', // by default
-                x: -10,
-                y: 10
-            },
-            relativeTo: 'chart'
+        zooming: {
+            type: 'x',
+            resetButton: {
+                position: {
+                    // align: 'right', // by default
+                    // verticalAlign: 'top', // by default
+                    x: -10,
+                    y: 10
+                },
+                relativeTo: 'chart'
+            }
         }
     },
 

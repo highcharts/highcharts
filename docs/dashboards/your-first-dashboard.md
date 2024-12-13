@@ -3,14 +3,13 @@ Your first dashboard
 
 When you are ready to create your first simple dashboard, please follow these steps:
 
-1. Add a div to your webpage with a specific id.
+1. Add a `div` element to your webpage with a specific `id`.
 
 ```html
 <div id="container">
 ```
 
-2. In this basic example we are going to create a dashboard with two cells. One will contain a static HTML and the other will contain a chart created with Highcharts.
-Thus, we have to import the Highcharts library and the Dashboards library to bind them together.
+2. In this example, we are going to create a simple dashboard with two cells. The first cell contains some *static HTML*, while the second contains a Highcharts chart. For this dashboard to work, we need both the `Highcharts library` and the `Dashboards library`.
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -18,19 +17,18 @@ Thus, we have to import the Highcharts library and the Dashboards library to bin
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
-However, this is not the only way to import Dashboards packages. See other ways, e.g. install via npm, [here](https://www.highcharts.com/docs/dashboards/installation).
+However, this is not the only way to import **Dashboards** packages. For alternative approaches, e.g. install via npm, see [this article](https://www.highcharts.com/docs/dashboards/installation).
 
-3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
-If you want to use Highcharts charts, you should also import the charts styles, because the [styled mode](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode) is enabled by default in Dashboards.
+3. We need some styling to display the whole dashboard properly. You can get the basic one by importing the modules to the CSS file, as shown below.
 
 ```css
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard.  
-To do so, you have to pass two arguments:  
-* the div’s id where the dashboard should be placed (see point 1).
+4. We are now ready to start working on the actual Dashboard configuration. Create a new dashboard instance inside the `script tag`.
+
+To do so, you have to pass two arguments:
+* the div’s ID where the dashboard should be placed (see point 1).
 * the object with dashboard options.
 
 To do so, you can use the factory function `Dashboards.board`:
@@ -45,8 +43,8 @@ or the class `Dashboards.Board` to create a new instance of the dashboard:
 const board = new Dashboards.Board('container', {...})
 ```
 
-5.  As options, you have to provide two essential things:
-    * __gui__ - here you can define the layout of the dashboard by specifying rows and cells
+5.  For the dashboard to work, two options are mandatory:
+    * __gui__ - here, you can define the layout of the dashboard by specifying rows and cells
 
         ```js
         gui: {
@@ -63,7 +61,8 @@ const board = new Dashboards.Board('container', {...})
         },
         ```
 
-    * __components__ - this is an array with components to be inserted into the dashboard. To place a component in a cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated article) and its options.
+    * __components - This is an array of components to be inserted into the dashboard. To place a component in a cell, use the cell ID defined in the `gui` option.
+    You also have to declare the type of the component and its options.
 
         ```js
         components: [{
@@ -90,6 +89,6 @@ const board = new Dashboards.Board('container', {...})
         }]
         ```
 
-6. With that config, your dashboard should look like the example below:
+6. The dashboard should now look like the example below:
 
 <iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard" allow="fullscreen"></iframe>

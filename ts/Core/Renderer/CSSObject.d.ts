@@ -68,6 +68,7 @@ export interface CSSObject {
     height?: string|0;
     'justify-content'?: AlignValue;
     left?: string|0;
+    lineClamp?: number;
     lineHeight?: string|0;
     lineWidth?: (number|string); // @todo: Check this. It's not CSS...
     listStyle?: string;
@@ -76,6 +77,7 @@ export interface CSSObject {
     marginTop?: string|0;
     'max-height'?: string;
     'max-width'?: string;
+    mixedBlendMode?: string;
     MozBoxShadow?: string;
     MozTransform?: string;
     opacity?: number;
@@ -110,6 +112,8 @@ export interface CSSObject {
     width?: string|0;
     WebkitBoxShadow?: string;
     WebkitOverflowScrolling?: string;
+    WebkitBoxOrient?: 'vertical'|'horizontal';
+    WebkitLineClamp?: number;
     '-webkit-tap-highlight-color'?: string;
     zIndex?: number;
     'z-index'?: number;

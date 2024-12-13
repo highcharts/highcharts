@@ -1,5 +1,5 @@
 QUnit.test(
-    'CropThreshold should not interfere with getExtremesFromAll.(#4599)',
+    'Crop threshold should not interfere with getExtremesFromAll',
     function (assert) {
         var chart = $('#container')
             .highcharts({
@@ -11,7 +11,10 @@ QUnit.test(
                         getExtremesFromAll: true,
                         type: 'column',
                         cropThreshold: 4,
-                        data: [10, 20, 11, 12, 15, 100]
+                        data: [10, 20, 11, 12, 15, 100],
+                        dataLabels: {
+                            enabled: true
+                        }
                     }
                 ]
             })
@@ -20,7 +23,22 @@ QUnit.test(
         assert.strictEqual(
             chart.yAxis[0].max >= 100,
             true,
-            'Proper extremes on yAxis.'
+            'Y-axis should get extremes from all (#4599)'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points.length,
+            5,
+            'Points should be created only for the visible range (#21003)'
+        );
+
+        assert.strictEqual(
+            chart.series[0].dataLabelsGroup
+                .element
+                .querySelectorAll('.highcharts-data-label')
+                .length,
+            5,
+            'Data labels should be created only for the visible range (#21003)'
         );
     }
 );

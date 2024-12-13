@@ -26,9 +26,9 @@ jobs:
       BROWSER_COUNT: 2
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - run: echo ${{github.ref_name}}

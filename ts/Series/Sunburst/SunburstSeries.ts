@@ -25,10 +25,10 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type {
     SunburstDataLabelOptions,
+    SunburstSeriesLevelOptions,
     SunburstSeriesOptions
 } from './SunburstSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import CU from '../CenteredUtilities.js';
@@ -66,6 +66,9 @@ const {
     merge,
     splat
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -145,7 +148,8 @@ function getDlOptions(
         }, optionsLevel, optionsPoint),
         padding: Array<number> = splat(options.padding || 0),
         paddingLeft = padding[3 % padding.length],
-        paddingRight = padding[1 % padding.length];
+        paddingRight = padding[1 % padding.length]
+        { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
         rotation: (number|undefined),
@@ -164,8 +168,8 @@ function getDlOptions(
             }
 
             if (
-                (point.innerArcLength as any) < 1 &&
-                (point.outerArcLength as any) > (shape.radius as any)
+                innerArcLength < 1 &&
+                outerArcLength > (shape.radius as any)
             ) {
                 rotationRad = 0;
                 // Trigger setTextPath function to get textOutline etc.
@@ -175,8 +179,8 @@ function getDlOptions(
                     };
                 }
             } else if (
-                (point.innerArcLength as any) > 1 &&
-                (point.outerArcLength as any) > 1.5 * (shape.radius as any)
+                innerArcLength > 1 &&
+                outerArcLength > 1.5 * (shape.radius as any)
             ) {
                 if (rotationMode === 'circular') {
                     options.textPath = {
@@ -191,8 +195,7 @@ function getDlOptions(
             } else {
                 // Trigger the destroyTextPath function
                 if (
-                    point.dataLabel &&
-                    point.dataLabel.textPath &&
+                    point.dataLabel?.textPath &&
                     rotationMode === 'circular'
                 ) {
                     options.textPath = {
@@ -219,7 +222,7 @@ function getDlOptions(
         if (rotationMode === 'parallel') {
             (options.style as any).width = Math.min(
                 (shape.radius as any) * 2.5,
-                ((point.outerArcLength as any) + point.innerArcLength) / 2
+                (outerArcLength + innerArcLength) / 2
             );
         } else {
             if (
@@ -232,15 +235,18 @@ function getDlOptions(
             }
         }
 
-        if (
-            rotationMode === 'perpendicular' &&
+        if (rotationMode === 'perpendicular') {
             // 16 is the inferred line height. We don't know the real line
             // yet because the label is not rendered. A better approach for this
             // would be to hide the label from the `alignDataLabel` function
             // when the actual line height is known.
-            point.outerArcLength as any < 16
-        ) {
-            (options.style as any).width = 1;
+            if (outerArcLength < 16) {
+                (options.style as any).width = 1;
+            } else {
+                (options.style as any).lineClamp = Math.floor(
+                    innerArcLength / 16
+                ) || 1;
+            }
         }
 
         // Apply padding (#8515)
@@ -297,6 +303,7 @@ function getDlOptions(
                     paddingLeft - paddingRight,
                 1
             );
+            (options.style as any).whiteSpace = 'nowrap';
         }
     }
     return options;
@@ -469,7 +476,7 @@ class SunburstSeries extends TreemapSeries {
 
     public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
     public nodeMap!: Record<string, SunburstNode>;
 
@@ -702,7 +709,7 @@ class SunburstSeries extends TreemapSeries {
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
         children: Array<SunburstNode>,
-        options: SunburstSeriesOptions
+        options: (SunburstSeriesOptions|SunburstSeriesLevelOptions)
     ): Array<SunburstNode.NodeValuesObject> {
         let startAngle = parent.start;
 
@@ -784,9 +791,7 @@ class SunburstSeries extends TreemapSeries {
     public setShapeArgs(
         parent: SunburstNode,
         parentValues: SunburstNode.NodeValuesObject,
-        mapOptionsToLevel: (
-            Record<string, SunburstSeriesOptions>
-        )
+        mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>
     ): void {
         const level = parent.level + 1,
             options = mapOptionsToLevel[level],
@@ -862,15 +867,12 @@ class SunburstSeries extends TreemapSeries {
             rootId = updateRootId(series);
 
         let mapIdToNode = series.nodeMap,
-            mapOptionsToLevel: Record<string, SunburstSeriesOptions>,
+            mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // Hidden series
-            series.processData();
-        }
         series.generatePoints();
 
         fireEvent(series, 'afterTranslate');
@@ -998,7 +1000,7 @@ namespace SunburstSeries {
     }
 
     export interface DlOptionsParams {
-        level: SunburstSeriesOptions;
+        level: SunburstSeriesLevelOptions;
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;

@@ -35,11 +35,14 @@ import Component from '../Component.js';
 
 const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
     type: 'Navigator',
+    className: [
+        Component.defaultOptions.className,
+        `${Component.defaultOptions.className}-navigator`
+    ].join(' '),
     chartOptions: {
         chart: {
             animation: false,
             height: 200,
-            styledMode: true,
             type: 'column',
             zooming: {
                 mouseWheel: {
@@ -58,7 +61,8 @@ const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
             outlineWidth: 0,
             series: {
                 animation: false,
-                lineWidth: 0
+                lineWidth: 0,
+                colorIndex: 0
             },
             xAxis: {
                 endOnTick: true,

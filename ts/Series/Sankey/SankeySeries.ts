@@ -27,7 +27,6 @@ import type {
 } from './SankeySeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
@@ -46,6 +45,7 @@ const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    crisp,
     extend,
     isObject,
     merge,
@@ -53,6 +53,9 @@ const {
     relativeLength,
     stableSort
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -248,7 +251,7 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -330,10 +333,6 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-
-        if (!this.processedXData) {
-            this.processData();
-        }
 
         this.generatePoints();
 
@@ -625,24 +624,23 @@ class SankeySeries extends ColumnSeries {
                 this.options.minLinkWidth as any
             ),
             nodeWidth = Math.round(this.nodeWidth),
-            crisp = Math.round(borderWidth) % 2 / 2,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = Math.floor(pick(
+            fromNodeTop = crisp(pick(
                 (nodeOffset as any).absoluteTop,
                 (
                     column.sankeyColumn.top(translationFactor) +
                     (nodeOffset as any).relativeTop
                 )
-            )) + crisp,
-            left = Math.floor(
+            ), borderWidth),
+            left = crisp(
                 this.colDistance * (node.column as any) +
-                borderWidth / 2
+                    borderWidth / 2,
+                borderWidth
             ) + relativeLength(node.options[
                 chart.inverted ?
                     'offsetVertical' :
                     'offsetHorizontal'
-            ] || 0, nodeWidth) +
-            crisp,
+            ] || 0, nodeWidth),
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
                 left;
@@ -874,23 +872,11 @@ export default SankeySeries;
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
+ * @param {Highcharts.Point} this
  *        Data label context to format
  *
  * @return {string|undefined}
  *         Formatted data label text
- */
-
-/**
- * Context for the node formatter function.
- *
- * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- *//**
- * The node object. The node name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
- * @type {Highcharts.SankeyNodeObject}
  */
 
 ''; // Detach doclets above

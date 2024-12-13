@@ -1,0 +1,194 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+:root {
+    /* Dimensions */
+    --chart-height: 200px;
+    --log-height: 160px;
+
+    /* Colors */
+    --custom-background: var(--highcharts-neutral-color-3);
+    --text-color: var(--highcharts-neutral-color-80);
+}
+
+/**
+ *
+ *  Layout
+ *
+ **/
+
+.highcharts-dashboards-row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.highcharts-dashboards-cell {
+    min-width: 20px;
+    flex: 1 1 50%;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 5px;
+    padding: 5px;
+}
+
+/**
+ *
+ *  Dashboards/Datagrid specific
+ *
+ **/
+.highcharts-dashboards-wrapper {
+    padding: 10px;
+    background-color: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-dashboards-component {
+    background-color: var(--custom-background);
+    max-height: var(--chart-height);
+}
+
+.highcharts-datagrid-container {
+    font-size: 0.8em;
+    max-height: 100%;
+}
+
+/**
+ *
+ *  Message log (outside Dashboard)
+ *
+ **/
+#custom {
+    background-color: var(--highcharts-neutral-color-10);
+    margin: 0;
+    padding: 0;
+    border: 1px solid transparent;
+}
+
+#html-log {
+    padding: 10px;
+    margin: 0;
+    overflow: none;
+    color: var(--text-color);
+}
+
+#html-log h1 {
+    text-align: center;
+    font-size: 1em;
+    padding: 5px 0;
+    margin: 0;
+    border-bottom: 1px dotted var(--highcharts-neutral-color-20);
+}
+
+#log-content {
+    height: var(--log-height);
+    margin: 0;
+    padding: 10px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.9em;
+    overflow: auto;
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+/**
+ *
+ *  App control - Connect status and clearing log
+ *
+ **/
+#app-control {
+    padding: 0;
+    font-size: 0.9em;
+    width: 100%;
+    background-color: var(--highcharts-neutral-color-10);
+    color: var(--text-color);
+    margin: 0 auto;
+    text-align: center;
+}
+
+#app-control #connect-status,
+#app-control #btn-clear-log {
+    margin: 15px 10%;
+}
+
+#app-control #connect-status {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#app-control #connect-status::before {
+    content: "MQTT ";
+}
+
+#app-control button {
+    font-size: 1em;
+    padding: 5px 10px;
+}
+
+#app-control button:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+/**
+ *
+ *  Dashboards container and description
+ *
+ **/
+
+body {
+    background-color: var(--highcharts-neutral-color-10);
+}
+
+div#description {
+    background-color: var(--highcharts-neutral-color-3);
+    color: var(--text-color);
+    padding: 5px 10px;
+    max-width: 100%;
+    text-align: justify;
+
+    & a {
+        color: var(--highcharts-highlight-color-80);
+    }
+
+    pre.json {
+        padding: 5px;
+        color: var(--highcharts-highlight-color-80);
+        border-radius: 5px;
+    }
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #column-chart-1,
+    #data-grid-1,
+    #column-chart-2,
+    #data-grid-2 {
+        flex: 1 1 100%;
+    }
+
+    #app-control #connect-status {
+        white-space: nowrap;
+        display: block;
+    }
+}

@@ -34,7 +34,9 @@ console.time('line');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift'
     },

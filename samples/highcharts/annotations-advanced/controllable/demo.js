@@ -17,7 +17,9 @@ const chart = Highcharts.chart('container', {
 
     chart: {
         // inverted: true,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         events: {
             load: function () {
                 this.annotations.forEach(function (annotation) {

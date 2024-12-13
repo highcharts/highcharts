@@ -12,10 +12,7 @@ const chart = new Highcharts.Chart({
         }
     },
     xAxis: {
-        categories: [
-            'Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
-            'Volkswagen', 'Polestar', 'Kia', 'Nissan'
-        ]
+        type: 'category'
     },
     yAxis: {
         title: {
@@ -27,14 +24,12 @@ const chart = new Highcharts.Chart({
         pointFormat: 'Cars sold: {point.y}'
     },
     title: {
-        text: 'Sold passenger cars in Norway by brand, January 2021',
-        align: 'left'
+        text: 'Sold passenger cars in Norway by brand, May 2024'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://ofv.no/registreringsstatistikk"' +
-            'target="_blank">OFV</a>',
-        align: 'left'
+            'target="_blank">OFV</a>'
     },
     legend: {
         enabled: false
@@ -45,7 +40,18 @@ const chart = new Highcharts.Chart({
         }
     },
     series: [{
-        data: [1318, 1073, 1060, 813, 775, 745, 537, 444, 416, 395],
+        data: [
+            ['Toyota', 1795],
+            ['Volkswagen', 1242],
+            ['Volvo', 1074],
+            ['Tesla', 832],
+            ['Hyundai', 593],
+            ['MG', 509],
+            ['Skoda', 471],
+            ['BMW', 442],
+            ['Ford', 385],
+            ['Nissan', 371]
+        ],
         colorByPoint: true
     }]
 });

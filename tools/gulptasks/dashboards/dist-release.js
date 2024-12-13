@@ -27,9 +27,9 @@ async function distRelease() {
 
     const argv = require('yargs').argv;
     const config = require('./_config.json');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     const release = argv.release;
 
@@ -65,6 +65,10 @@ async function distRelease() {
     });
 
     // Remove deprecated files and folders
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'es-modules', 'Core'),
+        true
+    );
 
     fsLib.deleteDirectory(
         path.join(distRepository, 'css', 'dashboards'),

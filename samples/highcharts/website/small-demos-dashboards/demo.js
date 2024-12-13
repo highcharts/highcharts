@@ -69,7 +69,7 @@ function climate() {
                     options: {
                         csvURL: (
                             'https://www.highcharts.com/samples/data/' +
-                        'climate-cities.csv'
+                            'climate-cities.csv'
                         )
                     }
                 }]
@@ -151,9 +151,6 @@ function climate() {
                                 y: 22
                             },
                             opposite: true,
-                            // showFirstLabel: true,
-                            // showLastLabel: true,
-                            // startOnTick: true,
                             tickPosition: 'inside'
                         },
                         yAxis: {
@@ -180,20 +177,20 @@ function climate() {
                             afterSetExtremes: function (e) {
                                 window.clearTimeout(selectionTimeout);
                                 selectionTimeout =
-                                window.setTimeout(async () => {
-                                    if (
-                                        activeTimeRange[0] !== e.min ||
-                                    activeTimeRange[1] !== e.max
-                                    ) {
-                                        activeTimeRange = [e.min, e.max];
-                                        await updateBoard(
-                                            board,
-                                            activeCity,
-                                            activeColumn,
-                                            activeScale
-                                        );
-                                    }
-                                }, 50);
+                                    window.setTimeout(async () => {
+                                        if (
+                                            activeTimeRange[0] !== e.min ||
+                                            activeTimeRange[1] !== e.max
+                                        ) {
+                                            activeTimeRange = [e.min, e.max];
+                                            await updateBoard(
+                                                board,
+                                                activeCity,
+                                                activeColumn,
+                                                activeScale
+                                            );
+                                        }
+                                    }, 50);
                             }
                         }
                     },
@@ -209,7 +206,7 @@ function climate() {
                     chart: {
                         map: await fetch(
                             'https://code.highcharts.com/mapdata/' +
-                        'custom/world.topo.json'
+                            'custom/world.topo.json'
                         ).then(response => response.json()),
                         styledMode: true,
                         height: 190,
@@ -305,8 +302,8 @@ function climate() {
                             headerFormat: '',
                             pointFormat: (
                                 '<b>{point.name}</b><br>' +
-                            'Elevation: {point.custom.elevation}m<br>' +
-                            '{point.y:.1f}˚{point.custom.yScale}'
+                                'Elevation: {point.custom.elevation}m<br>' +
+                                '{point.y:.1f}˚{point.custom.yScale}'
                             )
                         }
                     }],
@@ -431,7 +428,7 @@ function climate() {
         const cityTable = await dataPool.getConnectorTable(city);
 
         if (newData) {
-        // Update time range selector
+            // Update time range selector
             timeRangeSelector.chart.series[0].update({
                 type: column[0] === 'T' ? 'spline' : 'column',
                 data: cityTable.modified
@@ -483,25 +480,47 @@ function climate() {
 
 
         // Update city grid selection
-        const showCelsius = scale === 'C';
+        // const showCelsius = scale === 'C';
         if (newData) {
-        // await selectionGrid.update({
-        //     dataGridOptions: {
-        //         columns: {
-        //             TNC: {
-        //                 show: showCelsius
-        //             },
-        //             TNF: {
-        //                 show: !showCelsius
-        //             },
-        //             TXC: {
-        //                 show: showCelsius
-        //             },
-        //             TXF: {
-        //                 show: !showCelsius
-        //             }
-        //         }
-        //     },
+            // await selectionGrid.update({
+            //     dataGridOptions: {
+            //         columns: {
+            //             TNC: {
+            //                 show: showCelsius
+            //             },
+            //             TNF: {
+            //                 show: !showCelsius
+            //             },
+            //             TXC: {
+            //                 show: showCelsius
+            //             },
+            //             TXF: {
+            //                 show: !showCelsius
+            //             }
+            //         }
+            //     },
+            //     columnAssignment: {
+            //         time: 'x',
+            //         FD: column === 'FD' ? 'y' : null,
+            //         ID: column === 'ID' ? 'y' : null,
+            //         RR1: column === 'RR1' ? 'y' : null,
+            //         TN: null,
+            //         TNC: column === 'TNC' ? 'y' : null,
+            //         TNF: column === 'TNF' ? 'y' : null,
+            //         TX: null,
+            //         TXC: column === 'TXC' ? 'y' : null,
+            //         TXF: column === 'TXF' ? 'y' : null,
+            //         Date: null
+            //     }
+            // });
+        }
+
+        // selectionGrid.dataGrid.scrollToRow(
+        //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
+        // );
+
+        // // Update city chart selection
+        // await cityChart.update({
         //     columnAssignment: {
         //         time: 'x',
         //         FD: column === 'FD' ? 'y' : null,
@@ -514,40 +533,18 @@ function climate() {
         //         TXC: column === 'TXC' ? 'y' : null,
         //         TXF: column === 'TXF' ? 'y' : null,
         //         Date: null
+        //     },
+        //     chartOptions: {
+        //         chart: {
+        //             type: column[0] === 'T' ? 'spline' : 'column'
+        //         },
+        //         colorAxis: {
+        //             min: colorMin,
+        //             max: colorMax,
+        //             stops: colorStops
+        //         }
         //     }
         // });
-        }
-
-        // selectionGrid.dataGrid.scrollToRow(
-        //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
-        // );
-
-    // // Update city chart selection
-    // await cityChart.update({
-    //     columnAssignment: {
-    //         time: 'x',
-    //         FD: column === 'FD' ? 'y' : null,
-    //         ID: column === 'ID' ? 'y' : null,
-    //         RR1: column === 'RR1' ? 'y' : null,
-    //         TN: null,
-    //         TNC: column === 'TNC' ? 'y' : null,
-    //         TNF: column === 'TNF' ? 'y' : null,
-    //         TX: null,
-    //         TXC: column === 'TXC' ? 'y' : null,
-    //         TXF: column === 'TXF' ? 'y' : null,
-    //         Date: null
-    //     },
-    //     chartOptions: {
-    //         chart: {
-    //             type: column[0] === 'T' ? 'spline' : 'column'
-    //         },
-    //         colorAxis: {
-    //             min: colorMin,
-    //             max: colorMax,
-    //             stops: colorStops
-    //         }
-    //     }
-    // });
     }
 }
 
@@ -567,8 +564,7 @@ function minimal() {
         editMode: {
             enabled: false,
             contextMenu: {
-                enabled: true,
-                items: ['editMode']
+                enabled: true
             }
         },
         gui: {
@@ -772,15 +768,12 @@ function datacursor() {
         };
     }
 
-    // Build table with Highcharts.Series aliases
+    // Build table with vegetables data
     function buildVegeTable() {
         const table = new DataTable({
-            aliases: {
-                name: 'vegetable',
-                y: 'amount'
-            },
             columns: {
-                vegetable: [
+                // Vegetable name
+                name: [
                     'Broccoli',
                     'Carrots',
                     'Corn',
@@ -789,9 +782,9 @@ function datacursor() {
                     'Potatos',
                     'Spinach',
                     'Tomatos'
-
                 ],
-                amount: [
+                // Amount
+                y: [
                     44,
                     51,
                     38,
@@ -810,9 +803,6 @@ function datacursor() {
 }
 
 function extremes() {
-    let chart1;
-    let chart2;
-
     const csv = document.getElementById('csv2').innerText;
 
     Dashboards.board('container', {
@@ -835,6 +825,7 @@ function extremes() {
                     ]
                 }, {
                     cells: [
+                        { id: 'dashboard-col-2', height: 130 },
                         { id: 'dashboard-col-3', height: 130 }
                     ]
                 }]
@@ -870,20 +861,27 @@ function extremes() {
                 },
                 chart: {
                     type: 'column',
-                    zoomType: 'x',
                     margin: [10, 10, 10, 35],
                     spacing: 0,
                     height: 130,
                     events: {
                         load: function () {
-                            chart1 = this;
+                            const el = document.getElementById('zoom1');
+                            el.addEventListener('click', () => {
+                                this.xAxis[0].setExtremes(10, 20);
+                            });
                         }
                     },
-                    resetZoomButton: {
-                        align: 'center',
-                        theme: {
-                            zIndex: 20,
-                            padding: 4
+                    zooming: {
+                        type: 'x',
+                        resetButton: {
+                            position: {
+                                align: 'center'
+                            },
+                            theme: {
+                                zIndex: 20,
+                                padding: 4
+                            }
                         }
                     }
                 },
@@ -942,20 +940,27 @@ function extremes() {
                 },
                 chart: {
                     type: 'column',
-                    zoomType: 'x',
                     margin: [10, 10, 10, 35],
                     spacing: 0,
                     height: 130,
                     events: {
                         load: function () {
-                            chart2 = this;
+                            const el = document.getElementById('zoom2');
+                            el.addEventListener('click', () => {
+                                this.xAxis[0].setExtremes(10, 20);
+                            });
                         }
                     },
-                    resetZoomButton: {
-                        align: 'center',
-                        theme: {
-                            zIndex: 20,
-                            padding: 4
+                    zooming: {
+                        type: 'x',
+                        resetButton: {
+                            position: {
+                                align: 'center'
+                            },
+                            theme: {
+                                zIndex: 20,
+                                padding: 4
+                            }
                         }
                     }
                 },
@@ -1011,23 +1016,9 @@ function extremes() {
             type: 'DataGrid',
             sync: {
                 extremes: true
-            },
-            dataGridOptions: {
-                editable: false
             }
         }]
     }, true);
-
-
-    document.getElementById('zoom1').addEventListener('click', () => {
-        chart1.xAxis[0].setExtremes(10, 20);
-    });
-
-    document.getElementById('zoom2').addEventListener('click', () => {
-        chart2.xAxis[0].setExtremes(10, 20);
-    });
-
-
 }
 
 const charts = {

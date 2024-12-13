@@ -11,6 +11,8 @@ QUnit.test('RangeModifier.modify', async function (assert) {
             }
         }),
         modifier = new RangeModifier();
+        // Ranges are static but not cleared in constructor
+        modifier.options.ranges.length = 0;
 
     await modifier.modify(table);
 

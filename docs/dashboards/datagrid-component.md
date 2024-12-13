@@ -1,5 +1,4 @@
-DataGrid Component
-===
+# DataGrid Component
 
 The DataGrid Component can be placed inside a dashboard's cell to allow users to visualize the data in the editable table.
 
@@ -8,62 +7,65 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 ## How to start
 
-1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
-The order of the imports is important, so make sure that the Dashboards module is imported after the DataGrid module.
-    ```html
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    ```
+1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules, namely the [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
+The order of the imports is essential, so ensure the Dashboards module is imported after the DataGrid module.
 
-    Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    import * as DataGrid from '@highcharts/dashboards/datagrid';
+```html
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+```
 
-    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
-    Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
-    ```
+Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
 
-2. You also need to import the styles in your main CSS file.
-    ```css
-    @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
-    ```
+```typescript
+import * as Dashboards from '@highcharts/dashboards';
+import * as DataGrid from '@highcharts/dashboards/datagrid';
+
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+```
+
+2. You must also import the styles in your main CSS file.
+```css
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+```
 
 3. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.
-    ```js
-    gui: {
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }]
+```js
+gui: {
+    layouts: [{
+        id: 'layout-1',
+        rows: [{
+            cells: [{
+                id: 'dashboard-col-0'
             }]
         }]
-    }
-    ```
+    }]
+}
+```
 
-4. You will also need some data that you could display in your DataGrid component. For this purpose, you can, for example, define a connector that, in this case, contains example data in the CSV format.
-    ```js
-    dataPool: {
-        connectors: [{
-            id: 'data',
-            type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`
-            }
-        }]
-    }
-    ```
-    Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
+4. You will also need some data to display in your DataGrid component. For this purpose, you can, for example, define a connector that, in this case, contains example data in the CSV format.
+```js
+dataPool: {
+    connectors: [{
+        id: 'data',
+        type: 'CSV',
+        options: {
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`
+        }
+    }]
+}
+```
 
-5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we defined in point 3 or created in our own layout), and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
+Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
+
+5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we described in point 3 or created in our layout), and the ID of the connector with the data in the `connector.id` option (point 4). For the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
     ```js
     components: [{
         renderTo: 'dashboard-col-1',
@@ -73,7 +75,7 @@ The order of the imports is important, so make sure that the Dashboards module i
         type: 'DataGrid'
     }]
     ```
-    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
+To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple DataGrid:
 ```js
@@ -123,10 +125,10 @@ Data modifiers allow manipulation of data provided to connectors to be placed in
 
 There are different types of Data Modifiers:
 * `Chain` - A chain of modifiers executed in a fixed order.
-* `Invert` - Invert modifier allows reversing the order of displayed rows.
+* `Invert` - The invert modifier reverses the order of displayed rows.
 * `Range` - Range modifiers allow selecting rows to be displayed based on specific ranges regarding data from specific columns.
-* `Sort` - Sort modifiers allow setting the display order of rows based on the result of sorting the data in specific columns.
-* `Math` - Math modifiers allow the creation of additional columns with data that is a mathematical transformation of data from another column.
+* `Sort` - Sort modifiers allow the display order of rows to be set based on the result of sorting the data in specific columns.
+* `Math` - Math modifiers allow the creation of additional columns with data mathematically transformed from another column.
 
 The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1#dataModifier) option can be used in the connectors options, as follows:
 ```js
@@ -169,6 +171,26 @@ See demos of `sync` types below:
 * [Visibility Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
 
 
+### Highlight sync options
+
+Highlight sync for the DataGrid Component can have additional options:
+
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        autoScroll: true
+    }
+}
+```
+
+If you want to scroll the DataGrid automatically to a highlighted row, turn on
+the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.DataGridHighlightSyncOptions) option.
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/datagrid-highlight-sync-autoscroll" allow="fullscreen"></iframe>
+
+
 ## Custom styling
 
-In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.
+In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#dataGridClassName) option can be very useful; it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.

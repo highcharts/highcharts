@@ -20,7 +20,7 @@
  *
  * */
 
-import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
+import type { DataGridOptions } from '../../Plugins/DataGridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -34,6 +34,11 @@ import type Sync from '../Sync/Sync';
  * Options to control the DataGrid component.
  */
 export interface Options extends Component.Options {
+    /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
     /**
      * The style class to add to the rendered data grid container.
      */
@@ -62,17 +67,7 @@ export interface Options extends Component.Options {
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: BaseDataGridOptions;
-
-    /**
-     * The set of options like `dataGridClassName` and `dataGridID`.
-     */
-    chartClassName?: string;
-
-    /**
-     * The id that is applied to the chart's container.
-     */
-    chartID?: string;
+    dataGridOptions?: DataGridOptions;
 
     /** @private */
     tableAxisMap?: Record<string, string | null>;
@@ -100,21 +95,6 @@ export interface Options extends Component.Options {
      * Sync options for the component.
      */
     syncHandlers?: Sync.OptionsRecord;
-
-    /**
-     * If the `visibleColumns` option is not provided, the data grid will
-     * calculate and include each column from the data connector.
-     * When declared, the data grid will only include the columns that are
-     * listed.
-     *
-     * Alternatively, the column visibility can be controlled by the
-     * `dataGridOptions.columns` option.
-     * ```
-     * Example
-     * visibleColumns: ['Food', 'Vitamin A']
-     * ```
-     */
-    visibleColumns?: Array<string>;
 }
 
 /**
@@ -151,7 +131,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.HighlightSyncOptions;
+    highlight?: boolean|Sync.OptionsEntry;
     /**
      * Visibility sync is available for Highcharts and DataGrid components.
      * Synchronizes the visibility of data from a hidden/shown series.
@@ -164,6 +144,28 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      */
     visibility?: boolean|Sync.OptionsEntry;
 }
+
+/**
+ * Datagrid component highlight sync options.
+ *
+ * Example:
+ * ```
+ * {
+ *     enabled: true,
+ *     autoScroll: true
+ * }
+ * ```
+ */
+export interface DataGridHighlightSyncOptions extends Sync.OptionsEntry {
+    /**
+     * Whether to scroll the data grid to the highlighted row automatically.
+     *
+     * @default false
+     */
+    autoScroll?: boolean;
+}
+
+
 /* *
  *
  *  Default Export

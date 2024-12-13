@@ -714,14 +714,22 @@ namespace BrokenAxis {
             breaks?: Array<AxisBreakOptions>,
             redraw?: boolean
         ): void {
-            const brokenAxis = this;
-            const axis = brokenAxis.axis;
-            const hasBreaks = isArray(breaks) &&
-                !!breaks.length &&
-                !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
+            const brokenAxis = this,
+                axis = brokenAxis.axis,
+                time = axis.chart.time,
+                hasBreaks = isArray(breaks) &&
+                    !!breaks.length &&
+                    !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
+
+            // Compile string dates
+            breaks?.forEach((brk): void => {
+                brk.from = time.parse(brk.from) || 0;
+                brk.to = time.parse(brk.to) || 0;
+            });
+
             if (breaks !== axis.options.breaks) {
                 axis.options.breaks = axis.userOptions.breaks = breaks;
             }

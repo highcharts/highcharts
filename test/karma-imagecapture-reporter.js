@@ -7,7 +7,7 @@
  */
 
 const fs = require('fs');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
 const version = require('../package.json').version;
 
 /* eslint-disable require-jsdoc */
@@ -27,39 +27,40 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         referenceRun = false
     } = config;
 
+
     /**
-     * Create an animated gif of the reference and the candidata image, in order to
-     * see the differences.
-     * @param  {String} filename
-     *         The file name
-     * @param  {Array}  frames
-     *         The image data of the GIF frames
-     * @param {number} width
-     *          Width of the created gif
-     * @param {number} height
-     *          Height of the created gif
-     * @return {void}
+     * Create an animated GIF from the provided frames.
+     * @param {String} filename The output file name.
+     * @param {Array} frames An array of frame data (Uint8Array) in RGBA format.
+     * @param {number} width The width of the GIF.
+     * @param {number} height The height of the GIF.
      */
     function createAnimatedGif(filename, frames, width, height) {
-        var GIFEncoder = require('gifencoder');
+        const { GIFEncoder: gifenc, quantize, applyPalette } = require('gifenc');
+        // Quantize the first frame to get the global palette
+        const palette = quantize(frames[0], 256);
 
-        var encoder = new GIFEncoder(width, height);
-        encoder.start();
-        // 0 for repeat, -1 for no-repeat
-        encoder.setRepeat(0);
-        // frame delay in ms
-        encoder.setDelay(500);
-        // image quality. 10 is default.
-        encoder.setQuality(10);
+        // Create a new GIF encoder
+        const gif = gifenc();
 
+        // Add each frame to the GIF
         frames.forEach(frame => {
-            encoder.addFrame(frame);
+        // Apply the palette to the frame
+            const indexedFrame = applyPalette(frame, palette);
+            // Add the frame to the GIF with a 500ms delay
+            gif.writeFrame(indexedFrame, width, height, { palette, delay: 500 });
         });
-        encoder.finish();
 
-        var buf = encoder.out.getData();
+        // Finalize the GIF
+        gif.finish();
+
+        // Get the GIF as a Uint8Array
+        const gifData = gif.bytes();
+
         pendingFileWritings++;
-        fs.writeFile(filename, buf, function (err) {
+
+        // Write the GIF to a file
+        fs.writeFile(filename, Buffer.from(gifData), err => {
             if (err) {
                 throw err;
             }

@@ -14,6 +14,7 @@
  *
  * */
 
+import type AnimationOptions from './Animation/AnimationOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type F from './Templating';
@@ -36,12 +37,12 @@ declare module './Options' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: DeepPartial<TooltipOptions>;
+        tooltip?: Partial<TooltipOptions>;
     }
 }
 
 export interface TooltipOptions {
-    animation: boolean;
+    animation: boolean|Partial<AnimationOptions>;
     backgroundColor: ColorType;
     borderColor?: ColorType;
     borderRadius: number;
@@ -81,7 +82,7 @@ export interface TooltipOptions {
     valueDecimals?: number;
     valuePrefix?: string;
     valueSuffix?: string;
-    xDateFormat?: string;
+    xDateFormat?: Time.DateTimeFormat;
 }
 
 /* *

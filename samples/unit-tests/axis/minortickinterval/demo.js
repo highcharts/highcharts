@@ -84,7 +84,10 @@ QUnit.test('Legacy - auto, log', function (assert) {
             width: 600,
             height: 250,
             marginTop: 40,
-            marginBottom: 60
+            marginBottom: 60,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTickInterval: 'auto',
@@ -216,21 +219,40 @@ QUnit.test('Typed - auto, linear', function (assert) {
     chart = Highcharts.chart('container', {
         chart: {
             width: 600,
-            height: 250
+            height: 400,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTicks: true
         },
         series: [
             {
-                data: [1, 2, 3, 4]
+                data: [1, 5, 2, 4, 3, 6]
             }
         ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
-        15,
+        35,
         'Auto'
+    );
+
+    chart.update({
+        yAxis: {
+            tickAmount: 5
+        }
+    });
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].ticks).length,
+        5,
+        'The major tick amount should match `tickAmount` option'
+    );
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].minorTicks).length,
+        20,
+        'The minor tick amount should match `tickAmount` option'
     );
 });
 
@@ -267,7 +289,10 @@ QUnit.test('Typed - auto, log', function (assert) {
             width: 600,
             height: 250,
             marginTop: 40,
-            marginBottom: 60
+            marginBottom: 60,
+            style: {
+                fontFamily: 'Helvetica, Arial, sans-serif'
+            }
         },
         yAxis: {
             minorTicks: true,

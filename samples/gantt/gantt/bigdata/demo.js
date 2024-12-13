@@ -52241,7 +52241,9 @@ data.vessels.forEach(function (vessel, i) {
 
 Highcharts.ganttChart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     yAxis: {
@@ -52251,8 +52253,7 @@ Highcharts.ganttChart('container', {
 
     plotOptions: {
         series: {
-            grouping: false,
-            turboThreshold: 0
+            grouping: false
         }
     },
 

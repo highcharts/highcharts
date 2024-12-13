@@ -1,0 +1,46 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    color: var(--highcharts-neutral-color-100);
+}
+
+#container {
+    background: var(--highcharts-neutral-color-5);
+    padding: 10px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.cell {
+    flex: 40%;
+    min-width: 20px;
+    background: var(--highcharts-background-color);
+}
+
+#dashboard-col-0,
+#dashboard-col-1,
+#dashboard-col-2,
+#dashboard-col-3 {
+    overflow: hidden;
+    height: 150px;
+}
+
+.group-select-container {
+    margin: 8px;
+}

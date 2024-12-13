@@ -1,10 +1,28 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 .highcharts-figure {
     max-width: 800px;
     margin: 0 auto;
 }
 
 #slider {
-    width: 100%;
-    margin-top: 20px;
+    width: calc(100% - 20px);
+    margin: 10px;
     display: block;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

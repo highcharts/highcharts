@@ -3,12 +3,13 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     title: {
-        text: 'Highcharts bubbles with radial gradient fill',
-        align: 'left'
+        text: 'Highcharts bubbles with radial gradient fill'
     },
 
     xAxis: {

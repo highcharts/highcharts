@@ -28,12 +28,6 @@ export interface DataTableOptions {
 
 
     /**
-     * Initial map of column aliases to original column names.
-     */
-    aliases?: Record<string, string>;
-
-
-    /**
      * Initial columns with their values.
      */
     columns?: Record<string, Array<DataTableValue>>;
@@ -43,8 +37,6 @@ export interface DataTableOptions {
      * Custom ID to identify the new DataTable instance.
      */
     id?: string;
-
-
 }
 
 

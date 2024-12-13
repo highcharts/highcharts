@@ -40,6 +40,10 @@
     text-transform: none;
 }
 
+.hidden {
+    display: none;
+}
+
 @media screen and (max-width: 1000px) {
     #container,
     #info {

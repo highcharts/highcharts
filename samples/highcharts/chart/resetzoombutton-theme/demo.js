@@ -1,17 +1,19 @@
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x',
-        resetZoomButton: {
-            theme: {
-                fill: 'white',
-                stroke: 'silver',
-                r: 0,
-                states: {
-                    hover: {
-                        fill: '#41739D',
-                        style: {
-                            color: 'white'
+        zooming: {
+            type: 'x',
+            resetButton: {
+                theme: {
+                    fill: 'white',
+                    stroke: 'silver',
+                    r: 0,
+                    states: {
+                        hover: {
+                            fill: '#41739D',
+                            style: {
+                                color: 'white'
+                            }
                         }
                     }
                 }

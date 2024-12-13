@@ -1,0 +1,19 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+.revenue {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.revenue .title {
+    font-size: 30px;
+}
+
+.revenue .value {
+    font-size: 20px;
+    text-decoration: underline;
+}

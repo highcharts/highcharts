@@ -19,7 +19,6 @@
  * */
 
 import type {
-    NetworkgraphDataLabelsFormatterContextObject,
     NetworkgraphSeriesOptions
 } from './NetworkgraphSeriesOptions';
 import type NetworkgraphPoint from './NetworkgraphPoint';
@@ -148,20 +147,12 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * Note that if a `format` is defined, the format takes precedence
          * and the formatter is ignored.
          *
-         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
          * @since 7.0.0
          */
         formatter: function (
-            this: (
-                NetworkgraphDataLabelsFormatterContextObject|
-                Point.PointLabelObject
-            )
+            this: Point|NetworkgraphPoint
         ): string {
-            return (
-                this as (
-                    NetworkgraphDataLabelsFormatterContextObject
-                )
-            ).key;
+            return String(this.key ?? '');
         },
 
         /**
@@ -181,19 +172,15 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * The `linkFormat` option takes precedence over the
          * `linkFormatter`.
          *
-         * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
         linkFormatter: function (
-            this: (
-                NetworkgraphDataLabelsFormatterContextObject|
-                Point.PointLabelObject
-            )
+            this: Point|NetworkgraphPoint
         ): string {
             return (
-                (this.point as NetworkgraphPoint).fromNode.name +
+                (this as NetworkgraphPoint).fromNode.name +
                 '<br>' +
-                (this.point as NetworkgraphPoint).toNode.name
+                (this as NetworkgraphPoint).toNode.name
             );
         },
 
@@ -508,7 +495,7 @@ export default NetworkgraphSeriesDefaults;
  *
  * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
- * @excluding drilldown,marker,x,y,draDrop
+ * @excluding drilldown,marker,x,y,dragDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/
  *            Numerical values
  * @sample    {highcharts} highcharts/series/data-array-of-arrays/

@@ -6,9 +6,9 @@ name: Dashboards Test
 on:
   # Triggers the workflow on push or pull request events but only for the default branch
   push:
-    branches: [ 'master' ]
+    branches: ['master']
   pull_request:
-    branches: [ 'master' ]
+    branches: ['master']
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
@@ -19,7 +19,7 @@ on:
       - 'ts/Data/**'
 
 permissions:
-   contents: read # to fetch code (actions/checkout)
+  contents: read # to fetch code (actions/checkout)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -31,13 +31,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'

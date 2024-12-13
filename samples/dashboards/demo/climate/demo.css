@@ -2,11 +2,11 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-/* *
+/**
  *
  *  Colors
  *
- * */
+ **/
 
 #city-chart {
     --color-axis: #f7f7f7;
@@ -130,11 +130,11 @@
     }
 }
 
-/* *
+/**
  *
  *  City Chart
  *
- * */
+ **/
 
 #city-chart .highcharts-dashboards-component-content {
     background: var(--color-background);
@@ -193,11 +193,11 @@
     fill: #cc0;
 }
 
-/* *
+/**
  *
  *  KPI
  *
- * */
+ **/
 
 #kpi-layout .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
@@ -268,32 +268,34 @@
     display: none;
 }
 
-/* *
+/**
  *
  *  Selection Grid
  *
- * */
+ **/
 
 #selection-grid .highcharts-dashboards-component {
     background-color: var(--color-background);
 }
 
-#selection-grid .highcharts-datagrid-column-header,
-.highcharts-datagrid-cell {
+#selection-grid .highcharts-datagrid-table thead {
     font-size: 12px;
 }
 
-#selection-grid .highcharts-datagrid-row.hovered {
+#selection-grid .highcharts-datagrid-hovered-row {
     background-color: var(--color-hover-background);
-    border-color: var(--color-hover-border);
     color: var(--color-hover-text);
 }
 
-/* *
+#selection-grid .highcharts-datagrid-hovered-column {
+    background: none;
+}
+
+/**
  *
  *  Time Range Selector
  *
- * */
+ **/
 
 #time-range-selector .highcharts-background {
     fill: var(--highcharts-neutral-color-0);
@@ -357,11 +359,11 @@
     fill: var(--color-axis-labels);
 }
 
-/* *
+/**
  *
  *  World Map
  *
- * */
+ **/
 
 #world-map .highcharts-dashboards-component-content {
     background: var(--color-background);
@@ -462,11 +464,11 @@
     stroke-width: 2px;
 }
 
-/* *
+/**
  *
  *  Edit mode
  *
- * */
+ **/
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {

@@ -48,7 +48,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Agriculture: 'y'
         },
         sync: {
@@ -69,7 +69,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Industry: 'y'
         },
         sync: {
@@ -90,7 +90,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Services: 'y'
         },
         sync: {
@@ -112,17 +112,25 @@ Dashboards.board('container', {
             id: 'Economy'
         },
         dataGridOptions: {
-            columns: {
-                Agriculture: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Industry: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Services: {
-                    cellFormat: '{value:.1f}%'
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Agriculture',
+                cells: {
+                    format: '{value:.1f}%'
                 }
-            }
+            }, {
+                id: 'Industry',
+                cells: {
+                    format: '{value:.1f}%'
+                }
+            }, {
+                id: 'Services',
+                cells: {
+                    format: '{value:.1f}%'
+                }
+            }]
         }
     }]
 });

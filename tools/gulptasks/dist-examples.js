@@ -23,7 +23,7 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
-const logLib = require('./lib/log');
+const logLib = require('../libs/log');
 
 function getDemoBuildPath() {
     const config = getGitIgnoreMeProperties();
@@ -148,8 +148,8 @@ function assembleSample(template, variables) {
 async function createExamples(title, sourcePath, targetPath, template) {
 
     const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
+    const FSLib = require('../libs/fs');
+    const LogLib = require('../libs/log');
 
     const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
 

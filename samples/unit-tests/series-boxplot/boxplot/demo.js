@@ -85,7 +85,7 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'boxplot'
         },
@@ -97,7 +97,10 @@ QUnit.test('Individual options and Point.update', function (assert) {
         ]
     });
 
-    var point = chart.series[0].points[0];
+    const point = chart.series[0].points[0],
+        upperWhiskerLength = 32,
+        lowerWhiskerLength = 48;
+
     point.update(
         {
             color: 'red',
@@ -108,7 +111,9 @@ QUnit.test('Individual options and Point.update', function (assert) {
             stemDashStyle: 'dot',
             stemWidth: 1,
             whiskerColor: '#3D9200',
-            whiskerWidth: 3
+            whiskerWidth: 3,
+            upperWhiskerLength: 32,
+            lowerWhiskerLength: 48
         },
         true,
         false
@@ -145,6 +150,25 @@ QUnit.test('Individual options and Point.update', function (assert) {
         'whiskerColor'
     );
     assert.strictEqual(point.whiskers.attr('stroke-width'), 3, 'whiskerWidth');
+
+    const [
+        upperMoveTo,
+        upperLineTo,
+        lowerMoveTo,
+        lowerLineTo
+    ] = point.whiskers.pathArray;
+
+    assert.strictEqual(
+        upperLineTo[1] - upperMoveTo[1],
+        upperWhiskerLength,
+        'Upper whisker\'s length should be configured appropriately'
+    );
+
+    assert.strictEqual(
+        lowerLineTo[1] - lowerMoveTo[1],
+        lowerWhiskerLength,
+        'Lower whisker\'s length should be configured appropriately'
+    );
 });
 
 QUnit.test(
@@ -187,7 +211,7 @@ QUnit.test(
 QUnit.test(
     'Individual dash styles for box, median, stem and whisker lines (#13065)',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 type: 'boxplot'
             },
@@ -223,7 +247,7 @@ QUnit.test(
             ]
         });
 
-        var series = chart.series[0],
+        const series = chart.series[0],
             firstPoint = series.points[0],
             secondPoint = series.points[1];
 
@@ -260,6 +284,42 @@ QUnit.test(
             secondPoint.stem.attr('stroke-dasharray'),
             '4,3,1,3',
             'DashDot dashStyle should be applied to the second point\'s stem.'
+        );
+
+        chart.series[0].update({
+            dashStyle: 'normal',
+            medianDashStyle: 'normal',
+            whiskerDashStyle: 'normal',
+            data: [{
+                low: 194.0,
+                q1: 205.52,
+                median: 207.36,
+                q3: 209.08,
+                high: 317.58
+            }]
+        }, false);
+
+        chart.addSeries({
+            data: [{
+                low: 195.64,
+                q1: 204.16,
+                median: 205.72,
+                q3: 207.48,
+                high: 275.4
+            }]
+        });
+
+        const whiskersBox = chart.series[0].points[0].whiskers.getBBox(),
+            whiskersCenter = whiskersBox.x + (whiskersBox.width / 2),
+            { shapeArgs } = chart.series[0].points[0],
+            pointCenter = shapeArgs.x + (shapeArgs.width / 2);
+
+        assert.close(
+            whiskersCenter,
+            pointCenter,
+            0.501,
+            `Whiskers and stem should be placed correctly in the center of point
+            for multiple boxplot series, #21245.`
         );
     }
 );

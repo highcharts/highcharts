@@ -17,7 +17,8 @@
         // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
         "lib": [
             "DOM",
-            "ES2016"
+            "ES2016",
+            "ES2017.Object"
         ],
         // "jsx": "preserve",                                /* Specify what JSX code is generated. */
         // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
@@ -69,7 +70,7 @@
         // "inlineSourceMap": true,                          /* Include sourcemap files inside the emitted JavaScript. */
         // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
         // "outDir": "./",                                   /* Specify an output folder for all emitted files. */
-        "outDir": "../js/",
+        "outDir": "../code/es-modules/",
         // "removeComments": true,                           /* Disable emitting comments. */
         // "noEmit": true,                                   /* Disable emitting files from a compilation. */
         // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
@@ -124,8 +125,8 @@
 
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-        // "skipLibCheck": true                              /* Skip type checking all .d.ts files. */
-        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        // "skipLibCheck": true,                             /* Skip type checking all .d.ts files. */
 
         /* Deprecated */
         // "ignoreDeprecations": "5.0",                      /* Silence deprecation errors of specified TypeScript version. */

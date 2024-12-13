@@ -368,7 +368,6 @@ class SonificationInstrument {
      * @private
      */
     static noteStringToC0Distance(note: string): number {
-        // eslint-disable-next-line require-unicode-regexp
         const match = note.match(/^([a-g][#b]?)([0-8])$/i),
             semitone = match ? match[1] : 'a',
             wholetone = semitone[0].toLowerCase(),

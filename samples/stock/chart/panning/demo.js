@@ -12,7 +12,9 @@
                 type: 'xy'
             },
             panKey: 'alt',
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
 
         title: {

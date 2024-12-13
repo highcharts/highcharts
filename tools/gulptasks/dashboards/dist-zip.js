@@ -25,7 +25,7 @@ const zlib = require('zlib');
 async function distZipDashboards() {
     const argv = require('yargs').argv;
     const config = require('./_config.json');
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
     const zip = require('gulp-zip');
 
     const release = argv.release;
@@ -64,8 +64,8 @@ async function distZipDashboards() {
 async function distJSGZipDashboards() {
     const argv = require('yargs').argv;
     const glob = require('glob');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     const { buildFolder } = require('./_config.json');
 
     const zipCacheFolder = path.join(buildFolder, 'js-gzip');
@@ -110,8 +110,8 @@ async function distJSGZipDashboards() {
 async function distJSGZipDataGrid() {
     const argv = require('yargs').argv;
     const glob = require('glob');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     const { buildFolderDataGrid } = require('./_config.json');
 
     const zipCacheFolder = path.join(buildFolderDataGrid, 'js-gzip');

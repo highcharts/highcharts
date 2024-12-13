@@ -232,7 +232,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 });
 
-QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
+QUnit.test('Stock panning (#6276, #21319)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 600
@@ -291,8 +291,8 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     assert.strictEqual(chart.xAxis[0].max, 1514505600000, 'Initial max');
 
     // Pan
-    controller.mouseDown(100, 200, { shiftKey: true }, true);
-    controller.mouseMove(300, 200, { shiftKey: true }, true);
+    controller.mouseDown(100, 200, { shiftKey: true });
+    controller.mouseMove(300, 200, { shiftKey: true });
     controller.mouseUp();
 
     assert.ok(chart.xAxis[0].min < initialMin, 'Has panned');
@@ -339,10 +339,24 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         chart.xAxis[0].getExtremes(),
         '#20809, panning outside chart extremes should not do anything.'
     );
+
+    // #21319
+    chart.update({
+        xAxis: {
+            ordinal: false
+        }
+    });
+    controller.pan([300, 200], [100, 200]);
+    assert.strictEqual(
+        chart.resetZoomButton,
+        undefined,
+        `resetZoomButton should not be rendered while panning on non-ordinal
+        axes. (#21319)`
+    );
 });
 
 QUnit.test(
-    'Ordinal axis panning, when data is equally spaced (#13334).',
+    'Ordinal axis panning.',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -401,7 +415,36 @@ QUnit.test(
         assert.notEqual(
             initialMin,
             chart.xAxis[0].min,
-            'Chart should pan horizontally.'
+            'Chart should pan horizontally, when data is equally spaced #13334.'
+        );
+
+        const data = [];
+
+        for (let i = 0; i < 100000; i++) {
+            data.push([400 + i, 1]);
+        }
+
+        chart.series[0].update({
+            data,
+            type: 'column',
+            dataGrouping: {
+                forced: true,
+                units: [[
+                    'second',
+                    [1]
+                ]]
+            }
+        });
+
+        chart.xAxis[0].setExtremes(2000, 45000);
+
+        controller.pan([100, 200], [200, 200]);
+
+        assert.equal(
+            chart.xAxis[0].min,
+            0,
+            `It should be possible to pan to the axis minimum in a data grouped
+            ordinal column chart, #21524.`
         );
     }
 );

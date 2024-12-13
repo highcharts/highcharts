@@ -194,8 +194,6 @@ function axisGetDDPoints(
  * This method creates an array of arrays containing a level number
  * with the corresponding series/point.
  *
- * @requires  modules/breadcrumbs
- *
  * @private
  * @param {Highcharts.Chart} chart
  *        Highcharts Chart object.
@@ -397,8 +395,7 @@ class ChartAdditions {
             colorProp: SeriesOptions = chart.styledMode ?
                 { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
                 { color: point.color || oldSeries.color },
-            levelNumber = oldSeries.options._levelNumber || 0,
-            pointIndex = oldSeries.points.indexOf(point);
+            levelNumber = oldSeries.options._levelNumber || 0;
 
         if (!chart.drilldownLevels) {
             chart.drilldownLevels = [];
@@ -459,8 +456,8 @@ class ChartAdditions {
                 Color.parse(colorProp.color).setOpacity(0).get() :
                 colorProp.color,
             lowerSeriesOptions: ddOptions,
-            pointOptions: (oldSeries.options.data as any)[pointIndex],
-            pointIndex: pointIndex,
+            pointOptions: point.options,
+            pointIndex: point.index,
             oldExtremes: {
                 xMin: xAxis && xAxis.userMin,
                 xMax: xAxis && xAxis.userMax,
@@ -586,6 +583,8 @@ class ChartAdditions {
                                         });
                                         chart.mapView
                                             .fitToBounds(void 0, void 0);
+                                        chart.mapView.allowTransformAnimation =
+                                            true; // #20857
                                     }
                                     fireEvent(chart, 'afterApplyDrilldown');
                                 }
@@ -726,7 +725,9 @@ class ChartAdditions {
                         }
                     }
                 }
-                oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+                // Overcome problems with minRange (#2898)
+                oldSeries.dataTable.setColumn('x', []);
 
                 // Reset the names to start new series from the beginning.
                 // Do it once to preserve names when multiple
@@ -734,7 +735,10 @@ class ChartAdditions {
                 if (
                     oldSeries.xAxis &&
                     oldSeries.xAxis.names &&
-                    (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+                    (
+                        drilldownLevelsNumber === 0 ||
+                        i === drilldownLevelsNumber - 1
+                    )
                 ) {
                     oldSeries.xAxis.names.length = 0;
                 }
@@ -793,13 +797,6 @@ class ChartAdditions {
 
                 if (!chart.mapView) {
                     fireEvent(chart, 'afterDrillUp');
-                    chart.redraw();
-                    if (chart.ddDupes) {
-                        chart.ddDupes.length = 0; // #3315
-                    } // #8324
-                    // Fire a once-off event after all series have been drilled
-                    // up (#5158)
-                    fireEvent(chart, 'drillupall');
                 } else {
                     const shouldAnimate = level.levelNumber === levelNumber &&
                         isMultipleDrillUp,
@@ -857,6 +854,7 @@ class ChartAdditions {
                                         }
                                     }
                                 );
+                                newSeries._hasTracking = false;
                             } else {
                                 // When user don't want to zoom into region only
                                 // fade out
@@ -881,17 +879,22 @@ class ChartAdditions {
                             }
 
                             newSeries.isDrilling = false;
-                            if (chart.ddDupes) {
-                                chart.ddDupes.length = 0; // #3315
-                            } // #8324
-                            // Fire a once-off event after all series have been
-                            // drilled up (#5158)
-                            fireEvent(chart, 'drillupall');
                         }
                     }
                 }
             }
         }
+
+        if (!chart.mapView) {
+            chart.redraw();
+        }
+
+        if (chart.ddDupes) {
+            chart.ddDupes.length = 0; // #3315
+        } // #8324
+        // Fire a once-off event after all series have been
+        // drilled up (#5158)
+        fireEvent(chart, 'drillupall');
     }
 
     /**
@@ -1139,7 +1142,7 @@ namespace Drilldown {
         (this.xAxis || []).forEach((axis): void => {
             axis.ddPoints = {};
             axis.series.forEach((series): void => {
-                const xData = series.xData || [],
+                const xData = series.getColumn('x'),
                     points = series.points;
 
                 for (let i = 0, iEnd = xData.length, p; i < iEnd; i++) {

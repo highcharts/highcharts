@@ -28,14 +28,7 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface PackedBubbleDataLabelsFormatterCallbackFunction {
-    (this: (
-        Point.PointLabelObject|
-        PackedBubbleDataLabelFormatterObject
-    )): (number|string|null|undefined);
-}
-
-export interface PackedBubbleDataLabelFormatterObject extends Point.PointLabelObject {
-    point: PackedBubblePoint;
+    (this: (Point|PackedBubblePoint)): (number|string|null|undefined);
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {

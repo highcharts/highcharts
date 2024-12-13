@@ -1,9 +1,22 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 figure {
     max-width: 1300px;
     min-width: 320px;
     margin: 0 auto;
     position: relative;
-    font-family: sans-serif;
 }
 
 #container {
@@ -16,7 +29,7 @@ figure {
 
 #legend {
     max-width: 1300px;
-    margin: 5px auto 40px;
+    margin: 5px 10px 40px;
     display: flex;
     gap: 15px;
     flex-direction: column;
@@ -114,4 +127,8 @@ figure {
 
 pre {
     display: none;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }

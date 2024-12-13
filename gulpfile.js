@@ -22,8 +22,14 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api',
+    'api-docs',
+    'api-server',
+    'api-tree',
     'api-upload',
+    'clean',
     'dashboards/api',
+    'dashboards/api2',
     'dashboards/api-docs',
     'dashboards/api-server',
     'dashboards/cypress',
@@ -90,19 +96,16 @@ Gulp.registry(new GulpForwardReference());
     'test-karma',
     'test-tree',
     'test-ts',
-    'tsdoc',
-    'tsdoc-debug',
-    'tsdoc-watch',
     'update',
     'unsorted/build-modules',
     'unsorted/compare-filesizes',
     'unsorted/filesize',
     'unsorted/get-filesizes',
     'unsorted/nightly',
+    'unsorted/patch-ink-docstrap',
     'unsorted/update-vendor',
     'unsorted/upload-files',
     'update-pr-testresults',
-    'update-pr-testresults-cypress',
     'pr-size-table'
 ]));
 

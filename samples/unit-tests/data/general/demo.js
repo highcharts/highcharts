@@ -251,7 +251,7 @@ QUnit.test('Combination charts and column mapping', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].options.type,
+        chart.xAxis[0].type,
         'category',
         `After setting first column as string in data.columnTypes, x-axis should
         be configured as category axis (#16920).`

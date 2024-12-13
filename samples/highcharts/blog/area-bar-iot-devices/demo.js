@@ -274,10 +274,10 @@ fetch('https://www.highcharts.com/samples/data/iot-devices.csv').then(function (
     chartTwo.series.push(dtsObject);
 
     chartOne = Highcharts.merge(optionsOne, chartOne);
-    const chartOneRendered = new Highcharts.Chart(chartOne);
+    Highcharts.chart(chartOne);
 
     chartTwo = Highcharts.merge(optionsTwo, chartTwo);
-    const chartTwoRendere = new Highcharts.Chart(chartTwo);
+    Highcharts.chart(chartTwo);
 
     console.log(chartOne);
     console.log(chartTwo);

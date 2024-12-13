@@ -137,6 +137,7 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
+        isStandalone,
         lang
     } = options;
 
@@ -145,12 +146,18 @@ function renderCollapseHeader(
         {
             className:
                 EditGlobals.classNames[
-                    isNested ? 'accordionNestedWrapper' : 'accordionContainer'
-                ] + ' ' + EditGlobals.classNames.collapsableContentHeader
+                    (isNested ? 'accordionNestedWrapper' : 'accordionContainer')
+                ] + ' ' +
+                (
+                    isStandalone ?
+                        EditGlobals.classNames.accordionStandaloneWrapper : ''
+                ) + ' ' + EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
     );
+
+
     const header = createElement(
         'div',
         {
@@ -160,12 +167,21 @@ function renderCollapseHeader(
         accordion
     );
 
-    const headerBtn = createElement(
-        'button',
-        { className: EditGlobals.classNames.accordionHeaderBtn },
-        {},
-        header
-    );
+    let headerBtn;
+
+    if (!isStandalone || showToggle) {
+        headerBtn = createElement(
+            isStandalone && showToggle ? 'span' : 'button',
+            {
+                className: EditGlobals.classNames[
+                    isStandalone ?
+                        'accordionHeaderWrapper' : 'accordionHeaderBtn'
+                ]
+            },
+            {},
+            header
+        );
+    }
 
     createElement(
         'span',
@@ -176,7 +192,7 @@ function renderCollapseHeader(
         headerBtn
     );
 
-    if (showToggle) {
+    if (showToggle && header) {
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
@@ -187,32 +203,39 @@ function renderCollapseHeader(
         });
     }
 
-    const headerIcon = createElement(
-        'span',
-        {
-            className:
-                EditGlobals.classNames.accordionHeaderIcon + ' ' +
+    if (!isStandalone) {
+        const headerIcon = createElement(
+            'span',
+            {
+                className:
+                    EditGlobals.classNames.accordionHeaderIcon + ' ' +
+                    EditGlobals.classNames.collapsedElement
+            },
+            {},
+            headerBtn
+        );
+
+        headerBtn?.addEventListener('click', function (): void {
+            content.classList.toggle(EditGlobals.classNames.hiddenElement);
+            headerIcon?.classList.toggle(
                 EditGlobals.classNames.collapsedElement
-        },
-        {},
-        headerBtn
-    );
+            );
+        });
+    }
 
     const content = createElement(
         'div',
         {
             className:
                 EditGlobals.classNames.accordionContent + ' ' +
-                EditGlobals.classNames.hiddenElement
+                (isStandalone ?
+                    EditGlobals.classNames.standaloneElement :
+                    EditGlobals.classNames.hiddenElement
+                )
         },
         {},
         accordion
     );
-
-    headerBtn.addEventListener('click', function (): void {
-        content.classList.toggle(EditGlobals.classNames.hiddenElement);
-        headerIcon.classList.toggle(EditGlobals.classNames.collapsedElement);
-    });
 
     return { outerElement: accordion, content: content };
 }
@@ -875,6 +898,7 @@ export interface ToggleFormFieldOptions {
 export interface NestedHeaderFormFieldOptions {
     name: string;
     showToggle?: boolean;
+    isStandalone?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;

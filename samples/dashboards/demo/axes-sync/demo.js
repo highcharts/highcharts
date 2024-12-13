@@ -29,7 +29,9 @@ Highcharts.setOptions({
         spacingBottom: 20,
         height: 300,
         type: 'area',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     legend: {
         enabled: false
@@ -63,8 +65,7 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     dataPool: {
@@ -138,7 +139,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             title: {
                 text: 'Global'
@@ -176,7 +179,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             title: {
                 text: 'South-East Asia'
@@ -220,7 +225,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'y'
+                zooming: {
+                    type: 'y'
+                }
             },
             title: {
                 text: 'Africa'
@@ -264,7 +271,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'y'
+                zooming: {
+                    type: 'y'
+                }
             },
             title: {
                 text: 'Europe'

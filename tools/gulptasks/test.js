@@ -41,7 +41,7 @@ function checkJSWrap() {
 
     const fs = require('fs');
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -57,11 +57,11 @@ function checkJSWrap() {
                 fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                logLib.failure('js_wrap not found:', detailsFile);
+                LogLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            logLib.failure('File not found:', detailsFile);
+            LogLib.failure('File not found:', detailsFile);
             errors++;
         }
     });
@@ -94,16 +94,27 @@ function checkDemosConsistency() {
     });
 
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const FSLib = require('../libs/fs.js');
+    const LogLib = require('../libs/log');
     const yaml = require('js-yaml');
+    const assert = require('node:assert');
+    const { existsSync } = require('node:fs');
 
     let errors = 0;
 
-    glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details'
-    ).forEach(detailsFile => {
 
-        if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        assert(existsSync(FSLib.path(p + '/demo.details')), `Missing demo.details file at ${p}`);
+    });
+
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/*/*/demo.details', true)
+    ).forEach(detailsFile => {
+        detailsFile = FSLib.path(detailsFile, true);
+
+        if (/\/samples\/(\w+)\/demo\//u.test(detailsFile)) {
             try {
                 const details = yaml.load(
                     fs.readFileSync(detailsFile, 'utf-8')
@@ -115,58 +126,35 @@ function checkDemosConsistency() {
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
                 if (!name || /High.*demo/.test(name)) {
-                    logLib.failure('no name set, or default name used:', detailsFile);
+                    LogLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
 
                 if (!demoCategories || !demoCategories.length) {
-                    logLib.failure('no categories found:', detailsFile);
+                    LogLib.failure('no categories found:', detailsFile);
                     errors++;
                 } else {
                     if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                        logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                        LogLib.failure('one or more categories are missing from demo-config:', detailsFile);
                         errors++;
                     }
                 }
 
                 if (!demoTags || !demoTags.length) {
-                    logLib.failure('no tags found:', detailsFile);
+                    LogLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
                     if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
+                        LogLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
 
-            } catch (e) {
-                logLib.failure('File not found:', detailsFile);
+            } catch {
+                LogLib.failure('File not found:', detailsFile);
                 errors++;
             }
 
-        } else {
-            try {
-                const details = yaml.load(
-                    fs.readFileSync(detailsFile, 'utf-8')
-                );
-
-                if (typeof details === 'object') {
-                    if (details.categories) {
-                        logLib.failure(
-                            'categories should not be used in demo.details outside demo folder',
-                            detailsFile
-                        );
-                        errors++;
-                    } else if (details.tags) {
-                        logLib.failure(
-                            'tags should not be used in demo.details outside demo folder',
-                            detailsFile
-                        );
-                        errors++;
-                    }
-                }
-            // eslint-disable-next-line
-            } catch (e) {}
         }
     });
 
@@ -182,15 +170,25 @@ function checkDemosConsistency() {
  */
 function checkDocsConsistency() {
     const FS = require('fs');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     const sidebar = require('../../docs/sidebars.js');
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
-    Object
-        .keys(sidebar.docs)
-        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
+    // Recursive function to collect doc paths from sidebar
+    function collectDocs(item) {
+        if (Array.isArray(item)) {
+            item.forEach(collectDocs);
+        } else if (typeof item === 'string') {
+            sidebarDocs.push(item);
+        } else if (typeof item === 'object') {
+            Object.values(item).forEach(collectDocs);
+        }
+    }
+
+    // Start collecting docs from sidebar.docs
+    collectDocs(sidebar.docs);
 
     const dirs = FS.readdirSync('docs/');
     const foundDocs = [];
@@ -208,6 +206,7 @@ function checkDocsConsistency() {
     } catch (error) {
         throw new Error(error);
     }
+
     const docsNotAdded = foundDocs.filter(file => {
         if (unlisted.includes(file)) {
             return false;
@@ -240,7 +239,7 @@ function checkDocsConsistency() {
 async function test() {
     const fs = require('fs');
     const argv = require('yargs').argv;
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 

@@ -15,6 +15,8 @@
  * */
 
 import type BubblePointOptions from '../Bubble/BubblePointOptions';
+import type NetworkgraphPointOptions from '../Networkgraph/NetworkgraphPointOptions';
+import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
 
 /* *
  *
@@ -22,8 +24,18 @@ import type BubblePointOptions from '../Bubble/BubblePointOptions';
  *
  * */
 
-export interface PackedBubblePointOptions extends BubblePointOptions {
+export interface PackedBubblePointOptions
+    extends BubblePointOptions, NetworkgraphPointOptions {
+
+    /**
+     * @type {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
+     *
+     * @product highcharts
+     */
+    dataLabels?: (PackedBubbleDataLabelOptions|Array<PackedBubbleDataLabelOptions>);
+
     mass?: number;
+
 }
 
 /* *

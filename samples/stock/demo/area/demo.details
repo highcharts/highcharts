@@ -1,8 +1,9 @@
 ---
-name: Area
+name: BTC-ETH Area
 authors:
-  - Torstein Hønsi
+  - Askel Eirik Johansson
 js_wrap: b
+new_until: 2024-06-26
 tags:
   - Highcharts Stock demo
 categories:

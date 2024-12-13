@@ -22,7 +22,7 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
@@ -394,7 +394,7 @@ class Cell extends GUIElement {
 
     // Method to get array of overlapping levels.
     public getOverlappingLevels(
-        align: string, // 'left', 'right', 'top', 'bottom'
+        align: 'left' | 'right' |'top' |'bottom',
         levelMaxGap: number, // Max distance between levels
         offset?: number // Analyzed cell offset
     ): Array<number> {
@@ -485,9 +485,7 @@ class Cell extends GUIElement {
         }
     }
 
-    public setHighlight(
-        remove?: boolean
-    ): void {
+    public setHighlight(remove?: boolean): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
@@ -515,10 +513,13 @@ class Cell extends GUIElement {
         }
     }
 
+    /**
+     * Sets the active state of the cell and resets the state of other cells.
+     */
     public setActiveState(): void {
-        // Reset other boxes
         const cell = this;
 
+        // Reset other boxes
         cell.row.layout.board.mountedComponents.forEach(
             (mountedComponent):void => {
                 if (mountedComponent.cell.container) {
@@ -526,6 +527,7 @@ class Cell extends GUIElement {
                         Globals.classNames.cellActive
                     );
                 }
+                mountedComponent.component.isActive = false;
             }
         );
 
@@ -601,6 +603,35 @@ namespace Cell {
          * Unique cell id.
          **/
         id: string;
+
+        /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
         /**
          * Width of the cell. Can be a percentage value, pixels or a fraction.
          *
@@ -662,13 +693,6 @@ namespace Cell {
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
     }
-
-    export interface DOMCell {
-        id: string;
-        container: HTMLElement;
-        mountedComponent: Component
-    }
-
 }
 
 /* *

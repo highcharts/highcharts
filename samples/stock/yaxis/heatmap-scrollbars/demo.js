@@ -10,14 +10,19 @@ Highcharts.chart('container', {
     },
     chart: {
         type: 'heatmap',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     xAxis: {
-        min: Date.UTC(2015, 4, 1),
-        max: Date.UTC(2015, 4, 30),
+        min: '2015-05-01',
+        max: '2015-05-30',
         scrollbar: {
             enabled: true
         }
+    },
+    tooltip: {
+        pointFormat: '{x:%[Ybe]} {y}:00 - <b>{value} ℃</b>'
     },
     yAxis: {
         minPadding: 0,

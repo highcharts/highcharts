@@ -208,37 +208,41 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
             .pointClass.prototype.setState;
 
     setState.call(point, '');
-    assert.strictEqual(
-        point.graphic.zIndex,
-        0,
-        'When state:normal zIndex is 0'
+    assert.notEqual(
+        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is normal, state marker graphic should not refer to the point'
     );
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`
     );
 
     setState.call(point, 'hover');
-    assert.strictEqual(point.graphic.zIndex, 1, 'When state:hover zIndex is 1');
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        point.series.stateMarkerGraphic.attr('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is hover, state marker graphic should refer to the point'
+    );
+    assert.strictEqual(
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'hover' state, #16165.`
     );
 
     setState.call(point, 'select');
-    assert.strictEqual(
-        point.graphic.zIndex,
-        0,
-        'When state:select zIndex is 0'
+    assert.notEqual(
+        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is select, state marker graphic should not refer to the point'
     );
 
     setState.call(point, '');
     assert.strictEqual(
-        point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
+        Math.round(point.graphic.d.split(' ')[1] - point.graphic.getBBox().x),
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`

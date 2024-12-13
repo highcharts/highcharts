@@ -1,14 +1,14 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
-        text: 'Average Monthly Weather Data for Tokyo',
-        align: 'left'
+        text: 'Average Monthly Weather Data for Tokyo'
     },
     subtitle: {
-        text: 'Source: WorldClimate.com',
-        align: 'left'
+        text: 'Source: WorldClimate.com'
     },
     xAxis: [{
         categories: [

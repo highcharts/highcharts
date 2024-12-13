@@ -21,7 +21,9 @@
                     }
                 }
             },
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         },
 
         rangeSelector: {

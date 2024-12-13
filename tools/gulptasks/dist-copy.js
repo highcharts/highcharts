@@ -190,8 +190,8 @@ const VENDOR_FILTER = [
  */
 function distCopy() {
 
-    const FsLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
+    const FsLib = require('../libs/fs');
+    const LogLib = require('../libs/log');
 
     return new Promise(resolve => {
 

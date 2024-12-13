@@ -1,0 +1,6 @@
+---
+ name: Gauge with rounded plot bands
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

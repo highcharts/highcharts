@@ -243,19 +243,20 @@ const options = {
             align: 'left'
         },
         plotBands: [{
-            from: Date.UTC(2009, 10, 27),
-            to: Date.UTC(2010, 11, 1),
+            from: '2009-11-27',
+            to: '2010-12-01',
             color: '#EFFFFF',
             label: {
                 text: '<em>Offices:</em><br> Torstein\'s<br>basement',
                 style: {
-                    color: '#999999'
+                    color: '#999999',
+                    width: 'auto'
                 },
                 y: 180
             }
         }, {
-            from: Date.UTC(2010, 11, 1),
-            to: Date.UTC(2013, 9, 1),
+            from: '2010-12-01',
+            to: '2013-10-01',
             color: '#FFFFEF',
             label: {
                 text: '<em>Offices:</em><br> Tomtebu',
@@ -265,8 +266,8 @@ const options = {
                 y: 30
             }
         }, {
-            from: Date.UTC(2013, 9, 1),
-            to: Date.UTC(2016, 2, 10),
+            from: '2013-10-01',
+            to: '2016-03-10',
             color: '#FFEFFF',
             label: {
                 text: '<em>Offices:</em><br> VikØrsta',
@@ -276,7 +277,7 @@ const options = {
                 y: 30
             }
         }, {
-            from: Date.UTC(2016, 2, 10),
+            from: '2016-03-10',
             to: Date.now(),
             color: '#EFFFEF',
             label: {
@@ -488,7 +489,7 @@ if (Highcharts.Series.types.flags) {
         shape: 'squarepin',
         y: -80,
         data: [{
-            x: Date.UTC(2014, 5, 13),
+            x: '2014-06-13',
             text: 'Highmaps version 1.0 released',
             title: 'Maps'
         }],
@@ -500,17 +501,17 @@ if (Highcharts.Series.types.flags) {
         shape: 'squarepin',
         y: -55,
         data: [{
-            x: Date.UTC(2014, 4, 1),
+            x: '2014-05-01',
             text: 'Highcharts Cloud Beta',
             title: 'Cloud'
         },
         {
-            x: Date.UTC(2017, 10, 24),
+            x: '2017-11-24',
             text: 'Highcharts Cloud v2',
             title: 'Cloud v2'
         },
         {
-            x: Date.UTC(2018, 11, 6),
+            x: '2018-12-06',
             text: 'Highcharts Cloud v2',
             title: 'Cloud v3'
         }
@@ -522,54 +523,54 @@ if (Highcharts.Series.types.flags) {
         color: '#333333',
         shape: 'circlepin',
         data: [{
-            x: Date.UTC(2009, 10, 27),
+            x: '2009-11-27',
             text: 'Highcharts version 1.0 released',
             title: '1.0'
         },
         {
-            x: Date.UTC(2010, 6, 13),
+            x: '2010-07-13',
             text: 'Ported from canvas to SVG rendering',
             title: '2.0'
         },
         {
-            x: Date.UTC(2010, 10, 23),
+            x: '2010-11-23',
             text: 'Dynamically resize and scale to text labels',
             title: '2.1'
         },
         {
-            x: Date.UTC(2011, 9, 18),
+            x: '2011-10-18',
             text: 'Highcharts Stock version 1.0 released',
             title: 'Stock',
             shape: 'squarepin'
         },
         {
-            x: Date.UTC(2012, 7, 24),
+            x: '2012-08-24',
             text: 'Gauges, polar charts and range series',
             title: '2.3'
         },
         {
-            x: Date.UTC(2013, 2, 22),
+            x: '2013-03-22',
             text: 'Multitouch support, more series types',
             title: '3.0'
         },
         {
-            x: Date.UTC(2014, 3, 22),
+            x: '2014-04-22',
             text: '3D charts, heatmaps',
             title: '4.0'
         },
         {
-            x: Date.UTC(2016, 8, 29),
+            x: '2016-09-29',
             text: 'Styled mode, responsive options, accessibility, ' +
                 'chart.update',
             title: '5.0'
         },
         {
-            x: Date.UTC(2017, 9, 4),
+            x: '2017-10-04',
             text: 'Annotations, Boost, Series labels, new series types',
             title: '6.0'
         },
         {
-            x: Date.UTC(2018, 11, 11),
+            x: '2018-12-11',
             text: 'Sonification, TypeScript (beta), new series types',
             title: '7.0'
         }
@@ -580,7 +581,7 @@ if (Highcharts.Series.types.flags) {
         name: 'logo',
         shape: 'url(https://www.highcharts.com/favicon.ico)',
         data: [{
-            x: Date.UTC(2014, 4, 21),
+            x: '2014-05-21',
             text: 'New logo',
             title: ' '
         }],
@@ -593,35 +594,35 @@ if (Highcharts.Series.types.flags) {
         color: '#333333',
         fillColor: 'rgba(255,255,255,0.8)',
         data: [{
-            x: Date.UTC(2012, 10, 1),
+            x: '2012-11-01',
             text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
                 'Fjordane, Norway',
             title: 'Award'
         },
         {
-            x: Date.UTC(2012, 11, 25),
+            x: '2012-12-25',
             text: 'Packt Publishing published <em>Learning Highcharts by ' +
                 'Example</em>. Since then, many other books are written ' +
                 'about Highcharts.',
             title: 'First book'
         },
         {
-            x: Date.UTC(2013, 4, 25),
+            x: '2013-05-25',
             text: 'Highsoft nominated Norway\'s Startup of the Year',
             title: 'Award'
         },
         {
-            x: Date.UTC(2014, 4, 25),
+            x: '2014-05-25',
             text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
             title: 'Award'
         },
         {
-            x: Date.UTC(2017, 9, 20),
+            x: '2017-10-20',
             text: 'Torstein awarded EY Entrepeneur of the Year, Vestlandet',
             title: 'Award'
         },
         {
-            x: Date.UTC(2018, 11, 13),
+            x: '2018-12-13',
             text: 'Grethe awarded NCE Ambassador',
             title: 'Award'
         }

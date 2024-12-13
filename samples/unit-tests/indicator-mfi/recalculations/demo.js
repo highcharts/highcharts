@@ -142,7 +142,7 @@ QUnit.test('Test MFI calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[2].yData,
+        chart.series[2].getColumn('y'),
         [
             49.466311,
             45.109745,
@@ -173,7 +173,7 @@ QUnit.test('Test MFI calculations on data updates.', function (assert) {
     chart.series[1].points[chart.series[1].points.length - 1].remove();
 
     assert.deepEqual(
-        chart.series[2].yData,
+        chart.series[2].getColumn('y'),
         [
             49.466311,
             45.109745,

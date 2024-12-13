@@ -63,19 +63,20 @@ KPIComponent allows end-user including the extra chart.
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
     ```
 
-2. The KPIComponent with chart uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so you need to load also the set of CSS styles to display Highcharts properly.
-    ```css
-    @import url("https://code.highcharts.com/css/highcharts.css");
-    ```
-    More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+2. From version v3.0.0 the KPIComponent with chart does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, no need to load the set of CSS styles to display Highcharts properly.
+Importing only dashboards CSS file is enough:
 
-    Also, be aware that we prepared the component so it was minimalist.  
-    To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).
+```css
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+```
+
+Also, be aware that we prepared the component so it was minimalist.  
+To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).
 
 3. Define chart options for the KPI.
 For the full set of available chart options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
-    ```js
+```js
     Dashboards.board('container', {
         gui: {
             layouts: [{
@@ -102,17 +103,18 @@ For the full set of available chart options, see the [Highcharts API](https://ap
             }
         }]
     });
-    ```
+```
 
-    By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options#linkedValueTo) option as in the example above.
+By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options#linkedValueTo) option as in the example above.
 
-    You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
+You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 
 ## Working with data
 You can either define static data, as you would do in the basic KPI Component (the `value` parameter), or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The KPIComponent reflects the last value from the column (declared by `columnName` param) as a value itself.
 
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/kpi-with-connector).
 Example of working with connector.
+
 ```js
 Dashboards.board('container', {
     dataPool: {
@@ -152,15 +154,15 @@ Dashboards.board('container', {
 ## Configuring options
 The `value` can be customized by:
 - `valueFormat` - a format string for the value text.
-    ```
-        valueFormat: '{value} km/h',
-    ```
+```
+    valueFormat: '{value} km/h',
+```
 - `valueFormatter` - a function to format the text of the value from scratch.
-    ```
-        valueFormatter: function () {
-            return this.options.value + ' km/h';
-        },
-    ```
+```
+    valueFormatter: function () {
+        return this.options.value + ' km/h';
+    },
+```
 
 ## Sync with other components
 The KPI Component allows users to sync the component with other components in Dashboards. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
