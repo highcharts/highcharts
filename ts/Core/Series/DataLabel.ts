@@ -392,7 +392,7 @@ namespace DataLabel {
             if (justify && alignTo.height >= 0) { // #8830
                 this.justifyDataLabel(
                     dataLabel,
-                    options,
+                    dataLabel.alignOptions || {},
                     dataLabel.alignAttr,
                     bBox,
                     alignTo,
