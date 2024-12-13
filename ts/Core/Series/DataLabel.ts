@@ -33,6 +33,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import Color from '../Color/Color.js';
 import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
@@ -694,19 +695,16 @@ namespace DataLabel {
                         };
 
                         if (!chart.styledMode) {
-                            if (backgroundColor === 'auto') {
-                                attr.fill = point.color;
-                            } else if (
-                                backgroundColor === 'contrast' &&
-                                isString(style.color)
-                            ) {
-                                attr.fill = renderer.getContrast(style.color);
-                                // Just enough opacity to make the text pass
-                                // WCAG contrast rules
-                                attr['fill-opacity'] = 0.65;
-                            } else {
-                                attr.fill = backgroundColor;
-                            }
+                            attr.fill = backgroundColor === 'auto' ?
+                                point.color :
+                                (
+                                    backgroundColor === 'contrast' &&
+                                    isString(style.color)
+                                ) ?
+                                    new Color(
+                                        renderer.getContrast(style.color)
+                                    ).setOpacity(0.65).get() :
+                                    backgroundColor;
                             attr.stroke = borderColor === 'auto' ?
                                 point.color :
                                 borderColor;
