@@ -124,6 +124,7 @@ function onTransform(
                         if (Object.keys(to).length) {
                             width = width * (fromWidth / toWidth);
                             height = height * (fromWidth / toHeight);
+                            y -= chart.plotTop;
 
                             scale =
                                 Math.min(
@@ -131,6 +132,8 @@ function onTransform(
                                     (chart.plotSizeY || 0) / height
                                 );
                         } else {
+                            fromWidth /= Math.abs(series.group?.scaleX || 1);
+                            fromHeight /= Math.abs(series.group?.scaleY || 1);
                             scale = Math.min(
                                 (chart.plotSizeX || 0) / fromWidth,
                                 (chart.plotSizeY || 0) / fromHeight
@@ -141,7 +144,6 @@ function onTransform(
                             y = y + (height / 2);
                         }
 
-                        y -= chart.plotTop;
 
                         series.zoomBox = {
                             x, y, width, height, scale, panX: 0, panY: 0
