@@ -141,6 +141,8 @@ function onTransform(
                             y = y + (height / 2);
                         }
 
+                        y -= chart.plotTop;
+
                         series.zoomBox = {
                             x, y, width, height, scale, panX: 0, panY: 0
                         };
