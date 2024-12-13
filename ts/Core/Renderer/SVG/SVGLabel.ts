@@ -495,7 +495,9 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        const { text, textAlign } = this;
+        const text = this.text,
+            textAlign = text.styles.textAlign || this.textAlign;
+
         if (!text.textPath) {
 
             this.updateBoxSize();
