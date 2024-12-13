@@ -298,7 +298,7 @@ const Options: DeepPartial<A11yOptions> = {
             /**
              * When a series contains more points than this, we no longer expose
              * information about individual points to screen readers. Note that
-             * this does not prevvent the keyboard navigation for this series if
+             * this does not prevent the keyboard navigation for this series if
              * enabled, at the same time point would not get proper descriptions
              * for users of screen readers.
              *
