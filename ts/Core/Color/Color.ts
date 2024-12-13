@@ -33,11 +33,6 @@ const {
     defined
 } = U;
 
-const supportsColorMix = win.CSS?.supports(
-    'color',
-    'color-mix(in srgb,red,blue 9%)'
-);
-
 /* *
  *
  *  Helpers
@@ -137,6 +132,16 @@ class Color implements ColorLike {
             ];
         }
     }];
+
+    /**
+     * Whether to use CSS `color-mix` for color handling (brightening,
+     * tweening). This can be disabled from the outside.
+     * @private
+     */
+    public static useColorMix = win.CSS?.supports(
+        'color',
+        'color-mix(in srgb,red,blue 9%)'
+    );
 
     // Must be last static member for init cycle
     public static readonly None = new Color('');
@@ -309,7 +314,7 @@ class Color implements ColorLike {
                         rgba[i] = 255;
                     }
                 }
-            } else if (supportsColorMix && isStringColor(this.input)) {
+            } else if (Color.useColorMix && isStringColor(this.input)) {
                 this.output = colorMix(
                     this.input,
                     alpha > 0 ? 'white' : 'black',
@@ -359,7 +364,7 @@ class Color implements ColorLike {
         // Unsupported color, return to-color (#3920, #7034)
         if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
             if (
-                supportsColorMix &&
+                Color.useColorMix &&
                 isStringColor(this.input) &&
                 isStringColor(to.input)
             ) {
