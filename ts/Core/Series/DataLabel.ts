@@ -247,6 +247,8 @@ namespace DataLabel {
             plotX = point.plotX,
             plotY = point.plotY,
             { distance, rotation = 0 } = options,
+            alignFactor = getAlignFactor(options.align),
+            verticalAlignFactor = getAlignFactor(options.verticalAlign),
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -351,9 +353,9 @@ namespace DataLabel {
                 }
             ), false, alignTo, false);
 
-            dataLabel.alignAttr.x += getAlignFactor(options.align) *
+            dataLabel.alignAttr.x += alignFactor *
                 (unrotatedbBox.width - bBox.width);
-            dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
+            dataLabel.alignAttr.y += verticalAlignFactor *
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({

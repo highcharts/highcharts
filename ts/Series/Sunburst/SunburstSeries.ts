@@ -148,7 +148,7 @@ function getDlOptions(
         }, optionsLevel, optionsPoint),
         padding: Array<number> = splat(options.padding || 0),
         paddingLeft = padding[3 % padding.length],
-        paddingRight = padding[1 % padding.length]
+        paddingRight = padding[1 % padding.length],
         { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
