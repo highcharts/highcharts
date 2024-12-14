@@ -17,7 +17,7 @@
         },
 
         title: {
-            text: 'Recurring stock investment simulator'
+            text: 'Investment simulator'
         },
 
         xAxis: {
@@ -57,11 +57,25 @@
             }
         },
 
+        responsive: {
+            rules: [{
+                condition: {
+                    minWidth: 1200
+                },
+                chartOptions: {
+                    legend: {
+                        align: 'right',
+                        layout: 'proximate',
+                        margin: 50
+                    }
+                }
+            }]
+        },
+
         series: [{
             name: 'Invested amount',
             data: data[0],
             step: true,
-            dashStyle: 'ShortDot',
             lastPrice: {
                 label: {
                     borderColor: '#2caffe'
