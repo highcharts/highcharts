@@ -4003,7 +4003,13 @@ class Series {
                     dataOptions,
                     ...Object.values(table.getColumns())
                 ].filter(defined).forEach((coll): void => {
-                    coll.shift();
+                    if (Array.isArray(coll)) {
+                        coll.shift();
+                    } else {
+                        // TODO (DD): Add support for the typed arrays
+                        // eslint-disable-next-line no-console
+                        console.error('Typed array is not fully supported.');
+                    }
                 });
                 table.rowCount -= 1;
                 fireEvent(table, 'afterDeleteRows');
@@ -4069,7 +4075,13 @@ class Series {
                     series.options.data,
                     ...Object.values(table.getColumns())
                 ].filter(defined).forEach((coll): void => {
-                    coll.splice(i, 1);
+                    if (Array.isArray(coll)) {
+                        coll.splice(i, 1);
+                    } else {
+                        // TODO (DD): Add support for the typed arrays
+                        // eslint-disable-next-line no-console
+                        console.error('Typed array is not fully supported.');
+                    }
                 });
 
                 // Shorthand row deletion in order to avoid including the whole

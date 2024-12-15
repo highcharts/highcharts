@@ -27,6 +27,7 @@
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
+import type { TypedArray } from '../Core/Series/SeriesOptions.js';
 
 import DataTableCore from './DataTableCore.js';
 import U from '../Core/Utilities.js';
@@ -378,7 +379,15 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 ++i
             ) {
                 column = columns[columnNames[i]];
-                deletedCells = column.splice(rowIndex, rowCount);
+
+                if (Array.isArray(column)) {
+                    deletedCells = column.splice(rowIndex, rowCount);
+                } else {
+                    // TODO (DD): Implement support for typed arrays (?).
+                    // eslint-disable-next-line no-console
+                    console.error('Typed array columns are not supported yet.');
+                    return deletedRows;
+                }
 
                 if (!i) {
                     table.rowCount = column.length;
@@ -606,6 +615,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * type number or `null`. Otherwise it will convert all cells to number
      * type, except `null`.
      *
+     * @deprecated
+     *
      * @function Highcharts.DataTable#getColumnAsNumbers
      *
      * @param {string} columnName
@@ -683,12 +694,17 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
 
     public getColumns(
         columnNames?: Array<string>,
-        asReference?: boolean
+        asReference?: boolean,
     ): DataTable.ColumnCollection;
     public getColumns(
         columnNames: (Array<string> | undefined),
         asReference: true
     ): Record<string, DataTable.Column>;
+    public getColumns(
+        columnNames: (Array<string> | undefined),
+        asReference: false,
+        asBasicColumns: true
+    ): Record<string, DataTable.BasicColumn>;
     /**
      * Retrieves all or the given columns.
      *
@@ -700,13 +716,17 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * @param {boolean} [asReference]
      * Whether to return columns as a readonly reference.
      *
+     * @param {boolean} [asBasicColumns]
+     * Whether to transform all typed array columns to normal arrays.
+     *
      * @return {Highcharts.DataTableColumnCollection}
      * Collection of columns. If a requested column was not found, it is
      * `undefined`.
      */
     public getColumns(
         columnNames?: Array<string>,
-        asReference?: boolean
+        asReference?: boolean,
+        asBasicColumns?: boolean
     ): DataTable.ColumnCollection {
         const table = this,
             tableColumns = table.columns,
@@ -728,7 +748,13 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             column = tableColumns[columnName];
 
             if (column) {
-                columns[columnName] = (asReference ? column : column.slice());
+                if (asReference) {
+                    columns[columnName] = column;
+                } else if (asBasicColumns) {
+                    columns[columnName] = Array.from(column);
+                } else {
+                    columns[columnName] = column.slice();
+                }
             }
         }
 
@@ -851,7 +877,15 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         const column = table.columns[columnName];
 
         if (column) {
-            const rowIndex = column.indexOf(cellValue, rowIndexOffset);
+            let rowIndex = -1;
+
+            if (Array.isArray(column)) {
+                // Normal array
+                rowIndex = column.indexOf(cellValue, rowIndexOffset);
+            } else if (defined(cellValue) && Number.isFinite(cellValue)) {
+                // Typed array
+                rowIndex = column.indexOf(+cellValue, rowIndexOffset);
+            }
 
             if (rowIndex !== -1) {
                 return rowIndex;
@@ -1049,8 +1083,14 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         const table = this;
         const column = table.columns[columnName];
 
-        if (column) {
+        // Normal array
+        if (Array.isArray(column)) {
             return (column.indexOf(cellValue) !== -1);
+        }
+
+        // Typed array
+        if (defined(cellValue) && Number.isFinite(cellValue)) {
+            return (column.indexOf(+cellValue) !== -1);
         }
 
         return false;
@@ -1430,6 +1470,16 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             modifier = table.modifier,
             rowCount = rows.length;
 
+        if (insert) {
+            for (const columnName of columnNames) {
+                if (!Array.isArray(columns[columnName])) {
+                    // eslint-disable-next-line no-console
+                    console.error('Typed array columns are not supported yet.');
+                    return;
+                }
+            }
+        }
+
         table.emit({
             type: 'setRows',
             detail: eventDetail,
@@ -1448,10 +1498,21 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             row = rows[i];
             if (row === DataTable.NULL) {
                 for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    const column = columns[columnNames[j]];
+
                     if (insert) {
-                        columns[columnNames[j]].splice(i2, 0, null);
+                        if (!Array.isArray(column)) {
+                            // eslint-disable-next-line no-console
+                            console.error(
+                                'Typed array columns are not fully ' +
+                                'supported yet.'
+                            );
+                            return;
+                        }
+
+                        column.splice(i2, 0, null);
                     } else {
-                        columns[columnNames[j]][i2] = null;
+                        column[i2] = null;
                     }
                 }
             } else if (row instanceof Array) {
@@ -1469,7 +1530,15 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                columns[columnNames[i]].length = indexRowCount;
+                const column = columns[columnNames[i]];
+
+                if (!Array.isArray(column)) {
+                    // eslint-disable-next-line no-console
+                    console.error('Typed array columns are not supported yet.');
+                    return;
+                }
+
+                column.length = indexRowCount;
             }
         }
 
@@ -1505,6 +1574,37 @@ namespace DataTable {
      *
      * */
 
+
+    /**
+     * Primitive value types for a table cell.
+     */
+    export type BasicCellType = (boolean|number|null|string|undefined);
+
+    /**
+     * Possible value types for a table cell.
+     */
+    export type CellType = BasicCellType|Array<BasicCellType>;
+
+    /**
+     * Conventional array of table cells typed as `CellType`.
+     */
+    export interface BasicColumn extends Array<DataTable.CellType> {
+        [index: number]: CellType;
+    }
+
+    /**
+     * Array of table cells in vertical expansion.
+     */
+    export type Column = BasicColumn|TypedArray;
+
+    /**
+     * Collection of columns, where the key is the column name and
+     * the value is an array of column values.
+     */
+    export interface ColumnCollection {
+        [columnName: string]: Column;
+    }
+
     /**
      * Event object for cell-related events.
      */
@@ -1512,15 +1612,10 @@ namespace DataTable {
         readonly type: (
             'setCell' | 'afterSetCell'
         );
-        readonly cellValue: CellType;
+        readonly cellValue: DataTable.CellType;
         readonly columnName: string;
         readonly rowIndex: number;
     }
-
-    /**
-     * Possible value types for a table cell.
-     */
-    export type CellType = (boolean | number | null | string | undefined);
 
     /**
      * Event object for clone-related events.
@@ -1533,27 +1628,12 @@ namespace DataTable {
     }
 
     /**
-     * Array of table cells in vertical expansion.
-     */
-    export interface Column extends Array<DataTable.CellType> {
-        [index: number]: CellType;
-    }
-
-    /**
-     * Collection of columns, where the key is the column name and
-     * the value is an array of column values.
-     */
-    export interface ColumnCollection {
-        [columnName: string]: Column;
-    }
-
-    /**
      * Event object for column-related events.
      */
     export interface ColumnEvent extends DataEvent {
         readonly type: (
-            'deleteColumns' | 'afterDeleteColumns' |
-            'setColumns' | 'afterSetColumns'
+            'deleteColumns'|'afterDeleteColumns'|
+            'setColumns'|'afterSetColumns'
         );
         readonly columns?: ColumnCollection;
         readonly columnNames: Array<string>;
@@ -1594,12 +1674,12 @@ namespace DataTable {
      */
     export interface RowEvent extends DataEvent {
         readonly type: (
-            'deleteRows' | 'afterDeleteRows' |
-            'setRows' | 'afterSetRows'
+            'deleteRows'|'afterDeleteRows'|
+            'setRows'|'afterSetRows'
         );
         readonly rowCount: number;
         readonly rowIndex: number;
-        readonly rows?: Array<(Row | RowObject)>;
+        readonly rows?: Array<Row|RowObject>;
     }
 
     /**
@@ -1608,7 +1688,6 @@ namespace DataTable {
     export interface RowObject extends Record<string, CellType> {
         [column: string]: CellType;
     }
-
 
     /**
     * Event object for the setModifier events.
@@ -1622,7 +1701,6 @@ namespace DataTable {
         readonly modifier?: DataModifier;
         readonly modified?: DataTable;
     }
-
 
 }
 

@@ -27,6 +27,7 @@ import type DataEvent from './DataEvent.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
+
 import U from '../Core/Utilities.js';
 const {
     fireEvent,
@@ -49,7 +50,7 @@ const {
  * from specific cells.
  *
  * @class
- * @name Highcharts.DataTable
+ * @name Highcharts.DataTableCore
  *
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
@@ -209,7 +210,7 @@ class DataTableCore {
         columnNames?: Array<string>
     ): (DataTable.Row|undefined) {
         return (columnNames || Object.keys(this.columns)).map(
-            (key): DataTableCore.CellType => this.columns[key]?.[rowIndex]
+            (key): DataTable.CellType => this.columns[key]?.[rowIndex]
         );
     }
 
@@ -242,7 +243,7 @@ class DataTableCore {
 
     /**
      * * Sets cell values for multiple columns. Will insert new columns, if not
-     * found. Simplified version of the full `DataTable.setColumns`, limited to
+     * found. Simplified version of the full `DataTableCore.setColumns`, limited to
      * full replacement of the columns (undefined `rowIndex`).
      *
      * @param {Highcharts.DataTableColumnCollection} columns
@@ -310,7 +311,13 @@ class DataTableCore {
                 eventDetail?.addColumns !== false && new Array(indexRowCount);
             if (column) {
                 if (insert) {
-                    column.splice(rowIndex, 0, cellValue);
+                    if (Array.isArray(column)) {
+                        column.splice(rowIndex, 0, cellValue);
+                    } else {
+                        // TODO (DD): Support typed arrays?
+                        // eslint-disable-next-line no-console
+                        console.error('Typed array not supported for insert');
+                    }
                 } else {
                     column[rowIndex] = cellValue;
                 }
@@ -347,73 +354,12 @@ namespace DataTableCore {
      * */
 
     /**
-     * Possible value types for a table cell.
-     */
-    export type CellType = (boolean|number|null|string|undefined);
-
-    /**
-     * Array of table cells in vertical expansion.
-     */
-    export interface Column extends Array<DataTable.CellType> {
-        [index: number]: CellType;
-    }
-
-    /**
-     * Collection of columns, where the key is the column name and
-     * the value is an array of column values.
-     */
-    export interface ColumnCollection {
-        [columnName: string]: Column;
-    }
-
-    /**
-     * Event object for column-related events.
-     */
-    export interface ColumnEvent extends DataEvent {
-        readonly type: (
-            'deleteColumns'|'afterDeleteColumns'|
-            'setColumns'|'afterSetColumns'
-        );
-        readonly columns?: ColumnCollection;
-        readonly columnNames: Array<string>;
-        readonly rowIndex?: number;
-    }
-
-    /**
      * All information objects of DataTable events.
      */
     export type Event = (
-        ColumnEvent|
-        RowEvent
+        DataTable.ColumnEvent|
+        DataTable.RowEvent
     );
-
-    /**
-     * Array of table cells in horizontal expansion. Index of the array is the
-     * index of the column names.
-     */
-    export interface Row extends Array<CellType> {
-        [index: number]: CellType;
-    }
-
-    /**
-     * Event object for row-related events.
-     */
-    export interface RowEvent extends DataEvent {
-        readonly type: (
-            'deleteRows'|'afterDeleteRows'|
-            'setRows'|'afterSetRows'
-        );
-        readonly rowCount: number;
-        readonly rowIndex: number;
-        readonly rows?: Array<(Row|RowObject)>;
-    }
-
-    /**
-     * Object of row values, where the keys are the column names.
-     */
-    export interface RowObject extends Record<string, CellType> {
-        [column: string]: CellType;
-    }
 }
 
 
