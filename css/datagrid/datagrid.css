@@ -416,6 +416,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     position: relative;
 }
 
+.highcharts-datagrid-table tbody {
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
 .highcharts-datagrid-table tbody tr {
     overflow: hidden;
     width: 100%;
