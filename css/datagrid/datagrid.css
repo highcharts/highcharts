@@ -421,7 +421,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     width: 100%;
 }
 
- .highcharts-datagrid-table tbody tr td {
+ .highcharts-datagrid-table tbody tr td,
+ .highcharts-datagrid-table tbody tr td.highcharts-datagrid-mocked-cell {
     border-right: var(--hcdg-column-border);
     border-bottom: var(--hcdg-row-border);
     text-align: var(--hcdg-text-align);
@@ -437,7 +438,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 .highcharts-datagrid-table tr:last-of-type td {
-    border-bottom-color: transparent;
+    border-bottom: none;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody tr {

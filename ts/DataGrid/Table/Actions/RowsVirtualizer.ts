@@ -473,7 +473,7 @@ class RowsVirtualizer {
 
         const mockCell = makeHTMLElement('td', {
             innerText: 'mock',
-            className: 'outline'
+            className: Globals.classNames.mockedCell
         }, mockRow);
 
         const defaultRowHeight = mockRow.offsetHeight;
