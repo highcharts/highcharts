@@ -538,6 +538,63 @@ QUnit.module('Format', () => {
             'Date formatting with string output should be preserved'
         );
 
+        assert.strictEqual(
+            format(
+                'Hello {"World"}',
+                {}
+            ),
+            'Hello World',
+            'Immediate string literal should resolve'
+        );
+
+        assert.strictEqual(
+            format(
+                'Hello {(key)}',
+                { key: 'World' }
+            ),
+            'Hello World',
+            'Immediate parenthesis should resolve'
+        );
+
+        assert.strictEqual(
+            format(
+                '<span>{(point.key:%a %d.%m.%y %H:%M)}</span><br>',
+                { point: { key: Date.UTC(2024, 11, 11) } }
+            ),
+            '<span>Wed 11.12.24 00:00</span><br>',
+            'Date formatting with parens and colon inside string should ' +
+                'resolve (#22316)'
+        );
+
+        assert.strictEqual(
+            format(
+                'How people with {type} see {ucfirst (color)}',
+                {
+                    type: 'Tritanopia',
+                    color: 'red'
+                }
+            ),
+            'How people with Tritanopia see Red',
+            'Strings with multiple expressions, sub in one, should resolve'
+        );
+
+        assert.strictEqual(
+            format(
+                '<span>{categories.(point.key)}</span>',
+                {
+                    categories: {
+                        one: 'First',
+                        two: 'Second'
+                    },
+                    point: {
+                        key: 'two'
+                    }
+                }
+            ),
+            '<span>Second</span>',
+            'String properties inside deep objects should resolve'
+        );
+
     });
 
     QUnit.test('Error handling', assert => {

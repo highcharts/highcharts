@@ -35,6 +35,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    isString,
     pick,
     ucfirst
 } = U;
@@ -90,6 +91,9 @@ const numberFormatCache: Record<string, Intl.NumberFormat> = {};
  *  Functions
  *
  * */
+
+// Internal convenience function
+const isQuotedString = (str: string): boolean => /^["'].+["']$/.test(str);
 
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
@@ -204,7 +208,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         if ((n = Number(key)).toString() === key) {
             return n;
         }
-        if (/^["'].+["']$/.test(key)) {
+        if (isQuotedString(key)) {
             return key.slice(1, -1);
         }
 
@@ -355,7 +359,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
         // Simple variable replacement
         } else {
-            const valueAndFormat = expression.split(':');
+            const valueAndFormat = isQuotedString(expression) ?
+                [expression] : expression.split(':');
 
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
@@ -379,13 +384,14 @@ function format(str = '', ctx: any, chart?: Chart): string {
                     }
                 } else {
                     replacement = time.dateFormat(segment, replacement);
-
-                    // Use string literal in order to be preserved in the outer
-                    // expression
-                    if (hasSub) {
-                        replacement = `"${replacement}"`;
-                    }
                 }
+            }
+
+            // Use string literal in order to be preserved in the outer
+            // expression
+            subRegex.lastIndex = 0;
+            if (subRegex.test(match.find) && isString(replacement)) {
+                replacement = `"${replacement}"`;
             }
         }
         str = str.replace(match.find, pick(replacement, ''));
