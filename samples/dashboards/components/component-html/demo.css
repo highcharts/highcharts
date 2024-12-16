@@ -7,3 +7,9 @@
 #description {
     text-decoration: underline;
 }
+
+@media screen and (max-width: 680px) {
+    .highcharts-dashboards-cell {
+        flex: 1 1 100%;
+    }
+}

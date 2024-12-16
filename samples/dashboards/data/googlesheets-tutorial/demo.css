@@ -103,3 +103,9 @@ div#description a {
     color: var(--highcharts-highlight-color-80);
     letter-spacing: 2px;
 }
+
+@media screen and (max-width: 680px) {
+    .cell {
+        flex: 1 1 100%;
+    }
+}

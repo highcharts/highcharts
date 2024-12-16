@@ -4,3 +4,9 @@
 #dashboard-col-0 {
     text-align: center;
 }
+
+@media screen and (max-width: 680px) {
+    #dashboard-col-0 {
+        flex: 1 1 100%;
+    }
+}

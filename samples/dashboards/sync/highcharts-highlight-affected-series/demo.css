@@ -16,3 +16,9 @@
 .inputs label {
     color: var(--highcharts-neutral-color-100);
 }
+
+@media screen and (max-width: 680px) {
+    .highcharts-dashboards-cell {
+        flex: 1 1 100%;
+    }
+}

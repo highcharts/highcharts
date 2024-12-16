@@ -1,1 +1,7 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+@media screen and (max-width: 680px) {
+    .highcharts-dashboards-cell {
+        flex: 1 1 100%;
+    }
+}
