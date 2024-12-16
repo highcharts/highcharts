@@ -675,7 +675,35 @@ QUnit.test('Input types', assert => {
             assert.strictEqual(
                 input().type,
                 'date',
-                'default format should result in date input'
+                'Default format should result in date input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%e %b %Y'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Legacy format should result in date input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: {
+                        year: 'full',
+                        month: 'short',
+                        day: '2-digit'
+                    }
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'date',
+                'Object format should result in date input'
             );
         } else {
             assert.strictEqual(
@@ -708,6 +736,33 @@ QUnit.test('Input types', assert => {
                 input().type,
                 'datetime-local',
                 'Locale year and hour should result in datetime-local input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: '%Y %H'
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Legacy year and hour should result in datetime-local input'
+            );
+
+            chart.update({
+                rangeSelector: {
+                    inputDateFormat: {
+                        year: 'full',
+                        hour: '2-digit'
+                    }
+                }
+            });
+
+            assert.strictEqual(
+                input().type,
+                'datetime-local',
+                'Object year and hour should result in datetime-local input'
             );
         }
 
