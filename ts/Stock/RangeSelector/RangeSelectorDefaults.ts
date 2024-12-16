@@ -475,8 +475,11 @@ const rangeSelector: RangeSelectorOptions = {
          * The alignment of the input box. Allowed properties are `left`,
          * `center`, `right`.
          *
-         * @sample {highstock} stock/rangeselector/input-button-position/
-         *         Alignment
+         * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0
@@ -522,8 +525,11 @@ const rangeSelector: RangeSelectorOptions = {
          * The alignment of the input box. Allowed properties are `left`,
          * `center`, `right`.
          *
-         * @sample {highstock} stock/rangeselector/input-button-position/
-         *         Alignment
+         * @sample {highstock} stock/rangeselector/input-button-opposite-alignment/
+         *         Opposite alignment
+         *
+         * @sample {highstock} stock/rangeselector/input-button-same-alignment/
+         *         Same alignment for buttons and input
          *
          * @type  {Highcharts.AlignValue}
          * @since 6.0.0
