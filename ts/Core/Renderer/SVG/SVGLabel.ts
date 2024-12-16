@@ -165,6 +165,7 @@ class SVGLabel extends SVGElement {
 
     public alignSetter(value: AlignValue): void {
         const alignFactor = getAlignFactor(value);
+        this.textAlign = value;
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -394,6 +395,7 @@ class SVGLabel extends SVGElement {
 
     public 'text-alignSetter'(value: string): void {
         this.textAlign = value;
+        this.updateTextPadding();
     }
 
     public textSetter(text?: string): void {
@@ -493,7 +495,9 @@ class SVGLabel extends SVGElement {
      * is changed.
      */
     public updateTextPadding(): void {
-        const text = this.text;
+        const text = this.text,
+            textAlign = text.styles.textAlign || this.textAlign;
+
         if (!text.textPath) {
 
             this.updateBoxSize();
@@ -502,21 +506,17 @@ class SVGLabel extends SVGElement {
             const textY = this.baseline ? 0 : this.baselineOffset,
                 textX = (this.paddingLeft ?? this.padding) +
                     // Compensate for alignment
-                    (
-                        (defined(this.widthSetting) && this.bBox) ?
-                            getAlignFactor(this.textAlign) *
-                                (this.widthSetting - this.bBox.width) :
-                            0
+                    getAlignFactor(textAlign) * (
+                        this.widthSetting ?? this.bBox.width
                     );
 
             // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
-                text.attr('x', textX);
-                // #8159 - prevent misplaced data labels in treemap
-                // (useHTML: true)
-                if (text.hasBoxWidthChanged) {
-                    this.bBox = text.getBBox(true);
-                }
+                text.attr({
+                    align: textAlign,
+                    x: textX
+                });
+
                 if (typeof textY !== 'undefined') {
                     text.attr('y', textY);
                 }
