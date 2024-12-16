@@ -2,6 +2,7 @@
 
 Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and DataGrid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components. 
 
+## Overview
 This is an overview of the most critical parameters of a component:
 * `id` - The unique identifier of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
 * `renderTo` - id of the cell to which the component should be rendered
@@ -15,7 +16,7 @@ This is an overview of the most critical parameters of a component:
 The most basic and generic component type allows you to add everything that could be defined as HTML, as well as some custom events.
 
 The HTML component can be defined in two ways:  
-### **Abstract Syntax Tree (AST) style**  
+### Abstract Syntax Tree (AST) style  
 Defines the HTML code as a nested tree structure.
 
 Code snippet:
@@ -31,7 +32,7 @@ Code snippet:
     }]
 }
 ```
-### **HTML string**  
+### HTML string
 Defines the HTML code as a standard HTML string.
 
 Code snippet:
