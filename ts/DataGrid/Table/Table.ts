@@ -348,7 +348,7 @@ class Table {
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow(true);
+        this.reflow(this.scrollable);
     };
 
     /**
