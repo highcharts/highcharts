@@ -2,13 +2,15 @@
 
 When you are ready to create your first simple dashboard, please follow these steps:
 
-Add a `div` element to your webpage with a specific `id`.
+## 1. Add a `div` element
+ The first required step in creating a dashboard is to define a `div` element where the dashboard is to be rendered. The `id` of the 'div' identifies the HTML element and is needed by the script that manages the dashboard. This `div` is generally  referred to as the **Dashboards** container.
 
 ```html
 <div id="container">
 ```
 
-In this example, we will create a simple dashboard with two cells. The first cell contains some *static HTML*, while the second contains a Highcharts chart. For this dashboard to work, we need both the **Highcharts** library and the **Dashboards** library.
+## 2. Create the dashboard
+In this example, we will create a simple dashboard with two cells. The first cell contains some *static HTML*, while the second contains a **Highcharts** chart. For this dashboard to work, we need both the **Highcharts** library and the **Dashboards** library, as well as the `layout` module. The required JS modules are imported as follows:
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -18,16 +20,18 @@ In this example, we will create a simple dashboard with two cells. The first cel
 
 However, there are other ways to import **Dashboards** packages. For alternative approaches, e.g. install via **npm**, see [this article](https://www.highcharts.com/docs/dashboards/installation).
 
-We need some styling to display the whole dashboard properly. You can get the basic one by importing the modules to the CSS file, as shown below.
+## 3. Add CSS
+We need CSS styling to display the dashboard properly. The default styles of the dashboard is contained is the **Dashboards** CSS file, and imported as shown below.
 
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-We are now ready to start working on the actual Dashboard configuration. Create a new dashboard instance inside the `script` tag.
+## 4. Add the script
+We are now ready to start working on the actual **Dashboards** configuration. Create a new dashboard instance inside the `script` tag.
 
 To do so, you have to pass two arguments:
-* the div’s ID where the dashboard should be placed (see point 1).
+* the container div’s ID where the dashboard should be placed (see point 1).
 * the object with dashboard options.
 
 To do so, you can use the factory function `Dashboards.board`:
@@ -42,9 +46,11 @@ or the class `Dashboards.Board` to create a new instance of the dashboard:
 const board = new Dashboards.Board('container', {...})
 ```
 
+## 5. Add mandatory options
 For the dashboard to work, two options are mandatory:
 
-* __gui__ - Here, you can define the layout of the dashboard by specifying rows and cells
+### gui
+This is an objects that is used to define the layout of the dashboard by specifying rows and cells
 
 ```js
 gui: {
@@ -61,7 +67,8 @@ gui: {
 }
 ```
 
-* __components__ - This is an array of components to be inserted into the dashboard. To place a component in a cell, use the cell ID defined in the `gui` option.
+### components
+This is an array of components to be inserted into the dashboard. To place a component in a cell, use the cell ID defined in the `gui` option.
 You also have to declare the type of the component and its options.
 
 ```js
@@ -86,6 +93,7 @@ components: [{
 
 ```
 
-The dashboard should now look like the example below:
+## View the result
+With the configuration above, your datagrid should look like this:
 
 <iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>
