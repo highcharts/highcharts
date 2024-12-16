@@ -27,8 +27,9 @@
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
-import type { TypedArray } from '../Core/Series/SeriesOptions.js';
+import type { TypedArray } from './ColumnUtils';
 
+import ColumnUtils from './ColumnUtils.js';
 import DataTableCore from './DataTableCore.js';
 import U from '../Core/Utilities.js';
 const {
@@ -374,20 +375,16 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 let i = 0,
                     iEnd = columnNames.length,
                     column: DataTable.Column,
-                    deletedCells: Array<DataTable.CellType>;
+                    deletedCells: DataTable.Column;
                 i < iEnd;
                 ++i
             ) {
                 column = columns[columnNames[i]];
 
-                if (Array.isArray(column)) {
-                    deletedCells = column.splice(rowIndex, rowCount);
-                } else {
-                    // TODO (DD): Implement support for typed arrays (?).
-                    // eslint-disable-next-line no-console
-                    console.error('Typed array columns are not supported yet.');
-                    return deletedRows;
-                }
+                const result = ColumnUtils.splice(column, rowIndex, rowCount);
+
+                deletedCells = result.removed;
+                column = result.array;
 
                 if (!i) {
                     table.rowCount = column.length;

@@ -27,11 +27,10 @@ import type DataEvent from './DataEvent.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
-
+import ColumnUtils from './ColumnUtils.js';
 import U from '../Core/Utilities.js';
 const {
     fireEvent,
-    isArray,
     objectEach,
     uniqueKey
 } = U;
@@ -143,10 +142,11 @@ class DataTableCore {
         rowCount: number
     ): void {
         this.rowCount = rowCount;
-        objectEach(this.columns, (column): void => {
-            if (isArray(column)) { // Not on typed array
-                column.length = rowCount;
-            }
+        objectEach(this.columns, (column, columnName): void => {
+            this.replaceColumnRef(
+                columnName,
+                ColumnUtils.setLength(column, rowCount)
+            );
         });
     }
 
@@ -212,6 +212,36 @@ class DataTableCore {
         return (columnNames || Object.keys(this.columns)).map(
             (key): DataTable.CellType => this.columns[key]?.[rowIndex]
         );
+    }
+
+    /**
+     * Replaces a column reference in the table. It does not do anything else,
+     * unlike the `setColumn` method.
+     *
+     * @param {string} columnName
+     * Name of the column to replace.
+     *
+     * @param {DataTable.Column} column
+     * New column reference.
+     *
+     * @param {boolean} silent
+     * Whether to suppress events. Default is `true`.
+     *
+     * @emits #afterSetColumns
+     *
+     * @internal
+     */
+    public replaceColumnRef(
+        columnName: string,
+        column: DataTable.Column,
+        silent: boolean = true
+    ): void {
+        this.columns[columnName] = column;
+
+        if (!silent) {
+            fireEvent(this, 'afterSetColumns');
+            this.versionTag = uniqueKey();
+        }
     }
 
     /**
@@ -307,17 +337,17 @@ class DataTableCore {
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
 
         objectEach(row, (cellValue, columnName): void => {
-            const column = columns[columnName] ||
+            let column = columns[columnName] ||
                 eventDetail?.addColumns !== false && new Array(indexRowCount);
             if (column) {
                 if (insert) {
-                    if (Array.isArray(column)) {
-                        column.splice(rowIndex, 0, cellValue);
-                    } else {
-                        // TODO (DD): Support typed arrays?
-                        // eslint-disable-next-line no-console
-                        console.error('Typed array not supported for insert');
-                    }
+                    column = ColumnUtils.splice(
+                        column,
+                        rowIndex,
+                        0,
+                        true,
+                        [cellValue]
+                    ).array;
                 } else {
                     column[rowIndex] = cellValue;
                 }
@@ -334,6 +364,35 @@ class DataTableCore {
             this.versionTag = uniqueKey();
         }
     }
+
+    /**
+     * Shifts the first row of the table and returns it.
+     * @internal
+     */
+    public shift(silent: boolean = false): DataTable.Row|undefined {
+        const firstRow = this.getRow(0);
+        if (!firstRow) {
+            return void 0;
+        }
+
+        objectEach(this.columns, (column, columnName): void => {
+            this.replaceColumnRef(
+                columnName,
+                ColumnUtils.shift(column).array
+            );
+        });
+
+        this.rowCount -= 1;
+
+        if (!silent) {
+            fireEvent(this, 'afterDeleteRows');
+            this.versionTag = uniqueKey();
+        }
+
+        return firstRow;
+    }
+
+    // TODO (DD): Implement internal splice method
 }
 
 /* *

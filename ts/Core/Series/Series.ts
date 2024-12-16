@@ -4000,19 +4000,12 @@ class Series {
             } else {
                 [
                     data,
-                    dataOptions,
-                    ...Object.values(table.getColumns())
+                    dataOptions
                 ].filter(defined).forEach((coll): void => {
-                    if (Array.isArray(coll)) {
-                        coll.shift();
-                    } else {
-                        // TODO (DD): Add support for the typed arrays
-                        // eslint-disable-next-line no-console
-                        console.error('Typed array is not fully supported.');
-                    }
+                    coll.shift();
                 });
-                table.rowCount -= 1;
-                fireEvent(table, 'afterDeleteRows');
+
+                table.shift(false);
             }
         }
 
