@@ -853,7 +853,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             type: 'scatter',
             width: 800,
             style: {
-                fontFamily: 'Helvetica'
+                fontFamily: 'Helvetica, Arial, sans-serif'
             }
         },
         xAxis: [

@@ -1458,7 +1458,7 @@ export function getNestedProperty(path: string, parent: unknown): unknown {
         }
 
         const child = (parent as Record<string, unknown>)[
-            pathElement
+            pathElement.replace(/[\\'"]/g, '')
         ] as Record<string, unknown>;
 
         // Filter on the child

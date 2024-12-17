@@ -11,20 +11,21 @@ const commonOptions = {
 
 const NVIDIACorpId = '0P000003RE';
 
+const NVIDIAPriceConnector =
 // eslint-disable-next-line no-undef
-const NVIDIAPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'OHLCV'
-    },
-    securities: [
-        {
-            id: NVIDIACorpId,
-            idType: 'MSID'
-        }
-    ],
-    currencyId: 'EUR'
-});
+    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'OHLCV'
+        },
+        securities: [
+            {
+                id: NVIDIACorpId,
+                idType: 'MSID'
+            }
+        ],
+        currencyId: 'EUR'
+    });
 
 Promise.all([NVIDIAPriceConnector.load()]).then(() => {
     const {

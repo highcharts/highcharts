@@ -108,7 +108,7 @@ export class Error16Plugin {
             filepath,
             content.replace(
                 /((root\S+?) = factory\S+?);/su,
-                '($2 && $2.error(16, true)) || ($1);'
+                '(($2 && $2.error(16, true)), $1);'
             ),
             'utf8'
         );
