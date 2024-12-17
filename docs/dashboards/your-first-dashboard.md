@@ -70,7 +70,7 @@ gui: {
 }
 ```
 
-#### components
+**components**
 This is an array of components to be inserted into the dashboard. To place a component in a cell, use the cell ID defined in the `gui` option.
 You also have to declare the type of the component and its options.
 
