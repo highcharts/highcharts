@@ -644,6 +644,20 @@ namespace CSVConverter {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        CSV: typeof CSVConverter;
+    }
+}
+
+DataConverter.registerType('CSV', CSVConverter);
+
+/* *
+ *
  *  Default Export
  *
  * */

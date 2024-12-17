@@ -294,9 +294,9 @@ An example implementation of the `ThresholdComponent` can look like this:
 ```js
 const {
     Component,
-    ComponentRegistry
+    ComponentRegistry,
+    merge
 } = Dashboards;
-const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
 
 class ThresholdComponent extends Component {
     constructor(cell, options) {
