@@ -130,7 +130,7 @@ const ChartDefaults: ChartOptions = {
      *
      * - `easing`: A string reference to an easing function set on the
      *   `Math` object. See
-     *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
+     *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-animation-easing/).
      *
      * When zooming on a series with less than 100 points, the chart redraw
      * will be done with animation, but in case of more data points, it is

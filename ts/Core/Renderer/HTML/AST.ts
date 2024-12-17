@@ -93,7 +93,7 @@ class AST {
      * the DOM.
      *
      * @see [Source code with default values](
-     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedAttributes)
+     * https://github.com/highcharts/highcharts/blob/main/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedAttributes)
      *
      * @example
      * // Allow a custom, trusted attribute
@@ -189,7 +189,7 @@ class AST {
      * these strings.
      *
      * @see [Source code with default values](
-     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedReferences)
+     * https://github.com/highcharts/highcharts/blob/main/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedReferences)
      *
      * @example
      * // Allow tel:
@@ -213,7 +213,7 @@ class AST {
      * harmful content from the chart configuration before adding to the DOM.
      *
      * @see [Source code with default values](
-     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedTags)
+     * https://github.com/highcharts/highcharts/blob/main/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedTags)
      *
      * @example
      * // Allow a custom, trusted tag

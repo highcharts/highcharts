@@ -66,7 +66,7 @@ Note that, depending on the projection, a map line between two points may render
 
 ### Demos
 
-The above `geometry` examples can be viewed live in the [Projection Explorer](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/projection-explorer/), where the geodesic rendering is also shown. The [mapline series type](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/chart/type-mapline/) main demo shows how mapline geometries are loaded from a TopoJSON map source.
+The above `geometry` examples can be viewed live in the [Projection Explorer](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/demo/projection-explorer/), where the geodesic rendering is also shown. The [mapline series type](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/chart/type-mapline/) main demo shows how mapline geometries are loaded from a TopoJSON map source.
 
 
 ### Legacy
