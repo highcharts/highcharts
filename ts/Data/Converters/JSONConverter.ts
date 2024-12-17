@@ -298,6 +298,20 @@ namespace JSONConverter {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        JSON: typeof JSONConverter;
+    }
+}
+
+DataConverter.registerType('JSON', JSONConverter);
+
+/* *
+ *
  *  Default Export
  *
  * */

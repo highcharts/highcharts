@@ -79,7 +79,7 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
 
     Highcharts.setOptions({
         time: {
-            timezone: undefined
+            timezone: 'UTC'
         }
     });
 });

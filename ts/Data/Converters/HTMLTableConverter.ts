@@ -570,6 +570,20 @@ namespace HTMLTableConverter {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        HTMLTable: typeof HTMLTableConverter;
+    }
+}
+
+DataConverter.registerType('HTMLTable', HTMLTableConverter);
+
+/* *
+ *
  *  Default Export
  *
  * */

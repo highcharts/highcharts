@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 
-describe('S3 utils', async ()=> {
-    const S3 =  await import('../gulptasks/lib/uploadS3.js')
+describe('S3 utils', async () => {
+    const S3 = await import('../gulptasks/lib/uploadS3.js');
     const { toS3Path } = S3;
 
-    await it('toS3Path', async ()=>{
+    await it('toS3Path', async () => {
         assert.deepEqual(
             toS3Path(
                 'samples/graphics/cyber-monday/core.svg',
@@ -38,6 +38,6 @@ describe('S3 utils', async ()=> {
                 from: 'samples/graphics/cyber-monday/core.svg',
                 to: 'demos/samples/graphics/cyber-monday/core.svg'
             }
-        )
+        );
     });
 });

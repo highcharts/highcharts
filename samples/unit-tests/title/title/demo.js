@@ -91,8 +91,8 @@ QUnit.test('Title alignment', function (assert) {
         title: {
             useHTML: true,
             align: 'right',
-            text: `Here is a title that helps show the issue, < it is pretty
-                long`
+            text: 'Here is a title that helps show the issue, < it is pretty ' +
+                'long'
         }
     });
 

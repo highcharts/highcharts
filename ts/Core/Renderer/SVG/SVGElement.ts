@@ -166,7 +166,6 @@ class SVGElement implements SVGElementLike {
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
-    public hasBoxWidthChanged?: boolean;
     public height?: number;
     public imgwidth?: number;
     public imgheight?: number;
@@ -411,7 +410,9 @@ class SVGElement implements SVGElementLike {
         alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs: SVGAttributes = {},
+        const attribs: SVGAttributes = {
+                'text-align': alignOptions?.align
+            },
             renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             initialAlignment = Boolean(alignOptions);

@@ -181,7 +181,8 @@ class TableHeader {
     }
 
     /**
-     * Scrolls the table head horizontally.
+     * Scrolls the table head horizontally, only when the virtualization
+     * is enabled.
      *
      * @param scrollLeft
      * The left scroll position.

@@ -8,6 +8,9 @@ function createChart() {
         chart: {
             type: 'areaspline'
         },
+        lang: {
+            locale: 'en-GB'
+        },
         title: {
             text: 'Live Data'
         },

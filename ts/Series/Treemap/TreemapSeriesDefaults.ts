@@ -40,7 +40,7 @@ const { isString } = U;
  *         Treemap
  *
  * @extends      plotOptions.scatter
- * @excluding    cluster, connectEnds, connectNulls, dataSorting, dragDrop, jitter, marker
+ * @excluding    connectEnds, connectNulls, dataSorting, dragDrop, jitter, marker
  * @product      highcharts
  * @requires     modules/treemap
  * @optionparent plotOptions.treemap
@@ -69,6 +69,8 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
      *         Enabled
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-traversing/
+     *         Traversing to Grouped Points node
      *
      * @since     7.0.3
      * @product   highcharts
@@ -205,12 +207,29 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             return name;
         },
         inside: true,
-        verticalAlign: 'middle'
+        padding: 2,
+        verticalAlign: 'middle',
+        style: {
+            textOverflow: 'ellipsis'
+        }
     },
 
     tooltip: {
         headerFormat: '',
-        pointFormat: '<b>{point.name}</b>: {point.value}<br/>'
+        pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
+        /**
+         * The HTML of the grouped point's nodes in the tooltip. Works only for
+         * Treemap series grouping and analogously to
+         * [pointFormat](#tooltip.pointFormat).
+         *
+         * The grouped nodes point tooltip can be also formatted using
+         * `tooltip.formatter` callback function and `point.isGroupNode` flag.
+         *
+         * @type      {string}
+         * @default   '+ {point.groupedPointsAmount} more...'
+         * @apioption tooltip.clusterFormat
+         */
+        clusterFormat: '+ {point.groupedPointsAmount} more...<br/>'
     },
 
     /**
@@ -542,7 +561,120 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @product highcharts
      */
-    traverseToLeaf: false
+    traverseToLeaf: false,
+
+    /**
+     * An option to optimize treemap series rendering by grouping smaller leaf
+     * nodes below a certain square area threshold in pixels. If the square area
+     * of a point becomes smaller than the specified threshold, determined by
+     * the `pixelWidth` and/or `pixelHeight` options, then this point is moved
+     * into one group point per series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-simple
+     *         Simple demo of Treemap grouping
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-multiple-parents
+     *         Treemap grouping with multiple parents
+     * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
+     *         Advanced demo of Treemap grouping
+     *
+     * @since 12.1.0
+     *
+     * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
+     * layoutAlgorithm, marker, states, zones
+     *
+     * @product highcharts
+     */
+    cluster: {
+        /**
+         * An additional, individual class name for the grouped point's graphic
+         * representation.
+         *
+         * @type      string
+         * @product   highcharts
+         */
+        className: void 0,
+
+        /**
+         * Individual color for the grouped point. By default the color is
+         * pulled from the parent color.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts
+         */
+        color: void 0,
+
+        /**
+         * Enable or disable Treemap grouping.
+         *
+         * @type {boolean}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        enabled: false,
+
+        /**
+         * The pixel threshold width of area, which is used in Treemap grouping.
+         *
+         * @type {number}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        pixelWidth: void 0,
+
+        /**
+         * The pixel threshold height of area, which is used in Treemap
+         * grouping.
+         *
+         * @type {number}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        pixelHeight: void 0,
+
+        /**
+         * The name of the point of grouped nodes shown in the tooltip,
+         * dataLabels, etc. By default it is set to '+ n', where n is number of
+         * grouped points.
+         *
+         * @type {string}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        name: void 0,
+
+
+        /**
+         * A configuration property that specifies the factor by which the value
+         * and size of a grouped node are reduced. This can be particularly
+         * useful when a grouped node occupies a disproportionately large
+         * portion of the graph, ensuring better visual balance and readability.
+         *
+         * @type {number}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        reductionFactor: void 0,
+
+        /**
+         * Defines the minimum number of child nodes required to create a group
+         * of small nodes.
+         *
+         * @type {number}
+         * @since 12.1.0
+         * @product highcharts
+         */
+        minimumClusterSize: 5,
+
+        layoutAlgorithm: {
+            distance: 0,
+            gridSize: 0,
+            kmeansThreshold: 0
+        },
+        marker: {
+            lineWidth: 0,
+            radius: 0
+        }
+    }
 
 };
 

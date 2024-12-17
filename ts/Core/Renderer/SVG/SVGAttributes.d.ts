@@ -114,6 +114,7 @@ export interface SVGAttributes {
     tabindex?: number;
     tableValues?: string;
     text?: string;
+    textAlign?: 'center'|'left'|'right';
     'text-align'?: 'center'|'left'|'right';
     'text-anchor'?: string;
     title?: string;

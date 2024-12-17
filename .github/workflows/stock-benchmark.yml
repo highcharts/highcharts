@@ -60,7 +60,7 @@ jobs:
         run: node --import tsx test/ts-node-unit-tests/benchmark-compare.ts
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: benchmark-files
           path: |

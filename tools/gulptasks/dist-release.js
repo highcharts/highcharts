@@ -86,12 +86,22 @@ async function runGit(version, push = false) {
  */
 async function npmPublish(push = false) {
     if (push) {
-        const answer = await askUser('\nAbout to publish to npm using \'latest\' tag. Is this ok [Y/n]?');
-        if (answer !== 'Y') {
+        const answer = await askUser(
+            '\nAbout to publish to npm using \'latest\' tag. To approve, ' +
+            'enter the one time password from your 2FA authentication setup. ' +
+            'To abort, enter \'n\''
+        );
+        if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
         }
-        childProcess.execSync('npm publish', { cwd: pathToDistRepo });
+        if (!answer.match(/^\d{6}$/u)) {
+            throw new Error('Invalid OTP. Please enter a 6 digit number.');
+        }
+        childProcess.execSync(
+            `npm publish --otp=${answer}`,
+            { cwd: pathToDistRepo }
+        );
         log.message('Successfully published to npm!');
     } else {
         const version = childProcess.execSync('npm -v', { cwd: pathToDistRepo });

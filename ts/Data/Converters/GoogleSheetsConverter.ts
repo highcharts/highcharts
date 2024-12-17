@@ -238,6 +238,20 @@ namespace GoogleSheetsConverter {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        GoogleSheets: typeof GoogleSheetsConverter;
+    }
+}
+
+DataConverter.registerType('GoogleSheets', GoogleSheetsConverter);
+
+/* *
+ *
  *  Default Export
  *
  * */

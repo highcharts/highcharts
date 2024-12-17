@@ -151,10 +151,23 @@ QUnit.test('RangeSelector.dropdown', assert => {
 
     chart.update({
         rangeSelector: {
-            buttons: [],
             dropdown: 'always'
         }
     });
+    chart.xAxis[0].setExtremes(0, Date.UTC(1970, 0, 8));
+
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.selectedIndex,
+        -1,
+        'There should be no option selected'
+    );
+
+    chart.update({
+        rangeSelector: {
+            buttons: []
+        }
+    });
+
     assert.ok(
         true, '#15124: Attempting to collapse with no buttons should ' +
         'not throw'
