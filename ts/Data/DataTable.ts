@@ -27,9 +27,8 @@
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
-import type { TypedArray, TypedArrayConstructor } from './ColumnUtils';
 
-import ColumnUtils from './ColumnUtils.js';
+import CU from './ColumnUtils.js';
 import DataTableCore from './DataTableCore.js';
 import U from '../Core/Utilities.js';
 const {
@@ -383,7 +382,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 columnName = columnNames[i];
                 column = columns[columnName];
 
-                const result = ColumnUtils.splice(column, rowIndex, rowCount);
+                const result = CU.splice(column, rowIndex, rowCount);
 
                 deletedCells = result.removed;
                 columns[columnName] = column = result.array;
@@ -1274,7 +1273,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     column: DataTable.Column,
                     tableColumn: DataTable.Column,
                     columnName: string,
-                    ArrayConstructor: TypedArrayConstructor|ArrayConstructor;
+                    ArrayConstructor: CU.TypedArrayConstructor|ArrayConstructor;
                 i < iEnd;
                 ++i
             ) {
@@ -1295,7 +1294,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     }
                 } else if (tableColumn.length < rowCount) {
                     tableColumn =
-                        new ArrayConstructor(rowCount) as TypedArray;
+                        new ArrayConstructor(rowCount) as CU.TypedArray;
                     tableColumn.set(
                         tableColumns[columnName] as ArrayLike<number>
                     );
@@ -1613,7 +1612,7 @@ namespace DataTable {
     /**
      * Array of table cells in vertical expansion.
      */
-    export type Column = BasicColumn|TypedArray;
+    export type Column = BasicColumn|CU.TypedArray;
 
     /**
      * Collection of columns, where the key is the column name and
