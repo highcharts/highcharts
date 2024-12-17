@@ -36,6 +36,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    isString,
     pick,
     ucfirst
 } = U;
@@ -91,6 +92,9 @@ const numberFormatCache: Record<string, Intl.NumberFormat> = {};
  *  Functions
  *
  * */
+
+// Internal convenience function
+const isQuotedString = (str: string): boolean => /^["'].+["']$/.test(str);
 
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
@@ -178,11 +182,11 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
 
-    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@"'’= #\(\)]+)\}/gu,
+    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@"'= ]+)\)/gu,
+        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
@@ -208,7 +212,7 @@ function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
         if ((n = Number(key)).toString() === key) {
             return n;
         }
-        if (/^["'].+["']$/.test(key)) {
+        if (isQuotedString(key)) {
             return key.slice(1, -1);
         }
 
@@ -359,7 +363,8 @@ function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
 
         // Simple variable replacement
         } else {
-            const valueAndFormat = expression.split(':');
+            const valueAndFormat = isQuotedString(expression) ?
+                [expression] : expression.split(':');
 
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
@@ -383,13 +388,14 @@ function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
                     }
                 } else {
                     replacement = timeInstance.dateFormat(segment, replacement);
-
-                    // Use string literal in order to be preserved in the outer
-                    // expression
-                    if (hasSub) {
-                        replacement = `"${replacement}"`;
-                    }
                 }
+            }
+
+            // Use string literal in order to be preserved in the outer
+            // expression
+            subRegex.lastIndex = 0;
+            if (subRegex.test(match.find) && isString(replacement)) {
+                replacement = `"${replacement}"`;
             }
         }
         str = str.replace(match.find, pick(replacement, ''));

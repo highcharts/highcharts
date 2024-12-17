@@ -199,6 +199,15 @@ export interface RowsSettings {
      * @default false
      */
     strictHeights?: boolean;
+
+    /**
+     * Rows virtualization option render rows that are visible in the viewport
+     * only. In case of large data set, the enabled option improve performance
+     * and saves memory.
+     *
+     * @default true
+     */
+    virtualization?: boolean;
 }
 
 /**

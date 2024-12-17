@@ -207,7 +207,11 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             return name;
         },
         inside: true,
-        verticalAlign: 'middle'
+        padding: 2,
+        verticalAlign: 'middle',
+        style: {
+            textOverflow: 'ellipsis'
+        }
     },
 
     tooltip: {
@@ -573,7 +577,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
      *         Advanced demo of Treemap grouping
      *
-     * @since next
+     * @since 12.1.0
      *
      * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
      * layoutAlgorithm, marker, states, zones
@@ -603,7 +607,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * Enable or disable Treemap grouping.
          *
          * @type {boolean}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         enabled: false,
@@ -612,7 +616,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * The pixel threshold width of area, which is used in Treemap grouping.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         pixelWidth: void 0,
@@ -622,7 +626,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouping.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         pixelHeight: void 0,
@@ -633,7 +637,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * grouped points.
          *
          * @type {string}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         name: void 0,
@@ -646,7 +650,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * portion of the graph, ensuring better visual balance and readability.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         reductionFactor: void 0,
@@ -656,7 +660,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * of small nodes.
          *
          * @type {number}
-         * @since next
+         * @since 12.1.0
          * @product highcharts
          */
         minimumClusterSize: 5,

@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [ 'master' ]
     paths:
+      - 'package.json'
       - 'tools/**/*'
       - '.github/workflows/test-tooling.yml'
   workflow_dispatch:
@@ -11,13 +12,14 @@ on:
 permissions:
    contents: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   notify:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: ['lts/*', 'latest']
+
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,5 +34,5 @@ jobs:
         run: npm i
 
       - name: Run test
-        run: node --test ./tools/gulptasks-tests/
+        run: node --test "./tools/gulptasks-tests/*.mjs"
 

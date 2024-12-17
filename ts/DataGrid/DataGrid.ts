@@ -595,23 +595,23 @@ class DataGrid {
      * @internal
      */
     public renderViewport(): void {
-        let vp = this.viewport;
-        const viewportMeta = vp?.getStateMeta();
+        const viewportMeta = this.viewport?.getStateMeta();
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
         this.credits?.destroy();
-        vp?.destroy();
+
+        this.viewport?.destroy();
+        delete this.viewport;
 
         if (this.contentWrapper) {
             this.contentWrapper.innerHTML = AST.emptyHTML;
         }
 
         if (this.enabledColumns.length > 0) {
-            this.renderTable();
-            vp = this.viewport;
-            if (viewportMeta && vp) {
-                vp.applyStateMeta(viewportMeta);
+            this.viewport = this.renderTable();
+            if (viewportMeta && this.viewport) {
+                this.viewport.applyStateMeta(viewportMeta);
             }
         } else {
             this.renderNoData();
@@ -621,24 +621,31 @@ class DataGrid {
             this.credits = new Credits(this);
         }
 
-        this.viewport?.reflow();
+        if (this.options?.rendering?.rows?.virtualization) {
+            this.viewport?.reflow();
+        }
     }
 
     /**
      * Renders the table (viewport) of the data grid.
+     *
+     * @returns
+     * The newly rendered table (viewport) of the data grid.
      */
-    private renderTable(): void {
+    private renderTable(): Table {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.classNames.tableElement
         }, this.contentWrapper);
 
-        this.viewport = new Table(this, this.tableElement);
+        const vp = new Table(this, this.tableElement);
 
         // Accessibility
         this.tableElement.setAttribute(
             'aria-rowcount',
             this.dataTable?.getRowCount() ?? 0
         );
+
+        return vp;
     }
 
     /**

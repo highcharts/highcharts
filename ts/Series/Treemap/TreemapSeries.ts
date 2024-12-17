@@ -76,6 +76,7 @@ const {
     merge,
     pick,
     pushUnique,
+    splat,
     stableSort
 } = U;
 
@@ -403,27 +404,11 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         dataLabel: SVGLabel,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         labelOptions: DataLabelOptions
     ): void {
-        const style = labelOptions.style;
-
-        // #8160: Prevent the label from exceeding the point's
-        // boundaries in treemaps by applying ellipsis overflow.
-        // The issue was happening when datalabel's text contained a
-        // long sequence of characters without a whitespace.
-        if (
-            style &&
-            !defined(style.textOverflow) &&
-            dataLabel.text &&
-            dataLabel.getBBox().width > (dataLabel.text.textWidth || 0)
-        ) {
-            dataLabel.css({
-                textOverflow: 'ellipsis',
-                // Unit (px) is required when useHTML is true
-                width: style.width += 'px'
-            });
-        }
         ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
             // `point.node.zIndex` could be undefined (#6956)
@@ -672,7 +657,8 @@ class TreemapSeries extends ScatterSeries {
                 n: TreemapPoint
             ): boolean {
                 return n.node.visible || defined(n.dataLabel);
-            });
+            }),
+            padding = splat(series.options.dataLabels || {})[0]?.padding;
 
         let options: DataLabelOptions,
             level: TreemapSeriesLevelOptions;
@@ -700,10 +686,14 @@ class TreemapSeries extends ScatterSeries {
                 series.hasDataLabels = (): boolean => true;
             }
 
-            // Set dataLabel width to the width of the point shape.
+            // Set dataLabel width to the width of the point shape minus the
+            // padding
             if (point.shapeArgs) {
                 const css = {
-                    width: `${point.shapeArgs.width || 0}px`,
+                    width: (
+                        (point.shapeArgs.width || 0) -
+                        2 * (options.padding || padding || 0)
+                    ) + 'px',
                     lineClamp: Math.floor((point.shapeArgs.height || 0) / 16)
                 };
                 extend((options.style as any), css);
