@@ -8,12 +8,19 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
 'use strict';
 
-import { TypedArray } from '../Core/Series/SeriesOptions';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { TypedArray } from '../Data/ColumnUtils';
 
 
 /* *
