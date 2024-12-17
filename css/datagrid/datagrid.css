@@ -276,11 +276,14 @@
     border-right: var(--hcdg-header-column-border);
     border-bottom: var(--hcdg-header-row-border);
     background-color: var(--hcdg-header-row-background-color);
-    padding: var(--hcdg-header-padding);
+    padding-top: var(--hcdg-header-vertical-padding);
+    padding-bottom: var(--hcdg-header-vertical-padding);
+    padding-left: var(--hcdg-header-horizontal-padding);
+    padding-right: max(var(--hcdg-header-horizontal-padding), 20px);
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
-    width: calc(100% - 15px); /* 12px width of sorting icon, 3px padding */
+    width: 100%;
     font: var(--hcdg-header-font);
     color: var(--hcdg-header-color);
     text-align: var(--hcdg-header-text-align);
@@ -288,7 +291,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-    padding-left: 18px;
+    padding: 0;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
@@ -643,6 +646,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     --header-font-weight: bold;
     --header-row-background-color: var(--highcharts-neutral-color-5);
     --header-text-align: center;   
+    --header-horizontal-padding: 20px;
 
     --row-even-background-color: var(--highcharts-neutral-color-3);
     --row-hovered-background-color: var(--highcharts-highlight-color-10);
