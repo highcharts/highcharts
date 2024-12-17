@@ -7,7 +7,7 @@ _For more detailed samples and documentation check the [API](https://api.highcha
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/histogram allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/histogram/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/histogram/) to check the code.
 
 How to create a Histogram
 -------------------------
@@ -20,7 +20,7 @@ Two steps are required to create an Histogram chart:
 
 1. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
 
-    
+
         series: [{
             type: histogram,
             xAxis: 1,
@@ -29,7 +29,7 @@ Two steps are required to create an Histogram chart:
         }, {
             data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
         }]
-    
+
 
 Histogram chart specific options
 --------------------------------
@@ -44,10 +44,10 @@ For the full set of options, [see the API](https://api.highcharts.com/highcharts
 Histogram using pre-aggregated data
 -----------------------------------
 
-A histogram chart can also be created using a column chart if the data is already pre-aggregated.  
+A histogram chart can also be created using a column chart if the data is already pre-aggregated.
 Use the following setting to set up a histogram chart with a column chart:
 
-    
+
     plotOptions: {
         column: {
             pointPadding: 0,

@@ -51,9 +51,9 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/single-element/ | HTML component with one image.}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/samples/dashboards/html-component/single-element/ | HTML component with one image.}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/nested-elements/ | HTML component with nested images.}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highchartshighcharts/tree/main/-component/nested-elements/ | HTML component with nested images.}
      *
      */
     elements?: (AST.Node)[];

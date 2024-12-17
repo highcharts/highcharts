@@ -13,7 +13,7 @@ from a source is an asynchronous process as the source is usually a web server.
 Each dashboard has one `DataPool` instance for all components. It is available
 via the `Board.dataPool` class property and can be configured with the
 `BoardOptions.dataPool` option. Usually, one or more connectors get defined,
-including the ID, the data source, and whether the data needs 
+including the ID, the data source, and whether the data needs
 additional modification. The ID is used to retrieve a connector, which is an
 asynchronous process.
 
@@ -116,7 +116,7 @@ run();
 
 Google Sheets is a spreadsheet application included in Google's free, web-based Google Docs Editors suite.
 
-With the `GoogleSheetsConnector` in Highcharts Dashboards, you can load tables from a Google spreadsheet into one of your dashboard 
+With the `GoogleSheetsConnector` in Highcharts Dashboards, you can load tables from a Google spreadsheet into one of your dashboard
 components, whether a DataGrid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
 Alternatively, the data may be filtered or modified before it is parsed in the `beforeParse` callback.
 
@@ -208,7 +208,7 @@ base class. An implementation usually has three steps to fulfil:
    incoming changes from the source.
 
 You can see a typical implementation of this in the
-[GoogleSheetsConnector](https://github.com/highcharts/highcharts/blob/master/ts/Data/Connectors/GoogleSheetsConnector.ts).
+[GoogleSheetsConnector](https://github.com/highcharts/highcharts/blob/main/ts/Data/Connectors/GoogleSheetsConnector.ts).
 Please note that the included connectors use a separate converter instance for the second step, which involves adding the data to the `DataTable`.
 
 

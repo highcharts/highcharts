@@ -19,7 +19,7 @@ Load Highcharts Stock as a module when a project needs both Highcharts and Highc
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/stock/modules/stock.js"></script>
 ```
-For alternative loading and bundling patterns, for UMD, AMD, CommonJS or ES6 modules, find more information [here](https://github.com/highcharts/highcharts/blob/master/readme.md). Highcharts Stock follows the same patterns as described for Highcharts.
+For alternative loading and bundling patterns, for UMD, AMD, CommonJS or ES6 modules, find more information [here](https://github.com/highcharts/highcharts/blob/main/readme.md). Highcharts Stock follows the same patterns as described for Highcharts.
 
 Constructor
 -----------

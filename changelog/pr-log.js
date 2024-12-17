@@ -50,7 +50,7 @@ const parseUpgradeNotes = p => {
 
 const loadPulls = async (
     since,
-    branches = 'master',
+    branches = 'main',
     isDashboards = false
 ) => {
     let page = 1;
@@ -108,7 +108,7 @@ const loadPulls = async (
 
             // On the master, keep only PRs that have been closed since last
             // release
-            if (base === 'master') {
+            if (base === 'main') {
                 data = data.filter(d => Date.parse(d.merged_at) > after);
 
             // On feature branches, keep all incoming PRs

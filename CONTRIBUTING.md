@@ -38,11 +38,11 @@ demonstrate the bug.
 needed for us to debug.
 3. It may be that the bug is already fixed. See [Test a fix](#test-a-fix).
 
-If you find a closed issue describing your problem, please open a new issue and 
+If you find a closed issue describing your problem, please open a new issue and
 link to the closed one in your issue description (use `#<ticket number>`, e.g.
 `#12345`).
 
-Please also follow the directions in our [ticket submission template](https://github.com/highcharts/highcharts/blob/master/ISSUE_TEMPLATE.md).
+Please also follow the directions in our [ticket submission template](https://github.com/highcharts/highcharts/blob/main/ISSUE_TEMPLATE.md).
 
 ### Test a fix
 
@@ -87,7 +87,7 @@ if the issue is already reported.
 
 ### Licensing And Legal
 
-Please note that when you contribute code to the Highcharts repository that code 
+Please note that when you contribute code to the Highcharts repository that code
 will be part of the Highcharts source base, which is a commercial product.
 
 For this reason, submissions may not contain code that prevents or limits
