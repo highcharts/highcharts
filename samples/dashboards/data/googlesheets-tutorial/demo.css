@@ -104,7 +104,7 @@ div#description a {
     letter-spacing: 2px;
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 576px) {
     .cell {
         flex: 1 1 100%;
     }

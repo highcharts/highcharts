@@ -22,7 +22,7 @@ div#legend .highcharts-title {
     flex: 1 1 33.333%;
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 576px) {
     #south-america-chart,
     #north-america-chart,
     #asia-chart {

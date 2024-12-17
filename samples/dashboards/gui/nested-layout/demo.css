@@ -5,7 +5,7 @@
     display: none;
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 576px) {
     #db-col-0-nolayout,
     #db-col-2-nolayout {
         flex: 1 1 100%;
