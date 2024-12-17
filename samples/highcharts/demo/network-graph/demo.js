@@ -64,7 +64,10 @@ Highcharts.chart('container', {
             keys: ['from', 'to'],
             layoutAlgorithm: {
                 enableSimulation: true,
-                friction: -0.9
+                friction: -0.9,
+                gravitationalConstant:
+                    document.getElementById('container').scrollWidth < 500 ?
+                        0.2 : 0.06
             }
         }
     },
@@ -208,22 +211,5 @@ Highcharts.chart('container', {
             ['South Slavic', 'Belarusian'],
             ['South Slavic', 'Rusyn']
         ]
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                plotOptions: {
-                    networkgraph: {
-                        layoutAlgorithm: {
-                            gravitationalConstant: 0.2
-                        }
-                    }
-                }
-            }
-        }]
-    }
+    }]
 });
