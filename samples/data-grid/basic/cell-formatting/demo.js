@@ -1,6 +1,6 @@
 DataGrid.setOptions({
     lang: {
-        locale: 'ar-SA'
+        locale: 'en-US'
     }
 });
 
