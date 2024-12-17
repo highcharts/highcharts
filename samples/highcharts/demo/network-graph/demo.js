@@ -208,5 +208,22 @@ Highcharts.chart('container', {
             ['South Slavic', 'Belarusian'],
             ['South Slavic', 'Rusyn']
         ]
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                plotOptions: {
+                    networkgraph: {
+                        layoutAlgorithm: {
+                            gravitationalConstant: 0.2
+                        }
+                    }
+                }
+            }
+        }]
+    }
 });
