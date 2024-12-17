@@ -74,6 +74,7 @@ function onTooltipHeaderFormatter(
 ): void {
 
     const chart = this.chart,
+        lang = chart.options.lang,
         time = chart.time,
         point = e.point,
         series = point.series,
@@ -125,7 +126,6 @@ function onTooltipHeaderFormatter(
             xDateFormat = xAxis.dateTime.getXDateFormat(
                 point.x,
                 tooltipOptions.dateTimeLabelFormats
-
             );
         }
 
@@ -148,12 +148,16 @@ function onTooltipHeaderFormatter(
             formatString = this.styledModeFormat(formatString);
         }
 
+
         // Return the replaced format
         e.text = format(
             formatString, {
-                point: extend(point, { key: formattedKey }),
-                series: series,
-                lang: chart.options.lang
+                point: extend(
+                    point,
+                    { key: format(formattedKey, { lang }) }
+                ),
+                series,
+                lang
             },
             chart
         );
