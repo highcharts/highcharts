@@ -519,6 +519,7 @@ class Chart {
             this.time = new Time(extend(
                 options.time || {},
                 {
+                    ...options.lang,
                     locale: this.locale
                 }
             ));

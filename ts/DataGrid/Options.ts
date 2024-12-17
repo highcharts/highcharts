@@ -25,6 +25,7 @@ import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type { LangOptionsCore } from '../Core/Options';
 
 
 /* *
@@ -583,7 +584,7 @@ export interface CreditsOptions {
 /**
  * Language options for the datagrid.
  */
-export interface LangOptions {
+export interface LangOptions extends LangOptionsCore {
 
     /**
      * Configure the accessibility strings in the chart.
