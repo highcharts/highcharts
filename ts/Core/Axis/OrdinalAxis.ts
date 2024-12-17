@@ -1517,7 +1517,7 @@ namespace OrdinalAxis {
         }
 
         /**
-         * If overscroll is pixel or pecentage value, convert it to axis range.
+         * If overscroll is pixel or percentage value, convert it to axis range.
          *
          * @private
          * @param {number | string} overscroll
@@ -1542,6 +1542,20 @@ namespace OrdinalAxis {
 
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
+                let isFullRange;
+
+                // #22334
+                if (
+                    defined(axis.min) && defined(axis.max) &&
+                    defined(axis.dataMin) && defined(axis.dataMax)
+                ) {
+                    isFullRange =
+                        axis.max - axis.min === axis.dataMax - axis.dataMin;
+
+                    if (!isFullRange) {
+                        this.originalOrdinalRange = axis.max - axis.min;
+                    }
+                }
 
                 if (/%$/.test(overscroll)) {
                     // If overscroll is percentage
@@ -1559,7 +1573,8 @@ namespace OrdinalAxis {
                         pixelToPercent = limitedOverscrollValue / axis.len;
 
                     return calculateOverscroll(
-                        pixelToPercent / (1 - pixelToPercent)
+                        pixelToPercent /
+                        (isFullRange ? (1 - pixelToPercent) : 1)
                     );
                 }
 
