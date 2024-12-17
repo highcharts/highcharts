@@ -52,7 +52,7 @@ const board = new Dashboards.Board('container', {...})
 ### 5. Add mandatory options
 For the dashboard to work, two options are mandatory:
 
-#### gui
+**gui**
 This is an objects that is used to define the layout of the dashboard by specifying rows and cells
 
 ```js
