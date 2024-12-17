@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Use Node.js lts/iron
         uses: actions/setup-node@v4
@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
