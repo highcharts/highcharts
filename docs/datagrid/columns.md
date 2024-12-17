@@ -108,3 +108,49 @@ When the `sortable` option is enabled, clicking the header will toggle the sorti
 The sorting options are available for individual columns, but the default value for `sortable` can also be set in `columnDefaults.sorting.sortable`.
 
 Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
+
+## Formatting
+
+### Time formatting
+Time formatting is handled by the [Intl.DateTimeFormat.prototype.format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format) and can be aware of the locale of the user. The default locale is the one of the browser, but it can be changed using the `lang.locale` option like.
+```js
+DataGrid.setOptions({
+    lang: {
+        locale: 'en-US'
+    }
+});
+```
+To properly format the time use one of [the supported formats](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat)
+Fore example:
+```js
+columns: [
+    {
+        id: 'date',
+        header: {
+            format: 'Date of purchase'
+        },
+        cells: {
+            format: '{value:%[dbY]}'
+        }
+    }
+    ...
+]
+```
+
+For more advanced formatting the formatter callback callback function can be used.
+
+### Number formatting
+
+The number formatting is handled by [the template engine](https://www.highcharts.com/docs/chart-concepts/templating). The following example shows how to format numbers with thousands separators:
+
+```js
+columns: [
+    {
+        id: 'weight',
+        className: 'custom-column-class-name',
+        cells: {
+            format: '{value:,.1f} kg'
+        }
+    }
+    ...
+]
