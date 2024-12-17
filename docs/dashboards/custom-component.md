@@ -1,14 +1,14 @@
 # Custom Dashboards components
 
 ## Custom YouTube Component
-This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.
+This article shows how to create a custom **Dashboards** component. In this example, we create a **YouTube** component.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" allow="fullscreen" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" ></iframe>
 
-Note that to create the custom component, we are using ES6 and using the `class` and `extends` keywords, which makes creating a custom class much easier.
+Note that to create the custom component, we use ES6 and its `class` and `extends` keywords. This makes creating a custom class much easier.
 
-We start by importing the default `Component` class and `ComponentRegistry` from the `Dashboards` namespace. We can use destructuring syntax to retrieve these two classes. The next step is creating the class that will inherit from the imported `Component` class.
-The class name will automatically be the string used to reference this component type. For example, the class `YouTubeComponent` will be referenced by the name "`YouTube`."
+First, we import the default `Component` class and `ComponentRegistry` from the `Dashboards` namespace. We can use destructuring syntax to retrieve these two classes. The next step is creating the class that will inherit from the imported `Component` class.
+The class name will automatically be the string used to reference this component type. For example, the class `YouTubeComponent` will be referenced by the name "`YouTube`".
 
 ```js
 const { Component, ComponentRegistry } = Dashboards;
@@ -294,9 +294,9 @@ An example implementation of the `ThresholdComponent` can look like this:
 ```js
 const {
     Component,
-    ComponentRegistry
+    ComponentRegistry,
+    merge
 } = Dashboards;
-const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
 
 class ThresholdComponent extends Component {
     constructor(cell, options) {

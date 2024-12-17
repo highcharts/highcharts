@@ -186,7 +186,9 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '0.8em'
+            fontSize: '0.8em',
+            /** @internal */
+            textAlign: 'left'
         },
 
         /**
