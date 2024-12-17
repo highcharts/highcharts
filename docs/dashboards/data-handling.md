@@ -9,7 +9,7 @@ The following diagram illustrates the entire data management:
 
 ## DataPool
 
-**The `DataPool` is the main entry point for data handling in Highcharts Dashboards.**
+The `DataPool` is the main entry point for data handling in Highcharts Dashboards.
 It can be linked to a warehouse where various products are stored. It handles incoming data from various sources and provides a way to access and
 modify it. However, it also provides a way to use that data in the dashboard's components and synchronize the data between them.
 
@@ -20,7 +20,7 @@ via `Board.dataPool.getConnector`.
 
 ## DataConnector
 
-**The `DataConnector` serves as a delivery service that brings data from external suppliers to the `DataPool`.**
+The `DataConnector` serves as a delivery service that brings data from external suppliers to the `DataPool`.
 It retrieves data from external sources and creates new `DataTables` within the `DataPool` to store this imported data, similar to how the
 delivery service brings new products to the warehouse for storage.
 
@@ -92,7 +92,7 @@ dataPool: {
 ```
 
 ## DataTable
-**The `DataTable` is a storage system for the data in the `DataPool`.**
+The `DataTable` is a storage system for the data in the `DataPool`.
 Each `DataTable` within the `DataPool` is like a section or aisle within the warehouse dedicated to a particular type of product
 where everything is organized and stored.
 
@@ -103,7 +103,7 @@ can be made directly on the table or with DataModifiers.
 
 
 ## DataModifier
-**The `DataModifier` is a tool to modify the data in the `DataTables`.**
+The `DataModifier` is a tool to modify the data in the `DataTables`.
 When a `DataModifier` is applied to a `DataTable`, it's like assigning a specific team of workers to handle modifications for that batch of products.
 They can change the products as needed and store the modified versions separately.
 
@@ -114,7 +114,7 @@ changes are available on a clone in the `DataTable.modified` property.
 
 
 ## DataCursor
-**The `DataCursor` provides a system to synchronize status data on cells of `DataTables`.**
+The `DataCursor` provides a system to synchronize status data on cells of `DataTables`.
 The `DataCursor` acts like a team of warehouse inspectors responsible for keeping track of the status of various products in different sections.
 
 This can be, for example, highlights, markers, or selections. It
