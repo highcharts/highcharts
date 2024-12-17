@@ -60,6 +60,7 @@ const {
     animObject,
     setAnimation
 } = A;
+import ColumnUtils from '../../Data/ColumnUtils.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -4005,7 +4006,16 @@ class Series {
                     coll.shift();
                 });
 
-                table.shift(false);
+                // Shorthand row deletion in order to avoid including the whole
+                // `deleteRows` function in the DataTableCore module.
+                objectEach(table.columns, (column, columnName): void => {
+                    table.replaceColumnRef(
+                        columnName,
+                        ColumnUtils.shift(column).array
+                    );
+                });
+                table.rowCount -= 1;
+                fireEvent(table, 'afterDeleteRows');
             }
         }
 
@@ -4065,20 +4075,19 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data,
-                    ...Object.values(table.getColumns())
+                    series.options.data
                 ].filter(defined).forEach((coll): void => {
-                    if (Array.isArray(coll)) {
-                        coll.splice(i, 1);
-                    } else {
-                        // TODO (DD): Add support for the typed arrays
-                        // eslint-disable-next-line no-console
-                        console.error('Typed array is not fully supported.');
-                    }
+                    coll.splice(i, 1);
                 });
 
                 // Shorthand row deletion in order to avoid including the whole
                 // `deleteRows` function in the DataTableCore module.
+                objectEach(table.columns, (column, columnName): void => {
+                    table.replaceColumnRef(
+                        columnName,
+                        ColumnUtils.splice(column, i, 1).array
+                    );
+                });
                 table.rowCount -= 1;
                 fireEvent(table, 'afterDeleteRows');
 

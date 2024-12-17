@@ -27,7 +27,7 @@
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
-import type { TypedArray } from './ColumnUtils';
+import type { TypedArray, TypedArrayConstructor } from './ColumnUtils';
 
 import ColumnUtils from './ColumnUtils.js';
 import DataTableCore from './DataTableCore.js';
@@ -375,16 +375,18 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 let i = 0,
                     iEnd = columnNames.length,
                     column: DataTable.Column,
-                    deletedCells: DataTable.Column;
+                    deletedCells: DataTable.Column,
+                    columnName: string;
                 i < iEnd;
                 ++i
             ) {
-                column = columns[columnNames[i]];
+                columnName = columnNames[i];
+                column = columns[columnName];
 
                 const result = ColumnUtils.splice(column, rowIndex, rowCount);
 
                 deletedCells = result.removed;
-                column = result.array;
+                columns[columnName] = column = result.array;
 
                 if (!i) {
                     table.rowCount = column.length;
@@ -1231,13 +1233,18 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
+     * @param {boolean} [typeAsOriginal=false]
+     * Whether to get the type of the original column. If `false`, the columns
+     * will have the same type as the provided columns.
+     *
      * @emits #setColumns
      * @emits #afterSetColumns
      */
-    public setColumns(
+    public override setColumns(
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEvent.Detail,
+        typeAsOriginal: boolean = false
     ): void {
         const table = this,
             tableColumns = table.columns,
@@ -1254,30 +1261,46 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             rowIndex
         });
 
-        if (typeof rowIndex === 'undefined') {
+        if (!defined(rowIndex) && !typeAsOriginal) {
             super.setColumns(
                 columns,
-                rowIndex,
+                void 0,
                 extend(eventDetail, { silent: true })
             );
         } else {
-
             for (
                 let i = 0,
                     iEnd = columnNames.length,
                     column: DataTable.Column,
-                    columnName: string;
+                    tableColumn: DataTable.Column,
+                    columnName: string,
+                    ArrayConstructor: TypedArrayConstructor|ArrayConstructor;
                 i < iEnd;
                 ++i
             ) {
                 columnName = columnNames[i];
                 column = columns[columnName];
+                tableColumn = tableColumns[columnName];
+                rowCount = Math.max(rowCount, column.length);
 
-                const tableColumn: DataTable.Column = (
-                    tableColumns[columnName] ?
-                        tableColumns[columnName] :
-                        tableColumns[columnName] = new Array(table.rowCount)
-                );
+                ArrayConstructor = Object.getPrototypeOf(
+                    (tableColumn && typeAsOriginal) ? tableColumn : column
+                ).constructor;
+
+                if (!tableColumn) {
+                    tableColumn = new ArrayConstructor(rowCount);
+                } else if (ArrayConstructor === Array) {
+                    if (!Array.isArray(tableColumn)) {
+                        tableColumn = Array.from(tableColumn);
+                    }
+                } else if (tableColumn.length < rowCount) {
+                    tableColumn =
+                        new ArrayConstructor(rowCount) as TypedArray;
+                    tableColumn.set(
+                        tableColumns[columnName] as ArrayLike<number>
+                    );
+                }
+                tableColumns[columnName] = tableColumn;
 
                 for (
                     let i = (rowIndex || 0),
@@ -1287,8 +1310,6 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                 ) {
                     tableColumn[i] = column[i];
                 }
-
-                rowCount = Math.max(rowCount, tableColumn.length);
             }
 
             this.applyRowCount(rowCount);

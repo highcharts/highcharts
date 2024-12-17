@@ -143,10 +143,12 @@ class DataTableCore {
     ): void {
         this.rowCount = rowCount;
         objectEach(this.columns, (column, columnName): void => {
-            this.replaceColumnRef(
-                columnName,
-                ColumnUtils.setLength(column, rowCount)
-            );
+            if (column.length !== rowCount) {
+                this.replaceColumnRef(
+                    columnName,
+                    ColumnUtils.setLength(column, rowCount)
+                );
+            }
         });
     }
 
@@ -253,8 +255,8 @@ class DataTableCore {
      * @param {Highcharts.DataTableColumn} [column]
      * Values to set in the column.
      *
-     * @param {number} [rowIndex=0]
-     * Index of the first row to change. (Default: 0)
+     * @param {number} [rowIndex]
+     * Index of the first row to change. Keep undefined to reset.
      *
      * @param {Record<string, (boolean|number|string|null|undefined)>} [eventDetail]
      * Custom information for pending events.
@@ -265,7 +267,7 @@ class DataTableCore {
     public setColumn(
         columnName: string,
         column: DataTable.Column = [],
-        rowIndex: number = 0,
+        rowIndex?: number,
         eventDetail?: DataEvent.Detail
     ): void {
         this.setColumns({ [columnName]: column }, rowIndex, eventDetail);
@@ -294,12 +296,10 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         let rowCount = this.rowCount;
-
         objectEach(columns, (column, columnName): void => {
             this.columns[columnName] = column.slice();
             rowCount = column.length;
         });
-
         this.applyRowCount(rowCount);
 
         if (!eventDetail?.silent) {
@@ -364,35 +364,6 @@ class DataTableCore {
             this.versionTag = uniqueKey();
         }
     }
-
-    /**
-     * Shifts the first row of the table and returns it.
-     * @internal
-     */
-    public shift(silent: boolean = false): DataTable.Row|undefined {
-        const firstRow = this.getRow(0);
-        if (!firstRow) {
-            return void 0;
-        }
-
-        objectEach(this.columns, (column, columnName): void => {
-            this.replaceColumnRef(
-                columnName,
-                ColumnUtils.shift(column).array
-            );
-        });
-
-        this.rowCount -= 1;
-
-        if (!silent) {
-            fireEvent(this, 'afterDeleteRows');
-            this.versionTag = uniqueKey();
-        }
-
-        return firstRow;
-    }
-
-    // TODO (DD): Implement internal splice method
 }
 
 /* *

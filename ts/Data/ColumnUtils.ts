@@ -42,6 +42,10 @@ export interface SpliceResult<T extends DataTable.Column> {
     array: T
 }
 
+export interface TypedArrayConstructor {
+    new (length: number): TypedArray;
+}
+
 
 /* *
  *
@@ -157,9 +161,8 @@ function splice(
         };
     }
 
-    const Constructor = Object.getPrototypeOf(column).constructor as {
-        new (length: number): TypedArray;
-    };
+    const Constructor = Object.getPrototypeOf(column)
+        .constructor as TypedArrayConstructor;
 
     const removed = column[
         removedAsSubarray ? 'subarray' : 'slice'
