@@ -250,7 +250,11 @@ class TimelinePoint extends LinePoint {
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
-        const isNull = this.isNull || options === null;
+        const isNull = (
+            this.isNull ||
+            options === null ||
+            (options as PointOptions).y === null
+        );
 
         if (!x) {
             x = this.x || this.series.xIncrement || 0;
