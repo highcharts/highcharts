@@ -505,8 +505,10 @@ function numberFormat(
     // format with string replacement for the separators.
     if (hasSeparators) {
         ret = ret
-            .replace(/\,/g, thousandsSep ?? ',')
-            .replace('.', decimalPoint ?? '.');
+            // Preliminary step to avoid re-swapping (#22402)
+            .replace(/([,\.])/g, '_$1')
+            .replace(/_\,/g, thousandsSep ?? ',')
+            .replace('_.', decimalPoint ?? '.');
     }
 
     if (
