@@ -370,7 +370,6 @@ QUnit.test(
 
         column = chart.yAxis[0].stacking.stacks['column,,,'];
 
-        console.log(column[4].label.alignAttr);
         assert.strictEqual(
             column[4].label.text.x - column[4].label.text.getBBox().width,
             padding,
