@@ -211,6 +211,13 @@ class Point {
      */
 
     /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
+     */
+
+    /**
      * The series object associated with the point.
      *
      * @name Highcharts.Point#series
