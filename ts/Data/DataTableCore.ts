@@ -49,7 +49,7 @@ const {
  * from specific cells.
  *
  * @class
- * @name Highcharts.DataTableCore
+ * @name Highcharts.DataTable
  *
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
@@ -223,7 +223,7 @@ class DataTableCore {
      * @param {string} columnName
      * Name of the column to replace.
      *
-     * @param {DataTable.Column} column
+     * @param {Highcharts.DataTableColumn} column
      * New column reference.
      *
      * @param {boolean} silent
@@ -231,7 +231,7 @@ class DataTableCore {
      *
      * @emits #afterSetColumns
      *
-     * @internal
+     * @private
      */
     public replaceColumnRef(
         columnName: string,
@@ -410,8 +410,11 @@ export default DataTableCore;
  * */
 
 /**
+ * A typed array.
+ * @typedef {Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|Uint32Array|Float32Array|Float64Array} Highcharts.TypedArray
+ * //**
  * A column of values in a data table.
- * @typedef {Array<boolean|null|number|string|undefined>} Highcharts.DataTableColumn
+ * @typedef {Array<boolean|null|number|string|undefined>|TypedArray} Highcharts.DataTableColumn
  *//**
  * A collection of data table columns defined by a object where the key is the
  * column name and the value is an array of the column values.

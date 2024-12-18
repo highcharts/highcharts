@@ -23,6 +23,7 @@ import type DataTable from './DataTable';
 
 /**
  * Utility functions for columns that can be either arrays or typed arrays.
+ * @private
  */
 namespace ColumnUtils {
 
@@ -73,6 +74,8 @@ namespace ColumnUtils {
     /**
      * Sets the length of the column array.
      *
+     * @private
+     *
      * @param {DataTable.Column} column
      * Column to be modified.
      *
@@ -107,7 +110,9 @@ namespace ColumnUtils {
      * If the column is a typed array, it will be not modified, but a subarray
      * will be returned.
      *
-     * @param {DataTable.Column} column
+     * @private
+     *
+     * @param {Highcharts.DataTableColumn} column
      * Column to be shifted.
      *
      * @param {boolean} asSubarray
@@ -137,6 +142,8 @@ namespace ColumnUtils {
 
     /**
      * Splices a column array.
+     *
+     * @private
      *
      * @param {DataTable.Column} column
      * Column to be modified.
