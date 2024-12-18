@@ -1,14 +1,14 @@
 # Highcharts Component
 
-The Highcharts Component allows the end-user to define a chart in the dashboard. Charts are most often used to visualize changing data.
+The **Highcharts** Component allows the end-user to define a chart in the dashboard. Charts are generally used to visualize changing data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts allow="fullscreen"></iframe>
 
 ## How to start
-We need to load the JavaScript and CSS files in the following order to get started quickly.
+We need to load the JavaScript and CSS files in the following order to get started.
 
-1. To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
-    The order of the imports is essential, so ensure the Dashboards module is imported after the Highcharts module.
+### Load
+To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together. The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Highcharts** module.
 
 ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -16,13 +16,13 @@ We need to load the JavaScript and CSS files in the following order to get start
     <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
-Alternatively, you can also use the NPM package.
+Alternatively, you can use the NPM package.
 
 ```bash
     npm install highcharts
 ```
 
-Then, import the package and the dedicated plug to connect it to the Dashboards.
+Then, import the package and the dedicated plugin to connect it to the dashboard.
 
 ```typescript
     import * as Highcharts from 'highcharts';
@@ -35,19 +35,22 @@ Then, import the package and the dedicated plug to connect it to the Dashboards.
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
  ```
 
-2. From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
+### CSS
+From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
 Importing only Dashboards' CSS file is enough:
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
     ```
 
-    You can enable the styled mode at any time by setting the `styledMode` option to `true` in your chart options and styling it according to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+You can enable the styled mode at any time by setting the `styledMode` option to `true` in your chart options and styling it according to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-3. After loading the necessary files, define a cell using a unique identifier, such as `renderTo: 'dashboard-col-0'`.
+### Target cell
+After loading the necessary files, define a cell using a unique identifier, for example `renderTo: 'dashboard-col-0'`.
 
-    You can find more information on creating a layout in the dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
+You can find more information on creating a layout in the dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
-4. Declare all the chart options in the `chartOptions` object.
+### Chart options
+Declare all the chart options in the `chartOptions` object.
 For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
 ```js
@@ -58,37 +61,40 @@ For the full set of available options, see the [Highcharts API](https://api.high
     }
 ```
 
-5. The last thing you have to do is specify the `type: 'Highcharts'` in the component’s config. See the full example below.
+### Chart type
+The last thing you have to do is specify the `type: 'Highcharts'` in the component’s config. See the full example below.
 
-    ```js
-    Dashboards.board('container', {
-        gui: {
-            layouts: [{
-                id: 'layout-1',
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }]
+```js
+Dashboards.board('container', {
+    gui: {
+        layouts: [{
+            id: 'layout-1',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
                 }]
             }]
-        },
-        components: [{
-            renderTo: 'dashboard-col-0',
-            type: 'Highcharts',
-            chartOptions: {
-                series: [{
-                    data: [1, 2, 3, 4]
-                }]
-            }
         }]
-    });
-    ```
+    },
+    components: [{
+        renderTo: 'dashboard-col-0',
+        type: 'Highcharts',
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }
+    }]
+});
+```
 
 ## Working with data
-You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data.
-[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). If the data connector is connected, you can load the Highcharts' `dragDrop` module to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more about it in the `dataPool` section.
+You can either define static data, as you would do in the basic **Highcharts** chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
-Example of working with connector.
+If the data connector is connected, you can load the Highcharts' `dragDrop` module to allow the user to change the value and sync the changes of this value with other components. Also, the editing is disabled by default if the series data is based on the columns in the connector, which were created by `mathModifier`. You can read more about it in the `dataPool` section.
+
+Example using a **DataConnector**.
 ```js
 Dashboards.board('container', {
     dataPool: {
@@ -137,7 +143,7 @@ You can also declare which columns will be the point's parameters. This is usefu
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment).
 
 The `data` option can take three different types:
-1. `string` - column name containing the one-dimensional data.
+#### `string` - column name containing the one-dimensional data.
 ```js
 columnAssignment: [{
     seriesId: 'mySeriesId',
@@ -146,7 +152,7 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-1d-data allow="fullscreen"></iframe>
 
-2. `string[]` - names of the columns that data will be used in the two-dimensional format.
+#### `string[]` - names of the columns that data will be used in the two-dimensional format.
 ```js
 columnAssignment: [{
     seriesId: 'mySeriesId',
@@ -155,7 +161,7 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-2d-data allow="fullscreen"></iframe>
 
-3. `Record<string, string>` - the object with the keys as series data key names and column names that will be used for the key-defined two-dimensional series data.
+#### `Record<string, string>` - the object with the keys as series data key names and column names that will be used for the key-defined two-dimensional series data.
 ```js
 columnAssignment: [{
     seriesId: 'myStockSeriesId',
@@ -179,7 +185,7 @@ columnAssignment: [{
 
 ### Multiple connectors
 
-The Highcharts Component also supports more than one data source. Therefore, the connector option should be configured as an array of objects rather than a single object.
+The Highcharts Component also supports more than one data source. Therefore, the connector option must be configured as an array of objects rather than a single object.
 
 Code sample:
 ```js
