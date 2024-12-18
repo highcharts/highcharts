@@ -410,10 +410,7 @@ class SVGElement implements SVGElementLike {
         alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs: SVGAttributes = {
-                'text-align': alignOptions?.align
-            },
-            renderer = this.renderer,
+        const renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             initialAlignment = Boolean(alignOptions);
 
@@ -455,7 +452,10 @@ class SVGElement implements SVGElementLike {
             // Default: top align
             y = (alignToBox.y || 0) + (alignOptions.y || 0) +
                 ((alignToBox.height || 0) - (alignOptions.height || 0)) *
-                getAlignFactor(alignOptions.verticalAlign);
+                getAlignFactor(alignOptions.verticalAlign),
+            attribs: SVGAttributes = {
+                'text-align': alignOptions?.align
+            };
 
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
