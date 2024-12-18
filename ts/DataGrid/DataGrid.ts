@@ -222,6 +222,18 @@ class DataGrid {
     public hoveredColumnId?: string;
 
     /**
+     * The synced row index.
+     * @internal
+     */
+    public syncedRowIndex?: number;
+
+    /**
+     * The synced column ID.
+     * @internal
+     */
+    public syncedColumnId?: string;
+
+    /**
      * The querying controller.
      */
     public querying: QueryingController;
@@ -361,6 +373,7 @@ class DataGrid {
             this.userOptions
         );
 
+        // Generate column options map
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
             return;
@@ -369,7 +382,6 @@ class DataGrid {
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
         }
-
         this.columnOptionsMap = columnOptionsObj;
     }
 
@@ -606,6 +618,57 @@ class DataGrid {
     }
 
     /**
+     * Sets the sync state to the row with the provided index. It removes the
+     * synced effect from the previously synced row.
+     *
+     * @param rowIndex
+     * The index of the row.
+     */
+    public syncRow(rowIndex?: number): void {
+        const rows = this.viewport?.rows;
+        if (!rows) {
+            return;
+        }
+
+        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
+
+        if (this.syncedRowIndex !== void 0) {
+            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+        }
+
+        if (rowIndex !== void 0) {
+            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+        }
+
+        this.syncedRowIndex = rowIndex;
+    }
+
+    /**
+     * Sets the sync state to the column with the provided ID. It removes the
+     * synced effect from the previously synced column.
+     *
+     * @param columnId
+     * The ID of the column.
+     */
+    public syncColumn(columnId?: string): void {
+        const vp = this.viewport;
+
+        if (!vp) {
+            return;
+        }
+
+        if (this.syncedColumnId) {
+            vp.getColumn(this.syncedColumnId)?.setSyncedState(false);
+        }
+
+        if (columnId) {
+            vp.getColumn(columnId)?.setSyncedState(true);
+        }
+
+        this.syncedColumnId = columnId;
+    }
+
+    /**
      * Render caption above the datagrid.
      *
      * @internal
@@ -654,6 +717,21 @@ class DataGrid {
     }
 
     /**
+     * Resets the content wrapper of the data grid. It clears the content and
+     * resets the class names.
+     */
+    public resetContentWrapper(): void {
+        if (!this.contentWrapper) {
+            return;
+        }
+
+        this.contentWrapper.innerHTML = AST.emptyHTML;
+        this.contentWrapper.className = Globals.classNames.container + ' ' + (
+            this.options?.rendering?.theme || ''
+        );
+    }
+
+    /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
@@ -668,10 +746,7 @@ class DataGrid {
         this.viewport?.destroy();
         delete this.viewport;
 
-        if (this.contentWrapper) {
-            this.contentWrapper.innerHTML = AST.emptyHTML;
-        }
-
+        this.resetContentWrapper();
         this.renderCaption();
 
         if (this.enabledColumns.length > 0) {

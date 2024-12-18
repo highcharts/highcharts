@@ -78,7 +78,8 @@ namespace Defaults {
             },
             header: {
                 enabled: true
-            }
+            },
+            theme: 'hcdg-theme-default'
         },
         credits: {
             enabled: true,
