@@ -50,10 +50,6 @@ class YouTubeComponent extends Component {
         return this;
     }
 
-    resize(width, height) {
-        super.resize.call(this, width, height);
-    }
-
     async load() {
         super.load();
 
