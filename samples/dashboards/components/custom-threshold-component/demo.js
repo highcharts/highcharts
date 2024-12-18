@@ -21,6 +21,8 @@ class ThresholdComponent extends Component {
                 value
             });
 
+        // Selecting appropriate options and components based on thresholds
+        // and given value.
         if (thresholds && Number.isFinite(value)) {
             for (let i = 0; i < thresholds.length; i++) {
                 const threshold = thresholds[i];
@@ -40,6 +42,8 @@ class ThresholdComponent extends Component {
             }
         }
 
+        // Rendering the appropriate component or updating it with new options
+        // if it already exists.
         if (!this.component || this.component !== Component) {
             this.parentElement.innerHTML = '';
             this.component =
