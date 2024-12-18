@@ -345,9 +345,8 @@ namespace DataLabel {
             dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
                 (unrotatedbBox.height - bBox.height);
 
-            dataLabel.attr({
-                'text-align': dataLabel.alignAttr['text-align'] || 'center'
-            })[dataLabel.placed ? 'animate' : 'attr']({
+            dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x: dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
