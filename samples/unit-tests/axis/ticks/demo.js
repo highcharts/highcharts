@@ -990,7 +990,7 @@ QUnit.test('Ticks and setSize', assert => {
     }
 });
 
-QUnit.only(
+QUnit.test(
     'Expected space for ticks, calculation of chart plot height (#19896).',
     function (assert) {
         const optionsToCheck = [{

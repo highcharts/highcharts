@@ -1127,7 +1127,10 @@ QUnit.test(
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
-                width: 400
+                width: 400,
+                style: {
+                    fontFamily: 'Helvetica, Arial, sans-serif'
+                }
             },
             xAxis: {
                 breaks: [{
