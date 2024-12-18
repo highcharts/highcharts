@@ -20,7 +20,7 @@
  *
  * */
 
-import type { TypedArray } from '../Core/Series/SeriesOptions';
+import type CU from './ColumnUtils';
 
 
 /* *
@@ -39,7 +39,7 @@ export interface DataTableOptions {
     /**
      * Initial columns with their values.
      */
-    columns?: Record<string, Array<DataTableValue>|TypedArray>;
+    columns?: Record<string, Array<DataTableValue>|CU.TypedArray>;
 
 
     /**
