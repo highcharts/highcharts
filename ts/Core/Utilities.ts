@@ -2032,6 +2032,9 @@ function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
 
+/**
+ *
+ */
 function ucfirst(s: unknown): string {
     return (
         (isString(s) ?
