@@ -547,10 +547,7 @@ QUnit.test('DataTable.setColumns', function (assert) {
     );
 
     assert.deepEqual(
-        Object.keys(columns).reduce((prev, curr) => {
-            prev[curr] = Array.from(columns[curr]);
-            return prev;
-        }, {}),
+        table.getColumns(void 0, false, true), // Get all columns as arrays
         {
             x: [0, 1, 2, 7, 6, 5],
             y: [0, 1, void 0, void 0, void 0, void 0]
