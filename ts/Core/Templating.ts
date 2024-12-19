@@ -191,8 +191,8 @@ function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
         lang = chart?.options.lang || defaultOptions.lang,
-        timeInstance = chart && chart.time || time || defaultTime,
-        numberFormatter = chart && chart.numberFormatter || numberFormat;
+        timeInstance = chart?.time || time || defaultTime,
+        numberFormatter = chart?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be

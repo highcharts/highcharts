@@ -137,7 +137,7 @@ columns: [
 ]
 ```
 
-For more advanced formatting the formatter callback callback function can be used.
+For more advanced formatting the formatter callback function can be used.
 
 ### Number formatting
 
