@@ -13,7 +13,7 @@ describe('data grid highlight sync autoscroll', () => {
                 state: 'point.mouseOver'
             });
 
-            cy.get('.highcharts-datagrid-row.highcharts-datagrid-hovered-row')
+            cy.get('.highcharts-datagrid-row.highcharts-datagrid-synced-row')
                 .children()
                 .eq(0)
                 .should('have.text', '2015-07-15');
