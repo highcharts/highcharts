@@ -433,13 +433,17 @@ Dashboards.board({
 ```
 
 ## Adding a custom component to the sidebar
+
 To add the custom component to the sidebar, you need to add the two things:
-### On-drop options
+
+### 1. On-drop options
 Define the `getOptionsOnDrop` method for the custom component, which will be called when the component is dropped on the dashboard. It should return options for the dropped component.
-### Edit mode
+
+### 2. Edit mode
 For the `editMode` sidebar, define the list of the components that will be available in it.
 Use the exact name to register the component in the `ComponentRegistry`.
-### The `lang` option
+
+### 3. The `lang` option
 To properly display the component name in the sidebar, add the `lang` options to the `editMode` object. If not specified, the component name will be displayed as `[YourComponentName]Component`; in this case, it is `YouTubeComponent`.
 ```js
     editMode: {

@@ -4,9 +4,9 @@ The HTML Component serves as a fundamental building block in dashboards. It offe
 
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/component-html' allow="fullscreen"></iframe>
 
-## Using the HTML component.
+## Using the HTML component
 
-### Installation
+### 1. Installation
 The HTML component is the simplest component available in **Highcharts Dashboards**. You can find it in the main Highcharts Dashboards package.  
 
 To use it through the CDN, you need to load the following files
@@ -28,7 +28,7 @@ import LayoutModule from '@highcharts/dashboards/modules/layout';
 LayoutModule(Dashboards);
 ```
 
-### Layout
+### 2. Layout
 After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.
 
 ```js
@@ -44,12 +44,12 @@ gui: {
 }
 ```
 
-### Options
+### 3. Options
 When the placeholder is ready, component options can be defined. To do so, set the `type` of the component to `HTML`. The type is case-sensitive, so make sure to use the exact spelling.
 
 Apart from the `type` property, the component requires the `cell` property to be defined. The `cell` property is used to specify the cell in which the component should be placed.
 
-### HTML elements
+### 4. HTML elements
 Now, you can define the HTML elements that will be rendered in the component.  
 
 HTML content can be defined in two ways:

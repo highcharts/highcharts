@@ -7,7 +7,7 @@ The **Highcharts** Component allows the end-user to define a chart in the dashbo
 ## How to start
 We need to load the JavaScript and CSS files in the following order to get started.
 
-### Load
+### 1. Import
 To use the Highcharts Component, you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together. The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Highcharts** module.
 
 ```html
@@ -35,7 +35,7 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
  ```
 
-### CSS
+### 2. CSS
 From version v3.0.0, the Highcharts Component does not use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default, so there is no need to load the set of CSS styles to display Highcharts properly.
 Importing only Dashboards' CSS file is enough:
     ```css
@@ -44,12 +44,12 @@ Importing only Dashboards' CSS file is enough:
 
 You can enable the styled mode at any time by setting the `styledMode` option to `true` in your chart options and styling it according to the [Highcharts styling guide](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-### Target cell
+### 3. Cell identifier
 After loading the necessary files, define a cell using a unique identifier, for example `renderTo: 'dashboard-col-0'`.
 
 You can find more information on creating a layout in the dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
-### Chart options
+### 4. Chart options
 Declare all the chart options in the `chartOptions` object.
 For the full set of available options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
 
@@ -61,7 +61,7 @@ For the full set of available options, see the [Highcharts API](https://api.high
     }
 ```
 
-### Chart type
+### 5. Chart type
 The last thing you have to do is specify the `type: 'Highcharts'` in the component’s config. See the full example below.
 
 ```js
@@ -136,14 +136,15 @@ Dashboards.board('container', {
 });
 ```
 
-### Assigning column data to series data
+## Assigning column data to series data
 
 The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
 You can also declare which columns will be the point's parameters. This is useful for series like OHLC, candlestick, column range, or arrange. The `seriesId` field is mandatory for properly displaying series (for instance, in the legend).
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment).
 
 The `data` option can take three different types:
-#### `string` - column name containing the one-dimensional data.
+### 1. `string`  one-dimensional
+Column name containing the one-dimensional data.
 ```js
 columnAssignment: [{
     seriesId: 'mySeriesId',
@@ -152,7 +153,8 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-1d-data allow="fullscreen"></iframe>
 
-#### `string[]` - names of the columns that data will be used in the two-dimensional format.
+### 2. `string[]` two-dimensional
+Names of the columns that data will be used in the two-dimensional format.
 ```js
 columnAssignment: [{
     seriesId: 'mySeriesId',
@@ -161,7 +163,8 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-2d-data allow="fullscreen"></iframe>
 
-#### `Record<string, string>` - the object with the keys as series data key names and column names that will be used for the key-defined two-dimensional series data.
+### 3. `Record<string, string>`
+Object with the keys as series data key names and column names that will be used for the key-defined two-dimensional series data.
 ```js
 columnAssignment: [{
     seriesId: 'myStockSeriesId',

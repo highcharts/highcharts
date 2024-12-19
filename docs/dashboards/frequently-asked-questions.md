@@ -10,7 +10,7 @@ After that, you need to pass the connector to the component config, and that’s
 
 ## How do you connect a component to a cell?
 
-### Enabled layout creator (GUI)
+### 1. Enabled layout creator (GUI)
 To use **Dashboards** with a layout system and edit mode, you first have to load the `layout` module.
 The order of the imports is essential, so make sure that the `layout` module is imported after the Dashboards module.
 
@@ -48,7 +48,7 @@ components: [{
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 
-### Disabled default layout creator
+### 2. Disabled default layout creator
 You can create your HTML structure for a layout styled by CSS or another CSS framework (e.g., **Tailwind**, **Bootstrap**).
 Please remember that each container should have a unique `id` for the rendered component.
 
@@ -171,7 +171,7 @@ afterRender(e) {
 
 ## How to style the Dashboard?
 
-### Enabled layout creator (GUI)
+### 1. Enabled layout creator (GUI)
 **Dashboards** has a default theme applied to all its components.
 You need to import the default CSS stylesheet to your project so that the dashboard displays correctly. You can do it by importing the following CSS files:
 
@@ -212,7 +212,7 @@ Example:
 Note that each component that includes a chart (Highcharts, KPI) uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default to style the chart. The CSS stylesheet needs to be imported so that the Highcharts display correctly.
 To customize your chart styles, you can create your own themes or add your own individual CSS variables or rules found in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
-### Disabled default layout creator (GUI)
+### 2. Disabled default layout creator (GUI)
 You can create your own HTML structure of a layout styled by CSS or Tailwind.
 Please remember that each container should have a unique `id` for the rendered component.
 

@@ -2,19 +2,19 @@
 
 To create a dashboard with **Vue**, please follow the steps below:
 
-## Install the Dashboards package
+## 1. Install the Dashboards package
 
 ```bash
 npm install @highcharts/dashboards
 ```
 
-## Import the Dashboards package
+## 2. Import the Dashboards package
 
 ```typescript
 import * as Dashboards from '@highcharts/dashboards';
 ```
 
-## Additional packages
+## 3. Additional packages
 
 Consider additional packages like **Highcharts** or **DataGrid** to fully utilize the **Dashboards** potential.
 
@@ -44,7 +44,7 @@ full editor support for all Highcharts modules. You will find it in the menu
 `File` -> `Preferences` -> `Settings`, where you have to scroll to the
 `Vue: Max File Size` value.
 
-## Create an HTML structure for the dashboard
+## 4. Create an HTML structure for the dashboard
 
 There are two ways to do it:
 
@@ -63,7 +63,7 @@ Then add a div where you want to render the dashboard:
 ### Declare your HTML structure.
 Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
-## Create a dashboard
+## 5. Create a dashboard
 The dashboard is created using the factory function `Dashboards.board`. The function takes three arguments:
 - `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element
 - `options` - the options object for the dashboard

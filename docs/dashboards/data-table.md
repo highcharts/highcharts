@@ -9,7 +9,7 @@ Think of a Data Table as a grid where each row represents a record or entry, and
 ## Creating a data table
 There are several ways to create a `DataTable`:
 
-### From a data pool
+### 1. From a data pool
 The `DataPool` is the main entry point for data handling in **Highcharts Dashboards**. It handles incoming data and creates a `DataTable` to store the imported data.
 
 It can be created automatically when you create a **Dashboard**:
@@ -42,7 +42,7 @@ dataPool.setConnectorOptions({
 const dataTable = await dataPool.getConnectorTable('my-connector');
 ```
 
-### From a data connector
+### 2. From a data connector
 A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.
 
 The `DataTable` is accessible via the `DataConnector.table`
@@ -59,7 +59,7 @@ async function loadData() {
 }
 ```
 
-### Manually
+### 3. Manually
 You can create a DataTable manually by providing the columns and rows.
 
 ```javascript
@@ -71,7 +71,7 @@ const dataTable = new Dashboards.DataTable({
 });
 ```
 
-### From a data modifier
+### 4. From a data modifier
 A `DataModifier` is a service that modifies data in a `DataTable`. It can create a new `DataTable` with the modified data.
 
 ```javascript

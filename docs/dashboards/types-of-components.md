@@ -16,7 +16,7 @@ This is an overview of the most critical parameters of a component:
 The most basic and generic component type allows you to add everything that could be defined as HTML, as well as some custom events.
 
 The HTML component can be defined in two ways:  
-### Abstract Syntax Tree (AST) style  
+### 1. Abstract Syntax Tree (AST) style  
 Defines the HTML code as a nested tree structure.
 
 Code snippet:
@@ -32,7 +32,7 @@ Code snippet:
     }]
 }
 ```
-### HTML string
+### 2. HTML string
 Defines the HTML code as a standard HTML string.
 
 Code snippet:
