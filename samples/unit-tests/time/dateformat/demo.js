@@ -270,3 +270,49 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Global time object (#22393)', assert => {
+    const htmlLang = document.body.closest('[lang]')?.lang,
+        origLocale = Highcharts.defaultOptions.lang.locale;
+
+    if (htmlLang === 'en') {
+
+        Highcharts.setOptions({
+            lang: {
+                locale: undefined
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.pageLang,
+            htmlLang,
+            'The internal Highcharts `pageLang` property should be set'
+        );
+
+        assert.strictEqual(
+            Highcharts.dateFormat('%A', Date.UTC(2024, 11, 19, 12)),
+            'Thursday',
+            'The global `dateFormat` should use the global language'
+        );
+
+        Highcharts.setOptions({
+            lang: {
+                locale: 'es'
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.dateFormat('%A', Date.UTC(2024, 11, 19, 12)),
+            'jueves',
+            'Explicit locale, the global `dateFormat` should comply'
+        );
+
+        // Reset
+        Highcharts.setOptions({
+            lang: {
+                locale: origLocale
+            }
+        });
+
+    }
+});
