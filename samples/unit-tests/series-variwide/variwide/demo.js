@@ -229,3 +229,32 @@ QUnit.test('#8635: Variwide zoom', assert => {
         );
     });
 });
+
+
+QUnit.test('Zooming in Variwide should not occlude column (#14182)', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: [{
+            type: 'datetime',
+            min: 1587502697151,
+            max: 1587508014677
+        }],
+        series: [{
+            type: 'variwide',
+            keys: ['x', 'y', 'z', 'color'],
+            data: [
+                [1587500934161, -0.12713, 668520, '#FF6666'],
+                [1587502696151, 0.0955, 4318151, '#5CCE61'],
+                [1587507014677, -0.11131, 2254849, '#FF6666']
+            ],
+            cropThreshold: false
+        }]
+    });
+
+    const processedXData = chart.series[0].dataTable.modified.getColumn('x');
+
+    assert.strictEqual(
+        processedXData[0],
+        1587502696151,
+        'Timestamp at 20:58 should be visisble and first'
+    );
+});
