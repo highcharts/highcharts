@@ -295,3 +295,57 @@
         }
     );
 });
+
+QUnit.test('Overscroll with rangeSelector (#22334)', function (assert) {
+    const overscrollPixelValue = 200,
+        overscrollPercentageValue = 25;
+
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 820 // Gives us axis.len of 800px
+        },
+
+        xAxis: {
+            overscroll: overscrollPixelValue + 'px'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            pointStart: '2017-01-01',
+            pointInterval: 1000 * 60 * 60 * 24, // 1 day
+            data: (function () {
+                const data = [];
+
+                for (let i = 0; i <= 1000; i += 1) {
+                    data.push(
+                        Math.round(Math.random() * 100)
+                    );
+                }
+                return data;
+            }())
+        }]
+    });
+
+    const points = chart.series[0].points,
+        lastPoint = points[points.length - 1];
+
+    assert.strictEqual(
+        lastPoint.plotX,
+        chart.xAxis[0].width - overscrollPixelValue,
+        'Pixel overscroll correct range with rangeSelector enabled'
+    );
+
+    chart.xAxis[0].update({
+        overscroll: overscrollPercentageValue + '%'
+    });
+
+    assert.strictEqual(
+        lastPoint.plotX,
+        chart.xAxis[0].width -
+            (chart.xAxis[0].len * overscrollPercentageValue / 100),
+        'Percent overscroll correct range with rangeSelector enabled'
+    );
+});
