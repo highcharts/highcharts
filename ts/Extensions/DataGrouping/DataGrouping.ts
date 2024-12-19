@@ -74,6 +74,7 @@ function onTooltipHeaderFormatter(
 ): void {
 
     const chart = this.chart,
+        lang = chart.options.lang,
         time = chart.time,
         point = e.point,
         series = point.series,
@@ -125,7 +126,6 @@ function onTooltipHeaderFormatter(
             xDateFormat = xAxis.dateTime.getXDateFormat(
                 point.x,
                 tooltipOptions.dateTimeLabelFormats
-
             );
         }
 
@@ -148,11 +148,16 @@ function onTooltipHeaderFormatter(
             formatString = this.styledModeFormat(formatString);
         }
 
+
         // Return the replaced format
         e.text = format(
             formatString, {
-                point: extend(point, { key: formattedKey }),
-                series: series
+                point: extend(
+                    point,
+                    { key: format(formattedKey, { lang }) }
+                ),
+                series,
+                lang
             },
             chart
         );
@@ -357,7 +362,7 @@ export default DataGroupingComposition;
  *     minute: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
  *     hour: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
  *     day: ['%A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
- *     week: ['Week from %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
+ *     week: ['{lang.weekFrom} %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
  *     year: ['%Y', '%Y', '-%Y']
  * }
