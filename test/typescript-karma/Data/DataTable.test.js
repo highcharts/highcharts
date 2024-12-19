@@ -490,6 +490,8 @@ QUnit.test('DataTable.setColumns', function (assert) {
         }
     });
 
+    let columns;
+
     table.setColumns({
         x: [8, 9],
         y: [0, 1]
@@ -515,6 +517,64 @@ QUnit.test('DataTable.setColumns', function (assert) {
             y: [0, 1]
         },
         'Table should contain two rows of valid values.'
+    );
+
+    table.setColumns({
+        x: new Float32Array([10, 9, 8, 7, 6, 5])
+    });
+
+    columns = table.getColumns();
+    
+    assert.ok(
+        columns.x instanceof Float32Array,
+        'x column should be a Float32Array.'
+    );
+
+    assert.strictEqual(
+        columns.x.length,
+        6,
+        'x column should contain 6 values.'
+    )
+
+    table.setColumns({
+        x: [0, 1, 2]
+    }, 0, void 0, true);
+    columns = table.getColumns();
+
+    assert.ok(
+        columns.x instanceof Float32Array,
+        'x column should stay a Float32Array when typeAsOriginal is true.'
+    );
+
+    assert.deepEqual(
+        Object.keys(columns).reduce((prev, curr) => {
+            prev[curr] = Array.from(columns[curr]);
+            return prev;
+        }, {}),
+        {
+            x: [0, 1, 2, 7, 6, 5],
+            y: [0, 1, void 0, void 0, void 0, void 0]
+        },
+        'Table should contain six rows of valid values.'
+    );
+
+    table.setColumns({
+        x: [5, 5, 5]
+    }, 0);
+    columns = table.getColumns();
+
+    assert.ok(
+        Array.isArray(columns.x),
+        'x column should be transformed to a conventional array.'
+    );
+
+    assert.deepEqual(
+        columns,
+        {
+            x: [5, 5, 5, 7, 6, 5],
+            y: [0, 1, void 0, void 0, void 0, void 0]
+        },
+        'Table should be valid after x column type change.'
     );
 });
 
