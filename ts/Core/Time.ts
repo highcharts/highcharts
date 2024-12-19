@@ -21,6 +21,7 @@ import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import H from './Globals.js';
 const {
+    pageLang,
     win
 } = H;
 import U from './Utilities.js';
@@ -319,7 +320,7 @@ class Time {
     private dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale
+        locale: string|Array<string>|undefined = this.options.locale || pageLang
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {

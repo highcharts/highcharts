@@ -346,6 +346,7 @@ namespace DataLabel {
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x: dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +

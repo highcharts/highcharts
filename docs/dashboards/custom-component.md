@@ -1,14 +1,14 @@
 # Custom Dashboards components
 
 ## Custom YouTube Component
-This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.
+This article shows how to create a custom **Dashboards** component. In this example, we create a **YouTube** component.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" allow="fullscreen" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" ></iframe>
 
-Note that to create the custom component, we are using ES6 and using the `class` and `extends` keywords, which makes creating a custom class much easier.
+Note that to create the custom component, we use ES6 and its `class` and `extends` keywords. This makes creating a custom class much easier.
 
-We start by importing the default `Component` class and `ComponentRegistry` from the `Dashboards` namespace. We can use destructuring syntax to retrieve these two classes. The next step is creating the class that will inherit from the imported `Component` class.
-The class name will automatically be the string used to reference this component type. For example, the class `YouTubeComponent` will be referenced by the name "`YouTube`."
+First, we import the default `Component` class and `ComponentRegistry` from the `Dashboards` namespace. We can use destructuring syntax to retrieve these two classes. The next step is creating the class that will inherit from the imported `Component` class.
+The class name will automatically be the string used to reference this component type. For example, the class `YouTubeComponent` will be referenced by the name "`YouTube`".
 
 ```js
 const { Component, ComponentRegistry } = Dashboards;
@@ -18,7 +18,7 @@ class YouTubeComponent extends Component {
 }
 ```
 
-Then, depending on what the component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, `videoId`. Since the iframe element needs its size to be defined, the resize method is extended to update the size of the element.
+Then, depending on what the component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, `videoId`. Since the `iframe` element needs its size to be defined, the resize method is extended to update the size of the element.
 
 The new `YouTubeComponent` class must be added to the registry using the `ComponentRegistry.registerComponent` method.
 
@@ -50,13 +50,7 @@ class YouTubeComponent extends Component {
         return this;
     }
 
-    resize(width, height) {
-        super.resize.call(this, width, height);
-        this.youTubeElement.setAttribute('width', width - 10);
-        this.youTubeElement.setAttribute('height', height - 10);
-    }
-
-    load() {
+    async load() {
         super.load();
 
         this.youTubeElement.setAttribute(
@@ -104,15 +98,15 @@ Dashboards.board({
         layouts: [{
             rows: [{
                 cells:[{
-                    id: 'cell-id'
+                    id: 'yt-highsoft'
                 }]
             }]
         }]
     }],
     components: [{
-        renderTo: 'cell-id',
+        renderTo: 'yt-highsoft',
         type: 'YouTube',
-        videoId: 'video-id-from-youtube'
+        videoId: '115hdz9NsrY'
     }]
 });
 ```
@@ -253,7 +247,7 @@ Dashboards.board('container', {
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
-                <span id="custom-html-div-2">Custom HTML added as string </span>
+                <span id="custom-html-div-2">Custom HTML added as string</span>
             </div>
         `
     },
@@ -294,9 +288,9 @@ An example implementation of the `ThresholdComponent` can look like this:
 ```js
 const {
     Component,
-    ComponentRegistry
+    ComponentRegistry,
+    merge
 } = Dashboards;
-const { merge, isNumber } = Dashboards._modules['Core/Utilities.js'];
 
 class ThresholdComponent extends Component {
     constructor(cell, options) {
@@ -317,13 +311,13 @@ class ThresholdComponent extends Component {
 
         // Selecting appropriate options and components based on thresholds
         // and given value.
-        if (thresholds && isNumber(value)) {
+        if (thresholds && Number.isFinite(value)) {
             for (let i = 0; i < thresholds.length; i++) {
                 const threshold = thresholds[i];
 
                 if (
-                    isNumber(threshold.min) && value < threshold.min ||
-                    isNumber(threshold.max) && value > threshold.max
+                    Number.isFinite(threshold.min) && value < threshold.min ||
+                    Number.isFinite(threshold.max) && value > threshold.max
                 ) {
                     continue;
                 }
@@ -355,7 +349,7 @@ ComponentRegistry.registerComponent('Threshold', ThresholdComponent);
 
 Now you can create the board containing the `ThresholdComponent` with the thresholds options, that you want, for example:
 ```js
-Dashboards.board('container', {
+const board = Dashboards.board('container', {
     gui: {
         layouts: [{
             rows: [{
@@ -369,22 +363,69 @@ Dashboards.board('container', {
         type: 'Threshold',
         renderTo: 'dashboard-col-0',
         component: 'HTML',
-        value: 7,
+        value: 10,
+        options: {
+            title: {
+                text: 'Threshold Component'
+            },
+            elements: [{
+                tagName: 'p',
+                textContent: `This is a demo of a custom threshold component
+                that allows you to adjust your content depending on the values
+                according to the appropriate thresholds. Move the slider above
+                the board and see how the options and components will change.`,
+                style: {
+                    padding: '0 14px',
+                    textAlign: 'justify'
+                }
+            }]
+        },
         thresholds: [{
-            min: 5,
+            min: 15,
             component: 'KPI',
             options: {
-                title: {
-                    text: 'Example KPI Component'
-                }
+                title: 'KPI Component',
+                subtitle: 'You can use any component here, e.g. KPI.'
             }
         }, {
-            min: 10,
+            min: 40,
+            max: 69,
             component: 'Highcharts',
             options: {
                 title: '',
                 chartOptions: {
-                    ...
+                    title: {
+                        text: 'Highcharts Component'
+                    },
+                    subtitle: {
+                        text: 'You can use also the Highcharts Component.'
+                    },
+                    series: [{
+                        data: [1, 2, 3],
+                        animation: false
+                    }]
+                }
+            }
+        }, {
+            min: 70,
+            options: {
+                subtitle: `Options from previous thresholds, if not overwritten
+                or limited by the 'max' option, are passed to the next
+                thresholds.`
+            }
+        }, {
+            min: 80,
+            options: {
+                style: {
+                    background: '#197'
+                }
+            }
+        }, {
+            min: 90,
+            component: 'HTML',
+            options: {
+                title: {
+                    text: 'The End'
                 }
             }
         }]
@@ -395,13 +436,13 @@ Dashboards.board('container', {
 
 ## Custom Component with data from the DataConnector
 
-The example below shows how to develop a custom component that fetches data from the DataConnector, processes and displays it on the dashboard.
+The example below shows how to develop a custom component that fetches data from the `DataConnector`, processes and displays it on the dashboard.
 
 The custom component is created by extending the `HTMLComponent` class, which displays the total revenue.
 
 <iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
 
-The DataConnector is registered on the `load`, so we need to execute and await the `super.load()` method first to ensure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
+The `DataConnector` is registered on the `load`, so we need to execute and await the `super.load()` method first to ensure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
 
 When the data is ready, the `getTotalRevenue` method calculates the total revenue. The `getElementsFromString` method parses the HTML string into an AST-like object. The `render` method renders the component on the dashboard.
 

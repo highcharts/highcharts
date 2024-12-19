@@ -25,9 +25,8 @@ const {
 } = D;
 import G from './Globals.js';
 const {
-    doc
+    pageLang
 } = G;
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import U from './Utilities.js';
 const {
     extend,
@@ -35,6 +34,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    isString,
     pick,
     ucfirst
 } = U;
@@ -90,6 +90,9 @@ const numberFormatCache: Record<string, Intl.NumberFormat> = {};
  *  Functions
  *
  * */
+
+// Internal convenience function
+const isQuotedString = (str: string): boolean => /^["'].+["']$/.test(str);
 
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
@@ -174,11 +177,11 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@"'’= #\(\)]+)\}/gu,
+    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@"'= ]+)\)/gu,
+        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
@@ -204,7 +207,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         if ((n = Number(key)).toString() === key) {
             return n;
         }
-        if (/^["'].+["']$/.test(key)) {
+        if (isQuotedString(key)) {
             return key.slice(1, -1);
         }
 
@@ -355,7 +358,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
         // Simple variable replacement
         } else {
-            const valueAndFormat = expression.split(':');
+            const valueAndFormat = isQuotedString(expression) ?
+                [expression] : expression.split(':');
 
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
@@ -379,13 +383,14 @@ function format(str = '', ctx: any, chart?: Chart): string {
                     }
                 } else {
                     replacement = time.dateFormat(segment, replacement);
-
-                    // Use string literal in order to be preserved in the outer
-                    // expression
-                    if (hasSub) {
-                        replacement = `"${replacement}"`;
-                    }
                 }
+            }
+
+            // Use string literal in order to be preserved in the outer
+            // expression
+            subRegex.lastIndex = 0;
+            if (subRegex.test(match.find) && isString(replacement)) {
+                replacement = `"${replacement}"`;
             }
         }
         str = str.replace(match.find, pick(replacement, ''));
@@ -484,11 +489,7 @@ function numberFormat(
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
             'en' :
-            (
-                (this as Chart)?.locale ||
-                lang.locale ||
-                (doc.body.closest('[lang]') as HTMLDOMElement|null)?.lang
-            ),
+            ((this as Chart)?.locale || lang.locale || pageLang),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
@@ -499,8 +500,10 @@ function numberFormat(
     // format with string replacement for the separators.
     if (hasSeparators) {
         ret = ret
-            .replace(/\,/g, thousandsSep ?? ',')
-            .replace('.', decimalPoint ?? '.');
+            // Preliminary step to avoid re-swapping (#22402)
+            .replace(/([,\.])/g, '_$1')
+            .replace(/_\,/g, thousandsSep ?? ',')
+            .replace('_.', decimalPoint ?? '.');
     }
 
     if (
