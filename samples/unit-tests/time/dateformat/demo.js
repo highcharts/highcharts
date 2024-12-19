@@ -314,5 +314,7 @@ QUnit.test('Global time object (#22393)', assert => {
             }
         });
 
+    } else {
+        assert.expect(0);
     }
 });
