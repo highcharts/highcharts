@@ -22,6 +22,7 @@ Highcharts.chart('container', {
                 splitSeries: true,
                 parentNodeLimit: true,
                 dragBetweenSeries: true,
+                friction: -0.5,
                 parentNodeOptions: {
                     bubblePadding: 20
                 }
@@ -29,7 +30,10 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '{point.shortName}',
-                parentNodeFormat: '{point.series.name}'
+                parentNodeFormat: '{point.series.name}',
+                style: {
+                    fontSize: '0.9em'
+                }
             }
         }
     },
