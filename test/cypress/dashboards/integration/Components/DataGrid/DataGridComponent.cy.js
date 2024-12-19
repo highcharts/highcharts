@@ -30,10 +30,10 @@ describe('layout resize on window changes', () => {
         // Act - hover over the chart.
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
 
-        // Assert - hover over the chart.
-        cy.get('@firstDataGridRow').should('not.have.class', 'highcharts-datagrid-hovered-row');
+        // Assert - synced over the chart.
+        cy.get('@firstDataGridRow').should('not.have.class', 'highcharts-datagrid-synced-row');
         cy.get('@secondDataGridRow').should('have.class', 'highcharts-datagrid-synced-row');
-        cy.get('@secondDataGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-hovered-column');
+        cy.get('@secondDataGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-synced-column');
         cy.get('@secondDataGridRow').children().eq(1).should('have.class', 'highcharts-datagrid-synced-column');
     });
 
