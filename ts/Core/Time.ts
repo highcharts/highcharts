@@ -18,6 +18,7 @@
 
 import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+import type { LangOptionsCore } from './Options';
 
 import H from './Globals.js';
 const {
@@ -148,9 +149,11 @@ class Time {
      * */
 
     public constructor(
-        options?: Time.TimeOptions
+        options?: Time.TimeOptions,
+        langOptions?: LangOptionsCore
     ) {
         this.update(options);
+        this.langOptions = langOptions;
     }
 
     /* *
@@ -162,6 +165,8 @@ class Time {
     public options: Time.TimeOptions = {
         timezone: 'UTC'
     };
+
+    private langOptions?: LangOptionsCore;
 
     public timezone?: string;
 
@@ -176,6 +181,7 @@ class Time {
     private weekdays!: Array<string>;
 
     private shortWeekdays!: Array<string>;
+
 
     /* *
      *
@@ -658,7 +664,7 @@ class Time {
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
-        const lang = H.defaultOptions?.lang;
+        const lang = this.langOptions;
 
         if (!defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
@@ -673,7 +679,8 @@ class Time {
             while ((match = localeAwareRegex.exec(format))) {
                 format = format.replace(match[0], this.dateTimeFormat(
                     match[1],
-                    timestamp
+                    timestamp,
+                    lang?.locale
                 ));
             }
         }

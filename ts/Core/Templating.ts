@@ -17,6 +17,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type Time from './Time';
 
 import D from './Defaults.js';
 const {
@@ -172,10 +173,13 @@ function dateFormat(
  * @param {Highcharts.Chart} [chart]
  *        A `Chart` instance used to get numberFormatter and time.
  *
+ * @param {Highcharts.Time} [time]
+ *        A `Time` instance used to get dateFormat.
+ *
  * @return {string}
  *         The formatted string.
  */
-function format(str = '', ctx: any, chart?: Chart): string {
+function format(str = '', ctx: any, chart?: Chart, time?: Time): string {
 
     const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
         // The sub expression regex is the same as the top expression regex,
@@ -186,8 +190,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
         lang = chart?.options.lang || defaultOptions.lang,
-        time = chart && chart.time || defaultTime,
-        numberFormatter = chart && chart.numberFormatter || numberFormat;
+        timeInstance = chart?.time || time || defaultTime,
+        numberFormatter = chart?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -382,7 +386,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
                         );
                     }
                 } else {
-                    replacement = time.dateFormat(segment, replacement);
+                    replacement = timeInstance.dateFormat(segment, replacement);
                 }
             }
 
