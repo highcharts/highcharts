@@ -174,6 +174,10 @@ class TableRow extends Row {
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
         }
+
+        if (this.viewport.dataGrid.syncedRowIndex === idx) {
+            el.classList.add(Globals.classNames.syncedRow);
+        }
     }
 
     /**
