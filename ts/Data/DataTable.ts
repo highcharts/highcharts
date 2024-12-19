@@ -1233,8 +1233,10 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
      * Custom information for pending events.
      *
      * @param {boolean} [typeAsOriginal=false]
-     * Whether to get the type of the original column. If `false`, the columns
-     * will have the same type as the provided columns.
+     * Determines whether the original column retains its type when data
+     * replaced. If `true`, the original column keeps its type. If `false`
+     * (default), the original column will adopt the type of the replacement
+     * column.
      *
      * @emits #setColumns
      * @emits #afterSetColumns
