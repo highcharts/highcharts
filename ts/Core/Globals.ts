@@ -17,6 +17,7 @@
  * */
 
 import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -204,6 +205,7 @@ namespace Globals {
                 doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
             ).createSVGRect
         ),
+        pageLang = (doc?.body.closest('[lang]') as HTMLDOMElement|null)?.lang,
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
