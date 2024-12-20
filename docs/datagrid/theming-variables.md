@@ -1,8 +1,8 @@
 # Variable Reference
 
-Highcharts DataGrid theming uses a set of CSS variables. By defining global variables, such as `--hcdg-font-size`, `--hcdg-background-color`, `--hcdg-border-width`, and `--hcdg-padding`, you establish a baseline style for the entire datagrid. To customize specific sections, prepend section-specific prefixes, such as `--hcdg-header`, `--hcdg-caption`, `--hcdg-row`, to these global variables. If no section-specific variable is defined, the datagrid defaults to the global value.
+Highcharts DataGrid theming uses a set of CSS variables. By defining global variables, such as `--hcdg-font-size`, `--hcdg-background`, `--hcdg-padding` etc., you establish a baseline style for the entire datagrid. To customize specific sections, replace the global prefix (`--hcdg`) with a section-specific prefix, such as `--hcdg-header` or `--hcdg-row`. For example, the global variable `--hcdg-padding` becomes `--hcdg-row-padding` for rows. If no section-specific variable is defined, the datagrid defaults to the global value.
 
-For example, setting a global `--hcdg-font-size` and `--hcdg-font-family` affects the whole datagrid. To make headers bold or captions larger, define `--hcdg-header-font-weight` or `--hcdg-caption-font-size`. This pattern ensures your theme remains clean and consistent.
+The part of the variable name following the prefix corresponds 1:1 to the associated CSS property, such as `padding`, `font-size` or `background`. This makes it intuitive to understand the expected values and their behavior.
 
 ## Fonts and Text
 
