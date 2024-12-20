@@ -258,3 +258,40 @@ QUnit.test('Zooming in Variwide should not occlude column (#14182)', assert => {
         'Timestamp at 20:58 should be visisble and first'
     );
 });
+
+QUnit.test('Zoom to empty region should not render points (#21696)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            panning: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            min: 1721427150000,
+            max: 1721512350000,
+            type: 'datetime'
+        },
+        series: [{
+            type: 'variwide',
+            keys: ['x', 'y', 'z'],
+            cropThreshold: false,
+            data: [
+                [1721418923000, 24, 1000000],
+                [1721420723000, 12, 1000000],
+                [1721423423000, 67, 1000000],
+                // <--
+                [1721539158000, 32, 1000000],
+                [1721540058000, 32, 1000000],
+                [1721542758000, 59, 1000000]
+            ]
+        }]
+    });
+
+    const processedXData = chart.series[0].dataTable.modified.getColumn('x');
+
+    assert.strictEqual(
+        processedXData.length,
+        0,
+        'Cropped data should be empty'
+    );
+});
