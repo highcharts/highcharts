@@ -57,6 +57,7 @@ namespace Defaults {
                     }
                 },
                 sorting: {
+                    sortable: 'Sortable.',
                     announcements: {
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',
