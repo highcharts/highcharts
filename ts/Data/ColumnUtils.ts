@@ -74,8 +74,6 @@ namespace ColumnUtils {
     /**
      * Sets the length of the column array.
      *
-     * @private
-     *
      * @param {DataTable.Column} column
      * Column to be modified.
      *
@@ -89,6 +87,8 @@ namespace ColumnUtils {
      *
      * @return {DataTable.Column}
      * Modified column.
+     *
+     * @private
      */
     export function setLength(
         column: DataTable.Column,
@@ -110,8 +110,6 @@ namespace ColumnUtils {
      * If the column is a typed array, it will be not modified, but a subarray
      * will be returned.
      *
-     * @private
-     *
      * @param {Highcharts.DataTableColumn} column
      * Column to be shifted.
      *
@@ -122,6 +120,8 @@ namespace ColumnUtils {
      *
      * @return {ShiftResult}
      * Object containing shifted value and the rest of the column.
+     *
+     * @private
      */
     export function shift(
         column: DataTable.Column,
@@ -142,8 +142,6 @@ namespace ColumnUtils {
 
     /**
      * Splices a column array.
-     *
-     * @private
      *
      * @param {DataTable.Column} column
      * Column to be modified.
@@ -166,6 +164,8 @@ namespace ColumnUtils {
      *
      * @return {SpliceResult}
      * Object containing removed elements and the modified column.
+     *
+     * @private
      */
     export function splice(
         column: DataTable.Column,

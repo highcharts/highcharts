@@ -85,7 +85,7 @@ class DataTableCore {
         this.columns = {};
 
         /**
-         * ID of the table for indentification purposes.
+         * ID of the table for identification purposes.
          *
          * @name Highcharts.DataTable#id
          * @type {string}
@@ -217,8 +217,10 @@ class DataTableCore {
     }
 
     /**
-     * Replaces a column reference in the table. It does not do anything else,
-     * unlike the `setColumn` method.
+     * Replaces a column reference in the table. It does not update the row
+     * count, but only replaces the reference to the column. Can also call the
+     * `afterSetColumns` event and update the table version tag if `silent` is
+     * set to `false`.
      *
      * @param {string} columnName
      * Name of the column to replace.
@@ -318,7 +320,7 @@ class DataTableCore {
      * Cell values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the row to set. Leave `undefind` to add as a new row.
+     * Index of the row to set. Leave `undefined` to add as a new row.
      *
      * @param {boolean} [insert]
      * Whether to insert the row at the given index, or to overwrite the row.

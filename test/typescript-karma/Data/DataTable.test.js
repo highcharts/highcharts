@@ -640,7 +640,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
             assert.strictEqual(
                 table.modified.getLocalRowIndex(1), 2,
                 'Sorted table should allow to retrieve the local row index' +
-                'from the origianl row index.'
+                'from the original row index.'
             );
 
             assert.strictEqual(

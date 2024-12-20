@@ -778,7 +778,7 @@ class Series {
         );
 
         // The tooltip options are merged between global and series specific
-        // options. Importance order asscendingly:
+        // options. Importance order ascendingly:
         // globals: (1)tooltip, (2)plotOptions.series,
         // (3)plotOptions[this.type]
         // init userOptions with possible later updates: 4-6 like 1-3 and
@@ -1120,7 +1120,7 @@ class Series {
                 );
 
                 // Matching X not found
-                // or used already due to ununique x values (#8995),
+                // or used already due to non-unique x values (#8995),
                 // add point (but later)
                 if (
                     pointIndex === -1 ||
@@ -1145,7 +1145,7 @@ class Series {
                     oldData[pointIndex].touched = true;
 
                     // Speed optimize by only searching after last known
-                    // index. Performs ~20% bettor on large data sets.
+                    // index. Performs ~20% better on large data sets.
                     if (requireSorting) {
                         lastIndex = pointIndex + 1;
                     }
