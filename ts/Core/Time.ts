@@ -149,10 +149,10 @@ class Time {
 
     public constructor(
         options?: Time.TimeOptions,
-        langOptions?: LangOptionsCore
+        lang?: LangOptionsCore
     ) {
         this.update(options);
-        this.langOptions = langOptions;
+        this.lang = lang;
     }
 
     /* *
@@ -165,7 +165,7 @@ class Time {
         timezone: 'UTC'
     };
 
-    private langOptions?: LangOptionsCore;
+    private lang?: LangOptionsCore;
 
     public timezone?: string;
 
@@ -663,7 +663,7 @@ class Time {
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
-        const lang = this.langOptions;
+        const lang = this.lang;
 
         if (!defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
