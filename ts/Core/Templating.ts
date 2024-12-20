@@ -25,9 +25,8 @@ const {
 } = D;
 import G from './Globals.js';
 const {
-    doc
+    pageLang
 } = G;
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import U from './Utilities.js';
 const {
     extend,
@@ -490,11 +489,7 @@ function numberFormat(
     const hasSeparators = thousandsSep || decimalPoint,
         locale = hasSeparators ?
             'en' :
-            (
-                (this as Chart)?.locale ||
-                lang.locale ||
-                (doc.body.closest('[lang]') as HTMLDOMElement|null)?.lang
-            ),
+            ((this as Chart)?.locale || lang.locale || pageLang),
         cacheKey = JSON.stringify(options) + locale,
         nf = numberFormatCache[cacheKey] ??=
             new Intl.NumberFormat(locale, options);
@@ -505,8 +500,10 @@ function numberFormat(
     // format with string replacement for the separators.
     if (hasSeparators) {
         ret = ret
-            .replace(/\,/g, thousandsSep ?? ',')
-            .replace('.', decimalPoint ?? '.');
+            // Preliminary step to avoid re-swapping (#22402)
+            .replace(/([,\.])/g, '_$1')
+            .replace(/_\,/g, thousandsSep ?? ',')
+            .replace('_.', decimalPoint ?? '.');
     }
 
     if (
