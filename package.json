@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "12.1.1",
+  "version": "12.1.2",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
