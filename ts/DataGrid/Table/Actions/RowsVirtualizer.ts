@@ -358,6 +358,8 @@ class RowsVirtualizer {
             }
         }
 
+        // Reset the focus anchor cell
+        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
         const firstVisibleRow = rows[rowCursor - rows[0].index];
         this.focusAnchorCell = firstVisibleRow?.cells[0];
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');

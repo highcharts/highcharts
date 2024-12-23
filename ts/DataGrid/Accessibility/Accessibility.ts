@@ -115,6 +115,26 @@ class Accessibility {
     }
 
     /**
+     * Add the 'sortable' hint span element for the sortable column.
+     *
+     * @param element
+     * The element to add the description to.
+     */
+    public addSortableColumnHint(element: HTMLElement): void {
+        const sortableLang =
+            this.dataGrid.options?.lang?.accessibility?.sorting?.sortable;
+
+        if (!sortableLang) {
+            return;
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.classNames.visuallyHidden,
+            innerText: ', ' + sortableLang
+        }, element);
+    }
+
+    /**
      * Add the description to the header cell.
      *
      * @param thElement

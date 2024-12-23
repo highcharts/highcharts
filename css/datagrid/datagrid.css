@@ -334,16 +334,6 @@
     user-select: none; /* Standard syntax */
 }
 
-.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-}
-
-.highcharts-datagrid-table thead th button.highcharts-datagrid-header-cell-content:hover {
-    background: transparent;
-}
-
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
     flex: 1;
     overflow: hidden;
