@@ -33,7 +33,7 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement, isHTML } = DGUtils;
-const { merge } = Utilities;
+const { merge, isString } = Utilities;
 
 
 /* *
@@ -128,7 +128,7 @@ class HeaderCell extends Cell {
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
-        } else if (headerCellOptions.format) {
+        } else if (isString(headerCellOptions.format)) {
             this.value = column.format(headerCellOptions.format);
         } else {
             this.value = column.id;
