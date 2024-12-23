@@ -420,6 +420,7 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
+                                dropContext.setHighlight();
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
