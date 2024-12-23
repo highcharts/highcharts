@@ -25,7 +25,7 @@
     "dapi2": "gulp dashboards/api2",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
-    "dlintcss": "npx stylelint --config .stylelintrc.json 'css/datagrid/*.css' && npx stylelint --config .stylelintrc.json 'css/dashboards/*.css'",
+    "dlintcss": "npx stylelint --config ./css/.stylelintrc.json 'css/datagrid/*.css' && npx stylelint --config ./css/.stylelintrc.json 'css/dashboards/*.css'",
     "dtest": "gulp dashboards/test",
     "dlint": "gulp dashboards/lint",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
