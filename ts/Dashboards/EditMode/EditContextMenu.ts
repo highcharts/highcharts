@@ -54,6 +54,13 @@ class EditContextMenu extends Menu {
             getValue: function (item: MenuItem): boolean {
                 return item.menu.editMode.isActive();
             },
+            setValue: function (item: MenuItem, value: boolean): void {
+                const inputElem = item.innerElement?.querySelector('input');
+
+                if (inputElem) {
+                    inputElem.checked = value;
+                }
+            },
             langKey: 'editMode',
             events: {
                 click: function (this: MenuItem): void {
@@ -148,6 +155,7 @@ class EditContextMenu extends Menu {
             contextButtonElement =
                 contextMenu.editMode.tools.contextButtonElement;
 
+        // set editMode button current state
         if (contextMenu.container && contextButtonElement) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
@@ -166,6 +174,18 @@ class EditContextMenu extends Menu {
                     'false'
                 );
             }
+        }
+
+        // set editMode toggle state
+        const toggleEditMode = this.activeItems.find(
+            (item) => item.options.langKey === 'editMode'
+        );
+
+        if (toggleEditMode) {
+            (toggleEditMode.options as MenuItem.ToggleOptions).setValue(
+                toggleEditMode,
+                this.editMode.isActive()
+            );
         }
     }
 
