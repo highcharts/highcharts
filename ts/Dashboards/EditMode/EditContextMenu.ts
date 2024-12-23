@@ -155,7 +155,6 @@ class EditContextMenu extends Menu {
             contextButtonElement =
                 contextMenu.editMode.tools.contextButtonElement;
 
-        // set editMode button current state
         if (contextMenu.container && contextButtonElement) {
             if (visible) {
                 contextMenu.container.style.display = 'block';
