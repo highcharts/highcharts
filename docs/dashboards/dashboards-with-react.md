@@ -66,7 +66,7 @@ The dashboard is created using the factory function `Dashboards.board`. The func
 - `isAsync` - whether the dashboard should be rendered asynchronously or not- functional when using external data resources
 
 ## Demos
-See how it works in the following demos::
+See how it works in the following demos:
 - [Basic live example](https://stackblitz.com/edit/stackblitz-starters-xn8e17)
 - [Custom layout live example](https://stackblitz.com/edit/stackblitz-starters-g6quez)
 - [Component live example](https://stackblitz.com/edit/stackblitz-starters-sx8crk)

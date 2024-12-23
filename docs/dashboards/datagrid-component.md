@@ -8,7 +8,7 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 ## How to start
 
 ### 1. Import
-To use the **DataGrid** component in **Dashboards**, you need to import the required modules, namely the [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
+To use the **DataGrid** component in **Dashboards**, you need to import the required modules, namely the [datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js), to bind them together.
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **DataGrid** module.
 
 ```html
@@ -34,7 +34,7 @@ You must also import the styles in your main CSS file.
 ```
 
 ### 3. Cell identifier
-After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard and the content of the datagrid is rendered here.
+After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard and the content of the DataGrid is rendered here.
 ```js
 gui: {
     layouts: [{
@@ -82,7 +82,7 @@ components: [{
 ```
 To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
 
-See the summarized JS code needed to create a simple datagrid:
+See the summarized JS code needed to create a simple DataGrid:
 ```js
 Dashboards.board('container', {
     dataPool: {
