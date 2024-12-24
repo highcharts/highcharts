@@ -24,6 +24,7 @@
 
 import type DataGrid from '../DataGrid';
 import type { ColumnSortingOrder } from '../Options';
+import whcm from '../../Accessibility/HighContrastMode.js';
 
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
@@ -85,6 +86,8 @@ class Accessibility {
         this.announcerElement = document.createElement('p');
         this.announcerElement.setAttribute('aria-atomic', 'true');
         this.announcerElement.setAttribute('aria-hidden', 'false');
+
+        this.addHighContrast();
     }
 
 
@@ -255,6 +258,25 @@ class Accessibility {
     }
 
     /**
+     * Adds high contrast CSS class, if the browser is in High Contrast mode.
+     */
+    public addHighContrast() {
+        const highContrastMode =
+            this.dataGrid.options?.accessibility?.highContrastMode;
+
+        if (
+            highContrastMode !== false && (
+                whcm.isHighContrastModeActive() ||
+                highContrastMode === true
+            )
+        ) {
+            this.dataGrid.container?.classList.add(
+                Globals.classNamePrefix + 'highcontrast-theme'
+            );
+        }
+    }
+
+    /**
      * Set the row index attribute for the row element.
      *
      * @param el
@@ -297,7 +319,6 @@ class Accessibility {
             );
         }
     }
-
 }
 
 

@@ -60,9 +60,9 @@ declare global {
         DataConnector: typeof DataConnector;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
+        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
-        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
     }
     interface Window {
         DataGrid: DataGridNamespace;
