@@ -224,6 +224,53 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         undefined,
         'Column element is undefined after drillUp'
     );
+
+    chart.update({
+        xAxis: {
+            type: 'datetime'
+        },
+        drilldown: {
+            series: [
+                {
+                    id: 'first',
+                    data: [
+                        [1672704000000, 11],
+                        [1683158400000, 12]
+                    ],
+                    name: 'series_1'
+                }
+            ]
+        }
+    }, false);
+
+    chart.series[0].setData([
+        {
+            x: 1672704000000,
+            y: 10,
+            drilldown: 'first'
+        }
+    ]);
+
+    let label = chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label;
+
+    const labelParametersBefore = {
+        text: label.textStr,
+        pos: label.xy
+    };
+
+    chart.series[0].points[0].doDrilldown();
+    chart.drillUp();
+
+    label = chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label;
+
+    assert.deepEqual(
+        labelParametersBefore,
+        {
+            text: label.textStr,
+            pos: label.xy
+        },
+        'After drilling up, the label should not be changed or hidden, #22206.'
+    );
 });
 
 // Highcharts 4.0.4, Issue #3579

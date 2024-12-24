@@ -215,7 +215,7 @@ class Axis {
     public bottom!: number;
     public categories?: Array<string>;
     public chart!: Chart;
-    public closestPointRange!: number;
+    public closestPointRange?: number;
     public coll!: AxisCollectionKey;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
@@ -1638,7 +1638,7 @@ class Axis {
             // The `closestPointRange` is the closest distance between points.
             // In columns it is mostly equal to pointRange, but in lines
             // pointRange is 0 while closestPointRange is some other value
-            if (isXAxis && closestPointRange) {
+            if (isXAxis) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -1959,7 +1959,11 @@ class Axis {
             !axis.series.some((s): boolean|undefined => !s.sorted) ?
                 axis.closestPointRange : 0
         );
-        if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+        if (
+            !tickIntervalOption &&
+            minTickInterval &&
+            axis.tickInterval < minTickInterval
+        ) {
             axis.tickInterval = minTickInterval;
         }
 
