@@ -175,9 +175,9 @@ class EditContextMenu extends Menu {
             }
         }
 
-        // set editMode toggle state
+        // Set editMode toggle state
         const toggleEditMode = this.activeItems.find(
-            (item) => item.options.langKey === 'editMode'
+            (item): boolean => item.options.langKey === 'editMode'
         );
 
         if (toggleEditMode) {
