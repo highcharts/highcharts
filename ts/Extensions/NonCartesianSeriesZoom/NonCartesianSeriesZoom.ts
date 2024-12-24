@@ -87,7 +87,7 @@ function onTransform(
         selection
     ) {
         chart.series.forEach((series): void => {
-            if (!series.isCartesian) {
+            if (!series.isCartesian && series.options.zoomEnabled !== false) {
                 series.isDirty = true;
                 chart.isDirtyBox = true;
                 params.hasZoomed = true;
@@ -400,5 +400,28 @@ export default NonCartesianSeriesZoom;
  *
  * */
 
+/**
+ * Whether to zoom non-cartesian series. If `chart.zooming` is set, the option
+ * allows to disable zooming on an individual non-cartesian series. By default
+ * zooming is enabled for all series.
+ *
+ * Note: This option works only for non-cartesian series.
+ *
+ * @type      {boolean}
+ * @since     next
+ * @apioption plotOptions.series.zoomEnabled
+ */
+
+/**
+ * Whether to zoom non-cartesian series. If `chart.zooming` is set, the option
+ * allows to disable zooming on an individual non-cartesian series. By default
+ * zooming is enabled for all series.
+ *
+ * Note: This option works only for non-cartesian series.
+ *
+ * @type      {boolean}
+ * @since     next
+ * @apioption series.zoomEnabled
+ */
 
 (''); // Keeps doclets above in JS file

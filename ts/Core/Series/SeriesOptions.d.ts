@@ -147,6 +147,7 @@ export interface SeriesOptions {
     xAxis?: (number|string);
     yAxis?: (number|string);
     zIndex?: number;
+    zoomEnabled?: boolean;
     zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;

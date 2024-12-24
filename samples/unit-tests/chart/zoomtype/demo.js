@@ -225,11 +225,23 @@ QUnit.test('Non-cartesian series zooming', function (assert) {
                 ser.group.translateY > translateY,
                 `Chart should be panned to top, ${el.type} series.`
             );
+
+            series.update({
+                zoomEnabled: false
+            });
+
+            cont.pan([200, 150], [250, 200]);
+            assert.ok(
+                ser.group.scaleX = 1,
+                `Zooming should not work for ${el.type} series, when zooming
+                is disabled.`
+            );
         };
 
     nonCartesianSeries.forEach(seriesEl => {
         series.update({
             type: seriesEl.type,
+            zoomEnabled: true,
             data: seriesEl.data || defaultData
         });
 
