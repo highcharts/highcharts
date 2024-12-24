@@ -124,6 +124,7 @@ class HeaderCell extends Cell {
         const column = this.column;
         const options = merge(column.options, this.options); // ??
         const headerCellOptions = options.header || {};
+        const isSortableData = options.sorting?.sortable && column.data;
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
@@ -135,9 +136,18 @@ class HeaderCell extends Cell {
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.headerContent = makeHTMLElement('span', {
-            className: Globals.classNames.headerCellContent
-        }, this.htmlElement);
+
+        this.headerContent = makeHTMLElement(
+            isSortableData ? 'button' : 'span',
+            {
+                className: Globals.classNames.headerCellContent
+            },
+            this.htmlElement
+        );
+
+        if (isSortableData) {
+            this.headerContent.setAttribute('type', 'button');
+        }
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
@@ -191,13 +201,13 @@ class HeaderCell extends Cell {
         let width = 0;
 
         if (cell.columns) {
-            for (const col of cell.columns) {
-                width += (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
+            const columnsIds = vp.dataGrid.getColumnIds(cell.columns);
+            for (const columnId of columnsIds) {
+                width += (vp.getColumn(columnId || '')?.getWidth()) || 0;
             }
         } else {
             width = cell.column.getWidth();
         }
-
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';

@@ -17,6 +17,7 @@
  * */
 
 import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -204,6 +205,7 @@ namespace Globals {
                 doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
             ).createSVGRect
         ),
+        pageLang = (doc?.body.closest('[lang]') as HTMLDOMElement|null)?.lang,
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
@@ -212,10 +214,6 @@ namespace Globals {
         isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
         isWebKit = userAgent.indexOf('AppleWebKit') !== -1,
         deg2rad = Math.PI * 2 / 360,
-        hasBidiBug = (
-            isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // Issue #38
-        ),
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
@@ -269,8 +267,15 @@ namespace Globals {
      * value. This function returns the formatted portion of the
      * date.
      *
+     * Using `dateFormats` is also a convenient way to define new keys for
+     * complex locale-aware date formats compatible with the
+     * [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
+     * browser API, whenever the built-in formats are not sufficient.
+     *
      * @sample highcharts/global/dateformats/
      *         Adding support for week number
+     * @sample highcharts/global/dateformats-object/
+     *         A locale-aware date format using `Intl.DateTimeFormat`
      *
      * @name Highcharts.dateFormats
      * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}

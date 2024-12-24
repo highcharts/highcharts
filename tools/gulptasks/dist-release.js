@@ -7,7 +7,7 @@ const gulp = require('gulp');
 const log = require('../libs/log');
 const fs = require('fs-extra');
 // const fs = require('fs');
-// const libFS = require('../libs/fs');
+// const fsLib = require('../libs/fs');
 const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
@@ -86,12 +86,22 @@ async function runGit(version, push = false) {
  */
 async function npmPublish(push = false) {
     if (push) {
-        const answer = await askUser('\nAbout to publish to npm using \'latest\' tag. Is this ok [Y/n]?');
-        if (answer !== 'Y') {
+        const answer = await askUser(
+            '\nAbout to publish to npm using \'latest\' tag. To approve, ' +
+            'enter the one time password from your 2FA authentication setup. ' +
+            'To abort, enter \'n\''
+        );
+        if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
         }
-        childProcess.execSync('npm publish', { cwd: pathToDistRepo });
+        if (!answer.match(/^\d{6}$/u)) {
+            throw new Error('Invalid OTP. Please enter a 6 digit number.');
+        }
+        childProcess.execSync(
+            `npm publish --otp=${answer}`,
+            { cwd: pathToDistRepo }
+        );
         log.message('Successfully published to npm!');
     } else {
         const version = childProcess.execSync('npm -v', { cwd: pathToDistRepo });
@@ -141,7 +151,7 @@ function updateJSONFiles(version, name) {
         const json = JSON.parse(fileData);
         json.types = (
             json.main ?
-                json.main.replace(/\.js$/, '.d.ts') :
+                json.main.replace(/\.js$/u, '.d.ts') :
                 'highcharts.d.ts'
         );
         json.version = version;
@@ -304,6 +314,12 @@ function checkIfLoggedInOnNpm() {
 async function release() {
     const products = await getProductsJs();
     const version = products[PRODUCT_NAME].nr;
+
+    if (!fs.existsSync('code/highcharts.js')) {
+        log.starting('Compiling one more time.');
+        await gulp.series('scripts', 'scripts-compile');
+    }
+
     log.starting(`Initiating release of ${PRODUCT_NAME} version ${version}.`);
 
     if (argv.push) {

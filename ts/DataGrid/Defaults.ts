@@ -41,14 +41,17 @@ namespace Defaults {
     export const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
             enabled: true,
-            highContrastMode: 'auto'
+            highContrastMode: 'auto',
+            announcements: {
+                cellEditing: true,
+                sorting: true
+            }
         },
         lang: {
             accessibility: {
                 cellEditing: {
                     editable: 'Editable.',
                     announcements: {
-                        enabled: true,
                         started: 'Entered cell editing mode.',
                         edited: 'Edited cell value.',
                         cancelled: 'Editing canceled.'
@@ -56,7 +59,6 @@ namespace Defaults {
                 },
                 sorting: {
                     announcements: {
-                        enabled: true,
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'
@@ -71,11 +73,14 @@ namespace Defaults {
             },
             rows: {
                 bufferSize: 10,
-                strictHeights: false
+                minVisibleRows: 2,
+                strictHeights: false,
+                virtualization: true
             },
             header: {
                 enabled: true
-            }
+            },
+            theme: 'hcdg-theme-default'
         },
         credits: {
             enabled: true,

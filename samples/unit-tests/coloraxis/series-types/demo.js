@@ -14,6 +14,7 @@ QUnit.module('Color axis for series types', function () {
                     'tiledwebmap',
                     'networkgraph',
                     'organization',
+                    'renko',
                     'sunburst',
                     'sankey',
                     'dependencywheel',

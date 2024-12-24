@@ -22,6 +22,7 @@
  *
  * */
 
+import type { RowsSettings } from '../../Options';
 import type Cell from '../Cell';
 
 import Table from '../Table.js';
@@ -29,7 +30,7 @@ import DGUtils from '../../Utils.js';
 import Globals from '../../Globals.js';
 import TableRow from '../Content/TableRow.js';
 
-const { makeHTMLElement, getTranslateY } = DGUtils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -88,6 +89,11 @@ class RowsVirtualizer {
      */
     public focusAnchorCell?: Cell;
 
+    /**
+     * Rendering row settings.
+     */
+    public rowSettings?: RowsSettings;
+
 
     /* *
     *
@@ -102,11 +108,12 @@ class RowsVirtualizer {
      * The viewport of the data grid to render rows in.
      */
     constructor(viewport: Table) {
-        const rowSettings = viewport.dataGrid.options?.rendering?.rows;
+        this.rowSettings =
+            viewport.dataGrid.options?.rendering?.rows as RowsSettings;
 
         this.viewport = viewport;
-        this.strictRowHeights = rowSettings?.strictHeights as boolean;
-        this.buffer = Math.max(rowSettings?.bufferSize as number, 0);
+        this.strictRowHeights = this.rowSettings.strictHeights as boolean;
+        this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {
@@ -128,11 +135,16 @@ class RowsVirtualizer {
      */
     public initialRender(): void {
         // Initial reflow to set the viewport height
-        this.viewport.reflow();
+        if (this.rowSettings?.virtualization) {
+            this.viewport.reflow();
+        }
 
         // Load & render rows
         this.renderRows(this.rowCursor);
-        this.adjustRowHeights();
+
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**
@@ -140,8 +152,8 @@ class RowsVirtualizer {
      * re-rendered, e.g., after a sort or filter operation.
      */
     public rerender(): void {
-        const rows = this.viewport.rows;
         const tbody = this.viewport.tbodyElement;
+        let rows = this.viewport.rows;
 
         let oldScrollTop: number | undefined;
 
@@ -155,11 +167,16 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (oldScrollTop !== void 0) {
-            tbody.scrollTop = oldScrollTop;
+        if (this.rowSettings?.virtualization) {
+
+            if (oldScrollTop !== void 0) {
+                tbody.scrollTop = oldScrollTop;
+            }
+
+            this.scroll();
         }
 
-        this.scroll();
+        rows = this.viewport.rows;
 
         // Reflow the rendered row cells widths (check redundancy)
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -168,7 +185,8 @@ class RowsVirtualizer {
     }
 
     /**
-     * Method called on the viewport scroll event.
+     * Method called on the viewport scroll event, only when the virtualization
+     * is enabled.
      */
     public scroll(): void {
         const target = this.viewport.tbodyElement;
@@ -210,13 +228,13 @@ class RowsVirtualizer {
 
         const lastRow = rows[rowsLn - 1];
 
-        let rowTop = getTranslateY(lastRow.htmlElement);
+        let rowTop = lastRow.translateY;
         const rowBottom = rowTop + lastRow.htmlElement.offsetHeight;
         let newHeight = lastRow.cells[0].htmlElement.offsetHeight;
         rowTop = rowBottom - newHeight;
 
         lastRow.htmlElement.style.height = newHeight + 'px';
-        lastRow.htmlElement.style.transform = `translateY(${rowTop}px)`;
+        lastRow.setTranslateY(rowTop);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
             lastRow.cells[j].htmlElement.style.transform = '';
         }
@@ -228,7 +246,8 @@ class RowsVirtualizer {
             rowTop -= newHeight;
 
             row.htmlElement.style.height = newHeight + 'px';
-            row.htmlElement.style.transform = `translateY(${rowTop}px)`;
+
+            row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
             }
@@ -244,17 +263,30 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
-        const rowsPerPage = Math.ceil(
-            vp.tbodyElement.offsetHeight / this.defaultRowHeight
-        );
+        const isVirtualization = this.rowSettings?.virtualization;
+        const rowsPerPage = isVirtualization ? Math.ceil(
+            (vp.dataGrid.tableElement?.clientHeight || 0) /
+            this.defaultRowHeight
+        ) : Infinity; // Need to be refactored when add pagination
 
-        const rows = vp.rows;
+        let rows = vp.rows;
+
+        if (!isVirtualization && rows.length > 50) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                'DataGrid: a large dataset can cause performance issues.'
+            );
+        }
 
         if (!rows.length) {
             const last = new TableRow(vp, vp.dataTable.getRowCount() - 1);
             last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
+
+            if (isVirtualization) {
+                last.setTranslateY(last.getDefaultTopOffset());
+            }
         }
 
         const from = Math.max(0, Math.min(
@@ -267,21 +299,47 @@ class RowsVirtualizer {
         );
 
         const alwaysLastRow = rows.pop();
+        const tempRows: TableRow[] = [];
 
+        // Remove rows that are out of the range except the last row.
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            rows[i].destroy();
+            const row = rows[i];
+            const rowIndex = row.index;
+
+            if (rowIndex < from || rowIndex > to) {
+                row.destroy();
+            } else {
+                tempRows.push(row);
+            }
         }
-        rows.length = 0;
+
+        rows = tempRows;
+        vp.rows = rows;
 
         for (let i = from; i <= to; ++i) {
-            const newRow = new TableRow(vp, i);
-            newRow.render();
-            vp.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                vp.tbodyElement.lastChild
-            );
+            const row = rows[i - (rows[0]?.index || 0)];
 
-            rows.push(newRow);
+            // Recreate row when it is destroyed and it is in the range.
+            if (!row) {
+                const newRow = new TableRow(vp, i);
+                rows.push(newRow);
+                newRow.rendered = false;
+                if (isVirtualization) {
+                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                }
+            }
+        }
+
+        rows.sort((a, b): number => a.index - b.index);
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (!rows[i].rendered) {
+                rows[i].render();
+                vp.tbodyElement.insertBefore(
+                    rows[i].htmlElement,
+                    vp.tbodyElement.lastChild
+                );
+            }
         }
 
         if (alwaysLastRow) {
@@ -366,20 +424,19 @@ class RowsVirtualizer {
             }
         }
 
+        rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
-            rows[i].htmlElement.style.transform =
-                `translateY(${translateBuffer}px)`;
+            rows[i].setTranslateY(translateBuffer);
         }
 
         // Set the proper offset for the last row
         const lastRow = rows[rowsLn - 1];
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
-            lastRow.htmlElement.style.transform = `translateY(${
-                preLastRow.htmlElement.offsetHeight +
-                getTranslateY(preLastRow.htmlElement)
-            }px)`;
+            lastRow.setTranslateY(
+                preLastRow.htmlElement.offsetHeight + translateBuffer
+            );
         }
     }
 
@@ -397,7 +454,9 @@ class RowsVirtualizer {
             rows[i].reflow();
         }
 
-        this.adjustRowHeights();
+        if (this.rowSettings?.virtualization) {
+            this.adjustRowHeights();
+        }
     }
 
     /**
@@ -406,11 +465,20 @@ class RowsVirtualizer {
      */
     private getDefaultRowHeight(): number {
         const mockRow = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement
+            className: Globals.classNames.rowElement,
+            style: {
+                position: 'absolute'
+            }
         }, this.viewport.tbodyElement);
+
+        const mockCell = makeHTMLElement('td', {
+            innerText: 'mock',
+            className: Globals.classNames.mockedCell
+        }, mockRow);
 
         const defaultRowHeight = mockRow.offsetHeight;
         mockRow.remove();
+        mockCell.remove();
 
         return defaultRowHeight;
     }

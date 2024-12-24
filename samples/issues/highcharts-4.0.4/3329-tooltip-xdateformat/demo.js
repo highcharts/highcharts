@@ -122,58 +122,58 @@ $(function () {
 
         series: [{
             data: [
-                [Date.UTC(2014, 0, 1), 1],
-                [Date.UTC(2015, 0, 1), 1],
-                [Date.UTC(2016, 0, 1), 1],
-                [Date.UTC(2017, 0, 1), 1]
+                ['2014-01-01', 1],
+                ['2015-01-01', 1],
+                ['2016-01-01', 1],
+                ['2017-01-01', 1]
             ],
             name: 'UTC, years',
             xAxis: 0,
             yAxis: 0
         }, {
             data: [
-                [Date.UTC(2014, 0, 1), 1],
-                [Date.UTC(2014, 1, 1), 1],
-                [Date.UTC(2014, 2, 1), 1],
-                [Date.UTC(2014, 3, 1), 1]
+                ['2014-01-01', 1],
+                ['2014-02-01', 1],
+                ['2014-03-01', 1],
+                ['2014-04-01', 1]
             ],
             name: 'UTC, months',
             xAxis: 1,
             yAxis: 1
         }, {
             data: [1, 1, 1, 1],
-            pointStart: Date.UTC(2014, 0, 6),
+            pointStart: '2014-01-06',
             pointInterval: 7 * 24 * 36e5,
             name: 'UTC, weeks',
             xAxis: 2,
             yAxis: 2
         }, {
             data: [1, 1, 1, 1],
-            pointStart: Date.UTC(2014, 0, 1),
+            pointStart: '2014-01-01',
             pointInterval: 24 * 36e5,
             name: 'UTC, days',
             xAxis: 3,
             yAxis: 3
         }, {
             data: [1, 1, 1, 1],
-            pointStart: Date.UTC(2014, 0, 1),
+            pointStart: '2014-01-01',
             pointInterval: 36e5,
             name: 'UTC, hours',
             xAxis: 4,
             yAxis: 4
         }, {
             data: [1, 1, 1, 1],
-            pointStart: Date.UTC(2014, 0, 1),
+            pointStart: '2014-01-01',
             pointInterval: 7 * 24 * 36e5,
             name: 'UTC, weeks but wrong day',
             xAxis: 5,
             yAxis: 5
         }, {
             data: [
-                [Date.UTC(2014, 0, 1, 1), 1],
-                [Date.UTC(2014, 0, 2, 1), 1],
-                [Date.UTC(2014, 0, 3, 1), 1],
-                [Date.UTC(2014, 0, 4, 1), 1]
+                ['2014-01-01 01:00', 1],
+                ['2014-01-02 01:00', 1],
+                ['2014-01-03 01:00', 1],
+                ['2014-01-04 01:00', 1]
             ],
             name: 'Days, but off by one hour',
             xAxis: 6,

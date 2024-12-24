@@ -6,11 +6,11 @@ Highcharts.chart('container', {
 
     series: [{
         data: [
-            [Date.UTC(2013, 8, 1), 1],
-            [Date.UTC(2013, 8, 2), 1],
+            ['2013-09-01', 1],
+            ['2013-09-02', 1],
             // gap
-            [Date.UTC(2013, 8, 4), 1],
-            [Date.UTC(2013, 8, 5), 1]
+            ['2013-09-04', 1],
+            ['2013-09-05', 1]
         ],
         gapSize: 1,
         type: 'area'

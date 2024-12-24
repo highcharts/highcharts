@@ -186,6 +186,7 @@ namespace DataLabel {
     }
 
     export interface LabelConnectorPositionObject {
+        angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
@@ -345,6 +346,7 @@ namespace DataLabel {
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x: dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
@@ -757,10 +759,13 @@ namespace DataLabel {
                             } else if (style.width) {
                                 // In styled mode with a width property set,
                                 // the width should be applied to the
-                                // dataLabel. (#20499)
+                                // dataLabel. (#20499). These properties affect
+                                // layout and must be applied also in styled
+                                // mode.
                                 dataLabel.css({
                                     width: style.width,
-                                    textOverflow: style.textOverflow
+                                    textOverflow: style.textOverflow,
+                                    whiteSpace: style.whiteSpace
                                 });
                             }
 

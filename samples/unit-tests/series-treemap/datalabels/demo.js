@@ -977,9 +977,9 @@ QUnit.test(
             }
         });
         assert.strictEqual(
-            point.dataLabel.attr('visibility'),
-            'hidden',
-            'Eastern Mediterranean is hidden'
+            point.dataLabel,
+            void 0,
+            'Eastern Mediterranean should be destroyed.'
         );
     }
 );

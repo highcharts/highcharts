@@ -25,8 +25,8 @@ QUnit.test('Align ticks on logarithmic axis (#6021)', function (assert) {
     });
 
     assert.notEqual(
-        chart.yAxis[0].tickPositions.length,
-        chart.yAxis[1].tickPositions.length,
+        chart.yAxis[0].ticks[Object.keys(chart.yAxis[0].ticks)[1]].gridLine.d,
+        chart.yAxis[1].ticks[Object.keys(chart.yAxis[1].ticks)[1]].gridLine.d,
         'Ticks are not aligned'
     );
 });

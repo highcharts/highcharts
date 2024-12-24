@@ -1,9 +1,22 @@
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
 figure {
     max-width: 1300px;
     min-width: 320px;
     margin: 0 auto;
     position: relative;
-    font-family: sans-serif;
 }
 
 #container {

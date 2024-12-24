@@ -18,7 +18,7 @@ Highcharts.chart('container', {
         type: 'datetime',
         tickInterval: day,
         labels: {
-            format: '{value:%a}'
+            format: '{ucfirst (value:%a)}'
         },
         min: today.getTime() - (3 * day),
         max: today.getTime() + (3 * day)
