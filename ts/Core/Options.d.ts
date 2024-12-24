@@ -32,6 +32,12 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions {
+    stockOpen: string;
+    stockHigh: string;
+    stockLow: string;
+    stockClose: string;
+    weekFrom: string;
+    chartTitle: string;
     decimalPoint?: string;
     invalidDate?: string;
     loading: string;
@@ -39,8 +45,11 @@ export interface LangOptions {
     months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
+    seriesName: string;
+    yAxisTitle: string;
     shortMonths?: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
