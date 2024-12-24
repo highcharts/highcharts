@@ -1,0 +1,2 @@
+# US map of top 100 cities by population
+This Highcharts Maps demo uses tile-based mapping with provider OpenStreetMap, breaking the map into smaller tiles for efficient loading. It employs the Web Mercator projection, a standard for web mapping. The map tiles load dynamically as users navigate, ensuring smooth performance even with detailed city-level data.
