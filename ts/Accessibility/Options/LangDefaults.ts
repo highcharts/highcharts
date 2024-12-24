@@ -72,7 +72,7 @@ const langOptions: DeepPartial<LangOptions> = {
          * Accessible label for the chart SVG element.
          * `{chartTitle}` refers to the chart title.
          */
-        svgContainerLabel: 'Interactive chart',
+        svgContainerLabel: '',
 
         /**
          * Accessible label for the drill-up button.
