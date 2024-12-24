@@ -115,6 +115,26 @@ class Accessibility {
     }
 
     /**
+     * Add the 'sortable' hint span element for the sortable column.
+     *
+     * @param element
+     * The element to add the description to.
+     */
+    public addSortableColumnHint(element: HTMLElement): void {
+        const sortableLang =
+            this.dataGrid.options?.lang?.accessibility?.sorting?.sortable;
+
+        if (!sortableLang) {
+            return;
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.classNames.visuallyHidden,
+            innerText: ', ' + sortableLang
+        }, element);
+    }
+
+    /**
      * Add the description to the header cell.
      *
      * @param thElement
@@ -245,6 +265,37 @@ class Accessibility {
      */
     public setRowIndex(el: HTMLElement, idx: number): void {
         el.setAttribute('aria-rowindex', idx);
+    }
+
+    /**
+     * Set aria attributes for the table element.
+     */
+    public initTableA11yAttrs(): void {
+        const dataGrid = this.dataGrid;
+        const tableEl = dataGrid.tableElement;
+
+        if (!tableEl) {
+            return;
+        }
+
+        tableEl.setAttribute(
+            'aria-rowcount',
+            dataGrid.dataTable?.getRowCount() || 0
+        );
+
+        if (dataGrid.captionElement) {
+            tableEl.setAttribute(
+                'aria-labelledby',
+                dataGrid.captionElement.id
+            );
+        }
+
+        if (dataGrid.descriptionElement) {
+            tableEl.setAttribute(
+                'aria-describedby',
+                dataGrid.descriptionElement.id
+            );
+        }
     }
 
 }

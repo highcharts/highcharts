@@ -122,6 +122,14 @@ namespace A11yOptions {
     export interface SortingLangA11yOptions {
 
         /**
+         * An additional hint (a visually hidden span) read by the voice over
+         * after the column name.
+         *
+         * @default 'Sortable.'
+         */
+        sortable?: string;
+
+        /**
          * Accessibility lang options for the sorting announcements.
          */
         announcements?: {

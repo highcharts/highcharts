@@ -57,6 +57,7 @@ namespace Defaults {
                     }
                 },
                 sorting: {
+                    sortable: 'Sortable.',
                     announcements: {
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',
@@ -72,12 +73,14 @@ namespace Defaults {
             },
             rows: {
                 bufferSize: 10,
+                minVisibleRows: 2,
                 strictHeights: false,
                 virtualization: true
             },
             header: {
                 enabled: true
-            }
+            },
+            theme: 'hcdg-theme-default'
         },
         credits: {
             enabled: true,

@@ -9,7 +9,8 @@
     width: 15%;
 }
 
-.custom-column-class-name {
+.custom-column-class-name,
+.highcharts-datagrid-table tbody tr td.custom-column-class-name {
     color: #f00;
     width: 40%;
 }
