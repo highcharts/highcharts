@@ -57,10 +57,10 @@ import { Palette } from '../../../Core/Color/Palettes.js';
  */
 function average(
     this: Measure
-): (''|number) {
-    let average: (''|number) = '';
+): number {
+    let average: number = 0;
 
-    if (this.max !== '' && this.min !== '') {
+    if (isNumber(this.max) && isNumber(this.min)) {
         average = (this.max + this.min) / 2;
     }
 
@@ -72,7 +72,7 @@ function average(
  */
 function bins(
     this: Measure
-): (''|number) {
+): number {
     const series = this.chart.series,
         ext = getExtremes(
             this.xAxisMin,
@@ -81,32 +81,27 @@ function bins(
             this.yAxisMax
         );
 
-    let bins: (''|number) = 0,
-        isCalculated = false; // To avoid Infinity in formatter
+    let bins: number = 0;
 
-    series.forEach((serie): void => {
+    series.forEach((s): void => {
         if (
-            serie.visible &&
-            serie.options.id !== 'highcharts-navigator-series'
+            s.visible &&
+            s.options.id !== 'highcharts-navigator-series'
         ) {
-            serie.points.forEach((point): void => {
+            s.points.forEach((point): void => {
                 if (
                     !point.isNull &&
-                    (point.x as any) > ext.xAxisMin &&
-                    (point.x as any) <= ext.xAxisMax &&
-                    (point.y as any) > ext.yAxisMin &&
-                    (point.y as any) <= ext.yAxisMax
+                    point.y &&
+                    point.x > ext.xAxisMin &&
+                    point.x <= ext.xAxisMax &&
+                    point.y > ext.yAxisMin &&
+                    point.y <= ext.yAxisMax
                 ) {
-                    (bins as any)++;
-                    isCalculated = true;
+                    bins++;
                 }
             });
         }
     });
-
-    if (!isCalculated) {
-        bins = '';
-    }
 
     return bins;
 }
@@ -174,9 +169,9 @@ function init(
         inverted = chart.inverted,
         xAxis = chart.xAxis[options.xAxis],
         yAxis = chart.yAxis[options.yAxis],
-        bck = options.background,
-        width: number = inverted ? bck.height : bck.width as any,
-        height: number = inverted ? bck.width : bck.height as any,
+        bg = options.background,
+        width: number = inverted ? bg.height : bg.width as any,
+        height: number = inverted ? bg.width : bg.height as any,
         selectType = options.selectType,
         top = inverted ? xAxis.left : yAxis.top, // #13664
         left = inverted ? yAxis.top : xAxis.left; // #13664
@@ -220,7 +215,7 @@ function init(
  */
 function max(
     this: Measure
-): (''|number) {
+): number {
     const series = this.chart.series,
         ext = getExtremes(
             this.xAxisMin,
@@ -229,24 +224,25 @@ function max(
             this.yAxisMax
         );
 
-    let max: (''|number) = -Infinity,
+    let max: number = -Infinity,
         isCalculated = false; // To avoid Infinity in formatter
 
-    series.forEach((serie): void => {
+    series.forEach((s): void => {
         if (
-            serie.visible &&
-            serie.options.id !== 'highcharts-navigator-series'
+            s.visible &&
+            s.options.id !== 'highcharts-navigator-series'
         ) {
-            serie.points.forEach((point): void => {
+            s.points.forEach((point): void => {
                 if (
                     !point.isNull &&
-                    (point.y as any) > max &&
-                    (point.x as any) > ext.xAxisMin &&
-                    (point.x as any) <= ext.xAxisMax &&
-                    (point.y as any) > ext.yAxisMin &&
-                    (point.y as any) <= ext.yAxisMax
+                    point.y &&
+                    point.y > max &&
+                    point.x > ext.xAxisMin &&
+                    point.x <= ext.xAxisMax &&
+                    point.y > ext.yAxisMin &&
+                    point.y <= ext.yAxisMax
                 ) {
-                    max = point.y as any;
+                    max = point.y;
                     isCalculated = true;
                 }
             });
@@ -254,7 +250,7 @@ function max(
     });
 
     if (!isCalculated) {
-        max = '';
+        max = 0;
     }
 
     return max;
@@ -266,7 +262,7 @@ function max(
  */
 function min(
     this: Measure
-): (''|number) {
+): number {
     const series = this.chart.series,
         ext = getExtremes(
             this.xAxisMin,
@@ -275,24 +271,25 @@ function min(
             this.yAxisMax
         );
 
-    let min: (''|number) = Infinity,
+    let min: number = Infinity,
         isCalculated = false; // To avoid Infinity in formatter
 
-    series.forEach((serie): void => {
+    series.forEach((s): void => {
         if (
-            serie.visible &&
-            serie.options.id !== 'highcharts-navigator-series'
+            s.visible &&
+            s.options.id !== 'highcharts-navigator-series'
         ) {
-            serie.points.forEach((point: Point): void => {
+            s.points.forEach((point: Point): void => {
                 if (
                     !point.isNull &&
-                    (point.y as any) < min &&
-                    (point.x as any) > ext.xAxisMin &&
-                    (point.x as any) <= ext.xAxisMax &&
-                    (point.y as any) > ext.yAxisMin &&
-                    (point.y as any) <= ext.yAxisMax
+                    point.y &&
+                    point.y < min &&
+                    point.x > ext.xAxisMin &&
+                    point.x <= ext.xAxisMax &&
+                    point.y > ext.yAxisMin &&
+                    point.y <= ext.yAxisMax
                 ) {
-                    min = point.y as any;
+                    min = point.y;
                     isCalculated = true;
                 }
             });
@@ -300,7 +297,7 @@ function min(
     });
 
     if (!isCalculated) {
-        min = '';
+        min = 0;
     }
 
     return min;
@@ -318,8 +315,8 @@ function recalculate(
     resize?: boolean
 ): void {
     const options = this.options.typeOptions,
-        xAxis = this.chart.xAxis[options.xAxis as any],
-        yAxis = this.chart.yAxis[options.yAxis as any],
+        xAxis = this.chart.xAxis[options.xAxis],
+        yAxis = this.chart.yAxis[options.yAxis],
         offsetX = this.offsetX,
         offsetY = this.offsetY;
 
@@ -360,8 +357,8 @@ function updateStartPoints(
 ): void {
     const options = this.options.typeOptions,
         selectType = options.selectType,
-        xAxis = this.chart.xAxis[options.xAxis as any],
-        yAxis = this.chart.yAxis[options.yAxis as any],
+        xAxis = this.chart.xAxis[options.xAxis],
+        yAxis = this.chart.yAxis[options.yAxis],
         startXMin = this.startXMin,
         startXMax = this.startXMax,
         startYMin = this.startYMin,
@@ -456,14 +453,6 @@ class Measure extends Annotation {
     }
 
     /**
-     * Get measure points configuration objects.
-     * @private
-     */
-    public pointsOptions(): Array<MockPointOptions> {
-        return this.options.points as any;
-    }
-
-    /**
      * Get points configuration objects for shapes.
      * @private
      */
@@ -519,7 +508,7 @@ class Measure extends Annotation {
 
         let controlPoint = new ControlPoint(
             this.chart,
-            this as any,
+            this,
             this.options.controlPointOptions,
             0
         );
@@ -530,7 +519,7 @@ class Measure extends Annotation {
         if (selectType !== 'xy') {
             controlPoint = new ControlPoint(
                 this.chart,
-                this as any,
+                this,
                 this.options.controlPointOptions,
                 1
             );
@@ -557,7 +546,7 @@ class Measure extends Annotation {
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (
+            (this.labels[0]).text = (
                 (formatter && formatter.call(this)) ||
                 defaultFormatter.call(this)
             );
@@ -825,7 +814,7 @@ class Measure extends Annotation {
             (updateStartPoints.call as any)(
                 this,
                 true,
-                false as any
+                false
             );
         }
 
@@ -889,11 +878,11 @@ class Measure extends Annotation {
  * */
 
 interface Measure {
-    average: (''|number);
-    bins: (''|number);
+    average: number;
+    bins: number;
     defaultOptions: Annotation['defaultOptions'];
-    min: (''|number);
-    max: (''|number);
+    min: number;
+    max: number;
     offsetX: number;
     offsetY: number;
     options: Measure.MeasureOptions;
@@ -1171,7 +1160,7 @@ Measure.prototype.defaultOptions = merge(
 
                     target.resizeX += x;
                     target.resizeY += y;
-                    (target.redraw as any)(false, true);
+                    target.redraw(false, true);
                 }
             }
         }
@@ -1223,7 +1212,7 @@ declare module './AnnotationType'{
     }
 }
 
-Annotation.types.measure = Measure as any;
+Annotation.types.measure = Measure;
 
 /* *
  *
