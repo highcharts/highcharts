@@ -509,10 +509,7 @@ class Measure extends Annotation {
             options = this.options.controlPointOptions,
             selectType = this.options.typeOptions.selectType;
 
-        if (!defined(
-            this.userOptions.controlPointOptions &&
-            this.userOptions.controlPointOptions.style.cursor
-        )) {
+        if (!defined(this.userOptions.controlPointOptions?.style?.cursor)) {
             if (selectType === 'x') {
                 options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
             } else if (selectType === 'y') {
