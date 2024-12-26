@@ -56,15 +56,21 @@ const previewTable = () => {
                 columns: getTableSpecificColumns()
             });
 
-            addEvent(this.dataTable, 'afterSetColumns', () => {
-                this.isDirtyData = true;
-                clearTimeout(chartRedrawTimer);
-                setTimeout(() => chart.redraw(), 0);
-            });
-
-            addEvent(dataTable, 'afterSetRows', () => {
-                this.dataTable.setColumns(getTableSpecificColumns());
+            addEvent(dataTable, 'afterSetRows', e => {
                 previewTable();
+
+                const row = dataTable.getRow.call({
+                    columns: getTableSpecificColumns()
+                }, e.rowIndex);
+
+                if (this.points[e.rowIndex]) {
+                    this.points[e.rowIndex].update(row, false);
+                } else {
+                    this.addPoint(row, false);
+                }
+
+                clearTimeout(chartRedrawTimer);
+                chartRedrawTimer = setTimeout(() => chart.redraw(), 0);
             });
         }
 
@@ -116,7 +122,22 @@ Highcharts.chart('container', {
     }]
 });
 
-/*
+
+document.getElementById('addrow').addEventListener('click', e => {
+    dataTable.setRow({
+        year: 2024,
+        cost: 15,
+        revenue: 20
+    });
+    e.target.disabled = true;
+});
+
+// @todo: Support for setColumn too. Fails to update the point because in
+// generatePoints, before the `new PointClass` call, the point already exists.
+// Probably need to refactor the `updateData` method to a true data-matching
+// method between old table and updated table, instead of working on options.
+// This could run either at the end of setData, or possibly within
+// generatePoints.
 document.getElementById('updaterow').addEventListener('click', e => {
     dataTable.setRow({
         year: 2021,
@@ -124,7 +145,6 @@ document.getElementById('updaterow').addEventListener('click', e => {
         revenue: Math.round(10 * Math.random())
     }, 1);
 });
-*/
 
 document.getElementById('addrow').addEventListener('click', e => {
     dataTable.setRow({

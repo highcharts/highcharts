@@ -323,7 +323,7 @@ class DataTableCore {
         }
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetRows');
+            fireEvent(this, 'afterSetRows', { rowIndex });
             this.versionTag = uniqueKey();
         }
     }

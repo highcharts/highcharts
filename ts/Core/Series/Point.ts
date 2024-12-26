@@ -1041,7 +1041,8 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            dataOptions = seriesOptions.data;
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1091,12 +1092,14 @@ class Point {
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
-                isObject((seriesOptions.data as any)[i], true) ||
+            if (dataOptions) {
+                dataOptions[i] = (
+                    isObject(dataOptions[i], true) ||
                     isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                ) ?
+                    point.options :
+                    options ?? dataOptions[i];
+            }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
