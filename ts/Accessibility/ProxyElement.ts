@@ -313,8 +313,8 @@ class ProxyElement {
                 chartPos = pointer.getChartPosition();
 
             return {
-                x: (rectEl.left - chartPos.left) / chartPos.scaleX,
-                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                x: (rectEl.left + window.scrollX - chartPos.left) / chartPos.scaleX,
+                y: (rectEl.top + window.scrollY - chartPos.top) / chartPos.scaleY,
                 width: rectEl.right / chartPos.scaleX -
                     rectEl.left / chartPos.scaleX,
                 height: rectEl.bottom / chartPos.scaleY -
