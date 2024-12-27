@@ -240,7 +240,7 @@ class Accessibility {
     /**
      * Adds high contrast CSS class, if the browser is in High Contrast mode.
      */
-    public addHighContrast() {
+    public addHighContrast(): void {
         const highContrastMode =
             this.dataGrid.options?.accessibility?.highContrastMode;
 
