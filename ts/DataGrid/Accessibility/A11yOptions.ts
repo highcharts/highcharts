@@ -43,6 +43,12 @@ namespace A11yOptions {
         enabled?: boolean;
 
         /**
+         * The default option is auto, which applies the high contrast theme the
+         * user's system has a high contrast theme active.
+         */
+        highContrastMode?: boolean | 'auto';
+
+        /**
          * VoiceOver announcer options for DataGrid actions.
          */
         announcements?: {

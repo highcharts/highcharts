@@ -41,6 +41,7 @@ namespace Defaults {
     export const defaultOptions: Globals.DeepPartial<Options> = {
         accessibility: {
             enabled: true,
+            highContrastMode: 'auto',
             announcements: {
                 cellEditing: true,
                 sorting: true
