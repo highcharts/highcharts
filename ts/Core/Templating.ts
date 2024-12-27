@@ -17,6 +17,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type Time from './Time';
 
 import D from './Defaults.js';
 const {
@@ -28,6 +29,7 @@ const {
     pageLang
 } = G;
 import U from './Utilities.js';
+import { LangOptionsCore } from './Options';
 const {
     extend,
     getNestedProperty,
@@ -172,10 +174,17 @@ function dateFormat(
  * @param {Highcharts.Chart} [chart]
  *        A `Chart` instance used to get numberFormatter and time.
  *
+ * @param {Highcharts.Time} [time]
+ *        A `Time` instance used to get dateFormat.
+ *
  * @return {string}
  *         The formatted string.
  */
-function format(str = '', ctx: any, chart?: Chart): string {
+function format(
+    str = '',
+    ctx: any,
+    templateOwner?: Templating.TemplatingOwner
+): string {
 
     const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
         // The sub expression regex is the same as the top expression regex,
@@ -185,9 +194,9 @@ function format(str = '', ctx: any, chart?: Chart): string {
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = chart?.options.lang || defaultOptions.lang,
-        time = chart && chart.time || defaultTime,
-        numberFormatter = chart && chart.numberFormatter || numberFormat;
+        lang = templateOwner?.options?.lang || defaultOptions.lang,
+        timeInstance = templateOwner?.time || defaultTime,
+        numberFormatter = templateOwner?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -352,7 +361,9 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx, chart);
+                replacement = format(
+                    replacement ? body : elseBody, ctx, templateOwner
+                );
             }
 
 
@@ -382,7 +393,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
                         );
                     }
                 } else {
-                    replacement = time.dateFormat(segment, replacement);
+                    replacement = timeInstance.dateFormat(segment, replacement);
                 }
             }
 
@@ -395,7 +406,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return hasSub ? format(str, ctx, chart) : str;
+    return hasSub ? format(str, ctx, templateOwner) : str;
 }
 
 /**
@@ -538,6 +549,14 @@ const Templating = {
 namespace Templating {
     export interface FormatterCallback<T> {
         (this: T): string;
+    }
+    export interface TemplatingOwnerOptions {
+        lang?: LangOptionsCore;
+    }
+    export interface TemplatingOwner {
+        options?: TemplatingOwnerOptions;
+        time?: Time;
+        numberFormatter?: Function
     }
 }
 

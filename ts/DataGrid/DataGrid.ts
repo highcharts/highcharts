@@ -36,6 +36,7 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
+import Time from '../Core/Time.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
@@ -216,6 +217,11 @@ class DataGrid {
      */
     public querying: QueryingController;
 
+    /**
+     * The time instance.
+     */
+    public time: Time;
+
     /* *
     *
     *  Constructor
@@ -253,6 +259,8 @@ class DataGrid {
             afterLoadCallback?.(this);
         });
 
+        this.time = new Time({}, this.options?.lang);
+
         DataGrid.dataGrids.push(this);
     }
 
@@ -263,7 +271,7 @@ class DataGrid {
      *
      * */
 
-    /**
+    /*
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
