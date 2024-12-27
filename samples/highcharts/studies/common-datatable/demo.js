@@ -57,8 +57,6 @@ const previewTable = () => {
             });
 
             addEvent(dataTable, 'afterSetRows', e => {
-                previewTable();
-
                 const row = dataTable.getRow.call({
                     columns: getTableSpecificColumns()
                 }, e.rowIndex);
@@ -67,6 +65,17 @@ const previewTable = () => {
                     this.points[e.rowIndex].update(row, false);
                 } else {
                     this.addPoint(row, false);
+                }
+
+                clearTimeout(chartRedrawTimer);
+                chartRedrawTimer = setTimeout(() => chart.redraw(), 0);
+            });
+
+            addEvent(dataTable, 'afterDeleteRows', e => {
+                const { rowCount, rowIndex } = e;
+
+                for (let i = rowIndex + rowCount - 1; i >= rowIndex; i--) {
+                    this.removePoint(i, false);
                 }
 
                 clearTimeout(chartRedrawTimer);
@@ -129,6 +138,7 @@ document.getElementById('addrow').addEventListener('click', e => {
         cost: 15,
         revenue: 20
     });
+    previewTable();
     e.target.disabled = true;
 });
 
@@ -140,22 +150,14 @@ document.getElementById('addrow').addEventListener('click', e => {
 // generatePoints.
 document.getElementById('updaterow').addEventListener('click', e => {
     dataTable.setRow({
-        year: 2021,
         cost: Math.round(15 * Math.random()),
         revenue: Math.round(10 * Math.random())
     }, 1);
-});
-
-document.getElementById('addrow').addEventListener('click', e => {
-    dataTable.setRow({
-        year: 2024,
-        cost: 15,
-        revenue: 20
-    });
-    e.target.disabled = true;
+    previewTable();
 });
 
 document.getElementById('deleterow').addEventListener('click', e => {
     dataTable.deleteRows(1);
     e.target.disabled = true;
+    previewTable();
 });

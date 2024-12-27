@@ -176,7 +176,7 @@ class DataTableCore {
             this.rowCount = length;
         }
 
-        fireEvent(this, 'afterDeleteRows');
+        fireEvent(this, 'afterDeleteRows', { rowIndex, rowCount });
         this.versionTag = uniqueKey();
     }
 
