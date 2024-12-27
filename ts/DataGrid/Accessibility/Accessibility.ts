@@ -86,8 +86,6 @@ class Accessibility {
         this.announcerElement = document.createElement('p');
         this.announcerElement.setAttribute('aria-atomic', 'true');
         this.announcerElement.setAttribute('aria-hidden', 'false');
-
-        this.addHighContrast();
     }
 
 
@@ -250,8 +248,8 @@ class Accessibility {
                 highContrastMode === true
             )
         ) {
-            this.dataGrid.container?.classList.add(
-                Globals.classNamePrefix + 'highcontrast-theme'
+            this.dataGrid.contentWrapper?.classList.add(
+                'hcdg-highcontrast-theme'
             );
         }
     }
@@ -270,9 +268,9 @@ class Accessibility {
     }
 
     /**
-     * Set aria attributes for the table element.
+     * Set a11y options for the DataGrid.
      */
-    public initTableA11yAttrs(): void {
+    public setA11yOptions(): void {
         const dataGrid = this.dataGrid;
         const tableEl = dataGrid.tableElement;
 
@@ -298,6 +296,8 @@ class Accessibility {
                 dataGrid.descriptionElement.id
             );
         }
+
+        this.addHighContrast();
     }
 }
 
