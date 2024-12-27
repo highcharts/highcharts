@@ -154,3 +154,8 @@ document.getElementById('addrow').addEventListener('click', e => {
     });
     e.target.disabled = true;
 });
+
+document.getElementById('deleterow').addEventListener('click', e => {
+    dataTable.deleteRows(1);
+    e.target.disabled = true;
+});

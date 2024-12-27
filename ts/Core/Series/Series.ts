@@ -4066,16 +4066,12 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data,
-                    ...Object.values(table.getColumns())
+                    series.options.data
                 ].filter(defined).forEach((coll): void => {
                     coll.splice(i, 1);
                 });
 
-                // Shorthand row deletion in order to avoid including the whole
-                // `deleteRows` function in the DataTableCore module.
-                table.rowCount -= 1;
-                fireEvent(table, 'afterDeleteRows');
+                table.deleteRows(i);
 
                 point?.destroy();
 
