@@ -472,12 +472,8 @@ class Series {
 
         const events = options.events;
         if (
-            (events && events.click) ||
-            (
-                options.point &&
-                options.point.events &&
-                options.point.events.click
-            ) ||
+            events?.click ||
+            options.point?.events?.click ||
             options.allowPointSelect
         ) {
             chart.runTrackerClick = true;
@@ -497,7 +493,7 @@ class Series {
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }
-        series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+        series._i = pick(lastSeries?._i, -1) + 1;
         series.opacity = series.options.opacity;
 
         // Insert the series and re-order all series above the insertion
@@ -505,7 +501,7 @@ class Series {
         chart.orderItems('series', insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
-        if (options.dataSorting && options.dataSorting.enabled) {
+        if (options.dataSorting?.enabled) {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
@@ -1020,7 +1016,7 @@ class Series {
             let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
                 oldPoint.index === optionsObject.index;
 
-            if (dataSorting && dataSorting.matchByName) {
+            if (dataSorting?.matchByName) {
                 matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
                     oldPoint.name === optionsObject.name;
 
@@ -1038,7 +1034,7 @@ class Series {
         }
 
         if (matchingPoint) {
-            pointIndex = matchingPoint && matchingPoint.index;
+            pointIndex = matchingPoint?.index;
             if (typeof pointIndex !== 'undefined') {
                 matchedById = true;
             }
@@ -1159,7 +1155,7 @@ class Series {
                 if (
                     !equalLength ||
                     i !== pointIndex ||
-                    (dataSorting && dataSorting.enabled) ||
+                    dataSorting?.enabled ||
                     this.hasDerivedData
                 ) {
                     hasUpdatedByKey = true;
@@ -1182,7 +1178,7 @@ class Series {
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
-        } else if (equalLength && (!dataSorting || !dataSorting.enabled)) {
+        } else if (equalLength && !dataSorting?.enabled) {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
@@ -1284,7 +1280,7 @@ class Series {
     ): void {
         const series = this,
             oldData = series.points,
-            oldDataLength = (oldData && oldData.length) || 0,
+            oldDataLength = oldData?.length || 0,
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
@@ -1319,7 +1315,7 @@ class Series {
 
         const dataLength = data.length;
 
-        if (dataSorting && dataSorting.enabled) {
+        if (dataSorting?.enabled) {
             data = this.sortData(data);
         }
 
@@ -1557,8 +1553,7 @@ class Series {
                     seriesData = options.data as Array<PointOptions>;
 
                 if (
-                    (!options.dataSorting ||
-                    !options.dataSorting.enabled) &&
+                    !options.dataSorting?.enabled &&
                     seriesData
                 ) {
                     seriesData.forEach(function (pointOptions, i): void {
@@ -1796,8 +1791,7 @@ class Series {
             keys = options.keys,
             points = [],
             groupCropStartIndex: number = (
-                options.dataGrouping &&
-                options.dataGrouping.groupAll ?
+                options.dataGrouping?.groupAll ?
                     cropStart :
                     0
             ),
@@ -2793,7 +2787,7 @@ class Series {
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
-                seriesMarkerOptions && seriesMarkerOptions.radius
+                seriesMarkerOptions?.radius
             );
 
         // Handle hover and select states
@@ -2803,10 +2797,10 @@ class Series {
                 (pointMarkerOptions.states as any)[state];
 
             radius = pick(
-                pointStateOptions && pointStateOptions.radius,
-                seriesStateOptions && seriesStateOptions.radius,
+                pointStateOptions?.radius,
+                seriesStateOptions?.radius,
                 radius && radius + (
-                    seriesStateOptions && seriesStateOptions.radiusPlus ||
+                    seriesStateOptions?.radiusPlus ||
                     0
                 )
             );
@@ -2866,13 +2860,11 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
-            pointOptions = point && point.options,
-            pointMarkerOptions = (
-                (pointOptions && pointOptions.marker) || {}
-            ),
-            pointColorOption = pointOptions && pointOptions.color,
-            pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color;
+            pointOptions = point?.options,
+            pointMarkerOptions = pointOptions?.marker || {},
+            pointColorOption = pointOptions?.color,
+            pointColor = point?.color,
+            zoneColor = point?.zone?.color;
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2963,7 +2955,6 @@ class Series {
             data = series.data || [];
         let destroy: ('hide'|'destroy'),
             i,
-            point,
             axis;
 
         // Add event hook
@@ -2975,7 +2966,7 @@ class Series {
         // Erase from axes
         (series.axisTypes || []).forEach(function (AXIS: string): void {
             axis = (series as any)[AXIS];
-            if (axis && axis.series) {
+            if (axis?.series) {
                 erase(axis.series, series);
                 axis.isDirty = axis.forceRedraw = true;
             }
@@ -2989,10 +2980,7 @@ class Series {
         // Destroy all points with their elements
         i = data.length;
         while (i--) {
-            point = data[i];
-            if (point && point.destroy) {
-                point.destroy();
-            }
+            data[i]?.destroy?.();
         }
 
         for (const zone of series.zones) {
@@ -3945,7 +3933,7 @@ class Series {
         const series = this,
             seriesOptions = series.options,
             { chart, data, dataTable: table, xAxis } = series,
-            names = xAxis && xAxis.hasNames && xAxis.names,
+            names = xAxis?.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
             xData = series.getColumn('x');
         let isInTheMiddle,
@@ -4422,7 +4410,7 @@ class Series {
                 }
             }
             for (const point of this.points) {
-                if (point && point.series) {
+                if (point?.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
                     // series options.

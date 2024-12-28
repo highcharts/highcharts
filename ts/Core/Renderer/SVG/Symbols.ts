@@ -148,10 +148,10 @@ function callout(
 ): SVGPath {
     const arrowLength = 6,
         halfDistance = 6,
-        r = Math.min((options && options.r) || 0, w, h),
+        r = Math.min((options?.r) || 0, w, h),
         safeDistance = r + halfDistance,
-        anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY || 0;
+        anchorX = options?.anchorX,
+        anchorY = options?.anchorY || 0;
 
     const path = roundedRect(x, y, w, h, { r });
 
@@ -324,7 +324,7 @@ function rect(
     h: number,
     options?: SymbolOptions
 ): SVGPath {
-    if (options && options.r) {
+    if (options?.r) {
         return roundedRect(x, y, w, h, options);
     }
     return [
