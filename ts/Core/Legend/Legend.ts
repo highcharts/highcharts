@@ -26,6 +26,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
+import type { LegendItemObject } from './LegendItem';
 import type LegendOptions from './LegendOptions';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -1317,7 +1318,8 @@ class Legend {
             };
         let clipHeight: number,
             lastY: number,
-            legendItem,
+            legendItem: LegendItemObject|undefined,
+            lastLegendItem: LegendItemObject|undefined,
             spaceHeight = (
                 chart.spacingBox.height +
                 (alignTop ? -optionsY : optionsY) - padding
@@ -1372,8 +1374,8 @@ class Legend {
 
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (lastY) {
-                    (allItems[i - 1].legendItem || {}).pageIx = len - 1;
+                if (lastY && lastLegendItem) {
+                    lastLegendItem.pageIx = len - 1;
                 }
 
                 // Add the last page if needed (#2617, #13683)
@@ -1391,6 +1393,7 @@ class Legend {
                 if (y !== lastY) {
                     lastY = y;
                 }
+                lastLegendItem = legendItem;
             });
 
             // Only apply clipping if needed. Clipping causes blurred legend in
