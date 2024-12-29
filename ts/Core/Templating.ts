@@ -186,8 +186,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
         lang = chart?.options.lang || defaultOptions.lang,
-        time = chart && chart.time || defaultTime,
-        numberFormatter = chart && chart.numberFormatter || numberFormat;
+        time = chart?.time || defaultTime,
+        numberFormatter = chart?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -230,7 +230,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             match = subMatch;
             hasSub = true;
         }
-        if (!currentMatch || !currentMatch.isBlock) {
+        if (!currentMatch?.isBlock) {
             currentMatch = {
                 ctx,
                 expression: match[1],
