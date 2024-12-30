@@ -550,7 +550,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;
@@ -583,7 +583,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;
