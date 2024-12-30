@@ -10,22 +10,24 @@ const commonOptions = {
 
 const AMDISIN = 'US0079031078';
 
-// eslint-disable-next-line no-undef
-const AMDPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'Price'
-    },
-    securities: [
-        {
-            id: AMDISIN,
-            idType: 'ISIN'
-        }
-    ],
-    currencyId: 'EUR'
-});
+const AMDPriceConnector =
+    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'Price'
+        },
+        securities: [
+            {
+                id: AMDISIN,
+                idType: 'ISIN'
+            }
+        ],
+        currencyId: 'EUR'
+    });
 
-Promise.all([AMDPriceConnector.load()]).then(() => {
+(async () => {
+    await AMDPriceConnector.load();
+
     const cols = AMDPriceConnector.table.getColumns();
 
     const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
@@ -121,4 +123,4 @@ Promise.all([AMDPriceConnector.load()]).then(() => {
         Date.UTC(2022),
         secondNav.navigator.xAxis.max
     );
-});
+})();
