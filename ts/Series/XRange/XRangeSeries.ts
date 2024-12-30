@@ -268,7 +268,7 @@ class XRangeSeries extends ColumnSeries {
 
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
-        point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+        point.plotX = pick(point.dlBox?.centerX, point.plotX);
 
         if (point.dataLabel && point.shapeArgs?.width) {
             point.dataLabel.css({
@@ -289,7 +289,7 @@ class XRangeSeries extends ColumnSeries {
             metrics = this.columnMetrics,
             options = this.options,
             minPointLength = options.minPointLength || 0,
-            oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
+            oldColWidth = (point.shapeArgs?.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
             posX = pick(point.x2, (point.x as any) + (point.len || 0)),
             borderRadius = options.borderRadius,

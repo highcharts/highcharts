@@ -633,7 +633,7 @@ namespace OrdinalAxis {
                 hoverPoints = chart.hoverPoints,
                 closestPointRange = (
                     xAxis.closestPointRange ||
-                    (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange)
+                    xAxis.ordinal?.overscrollPointsRange
                 ),
                 pointPixelWidth = (
                     xAxis.translationSlope *
@@ -752,7 +752,7 @@ namespace OrdinalAxis {
         const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
         // and destroy extendedOrdinalPositions, #16055.
-        if (xAxis && xAxis.options.ordinal) {
+        if (xAxis?.options.ordinal) {
             delete xAxis.ordinal.index;
             delete xAxis.ordinal.originalOrdinalRange;
         }
@@ -797,13 +797,8 @@ namespace OrdinalAxis {
             ordinalIndex = getIndexInArray(ordinalPositions, val);
             // Final return value is based on ordinalIndex
         } else {
-            extendedOrdinalPositions =
-                ordinal.getExtendedPositions &&
-                ordinal.getExtendedPositions();
-            if (!(
-                extendedOrdinalPositions && extendedOrdinalPositions.length
-            )) {
-
+            extendedOrdinalPositions = ordinal.getExtendedPositions?.();
+            if (!extendedOrdinalPositions?.length) {
                 return val;
             }
 

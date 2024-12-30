@@ -663,7 +663,7 @@ class Axis {
                 Math.abs(value) :
                 axis.tickInterval;
 
-        let i = numericSymbols && numericSymbols.length,
+        let i = numericSymbols?.length,
             multi,
             ret: (string|undefined);
 
@@ -1618,9 +1618,7 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = (
-                axis.ordinal && axis.ordinal.slope && closestPointRange
-            ) ?
+            ordinalCorrection = (axis.ordinal?.slope && closestPointRange) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -2575,14 +2573,14 @@ class Axis {
             // well:
             isXAxisDirty = (
                 isXAxisDirty ||
-                (series.xAxis && series.xAxis.isDirty) ||
+                series.xAxis?.isDirty ||
                 false
             );
         });
 
         // Set the new axisLength
         axis.setAxisSize();
-        const isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
+        const isDirtyAxisLength = axis.len !== axis.old?.len;
 
         // Do we really need to go through all this?
         if (
@@ -2591,8 +2589,8 @@ class Axis {
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== (axis.old && axis.old.userMin) ||
-            axis.userMax !== (axis.old && axis.old.userMax) ||
+            axis.userMin !== axis.old?.userMin ||
+            axis.userMax !== axis.old?.userMax ||
             axis.alignToOthers()
         ) {
 
@@ -3184,7 +3182,7 @@ class Axis {
         // Apply general and specific CSS
         tickPositions.forEach(function (pos: number): void {
             const tick = ticks[pos],
-                label = tick && tick.label,
+                label = tick?.label,
                 widthOption = labelStyleOptions.width,
                 css: CSSObject = {};
 
@@ -3562,7 +3560,7 @@ class Axis {
                 (axis.axisTitleMargin || 0) + titleOffset +
                 directionFactor * axis.offset,
                 labelOffsetPadded, // #3027
-                tickPositions && tickPositions.length && tickSize ?
+                tickPositions?.length && tickSize ?
                     tickSize[0] + directionFactor * axis.offset :
                     0 // #4866
             );
@@ -3767,7 +3765,7 @@ class Axis {
         if (
             !isLinked ||
             (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
-            (axis.grid && axis.grid.isColumn)
+            axis.grid?.isColumn
         ) {
 
             if (!ticks[pos]) {
@@ -3991,7 +3989,7 @@ class Axis {
 
 
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+        if (stackLabelOptions?.enabled && axis.stacking) {
             axis.stacking.renderStackTotals();
         }
         // End stacked totals
@@ -4133,7 +4131,7 @@ class Axis {
     public drawCrosshair(e?: PointerEvent, point?: Point): void {
 
         const options = this.crosshair,
-            snap = pick(options && options.snap, true),
+            snap = options?.snap ?? true,
             chart = this.chart;
 
         let path,
@@ -4147,7 +4145,7 @@ class Axis {
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
         if (!e) {
-            e = this.cross && this.cross.e;
+            e = this.cross?.e;
         }
 
         if (
@@ -4193,8 +4191,8 @@ class Axis {
                     // polar chart
                     extend(crossOptions, {
                         isCrosshair: true,
-                        chartX: e && e.chartX,
-                        chartY: e && e.chartY,
+                        chartX: e?.chartX,
+                        chartY: e?.chartY,
                         point: point
                     });
                 }

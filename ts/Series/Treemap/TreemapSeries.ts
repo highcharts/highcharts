@@ -566,7 +566,7 @@ class TreemapSeries extends ScatterSeries {
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
-        if (level && level.layoutStartingDirection) {
+        if (level?.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
                 0 :
                 1;
@@ -681,7 +681,7 @@ class TreemapSeries extends ScatterSeries {
             }
 
             // If options for level exists, include them as well
-            if (level && level.dataLabels) {
+            if (level?.dataLabels) {
                 options = merge(options, level.dataLabels);
                 series.hasDataLabels = (): boolean => true;
             }
@@ -1138,7 +1138,7 @@ class TreemapSeries extends ScatterSeries {
     public onClickDrillToNode(event: { point: TreemapPoint }): void {
         const series = this,
             point = event.point,
-            drillId = point && point.drillId;
+            drillId = point?.drillId;
 
         // If a drill id is returned, add click event and cursor.
         if (isString(drillId)) {
@@ -1165,7 +1165,7 @@ class TreemapSeries extends ScatterSeries {
             options = this.options,
             stateOptions =
                 state && options.states && options.states[state] || {},
-            className = (point && point.getClassName()) || '',
+            className = point?.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
             // Stroke width uses pick because it can be 0.
             attr: SVGAttributes = {
@@ -1181,11 +1181,11 @@ class TreemapSeries extends ScatterSeries {
                     options.borderWidth
                 ),
                 'dashstyle':
-                    (point && (point as any).borderDashStyle) ||
+                    (point as any)?.borderDashStyle ||
                     level.borderDashStyle ||
                     stateOptions.borderDashStyle ||
                     options.borderDashStyle,
-                'fill': (point && point.color) || this.color
+                'fill': point?.color || this.color
             };
 
         let opacity: number;
@@ -1228,8 +1228,8 @@ class TreemapSeries extends ScatterSeries {
         siblings?: number
     ): void {
         const series = this,
-            chart = series && series.chart,
-            colors = chart && chart.options && chart.options.colors;
+            chart = series?.chart,
+            colors = chart?.options?.colors;
 
         if (node) {
             const colorInfo = getColor(node, {
@@ -1447,7 +1447,7 @@ class TreemapSeries extends ScatterSeries {
         ));
 
         // Set the values
-        let val = pick(point && point.options.value, childrenTotal);
+        let val = pick(point?.options.value, childrenTotal);
 
         if (point) {
             point.value = val;
@@ -1467,14 +1467,14 @@ class TreemapSeries extends ScatterSeries {
             children: children,
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
-            ignore: !(pick(point && point.visible, true) && (val > 0)),
+            ignore: !(pick(point?.visible, true) && (val > 0)),
             isLeaf: tree.visible && !childrenTotal,
             isGroup: point?.isGroup,
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)
             ),
-            name: pick(point && point.name, ''),
-            sortIndex: pick(point && point.sortIndex, -val),
+            name: pick(point?.name, ''),
+            sortIndex: pick(point?.sortIndex, -val),
             val: val
         });
         return tree;
