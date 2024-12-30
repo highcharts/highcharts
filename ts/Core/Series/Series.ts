@@ -992,10 +992,10 @@ class Series {
         optionsObject: PointOptions,
         fromIndex: number
     ): (number|undefined) {
-        const id = optionsObject.id,
-            x = optionsObject.x,
+        const { id, x } = optionsObject,
             oldData = this.points,
-            dataSorting = this.options.dataSorting;
+            dataSorting = this.options.dataSorting,
+            cropStart = this.cropStart || 0;
 
         let matchingPoint: Point|undefined,
             matchedById: boolean|undefined,
@@ -1051,14 +1051,14 @@ class Series {
             typeof pointIndex !== 'undefined' &&
             this.cropped
         ) {
-            pointIndex = (pointIndex >= (this.cropStart as any)) ?
-                pointIndex - (this.cropStart as any) : pointIndex;
+            pointIndex = pointIndex >= cropStart ?
+                pointIndex - cropStart : pointIndex;
         }
 
         if (
             !matchedById &&
             isNumber(pointIndex) &&
-            oldData[pointIndex] && oldData[pointIndex].touched
+            oldData[pointIndex]?.touched
         ) {
             pointIndex = void 0;
         }
@@ -1079,11 +1079,10 @@ class Series {
         data: Array<(PointOptions|PointShortOptions)>,
         animation?: (boolean|Partial<AnimationOptions>)
     ): boolean {
-        const options = this.options,
+        const { options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.points,
             pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            requireSorting = this.requireSorting,
             equalLength = data.length === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1094,19 +1093,17 @@ class Series {
         this.xIncrement = null;
 
         // Iterate the new data
-        data.forEach(function (pointOptions, i): void {
+        data.forEach((pointOptions, i): void => {
             const optionsObject = (
-                defined(pointOptions) &&
-                    this.pointClass.prototype.optionsToObject.call(
-                        { series: this },
-                        pointOptions
-                    )
-            ) || {};
-            let pointIndex;
+                    defined(pointOptions) &&
+                        this.pointClass.prototype.optionsToObject.call(
+                            { series: this },
+                            pointOptions
+                        )
+                ) || {},
+                { id, x } = optionsObject;
 
-            // Get the x of the new data point
-            const x = optionsObject.x,
-                id = optionsObject.id;
+            let pointIndex;
 
             if (id || isNumber(x)) {
                 pointIndex = this.findPointIndex(
@@ -1114,9 +1111,8 @@ class Series {
                     lastIndex
                 );
 
-                // Matching X not found
-                // or used already due to ununique x values (#8995),
-                // add point (but later)
+                // Matching X not found or used already due to non-unique x
+                // values (#8995), add point (but later)
                 if (
                     pointIndex === -1 ||
                     typeof pointIndex === 'undefined'
@@ -1126,12 +1122,12 @@ class Series {
                 // Matching X found, update
                 } else if (
                     oldData[pointIndex] &&
-                    pointOptions !== (options.data as any)[pointIndex]
+                    pointOptions !== options.data?.[pointIndex]
                 ) {
                     oldData[pointIndex].update(
                         pointOptions,
                         false,
-                        null as any,
+                        void 0,
                         false
                     );
 
@@ -1171,19 +1167,19 @@ class Series {
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
-                if (point && !point.touched && point.remove) {
-                    point.remove(false, animation);
+                if (point && !point.touched) {
+                    point.remove?.(false, animation);
                 }
             }
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
-            data.forEach(function (point, i): void {
+            data.forEach((point, i): void => {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
                 if (point !== oldData[i].y && !oldData[i].destroyed) {
-                    oldData[i].update(point, false, null as any, false);
+                    oldData[i].update(point, false, void 0, false);
                 }
             });
             // Don't add new points since those configs are used above
@@ -1194,7 +1190,7 @@ class Series {
             succeeded = false;
         }
 
-        oldData.forEach(function (point): void {
+        oldData.forEach((point): void => {
             if (point) {
                 point.touched = false;
             }
@@ -1205,8 +1201,8 @@ class Series {
         }
 
         // Add new points
-        pointsToAdd.forEach(function (point): void {
-            this.addPoint(point, false, null as any, null as any, false);
+        pointsToAdd.forEach((point): void => {
+            this.addPoint(point, false, void 0, void 0, false);
         }, this);
 
         const xData = this.getColumn('x');
