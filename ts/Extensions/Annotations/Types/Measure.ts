@@ -70,6 +70,23 @@ function average(
 /**
  * @private
  */
+function isPointWithinExtremes(
+    point: Point,
+    ext: Record<string, number>
+): boolean {
+    return (
+        !point.isNull &&
+        isNumber(point.y) &&
+        point.x > ext.xAxisMin &&
+        point.x <= ext.xAxisMax &&
+        point.y > ext.yAxisMin &&
+        point.y <= ext.yAxisMax
+    );
+}
+
+/**
+ * @private
+ */
 function bins(
     this: Measure
 ): number {
@@ -90,12 +107,7 @@ function bins(
         ) {
             s.points.forEach((point): void => {
                 if (
-                    !point.isNull &&
-                    point.y &&
-                    point.x > ext.xAxisMin &&
-                    point.x <= ext.xAxisMax &&
-                    point.y > ext.yAxisMin &&
-                    point.y <= ext.yAxisMax
+                    isPointWithinExtremes(point, ext)
                 ) {
                     bins++;
                 }
@@ -234,13 +246,9 @@ function max(
         ) {
             s.points.forEach((point): void => {
                 if (
-                    !point.isNull &&
-                    point.y &&
+                    isNumber(point.y) &&
                     point.y > max &&
-                    point.x > ext.xAxisMin &&
-                    point.x <= ext.xAxisMax &&
-                    point.y > ext.yAxisMin &&
-                    point.y <= ext.yAxisMax
+                    isPointWithinExtremes(point, ext)
                 ) {
                     max = point.y;
                     isCalculated = true;
@@ -281,13 +289,9 @@ function min(
         ) {
             s.points.forEach((point: Point): void => {
                 if (
-                    !point.isNull &&
-                    point.y &&
+                    isNumber(point.y) &&
                     point.y < min &&
-                    point.x > ext.xAxisMin &&
-                    point.x <= ext.xAxisMax &&
-                    point.y > ext.yAxisMin &&
-                    point.y <= ext.yAxisMax
+                    isPointWithinExtremes(point, ext)
                 ) {
                     min = point.y;
                     isCalculated = true;
