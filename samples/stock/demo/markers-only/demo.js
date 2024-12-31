@@ -5,29 +5,8 @@
         'https://demo-live-data.highcharts.com/aapl-c.json'
     ).then(response => response.json());
 
-    const trendStart = data[data.length - 110],
-        trendEnd = data[data.length - 50];
-
     // Create the chart
     Highcharts.stockChart('container', {
-
-        annotations: [{
-            type: 'crookedLine',
-            draggable: '',
-            typeOptions: {
-                points: [{
-                    x: trendStart[0],
-                    y: trendStart[1]
-                }, {
-                    x: trendEnd[0],
-                    y: trendEnd[1]
-                }]
-            },
-            shapeOptions: {
-                stroke: '#ff0000',
-                strokeWidth: 2
-            }
-        }],
 
         rangeSelector: {
             selected: 2
