@@ -960,6 +960,9 @@ class Tooltip {
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
+        } else {
+            // Clear the previous anchor position (#22295)
+            attr.anchorX = attr.anchorY = void 0;
         }
 
         animation.step = (): void => tooltip.drawTracker();
