@@ -65,7 +65,6 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
-        Validator: typeof Validator;
     }
     interface Window {
         DataGrid: DataGridNamespace;
