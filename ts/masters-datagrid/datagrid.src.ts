@@ -29,7 +29,6 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
-import Validator from '../DataGrid/Table/ColumnTypes/Validator.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
