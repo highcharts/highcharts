@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "12.0.1",
+  "version": "12.1.0",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
@@ -40,10 +40,11 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint-docs": "npx cspell -c ./tools/cspell/cspell.json \"docs/**/*.md\"",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install ; gulp --series clean update-vendor",
+    "prepare": "husky install && gulp --series clean update-vendor",
     "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
@@ -73,6 +74,7 @@
     "chatgpt": "^5.2.5",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
+    "cspell": "^8.16.0",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
@@ -159,6 +161,9 @@
     ],
     "*.css": [
       "stylelint"
+    ],
+    "./docs/**/*.md": [
+      "npx cspell -c ./tools/cspell/cspell.json"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

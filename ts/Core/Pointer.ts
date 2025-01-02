@@ -1969,7 +1969,9 @@ class Pointer {
             const relatedTargetObj = { relatedTarget: chart.container };
 
             if (e && !e?.relatedTarget) {
-                e = { ...relatedTargetObj, ...e };
+                // #17192, Non-enumerable properties of "e" are dropped with
+                // spreading (...e). Using Object.assign ensures integrity.
+                Object.assign({}, e, relatedTargetObj);
             }
 
             hoverChart.pointer?.onContainerMouseLeave(

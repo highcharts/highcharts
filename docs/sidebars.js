@@ -211,7 +211,30 @@ module.exports = {
             'working-with-data/live-data',
             'working-with-data/data-from-a-database',
             'working-with-data/getting-data-across-domains-jsonp',
-            'working-with-data/server-side-data-grouping'
+            'working-with-data/server-side-data-grouping',
+            {
+                'Morningstar Connectors': [
+                    'morningstar/morningstar',
+                    'morningstar/goal-analysis',
+                    'morningstar/risk-score',
+                    'morningstar/regulatory-news-announcements',
+                    'morningstar/security-details',
+                    'morningstar/x-ray',
+                    {
+                        'Time Series': [
+                            'morningstar/time-series/time-series',
+                            'morningstar/time-series/cumulative-return',
+                            'morningstar/time-series/dividend',
+                            'morningstar/time-series/growth',
+                            'morningstar/time-series/ohlcv',
+                            'morningstar/time-series/price'
+                        ],
+                        'Screeners': [
+                            'morningstar/screeners/investment-screener',
+                        ]
+                    }
+                ]
+            }
         ],
         'Chart design and style': [
             'chart-design-and-style/design-and-style',
