@@ -98,22 +98,36 @@ class CellEditing {
     public stopEditing(submit = true): void {
         const cell = this.editedCell;
         const input = this.inputElement;
+        const editedCell = this.editedCell;
 
-        if (!cell || !input) {
+        if (!cell || !input || !editedCell) {
             return;
         }
 
+        const { column } = editedCell;
         const dataGrid = cell.column.viewport.dataGrid;
-        let newValue: string | number = input.value;
+        const newValue: string | number = input.value;
 
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.editedCell);
 
         cell.htmlElement.focus();
 
+        /* TODO: Adjust it or delete after implementing the validation.
         // Convert to number if possible
         if (!isNaN(+newValue)) {
             newValue = +newValue;
+        }
+        */
+
+        const validationRules = column.options.validation;
+        if (
+            validationRules &&
+            !validationRules.rules.call(editedCell, newValue)
+        ) {
+            // eslint-disable-next-line no-console
+            console.error('Wrong value: ', validationRules.errorMessage);
+            return;
         }
 
         void cell.setValue(
