@@ -1,4 +1,4 @@
-/* *SeriesDefau
+/* *
  *
  *  (c) 2010-2024 Torstein Honsi
  *
@@ -633,7 +633,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highcharts} highcharts/plotoptions/series-pointintervalunit/
      *         One point a month
-     * @sample {highstoc/k} highcharts/plotoptions/series-pointintervalunit/
+     * @sample {highstock} highcharts/plotoptions/series-pointintervalunit/
      *         One point a month
      *
      * @type       {string}
