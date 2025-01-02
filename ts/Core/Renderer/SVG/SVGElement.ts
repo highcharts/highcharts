@@ -1180,8 +1180,8 @@ class SVGElement implements SVGElementLike {
         if (strokeWidth as unknown as string === 'inherit') {
             strokeWidth = 1;
         }
-        value = value && value.toLowerCase();
         if (value) {
+            value = value.toLowerCase();
             const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
@@ -1262,8 +1262,7 @@ class SVGElement implements SVGElementLike {
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
         while (
-            parentToClean &&
-            parentToClean.div &&
+            parentToClean?.div &&
             parentToClean.div.childNodes.length === 0
         ) {
             grandParent = (parentToClean as any).parentGroup;
@@ -1316,7 +1315,7 @@ class SVGElement implements SVGElementLike {
             this.pathArray = value;
             value = value.reduce(
                 (acc, seg, i): string => {
-                    if (!seg || !seg.join) {
+                    if (!seg?.join) {
                         return (seg || '').toString();
                     }
                     return (i ? acc + ' ' : '') + seg.join(' ');
@@ -1915,13 +1914,13 @@ class SVGElement implements SVGElementLike {
         const existingGradient = (
             this.element.gradient &&
             this.renderer.gradients[this.element.gradient]
-        );
+        ) || void 0;
 
         this.element.radialReference = coordinates;
 
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
-        if (existingGradient && existingGradient.radAttr) {
+        if (existingGradient?.radAttr) {
             existingGradient.animate(
                 this.renderer.getRadialAttr(
                     coordinates,

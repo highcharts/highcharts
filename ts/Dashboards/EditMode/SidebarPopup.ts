@@ -363,7 +363,10 @@ class SidebarPopup extends BaseForm {
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
                 e.preventDefault();
-                if (sidebar.editMode.dragDrop) {
+
+                const dragDrop = sidebar.editMode.dragDrop;
+
+                if (dragDrop) {
 
                     // Workaround for Firefox, where mouseleave is not triggered
                     // correctly when dragging.
@@ -393,7 +396,7 @@ class SidebarPopup extends BaseForm {
                     document.addEventListener('mousemove', onMouseMove);
                     document.addEventListener('mouseup', onMouseUp);
 
-                    sidebar.editMode.dragDrop.onDragStart(
+                    dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
@@ -416,10 +419,20 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
+                            if (!dropContext) {
+                                const layouts = sidebar.editMode.board.layouts;
+                                dragDrop.dropContext = dropContext =
+                                    layouts[layouts.length - 1].addRow(
+                                        {},
+                                        void 0
+                                    );
+                            }
+
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
+                                dropContext.setHighlight();
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
@@ -445,43 +458,44 @@ class SidebarPopup extends BaseForm {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
 
-        if (dragDrop) {
-            const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                ),
-                newCell = row.addCell({
-                    id: GUIElement.getElementId('col')
-                });
-
-            dragDrop.onCellDragEnd(newCell);
-            const options = merge(componentOptions, {
-                cell: newCell.id
+        if (!dragDrop) {
+            return;
+        }
+        const row = (
+                dropContext.getType() === 'cell' ?
+                    (dropContext as Cell).row :
+                    (dropContext as Row)
+            ),
+            newCell = row.addCell({
+                id: GUIElement.getElementId('col')
             });
 
-            const componentPromise =
-                Bindings.addComponent(options, sidebar.editMode.board, newCell);
-            sidebar.editMode.setEditOverlay();
+        dragDrop.onCellDragEnd(newCell);
+        const options = merge(componentOptions, {
+            cell: newCell.id
+        });
 
-            void (async (): Promise<void> => {
-                const component = await componentPromise;
-                if (!component) {
-                    return;
+        const componentPromise =
+            Bindings.addComponent(options, sidebar.editMode.board, newCell);
+        sidebar.editMode.setEditOverlay();
+
+        void (async (): Promise<void> => {
+            const component = await componentPromise;
+            if (!component) {
+                return;
+            }
+
+            fireEvent(
+                this.editMode,
+                'layoutChanged',
+                {
+                    type: 'newComponent',
+                    target: component
                 }
+            );
+        })();
 
-                fireEvent(
-                    this.editMode,
-                    'layoutChanged',
-                    {
-                        type: 'newComponent',
-                        target: component
-                    }
-                );
-            })();
-
-            return newCell;
-        }
+        return newCell;
     }
 
     /**
