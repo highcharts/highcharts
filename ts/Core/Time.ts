@@ -21,6 +21,7 @@ import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import H from './Globals.js';
 const {
+    pageLang,
     win
 } = H;
 import U from './Utilities.js';
@@ -93,9 +94,17 @@ const spanishWeekdayIndex = (weekday: string): number =>
  * `Highcharts.setOptions`, or individually for each Chart item through the
  * [time](https://api.highcharts.com/highcharts/time) options set.
  *
- * The Time object is available from {@link Highcharts.Chart#time},
- * which refers to  `Highcharts.time` if no individual time settings are
- * applied.
+ * The Time object is available from {@link Highcharts.Chart#time}, which refers
+ * to  `Highcharts.time` unless individual time settings are applied for each
+ * chart.
+ *
+ * When configuring time settings for individual chart instances, be aware that
+ * using `Highcharts.dateFormat` or `Highcharts.time.dateFormat` within
+ * formatter callbacks relies on the global time object, which applies the
+ * global language and time zone settings. To ensure charts with local time
+ * settings function correctly, use `chart.time.dateFormat? instead. However,
+ * the recommended best practice is to use `setOptions` to define global time
+ * settings unless specific configurations are needed for each chart.
  *
  * @example
  * // Apply time settings globally
@@ -133,8 +142,8 @@ const spanishWeekdayIndex = (weekday: string): number =>
  * @class
  * @name Highcharts.Time
  *
- * @param {Highcharts.TimeOptions} [options]
- * Time options as defined in [chart.options.time](/highcharts/time).
+ * @param {Highcharts.TimeOptions} [options] Time options as defined in
+ * [chart.options.time](/highcharts/time).
  */
 class Time {
 
@@ -319,7 +328,7 @@ class Time {
     private dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale
+        locale: string|Array<string>|undefined = this.options.locale || pageLang
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {

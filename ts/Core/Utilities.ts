@@ -476,13 +476,13 @@ export function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-export function isClass<T>(obj: (object|undefined)): obj is Class<T> {
-    const c: (Function|undefined) = obj && obj.constructor;
+function isClass<T>(obj: (object|undefined)): obj is Class<T> {
+    const c: (Function|undefined) = obj?.constructor;
 
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && (c as any).name && (c as any).name !== 'Object')
+        ((c as any)?.name && (c as any).name !== 'Object')
     );
 }
 
@@ -1303,10 +1303,8 @@ export function destroyObjectProperties(
  * @param {Highcharts.HTMLDOMElement} element
  *        The HTML node to discard.
  */
-export function discardElement(element?: HTMLDOMElement): void {
-    if (element && element.parentElement) {
-        element.parentElement.removeChild(element);
-    }
+function discardElement(element?: HTMLDOMElement): void {
+    element?.parentElement?.removeChild(element);
 }
 
 
@@ -1520,8 +1518,7 @@ export function getStyle(
 
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).

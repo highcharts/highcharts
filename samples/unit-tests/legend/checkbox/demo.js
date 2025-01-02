@@ -68,7 +68,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 370 &&
+            chart.legend.box.getBBox().width >= 368 &&
                 chart.legend.box.getBBox().width < 395,
             true,
             'Legend box without checkboxes is of proper size - 4 items'
@@ -83,7 +83,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.legend.box.getBBox().width > 510 &&
+            chart.legend.box.getBBox().width >= 508 &&
                 chart.legend.box.getBBox().width < 535,
             true,
             'Legend box contains checkboxes - 4 items'

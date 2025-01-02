@@ -647,7 +647,7 @@ class Pointer {
             };
         }
 
-        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        if (shapeArgs?.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -799,7 +799,7 @@ class Pointer {
             this.findNearestKDPoint(searchSeries, shared, e) as any;
 
         // Assign hover series
-        hoverSeries = hoverPoint && hoverPoint.series;
+        hoverSeries = hoverPoint?.series;
 
         // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
@@ -1159,10 +1159,7 @@ class Pointer {
             // If the tooltip has stickOnContact enabled, do nothing. This
             // applies regardless of any combinations of the `split` and
             // `useHTML` options.
-            !(
-                tooltip &&
-                tooltip.shouldStickOnContact(pEvt)
-            )
+            !tooltip?.shouldStickOnContact(pEvt)
         ) {
             if (
                 this.inClass(pEvt.target as any, 'highcharts-no-tooltip')
@@ -1230,10 +1227,7 @@ class Pointer {
                     visiblePlotOnly: true
                 }
             ) &&
-            !(
-                tooltip &&
-                tooltip.shouldStickOnContact(pEvt)
-            ) && (
+            !tooltip?.shouldStickOnContact(pEvt) && (
                 pEvt.target === chart.container.ownerDocument ||
                 !this.inClass(pEvt.target as any, 'highcharts-tracker')
             )
@@ -1519,7 +1513,7 @@ class Pointer {
             hoverPoint = chart.hoverPoint,
             hoverPoints = chart.hoverPoints,
             tooltip = chart.tooltip,
-            tooltipPoints = tooltip && tooltip.shared ?
+            tooltipPoints = tooltip?.shared ?
                 hoverPoints :
                 hoverPoint;
 
@@ -1616,7 +1610,7 @@ class Pointer {
             chart = pointer.chart,
             series = chart.series,
             tooltip = (
-                chart.tooltip && chart.tooltip.options.enabled ?
+                chart.tooltip?.options.enabled ?
                     chart.tooltip :
                     void 0
             ),
@@ -1627,12 +1621,12 @@ class Pointer {
             );
 
         let hoverPoint = p || chart.hoverPoint,
-            hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
+            hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
         const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
-                    (hoverSeries && hoverSeries.directTouch) &&
+                    (hoverSeries?.directTouch) &&
                     pointer.isDirectTouch
                 )
             ),
@@ -1650,8 +1644,7 @@ class Pointer {
         hoverSeries = hoverData.hoverSeries;
 
         const points = hoverData.hoverPoints,
-            followPointer = hoverSeries &&
-                hoverSeries.tooltipOptions.followPointer &&
+            followPointer = hoverSeries?.tooltipOptions.followPointer &&
                 !hoverSeries.tooltipOptions.split,
             useSharedTooltip = (
                 shared &&
@@ -1666,7 +1659,7 @@ class Pointer {
             (
                 force ||
                 hoverPoint !== chart.hoverPoint ||
-                (tooltip && tooltip.isHidden)
+                tooltip?.isHidden
             )
         ) {
             (chart.hoverPoints || []).forEach(function (p: Point): void {
@@ -1758,14 +1751,14 @@ class Pointer {
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis): void {
-            const snap = pick((axis.crosshair || {}).snap, true);
+            const snap = axis.crosshair?.snap ?? true;
 
             let point: Point|undefined;
             if (snap) {
                 point = chart.hoverPoint; // #13002
                 if (!point || (point.series as any)[axis.coll] !== axis) {
                     point = find(points, (p: Point): boolean =>
-                        p.series && (p.series as any)[axis.coll] === axis
+                        p.series?.[axis.coll] === axis
                     );
                 }
             }
@@ -1973,10 +1966,7 @@ class Pointer {
             );
         }
 
-        if (
-            !hoverChart ||
-            !hoverChart.mouseIsDown
-        ) {
+        if (!hoverChart?.mouseIsDown) {
             Pointer.hoverChartIndex = chart.index;
         }
     }

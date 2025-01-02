@@ -1129,7 +1129,7 @@ QUnit.test(
             chart: {
                 width: 400,
                 style: {
-                    fontFamily: 'Helvetica'
+                    fontFamily: 'Helvetica, Arial, sans-serif'
                 }
             },
             xAxis: {
