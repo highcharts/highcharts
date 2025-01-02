@@ -245,9 +245,9 @@ class TimelineSeries extends LineSeries {
             ).map((
                 point: (TimelinePoint|TimelinePointOptions)
             ): (boolean|TimelinePoint|TimelinePointOptions) => (
-                (point && point.visible !== false &&
-                    !point.isNull) ||
-                    nullInteraction ?
+                point &&
+                point.visible !== false &&
+                (!point.isNull || nullInteraction) ?
                     point :
                     false
             ));
