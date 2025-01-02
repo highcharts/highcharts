@@ -71,12 +71,13 @@ class CellEditing {
      * The cell that is to be edited.
      */
     public startEditing(cell: TableCell): void {
-        if (this.editedCell === cell) {
+        if (
+            this.editedCell === cell || (
+                // If value is invalid, do not start new editing
+                this.editedCell && !this.stopEditing()
+            )
+        ) {
             return;
-        }
-
-        if (this.editedCell) {
-            this.stopEditing();
         }
 
         this.editedCell = cell;
@@ -94,40 +95,42 @@ class CellEditing {
      *
      * @param submit
      * Whether to save the value of the input to the cell. Defaults to true.
+     *
+     * @return
+     * Returns `true` if the cell was successfully stopped editing.
      */
-    public stopEditing(submit = true): void {
+    public stopEditing(submit = true): boolean {
         const cell = this.editedCell;
         const input = this.inputElement;
-        const editedCell = this.editedCell;
 
-        if (!cell || !input || !editedCell) {
-            return;
+        if (!cell || !input) {
+            return false;
         }
 
-        const { column } = editedCell;
-        const dataGrid = cell.column.viewport.dataGrid;
-        const newValue: string | number = input.value;
+        const { column } = cell;
+        const vp = column.viewport;
+        const dataGrid = vp.dataGrid;
+        let newValue: string | number = input.value;
+
+        if (submit) {
+            const validationErrors: string[] = [];
+            if (!vp.validator.check(cell, newValue, validationErrors)) {
+                // eslint-disable-next-line no-console
+                console.error('Wrong value.', validationErrors);
+                // TODO: Show error && handle it in the voice reader
+                return false;
+            }
+        }
 
         this.destroyInput();
         cell.htmlElement.classList.remove(Globals.classNames.editedCell);
 
         cell.htmlElement.focus();
 
-        /* TODO: Adjust it or delete after implementing the validation.
+        // TODO: Adjust it or delete after implementing the dataType.
         // Convert to number if possible
         if (!isNaN(+newValue)) {
             newValue = +newValue;
-        }
-        */
-
-        const validationRules = column.options.validation;
-        if (
-            validationRules &&
-            !validationRules.rules.call(editedCell, newValue)
-        ) {
-            // eslint-disable-next-line no-console
-            console.error('Wrong value: ', validationRules.errorMessage);
-            return;
         }
 
         void cell.setValue(
@@ -141,13 +144,17 @@ class CellEditing {
         );
 
         delete this.editedCell;
+
+        return true;
     }
 
     /**
      * Handles the blur event on the input field.
      */
     private onInputBlur = (): void => {
-        this.stopEditing();
+        if (!this.stopEditing()) {
+            this.inputElement?.focus();
+        }
     };
 
     /**
