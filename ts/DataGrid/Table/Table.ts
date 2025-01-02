@@ -295,6 +295,7 @@ class Table {
      */
     public loadPresentationData(): void {
         this.dataTable = this.dataGrid.presentationTable as DataTable;
+
         for (const column of this.columns) {
             column.loadData();
         }
