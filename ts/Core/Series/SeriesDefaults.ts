@@ -1,4 +1,4 @@
-/* *
+/* *SeriesDefau
  *
  *  (c) 2010-2024 Torstein Honsi
  *
@@ -556,14 +556,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Whether or not data-points with the value of `null` should be interactive.
      * When this is set to `true`, tooltips may highlight these points, and this
      * option also enables keyboard navigation for such points. Format options
-     * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter)
+     * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter).
+     * Works for these series: `line`, `spline`, `area`, `area-spline`,
+     * `column`, `bar`, and* `timeline`.
      *
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
      *
      * @type      {boolean|undefined}
      * @product   highcharts highstock
-     * @apioption plotOptions.line.nullInteraction
+     * @apioption plotOptions.series.nullInteraction
      */
 
     /**
@@ -631,7 +633,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highcharts} highcharts/plotoptions/series-pointintervalunit/
      *         One point a month
-     * @sample {highstock} highcharts/plotoptions/series-pointintervalunit/
+     * @sample {highstoc/k} highcharts/plotoptions/series-pointintervalunit/
      *         One point a month
      *
      * @type       {string}
