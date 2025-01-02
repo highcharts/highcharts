@@ -28,8 +28,10 @@ import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import DGUtils from '../../Utils.js';
+import Utils from '../../../Core/Utilities.js';
 
 const { sanitizeText } = DGUtils;
+const { isString } = Utils;
 
 /* *
  *
@@ -144,7 +146,7 @@ class HeaderRow extends Row {
                 );
             }
 
-            if (headerFormat) {
+            if (isString(headerFormat)) {
                 if (!headerCell.options.header) {
                     headerCell.options.header = {};
                 }
