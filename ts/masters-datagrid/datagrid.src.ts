@@ -29,6 +29,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import Validator from '../DataGrid/Table/ColumnTypes/Validator.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -47,9 +48,10 @@ import '../Data/Modifiers/SortModifier.js';
  * */
 
 
+type GlobalsType = typeof Globals;
+
 declare global {
-    interface DataGridNamespace {
-        win: typeof Globals.win;
+    interface DataGridNamespace extends GlobalsType {
         AST: typeof AST;
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
@@ -63,6 +65,7 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        Validator: typeof Validator;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -78,7 +81,7 @@ declare global {
  * */
 
 
-const G = Globals as unknown as DataGridNamespace;
+const G = Globals as DataGridNamespace;
 
 G.AST = AST;
 G.DataConnector = DataConnector;

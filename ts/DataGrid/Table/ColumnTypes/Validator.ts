@@ -21,8 +21,6 @@
  *
  * */
 
-import type DT from '../../../Data/DataTable';
-
 import Table from '../Table.js';
 import TableCell from '../Content/TableCell.js';
 
@@ -143,10 +141,8 @@ namespace Validator {
 
     export type ValidateFunction = (this: TableCell, value: string) => boolean;
 
-    export type ParseFunction = (this: TableCell, value: string) => DT.CellType;
-
     export interface RuleDefinition {
-        validate: ParseFunction;
+        validate: ValidateFunction;
         errorMessage: string;
     }
 
