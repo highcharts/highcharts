@@ -494,6 +494,11 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: 0;
 }
 
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error {
+    outline: none;
+    box-shadow: inset 0 0 0 var(--idg-negative-border-size) var(--idg-negative-border-color) !important;
+}
+
 .highcharts-datagrid-table tbody td:focus,
 .highcharts-datagrid-table thead th:focus-visible {
     outline: none;

@@ -121,13 +121,22 @@ class CellEditing {
         */
 
         const validationRules = column.options.validation;
+
         if (
             validationRules &&
             !validationRules.rules.call(editedCell, newValue)
         ) {
-            // eslint-disable-next-line no-console
-            console.error('Wrong value: ', validationRules.errorMessage);
+            cell.htmlElement.classList.add(Globals.classNames.editedCellError);
+
+            // 1. Set position
+            // 2. Show
+            // 3. Set text
+
             return;
+        } else {
+            cell.htmlElement.classList.remove(
+                Globals.classNames.editedCellError
+            );
         }
 
         void cell.setValue(

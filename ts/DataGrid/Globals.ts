@@ -82,6 +82,7 @@ namespace Globals {
         syncedCell: classNamePrefix + 'synced-cell',
         syncedColumn: classNamePrefix + 'synced-column',
         editedCell: classNamePrefix + 'edited-cell',
+        editedCellError: classNamePrefix + 'edited-cell-error',
         mockedCell: classNamePrefix + 'mocked-cell',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         virtualization: classNamePrefix + 'virtualization',
