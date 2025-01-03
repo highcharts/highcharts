@@ -66,13 +66,11 @@ class TextBuilder {
         this.svgElement = svgElement;
         this.width = svgElement.textWidth;
 
-        this.textLineHeight = textStyles && textStyles.lineHeight;
-        this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(
-            textStyles && textStyles.textOverflow === 'ellipsis'
-        );
+        this.textLineHeight = textStyles?.lineHeight;
+        this.textOutline = textStyles?.textOutline;
+        this.ellipsis = Boolean(textStyles?.textOverflow === 'ellipsis');
         this.lineClamp = textStyles?.lineClamp;
-        this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
+        this.noWrap = Boolean(textStyles?.whiteSpace === 'nowrap');
     }
 
     public ellipsis: boolean;
@@ -454,7 +452,7 @@ class TextBuilder {
             }
 
             // Modify styling
-            if (style && style.color) {
+            if (style?.color) {
                 style.fill = style.color;
             }
 
@@ -465,7 +463,7 @@ class TextBuilder {
 
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
-                if (nextNode && nextNode.textContent) {
+                if (nextNode?.textContent) {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }
@@ -552,7 +550,7 @@ class TextBuilder {
                         lengths[end] = startAt +
                             (parentNode as any).getSubStringLength(
                                 0,
-                                words && !startAt ? end + 1 : end
+                                words ? end + 1 : end
                             );
 
                     } catch (e) {

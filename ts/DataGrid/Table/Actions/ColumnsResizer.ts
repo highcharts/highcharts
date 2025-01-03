@@ -28,7 +28,9 @@ import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import DGUtils from '../../Utils.js';
 import Cell from '../Cell.js';
+import Utils from '../../../Core/Utilities.js';
 const { makeHTMLElement } = DGUtils;
+const { getStyle } = Utils;
 
 
 /* *
@@ -125,7 +127,14 @@ class ColumnsResizer {
 
         const leftColW = this.columnStartWidth ?? 0;
         const rightColW = this.nextColumnStartWidth ?? 0;
-        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
+        const colHtmlElement = column.cells[1].htmlElement;
+        const MIN_WIDTH = Math.max(
+            (
+                (getStyle(colHtmlElement, 'padding-left', true) || 0) +
+                (getStyle(colHtmlElement, 'padding-right', true) || 0) +
+                (getStyle(colHtmlElement, 'border-left', true) || 0)
+            ), Column.MIN_COLUMN_WIDTH
+        );
 
         let newLeftW = leftColW + diff;
         let newRightW = rightColW - diff;
@@ -212,16 +221,21 @@ class ColumnsResizer {
         }
 
         const diff = e.pageX - (this.dragStartX || 0);
+        const vp = this.viewport;
 
-        if (this.viewport.columnDistribution === 'full') {
+        if (vp.columnDistribution === 'full') {
             this.fullDistributionResize(diff);
         } else {
             this.fixedDistributionResize(diff);
         }
 
-        this.viewport.reflow();
-        this.viewport.rowsVirtualizer.adjustRowHeights();
-        this.viewport.dataGrid.options?.events?.column?.afterResize?.call(
+        vp.reflow(true);
+
+        if (vp.dataGrid.options?.rendering?.rows?.virtualization) {
+            vp.rowsVirtualizer.adjustRowHeights();
+        }
+
+        vp.dataGrid.options?.events?.column?.afterResize?.call(
             this.draggedColumn
         );
     };
@@ -255,6 +269,16 @@ class ColumnsResizer {
         column: Column
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
+            const vp = column.viewport;
+
+            if (!vp.dataGrid.options?.rendering?.rows?.virtualization) {
+                vp.dataGrid.contentWrapper?.classList.add(
+                    Globals.classNames.resizerWrapper
+                );
+                // Apply widths before resizing
+                this.viewport.reflow(true);
+            }
+
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;

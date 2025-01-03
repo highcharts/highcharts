@@ -1,11 +1,10 @@
-Synchronizing **Dashboards** components
-===
+# Synchronizing Dashboards components
 
 In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
 
-## How to synchronize **Dashboards** components?
+## How to synchronize Dashboards components?
 
 To synchronize components, you need to specify the event you want to synchronize between each component.
 Additionally, both components must use the same connector from the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling), a prerequisite for all predefined synchronization types to work.
@@ -114,7 +113,7 @@ sync: {
 ```
 
 
-### Sync groups
+### Synchronization groups
 
 By default, all components with a given type of synchronization enabled and sharing the same connector are synchronized. If you want to synchronize only specific components, you can do so using the [`group`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group) option, which is available for each type of synchronization.
 
@@ -164,7 +163,6 @@ To add synchronization to a [custom component](https://www.highcharts.com/docs/d
 * `defaultSyncPairs` - a record of default `emitter` and `handler` definitions per defined synchronization type.
 
 Additionally, after the component has finished rendering, you must run the `this.sync.start()` method to register the options and run the handlers and emitters.
-
 
 ```js
 class CustomComponent extends Component {

@@ -472,12 +472,8 @@ class Series {
 
         const events = options.events;
         if (
-            (events && events.click) ||
-            (
-                options.point &&
-                options.point.events &&
-                options.point.events.click
-            ) ||
+            events?.click ||
+            options.point?.events?.click ||
             options.allowPointSelect
         ) {
             chart.runTrackerClick = true;
@@ -497,7 +493,7 @@ class Series {
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }
-        series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+        series._i = pick(lastSeries?._i, -1) + 1;
         series.opacity = series.options.opacity;
 
         // Insert the series and re-order all series above the insertion
@@ -505,7 +501,7 @@ class Series {
         chart.orderItems('series', insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
-        if (options.dataSorting && options.dataSorting.enabled) {
+        if (options.dataSorting?.enabled) {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
@@ -996,10 +992,10 @@ class Series {
         optionsObject: PointOptions,
         fromIndex: number
     ): (number|undefined) {
-        const id = optionsObject.id,
-            x = optionsObject.x,
+        const { id, x } = optionsObject,
             oldData = this.points,
-            dataSorting = this.options.dataSorting;
+            dataSorting = this.options.dataSorting,
+            cropStart = this.cropStart || 0;
 
         let matchingPoint: Point|undefined,
             matchedById: boolean|undefined,
@@ -1020,7 +1016,7 @@ class Series {
             let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
                 oldPoint.index === optionsObject.index;
 
-            if (dataSorting && dataSorting.matchByName) {
+            if (dataSorting?.matchByName) {
                 matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
                     oldPoint.name === optionsObject.name;
 
@@ -1038,7 +1034,7 @@ class Series {
         }
 
         if (matchingPoint) {
-            pointIndex = matchingPoint && matchingPoint.index;
+            pointIndex = matchingPoint?.index;
             if (typeof pointIndex !== 'undefined') {
                 matchedById = true;
             }
@@ -1055,14 +1051,14 @@ class Series {
             typeof pointIndex !== 'undefined' &&
             this.cropped
         ) {
-            pointIndex = (pointIndex >= (this.cropStart as any)) ?
-                pointIndex - (this.cropStart as any) : pointIndex;
+            pointIndex = pointIndex >= cropStart ?
+                pointIndex - cropStart : pointIndex;
         }
 
         if (
             !matchedById &&
             isNumber(pointIndex) &&
-            oldData[pointIndex] && oldData[pointIndex].touched
+            oldData[pointIndex]?.touched
         ) {
             pointIndex = void 0;
         }
@@ -1083,11 +1079,10 @@ class Series {
         data: Array<(PointOptions|PointShortOptions)>,
         animation?: (boolean|Partial<AnimationOptions>)
     ): boolean {
-        const options = this.options,
+        const { options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.points,
             pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            requireSorting = this.requireSorting,
             equalLength = data.length === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1098,19 +1093,17 @@ class Series {
         this.xIncrement = null;
 
         // Iterate the new data
-        data.forEach(function (pointOptions, i): void {
+        data.forEach((pointOptions, i): void => {
             const optionsObject = (
-                defined(pointOptions) &&
-                    this.pointClass.prototype.optionsToObject.call(
-                        { series: this },
-                        pointOptions
-                    )
-            ) || {};
-            let pointIndex;
+                    defined(pointOptions) &&
+                        this.pointClass.prototype.optionsToObject.call(
+                            { series: this },
+                            pointOptions
+                        )
+                ) || {},
+                { id, x } = optionsObject;
 
-            // Get the x of the new data point
-            const x = optionsObject.x,
-                id = optionsObject.id;
+            let pointIndex;
 
             if (id || isNumber(x)) {
                 pointIndex = this.findPointIndex(
@@ -1118,9 +1111,8 @@ class Series {
                     lastIndex
                 );
 
-                // Matching X not found
-                // or used already due to ununique x values (#8995),
-                // add point (but later)
+                // Matching X not found or used already due to non-unique x
+                // values (#8995), add point (but later)
                 if (
                     pointIndex === -1 ||
                     typeof pointIndex === 'undefined'
@@ -1130,12 +1122,12 @@ class Series {
                 // Matching X found, update
                 } else if (
                     oldData[pointIndex] &&
-                    pointOptions !== (options.data as any)[pointIndex]
+                    pointOptions !== options.data?.[pointIndex]
                 ) {
                     oldData[pointIndex].update(
                         pointOptions,
                         false,
-                        null as any,
+                        void 0,
                         false
                     );
 
@@ -1159,7 +1151,7 @@ class Series {
                 if (
                     !equalLength ||
                     i !== pointIndex ||
-                    (dataSorting && dataSorting.enabled) ||
+                    dataSorting?.enabled ||
                     this.hasDerivedData
                 ) {
                     hasUpdatedByKey = true;
@@ -1175,19 +1167,19 @@ class Series {
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
-                if (point && !point.touched && point.remove) {
-                    point.remove(false, animation);
+                if (point && !point.touched) {
+                    point.remove?.(false, animation);
                 }
             }
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
-        } else if (equalLength && (!dataSorting || !dataSorting.enabled)) {
-            data.forEach(function (point, i): void {
+        } else if (equalLength && !dataSorting?.enabled) {
+            data.forEach((point, i): void => {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
                 if (point !== oldData[i].y && !oldData[i].destroyed) {
-                    oldData[i].update(point, false, null as any, false);
+                    oldData[i].update(point, false, void 0, false);
                 }
             });
             // Don't add new points since those configs are used above
@@ -1198,7 +1190,7 @@ class Series {
             succeeded = false;
         }
 
-        oldData.forEach(function (point): void {
+        oldData.forEach((point): void => {
             if (point) {
                 point.touched = false;
             }
@@ -1209,8 +1201,8 @@ class Series {
         }
 
         // Add new points
-        pointsToAdd.forEach(function (point): void {
-            this.addPoint(point, false, null as any, null as any, false);
+        pointsToAdd.forEach((point): void => {
+            this.addPoint(point, false, void 0, void 0, false);
         }, this);
 
         const xData = this.getColumn('x');
@@ -1284,7 +1276,7 @@ class Series {
     ): void {
         const series = this,
             oldData = series.points,
-            oldDataLength = (oldData && oldData.length) || 0,
+            oldDataLength = oldData?.length || 0,
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
@@ -1319,7 +1311,7 @@ class Series {
 
         const dataLength = data.length;
 
-        if (dataSorting && dataSorting.enabled) {
+        if (dataSorting?.enabled) {
             data = this.sortData(data);
         }
 
@@ -1557,8 +1549,7 @@ class Series {
                     seriesData = options.data as Array<PointOptions>;
 
                 if (
-                    (!options.dataSorting ||
-                    !options.dataSorting.enabled) &&
+                    !options.dataSorting?.enabled &&
                     seriesData
                 ) {
                     seriesData.forEach(function (pointOptions, i): void {
@@ -1796,8 +1787,7 @@ class Series {
             keys = options.keys,
             points = [],
             groupCropStartIndex: number = (
-                options.dataGrouping &&
-                options.dataGrouping.groupAll ?
+                options.dataGrouping?.groupAll ?
                     cropStart :
                     0
             ),
@@ -2793,7 +2783,7 @@ class Series {
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
-                seriesMarkerOptions && seriesMarkerOptions.radius
+                seriesMarkerOptions?.radius
             );
 
         // Handle hover and select states
@@ -2803,10 +2793,10 @@ class Series {
                 (pointMarkerOptions.states as any)[state];
 
             radius = pick(
-                pointStateOptions && pointStateOptions.radius,
-                seriesStateOptions && seriesStateOptions.radius,
+                pointStateOptions?.radius,
+                seriesStateOptions?.radius,
                 radius && radius + (
-                    seriesStateOptions && seriesStateOptions.radiusPlus ||
+                    seriesStateOptions?.radiusPlus ||
                     0
                 )
             );
@@ -2866,13 +2856,11 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesMarkerOptions = this.options.marker,
-            pointOptions = point && point.options,
-            pointMarkerOptions = (
-                (pointOptions && pointOptions.marker) || {}
-            ),
-            pointColorOption = pointOptions && pointOptions.color,
-            pointColor = point && point.color,
-            zoneColor = point && point.zone && point.zone.color;
+            pointOptions = point?.options,
+            pointMarkerOptions = pointOptions?.marker || {},
+            pointColorOption = pointOptions?.color,
+            pointColor = point?.color,
+            zoneColor = point?.zone?.color;
         let seriesStateOptions,
             pointStateOptions,
             color: (ColorType|undefined) = this.color,
@@ -2963,7 +2951,6 @@ class Series {
             data = series.data || [];
         let destroy: ('hide'|'destroy'),
             i,
-            point,
             axis;
 
         // Add event hook
@@ -2975,7 +2962,7 @@ class Series {
         // Erase from axes
         (series.axisTypes || []).forEach(function (AXIS: string): void {
             axis = (series as any)[AXIS];
-            if (axis && axis.series) {
+            if (axis?.series) {
                 erase(axis.series, series);
                 axis.isDirty = axis.forceRedraw = true;
             }
@@ -2989,10 +2976,7 @@ class Series {
         // Destroy all points with their elements
         i = data.length;
         while (i--) {
-            point = data[i];
-            if (point && point.destroy) {
-                point.destroy();
-            }
+            data[i]?.destroy?.();
         }
 
         for (const zone of series.zones) {
@@ -3642,14 +3626,30 @@ class Series {
     public searchKDTree(
         point: KDPointSearchObject,
         compareX?: boolean,
-        e?: PointerEvent
+        e?: PointerEvent,
+        suppliedPointEvaluator?: Function,
+        suppliedBSideCheckEvaluator?: Function
     ): (Point|undefined) {
         const series = this,
             [kdX, kdY] = this.kdAxisArray,
             kdComparer = compareX ? 'distX' : 'dist',
             kdDimensions = (series.options.findNearestPointBy || '')
                 .indexOf('y') > -1 ? 2 : 1,
-            useRadius = !!series.isBubble;
+            useRadius = !!series.isBubble,
+            pointEvaluator = suppliedPointEvaluator || ((
+                p1: Point,
+                p2: Point,
+                comparisonProp: 'distX' | 'dist'
+            ): [Point, boolean] => [
+                (p1[comparisonProp] || 0) < (p2[comparisonProp] || 0) ?
+                    p1 :
+                    p2,
+                false
+            ]),
+            bSideCheckEvaluator = suppliedBSideCheckEvaluator || ((
+                a: number,
+                b: number
+            ): boolean => a < b);
 
         /**
          * Set the one and two dimensional distance on the point object.
@@ -3682,9 +3682,8 @@ class Series {
         ): Point {
             const point = tree.point,
                 axis = series.kdAxisArray[depth % dimensions];
-            let nPoint1,
-                nPoint2,
-                ret = point;
+            let ret = point,
+                flip = false;
 
             setDistance(search, point);
 
@@ -3696,33 +3695,37 @@ class Series {
 
             // End of tree
             if (tree[sideA]) {
-                nPoint1 = doSearch(
-                    search, tree[sideA] as any, depth + 1, dimensions
-                );
 
-                ret = (
-                    (nPoint1 as any)[kdComparer] <
-                    (ret as any)[kdComparer] ?
-                        nPoint1 :
-                        point
-                );
-            }
-            if (tree[sideB]) {
-                // Compare distance to current best to splitting point to decide
-                // whether to check side B or not
-                if (Math.sqrt(tdist * tdist) < (ret as any)[kdComparer]) {
-                    nPoint2 = doSearch(
+                [ret, flip] = pointEvaluator(
+                    point,
+                    doSearch(
                         search,
-                        tree[sideB] as any,
+                        tree[sideA] as any,
                         depth + 1,
                         dimensions
-                    );
-                    ret = (
-                        (nPoint2 as any)[kdComparer] <
-                        (ret as any)[kdComparer] ?
-                            nPoint2 :
-                            ret
-                    );
+                    ),
+                    kdComparer
+                );
+
+            }
+            if (tree[sideB]) {
+
+                const sqrtTDist = Math.sqrt(tdist * tdist),
+                    retDist = (ret as any)[kdComparer];
+
+                // Compare distance to current best to splitting point to decide
+                // whether to check side B or no
+                if (bSideCheckEvaluator(sqrtTDist, retDist, flip)) {
+                    ret = pointEvaluator(
+                        ret,
+                        doSearch(
+                            search,
+                            tree[sideB] as any,
+                            depth + 1,
+                            dimensions
+                        ),
+                        kdComparer
+                    )[0];
                 }
             }
 
@@ -3926,7 +3929,7 @@ class Series {
         const series = this,
             seriesOptions = series.options,
             { chart, data, dataTable: table, xAxis } = series,
-            names = xAxis && xAxis.hasNames && xAxis.names,
+            names = xAxis?.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
             xData = series.getColumn('x');
         let isInTheMiddle,
@@ -4403,7 +4406,7 @@ class Series {
                 }
             }
             for (const point of this.points) {
-                if (point && point.series) {
+                if (point?.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
                     // series options.

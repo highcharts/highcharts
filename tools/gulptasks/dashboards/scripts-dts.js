@@ -74,6 +74,13 @@ async function scriptsDTS() {
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
+
+        fsLib.copyAllFiles(
+            path.join('ts', dtsFolder),
+            path.join(esModulesFolderDataGrid, dtsFolder),
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts')
+        );
     }
 
     logLib.success('Copied stand-alone DTS');

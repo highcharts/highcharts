@@ -21,6 +21,7 @@ import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import H from './Globals.js';
 const {
+    pageLang,
     win
 } = H;
 import U from './Utilities.js';
@@ -93,9 +94,17 @@ const spanishWeekdayIndex = (weekday: string): number =>
  * `Highcharts.setOptions`, or individually for each Chart item through the
  * [time](https://api.highcharts.com/highcharts/time) options set.
  *
- * The Time object is available from {@link Highcharts.Chart#time},
- * which refers to  `Highcharts.time` if no individual time settings are
- * applied.
+ * The Time object is available from {@link Highcharts.Chart#time}, which refers
+ * to  `Highcharts.time` unless individual time settings are applied for each
+ * chart.
+ *
+ * When configuring time settings for individual chart instances, be aware that
+ * using `Highcharts.dateFormat` or `Highcharts.time.dateFormat` within
+ * formatter callbacks relies on the global time object, which applies the
+ * global language and time zone settings. To ensure charts with local time
+ * settings function correctly, use `chart.time.dateFormat? instead. However,
+ * the recommended best practice is to use `setOptions` to define global time
+ * settings unless specific configurations are needed for each chart.
  *
  * @example
  * // Apply time settings globally
@@ -133,8 +142,8 @@ const spanishWeekdayIndex = (weekday: string): number =>
  * @class
  * @name Highcharts.Time
  *
- * @param {Highcharts.TimeOptions} [options]
- * Time options as defined in [chart.options.time](/highcharts/time).
+ * @param {Highcharts.TimeOptions} [options] Time options as defined in
+ * [chart.options.time](/highcharts/time).
  */
 class Time {
 
@@ -158,7 +167,9 @@ class Time {
      *
      * */
 
-    public options: Time.TimeOptions = {};
+    public options: Time.TimeOptions = {
+        timezone: 'UTC'
+    };
 
     public timezone?: string;
 
@@ -195,8 +206,6 @@ class Time {
         options: Time.TimeOptions = {}
     ): void {
 
-        let timezone: string|undefined = options.timezone ?? 'UTC';
-
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
@@ -205,6 +214,8 @@ class Time {
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
+        // Assign the time zone. Handle the legacy, deprecated `useUTC` option.
+        let timezone = options.timezone;
         if (defined(useUTC)) {
             timezone = useUTC ? 'UTC' : void 0;
         }
@@ -317,7 +328,7 @@ class Time {
     private dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale
+        locale: string|Array<string>|undefined = this.options.locale || pageLang
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {
@@ -776,7 +787,7 @@ class Time {
         } else if (isObject(format)) {
             const tzHours = (this.getTimezoneOffset(timestamp) || 0) /
                     (60000 * 60),
-                timeZone = this.options.timezone || (
+                timeZone = this.timezone || (
                     'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
                 ),
                 { prefix = '', suffix = '' } = format;
@@ -1071,7 +1082,7 @@ class Time {
      *         The optimal date format for a point.
      */
     public getDateFormat(
-        range: number,
+        range: number | undefined,
         timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
@@ -1094,6 +1105,7 @@ class Time {
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
             if (
+                range &&
                 range === timeUnits.week &&
                 +this.dateFormat('%w', timestamp) === startOfWeek &&
                 dateStr.substr(6) === blank.substr(6)
@@ -1103,7 +1115,7 @@ class Time {
             }
 
             // The first format that is too great for the range
-            if (timeUnits[n] > range) {
+            if (range && timeUnits[n] > range) {
                 n = lastN;
                 break;
             }
