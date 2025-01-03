@@ -63,13 +63,18 @@ async function langBuild() {
 */
 
 import D from '../../Core/Defaults.js';
+
 const { setOptions } = D;
 
 const languageOptions = ${JSON.stringify(jsonContent, null, 4)};
 
 setOptions({
     lang: languageOptions
-});`;
+});
+
+// Export Highcharts
+export default D;
+`;
 
 
     for (const langFile of langFiles) {
