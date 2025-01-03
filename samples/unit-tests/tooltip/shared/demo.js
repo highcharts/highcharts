@@ -324,7 +324,7 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
             data: [2, 6, 4],
             type: 'column'
         }, {
-            data: [4, 7, 9],
+            data: [4, 7, 9, 1],
             type: 'column',
             yAxis: 1
         }],
@@ -342,12 +342,38 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
     });
 
     const controller = new TestController(chart);
-    const point = chart.series[2].points[0];
+    let point = chart.series[2].points[0];
     const axis = chart.yAxis[1];
 
     controller.moveTo(axis.left + point.plotX, axis.top + point.plotY + 5);
     assert.notOk(
         chart.tooltip.isHidden,
         '#16004: Tooltip should be visible'
+    );
+
+    // Move to a single point
+    point = chart.series[2].points[3];
+    controller.moveTo(axis.left + point.plotX, axis.top + point.plotY + 5);
+
+    assert.ok(
+        !!chart.tooltip.label.anchorX,
+        'Tooltip should have anchorX for a single point'
+    );
+    assert.ok(
+        !!chart.tooltip.label.anchorY,
+        'Tooltip should have anchorY for a single point'
+    );
+
+    // Move from a single point to multiple points
+    point = chart.series[2].points[2];
+    controller.moveTo(axis.left + point.plotX, axis.top + point.plotY + 5);
+
+    assert.ok(
+        !chart.tooltip.label.anchorX,
+        'Tooltip should NOT have anchorX for multiple points'
+    );
+    assert.ok(
+        !chart.tooltip.label.anchorY,
+        'Tooltip should NOT have anchorY for multiple points'
     );
 });

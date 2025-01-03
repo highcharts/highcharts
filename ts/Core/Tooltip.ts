@@ -960,6 +960,9 @@ class Tooltip {
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
+        } else {
+            // Clear anchor with NaN to prevent animation (#22295)
+            attr.anchorX = attr.anchorY = NaN;
         }
 
         animation.step = (): void => tooltip.drawTracker();
