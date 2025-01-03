@@ -114,11 +114,12 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.check(cell, newValue, validationErrors)) {
-                // eslint-disable-next-line no-console
-                console.error('Wrong value.', validationErrors);
-                // TODO: Show error && handle it in the voice reader
+            if (!vp.validator.validate(cell, newValue, validationErrors)) {
+                vp.validator.initErrorBox(cell, validationErrors);
                 return false;
+            } else {
+                vp.validator.hide();
+                vp.validator.errorCell = void 0;
             }
         }
 

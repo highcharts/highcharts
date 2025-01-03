@@ -29,6 +29,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../DataGrid/Defaults.js';
 import Globals from '../DataGrid/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
+import _Validator from '../DataGrid/Table/ColumnTypes/Validator.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -64,6 +65,7 @@ declare global {
         isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
         defaultOptions: typeof Defaults.defaultOptions;
         setOptions: typeof Defaults.setOptions;
+        validator: typeof _Validator;
     }
     interface Window {
         DataGrid: DataGridNamespace;
@@ -94,6 +96,7 @@ G.DataTable = DataTable;
 G.defaultOptions = Defaults.defaultOptions;
 G.setOptions = Defaults.setOptions;
 G.isHighContrastModeActive = whcm.isHighContrastModeActive;
+G.validator = _Validator;
 
 
 /* *

@@ -23,7 +23,11 @@
 
 import Table from '../Table.js';
 import TableCell from '../Content/TableCell.js';
+import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
+import Cell from '../Cell.js';
 
+const { makeDiv } = DGUtils;
 
 /* *
  *
@@ -45,6 +49,16 @@ class Validator {
 
     public viewport: Table;
 
+    /**
+     * The cell that has an error.
+     */
+    public errorCell?: Cell;
+
+    /**
+     * HTML Element for the errors.
+     */
+    public errorsContainer: HTMLElement;
+
 
     /* *
      *
@@ -54,6 +68,10 @@ class Validator {
 
     constructor(viewport: Table) {
         this.viewport = viewport;
+        this.errorsContainer = makeDiv(Globals.classNames.errorsContainer);
+        this.viewport.dataGrid.contentWrapper?.appendChild(
+            this.errorsContainer
+        );
     }
 
 
@@ -69,16 +87,13 @@ class Validator {
      * @param cell
      * Edited cell
      *
-     * @param value
-     * New value
-     *
      * @param errors
      * An output array for error messages.
      *
      * @returns
      * Returns true if the value is valid, false otherwise.
      */
-    public check(
+    public validate(
         cell: TableCell,
         value: string,
         errors: string[] = []
@@ -107,17 +122,70 @@ class Validator {
         return !errors.length;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public show(cell: TableCell, message: string): void {
-        /// pass
+    /**
+     * Set content and adjust the position.
+     *
+     * @param cell
+     * Cell that is currently edited and is not valid.
+     *
+     * @param errors
+     * An array of error messages.
+     *
+     */
+    public initErrorBox(cell: TableCell, errors: string[]): void {
+        this.errorCell = cell;
+
+        // Set error container position
+        this.setPosition();
+        // Set width and content
+        this.errorsContainer.innerHTML = errors.join('<br />');
+
+        this.show();
     }
 
+    /**
+     * Highlight the non-valid cell and display error in the box.
+     */
+    public show(): void {
+        this.errorCell?.htmlElement.classList.add(
+            Globals.classNames.editedCellError
+        );
+        this.errorsContainer.style.display = 'block';
+    }
+
+    /**
+     * Hide the error and unset highlight on cell.
+     */
     public hide(): void {
-        /// pass
+        this.errorsContainer.style.display = 'none';
+        this.errorCell?.htmlElement.classList.remove(
+            Globals.classNames.editedCellError
+        );
     }
 
+    /**
+     * Set the position of the error box.
+     */
+    public setPosition(): void {
+        const cellPosition =
+            this.errorCell?.htmlElement.getBoundingClientRect();
+
+        if (!cellPosition) {
+            return;
+        }
+
+        this.errorsContainer.style.top =
+            (cellPosition.top + cellPosition.height) + 'px';
+        this.errorsContainer.style.left = cellPosition.left + 'px';
+        this.errorsContainer.style.width = cellPosition.width + 'px';
+    }
+
+    /**
+     * Destroy validator.
+     */
     public destroy(): void {
-        /// pass
+        this.errorCell = void 0;
+        this.errorsContainer.remove();
     }
 }
 
