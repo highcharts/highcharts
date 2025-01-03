@@ -16,6 +16,7 @@
  *
  * */
 
+import type AlignObject from './Renderer/AlignObject';
 import type Chart from './Chart/Chart';
 import type Point from './Series/Point';
 import type Pointer from './Pointer';
@@ -1777,13 +1778,15 @@ class Tooltip {
                 pointer,
                 renderer
             } = this,
+            label = this.getLabel(),
             {
                 height = 0,
                 width = 0
-            } = this.getLabel(),
+            } = label,
+            { position, positioner } = options,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
-            pos = (options.positioner || this.getPosition).call(
+            pos = (positioner || this.getPosition).call(
                 this,
                 width,
                 height,
@@ -1799,7 +1802,7 @@ class Tooltip {
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
             // Corrects positions, occurs with tooltip positioner (#16944)
-            if (options.positioner) {
+            if (positioner) {
                 pos.x += left - distance;
                 pos.y += top - distance;
             }
@@ -1831,6 +1834,16 @@ class Tooltip {
             }
             anchorX += left - pos.x;
             anchorY += top - pos.y;
+
+        // Fixed position doesn't work with outside because we can't simply run
+        // `align()` on the label inside the external container.
+        } else if (position?.fixed) {
+            label.align(
+                extend<AlignObject>({ width, height }, position),
+                false,
+                position.relativeTo || 'plotBox'
+            );
+            return;
         }
 
         // Do the move
