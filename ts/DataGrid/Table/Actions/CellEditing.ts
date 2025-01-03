@@ -114,11 +114,11 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.check(cell, newValue, validationErrors)) {
-                // eslint-disable-next-line no-console
-                console.error('Wrong value.', validationErrors);
-                // TODO: Show error && handle it in the voice reader
+            if (!vp.validator.validate(cell, newValue, validationErrors)) {
+                vp.validator.show(cell, validationErrors);
                 return false;
+            } else {
+                vp.validator.hide(cell);
             }
         }
 
@@ -132,29 +132,6 @@ class CellEditing {
         if (!isNaN(+newValue)) {
             newValue = +newValue;
         }
-// <<<<<<< HEAD
-//         */
-
-//         const validationRules = column.options.validation;
-
-//         if (
-//             validationRules &&
-//             !validationRules.rules.call(editedCell, newValue)
-//         ) {
-//             cell.htmlElement.classList.add(Globals.classNames.editedCellError);
-
-//             // 1. Set position
-//             // 2. Show
-//             // 3. Set text
-
-//             return;
-//         } else {
-//             cell.htmlElement.classList.remove(
-//                 Globals.classNames.editedCellError
-//             );
-//         }
-// =======
-// >>>>>>> dash/dg-validation-base
 
         void cell.setValue(
             submit ? newValue : cell.value,

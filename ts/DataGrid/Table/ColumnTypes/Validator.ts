@@ -23,7 +23,10 @@
 
 import Table from '../Table.js';
 import TableCell from '../Content/TableCell.js';
+import Globals from '../../Globals.js';
+import DGUtils from '../../Utils.js';
 
+const { makeDiv } = DGUtils;
 
 /* *
  *
@@ -45,6 +48,8 @@ class Validator {
 
     public viewport: Table;
 
+    public errorsContainer: HTMLElement;
+
 
     /* *
      *
@@ -54,6 +59,10 @@ class Validator {
 
     constructor(viewport: Table) {
         this.viewport = viewport;
+        this.errorsContainer = makeDiv(Globals.classNames.errorsContainer);
+        this.viewport.dataGrid.contentWrapper?.appendChild(
+            this.errorsContainer
+        );
     }
 
 
@@ -78,7 +87,7 @@ class Validator {
      * @returns
      * Returns true if the value is valid, false otherwise.
      */
-    public check(
+    public validate(
         cell: TableCell,
         value: string,
         errors: string[] = []
@@ -108,16 +117,18 @@ class Validator {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public show(cell: TableCell, message: string): void {
-        /// pass
+    public show(cell: TableCell, message: string[]): void {
+        cell.htmlElement.classList.add(Globals.classNames.editedCellError);
     }
 
-    public hide(): void {
-        /// pass
+    public hide(cell: TableCell): void {
+        cell.htmlElement.classList.remove(
+            Globals.classNames.editedCellError
+        );
     }
 
     public destroy(): void {
-        /// pass
+
     }
 }
 

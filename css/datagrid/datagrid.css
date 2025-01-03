@@ -494,11 +494,6 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     padding: 0;
 }
 
-.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error {
-    outline: none;
-    box-shadow: inset 0 0 0 var(--idg-negative-border-size) var(--idg-negative-border-color) !important;
-}
-
 .highcharts-datagrid-table tbody td:focus,
 .highcharts-datagrid-table thead th:focus-visible {
     outline: none;
@@ -590,6 +585,12 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     box-shadow: inset 0 0 0 1px #0000ed;
     padding: var(--idg-padding);
     background: #b7d4ff;
+}
+
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell-error input:focus {
+    box-shadow: inset 0 0 0 1px var(--idg-negative-border-color) !important;
+    background-color: var(--idg-negative-background) !important;
 }
 
 /* Accessibility */
@@ -694,6 +695,15 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table thead tr th.hcdg-left,
 .highcharts-datagrid-table tbody tr td.hcdg-left {
     text-align: left;
+}
+
+/* Errors container */
+.highcharts-datagrid-table .highcharts-datagrid-errors-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
 }
 
 /* End DataGrid CSS Helpers Classes */

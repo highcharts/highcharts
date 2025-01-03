@@ -20,9 +20,6 @@
  *
  * */
 
-import _Validator from '../DataGrid/Table/ColumnTypes/Validator.js';
-
-
 /* *
  *
  *  Namespace
@@ -68,6 +65,7 @@ namespace Globals {
 
     export const classNames = {
         container: classNamePrefix + 'container',
+        errorsContainer: classNamePrefix + 'errors-container',
         tableElement: classNamePrefix + 'table',
         captionElement: classNamePrefix + 'caption',
         descriptionElement: classNamePrefix + 'description',
@@ -110,8 +108,6 @@ namespace Globals {
     export const userAgent = (win.navigator && win.navigator.userAgent) || '';
     export const isChrome = userAgent.indexOf('Chrome') !== -1;
     export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
-    export const Validator = _Validator;
-
 }
 
 /* *
