@@ -201,19 +201,29 @@ class TimelinePoint extends LinePoint {
     public constructor(series: TimelineSeries, options: TimelinePointOptions) {
         super(series, options);
 
-        this.name ??= 'Event';
+        this.name ??= (
+            // If options is null, we are dealing with a null point
+            (options || !series.options.nullInteraction) &&
+                'Event' ||
+                'Null'
+        );
+
         this.y = 1;
     }
 
     public isValid(): boolean {
-        return this.options.y !== null;
+        return (
+            this.options.y !== null ||
+            this.series.options.nullInteraction ||
+            true
+        );
     }
 
     public setState(): void {
         const proceed = super.setState;
 
         // Prevent triggering the setState method on null points.
-        if (!this.isNull) {
+        if (!this.isNull || this.series.options.nullInteraction) {
             proceed.apply(this, arguments);
         }
     }
@@ -240,9 +250,29 @@ class TimelinePoint extends LinePoint {
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
-        options = Point.prototype.optionsToObject.call(this, options);
+        const isNull = (
+            this.isNull ||
+            options === null ||
+            (options as PointOptions).y === null
+        );
+
+        if (!x) {
+            x = this.x || this.series.xIncrement || 0;
+            this.series.autoIncrement();
+        }
+
+        options = Point.prototype.optionsToObject.call(
+            this,
+            options ?? (
+                (this.series.options.nullInteraction && { y: 0 }) ||
+                    null
+            )
+        );
+
         this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
-        return super.applyOptions(options, x);
+        const p = super.applyOptions(options, x);
+        p.isNull = isNull;
+        return p;
     }
 
 }
