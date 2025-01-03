@@ -15,7 +15,7 @@ function renderChart() {
         xAxis: {
             type: 'datetime',
             dateTimeLabelFormats: {
-                month: '%B %Y'
+                month: '%[BY]'
             }
         },
         series: [
