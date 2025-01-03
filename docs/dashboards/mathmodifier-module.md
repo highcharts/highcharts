@@ -1,12 +1,11 @@
-MathModifier module
-===================
+# MathModifier module
 
 The `MathModifier` provides different functions to run pre-defined formulas on a
 table, or to calculate the pre-filled formulas loaded into the table cells.
-MathModifier's integrated formula system supports a subset of known spreadsheet
+`MathModifier`'s integrated formula system supports a subset of known spreadsheet
 functions, but more can be defined by your needs.
 
-As in spreadsheets, you can use cell and range references. The MathModifier
+As in spreadsheets, you can use cell and range references. The `MathModifier`
 supports the following reference syntaxes:
 
 * `A1`: One or more capital letters are the index for the column, while one or 
@@ -34,13 +33,10 @@ For performance reasons, a reference to a formula cell is only supported as:
 
 
 As with every `DataModifier`, the original table will not be altered by the
-MathModifier, and instead, a table clone is created containing the calculated
+`MathModifier`, and instead, a table clone is created containing the calculated
 values.
 
-
-
-Pre-defined Column Calculations
--------------------------------
+## Pre-defined column calculations
 
 You can pre-define formulas in the MathModifier options to create new
 columns with calculations based on existing columns. You can also replace an
@@ -57,14 +53,11 @@ your formulas will be adjusted accordingly to each row.
 }
 ```
 
+## Pre-filled column calculations
 
-
-Pre-filled Column Calculations
-------------------------------
-
-If the table already contains cells pre-filled with formulas, then these will automatically be processed by the MathModifier. A formula in a cell has to start
+If the table already contains cells pre-filled with formulas, then these will automatically be processed by the `MathModifier`. A formula in a cell has to start
 with an equal sign (`=`) as the first character, to get calculated by the
-MathModifier.
+`MathModifier`.
 
 ``` JavaScript
 {
@@ -77,12 +70,9 @@ MathModifier.
 }
 ```
 
+## Supported calculations & functions
 
-
-Supported Calculations & Functions
-----------------------------------
-
-The formula system of the MathModifier supports infinite combinations of
+The formula system of the `MathModifier` supports infinite combinations of
 calculations and function calls. Additionally, custom functions can be added, as described in a later section.
 
 
@@ -182,7 +172,7 @@ Custom-defined Functions
 ------------------------
 
 If you need to support another function, you can define it in the formula
-system of the MathModifier. You might need to support cell and range references depending on the implementation.
+system of the `MathModifier`. You might need to support cell and range references depending on the implementation.
 
 ``` JavaScript
 const Formula = Dashboards.DataModifier.types.Math.Formula;

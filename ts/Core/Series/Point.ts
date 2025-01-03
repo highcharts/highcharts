@@ -440,7 +440,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (!dataSorting || !dataSorting.enabled) {
+            if (!dataSorting?.enabled) {
                 destroyPoint();
 
             } else {
@@ -471,7 +471,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item && item.element) {
+                if (item?.element) {
                     item.destroy();
                 }
             });
@@ -546,8 +546,13 @@ class Point {
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
             (point.options.className ? ' ' + point.options.className : '') +
-            (point.zone && point.zone.className ? ' ' +
-                point.zone.className.replace('highcharts-negative', '') : '');
+            (
+                point.zone?.className ?
+                    ' ' + point.zone.className.replace(
+                        'highcharts-negative', ''
+                    ) :
+                    ''
+            );
     }
 
     /**
@@ -640,7 +645,7 @@ class Point {
             this.nonZonedColor = this.color;
         }
 
-        if (zone && zone.color && !this.options.color) {
+        if (zone?.color && !this.options.color) {
             this.color = zone.color;
         } else {
             this.color = this.nonZonedColor;
@@ -1069,7 +1074,7 @@ class Point {
 
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
-                if (graphic && graphic.element) {
+                if (graphic?.element) {
                     // "null" is also a valid symbol
                     if (
                         options &&
@@ -1383,11 +1388,8 @@ class Point {
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
-            markerStateOptions = ((
-                markerOptions &&
-                markerOptions.states &&
-                (markerOptions.states as any)[state || 'normal']
-            ) || {}),
+            markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
+                {},
             stateDisabled = (markerStateOptions as any).enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
@@ -1565,13 +1567,10 @@ class Point {
         // Show me your halo
         const haloOptions = stateOptions.halo;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
-        const markerVisibility = (
-            markerGraphic && markerGraphic.visibility || 'inherit'
-        );
+        const markerVisibility = markerGraphic?.visibility || 'inherit';
 
         if (
-            haloOptions &&
-            haloOptions.size &&
+            haloOptions?.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster

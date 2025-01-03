@@ -1994,7 +1994,8 @@ class RangeSelector {
         const {
             chart,
             buttonGroup,
-            inputGroup
+            inputGroup,
+            initialButtonGroupWidth
         } = this;
 
         const {
@@ -2023,7 +2024,7 @@ class RangeSelector {
                 moveInputsDown();
 
                 if (
-                    this.initialButtonGroupWidth >
+                    initialButtonGroupWidth >
                     chart.plotWidth + xOffsetForExportButton - 20
                 ) {
                     this.collapseButtons();
@@ -2031,7 +2032,7 @@ class RangeSelector {
                     this.expandButtons();
                 }
             } else if (
-                this.initialButtonGroupWidth -
+                initialButtonGroupWidth -
                 xOffsetForExportButton +
                 inputGroup.getBBox().width >
                 chart.plotWidth
@@ -2044,7 +2045,14 @@ class RangeSelector {
             } else {
                 this.expandButtons();
             }
+        } else if (buttonGroup && dropdown === 'responsive') {
+            if (initialButtonGroupWidth > chart.plotWidth) {
+                this.collapseButtons();
+            } else {
+                this.expandButtons();
+            }
         }
+
         // Forced states
         if (buttonGroup) {
             if (dropdown === 'always') {

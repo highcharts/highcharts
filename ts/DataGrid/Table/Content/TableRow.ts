@@ -132,6 +132,22 @@ class TableRow extends Row {
     }
 
     /**
+     * Adds or removes the synced CSS class to the row element.
+     *
+     * @param synced
+     * Whether the row should be synced.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.htmlElement.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedRow
+        );
+
+        if (synced) {
+            this.viewport.dataGrid.syncedRowIndex = this.index;
+        }
+    }
+
+    /**
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
@@ -157,6 +173,10 @@ class TableRow extends Row {
 
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
+        }
+
+        if (this.viewport.dataGrid.syncedRowIndex === idx) {
+            el.classList.add(Globals.classNames.syncedRow);
         }
     }
 

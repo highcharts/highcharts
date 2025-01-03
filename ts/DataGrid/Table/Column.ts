@@ -235,6 +235,25 @@ class Column {
     }
 
     /**
+     * Adds or removes the synced CSS class to the column element
+     * and its cells.
+     *
+     * @param synced
+     * Whether the column should have synced state.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.header?.htmlElement?.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedColumn
+        );
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].htmlElement.classList[synced ? 'add' : 'remove'](
+                Globals.classNames.syncedColumn
+            );
+        }
+    }
+
+    /**
      * Creates a mock element to measure the width of the column from the CSS.
      * The element is appended to the viewport container and then removed.
      * It should be called only once for each column.
