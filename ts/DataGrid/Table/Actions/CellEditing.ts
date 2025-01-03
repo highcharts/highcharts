@@ -115,10 +115,11 @@ class CellEditing {
         if (submit) {
             const validationErrors: string[] = [];
             if (!vp.validator.validate(cell, newValue, validationErrors)) {
-                vp.validator.show(cell, validationErrors);
+                vp.validator.initErrorBox(cell, validationErrors);
                 return false;
             } else {
-                vp.validator.hide(cell);
+                vp.validator.hide();
+                vp.validator.errorCell = void 0;
             }
         }
 

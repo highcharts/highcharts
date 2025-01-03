@@ -698,12 +698,14 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 }
 
 /* Errors container */
-.highcharts-datagrid-table .highcharts-datagrid-errors-container {
+.highcharts-datagrid-errors-container {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100px;
-    height: 100px;
+    display: none;
+    background: var(--idg-negative-background);
+    color: var(--idg-negative-border-color);
+    padding: var(--hcdg-padding);
 }
 
 /* End DataGrid CSS Helpers Classes */
