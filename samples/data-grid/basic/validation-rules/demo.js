@@ -5,9 +5,11 @@ DataGrid.dataGrid('container', {
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes',
                 'Strawberries', 'Blueberries', 'Cherries', 'Mangoes'
             ],
-            weight: [100, 40, 0.5, 200, 150, 120, 50, 30, 25, 200],
+            numbers: [100, 40, 0.5, 200, 150, 120, 50, 30, 25, 200],
             price: [1.5, 2.53, 5, 4.5, 3, 2.8, 6, 4.2, 7, 3.5],
-            metaData: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'],
+            booleans: [
+                true, false, true, true, false, true, true, false, false, false
+            ],
             icon: [
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Oranges URL', 'Grapes URL', 'Strawberries URL',
@@ -26,12 +28,18 @@ DataGrid.dataGrid('container', {
         }
     },
     columns: [{
-        id: 'weight',
-        validation: {
-            rules: function () {
-                return isFinite(this.value) && this.value >= 0;
+        id: 'numbers',
+        validationRules: ['notEmpty', 'number']
+    }, {
+        id: 'booleans',
+        validationRules: ['bool']
+    }, {
+        id: 'icon',
+        validationRules: ['notEmpty', {
+            validate: function (value) {
+                return value.indexOf('URL') !== -1;
             },
-            errorMessage: 'Weight must be a positive number'
-        }
+            errorMessage: 'The value must contain "URL"'
+        }]
     }]
 });

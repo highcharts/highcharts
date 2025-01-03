@@ -25,6 +25,7 @@ import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type Validator from './Table/ColumnTypes/Validator';
 
 
 /* *
@@ -309,7 +310,7 @@ export interface ColumnOptions {
      *
      * If not set, the validation rules are applied according to the data type.
      */
-    validation?: ColumnValidationOptions;
+    validationRules?: (Validator.RuleKey|Validator.RuleDefinition)[];
 }
 
 /**
@@ -664,21 +665,6 @@ export interface LangOptions {
      * @default 'No data to display'
      */
     noData?: string;
-}
-
-/**
- * Validation options for the column.
- */
-export interface ColumnValidationOptions {
-    /**
-     * The validation rules for the column.
-     */
-    rules: (this: Cell, newValue: DataTable.CellType) => boolean;
-
-    /**
-     * The error message to display when the validation fails.
-     */
-    errorMessage: string;
 }
 
 

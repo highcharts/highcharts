@@ -20,6 +20,8 @@
  *
  * */
 
+import _Validator from '../DataGrid/Table/ColumnTypes/Validator.js';
+
 
 /* *
  *
@@ -108,6 +110,7 @@ namespace Globals {
     export const userAgent = (win.navigator && win.navigator.userAgent) || '';
     export const isChrome = userAgent.indexOf('Chrome') !== -1;
     export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
+    export const Validator = _Validator;
 
 }
 

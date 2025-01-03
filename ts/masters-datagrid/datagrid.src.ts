@@ -47,9 +47,10 @@ import '../Data/Modifiers/SortModifier.js';
  * */
 
 
+type GlobalsType = typeof Globals;
+
 declare global {
-    interface DataGridNamespace {
-        win: typeof Globals.win;
+    interface DataGridNamespace extends GlobalsType {
         AST: typeof AST;
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
@@ -78,7 +79,7 @@ declare global {
  * */
 
 
-const G = Globals as unknown as DataGridNamespace;
+const G = Globals as DataGridNamespace;
 
 G.AST = AST;
 G.DataConnector = DataConnector;
