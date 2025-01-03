@@ -2196,7 +2196,12 @@ class Axis {
 
         fireEvent(this, 'trimTicks');
 
-        if (!this.isLinked) {
+        if (
+            !this.isLinked ||
+            // Linked non-grid axes should trim ticks, #21743.
+            // Grid axis has custom handling of ticks.
+            !this.grid
+        ) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;
             } else {
