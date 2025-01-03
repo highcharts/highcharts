@@ -1001,7 +1001,11 @@ class Point {
             );
         });
 
-        return format(pointFormat, this, chart);
+        return format(
+            pointFormat,
+            { ...this, lang: chart.options.lang },
+            chart
+        );
     }
 
     /**

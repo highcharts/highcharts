@@ -3065,8 +3065,9 @@ namespace AxisDefaults {
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             *
+             * @apioption yAxis.title.text
              */
-            text: 'Values'
         },
 
         /**
