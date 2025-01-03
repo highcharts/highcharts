@@ -16,6 +16,11 @@
             text: 'AAPL Stock Price'
         },
 
+        tooltip: {
+            valueDecimals: 2,
+            valueSuffix: ' USD'
+        },
+
         series: [{
             name: 'AAPL Stock Price',
             id: 'aapl',
@@ -24,9 +29,6 @@
             marker: {
                 enabled: true,
                 radius: 2
-            },
-            tooltip: {
-                valueDecimals: 2
             },
             states: {
                 hover: {
