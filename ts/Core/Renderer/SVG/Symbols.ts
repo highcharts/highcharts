@@ -66,8 +66,8 @@ function arc(
             );
 
         if (fullCircle) {
-            start = 0;
-            end = 2 * Math.PI - proximity;
+            start = Math.PI / 2;
+            end = Math.PI * 2.5 - proximity;
         }
 
         const innerRadius = options.innerR,
