@@ -192,6 +192,23 @@ class RowsVirtualizer {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
+        const validator = this.viewport.validator;
+
+        if (validator.errorsContainer && validator.errorCell) {
+            const errorCellPosition =
+                validator.errorCell.htmlElement.getBoundingClientRect();
+
+            validator.setPosition();
+
+            if (
+                (errorCellPosition.top + errorCellPosition.height) >
+                target.getBoundingClientRect().top
+            ) {
+                validator.show();
+            } else {
+                validator.hide();
+            }
+        }
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
@@ -209,6 +226,7 @@ class RowsVirtualizer {
         this.rowCursor = rowCursor;
 
         this.adjustRowHeights();
+
         if (
             !this.strictRowHeights &&
             lastScrollTop > target.scrollTop &&
