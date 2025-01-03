@@ -1,0 +1,35 @@
+/* DO NOT EDIT */
+
+#container {
+    height: 400px;
+}
+
+details {
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px auto;
+
+    >pre {
+        padding: 12px 16px;
+        margin: 0;
+        font-size: 0.95em;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    summary {
+        background-color: #545ecc;
+        color: white;
+        font-weight: bold;
+        font-family: sans-serif;
+        padding: 12px 16px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        user-select: none;
+
+        &:focus {
+            border: 3px dashed yellow;
+        }
+    }
+}
