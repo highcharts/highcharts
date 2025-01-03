@@ -153,6 +153,40 @@ class DataTableCore {
     }
 
     /**
+     * Delete rows. Simplified version of the full
+     * `DataTable.deleteRows` method.
+     *
+     * @param {number} rowIndex
+     * The start row index
+     *
+     * @param {number} [rowCount=1]
+     * The number of rows to delete
+     *
+     * @return {void}
+     *
+     * @emits #afterDeleteRows
+     */
+    public deleteRows(
+        rowIndex: number,
+        rowCount = 1
+    ): void {
+        if (rowCount > 0 && rowIndex < this.rowCount) {
+            let length = 0;
+            objectEach(this.columns, (column, columnName): void => {
+                this.replaceColumnRef(
+                    columnName,
+                    ColumnUtils.splice(column, rowIndex, rowCount).array
+                );
+                length = column.length;
+            });
+            this.rowCount = length;
+        }
+
+        fireEvent(this, 'afterDeleteRows', { rowIndex, rowCount });
+        this.versionTag = uniqueKey();
+    }
+
+    /**
      * Fetches the given column by the canonical column name. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
