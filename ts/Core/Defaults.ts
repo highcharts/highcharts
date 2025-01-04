@@ -2922,6 +2922,13 @@ function setOptions(
         });
     }
 
+    if (options.lang?.chartTitle) {
+        defaultOptions.title = {
+            ...defaultOptions.title,
+            text: options.lang.chartTitle
+        } as DefaultOptions['title'];
+    }
+
     return defaultOptions;
 }
 
