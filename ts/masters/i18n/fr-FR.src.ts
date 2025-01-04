@@ -20,7 +20,7 @@ const languageOptions = {
     "locale": "fr-FR",
     "chartTitle": "Titre du graphique",
     "pieSliceName": "Part",
-    "seriesName": "Série {add series.index 1}",
+    "seriesName": "Série {add index 1}",
     "yAxisTitle": "Valeurs",
     "rangeSelector": {
         "allText": "Tout",
@@ -564,4 +564,5 @@ setOptions({
     lang: languageOptions
 });
 
+// Export Highcharts
 export default D;

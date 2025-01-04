@@ -2,7 +2,7 @@
     "locale": "en-US",
     "chartTitle": "Chart title",
     "pieSliceName": "Slice",
-    "seriesName": "Series {add series.index 1}",
+    "seriesName": "Series {add index 1}",
     "yAxisTitle": "Values",
     "rangeSelector": {
         "allText": "All",

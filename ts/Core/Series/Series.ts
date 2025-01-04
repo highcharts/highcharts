@@ -854,17 +854,12 @@ class Series {
      */
     public getName(): string {
         // #4119
-        return pick(
-            this.options.name,
+        return this.options.name ??
             format(
                 this.chart.options.lang.seriesName,
-                {
-                    series: this,
-                    chart: this.chart
-                },
+                this,
                 this.chart
-            )
-        );
+            );
     }
 
     /**

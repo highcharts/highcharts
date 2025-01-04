@@ -184,7 +184,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since next
          */
-        seriesName: 'Series {add series.index 1}',
+        seriesName: 'Series {add index 1}',
 
         /**
          * An array containing the months names in abbreviated form. Corresponds

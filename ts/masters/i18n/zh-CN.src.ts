@@ -20,7 +20,7 @@ const languageOptions = {
     "locale": "zh-CN",
     "chartTitle": "图表标题",
     "pieSliceName": "扇区",
-    "seriesName": "系列 {add series.index 1}",
+    "seriesName": "系列 {add index 1}",
     "yAxisTitle": "值",
     "rangeSelector": {
         "allText": "全部",
@@ -564,4 +564,5 @@ setOptions({
     lang: languageOptions
 });
 
+// Export Highcharts
 export default D;
