@@ -1,0 +1,5 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#container {
+    border: 2px solid red;
+}

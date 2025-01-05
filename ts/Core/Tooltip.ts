@@ -233,7 +233,7 @@ class Tooltip {
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
-            const tt = series && series.tt;
+            const tt = series?.tt;
 
             if (tt) {
                 if (!tt.isActive || force) {
@@ -321,8 +321,7 @@ class Tooltip {
         // If reversedStacks are false the tooltip position should be taken from
         // the last point (#17948)
         if (
-            points[0].series &&
-            points[0].series.yAxis &&
+            points[0].series?.yAxis &&
             !points[0].series.yAxis.options.reversedStacks
         ) {
             points = points.slice().reverse();
@@ -401,7 +400,7 @@ class Tooltip {
             !isHeader && 'highcharts-color-' + pick(
                 point.colorIndex, series.colorIndex
             ),
-            (seriesOptions && seriesOptions.className)
+            seriesOptions?.className
         ].filter(isString).join(' ');
     }
 
@@ -469,7 +468,7 @@ class Tooltip {
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
-                        (chartStyle && chartStyle.zIndex || 0) + 3
+                        (chartStyle?.zIndex || 0) + 3
                     )
                 });
 
@@ -1196,7 +1195,7 @@ class Tooltip {
 
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
-        const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+        const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
@@ -1696,7 +1695,7 @@ class Tooltip {
         const series = point.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
-            dateTime = xAxis && xAxis.dateTime,
+            dateTime = xAxis?.dateTime,
             e: Tooltip.HeaderFormatterEventObject = {
                 isFooter,
                 point

@@ -477,12 +477,12 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  *         True if the argument is a class.
  */
 function isClass<T>(obj: (object|undefined)): obj is Class<T> {
-    const c: (Function|undefined) = obj && obj.constructor;
+    const c: (Function|undefined) = obj?.constructor;
 
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && (c as any).name && (c as any).name !== 'Object')
+        ((c as any)?.name && (c as any).name !== 'Object')
     );
 }
 
@@ -1304,9 +1304,7 @@ function destroyObjectProperties(
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-    if (element && element.parentElement) {
-        element.parentElement.removeChild(element);
-    }
+    element?.parentElement?.removeChild(element);
 }
 
 
@@ -1458,7 +1456,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
         }
 
         const child = (parent as Record<string, unknown>)[
-            pathElement
+            pathElement.replace(/[\\'"]/g, '')
         ] as Record<string, unknown>;
 
         // Filter on the child
@@ -1520,8 +1518,7 @@ function getStyle(
 
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).

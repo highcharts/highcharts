@@ -228,7 +228,9 @@ const webpacks = FSLib
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
         const masterPath = Path.relative(mastersFolder, masterFile)
-        const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
+        const masterName = masterPath
+            .replace(/(?:\.src)?\.js$/u, '')
+            .replaceAll(Path.sep, Path.posix.sep);
         const webpackConfig = {
             // path to the main file
             entry: `./${masterFile}`,

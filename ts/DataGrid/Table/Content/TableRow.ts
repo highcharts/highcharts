@@ -24,6 +24,7 @@
 
 import type Cell from '../Cell';
 import type Column from '../Column';
+import type DataTable from '../../../Data/DataTable';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -48,6 +49,11 @@ class TableRow extends Row {
     * */
 
     /**
+     * The row values from the data table in the original column order.
+     */
+    public data: DataTable.Row = [];
+
+    /**
      * The local index of the row in the presentation data table.
      */
     public index: number;
@@ -56,6 +62,11 @@ class TableRow extends Row {
      * The index of the row in the original data table (ID).
      */
     public id?: number;
+
+    /**
+     * The vertical translation of the row.
+     */
+    public translateY: number = 0;
 
 
     /* *
@@ -77,6 +88,8 @@ class TableRow extends Row {
         super(viewport);
         this.index = index;
         this.id = viewport.dataTable.getOriginalRowIndex(index);
+
+        this.loadData();
         this.setRowAttributes();
     }
 
@@ -88,6 +101,18 @@ class TableRow extends Row {
 
     public override createCell(column: Column): Cell {
         return new TableCell(column, this);
+    }
+
+    /**
+     * Loads the row data from the data table.
+     */
+    private loadData(): void {
+        const data = this.viewport.dataTable.getRow(this.index);
+        if (!data) {
+            return;
+        }
+
+        this.data = data;
     }
 
     /**
@@ -107,6 +132,22 @@ class TableRow extends Row {
     }
 
     /**
+     * Adds or removes the synced CSS class to the row element.
+     *
+     * @param synced
+     * Whether the row should be synced.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.htmlElement.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedRow
+        );
+
+        if (synced) {
+            this.viewport.dataGrid.syncedRowIndex = this.index;
+        }
+    }
+
+    /**
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
@@ -114,7 +155,6 @@ class TableRow extends Row {
         const el = this.htmlElement;
         const a11y = this.viewport.dataGrid.accessibility;
 
-        el.style.transform = `translateY(${this.getDefaultTopOffset()}px)`;
         el.classList.add(Globals.classNames.rowElement);
 
         // Index of the row in the presentation data table
@@ -134,6 +174,21 @@ class TableRow extends Row {
         if (this.viewport.dataGrid.hoveredRowIndex === idx) {
             el.classList.add(Globals.classNames.hoveredRow);
         }
+
+        if (this.viewport.dataGrid.syncedRowIndex === idx) {
+            el.classList.add(Globals.classNames.syncedRow);
+        }
+    }
+
+    /**
+     * Sets the vertical translation of the row. Used for virtual scrolling.
+     *
+     * @param value
+     * The vertical translation of the row.
+     */
+    public setTranslateY(value: number): void {
+        this.translateY = value;
+        this.htmlElement.style.transform = `translateY(${value}px)`;
     }
 
     /**
