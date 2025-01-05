@@ -1169,6 +1169,7 @@ class Tooltip {
             distance,
             options,
             options: {
+                position,
                 positioner
             },
             pointer
@@ -1182,21 +1183,23 @@ class Tooltip {
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If
         // outside is true it should be the whole viewport
+        const chartBounds = {
+            left: scrollLeft,
+            right: scrollLeft + chartWidth,
+            top: scrollTop,
+            bottom: scrollTop + chartHeight
+        };
         const bounds = (
             tooltip.outside &&
             typeof scrollablePixelsX !== 'number'
         ) ?
-            doc.documentElement.getBoundingClientRect() : {
-                left: scrollLeft,
-                right: scrollLeft + chartWidth,
-                top: scrollTop,
-                bottom: scrollTop + chartHeight
-            };
+            doc.documentElement.getBoundingClientRect() : chartBounds;
 
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
+        const hasFixedPosition = positioner || position?.fixed;
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1272,7 +1275,8 @@ class Tooltip {
             anchorY: number,
             isHeader: (boolean|undefined),
             boxWidth: number,
-            alignedLeft = true
+            alignedLeft = true,
+            point?: Point
         ): PositionObject {
             let y;
             let x;
@@ -1284,6 +1288,23 @@ class Tooltip {
                     bounds.left,
                     bounds.right - boxWidth - (tooltip.outside ? chartLeft : 0)
                 );
+            } else if (position?.fixed) {
+                const { xAxis, yAxis } = point?.series || {},
+                    left = scrollLeft + (xAxis?.left || 0),
+                    top = (yAxis?.top || 0) - plotTop - scrollTop,
+                    pointBounds = position.relativeTo === 'pane' ? {
+                        left,
+                        right: left + (xAxis?.len || 0),
+                        top,
+                        bottom: top + (yAxis?.len || 0)
+                    } : chartBounds;
+                x = pointBounds.left + (position?.x || 0);
+                y = pointBounds.top + (position?.y || 0);
+
+                if (position.align === 'right') {
+                    x = pointBounds.right - boxWidth + (position?.x || 0);
+                }
+
             } else {
                 y = anchorY - distributionBoxTop;
                 x = alignedLeft ?
@@ -1421,13 +1442,15 @@ class Tooltip {
                                 anchorX,
                                 anchorY,
                                 isHeader,
-                                boxWidth
+                                boxWidth,
+                                void 0,
+                                point
                             )
                     );
 
                     boxes.push({
                         // 0-align to the top, 1-align to the bottom
-                        align: positioner ? 0 : void 0,
+                        align: hasFixedPosition ? 0 : void 0,
                         anchorX,
                         anchorY,
                         boxWidth,
@@ -1449,7 +1472,7 @@ class Tooltip {
 
         // Realign the tooltips towards the right if there is not enough space
         // to the left and there is space to the right
-        if (!positioner && boxes.some((box): boolean => {
+        if (!hasFixedPosition && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
             const { outside } = tooltip;
             const boxStart = (outside ? chartLeft : 0) + box.anchorX;
