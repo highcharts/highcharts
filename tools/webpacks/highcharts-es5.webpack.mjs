@@ -234,7 +234,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
         const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
         const webpackConfig = {
             // path to the main file
-            entry: masterFile,
+            entry: FSLib.relative(masterFile, true),
             mode: 'production',
             optimization: {
                 concatenateModules: true,

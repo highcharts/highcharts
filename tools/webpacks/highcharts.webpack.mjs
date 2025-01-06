@@ -233,7 +233,7 @@ const webpacks = FSLib
             .replaceAll(Path.sep, Path.posix.sep);
         const webpackConfig = {
             // path to the main file
-            entry: masterFile,
+            entry: FSLib.relative(masterFile, true),
             mode: 'production',
             optimization: {
                 concatenateModules: true,
