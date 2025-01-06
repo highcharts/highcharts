@@ -371,7 +371,7 @@ QUnit.test(
         column = chart.yAxis[0].stacking.stacks['column,,,'];
 
         assert.strictEqual(
-            column[4].label.text.x,
+            column[4].label.text.x - column[4].label.text.getBBox().width,
             padding,
             'This stack-label text x attribute should be ' +
                 'equal to set padding #12308'

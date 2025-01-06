@@ -451,10 +451,7 @@ function onBeforeRender(
 
                             // For using keys, or when using primitive points,
                             // rebuild the data structure
-                            if (
-                                foundPrimitivePoint ||
-                                 (s.options.keys && s.options.keys.length)
-                            ) {
+                            if (foundPrimitivePoint || s.options.keys?.length) {
                                 pointOptions = s.pointClass.prototype
                                     .optionsToObject
                                     .call({ series: s }, pointOptions);
@@ -548,8 +545,8 @@ function onBeforeRender(
                         getLevelOptions({
                             defaults: labelOptions,
                             from: 1,
-                            levels: labelOptions && labelOptions.levels,
-                            to: axis.treeGrid.tree && axis.treeGrid.tree.height
+                            levels: labelOptions?.levels,
+                            to: axis.treeGrid.tree?.height
                         });
                 // Setting initial collapsed nodes
                 if (e.type === 'beforeRender') {
@@ -872,7 +869,7 @@ function wrapRedraw(
     if (isTreeGrid && axis.visible) {
         axis.tickPositions.forEach(function (pos): void {
             const tick = axis.ticks[pos];
-            if (tick.label && tick.label.attachedTreeGridEvents) {
+            if (tick.label?.attachedTreeGridEvents) {
                 removeEvent(tick.label.element);
                 tick.label.attachedTreeGridEvents = false;
             }
@@ -1090,7 +1087,7 @@ class TreeGridAxisAdditions {
                 if (
                     pos >= roundedMin &&
                     pos <= roundedMax &&
-                    !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))
+                    !axis.brokenAxis?.isInAnyBreak(pos)
                 ) {
                     arr.push(pos);
                 }
