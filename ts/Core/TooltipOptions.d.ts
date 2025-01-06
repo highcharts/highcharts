@@ -90,7 +90,7 @@ export interface TooltipOptions {
 interface TooltipPositionOptions {
     align?: AlignValue;
     fixed?: boolean;
-    relativeTo?: 'chartBox'|'pane'|'plotBox'|'spacingBox'
+    relativeTo?: 'pane'|'plotBox'|'spacingBox'
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;

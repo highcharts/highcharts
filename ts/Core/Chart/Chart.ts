@@ -2146,6 +2146,24 @@ class Chart {
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
     }
 
+    public getPane(series?: Series): BBoxObject {
+        if (series) {
+            let { xAxis, yAxis } = series;
+            if (xAxis && yAxis) {
+                if (this.inverted) {
+                    [xAxis, yAxis] = [yAxis, xAxis];
+                }
+                return {
+                    x: xAxis.pos,
+                    y: yAxis.pos,
+                    width: xAxis.len,
+                    height: yAxis.len
+                };
+            }
+        }
+        return this.plotBox;
+    }
+
     /**
      * Initial margins before auto size margins are applied.
      *

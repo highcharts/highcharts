@@ -2383,7 +2383,7 @@ class Series {
      * @private
      * @function Highcharts.Series#getClip
      */
-    public getClipBox(): BBoxObject {
+    public getClipBox(chartCoords?: boolean): BBoxObject {
         const { chart, xAxis, yAxis } = this;
 
         // If no axes on the series, use global clipBox
@@ -2403,6 +2403,11 @@ class Series {
         // clip box should be inverted, but not the series clip box (#20264)
         if (chart.inverted && !this.invertible) {
             [width, height] = [height, width];
+        }
+
+        if (chartCoords) {
+            x = xAxis?.pos ?? chart.plotLeft;
+            y = yAxis?.pos ?? chart.plotTop;
         }
 
         return { x, y, width, height };
