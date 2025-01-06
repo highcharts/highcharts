@@ -22,12 +22,12 @@ import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
  * */
 
 
-const sourceFolder = './code/es5/es-modules/';
+const sourceFolder = Path.join('code', 'es5', 'es-modules');
 const mastersFolders = [
     'masters',
     'masters-es5'
 ].map(path => Path.join(sourceFolder, path));
-const targetFolder = './code/es5/';
+const targetFolder = Path.join('code', 'es5');
 
 const namespace = 'Highcharts';
 const productMasters = [
@@ -234,7 +234,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
         const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
         const webpackConfig = {
             // path to the main file
-            entry: `./${masterFile}`,
+            entry: masterFile,
             mode: 'production',
             optimization: {
                 concatenateModules: true,
@@ -243,7 +243,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
             },
             output: {
                 chunkFormat: 'array-push',
-                filename: `./${masterPath}`,
+                filename: masterPath,
                 globalObject: 'this',
                 library: {
                     export: 'default',

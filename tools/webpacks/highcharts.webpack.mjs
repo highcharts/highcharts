@@ -22,9 +22,9 @@ import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
  * */
 
 
-const sourceFolder = './code/es-modules/';
+const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
-const targetFolder = './code/';
+const targetFolder = Path.join('code');
 
 const namespace = 'Highcharts';
 const productMasters = [
@@ -233,7 +233,7 @@ const webpacks = FSLib
             .replaceAll(Path.sep, Path.posix.sep);
         const webpackConfig = {
             // path to the main file
-            entry: `./${masterFile}`,
+            entry: masterFile,
             mode: 'production',
             optimization: {
                 concatenateModules: true,
@@ -241,7 +241,7 @@ const webpacks = FSLib
                 moduleIds: 'deterministic'
             },
             output: {
-                filename: `./${masterPath}`,
+                filename: masterPath,
                 globalObject: 'this',
                 library: {
                     export: 'default',
