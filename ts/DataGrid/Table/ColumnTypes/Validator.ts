@@ -111,10 +111,6 @@ class Validator {
             rules.push(...Validator.predefinedRules[dataType]);
         }
 
-        if (rules.length < 1) {
-            return true;
-        }
-
         for (const rule of rules) {
             let ruleDef: Validator.RuleDefinition;
 
