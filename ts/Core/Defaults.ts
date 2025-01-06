@@ -697,9 +697,8 @@ const defaultOptions: DefaultOptions = {
          *
          * @default {highcharts|highmaps} Chart title
          * @default {highstock} undefined
-         * @apioption title.text
          */
-
+        text: 'Chart title',
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
@@ -2928,7 +2927,6 @@ function setOptions(
             text: options.lang.chartTitle
         } as DefaultOptions['title'];
     }
-
     return defaultOptions;
 }
 
