@@ -34,8 +34,9 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    fireEvent,
     extend,
+    fireEvent,
+    isNumber,
     uniqueKey
 } = U;
 
@@ -880,9 +881,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
             if (Array.isArray(column)) {
                 // Normal array
                 rowIndex = column.indexOf(cellValue, rowIndexOffset);
-            } else if (defined(cellValue) && Number.isFinite(cellValue)) {
+            } else if (isNumber(cellValue)) {
                 // Typed array
-                rowIndex = column.indexOf(+cellValue, rowIndexOffset);
+                rowIndex = column.indexOf(cellValue, rowIndexOffset);
             }
 
             if (rowIndex !== -1) {
