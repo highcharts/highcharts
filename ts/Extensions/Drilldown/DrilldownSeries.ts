@@ -212,7 +212,7 @@ function columnAnimateDrillupFrom(
         delete (series as any).group;
     }
 
-    this.points.forEach((point: Point): void => {
+    this.data.forEach((point: Point): void => {
         const graphic = point.graphic,
             animateTo = level.shapeArgs;
 
