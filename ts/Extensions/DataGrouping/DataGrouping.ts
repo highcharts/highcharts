@@ -154,7 +154,7 @@ function onTooltipHeaderFormatter(
             formatString, {
                 point: extend(
                     point,
-                    { key: format(formattedKey, { lang }) }
+                    { key: format(formattedKey, this, chart) }
                 ),
                 series,
                 lang

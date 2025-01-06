@@ -64,7 +64,7 @@ const common = {
             '-%[AebY]'
         ],
         week: [
-            '{lang.weekFrom} %[AebY]',
+            '{chart.options.lang.weekFrom} %[AebY]',
             '%[Aeb]',
             '-%[AebY]'
         ],
