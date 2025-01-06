@@ -144,10 +144,8 @@ class DataTableCore {
         this.rowCount = rowCount;
         objectEach(this.columns, (column, columnName): void => {
             if (column.length !== rowCount) {
-                this.replaceColumnRef(
-                    columnName,
-                    ColumnUtils.setLength(column, rowCount)
-                );
+                this.columns[columnName] =
+                    ColumnUtils.setLength(column, rowCount);
             }
         });
     }
@@ -173,10 +171,8 @@ class DataTableCore {
         if (rowCount > 0 && rowIndex < this.rowCount) {
             let length = 0;
             objectEach(this.columns, (column, columnName): void => {
-                this.replaceColumnRef(
-                    columnName,
-                    ColumnUtils.splice(column, rowIndex, rowCount).array
-                );
+                this.columns[columnName] =
+                    ColumnUtils.splice(column, rowIndex, rowCount).array;
                 length = column.length;
             });
             this.rowCount = length;
@@ -248,38 +244,6 @@ class DataTableCore {
         return (columnNames || Object.keys(this.columns)).map(
             (key): DataTable.CellType => this.columns[key]?.[rowIndex]
         );
-    }
-
-    /**
-     * Replaces a column reference in the table. It does not update the row
-     * count, but only replaces the reference to the column. Can also call the
-     * `afterSetColumns` event and update the table version tag if `silent` is
-     * set to `false`.
-     *
-     * @param {string} columnName
-     * Name of the column to replace.
-     *
-     * @param {Highcharts.DataTableColumn} column
-     * New column reference.
-     *
-     * @param {boolean} silent
-     * Whether to suppress events. Default is `true`.
-     *
-     * @emits #afterSetColumns
-     *
-     * @private
-     */
-    public replaceColumnRef(
-        columnName: string,
-        column: DataTable.Column,
-        silent: boolean = true
-    ): void {
-        this.columns[columnName] = column;
-
-        if (!silent) {
-            fireEvent(this, 'afterSetColumns');
-            this.versionTag = uniqueKey();
-        }
     }
 
     /**
