@@ -21,8 +21,10 @@
  *
  * */
 
-import Table from '../Table.js';
-import TableCell from '../Content/TableCell.js';
+import type Table from '../Table';
+import type TableCell from '../Content/TableCell';
+import type { ColumnDataType } from '../../Options';
+
 import Globals from '../../Globals.js';
 import DGUtils from '../../Utils.js';
 import Cell from '../Cell.js';
@@ -85,7 +87,10 @@ class Validator {
      * Validates the cell content.
      *
      * @param cell
-     * Edited cell
+     * Edited cell.
+     *
+     * @param value
+     * Value to validate.
      *
      * @param errors
      * An output array for error messages.
@@ -98,10 +103,15 @@ class Validator {
         value: string,
         errors: string[] = []
     ): boolean {
-        const { column } = cell;
-        const rules = column.options.validationRules;
+        const { validationRules, dataType } = cell.column.options;
+        const rules = Array.from(validationRules || []);
 
-        if (!rules) {
+        if (dataType) {
+            // TODO: Remove duplicates in rules array
+            rules.push(...Validator.predefinedRules[dataType]);
+        }
+
+        if (rules.length < 1) {
             return true;
         }
 
@@ -245,6 +255,13 @@ namespace Validator {
             ),
             errorMessage: 'Value has to be a boolean.'
         }
+    };
+
+    export const predefinedRules: Record<ColumnDataType, RuleKey[]> = {
+        number: ['number'],
+        bool: ['bool'],
+        string: [],
+        date: ['number']
     };
 }
 
