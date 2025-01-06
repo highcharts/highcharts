@@ -992,7 +992,7 @@ class Tooltip {
             styledMode = chart.styledMode;
         let wasShared = tooltip.allowShared;
 
-        if (!options.enabled || !point.series) { // #16820
+        if (!options.enabled || !point?.series) { // #16820
             return;
         }
 
