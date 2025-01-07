@@ -110,32 +110,23 @@
         }]
     });
 
-
-    document.getElementById('split').addEventListener('click', () => {
-        chart.update({
-            tooltip: {
-                split: true,
-                shared: false
-            }
+    document.querySelectorAll('input[name="split-shared"]').forEach(input => {
+        input.addEventListener('change', () => {
+            chart.update({
+                tooltip: {
+                    split: document.getElementById('split').checked,
+                    shared: document.getElementById('shared').checked
+                }
+            });
         });
     });
 
-
-    document.getElementById('shared').addEventListener('click', () => {
+    document.querySelector('#relative-to').addEventListener('change', e => {
         chart.update({
             tooltip: {
-                shared: true,
-                split: false
-            }
-        });
-    });
-
-
-    document.getElementById('single').addEventListener('click', () => {
-        chart.update({
-            tooltip: {
-                shared: false,
-                split: false
+                position: {
+                    relativeTo: e.target.value
+                }
             }
         });
     });

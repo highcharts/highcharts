@@ -4,14 +4,19 @@
 
 <div id="container"></div>
 
-<div>
-<button id="split" class="highcharts-demo-button">
-Split
-</button>
-<button id="shared" class="highcharts-demo-button">
-Shared
-</button>
-<button id="single" class="highcharts-demo-button">
-None
-</button>
+<div class="demo-controls">
+    <h4>Tooltip layout</h4>
+    <input type="radio" name="split-shared" id="split" checked="checked">
+    <label for="split">Split</label>
+    <input type="radio" name="split-shared" id="shared">
+    <label for="shared">Shared</label>
+    <input type="radio" name="split-shared" id="single">
+    <label for="single">Neither</label>
+
+    <h4>Fixed tooltip relative to</h4>
+    <select id="relative-to">
+        <option value="pane">pane</option>
+        <option value="plotBox">plotBox</option>
+        <option value="spacingBox">spacingBox</option>
+    </select>
 </div>
