@@ -41,6 +41,31 @@ namespace A11yOptions {
          * @default true
          */
         enabled?: boolean;
+
+        /**
+         * The default option is auto, which applies the high contrast theme the
+         * user's system has a high contrast theme active.
+         */
+        highContrastMode?: boolean | 'auto';
+
+        /**
+         * VoiceOver announcer options for DataGrid actions.
+         */
+        announcements?: {
+            /**
+             * Enable accessibility announcements for the cell editing.
+             *
+             * @default true
+             */
+            cellEditing?: boolean;
+
+            /**
+             * Enable accessibility announcements for the sorting.
+             *
+             * @default true
+             */
+            sorting?: boolean;
+        }
     }
 
     /**
@@ -75,13 +100,6 @@ namespace A11yOptions {
         announcements?: {
 
             /**
-             * Enable accessibility announcements for the cell editing.
-             *
-             * @default true
-             */
-            enabled?: boolean;
-
-            /**
              * The message when the cell editing started.
              *
              * @default 'Entered cell editing mode.'
@@ -110,16 +128,17 @@ namespace A11yOptions {
     export interface SortingLangA11yOptions {
 
         /**
+         * An additional hint (a visually hidden span) read by the voice over
+         * after the column name.
+         *
+         * @default 'Sortable.'
+         */
+        sortable?: string;
+
+        /**
          * Accessibility lang options for the sorting announcements.
          */
         announcements?: {
-
-            /**
-             * Enable accessibility announcements for the sorting.
-             *
-             * @default true
-             */
-            enabled?: boolean;
 
             /**
              * The message when the column was sorted in ascending order.

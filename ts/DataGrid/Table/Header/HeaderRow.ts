@@ -28,8 +28,10 @@ import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import DGUtils from '../../Utils.js';
+import Utils from '../../../Core/Utilities.js';
 
 const { sanitizeText } = DGUtils;
+const { isString } = Utils;
 
 /* *
  *
@@ -144,7 +146,7 @@ class HeaderRow extends Row {
                 );
             }
 
-            if (headerFormat) {
+            if (isString(headerFormat)) {
                 if (!headerCell.options.header) {
                     headerCell.options.header = {};
                 }
@@ -233,8 +235,8 @@ class HeaderRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', this.level);
+        const a11y = this.viewport.dataGrid.accessibility;
+        a11y?.setRowIndex(this.htmlElement, this.level);
     }
 }
 

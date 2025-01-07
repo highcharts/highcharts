@@ -64,6 +64,7 @@ const {
     objectEach,
     pick,
     removeEvent,
+    splat,
     uniqueKey
 } = U;
 
@@ -647,6 +648,11 @@ namespace Exporting {
                 ChartClass as typeof ChartComposition,
                 'init',
                 onChartInit
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'layOutTitle',
+                onChartLayOutTitle
             );
 
             if (G.isSafari) {
@@ -1237,26 +1243,40 @@ namespace Exporting {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis): void {
-            const axisCopy = find(chartCopy.axes, function (
-                    copy: Axis
-                ): boolean {
-                    return copy.options.internalKey ===
-                        axis.userOptions.internalKey;
-                }),
-                extremes = axis.getExtremes(),
-                userMin = extremes.userMin,
-                userMax = extremes.userMax;
+            const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
+                copy.options.internalKey === axis.userOptions.internalKey
+            );
 
-            if (
-                axisCopy &&
-                ((
-                    typeof userMin !== 'undefined' &&
-                    userMin !== axisCopy.min) || (
-                    typeof userMax !== 'undefined' &&
-                    userMax !== axisCopy.max
-                ))
-            ) {
-                axisCopy.setExtremes(userMin, userMax, true, false);
+            if (axisCopy) {
+                const extremes = axis.getExtremes(),
+                    // Make sure min and max overrides in the
+                    // `exporting.chartOptions.xAxis` settings are reflected.
+                    // These should override user-set extremes via zooming,
+                    // scrollbar etc (#7873).
+                    exportOverride = splat(chartOptions?.[axis.coll] || {})[0],
+                    userMin = 'min' in exportOverride ?
+                        exportOverride.min :
+                        extremes.userMin,
+                    userMax = 'max' in exportOverride ?
+                        exportOverride.max :
+                        extremes.userMax;
+
+                if (
+                    ((
+                        typeof userMin !== 'undefined' &&
+                        userMin !== axisCopy.min
+                    ) || (
+                        typeof userMax !== 'undefined' &&
+                        userMax !== axisCopy.max
+                    ))
+                ) {
+                    axisCopy.setExtremes(
+                        userMin ?? void 0,
+                        userMax ?? void 0,
+                        true,
+                        false
+                    );
+                }
             }
         });
 
@@ -1624,6 +1644,39 @@ namespace Exporting {
             ): void => {
                 update('navigation', options, redraw);
             });
+    }
+
+    /**
+     * On layout of titles (title, subtitle and caption), adjust the `alignTo``
+     * box to avoid the context menu button.
+     * @private
+     */
+    function onChartLayOutTitle(
+        this: ChartComposition,
+        { alignTo, key, textPxLength }: Chart.LayoutTitleEventObject
+    ): void {
+        const exportingOptions = this.options.exporting,
+            { align, buttonSpacing = 0, verticalAlign, width = 0 } = merge(
+                this.options.navigation?.buttonOptions,
+                exportingOptions?.buttons?.contextButton
+            ),
+            space = alignTo.width - textPxLength,
+            widthAdjust = width + buttonSpacing;
+
+        if (
+            (exportingOptions?.enabled ?? true) &&
+            key === 'title' &&
+            align === 'right' &&
+            verticalAlign === 'top'
+        ) {
+            if (space < 2 * widthAdjust) {
+                if (space < widthAdjust) {
+                    alignTo.width -= widthAdjust;
+                } else if (this.title?.alignValue !== 'left') {
+                    alignTo.x -= widthAdjust - space / 2;
+                }
+            }
+        }
     }
 
     /**

@@ -16,14 +16,16 @@
  *
  * */
 
+import type Chart from '../Chart/Chart.js';
 import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type FlagSeries from '../../Series/Flags/FlagsSeries';
+import type Point from '../Series/Point.js';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Point from '../Series/Point.js';
-import type Chart from '../Chart/Chart.js';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import Axis from './Axis.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -54,7 +56,7 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -110,7 +112,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -631,7 +633,7 @@ namespace OrdinalAxis {
                 hoverPoints = chart.hoverPoints,
                 closestPointRange = (
                     xAxis.closestPointRange ||
-                    (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange)
+                    xAxis.ordinal?.overscrollPointsRange
                 ),
                 pointPixelWidth = (
                     xAxis.translationSlope *
@@ -750,7 +752,7 @@ namespace OrdinalAxis {
         const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
         // and destroy extendedOrdinalPositions, #16055.
-        if (xAxis && xAxis.options.ordinal) {
+        if (xAxis?.options.ordinal) {
             delete xAxis.ordinal.index;
             delete xAxis.ordinal.originalOrdinalRange;
         }
@@ -795,13 +797,8 @@ namespace OrdinalAxis {
             ordinalIndex = getIndexInArray(ordinalPositions, val);
             // Final return value is based on ordinalIndex
         } else {
-            extendedOrdinalPositions =
-                ordinal.getExtendedPositions &&
-                ordinal.getExtendedPositions();
-            if (!(
-                extendedOrdinalPositions && extendedOrdinalPositions.length
-            )) {
-
+            extendedOrdinalPositions = ordinal.getExtendedPositions?.();
+            if (!extendedOrdinalPositions?.length) {
                 return val;
             }
 
@@ -944,6 +941,9 @@ namespace OrdinalAxis {
                 let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
+
+                    const xData = series.getColumn('x', true);
+
                     uniqueOrdinalPositions = [];
 
                     // For an axis with multiple series, check if the distance
@@ -951,14 +951,13 @@ namespace OrdinalAxis {
                     if (
                         i > 0 &&
                         series.options.id !== 'highcharts-navigator-series' &&
-                        series.processedXData.length > 1
+                        xData.length > 1
                     ) {
-                        adjustOrdinalExtremesPoints =
-                            distanceBetweenPoint !== series.processedXData[1] -
-                                series.processedXData[0];
+                        adjustOrdinalExtremesPoints = (
+                            distanceBetweenPoint !== xData[1] - xData[0]
+                        );
                     }
-                    distanceBetweenPoint =
-                        series.processedXData[1] - series.processedXData[0];
+                    distanceBetweenPoint = xData[1] - xData[0];
 
                     if (series.boosted) {
                         isBoosted = series.boosted;
@@ -974,9 +973,7 @@ namespace OrdinalAxis {
 
                         // Concatenate the processed X data into the existing
                         // positions, or the empty array
-                        ordinalPositions = ordinalPositions.concat(
-                            series.processedXData as any
-                        );
+                        ordinalPositions = ordinalPositions.concat(xData);
 
                         len = ordinalPositions.length;
 
@@ -1267,21 +1264,26 @@ namespace OrdinalAxis {
                 axis.series.forEach((series): void => {
                     fakeSeries = {
                         xAxis: fakeAxis,
-                        xData: (series.xData as any).slice(),
                         chart: chart,
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
-                        getProcessedData: Series.prototype.getProcessedData,
-                        applyGrouping: Series.prototype.applyGrouping,
-                        reserveSpace: Series.prototype.reserveSpace,
+                        getColumn: series.getColumn,
+                        applyGrouping: series.applyGrouping,
+                        getProcessedData: series.getProcessedData,
+                        reserveSpace: series.reserveSpace,
                         visible: series.visible
                     } as any;
 
-                    if (withOverscroll) {
-                        fakeSeries.xData = (fakeSeries.xData as any).concat(
-                            ordinal.getOverscrollPositions()
-                        );
-                    }
+                    const xData = series.getColumn('x').concat(
+                        withOverscroll ?
+                            ordinal.getOverscrollPositions() :
+                            []
+                    );
+                    fakeSeries.dataTable = new DataTableCore({
+                        columns: {
+                            x: xData
+                        }
+                    });
 
                     fakeSeries.options = {
                         ...series.options,
@@ -1332,7 +1334,9 @@ namespace OrdinalAxis {
                 }
 
                 // Cache it
-                ordinalIndex[key] = fakeAxis.ordinal.positions as any;
+                if (fakeAxis.ordinal.positions) {
+                    ordinalIndex[key] = fakeAxis.ordinal.positions;
+                }
             }
             return ordinalIndex[key];
         }
@@ -1366,8 +1370,8 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                processedXData = series.processedXData,
-                len = (processedXData as any).length,
+                processedXData = series.getColumn('x', true),
+                len = processedXData.length,
                 distances = [];
             let median,
                 i,
@@ -1381,8 +1385,8 @@ namespace OrdinalAxis {
                 // Register all the distances in an array
                 for (i = 0; i < len - 1; i++) {
                     distances[i] = (
-                        (processedXData as any)[i + 1] -
-                        (processedXData as any)[i]
+                        processedXData[i + 1] -
+                        processedXData[i]
                     );
                 }
 
@@ -1394,8 +1398,8 @@ namespace OrdinalAxis {
 
                 // Compensate for series that don't extend through the entire
                 // axis extent. #1675.
-                xMin = Math.max(xMin, (processedXData as any)[0]);
-                xMax = Math.min(xMax, (processedXData as any)[len - 1]);
+                xMin = Math.max(xMin, processedXData[0]);
+                xMax = Math.min(xMax, processedXData[len - 1]);
 
                 ordinal.groupIntervalFactor = groupIntervalFactor =
                     (len * median) / (xMax - xMin);
@@ -1488,18 +1492,18 @@ namespace OrdinalAxis {
             // altered.
             const ordinal = this,
                 axis = ordinal.axis,
-                ordinalSlope = ordinal.slope;
+                ordinalSlope = ordinal.slope,
+                closestPointRange = axis.closestPointRange;
             let ret;
 
-
-            if (ordinalSlope) {
+            if (ordinalSlope && closestPointRange) {
                 if (!axis.options.breaks) {
                     ret = (
                         tickInterval /
-                        (ordinalSlope / axis.closestPointRange)
+                        (ordinalSlope / closestPointRange)
                     );
                 } else {
-                    ret = axis.closestPointRange || tickInterval; // #7275
+                    ret = closestPointRange || tickInterval; // #7275
                 }
             } else {
                 ret = tickInterval;
@@ -1508,7 +1512,7 @@ namespace OrdinalAxis {
         }
 
         /**
-         * If overscroll is pixel or pecentage value, convert it to axis range.
+         * If overscroll is pixel or percentage value, convert it to axis range.
          *
          * @private
          * @param {number | string} overscroll
@@ -1533,6 +1537,20 @@ namespace OrdinalAxis {
 
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
+                let isFullRange;
+
+                // #22334
+                if (
+                    defined(axis.min) && defined(axis.max) &&
+                    defined(axis.dataMin) && defined(axis.dataMax)
+                ) {
+                    isFullRange =
+                        axis.max - axis.min === axis.dataMax - axis.dataMin;
+
+                    if (!isFullRange) {
+                        this.originalOrdinalRange = axis.max - axis.min;
+                    }
+                }
 
                 if (/%$/.test(overscroll)) {
                     // If overscroll is percentage
@@ -1550,7 +1568,8 @@ namespace OrdinalAxis {
                         pixelToPercent = limitedOverscrollValue / axis.len;
 
                     return calculateOverscroll(
-                        pixelToPercent / (1 - pixelToPercent)
+                        pixelToPercent /
+                        (isFullRange ? (1 - pixelToPercent) : 1)
                     );
                 }
 

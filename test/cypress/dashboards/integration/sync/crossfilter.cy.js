@@ -44,7 +44,9 @@ describe('Crossfilter with affectNavigator option', () => {
 
             assert.ok(
                 board.mountedComponents[1].component.chart
-                    .series[0].yData.filter(y => y !== null).length < 30,
+                    .series[0]
+                    .getColumn('y')
+                    .filter(y => y !== null).length < 30,
                 'The middle navigator should have less than 30 points with non null y-value.'
             );
 
