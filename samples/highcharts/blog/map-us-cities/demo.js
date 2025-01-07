@@ -2,7 +2,7 @@
     try {
         // Data for the top 100 cities
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@--TODO--/samples/data/us-population-city-100.json'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0dc2518d8353/samples/data/us-population-city-100.json'
         ).then(response => response.json());
 
         // Create the map chart
