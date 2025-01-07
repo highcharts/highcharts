@@ -12,7 +12,7 @@ const commonOptions = {
 const NVIDIACorpId = '0P000003RE';
 
 const NVIDIAPriceConnector =
-// eslint-disable-next-line no-undef
+    // eslint-disable-next-line no-undef
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,
         series: {
@@ -27,7 +27,9 @@ const NVIDIAPriceConnector =
         currencyId: 'EUR'
     });
 
-Promise.all([NVIDIAPriceConnector.load()]).then(() => {
+(async () => {
+    await NVIDIAPriceConnector.load();
+
     const {
         [`${NVIDIACorpId}_Open`]: open,
         [`${NVIDIACorpId}_High`]: high,
@@ -133,4 +135,4 @@ Promise.all([NVIDIAPriceConnector.load()]).then(() => {
             }]
         }
     });
-});
+})();
