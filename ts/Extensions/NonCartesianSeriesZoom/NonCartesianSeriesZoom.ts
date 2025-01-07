@@ -140,10 +140,15 @@ function onTransform(
                             );
                             width = fromWidth;
                             height = fromHeight;
-                            x = x + (width / 2);
-                            y = y + (height / 2);
-                        }
 
+                            const factorX = ((x - chart.plotLeft) /
+                                    (chart.plotSizeX || 1)),
+                                factorY = ((y - chart.plotTop) /
+                                    (chart.plotSizeY || 1));
+
+                            x += (fromWidth * 2) * factorX;
+                            y += (fromHeight / 2) * factorY;
+                        }
 
                         series.zoomBox = {
                             x, y, width, height, scale, panX: 0, panY: 0
