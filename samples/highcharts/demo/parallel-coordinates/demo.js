@@ -14,7 +14,7 @@
             }
         },
         title: {
-            text: 'Marathon set'
+            text: 'Marathon runner analysis'
         },
         lang: {
             accessibility: {
@@ -95,7 +95,7 @@
         }, {
             type: 'datetime'
         }, {
-            categories: ['&gt; 5miles', '&lt; 5miles']
+            categories: ['> 5miles', '< 5miles']
         }, {
             categories: ['Before', 'After']
         }],

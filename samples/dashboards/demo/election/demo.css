@@ -35,7 +35,17 @@
 }
 
 body {
-    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 #election-map {
@@ -462,7 +472,6 @@ text.highcharts-data-label {
 }
 
 /* Custom map tooltip */
-
 #election-map .map-tooltip caption {
     font-size: 13px;
     font-weight: bold;
@@ -566,6 +575,12 @@ text.highcharts-data-label {
 #election-chart-year .highcharts-data-label {
     color: #fff;
     font-size: 1em;
+}
+
+#election-chart-year .datalabels-wrapper {
+    display: inline-block;
+    white-space: normal;
+    width: 200px;
 }
 
 #election-chart-year .highcharts-axis-labels {
@@ -731,6 +746,7 @@ text.highcharts-data-label {
     #info-dem2,
     #info-rep2 {
         font-size: 10px;
+        white-space: normal;
     }
 
     #info-dem2 {
@@ -752,7 +768,7 @@ text.highcharts-data-label {
     }
 
     #election-chart-year .datalabels-wrapper {
-        font-size: 0.75em;
+        font-size: 0.65em;
         display: inline-block;
         white-space: normal;
         width: 100px;

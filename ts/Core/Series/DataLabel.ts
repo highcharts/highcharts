@@ -346,6 +346,7 @@ namespace DataLabel {
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x: dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
@@ -758,10 +759,13 @@ namespace DataLabel {
                             } else if (style.width) {
                                 // In styled mode with a width property set,
                                 // the width should be applied to the
-                                // dataLabel. (#20499)
+                                // dataLabel. (#20499). These properties affect
+                                // layout and must be applied also in styled
+                                // mode.
                                 dataLabel.css({
                                     width: style.width,
-                                    textOverflow: style.textOverflow
+                                    textOverflow: style.textOverflow,
+                                    whiteSpace: style.whiteSpace
                                 });
                             }
 
@@ -800,7 +804,7 @@ namespace DataLabel {
                 while (j--) {
                     // The item can be undefined if a disabled data label is
                     // succeeded by an enabled one (#19457)
-                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                    if (!dataLabels[j]?.isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     } else {

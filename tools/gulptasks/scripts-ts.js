@@ -44,7 +44,7 @@ function removeHighcharts() {
  *         Promise to keep.
  */
 async function scriptsTS(argv) {
-    const fs = require('fs');
+    const fs = require('node:fs');
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
@@ -75,19 +75,25 @@ async function scriptsTS(argv) {
 
         fsLib.copyAllFiles(
             'ts',
-            argv.webpack ? 'code/es-modules/' : 'js',
+            argv.assembler ? 'js' : 'code/es-modules/',
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
 
         if (argv.dashboards) {
-            await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
+            await processLib
+                .exec(`npx tsc -p ${typeScriptFolder} --outDir js/`);
         } else if (argv.datagrid) {
-            await processLib.exec(`npx tsc -p ${typeScriptFolderDatagrid}`);
-        } else if (argv.webpack) {
-            await processLib.exec('npx tsc -p ts --outDir code/es-modules/');
+            await processLib
+                .exec(`npx tsc -p ${typeScriptFolderDatagrid} --outDir js/`);
+        } else if (argv.assembler) {
+            await processLib
+                .exec('npx tsc -p ts --outDir js/');
         } else {
-            await processLib.exec('npx tsc --build ts');
+            await processLib
+                .exec('npx tsc -p ts');
+            await processLib
+                .exec('npx tsc -p ts/masters-es5');
         }
 
         if (argv.dashboards) {

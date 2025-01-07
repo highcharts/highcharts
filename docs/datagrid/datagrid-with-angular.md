@@ -1,5 +1,5 @@
 # DataGrid with Angular
-To create a DataGrid with Angular please follow the steps below:
+To create a DataGrid with Angular, please follow the steps below:
 
 ## 1. Install the Dashboards package
 The Dashboards package contains the DataGrid.
@@ -12,7 +12,7 @@ npm install @highcharts/dashboards
 import DataGrid from '@highcharts/dashboards/datagrid';
 ```
 
-## 3. Create a HTML container  
+## 3. Create an HTML container  
 Add a div where you want to render the DataGrid.
 ```html
 <div id="container"></div>
