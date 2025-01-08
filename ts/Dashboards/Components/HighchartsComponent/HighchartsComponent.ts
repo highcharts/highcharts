@@ -421,9 +421,15 @@ class HighchartsComponent extends Component {
         await super.update(options, false);
         this.setOptions();
 
-        if (this.chart) {
-            this.chart.update(merge(this.options.chartOptions) || {});
+        if (this.options.chartConstructor !== this.chartConstructor) {
+            this.chartConstructor = this.options.chartConstructor || 'chart';
+            this.chartOptions = this.options.chartOptions || {};
+            this.chart?.destroy();
+            delete this.chart;
         }
+
+        this.chart?.update(merge(this.options.chartOptions) || {});
+
         this.emit({ type: 'afterUpdate' });
 
         shouldRerender && this.render();
