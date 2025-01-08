@@ -77,10 +77,7 @@
                 fixed: true,
                 // relativeTo: 'spacingBox',
                 y: 1
-            },
-            borderWidth: 0,
-            shadow: false,
-            backgroundColor: '#ffffffdd'
+            }
         },
 
         series: [{
@@ -108,6 +105,16 @@
                 units: groupingUnits
             }
         }]
+    });
+
+    document.querySelector('#fixed').addEventListener('change', e => {
+        chart.update({
+            tooltip: {
+                position: {
+                    fixed: e.target.checked
+                }
+            }
+        });
     });
 
     document.querySelectorAll('input[name="split-shared"]').forEach(input => {

@@ -71,8 +71,8 @@ export interface TooltipOptions {
     pointFormatter?: F.FormatterCallback<Point>;
     position?: TooltipPositionOptions;
     positioner?: Tooltip.PositionerCallbackFunction;
-    shadow: (boolean|Partial<ShadowOptionsObject>);
-    shape: Tooltip.ShapeValue;
+    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shape?: Tooltip.ShapeValue;
     shared: boolean;
     snap: number;
     split?: boolean;

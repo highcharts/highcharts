@@ -502,7 +502,7 @@ class Tooltip {
                         '',
                         anchorX,
                         anchorY,
-                        options.shape,
+                        options.shape || 'callout',
                         void 0,
                         void 0,
                         options.useHTML,
@@ -552,7 +552,7 @@ class Tooltip {
 
             this.label
                 .attr({ zIndex: 8 })
-                .shadow(options.shadow)
+                .shadow(options.shadow ?? !options.position?.fixed)
                 .add();
         }
 
@@ -1221,17 +1221,16 @@ class Tooltip {
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container. If
         // outside is true it should be the whole viewport
-        const chartBounds = {
-            left: scrollLeft,
-            right: scrollLeft + chartWidth,
-            top: scrollTop,
-            bottom: scrollTop + chartHeight
-        };
         const bounds = (
             tooltip.outside &&
             typeof scrollablePixelsX !== 'number'
         ) ?
-            doc.documentElement.getBoundingClientRect() : chartBounds;
+            doc.documentElement.getBoundingClientRect() : {
+                left: scrollLeft,
+                right: scrollLeft + chartWidth,
+                top: scrollTop,
+                bottom: scrollTop + chartHeight
+            };
 
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
@@ -1363,28 +1362,33 @@ class Tooltip {
             str: string
         ): SVGElement {
             let tt = partialTooltip;
-            const { isHeader, series } = point;
+            const { isHeader, series } = point,
+                fixed = options.position?.fixed,
+                ttOptions = series.tooltipOptions || options;
 
             if (!tt) {
 
                 const attribs: SVGAttributes = {
-                    padding: options.padding,
-                    r: options.borderRadius
+                    padding: ttOptions.padding,
+                    r: ttOptions.borderRadius
                 };
 
                 if (!styledMode) {
-                    attribs.fill = options.backgroundColor;
-                    attribs['stroke-width'] = options.borderWidth ?? 1;
+                    attribs.fill = ttOptions.backgroundColor;
+                    attribs['stroke-width'] = ttOptions.borderWidth ?? (
+                        fixed && !isHeader ? 0 : 1
+                    );
                 }
                 tt = ren
                     .label(
                         '',
                         0,
                         0,
-                        (options[isHeader ? 'headerShape' : 'shape']),
+                        (ttOptions[isHeader ? 'headerShape' : 'shape']) ||
+                            (fixed && !isHeader ? 'rect' : 'callout'),
                         void 0,
                         void 0,
-                        options.useHTML
+                        ttOptions.useHTML
                     )
                     .addClass(
                         tooltip.getClassName(point, true, isHeader)
@@ -1398,10 +1402,10 @@ class Tooltip {
                 text: str
             });
             if (!styledMode) {
-                tt.css(options.style)
+                tt.css(ttOptions.style)
                     .attr({
                         stroke: (
-                            options.borderColor ||
+                            ttOptions.borderColor ||
                             point.color ||
                             series.color ||
                             Palette.neutralColor80
