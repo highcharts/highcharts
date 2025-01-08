@@ -2381,14 +2381,13 @@ class Chart {
             });
         }
 
-        plotBorder[verb](plotBorder.crisp({
-            x: plotLeft,
-            y: plotTop,
-            width: plotWidth,
-            height: plotHeight
-        }, -plotBorder.strokeWidth())); // #3282 plotBorder should be negative;
+        plotBorder[verb](plotBorder.crisp(
+            plotBox,
+            // #3282 plotBorder should be negative
+            -plotBorder.strokeWidth()
+        ));
 
-        // reset
+        // Reset
         chart.isDirtyBox = false;
 
         fireEvent(this, 'afterDrawChartBox');

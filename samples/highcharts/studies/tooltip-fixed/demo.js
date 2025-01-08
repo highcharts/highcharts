@@ -130,4 +130,12 @@
             }
         });
     });
+
+    document.querySelector('#outside').addEventListener('change', e => {
+        chart.update({
+            tooltip: {
+                outside: e.target.checked
+            }
+        });
+    });
 })();

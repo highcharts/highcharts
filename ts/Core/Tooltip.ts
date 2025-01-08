@@ -808,9 +808,11 @@ class Tooltip {
             chart = this.chart;
 
         if (position) {
-            const bounds = chart[
-                position.relativeTo as 'plotBox'|'spacingBox'
-            ] || this.chart.getClipBox(series, true);
+            const relativeTo = position.relativeTo,
+                bounds = relativeTo === 'chart' ?
+                    chart.renderer :
+                    chart[relativeTo as 'plotBox'|'spacingBox'] ||
+                        chart.getClipBox(series, true);
             return {
                 x: bounds.x + (bounds.width - boxWidth) *
                     getAlignFactor(position.align),
