@@ -127,6 +127,10 @@ export class ProductMetaPlugin {
         const options = this.options;
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
 
+        if (!FS.existsSync(filepath)) {
+            return;
+        }
+
         let content = FS.readFileSync(filepath, 'utf8');
         let productMatch = content.indexOf('@product.');
         let headerMatch = content.match(HEADER_PATTERN);
