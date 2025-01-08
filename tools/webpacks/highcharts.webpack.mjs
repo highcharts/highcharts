@@ -35,6 +35,11 @@ const productMasters = [
     'standalone-navigator'
 ];
 
+const externals = FSLib.getFile(
+    FSLib.path([import.meta.dirname, 'externals.json']),
+    true
+);
+
 
 /* *
  *
@@ -69,13 +74,15 @@ function createUMDConfig(...pathMembers) {
  * @param {*} info
  * Webpack reference information.
  *
+ * @param {string} masterName
+ * Master name that gets bundled.
+ *
  * @return
  * UMD config for external reference, or `undefined` to include reference in
  * bundle.
  */
-async function resolveExternals(info) {
+export async function resolveExternals(info, masterName) {
     // eslint-disable-next-line no-invalid-this
-    const masterName = this.masterName;
     const path = Path
         .relative(sourceFolder, Path.join(info.context, info.request))
         .replace(/(?:\.src)?\.js$/u, '')
@@ -92,127 +99,24 @@ async function resolveExternals(info) {
         return void 0;
     }
 
-    // Check for product-specific additions
-    switch (path) {
-        case 'Core/Axis/Color/ColorAxis':
-        case 'Series/ColorMapComposition':
-            if (
-                masterName !== 'modules/coloraxis' &&
-                masterName !== 'modules/heatmap' &&
-                masterName !== 'modules/map' &&
-                masterName !== 'modules/sunburst' &&
-                masterName !== 'modules/treemap'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        case 'Core/HttpUtilities':
-            if (
-                masterName !== 'modules/data' &&
-                masterName !== 'modules/exporting'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        case 'Extensions/Annotations/NavigationBindings':
-            if (
-                masterName !== 'modules/annotations' &&
-                masterName !== 'modules/annotations-advanced' &&
-                masterName !== 'modules/stock-tools'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        case 'Extensions/DataGrouping/ApproximationRegistry':
-            if (
-                masterName !== 'modules/datagrouping' &&
-                masterName !== 'modules/stock'
-            ) {
-                return createUMDConfig('dataGrouping', 'approximations');
-            }
-            break;
-        case 'Gantt/Pathfinder':
-            if (
-                masterName !== 'modules/gantt' &&
-                masterName !== 'modules/pathfinder'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        case 'Stock/Navigator/Navigator':
-        case 'Stock/Scrollbar/Scrollbar':
-            if (
-                masterName !== 'modules/accessibility' &&
-                masterName !== 'modules/gantt' &&
-                masterName !== 'modules/navigator' &&
-                masterName !== 'modules/stock'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        case 'Stock/RangeSelector/RangeSelector':
-            if (
-                masterName !== 'modules/accessibility' &&
-                masterName !== 'modules/gantt' &&
-                masterName !== 'modules/stock'
-            ) {
-                return createUMDConfig(name);
-            }
-            break;
-        default:
-            break;
+    console.log(masterName, name, path);
+
+    for (const external of externals) {
+        if (external.files.includes(path)) {
+            return (
+                external.included.includes(masterName) ?
+                    void 0 :
+                    createUMDConfig(
+                        ...external.namespacePath
+                            .replace(/\{name\}/gsu, name)
+                            .split('.')
+                            .slice(1)
+                    )
+            );
+        }
     }
 
-    // Fallback to core namespace
-    switch (path) {
-        case 'Core/Animation/AnimationUtilities':
-        case 'Core/Defaults':
-        case 'Core/Globals':
-        case 'Core/Renderer/RendererUtilities':
-        case 'Core/Utilities':
-            return createUMDConfig();
-        case 'Core/Animation/Fx':
-        case 'Core/Axis/Axis':
-        case 'Core/Axis/PlotLineOrBand/PlotLineOrBand':
-        case 'Core/Axis/Stacking/StackItem':
-        case 'Core/Axis/Tick':
-        case 'Core/Chart/Chart':
-        case 'Core/Color/Color':
-        case 'Core/Legend/Legend':
-        case 'Core/Legend/LegendSymbol':
-        case 'Core/Pointer':
-        case 'Core/Renderer/HTML/AST':
-        case 'Core/Renderer/SVG/SVGElement':
-        case 'Core/Renderer/SVG/SVGRenderer':
-        case 'Core/Renderer/RendererRegistry':
-        case 'Core/Series/DataLabel':
-        case 'Core/Series/Point':
-        case 'Core/Series/Series':
-        case 'Core/Series/SeriesRegistry':
-        case 'Core/Templating':
-        case 'Core/Time':
-        case 'Core/Tooltip':
-            return createUMDConfig(name);
-        case 'Series/Area/AreaSeries':
-            return createUMDConfig('Series', 'types', 'area');
-        case 'Series/AreaSpline/AreaSplineSeries':
-            return createUMDConfig('Series', 'types', 'areaspline');
-        case 'Series/Bar/BarSeries':
-            return createUMDConfig('Series', 'types', 'bar');
-        case 'Series/Column/ColumnSeries':
-            return createUMDConfig('Series', 'types', 'column');
-        case 'Series/Line/LineSeries':
-            return createUMDConfig('Series', 'types', 'line');
-        case 'Series/Pie/PieSeries':
-            return createUMDConfig('Series', 'types', 'pie');
-        case 'Series/Scatter/ScatterSeries':
-            return createUMDConfig('Series', 'types', 'scatter');
-        case 'Series/Spline/SplineSeries':
-            return createUMDConfig('Series', 'types', 'spline');
-        default:
-            return void 0;
-    }
-
+    return void 0;
 }
 
 
@@ -300,9 +204,9 @@ const webpacks = FSLib
         };
         if (!productMasters.includes(masterName)) {
             webpackConfig.externalsType = 'umd';
-            webpackConfig.externals = [resolveExternals.bind({
-                masterName
-            })];
+            webpackConfig.externals = [
+                (info) => resolveExternals(info, masterName)
+            ];
         }
         return webpackConfig;
     });
