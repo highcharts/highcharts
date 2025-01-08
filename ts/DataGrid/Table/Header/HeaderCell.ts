@@ -64,9 +64,10 @@ class HeaderCell extends Cell {
     public options: Partial<Column.Options> = {};
 
     /**
-     * Nested structure of columns that are grouped in the header cell.
+     * List of columns that are subordinated to the header cell. Undefined for
+     * the main column header.
      */
-    public readonly columnsTree?: GroupedHeaderOptions[];
+    public readonly columns?: Column[];
 
     /**
      * Whether the cell is a main column cell in the header.
@@ -107,7 +108,18 @@ class HeaderCell extends Cell {
         column.header = this;
 
         this.isMain = !!this.row.viewport.getColumn(this.column.id);
-        this.columnsTree = columnsTree;
+
+        if (columnsTree) {
+            this.columns = [];
+            const vp = this.row.viewport;
+            const columnIds = vp.dataGrid.getColumnIds(columnsTree, true);
+            for (const columnId of columnIds) {
+                const column = vp.getColumn(columnId);
+                if (column) {
+                    this.columns.push(column);
+                }
+            }
+        }
     }
 
     /* *
@@ -206,9 +218,7 @@ class HeaderCell extends Cell {
     }
 
     public override reflow(): void {
-        const cell = this;
-        const th = cell.htmlElement;
-        const vp = cell.column.viewport;
+        const th = this.htmlElement;
 
         if (!th) {
             return;
@@ -216,14 +226,14 @@ class HeaderCell extends Cell {
 
         let width = 0;
 
-        if (cell.columnsTree) {
-            const columnsIds = vp.dataGrid.getColumnIds(cell.columnsTree);
-            for (const columnId of columnsIds) {
-                width += (vp.getColumn(columnId || '')?.getWidth()) || 0;
+        if (this.columns) {
+            for (const column of this.columns) {
+                width += column.getWidth() || 0;
             }
         } else {
-            width = cell.column.getWidth();
+            width = this.column.getWidth();
         }
+
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';
@@ -276,42 +286,15 @@ class HeaderCell extends Cell {
     }
 
     /**
-     * Gets the column id of the last column in the scope.
-     *
-     * @param scope
-     * Structure of header under the current cell.
-     *
-     * @returns
-     * Column id of the last column in the scope.
-     */
-    private getLastColumnId(scope: (GroupedHeaderOptions|string)[]): string {
-        const lastColumn = scope[scope.length - 1];
-
-        if (typeof lastColumn === 'string') {
-            return lastColumn;
-        }
-
-        if (lastColumn.columnId) {
-            return lastColumn.columnId;
-        }
-
-        if (lastColumn.columns) {
-            return this.getLastColumnId(lastColumn.columns);
-        }
-
-        return '';
-    }
-
-    /**
      * Check if the cell is part of the last cell in the header.
      */
     private isLastColumn(): boolean {
-        const columns = this.row.viewport.columns;
-        const lastViewportColumnId = columns[columns.length - 1].id;
-        const lastCellColumnId = this.columnsTree ?
-            this.getLastColumnId(this.columnsTree) : this.column.id;
+        const vp = this.row.viewport;
 
-        return lastViewportColumnId === lastCellColumnId;
+        const lastViewportColumn = vp.columns[vp.columns.length - 1];
+        const lastCellColumn = this.columns?.[this.columns.length - 1];
+
+        return lastViewportColumn === lastCellColumn;
     }
 }
 
