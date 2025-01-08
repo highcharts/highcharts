@@ -99,8 +99,6 @@ export async function resolveExternals(info, masterName) {
         return void 0;
     }
 
-    console.log(masterName, name, path);
-
     for (const external of externals) {
         if (external.files.includes(path)) {
             return (
@@ -137,7 +135,7 @@ const webpacks = FSLib
             .replaceAll(Path.sep, Path.posix.sep);
         const webpackConfig = {
             // path to the main file
-            entry: FSLib.relative(masterFile, true),
+            entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
             mode: 'production',
             optimization: {
                 concatenateModules: true,

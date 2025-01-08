@@ -272,7 +272,7 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
  * Get file content.
  *
  * @param {string} filePath
- * File path to read.
+ * File path to read from.
  *
  * @param {boolean} [asJSON]
  * Whether to parse as JSON.
@@ -633,42 +633,23 @@ function path(
 }
 
 /**
- * Converts from POSIX path to the system-specific path by default. Set the flag
- * to convert to POSIX.
+ * Set file content.
  *
- * @param {string|Array<string>} path
- * Path to convert.
+ * @param {string} filePath
+ * File path to write to.
  *
- * @param {boolean} [toPosix]
- * Convert to a POSIX-uniform path, if set to `true`.
- *
- * @return {string}
- * Converted path.
+ * @param {string|*} [data]
+ * UTF-8 content or JSON.
  */
-function relative(
-    path,
-    toPosix
-) {
+function setFile(filePath, data) {
 
-    if (typeof path !== 'string') {
-        path = Path.relative(...path);
+    if (typeof data !== 'string') {
+        data = JSON.stringify(data, null, 4);
     }
 
-    if (!path.match(/^\.[\/\\]/su)) {
-        path = '.' + SEP + path;
-    }
+    FS.writeFileSync(filePath, data, 'utf8');
 
-    if (SEP !== PSEP) {
-        return (
-            toPosix ?
-                path.replaceAll(SEP, PSEP) :
-                path.replaceAll(PSEP, SEP)
-        );
-    }
-
-    return path;
 }
-
 
 /* *
  *
@@ -697,5 +678,5 @@ module.exports = {
     normalizePath,
     parentPath,
     path,
-    relative
+    setFile
 };
