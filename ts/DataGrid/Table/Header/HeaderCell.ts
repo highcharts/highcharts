@@ -64,15 +64,14 @@ class HeaderCell extends Cell {
     public options: Partial<Column.Options> = {};
 
     /**
-     * Columns that are grouped in the header cell. In most cases is contains
-     * only one column, but can be more if the header cell is grouped.
+     * Nested structure of columns that are grouped in the header cell.
      */
-    public columns?: GroupedHeaderOptions[];
+    public readonly columnsTree?: GroupedHeaderOptions[];
 
     /**
      * Whether the cell is a main column cell in the header.
      */
-    private isMain: boolean;
+    private readonly isMain: boolean;
 
     /**
      * Content value of the header cell.
@@ -94,12 +93,21 @@ class HeaderCell extends Cell {
      *
      * @param row
      * The row of the cell.
+     *
+     * @param columnsTree
+     * If the cell is a wider than one column, this property contains the
+     * structure of the columns that are subordinated to the header cell.
      */
-    constructor(column: Column, row: Row) {
+    constructor(
+        column: Column,
+        row: Row,
+        columnsTree?: GroupedHeaderOptions[]
+    ) {
         super(column, row);
         column.header = this;
 
         this.isMain = !!this.row.viewport.getColumn(this.column.id);
+        this.columnsTree = columnsTree;
     }
 
     /* *
@@ -184,6 +192,16 @@ class HeaderCell extends Cell {
             this.initColumnSorting();
         }
 
+        if (this.isLastColumn()) {
+            this.htmlElement.classList.add(
+                Globals.classNames.lastHeaderCellInRow
+            );
+        } else {
+            this.htmlElement.classList.remove(
+                Globals.classNames.lastHeaderCellInRow
+            );
+        }
+
         this.setCustomClassName(options.header?.className);
     }
 
@@ -198,8 +216,8 @@ class HeaderCell extends Cell {
 
         let width = 0;
 
-        if (cell.columns) {
-            const columnsIds = vp.dataGrid.getColumnIds(cell.columns);
+        if (cell.columnsTree) {
+            const columnsIds = vp.dataGrid.getColumnIds(cell.columnsTree);
             for (const columnId of columnsIds) {
                 width += (vp.getColumn(columnId || '')?.getWidth()) || 0;
             }
@@ -255,6 +273,45 @@ class HeaderCell extends Cell {
             column,
             this.htmlElement
         );
+    }
+
+    /**
+     * Gets the column id of the last column in the scope.
+     *
+     * @param scope
+     * Structure of header under the current cell.
+     *
+     * @returns
+     * Column id of the last column in the scope.
+     */
+    private getLastColumnId(scope: (GroupedHeaderOptions|string)[]): string {
+        const lastColumn = scope[scope.length - 1];
+
+        if (typeof lastColumn === 'string') {
+            return lastColumn;
+        }
+
+        if (lastColumn.columnId) {
+            return lastColumn.columnId;
+        }
+
+        if (lastColumn.columns) {
+            return this.getLastColumnId(lastColumn.columns);
+        }
+
+        return '';
+    }
+
+    /**
+     * Check if the cell is part of the last cell in the header.
+     */
+    private isLastColumn(): boolean {
+        const columns = this.row.viewport.columns;
+        const lastViewportColumnId = columns[columns.length - 1].id;
+        const lastCellColumnId = this.columnsTree ?
+            this.getLastColumnId(this.columnsTree) : this.column.id;
+
+        return lastViewportColumnId === lastCellColumnId;
     }
 }
 

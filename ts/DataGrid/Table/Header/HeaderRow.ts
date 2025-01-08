@@ -27,10 +27,8 @@ import Row from '../Row.js';
 import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
-import DGUtils from '../../Utils.js';
 import Utils from '../../../Core/Utilities.js';
 
-const { sanitizeText } = DGUtils;
 const { isString } = Utils;
 
 /* *
@@ -81,8 +79,11 @@ class HeaderRow extends Row {
     *
     * */
 
-    public override createCell(column: Column): HeaderCell {
-        return new HeaderCell(column, this);
+    public override createCell(
+        column: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): HeaderCell {
+        return new HeaderCell(column, this, columnsTree);
     }
 
     /**
@@ -132,12 +133,15 @@ class HeaderRow extends Row {
 
             const headerCell = this.createCell(
                 vp.getColumn(columnId || '') ||
+                // Creating a dummy column for the multicolumn header cell is
+                // necessary for now, but it should be refactored in the future.
                 new Column(
                     vp,
                     // Remove HTML tags and empty spaces.
-                    sanitizeText(headerFormat || '').trim() || '',
+                    '',
                     i
-                )
+                ),
+                typeof column !== 'string' ? column.columns : void 0
             );
 
             if (typeof column !== 'string') {
@@ -165,8 +169,6 @@ class HeaderRow extends Row {
             }
 
             headerCell.render();
-            headerCell.columns =
-                typeof column !== 'string' ? column.columns : void 0;
 
             if (columnId) {
                 headerCell.htmlElement.setAttribute(
