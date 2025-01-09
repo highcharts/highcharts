@@ -61,18 +61,12 @@ class HeaderCell extends Cell {
     /**
      * Reference to options in settings header.
      */
-    public options: Partial<Column.Options> = {};
+    public readonly options: Partial<Column.Options> = {};
 
     /**
-     * List of columns that are subordinated to the header cell. Undefined for
-     * the main column header.
+     * List of columns that are subordinated to the header cell.
      */
-    public readonly columns?: Column[];
-
-    /**
-     * Whether the cell is a main column cell in the header.
-     */
-    private readonly isMain: boolean;
+    public readonly columns: Column[] = [];
 
     /**
      * Content value of the header cell.
@@ -100,17 +94,16 @@ class HeaderCell extends Cell {
      * structure of the columns that are subordinated to the header cell.
      */
     constructor(
-        column: Column,
+        column: Column|null,
         row: Row,
         columnsTree?: GroupedHeaderOptions[]
     ) {
         super(column, row);
-        column.header = this;
 
-        this.isMain = !!this.row.viewport.getColumn(this.column.id);
-
-        if (columnsTree) {
-            this.columns = [];
+        if (column) {
+            column.header = this;
+            this.columns.push(column);
+        } else if (columnsTree) {
             const vp = this.row.viewport;
             const columnIds = vp.dataGrid.getColumnIds(columnsTree, true);
             for (const columnId of columnIds) {
@@ -142,16 +135,18 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const options = merge(column.options, this.options); // ??
+        const options = merge(column?.options || {}, this.options);
         const headerCellOptions = options.header || {};
-        const isSortableData = options.sorting?.sortable && column.data;
+        const isSortableData = options.sorting?.sortable && column?.data;
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
         } else if (isString(headerCellOptions.format)) {
-            this.value = column.format(headerCellOptions.format);
+            this.value = column ?
+                column.format(headerCellOptions.format) :
+                headerCellOptions.format;
         } else {
-            this.value = column.id;
+            this.value = column?.id || '';
         }
 
         // Render content of th element
@@ -171,7 +166,7 @@ class HeaderCell extends Cell {
         }
 
         if (isSortableData) {
-            column.viewport.dataGrid.accessibility?.addSortableColumnHint(
+            column?.viewport.dataGrid.accessibility?.addSortableColumnHint(
                 this.headerContent
             );
         }
@@ -184,7 +179,7 @@ class HeaderCell extends Cell {
             );
         }
 
-        if (this.isMain) {
+        if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
 
             // Add user column classname
@@ -195,23 +190,13 @@ class HeaderCell extends Cell {
             }
 
             // Add resizing
-            this.column.viewport.columnsResizer?.renderColumnDragHandles(
-                this.column,
+            column.viewport.columnsResizer?.renderColumnDragHandles(
+                column,
                 this
             );
 
             // Add sorting
             this.initColumnSorting();
-        }
-
-        if (this.isLastColumn()) {
-            this.htmlElement.classList.add(
-                Globals.classNames.lastHeaderCellInRow
-            );
-        } else {
-            this.htmlElement.classList.remove(
-                Globals.classNames.lastHeaderCellInRow
-            );
         }
 
         this.setCustomClassName(options.header?.className);
@@ -226,12 +211,8 @@ class HeaderCell extends Cell {
 
         let width = 0;
 
-        if (this.columns) {
-            for (const column of this.columns) {
-                width += column.getWidth() || 0;
-            }
-        } else {
-            width = this.column.getWidth();
+        for (const column of this.columns) {
+            width += column.getWidth() || 0;
         }
 
         // Set the width of the column. Max width is needed for the
@@ -240,7 +221,7 @@ class HeaderCell extends Cell {
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
-        if (e.target !== this.htmlElement) {
+        if (!this.column || e.target !== this.htmlElement) {
             return;
         }
 
@@ -258,7 +239,7 @@ class HeaderCell extends Cell {
         const column = this.column;
 
         if (
-            !this.isMain || (
+            !column || (
                 e.target !== this.htmlElement &&
                 e.target !== column.header?.headerContent
             )
@@ -278,6 +259,9 @@ class HeaderCell extends Cell {
      */
     private initColumnSorting(): void {
         const { column } = this;
+        if (!column) {
+            return;
+        }
 
         column.sorting = new ColumnSorting(
             column,
@@ -288,7 +272,7 @@ class HeaderCell extends Cell {
     /**
      * Check if the cell is part of the last cell in the header.
      */
-    private isLastColumn(): boolean {
+    public isLastColumn(): boolean {
         const vp = this.row.viewport;
 
         const lastViewportColumn = vp.columns[vp.columns.length - 1];

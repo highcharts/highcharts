@@ -52,7 +52,7 @@ abstract class Cell {
     /**
      * The column of the cell.
      */
-    public column: Column;
+    public column?: Column;
 
     /**
      * The row of the cell.
@@ -93,9 +93,12 @@ abstract class Cell {
      * @param row
      * The row of the cell.
      */
-    constructor(column: Column, row: Row) {
+    constructor(column: Column|null, row: Row) {
 
-        this.column = column;
+        if (column) {
+            this.column = column;
+        }
+
         this.row = row;
         this.row.registerCell(this);
 
@@ -177,6 +180,10 @@ abstract class Cell {
      */
     protected onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
+        if (!column) {
+            return;
+        }
+
         const vp = row.viewport;
 
         const changeFocusKeys: Record<typeof e.key, [number, number]> = {
@@ -224,6 +231,10 @@ abstract class Cell {
      */
     public reflow(): void {
         const column = this.column;
+        if (!column) {
+            return;
+        }
+
         const elementStyle = this.htmlElement.style;
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
@@ -297,7 +308,7 @@ abstract class Cell {
             this.htmlElement.removeEventListener(pair[0], pair[1]);
         });
 
-        this.column.unregisterCell(this);
+        this.column?.unregisterCell(this);
         this.row.unregisterCell(this);
         this.htmlElement.remove();
     }

@@ -56,6 +56,8 @@ class TableCell extends Cell {
      */
     public row: TableRow;
 
+    public override column: Column;
+
 
     /* *
     *
@@ -74,6 +76,8 @@ class TableCell extends Cell {
      */
     constructor(column: Column, row: TableRow) {
         super(column, row);
+
+        this.column = column;
         this.row = row;
 
         this.column.registerCell(this);

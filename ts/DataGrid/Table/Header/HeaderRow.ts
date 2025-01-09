@@ -80,7 +80,7 @@ class HeaderRow extends Row {
     * */
 
     public override createCell(
-        column: Column,
+        column: Column|null,
         columnsTree?: GroupedHeaderOptions[]
     ): HeaderCell {
         return new HeaderCell(column, this, columnsTree);
@@ -103,83 +103,82 @@ class HeaderRow extends Row {
 
         if (!header) {
             super.render();
-            return;
+        } else {
+            const columnsOnLevel = this.getColumnsAtLevel(header, level);
+
+            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+                const columnOnLevel = columnsOnLevel[i];
+                const colIsString = typeof columnOnLevel === 'string';
+                const colSpan = (!colIsString && columnOnLevel.columns) ?
+                    vp.dataGrid.getColumnIds(columnOnLevel.columns).length : 0;
+                const columnId = colIsString ?
+                    columnOnLevel : columnOnLevel.columnId;
+                const dataColumn = vp.getColumn(columnId || '');
+                const headerFormat = !colIsString ?
+                    columnOnLevel.format : void 0;
+                const className = !colIsString ?
+                    columnOnLevel.className : void 0;
+
+                // Skip hidden column or header when all columns are hidden.
+                if (
+                    (
+                        columnId &&
+                        enabledColumns && enabledColumns?.indexOf(columnId) < 0
+                    ) || (!dataColumn && colSpan === 0)
+                ) {
+                    continue;
+                }
+
+                const headerCell = this.createCell(
+                    columnId && vp.getColumn(columnId || '') || null,
+                    !colIsString ? columnOnLevel.columns : void 0
+                );
+
+                if (!colIsString) {
+                    vp.dataGrid.accessibility?.addHeaderCellDescription(
+                        headerCell.htmlElement,
+                        columnOnLevel.accessibility?.description
+                    );
+                }
+
+                if (isString(headerFormat)) {
+                    if (!headerCell.options.header) {
+                        headerCell.options.header = {};
+                    }
+                    headerCell.options.header.format = headerFormat;
+                }
+
+                if (className) {
+                    headerCell.options.className = className;
+                }
+
+                // Add class to disable left border on first column
+                if (dataColumn?.index === 0 && i === 0) {
+                    headerCell.htmlElement.classList.add(
+                        Globals.classNames.columnFirst
+                    );
+                }
+
+                headerCell.render();
+
+                if (columnId) {
+                    headerCell.htmlElement.setAttribute(
+                        'rowSpan',
+                        (this.viewport.header?.levels || 1) - level
+                    );
+                } else {
+                    if (colSpan > 1) {
+                        headerCell.htmlElement.setAttribute('colSpan', colSpan);
+                    }
+                }
+            }
         }
 
-        const columnsOnLevel = this.getColumnsAtLevel(header, level);
-
-        for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
-            const column = columnsOnLevel[i];
-            const colSpan =
-                (typeof column !== 'string' && column.columns) ?
-                    vp.dataGrid.getColumnIds(column.columns).length : 0;
-            const columnId = typeof column === 'string' ?
-                column : column.columnId;
-            const dataColumn = vp.getColumn(columnId || '');
-            const headerFormat = (typeof column !== 'string') ?
-                column.format : void 0;
-            const className = (typeof column !== 'string') ?
-                column.className : void 0;
-
-            // Skip hidden column or header when all columns are hidden.
-            if (
-                (
-                    columnId &&
-                    enabledColumns && enabledColumns?.indexOf(columnId) < 0
-                ) || (!dataColumn && colSpan === 0)
-            ) {
-                continue;
-            }
-
-            const headerCell = this.createCell(
-                vp.getColumn(columnId || '') ||
-                // Creating a dummy column for the multicolumn header cell is
-                // necessary for now, but it should be refactored in the future.
-                new Column(
-                    vp,
-                    // Remove HTML tags and empty spaces.
-                    '',
-                    i
-                ),
-                typeof column !== 'string' ? column.columns : void 0
+        const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
+        if (lastCell.isLastColumn()) {
+            lastCell.htmlElement.classList.add(
+                Globals.classNames.lastHeaderCellInRow
             );
-
-            if (typeof column !== 'string') {
-                vp.dataGrid.accessibility?.addHeaderCellDescription(
-                    headerCell.htmlElement, column.accessibility?.description
-                );
-            }
-
-            if (isString(headerFormat)) {
-                if (!headerCell.options.header) {
-                    headerCell.options.header = {};
-                }
-                headerCell.options.header.format = headerFormat;
-            }
-
-            if (className) {
-                headerCell.options.className = className;
-            }
-
-            // Add class to disable left border on first column
-            if (dataColumn?.index === 0 && i === 0) {
-                headerCell.htmlElement.classList.add(
-                    Globals.classNames.columnFirst
-                );
-            }
-
-            headerCell.render();
-
-            if (columnId) {
-                headerCell.htmlElement.setAttribute(
-                    'rowSpan',
-                    (this.viewport.header?.levels || 1) - level
-                );
-            } else {
-                if (colSpan > 1) {
-                    headerCell.htmlElement.setAttribute('colSpan', colSpan);
-                }
-            }
         }
     }
 

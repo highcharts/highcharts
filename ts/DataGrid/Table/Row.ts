@@ -98,7 +98,7 @@ abstract class Row {
      * @param column
      * The column the cell belongs to.
      */
-    public abstract createCell(column: Column): Cell;
+    public abstract createCell(column: Column|null): Cell;
 
     /**
      * Renders the row's content. It does not attach the row element to the
@@ -158,7 +158,7 @@ abstract class Row {
      * The cell with the given column ID or undefined if not found.
      */
     public getCell(columnId: string): Cell | undefined {
-        return this.cells.find((cell): boolean => cell.column.id === columnId);
+        return this.cells.find((cell): boolean => cell.column?.id === columnId);
     }
 
     /**
