@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Marita Vindedal, Øystein Moseng
+ js_wrap: b
+...
