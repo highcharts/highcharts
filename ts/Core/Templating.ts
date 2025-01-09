@@ -183,7 +183,7 @@ function dateFormat(
 function format(
     str = '',
     ctx: any,
-    templateOwner?: Templating.TemplatingOwner
+    owner?: Templating.Owner
 ): string {
 
     const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
@@ -194,9 +194,9 @@ function format(
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
-        lang = templateOwner?.options?.lang || defaultOptions.lang,
-        timeInstance = templateOwner?.time || defaultTime,
-        numberFormatter = templateOwner?.numberFormatter || numberFormat;
+        lang = owner?.options?.lang || defaultOptions.lang,
+        time = owner?.time || defaultTime,
+        numberFormatter = owner?.numberFormatter || numberFormat;
 
     /*
      * Get a literal or variable value inside a template expression. May be
@@ -362,7 +362,7 @@ function format(
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
                 replacement = format(
-                    replacement ? body : elseBody, ctx, templateOwner
+                    replacement ? body : elseBody, ctx, owner
                 );
             }
 
@@ -393,7 +393,7 @@ function format(
                         );
                     }
                 } else {
-                    replacement = timeInstance.dateFormat(segment, replacement);
+                    replacement = time.dateFormat(segment, replacement);
                 }
             }
 
@@ -406,7 +406,7 @@ function format(
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return hasSub ? format(str, ctx, templateOwner) : str;
+    return hasSub ? format(str, ctx, owner) : str;
 }
 
 /**
@@ -550,11 +550,11 @@ namespace Templating {
     export interface FormatterCallback<T> {
         (this: T): string;
     }
-    export interface TemplatingOwnerOptions {
+    export interface OwnerOptions {
         lang?: LangOptionsCore;
     }
-    export interface TemplatingOwner {
-        options?: TemplatingOwnerOptions;
+    export interface Owner {
+        options?: OwnerOptions;
         time?: Time;
         numberFormatter?: Function
     }

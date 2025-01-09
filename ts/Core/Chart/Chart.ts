@@ -523,10 +523,7 @@ class Chart {
                         locale: this.locale
                     }
                 ),
-                {
-                    ...options.lang,
-                    locale: this.locale
-                }
+                options.lang
             );
             options.time = this.time.options;
 
