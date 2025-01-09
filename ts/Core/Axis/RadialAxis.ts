@@ -189,7 +189,7 @@ namespace RadialAxis {
     }
 
     export const radialDefaultOptions: RadialDefaultOptions =
-        merge(RadialAxisDefaults);
+        RadialAxisDefaults;
 
     /* *
      *

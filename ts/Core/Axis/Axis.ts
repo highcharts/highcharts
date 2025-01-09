@@ -3257,26 +3257,6 @@ class Axis {
     }
 
     /**
-     * Returns the title defined in axis.options.title,
-     * or the default title depending on axis.coll if the option is unset
-     *
-     * @private
-     */
-    public getAxisTitle(): string | undefined {
-        const axis = this;
-        const axisTitleOptions = axis.options.title;
-
-        if (axisTitleOptions) {
-            return axisTitleOptions.text ?? (
-                axis.coll === 'yAxis' &&
-                    !('text' in axisTitleOptions) ?
-                    axis.chart.options.lang.yAxisTitle :
-                    ''
-            );
-        }
-    }
-
-    /**
      * Adds the title defined in axis.options.title.
      *
      * @function Highcharts.Axis#addTitle
@@ -3310,10 +3290,9 @@ class Axis {
                     axisTitleOptions.align as any
                 ];
             }
-
             axis.axisTitle = renderer
                 .text(
-                    axis.getAxisTitle(),
+                    axisTitleOptions.text || '',
                     0,
                     0,
                     axisTitleOptions.useHTML
@@ -3514,19 +3493,20 @@ class Axis {
         }
 
         if (
-            axis.getAxisTitle() &&
+            axisTitleOptions?.text &&
             axisTitleOptions.enabled !== false
         ) {
             axis.addTitle(showAxis);
 
             if (
-                axis.axisTitle &&
                 showAxis &&
                 !hasCrossing &&
                 axisTitleOptions.reserveSpace !== false
             ) {
                 axis.titleOffset = titleOffset =
-                    axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
+                    (axis.axisTitle as any).getBBox()[
+                        horiz ? 'height' : 'width'
+                    ];
                 titleOffsetOption = axisTitleOptions.offset;
                 titleMargin = defined(titleOffsetOption) ?
                     0 :

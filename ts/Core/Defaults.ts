@@ -2910,6 +2910,18 @@ function setOptions(
             text: options.lang.chartTitle
         } as DefaultOptions['title'];
     }
+
+    if (options.lang?.yAxisTitle) {
+        defaultOptions.yAxis = {
+            ...defaultOptions.yAxis,
+            title: {
+                ...defaultOptions.yAxis?.title,
+                text: options.lang.yAxisTitle
+            }
+        };
+    }
+
+
     return defaultOptions;
 }
 
