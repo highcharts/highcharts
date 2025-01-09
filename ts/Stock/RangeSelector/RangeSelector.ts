@@ -470,7 +470,7 @@ class RangeSelector {
 
         rangeSelector.buttonOptions = buttonOptions
             .map((opt): RangeSelectorButtonOptions => {
-                if (opt.type) {
+                if (opt.type && langOptions.rangeSelector) {
                     opt.text ??= langOptions.rangeSelector[`${opt.type}Text`];
                     opt.title ??= langOptions.rangeSelector[`${opt.type}Title`];
                 }
@@ -1479,7 +1479,7 @@ class RangeSelector {
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
-            if (rangeOptions.type) {
+            if (rangeOptions.type && langOptions.rangeSelector) {
                 rangeOptions.text ??= langOptions.rangeSelector[`${rangeOptions.type}Text`];
                 rangeOptions.title ??= langOptions.rangeSelector[`${rangeOptions.type}Title`];
             }

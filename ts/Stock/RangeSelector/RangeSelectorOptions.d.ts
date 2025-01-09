@@ -36,7 +36,7 @@ declare module '../../Core/Options'{
         rangeSelectorFrom?: string;
         rangeSelectorTo?: string;
         rangeSelectorZoom?: string;
-        rangeSelector: Partial<Record<RangeSelectorButtonLangKey, string>>;
+        rangeSelector?: Partial<Record<RangeSelectorButtonLangKey, string>>;
     }
     interface Options {
         rangeSelector?: DeepPartial<RangeSelectorOptions>;

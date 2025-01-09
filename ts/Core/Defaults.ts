@@ -284,23 +284,6 @@ const defaultOptions: DefaultOptions = {
         pieSliceName: 'Slice',
 
         /**
-         * The default text for the rangeselector buttons.
-         *
-         * @since next
-         */
-
-        rangeSelector: {
-            allText: 'All',
-            allTitle: 'View all',
-            monthText: '{count}m',
-            monthTitle: 'View {count} {#eq count 1}month{else}months{/eq}',
-            yearText: '{count}y',
-            yearTitle: 'View {count} {#eq count 1}year{else}years{/eq}',
-            ytdText: 'YTD',
-            ytdTitle: 'View year to date'
-        },
-
-        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.

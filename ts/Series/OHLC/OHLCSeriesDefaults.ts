@@ -69,10 +69,10 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
             '<b> {series.name}</b><br/>' +
-            '{lang.stockOpen}: {point.open}<br/>' +
-            '{lang.stockHigh}: {point.high}<br/>' +
-            '{lang.stockLow}: {point.low}<br/>' +
-            '{lang.stockClose}: {point.close}<br/>'
+            '{series.chart.options.lang.stockOpen}: {point.open}<br/>' +
+            '{series.chart.options.lang.stockHigh}: {point.high}<br/>' +
+            '{series.chart.options.lang.stockLow}: {point.low}<br/>' +
+            '{series.chart.options.lang.stockClose}: {point.close}<br/>'
     }
 
 };

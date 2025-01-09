@@ -32,10 +32,10 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions {
-    stockOpen: string;
-    stockHigh: string;
-    stockLow: string;
-    stockClose: string;
+    // StockOpen: string;
+    // stockHigh: string;
+    // stockLow: string;
+    // stockClose: string;
     weekFrom: string;
     chartTitle: string;
     decimalPoint?: string;

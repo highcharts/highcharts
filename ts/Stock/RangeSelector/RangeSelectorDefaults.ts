@@ -41,7 +41,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @optionparent lang
  */
-const lang: Record<string, string> = {
+const lang = {
 
     /**
      * The text for the label for the range selector buttons.
@@ -64,8 +64,23 @@ const lang: Record<string, string> = {
      *
      * @product highstock gantt
      */
-    rangeSelectorTo: '→'
+    rangeSelectorTo: '→',
 
+    /**
+     * The default text for the rangeselector buttons.
+     *
+     * @since next
+     */
+    rangeSelector: {
+        allText: 'All',
+        allTitle: 'View all',
+        monthText: '{count}m',
+        monthTitle: 'View {count} {#eq count 1}month{else}months{/eq}',
+        yearText: '{count}y',
+        yearTitle: 'View {count} {#eq count 1}year{else}years{/eq}',
+        ytdText: 'YTD',
+        ytdTitle: 'View year to date'
+    }
 };
 
 /**

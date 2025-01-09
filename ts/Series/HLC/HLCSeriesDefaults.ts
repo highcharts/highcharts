@@ -83,7 +83,7 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
         '<b> {series.name}</b><br/>' +
-        '{lang.stockHigh}: {point.high}<br/>' +
+        '{chart.lang.stockHigh}: {point.high}<br/>' +
         '{lang.stockLow}: {point.low}<br/>' +
         '{lang.stockClose}: {point.close}<br/>'
     },
