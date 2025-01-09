@@ -1,6 +1,8 @@
 {
     "extends": "../.stylelintrc.json",
     "rules": {
-        "color-hex-length": "long"
+        "color-hex-length": "long",
+        "hue-degree-notation": "number",
+        "custom-property-empty-line-before": "never"
     }
 }

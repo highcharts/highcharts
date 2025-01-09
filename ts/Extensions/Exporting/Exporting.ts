@@ -1819,11 +1819,6 @@ namespace Exporting {
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
-            // Batik doesn't support rgba fills and strokes (#3095)
-            .replace(
-                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
-                '$1="rgb($2)" $1-opacity="$3"'
-            )
 
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // No-break space

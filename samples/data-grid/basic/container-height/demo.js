@@ -12,9 +12,6 @@ DataGrid.dataGrid(container, {
             metaData: ['a', 'b', 'c', 'd'],
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
-    },
-    columnDefaults: {
-        resizing: false
     }
 });
 
