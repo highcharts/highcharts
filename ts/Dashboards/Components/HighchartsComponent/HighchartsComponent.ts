@@ -426,9 +426,9 @@ class HighchartsComponent extends Component {
             this.chartOptions = this.options.chartOptions || {};
             this.chart?.destroy();
             delete this.chart;
+        } else {
+            this.chart?.update(merge(this.options.chartOptions) || {});
         }
-
-        this.chart?.update(merge(this.options.chartOptions) || {});
 
         this.emit({ type: 'afterUpdate' });
 
