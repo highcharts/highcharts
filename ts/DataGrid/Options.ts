@@ -118,6 +118,11 @@ export interface Options {
     lang?: LangOptions;
 
     /**
+     * Time options for the datagrid.
+     */
+    time?: TimeOptions;
+
+    /**
      * Options to control the way datagrid is rendered.
      */
     rendering?: RenderingSettings;
@@ -606,6 +611,19 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+}
+
+/**
+ * Options for the time settings.
+ */
+export interface TimeOptions {
+    /**
+     * The timezone to use for formatting time and date. The time zone names
+     * can be different between browsers, as described in [mdn docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+     *
+     * @default 'UTC'
+     */
+    timezone?: string;
 }
 
 

@@ -40,7 +40,7 @@ import Time from '../Core/Time.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
-const { merge } = U;
+const { merge, extend } = U;
 
 
 /* *
@@ -222,6 +222,12 @@ class DataGrid {
      */
     public time: Time;
 
+    /**
+     * The locale of the data grid.
+     */
+    public locale?: string | string[];
+
+
     /* *
     *
     *  Constructor
@@ -253,13 +259,20 @@ class DataGrid {
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
+        this.locale = this.options?.lang?.locale || (
+            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+        );
+
+        this.time = new Time(extend<Time.TimeOptions>(
+            this.options?.time,
+            { locale: this.locale }
+        ), this.options?.lang);
+
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
             afterLoadCallback?.(this);
         });
-
-        this.time = new Time({}, this.options?.lang);
 
         DataGrid.dataGrids.push(this);
     }

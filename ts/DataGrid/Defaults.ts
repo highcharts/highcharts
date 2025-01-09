@@ -66,6 +66,9 @@ namespace Defaults {
             },
             noData: 'No data to display'
         },
+        time: {
+            timezone: 'UTC'
+        },
         rendering: {
             columns: {
                 distribution: 'full'
