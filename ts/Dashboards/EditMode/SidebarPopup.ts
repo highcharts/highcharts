@@ -287,7 +287,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove highlight from the row.
         if (
-            editMode.editCellContext instanceof Cell &&
+            Cell.isCell(editMode.editCellContext) &&
             editMode.editCellContext.row
         ) {
             editMode.editCellContext.row.setHighlight();
@@ -513,12 +513,12 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext instanceof Cell && editCellContext.row) {
+        if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
             editCellContext.setHighlight(true);
         } else if (
-            editCellContext instanceof CellHTML && editMode.cellToolbar
+            CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {
             editMode.cellToolbar.showToolbar(editCellContext);
             editCellContext.setHighlight();
