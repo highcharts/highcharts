@@ -153,6 +153,11 @@ export class UMDExtensionPlugin {
         }
 
         const filepath = Path.join(outputOptions.path, outputOptions.filename);
+
+        if (!FS.existsSync(filepath)) {
+            return;
+        }
+
         const content = FS.readFileSync(filepath, 'utf8');
 
         const nodeNamespaceReplacement = '_' + content

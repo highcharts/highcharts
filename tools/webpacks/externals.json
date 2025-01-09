@@ -1,0 +1,149 @@
+[
+    {
+        "files": [
+            "Core/Axis/Color/ColorAxis",
+            "Series/ColorMapComposition"
+        ],
+        "included": [
+            "modules/coloraxis",
+            "modules/heatmap",
+            "modules/map",
+            "modules/sunburst",
+            "modules/treemap"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Core/HttpUtilities"],
+        "included": [
+            "modules/data",
+            "modules/exporting"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Extensions/Annotations/NavigationBindings"],
+        "included": [
+            "modules/annotations",
+            "modules/annotations-advanced",
+            "modules/stock-tools"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Extensions/DataGrouping/ApproximationRegistry"],
+        "included": [
+            "modules/datagrouping",
+            "modules/stock"
+        ],
+        "namespacePath": ".dataGrouping.approximations"
+    },
+    {
+        "files": ["Gantt/Pathfinder"],
+        "included": [
+            "modules/gantt",
+            "modules/pathfinder"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": [
+            "Stock/Navigator/Navigator",
+            "Stock/Scrollbar/Scrollbar"
+        ],
+        "included": [
+            "modules/accessibility",
+            "modules/gantt",
+            "modules/navigator",
+            "modules/stock"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Stock/RangeSelector/RangeSelector"],
+        "included": [
+            "modules/accessibility",
+            "modules/gantt",
+            "modules/stock"
+        ],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": [
+            "Core/Animation/AnimationUtilities",
+            "Core/Defaults",
+            "Core/Globals",
+            "Core/Renderer/RendererUtilities",
+            "Core/Utilities"
+        ],
+        "included": [],
+        "namespacePath": ""
+    },
+    {
+        "files": [
+            "Core/Animation/Fx",
+            "Core/Axis/Axis",
+            "Core/Axis/PlotLineOrBand/PlotLineOrBand",
+            "Core/Axis/Stacking/StackItem",
+            "Core/Axis/Tick",
+            "Core/Chart/Chart",
+            "Core/Color/Color",
+            "Core/Legend/Legend",
+            "Core/Legend/LegendSymbol",
+            "Core/Pointer",
+            "Core/Renderer/HTML/AST",
+            "Core/Renderer/SVG/SVGElement",
+            "Core/Renderer/SVG/SVGRenderer",
+            "Core/Renderer/RendererRegistry",
+            "Core/Series/DataLabel",
+            "Core/Series/Point",
+            "Core/Series/Series",
+            "Core/Series/SeriesRegistry",
+            "Core/Templating",
+            "Core/Time",
+            "Core/Tooltip"
+        ],
+        "included": [],
+        "namespacePath": ".{name}"
+    },
+    {
+        "files": ["Series/Area/AreaSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.area"
+    },
+    {
+        "files": ["Series/Area/AreaSplineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.areaspline"
+    },
+    {
+        "files": ["Series/Area/BarSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.bar"
+    },
+    {
+        "files": ["Series/Area/ColumnSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.column"
+    },
+    {
+        "files": ["Series/Area/LineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.line"
+    },
+    {
+        "files": ["Series/Area/PieSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.pie"
+    },
+    {
+        "files": ["Series/Area/ScatterSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.scatter"
+    },
+    {
+        "files": ["Series/Area/SplineSeries"],
+        "included": [],
+        "namespacePath": ".Series.types.spline"
+    }
+]
