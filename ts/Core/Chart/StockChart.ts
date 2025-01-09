@@ -140,10 +140,9 @@ function getDefaultAxisOptions(
                 options.type === 'category'
             ),
             title: {
-                text: Object.hasOwnProperty.call(
-                    defaultOptions.title,
-                    'text'
-                ) ? defaultOptions.title?.text : null
+                text: defaultOptions.title?.text !== 'Values' ?
+                    defaultOptions.title?.text :
+                    null
             }
         };
     }
