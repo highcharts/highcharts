@@ -1089,7 +1089,7 @@ class Time {
      *         The optimal date format for a point.
      */
     public getDateFormat(
-        range: number,
+        range: number | undefined,
         timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
@@ -1112,6 +1112,7 @@ class Time {
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
             if (
+                range &&
                 range === timeUnits.week &&
                 +this.dateFormat('%w', timestamp) === startOfWeek &&
                 dateStr.substr(6) === blank.substr(6)
@@ -1121,7 +1122,7 @@ class Time {
             }
 
             // The first format that is too great for the range
-            if (timeUnits[n] > range) {
+            if (range && timeUnits[n] > range) {
                 n = lastN;
                 break;
             }

@@ -239,7 +239,7 @@ function format(
             match = subMatch;
             hasSub = true;
         }
-        if (!currentMatch || !currentMatch.isBlock) {
+        if (!currentMatch?.isBlock) {
             currentMatch = {
                 ctx,
                 expression: match[1],

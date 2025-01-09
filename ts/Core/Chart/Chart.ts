@@ -1535,7 +1535,7 @@ class Chart {
             tempStyle: CSSObject;
 
         if (!revert) {
-            while (node && node.style) {
+            while (node?.style) {
 
                 // When rendering to a detached node, it needs to be temporarily
                 // attached in order to read styling and bounding boxes (#5783,
@@ -1577,7 +1577,7 @@ class Chart {
                 }
             }
         } else {
-            while (node && node.style) {
+            while (node?.style) {
                 if ((node as any).hcOrigStyle) {
                     css(node, (node as any).hcOrigStyle);
                     delete (node as any).hcOrigStyle;
@@ -1731,7 +1731,7 @@ class Chart {
             chartHeight,
             void 0,
             optionsChart.forExport,
-            options.exporting && options.exporting.allowHTML,
+            options.exporting?.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
 
@@ -1785,7 +1785,7 @@ class Chart {
         }
 
         // Adjust for legend
-        if (this.legend && this.legend.display) {
+        if (this.legend?.display) {
             this.legend.adjustMargins(margin, spacing);
         }
 
@@ -1818,7 +1818,7 @@ class Chart {
         if (chart.hasCartesianSeries) {
             getOffset(chart.axes);
 
-        } else if (colorAxis && colorAxis.length) {
+        } else if (colorAxis?.length) {
             getOffset(colorAxis);
         }
 
@@ -2396,7 +2396,7 @@ class Chart {
             // Requires it
 
             // 4. Check if any the chart's series require it
-            i = seriesOptions && seriesOptions.length;
+            i = seriesOptions?.length;
             while (!value && i--) {
                 klass = seriesTypes[seriesOptions[i].type as any];
                 if (klass && (klass.prototype as any)[key]) {
@@ -2610,7 +2610,7 @@ class Chart {
         if (chart.hasCartesianSeries) {
             renderAxes(axes);
 
-        } else if (colorAxis && colorAxis.length) {
+        } else if (colorAxis?.length) {
             renderAxes(colorAxis);
         }
 
@@ -2715,7 +2715,7 @@ class Chart {
             axes = chart.axes,
             series = chart.series,
             container = chart.container,
-            parentNode = container && container.parentNode;
+            parentNode = container?.parentNode;
 
         let i: number;
 
@@ -2742,9 +2742,7 @@ class Chart {
         }
 
         // Destroy scroller & scroller series before destroying base series
-        if (this.scroller && this.scroller.destroy) {
-            this.scroller.destroy();
-        }
+        this.scroller?.destroy?.();
 
         // Destroy each series
         i = series.length;
@@ -2758,12 +2756,8 @@ class Chart {
             'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
             'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
             'renderer'
-        ].forEach(function (name: string): void {
-            const prop = (chart as any)[name];
-
-            if (prop && prop.destroy) {
-                (chart as any)[name] = prop.destroy();
-            }
+        ].forEach((name: string): void => {
+            (chart as any)[name] = (chart as any)[name]?.destroy?.();
         });
 
         // Remove container and all SVG, check container as it can break in IE
@@ -2889,7 +2883,7 @@ class Chart {
             this.renderer.boxWrapper.attr({
                 role: 'img',
                 'aria-label': (
-                    (title && title.element.textContent) || ''
+                    title?.element.textContent || ''
                 // #17753, < is not allowed in SVG attributes
                 ).replace(/</g, '&lt;')
             });
@@ -3506,7 +3500,7 @@ class Chart {
         }
 
         // Update size. Redraw is forced.
-        const newWidth = optionsChart && optionsChart.width;
+        const newWidth = optionsChart?.width;
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
                 relativeLength(

@@ -364,7 +364,7 @@ namespace PlotLineOrBandAxis {
             ]).forEach(function (arr): void {
                 i = arr.length;
                 while (i--) {
-                    if ((arr[i] || {}).id === id) {
+                    if (arr[i]?.id === id) {
                         erase(arr, arr[i]);
                     }
                 }

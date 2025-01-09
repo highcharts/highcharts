@@ -190,7 +190,7 @@ function wrapGetLabelPosition(
 ): PositionObject {
     const tick = this,
         lbOptions = pick(
-            tick.options && tick.options.labels,
+            tick.options?.labels,
             labelOptions
         ),
         pos = tick.pos,
@@ -220,8 +220,8 @@ function wrapGetLabelPosition(
                     0
             );
         mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode;
-        node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
-        level = (node && node.depth) || 1;
+        node = mapOfPosToGridNode?.[pos];
+        level = node?.depth || 1;
         result.x += (
             // Add space for symbols
             (width + (padding * 2)) +
@@ -263,7 +263,7 @@ function wrapRenderLabel(
                 labelOptions.symbol :
                 {}
         ),
-        node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
+        node = mapOfPosToGridNode?.[pos],
         {
             descendants,
             depth

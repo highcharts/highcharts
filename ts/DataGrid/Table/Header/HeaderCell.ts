@@ -33,7 +33,7 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement, isHTML } = DGUtils;
-const { merge } = Utilities;
+const { merge, isString } = Utilities;
 
 
 /* *
@@ -128,7 +128,7 @@ class HeaderCell extends Cell {
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
-        } else if (headerCellOptions.format) {
+        } else if (isString(headerCellOptions.format)) {
             this.value = column.format(headerCellOptions.format);
         } else {
             this.value = column.id;
@@ -137,17 +137,9 @@ class HeaderCell extends Cell {
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
 
-        this.headerContent = makeHTMLElement(
-            isSortableData ? 'button' : 'span',
-            {
-                className: Globals.classNames.headerCellContent
-            },
-            this.htmlElement
-        );
-
-        if (isSortableData) {
-            this.headerContent.setAttribute('type', 'button');
-        }
+        this.headerContent = makeHTMLElement('span', {
+            className: Globals.classNames.headerCellContent
+        }, this.htmlElement);
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
@@ -156,6 +148,12 @@ class HeaderCell extends Cell {
             );
         } else {
             this.headerContent.innerText = this.value;
+        }
+
+        if (isSortableData) {
+            column.viewport.dataGrid.accessibility?.addSortableColumnHint(
+                this.headerContent
+            );
         }
 
         this.htmlElement.setAttribute('scope', 'col');

@@ -100,6 +100,11 @@ export interface Options {
     dataTable?: DataTable | DataTableOptions;
 
     /**
+     * Options for the description of the datagrid.
+     */
+    description?: DescriptionOptions;
+
+    /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
@@ -111,6 +116,11 @@ export interface Options {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/grouped-headers | Grouped headers}
      */
     header?: Array<GroupedHeaderOptions|string>;
+
+    /**
+     * The unique id of the datagrid. It is generated automatically, if not set.
+     */
+    id?: string;
 
     /**
      * Language options for the datagrid.
@@ -146,6 +156,14 @@ export interface RenderingSettings {
      * Options to control the table rendering.
      */
     table?: TableSettings;
+
+    /**
+     * The theme of the DataGrid. It will set the class name on the container.
+     * Can be set to the empty string to disable the theme.
+     *
+     * @default 'hcdg-theme-default'
+     */
+    theme?: string;
 }
 
 export interface ColumnsSettings {
@@ -184,6 +202,19 @@ export interface RowsSettings {
      * @default 10
      */
     bufferSize?: number;
+
+    /**
+     * Defines the minimum height of the table body (`tbody`) based on the
+     * number of rows that should be visible in the viewport.
+     *
+     * If set to `null`, the minimum height will not be enforced.
+     *
+     * It's ignored when height of the container is set or the `min-height`
+     * style is set on the `tbody` by the user.
+     *
+     * @default 2
+     */
+    minVisibleRows?: number | null;
 
     /**
      * Whether the height of the rows should be calculated automatically based
@@ -430,6 +461,18 @@ export interface CaptionOptions {
      * The caption of the datagrid.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/overview | Caption}
+     */
+    text?: string;
+}
+
+export interface DescriptionOptions {
+    /**
+     * The custom CSS class name for the description.
+     */
+    className?: string;
+
+    /**
+     * The description of the datagrid.
      */
     text?: string;
 }

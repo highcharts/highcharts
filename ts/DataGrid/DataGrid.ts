@@ -40,7 +40,7 @@ import Time from '../Core/Time.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
-const { merge } = U;
+const { merge, getStyle } = U;
 
 
 /* *
@@ -139,6 +139,11 @@ class DataGrid {
     public accessibility?: Accessibility;
 
     /**
+     * The caption element of the data grid.
+     */
+    public captionElement?: HTMLElement;
+
+    /**
      * The user options declared for the columns as an object of column ID to
      * column options.
      */
@@ -164,6 +169,11 @@ class DataGrid {
      * that was passed to the data grid.
      */
     public dataTable?: DataTable;
+
+    /**
+     * The description element of the data grid.
+     */
+    public descriptionElement?: HTMLElement;
 
     /**
      * The presentation table of the data grid. It contains a modified version
@@ -213,6 +223,18 @@ class DataGrid {
     public hoveredColumnId?: string;
 
     /**
+     * The synced row index.
+     * @internal
+     */
+    public syncedRowIndex?: number;
+
+    /**
+     * The synced column ID.
+     * @internal
+     */
+    public syncedColumnId?: string;
+
+    /**
      * The querying controller.
      */
     public querying: QueryingController;
@@ -221,6 +243,17 @@ class DataGrid {
      * The time instance.
      */
     public time: Time;
+
+    /**
+     * The initial height of the container. Can be 0 also if not set.
+     */
+    public initialContainerHeight: number = 0;
+
+    /**
+     * The unique ID of the data grid.
+     */
+    public id: string;
+
 
     /* *
     *
@@ -248,6 +281,7 @@ class DataGrid {
         this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
+        this.id = this.options?.id || U.uniqueKey();
 
         this.initContainers(renderTo);
         this.initAccessibility();
@@ -304,6 +338,8 @@ class DataGrid {
             return;
         }
 
+        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
+
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;
         this.contentWrapper = makeHTMLElement('div', {
@@ -345,6 +381,7 @@ class DataGrid {
             this.userOptions
         );
 
+        // Generate column options map
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
             return;
@@ -353,7 +390,6 @@ class DataGrid {
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
         }
-
         this.columnOptionsMap = columnOptionsObj;
     }
 
@@ -590,6 +626,120 @@ class DataGrid {
     }
 
     /**
+     * Sets the sync state to the row with the provided index. It removes the
+     * synced effect from the previously synced row.
+     *
+     * @param rowIndex
+     * The index of the row.
+     */
+    public syncRow(rowIndex?: number): void {
+        const rows = this.viewport?.rows;
+        if (!rows) {
+            return;
+        }
+
+        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
+
+        if (this.syncedRowIndex !== void 0) {
+            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+        }
+
+        if (rowIndex !== void 0) {
+            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+        }
+
+        this.syncedRowIndex = rowIndex;
+    }
+
+    /**
+     * Sets the sync state to the column with the provided ID. It removes the
+     * synced effect from the previously synced column.
+     *
+     * @param columnId
+     * The ID of the column.
+     */
+    public syncColumn(columnId?: string): void {
+        const vp = this.viewport;
+
+        if (!vp) {
+            return;
+        }
+
+        if (this.syncedColumnId) {
+            vp.getColumn(this.syncedColumnId)?.setSyncedState(false);
+        }
+
+        if (columnId) {
+            vp.getColumn(columnId)?.setSyncedState(true);
+        }
+
+        this.syncedColumnId = columnId;
+    }
+
+    /**
+     * Render caption above the datagrid.
+     *
+     * @internal
+     */
+    public renderCaption(): void {
+        const captionOptions = this.options?.caption;
+        if (!captionOptions?.text) {
+            return;
+        }
+
+        this.captionElement = makeHTMLElement('div', {
+            innerText: captionOptions.text,
+            className: Globals.classNames.captionElement,
+            id: this.id + '-caption'
+        }, this.contentWrapper);
+
+        if (captionOptions.className) {
+            this.captionElement.classList.add(
+                ...captionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
+     * Render description under the datagrid.
+     *
+     * @internal
+     */
+    public renderDescription(): void {
+        const descriptionOptions = this.options?.description;
+        if (!descriptionOptions?.text) {
+            return;
+        }
+
+        this.descriptionElement = makeHTMLElement('div', {
+            innerText: descriptionOptions.text,
+            className: Globals.classNames.descriptionElement,
+            id: this.id + '-description'
+        }, this.contentWrapper);
+
+        if (descriptionOptions.className) {
+            this.descriptionElement.classList.add(
+                ...descriptionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
+     * Resets the content wrapper of the data grid. It clears the content and
+     * resets the class names.
+     */
+    public resetContentWrapper(): void {
+        if (!this.contentWrapper) {
+            return;
+        }
+
+        this.contentWrapper.innerHTML = AST.emptyHTML;
+        this.contentWrapper.className = Globals.classNames.container + ' ' + (
+            this.options?.rendering?.theme || ''
+        );
+    }
+
+    /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
@@ -604,9 +754,8 @@ class DataGrid {
         this.viewport?.destroy();
         delete this.viewport;
 
-        if (this.contentWrapper) {
-            this.contentWrapper.innerHTML = AST.emptyHTML;
-        }
+        this.resetContentWrapper();
+        this.renderCaption();
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
@@ -617,12 +766,16 @@ class DataGrid {
             this.renderNoData();
         }
 
+        this.renderDescription();
+
         if (this.options?.credits?.enabled) {
             this.credits = new Credits(this);
         }
 
-        if (this.options?.rendering?.rows?.virtualization) {
-            this.viewport?.reflow();
+        this.accessibility?.setA11yOptions();
+
+        if (this.viewport?.virtualRows) {
+            this.viewport.reflow();
         }
     }
 
@@ -637,15 +790,7 @@ class DataGrid {
             className: Globals.classNames.tableElement
         }, this.contentWrapper);
 
-        const vp = new Table(this, this.tableElement);
-
-        // Accessibility
-        this.tableElement.setAttribute(
-            'aria-rowcount',
-            this.dataTable?.getRowCount() ?? 0
-        );
-
-        return vp;
+        return new Table(this, this.tableElement);
     }
 
     /**

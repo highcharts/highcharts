@@ -97,6 +97,6 @@ components: [{
 ```
 
 ## View the result
-With the above configuration, your datagrid should look like this:
+With the above configuration, your dashboard should look like this:
 
 <iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>

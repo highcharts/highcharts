@@ -1,0 +1,8 @@
+---
+name: US map of top 100 cities by population
+authors:
+  - A. Solheim
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+...
