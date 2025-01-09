@@ -805,7 +805,7 @@ class Tooltip {
     ): PositionObject {
         const position = this.options.position,
             series = point.series,
-            chart = this.chart;
+            { chart, split } = this;
 
         if (position) {
             const relativeTo = position.relativeTo,
@@ -815,9 +815,11 @@ class Tooltip {
                         chart.getClipBox(series, true);
             return {
                 x: bounds.x + (bounds.width - boxWidth) *
-                    getAlignFactor(position.align),
+                    getAlignFactor(position.align) +
+                    position.x,
                 y: bounds.y + (bounds.height - boxHeight) *
-                    getAlignFactor(position.verticalAlign)
+                    getAlignFactor(position.verticalAlign) +
+                    (!split && position.y || 0)
             };
         }
         return { x: 0, y: 0 };
@@ -1236,7 +1238,8 @@ class Tooltip {
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
-        const hasFixedPosition = positioner || position?.fixed;
+        const fixed = position?.fixed;
+        const hasFixedPosition = positioner || fixed;
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1325,7 +1328,7 @@ class Tooltip {
                     bounds.left,
                     bounds.right - boxWidth - (tooltip.outside ? chartLeft : 0)
                 );
-            } else if (position?.fixed && point) {
+            } else if (fixed && point) {
                 const pos = tooltip.getFixedPosition(boxWidth, 0, point);
                 x = pos.x;
                 y = pos.y - distributionBoxTop;
@@ -1363,7 +1366,6 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point,
-                fixed = options.position?.fixed,
                 ttOptions = series.tooltipOptions || options;
 
             if (!tt) {
@@ -1578,7 +1580,8 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: (pos || 0) + distributionBoxTop,
+                y: (pos || 0) + distributionBoxTop +
+                    (fixed && position.y || 0),
                 anchorX,
                 anchorY
             };

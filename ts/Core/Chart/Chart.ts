@@ -748,8 +748,8 @@ class Chart {
         }
 
         if (chartCoords) {
-            x = (inverted ? yAxis : xAxis)?.pos ?? this.plotLeft;
-            y = (inverted ? xAxis : yAxis)?.pos ?? this.plotTop;
+            x += (inverted ? yAxis : xAxis)?.pos ?? this.plotLeft;
+            y += (inverted ? xAxis : yAxis)?.pos ?? this.plotTop;
         }
 
         return { x, y, width, height };

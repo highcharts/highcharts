@@ -2461,6 +2461,11 @@ const defaultOptions: DefaultOptions = {
          */
         padding: 8,
 
+        position: {
+            x: 0,
+            y: 1
+        },
+
         /**
          * The name of a symbol to use for the border around the tooltip. Can
          * be one of: `"callout"`, `"circle"` or `"rect"`. When

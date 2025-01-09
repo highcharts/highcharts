@@ -74,9 +74,7 @@
         tooltip: {
             split: true,
             position: {
-                fixed: true,
-                // relativeTo: 'spacingBox',
-                y: 1
+                fixed: true
             }
         },
 

@@ -92,8 +92,8 @@ interface TooltipPositionOptions {
     fixed?: boolean;
     relativeTo?: 'chart'|'pane'|'plotBox'|'spacingBox'
     verticalAlign?: VerticalAlignValue;
-    x?: number;
-    y?: number;
+    x: number;
+    y: number;
 }
 
 /* *
