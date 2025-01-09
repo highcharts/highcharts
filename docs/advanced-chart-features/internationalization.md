@@ -31,15 +31,15 @@ Live demos
 
 
 Chart in Arabic language
-<iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-arabic' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/lang/i18n-arabic" allow="fullscreen"></iframe>
 
 Chart in Chinese language
-<iframe style="width: 100%; height: 450px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/lang/i18n-chinese' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/lang/i18n-chinese" allow="fullscreen"></iframe>
 
 
 ## Language modules (preview)
 
-The Highcharts language modules contains translations for texts in the
+The Highcharts language modules contain translations for texts in the
 [lang](https://api.highcharts.com/highcharts/lang) option. They are meant to
 provide a convenient way to set the default texts of series, tooltips, axes,
 chart descriptions for accessibility, and more.
@@ -73,9 +73,16 @@ Highcharts.setOptions({
 
 Note that the language options have to be set before initializing the chart with `Highcharts.chart()`.
 
-<iframe
-    style="width: 100%; height: 450px; border: none;"
-    src="https://www.highcharts.com/samples/embed/highcharts/demo/i18n"
-    allow="fullscreen"
-></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/i18n" allow="fullscreen"></iframe>
+
+
+### Custom language modules
+
+If you want to create a custom language module, you can do so by following these steps:
+
+1. Download and install the [Highcharts repo](https://github.com/highcharts/highcharts) from Github.
+2. Translate the `i18n/lang.json` file to the language of your choosing.
+Save the translated JSON file in the `i18n` folder and name it after the relevant locale.
+3. Generate a TypeScript module by running `npx gulp lang-build`. The output file will appear in the `ts/masters/i18n/` folder.
+4. Generate a JavaScript file by running `npx gulp scripts`. The JS file will be placed in the `code/i18n/` folder.
 
