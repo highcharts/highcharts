@@ -2,7 +2,8 @@
 let selectedVerbosity = 'default',
     selectedTextSize = 'default',
     isContrastChecked = false,
-    isBorderChecked = false;
+    isBorderChecked = false,
+    selectedColorTheme = 'default';
 // const settingsImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Windows_Settings_icon.svg/639px-Windows_Settings_icon.svg.png';
 
 function initializeChart() {
@@ -17,7 +18,8 @@ function initializeChart() {
 function getChartConfig() {
     return {
         chart: {
-            type: 'column'
+            type: 'column',
+            styledMode: true
         },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
@@ -118,6 +120,18 @@ function createPreferencesDialog(chart) {
     </button>
     <h2>Preferences</h2>
     <p>Customize your chart settings to enhance your experience.</p>
+    <h3>Color Theme</h3>
+    <div class="pref color-theme">
+        <input type="radio" id="c-default" name="color-theme" value="none"
+        ${selectedColorTheme === 'default' ? 'checked' : ''}>
+        <label for="c-default">System default</label>
+        <input type="radio" id="color-light" name="color-theme" value="light"
+        ${selectedColorTheme === 'light' ? 'checked' : ''}>
+        <label for="color-light">Light</label>
+        <input type="radio" id="color-dark" name="color-theme" value="dark"
+        ${selectedColorTheme === 'dark' ? 'checked' : ''}>
+        <label for="color-dark">Dark</label>
+    </div>
     <h3>Verbosity:</h3>
     <div class="pref verbosity">
         <input type="radio" id="low" name="verbosity" value="low"
@@ -170,6 +184,8 @@ function setupEventListeners(prefContent, chart) {
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
+    const themeRadioButtons =
+        prefContent.querySelectorAll('input[name="color-theme"]');
 
     // For verbosity setting
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -241,6 +257,7 @@ function setupEventListeners(prefContent, chart) {
                 innerScreenReaderDiv.children[6].style.display = 'none';
 
                 // TODO: Shorten description for points somehow?
+                // Just value and unit without series?
 
             } else {
                 // Re-apply full description
@@ -251,6 +268,18 @@ function setupEventListeners(prefContent, chart) {
                 innerScreenReaderDiv.children[6].style.display = 'block';
 
             }
+        });
+    });
+
+    // TODO: Also add darkmode to the other elements outside of the chart?
+    themeRadioButtons.forEach(radio => {
+        radio.addEventListener('change', event => {
+            const theme = event.target.value;
+            selectedColorTheme = theme;
+
+            document.getElementById('container').className =
+                event.target.value === 'none' ?
+                    '' : `highcharts-${event.target.value}`;
         });
     });
 
