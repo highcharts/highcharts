@@ -1,12 +1,11 @@
-MathModifier module
-===================
+# MathModifier module
 
-The MathModifier provides different functions to run pre-defined formulas on a
+The `MathModifier` provides different functions to run pre-defined formulas on a
 table, or to calculate the pre-filled formulas loaded into the table cells.
-MathModifier's integrated formula system supports a subset of known spreadsheet
+`MathModifier`'s integrated formula system supports a subset of known spreadsheet
 functions, but more can be defined by your needs.
 
-As in spreadsheets you can use cell and range references. The MathModifier
+As in spreadsheets, you can use cell and range references. The `MathModifier`
 supports the following reference syntaxes:
 
 * `A1`: One or more capital letters are the index for the column, while one or 
@@ -18,7 +17,7 @@ supports the following reference syntaxes:
   range.
 
 * `R1C1`: __R__ followed by one or more digits is the index for the row, while
-  __C__ followed by one ore more digits is the index for the column. This syntax
+  __C__ followed by one or more digits is the index for the column. This syntax
   also supports negative values for back-references.
 
 * `R1C1:R9C9`: __R__ followed by digits is the start index and end index for the
@@ -26,23 +25,20 @@ supports the following reference syntaxes:
   index for the columns of the range.
 
 
-For performance reasons, a reference to a formular cell is only supported as:
+For performance reasons, a reference to a formula cell is only supported as:
 
 * A back-reference from the current column back to the first column.
 
 * A back-reference from the current row back to the first row.
 
 
-As with every DataModifier the original table will not be altered by the
-MathModifier and instead a table clone is created, containing the calculated
+As with every `DataModifier`, the original table will not be altered by the
+`MathModifier`, and instead, a table clone is created containing the calculated
 values.
 
+## Pre-defined column calculations
 
-
-Pre-defined Column Calculations
--------------------------------
-
-You can pre-define formulas in the options of the MathModifier to create new
+You can pre-define formulas in the MathModifier options to create new
 columns with calculations based on existing columns. You can also replace an
 existing column with calculations, e.g. replace metric values. References in
 your formulas will be adjusted accordingly to each row.
@@ -57,15 +53,11 @@ your formulas will be adjusted accordingly to each row.
 }
 ```
 
+## Pre-filled column calculations
 
-
-Pre-filled Column Calculations
-------------------------------
-
-If the table already contains cells pre-filled with formulas, then these will be
-automatically processed by the MathModifier. A formula in a cell has to start
-with a equal sign (`=`) as the first character, to get calculated by the
-MathModifier.
+If the table already contains cells pre-filled with formulas, then these will automatically be processed by the `MathModifier`. A formula in a cell has to start
+with an equal sign (`=`) as the first character, to get calculated by the
+`MathModifier`.
 
 ``` JavaScript
 {
@@ -78,19 +70,15 @@ MathModifier.
 }
 ```
 
+## Supported calculations & functions
 
-
-Supported Calculations & Functions
-----------------------------------
-
-The formula system of the MathModifier support infinite combinations of
-calculations and function calls. Additionally custom functions can be added
-as described in a later section.
+The formula system of the `MathModifier` supports infinite combinations of
+calculations and function calls. Additionally, custom functions can be added, as described in a later section.
 
 
 ### Operators
 
-For calculations the following operators are supported:
+For calculations, the following operators are supported:
 
 * `+`: Addition, e.g. `=1+2`.
 
@@ -121,10 +109,10 @@ The following functions are already included:
   Returns positive numbers.
 
 * `AND(...tests)`:
-  Returns `TRUE`, if all test results are not `0` or `FALSE`.
+  Returns `TRUE` if all test results are not `0` or `FALSE`.
 
 * `AVERAGE(...values)`:
-  Calculates the average of the given values that are numbers.
+  Calculates the average of the given values, which are numbers.
 
 * `AVERAGEA(...values)`:
   Calculates the average of the given values. Strings and `FALSE` are calculated
@@ -141,32 +129,32 @@ The following functions are already included:
   if the test result is not `0` or `FALSE`.
 
 * `ISNA(value)`:
-  Returns `TRUE` if value is not a number.
+  Returns `TRUE` if the value is not a number.
 
 * `MAX(...values)`:
-  Calculates the largest of the given values that are numbers.
+  Calculates the largest of the given numerical values.
 
 * `MEDIAN(...values)`:
   Calculates the median average of the given values.
 
 * `MIN(...values)`:
-  Calculates the lowest of the given values that are numbers.
+  Calculates the lowest of the given numerical values.
 
 * `MOD(value1, value2)`:
   Calculates the rest of the division with the given values.
 
 * `MODE.MULT(...values)`:
-  Calculates the most frequent values of the give values.
+  Calculates the most frequent values of the given values.
 
 * `MODE.SNGL(...values)`:
-  Calculates the lowest most frequent value of the give values.
+  Calculates the lowest, most frequent value of the given values.
   `MODE(...values)` is an alias.
 
 * `NOT(value)`:
   Returns the opposite test result.
 
 * `OR(...tests)`:
-  Returns `TRUE`, if one test result is not `0` or `FALSE`.
+  Returns `TRUE` if one test result is not `0` or `FALSE`.
 
 * `PRODUCT(...values)`:
   Calculates the product of the given values.
@@ -175,7 +163,7 @@ The following functions are already included:
   Calculates the sum of the given values.
 
 * `XOR(...tests)`:
-  Returns `TRUE`, if at least one of the given tests differs in result of other
+  Returns `TRUE` if at least one of the given tests differs from the result of other
   tests.
 
 
@@ -183,9 +171,8 @@ The following functions are already included:
 Custom-defined Functions
 ------------------------
 
-In case you need to support another function, you can define it in the formula
-system of the MathModifier. Depending on the implementation, you might need to
-support cell references and range references.
+If you need to support another function, you can define it in the formula
+system of the `MathModifier`. You might need to support cell and range references depending on the implementation.
 
 ``` JavaScript
 const Formula = Dashboards.DataModifier.types.Math.Formula;

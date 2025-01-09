@@ -44,7 +44,7 @@ jobs:
 
       - name: Benchmark
         continue-on-error: true
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context base --pattern Dashboards/
+        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context base --pattern Dashboards/
 
       - name: Checkout current branch
         uses: actions/checkout@v3
@@ -59,13 +59,13 @@ jobs:
         run: npx gulp dashboards/scripts
 
       - name: Benchmark
-        run: cd test/ts-node-unit-tests && node -r ts-node/register bench.ts --context actual --pattern Dashboards/
+        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Dashboards/
 
       - name: Benchmark comparison
-        run: cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts
+        run: cd test/ts-node-unit-tests && node --import tsx benchmark-compare.ts
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: benchmark-files
           path: |

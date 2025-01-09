@@ -136,7 +136,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             pointInterval: 3600000, // one hour
-            pointStart: Date.UTC(2024, 1, 29, 0, 0, 0)
+            pointStart: '2014-02-29'
         }
     },
     series: [{

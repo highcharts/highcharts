@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.4.8",
+  "version": "12.1.2",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
@@ -25,6 +25,7 @@
     "dapi2": "gulp dashboards/api2",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
+    "dlintcss": "npx stylelint --config ./css/.stylelintrc.json 'css/datagrid/*.css' && npx stylelint --config ./css/.stylelintrc.json 'css/dashboards/*.css'",
     "dtest": "gulp dashboards/test",
     "dlint": "gulp dashboards/lint",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
@@ -40,14 +41,15 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint-docs": "npx cspell -c ./tools/cspell/cspell.json \"docs/**/*.md\"",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
-    "prepare": "husky install",
+    "prepare": "husky install && gulp --series clean update-vendor",
     "postinstall": "npx gulp update-vendor && npx gulp patch-ink-docstrap",
     "reset": "npx gulp reset-clone && npm i",
-    "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
-    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
+    "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
+    "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.592.0",
@@ -57,7 +59,7 @@
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.9",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.10",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
     "@swc/core": "^1.5.25",
@@ -73,6 +75,7 @@
     "chatgpt": "^5.2.5",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
+    "cspell": "^8.16.0",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
@@ -159,6 +162,9 @@
     ],
     "*.css": [
       "stylelint"
+    ],
+    "./docs/**/*.md": [
+      "npx cspell -c ./tools/cspell/cspell.json"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

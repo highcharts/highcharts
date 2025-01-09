@@ -3,7 +3,7 @@
 Highcharts.addEvent(Highcharts.Point, 'click', function () {
     if (this.series.options.className.indexOf('popup-on-click') !== -1) {
         const chart = this.series.chart;
-        const date = Highcharts.dateFormat('%A, %b %e, %Y', this.x);
+        const date = chart.time.dateFormat('%A, %b %e, %Y', this.x);
         const text = `<b>${date}</b><br/>${this.y} ${this.series.name}`;
 
         const anchorX = this.plotX + this.series.xAxis.pos;

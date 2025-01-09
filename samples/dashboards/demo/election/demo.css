@@ -2,11 +2,11 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-/* *
+/**
  *
  *  Variables
  *
- * */
+ **/
 :root {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
@@ -35,7 +35,17 @@
 }
 
 body {
-    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 #election-map {
@@ -100,11 +110,11 @@ body {
     }
 }
 
-/* *
+/**
  *
  *  HTML layout
  *
- * */
+ **/
 
 #container {
     padding: 10px;
@@ -135,11 +145,11 @@ body {
     background-clip: border-box;
 }
 
-/* *
+/**
  *
  *  Common styles
  *
- * */
+ **/
 
 .highcharts-dashboards-component-title {
     margin: 0;
@@ -187,15 +197,15 @@ text.highcharts-data-label {
     display: none;
 }
 
-#demo-description {
-    padding: 15px;
+.highcharts-description {
+    padding: 0 20px;
 }
 
-/* *
+/**
  *
  *  HTML for displaying national election result
  *
- * */
+ **/
 
 #html-result-div {
     --progress-bar-height: 100%;
@@ -333,11 +343,11 @@ text.highcharts-data-label {
     font-size: 1.5em;
 }
 
-/* *
+/**
  *
  *  HTML application control
  *
- * */
+ **/
 
 #html-control-div {
     text-align: center;
@@ -391,11 +401,11 @@ text.highcharts-data-label {
     background-color: var(--component-background-optional);
 }
 
-/* *
+/**
  *
  *  US Map
  *
- * */
+ **/
 
 #election-map {
     height: 805px;
@@ -462,7 +472,6 @@ text.highcharts-data-label {
 }
 
 /* Custom map tooltip */
-
 #election-map .map-tooltip caption {
     font-size: 13px;
     font-weight: bold;
@@ -487,11 +496,11 @@ text.highcharts-data-label {
     text-align: center;
 }
 
-/* *
+/**
  *
  *  Election chart (national and history)
  *
- * */
+ **/
 
 #election-chart-year,
 #election-chart-historical {
@@ -568,6 +577,12 @@ text.highcharts-data-label {
     font-size: 1em;
 }
 
+#election-chart-year .datalabels-wrapper {
+    display: inline-block;
+    white-space: normal;
+    width: 200px;
+}
+
 #election-chart-year .highcharts-axis-labels {
     font-size: 1.3em;
     font-weight: bold;
@@ -581,11 +596,11 @@ text.highcharts-data-label {
     stroke: #fff;
 }
 
-/* *
+/**
  *
  *  Election Grid
  *
- * */
+ **/
 
 #election-grid .highcharts-datagrid-container {
     border-radius: var(--component-rounded-corners);
@@ -731,6 +746,7 @@ text.highcharts-data-label {
     #info-dem2,
     #info-rep2 {
         font-size: 10px;
+        white-space: normal;
     }
 
     #info-dem2 {
@@ -752,7 +768,7 @@ text.highcharts-data-label {
     }
 
     #election-chart-year .datalabels-wrapper {
-        font-size: 0.75em;
+        font-size: 0.65em;
         display: inline-block;
         white-space: normal;
         width: 100px;

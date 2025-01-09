@@ -371,13 +371,13 @@ abstract class Component {
             this.attachCellListeners();
 
             this.on('update', (): void => {
-                if (this.cell instanceof Cell) {
+                if (Cell.isCell(this.cell)) {
                     this.cell.setLoadingState();
                 }
             });
 
             this.on('afterRender', (): void => {
-                if (this.cell instanceof Cell) {
+                if (Cell.isCell(this.cell)) {
                     this.cell.setLoadingState(false);
                 }
             });
@@ -438,7 +438,7 @@ abstract class Component {
 
         if (
             this.cell &&
-            this.cell instanceof Cell &&
+            Cell.isCell(this.cell) &&
             Object.keys(this.cell).length
         ) {
             const board = this.cell.row.layout.board;

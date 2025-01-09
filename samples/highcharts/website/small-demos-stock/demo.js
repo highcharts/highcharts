@@ -279,8 +279,8 @@ function compare() {
                     lineColor: '#707073',
                     minorGridLineColor: '#505053',
                     tickColor: '#707073',
-                    min: Date.UTC(2013, 4, 5),
-                    max: Date.UTC(2013, 4, 10)
+                    min: '2013-05-05',
+                    max: '2013-05-10'
                 },
                 yAxis: {
                     gridLineColor: '#707073',
@@ -529,8 +529,8 @@ function ao() {
             }],
             xAxis: {
                 top: '10%',
-                min: Date.UTC(2021, 1, 19),
-                max: Date.UTC(2022, 4, 13)
+                min: '2021-02-19',
+                max: '2022-05-13'
             },
             series: [{
                 type: 'candlestick',
@@ -863,8 +863,8 @@ function ab() {
                 top: '35%'
             },
             xAxis: {
-                min: Date.UTC(2022, 3, 27),
-                max: Date.UTC(2022, 4, 22),
+                min: '2022-04-27',
+                max: '2022-05-22',
                 top: '10%'
             },
             plotOptions: {

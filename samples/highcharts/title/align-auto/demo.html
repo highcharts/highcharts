@@ -1,0 +1,32 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+
+    <div class="controls">
+
+        <input id="input-width" type="range" min="200" max="600" value="400">
+
+        <label>
+            <span>Title text</span>
+            <input id="title-input" type="text"
+            value="Title auto alignment and downscaling demo">
+        </label>
+        <label>
+            <span>Subtitle text</span>
+            <input id="subtitle-input" type="text"
+                value="Subtitle inherits align from title">
+        </label>
+
+        <label>
+            <input type="checkbox" id="usehtml">
+            Use HTML
+        </label>
+
+        <label>
+            <input type="checkbox" checked id="exporting">
+            Enable exporting
+        </label>
+    </div>
+</figure>

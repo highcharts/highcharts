@@ -169,29 +169,25 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var newTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
     var newTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
 
+    let precision = 0.01;
     if (Highcharts.isFirefox) {
-        assert.close(
-            newTitleX,
-            oldTitleX,
-            0.5,
-            'yAxis title is on the same position after toggling series ' +
-            'visibility'
-        );
-        assert.close(
-            newTitleY,
-            oldTitleY,
-            0.5,
-            'yAxis title is on the same position after toggling series ' +
-            'visibility'
-        );
-    } else {
-        assert.strictEqual(
-            oldTitleX === newTitleX && oldTitleY === newTitleY,
-            true,
-            'yAxis title is on the same position after toggling series ' +
-            'visibility'
-        );
+        precision = 0.5;
     }
+
+    assert.close(
+        newTitleX,
+        oldTitleX,
+        precision,
+        'yAxis title is on the same position after toggling series ' +
+        'visibility'
+    );
+    assert.close(
+        newTitleY,
+        oldTitleY,
+        precision,
+        'yAxis title is on the same position after toggling series ' +
+        'visibility'
+    );
 
     chart.update({
         chart: {

@@ -153,7 +153,7 @@
 
     // Highcharts v11.4.0+
     } else {
-        Highcharts.MultipleLinesComposition.compose(
+        Highcharts.MultipleLinesComposition?.compose(
             Highcharts.Series.types.linearregressionzones
         );
     }
