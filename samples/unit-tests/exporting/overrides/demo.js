@@ -1,4 +1,4 @@
-QUnit.test('Capture POST', function (assert) {
+QUnit.test('Exported SVG characteristics', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             backgroundColor: {
@@ -7,9 +7,13 @@ QUnit.test('Capture POST', function (assert) {
                     [0, '#ffffff'],
                     [1, '#e0e0e0']
                 ]
-            }
+            },
+            width: 600
         },
         credits: {
+            enabled: false
+        },
+        accessibility: {
             enabled: false
         },
         xAxis: {
@@ -62,7 +66,7 @@ QUnit.test('Capture POST', function (assert) {
             postData = data;
         };
 
-        // Run export width custom background
+        // Run export width override options
         chart.exportChart(null, {
             chart: {
                 backgroundColor: '#ffeeff'
@@ -84,6 +88,39 @@ QUnit.test('Capture POST', function (assert) {
             -1,
             'Solid background is there'
         );
+
+
+        // Test overrides for min and max (#7873)
+        chart.xAxis[0].setExtremes(1, 5);
+        chart.exportChart();
+        assert.notEqual(
+            postData.svg.indexOf('Jul'),
+            -1,
+            'No overrides, July should be within bounds'
+        );
+        assert.strictEqual(
+            postData.svg.indexOf('Aug'),
+            -1,
+            'No overrides, August should be outside bounds'
+        );
+
+        chart.exportChart(void 0, {
+            xAxis: {
+                min: undefined,
+                max: undefined
+            }
+        });
+        assert.notEqual(
+            postData.svg.indexOf('Jul'),
+            -1,
+            'No overrides, July should be within bounds'
+        );
+        assert.notEqual(
+            postData.svg.indexOf('Aug'),
+            -1,
+            'No overrides, Dec should be within bounds'
+        );
+
     } finally {
         Highcharts.HttpUtilities.post = originalPost;
     }

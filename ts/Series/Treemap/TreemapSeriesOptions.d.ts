@@ -132,7 +132,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * Enable or disable Treemap grouping.
      *
      * @type {boolean}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     enabled: boolean;
@@ -141,7 +141,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * The pixel threshold width of area, which is used in Treemap grouping.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     pixelWidth?: number;
@@ -150,7 +150,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * The pixel threshold height of area, which is used in Treemap grouping.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     pixelHeight?: number;
@@ -160,7 +160,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * etc. By default it is set to '+ n', where n is number of grouped points.
      *
      * @type {string}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     name?: string;
@@ -172,7 +172,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * graph, ensuring better visual balance and readability.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     reductionFactor?: number;
@@ -182,7 +182,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * small nodes.
      *
      * @type {number}
-     * @since next
+     * @since 12.1.0
      * @product highcharts
      */
     minimumClusterSize?: number;
@@ -538,7 +538,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-grouping-advanced
      *         Advanced demo of Treemap grouping
      *
-     * @since next
+     * @since 12.1.0
      *
      * @excluding allowOverlap, animation, dataLabels, drillToCluster, events,
      * layoutAlgorithm, marker, states, zones

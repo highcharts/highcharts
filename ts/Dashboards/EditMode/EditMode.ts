@@ -578,7 +578,7 @@ class EditMode {
     public setCellEvents(cell: Cell|CellHTML): void {
         const editMode = this;
 
-        if (cell instanceof CellHTML) {
+        if (CellHTML.isCellHTML(cell)) {
             addEvent(
                 cell.container,
                 'mouseenter',
@@ -685,7 +685,7 @@ class EditMode {
         editMode.hideToolbars();
 
         // Remove highlight from the context row if exists.
-        if (this.editCellContext && this.editCellContext instanceof Cell) {
+        if (this.editCellContext && Cell.isCell(this.editCellContext)) {
             this.editCellContext.row?.setHighlight();
         }
 
@@ -967,8 +967,8 @@ class EditMode {
         const oldContext = oldEditCellContext;
 
         if (
-            editCellContext instanceof CellHTML ||
-            oldContext instanceof CellHTML
+            CellHTML.isCellHTML(editCellContext) ||
+            CellHTML.isCellHTML(oldContext)
         ) {
             editMode.editCellContext = editCellContext;
             editMode.cellToolbar?.showToolbar(editCellContext);
