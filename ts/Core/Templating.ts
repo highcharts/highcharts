@@ -171,11 +171,8 @@ function dateFormat(
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance used to get dateFormat.
+ * @param {Highcharts.Chart|DataGrid.DataGrid} [owner]
+ *        A `Chart` or `DataGrid` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
