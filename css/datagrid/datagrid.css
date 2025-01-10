@@ -248,6 +248,12 @@
     --idg-column-even-synced-background: var(--hcdg-column-even-synced-background, var(--idg-column-even-hovered-background));
     --idg-column-even-synced-color: var(--hcdg-column-even-synced-color, var(--idg-column-even-hovered-color));
 
+    /* Cell synced backgrounds and colors */
+    --idg-cell-synced-background: var(--hcdg-cell-synced-background, var(--idg-cell-hovered-background));
+    --idg-cell-synced-color: var(--hcdg-cell-synced-color, var(--idg-cell-hovered-color));
+    --idg-cell-even-synced-background: var(--hcdg-cell-even-synced-background, var(--hcdg-cell-synced-background, var(--idg-cell-even-hovered-background)));
+    --idg-cell-even-synced-color: var(--hcdg-cell-even-synced-color, var(--hcdg-cell-synced-color, var(--idg-cell-even-hovered-color)));
+
     /* Header synced backgrounds and colors */
     --idg-header-column-synced-background: var(--hcdg-header-column-synced-background, var(--idg-header-column-hovered-background));
     --idg-header-column-synced-color: var(--hcdg-header-column-synced-color, var(--idg-header-column-hovered-color));
@@ -569,6 +575,17 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td.highcharts-datagrid-synced-column {
     background: var(--idg-column-even-synced-background);
     color: var(--idg-column-even-synced-color);
+}
+
+/* Cell synced backgrounds */
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
+    background: var(--idg-cell-synced-background);
+    color: var(--idg-cell-synced-color);
+}
+
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
+    background: var(--idg-cell-even-synced-background);
+    color: var(--idg-cell-even-synced-color);
 }
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
