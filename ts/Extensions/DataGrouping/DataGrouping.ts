@@ -74,7 +74,6 @@ function onTooltipHeaderFormatter(
 ): void {
 
     const chart = this.chart,
-        lang = chart.options.lang,
         time = chart.time,
         point = e.point,
         series = point.series,
@@ -156,8 +155,7 @@ function onTooltipHeaderFormatter(
                     point,
                     { key: format(formattedKey, this, chart) }
                 ),
-                series,
-                lang
+                series
             },
             chart
         );

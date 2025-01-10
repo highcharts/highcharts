@@ -2439,7 +2439,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%[AebY]',
             /** @internal */
-            week: '{lang.weekFrom} %[AebY]',
+            week: '{series.chart.options.lang.weekFrom} %[AebY]',
             /** @internal */
             month: '%[BY]',
             /** @internal */
