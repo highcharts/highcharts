@@ -31,22 +31,25 @@ export interface LabelsItemsOptions {
     style?: CSSObject;
 }
 
-export interface LangOptions {
-    decimalPoint?: string;
-    invalidDate?: string;
+export interface LangOptions extends LangOptionsCore {
     loading: string;
-    locale?: string|Array<string>;
-    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
+    zoomIn?: string;
+    zoomOut?: string;
+}
+
+export interface LangOptionsCore {
+    decimalPoint?: string;
+    invalidDate?: string;
+    locale?: string|Array<string>;
+    months?: Array<string>;
     shortMonths?: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
     weekdays?: Array<string>;
-    zoomIn?: string;
-    zoomOut?: string;
 }
 
 export interface LoadingOptions {

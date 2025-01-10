@@ -239,7 +239,7 @@ abstract class Cell {
      * The formatted string.
      */
     public format(template: string): string {
-        return Templating.format(template, this);
+        return Templating.format(template, this, this.row.viewport.dataGrid);
     }
 
     /**

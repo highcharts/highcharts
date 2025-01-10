@@ -516,12 +516,15 @@ class Chart {
              * @name Highcharts.Chart#time
              * @type {Highcharts.Time}
              */
-            this.time = new Time(extend(
-                options.time || {},
-                {
-                    locale: this.locale
-                }
-            ));
+            this.time = new Time(
+                extend(
+                    options.time || {},
+                    {
+                        locale: this.locale
+                    }
+                ),
+                options.lang
+            );
             options.time = this.time.options;
 
             /**
