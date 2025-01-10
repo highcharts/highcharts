@@ -100,7 +100,8 @@ namespace Globals {
         resizedColumn: classNamePrefix + 'column-resized',
         creditsContainer: classNamePrefix + 'credits-container',
         creditsText: classNamePrefix + 'credits',
-        visuallyHidden: classNamePrefix + 'visually-hidden'
+        visuallyHidden: classNamePrefix + 'visually-hidden',
+        lastHeaderCellInRow: classNamePrefix + 'last-header-cell-in-row'
     };
 
     export const win = window;

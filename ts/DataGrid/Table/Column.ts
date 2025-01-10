@@ -1,6 +1,6 @@
 /* *
  *
- *  DataGrid class
+ *  DataGrid Column class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -97,11 +97,6 @@ class Column {
     public data?: DataTable.Column;
 
     /**
-     * The type of the column data.
-     */
-    public type?: Column.Type;
-
-    /**
      * The options of the column.
      */
     public readonly options: Column.Options;
@@ -120,6 +115,7 @@ class Column {
      * Sorting column module.
      */
     public sorting?: ColumnSorting;
+
 
     /* *
     *
@@ -340,7 +336,6 @@ class Column {
  * */
 
 namespace Column {
-    export type Type = 'number'|'date'|'string'|'boolean';
     export type Options = Omit<IndividualColumnOptions, 'id'>;
 }
 

@@ -100,7 +100,7 @@ class TableRow extends Row {
     * */
 
     public override createCell(column: Column): Cell {
-        return new TableCell(column, this);
+        return new TableCell(this, column);
     }
 
     /**
