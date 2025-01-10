@@ -39,6 +39,7 @@ const {
     crisp,
     extend,
     isNumber,
+    isObject,
     merge,
     objectEach,
     pick
@@ -476,7 +477,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         // Points do not exist yet, so raw data is used
-                        xPoint = (options.data as any)[i];
+                        xPoint = options.data?.[i];
 
                         posTotal = actualStackX.absolutePos =
                             actualStackX.posTotal;
@@ -485,7 +486,10 @@ class WaterfallSeries extends ColumnSeries {
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
 
-                        if (xPoint?.isIntermediateSum) {
+                        if (
+                            isObject(xPoint, true) &&
+                            xPoint.isIntermediateSum
+                        ) {
                             calculateStackState(
                                 prevSum,
                                 actualSum,
@@ -500,7 +504,7 @@ class WaterfallSeries extends ColumnSeries {
                             stackThreshold ^= interSum;
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
-                        } else if (xPoint?.isSum) {
+                        } else if (isObject(xPoint, true) && xPoint.isSum) {
                             calculateStackState(
                                 seriesThreshold,
                                 totalYVal,

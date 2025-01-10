@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataTable from '../../Data/DataTable';
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import type Legend from '../Legend/Legend';
@@ -79,6 +80,7 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -505,7 +507,10 @@ class Series {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
-            series.setData(options.data as any, false);
+            series.setData(
+                options.dataTable || options.data,
+                false
+            );
         }
 
         fireEvent(this, 'afterInit');
@@ -1126,7 +1131,7 @@ class Series {
                 // Matching X found, update
                 } else if (
                     oldData[pointIndex] &&
-                    pointOptions !== (options.data as any)[pointIndex]
+                    pointOptions !== options.data?.[pointIndex]
                 ) {
                     oldData[pointIndex].update(
                         pointOptions,
@@ -1273,7 +1278,12 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>|undefined,
+        data: (
+            Array<PointOptions|PointShortOptions>|
+            DataTableOptions|
+            DataTableCore|
+            undefined
+        ),
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
@@ -1310,12 +1320,12 @@ class Series {
             copiedData = merge(true, data);
 
         }
-        data = copiedData || data || [];
+        data = copiedData || data;
 
 
-        const dataLength = data.length;
+        const dataLength = isArray(data) && data.length || 0;
 
-        if (dataSorting?.enabled) {
+        if (dataSorting?.enabled && isArray(data)) {
             data = this.sortData(data);
         }
 
@@ -1331,7 +1341,8 @@ class Series {
             series.visible &&
             // Soft updating has no benefit in boost, and causes JS error
             // (#8355)
-            !series.boosted
+            !series.boosted &&
+            isArray(data)
         ) {
             updatedData = this.updateData(data, animation);
         }
@@ -1343,120 +1354,201 @@ class Series {
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            // In turbo mode, look for one- or twodimensional arrays of numbers.
-            // The first and the last valid value are tested, and we assume that
-            // all the rest are defined the same way. Although the 'for' loops
-            // are similar, they are repeated inside each if-else conditional
-            // for max performance.
-            let runTurbo = turboThreshold && dataLength > turboThreshold;
-            if (runTurbo) {
+            if (isArray(data)) {
+                // In turbo mode, look for one- or twodimensional arrays of
+                // numbers. The first and the last valid value are tested, and
+                // we assume that all the rest are defined the same way.
+                // Although the 'for' loops are similar, they are repeated
+                // inside each if-else conditional for max performance.
+                let runTurbo = turboThreshold && dataLength > turboThreshold;
+                if (runTurbo) {
 
-                const firstPoint = series.getFirstValidPoint(data),
-                    lastPoint = series.getFirstValidPoint(
-                        data, dataLength - 1, -1
-                    ),
-                    isShortArray = (a: unknown): a is Array<unknown> => Boolean(
-                        isArray(a) && (keys || isNumber(a[0]))
-                    );
+                    const firstPoint = series.getFirstValidPoint(data),
+                        lastPoint = series.getFirstValidPoint(
+                            data, dataLength - 1, -1
+                        ),
+                        isShortArray = (a: unknown): a is Array<unknown> =>
+                            Boolean(isArray(a) && (keys || isNumber(a[0])));
 
-                // Assume all points are numbers
-                if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                    const x: Array<number> = [],
-                        valueData: Array<number|null> = [];
-                    for (const value of data) {
-                        x.push(this.autoIncrement());
-                        valueData.push(value as number|null);
-                    }
-                    table.setColumns({
-                        x,
-                        [pointValKey]: valueData
-                    });
-
-                // Assume all points are arrays when first point is
-                } else if (
-                    isShortArray(firstPoint) &&
-                    isShortArray(lastPoint)
-                ) {
-                    if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-
-                        // When autoX is 1, the x is skipped: [low, high]. When
-                        // autoX is 0, the x is included: [x, low, high]
-                        const autoX = firstPoint.length === valueCount ?
-                                1 : 0,
-                            colArray = new Array(dataColumnKeys.length)
-                                .fill(0).map((): Array<number> => []);
-                        for (const pt of data as number[][]) {
-                            if (autoX) {
-                                colArray[0].push(this.autoIncrement());
-                            }
-                            for (let j = autoX; j <= valueCount; j++) {
-                                colArray[j]?.push(pt[j - autoX]);
-                            }
-                        }
-
-                        table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnName, i):
-                            DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
-                                return columns;
-                            }, {} as DataTable.ColumnCollection));
-
-                    } else { // [x, y]
-                        if (keys) {
-                            indexOfX = keys.indexOf('x');
-                            indexOfY = keys.indexOf('y');
-
-                            indexOfX = indexOfX >= 0 ? indexOfX : 0;
-                            indexOfY = indexOfY >= 0 ? indexOfY : 1;
-                        }
-
-                        if (firstPoint.length === 1) {
-                            indexOfY = 0;
-                        }
-
-                        const xData: Array<number> = [],
+                    // Assume all points are numbers
+                    if (isNumber(firstPoint) && isNumber(lastPoint)) {
+                        const x: Array<number> = [],
                             valueData: Array<number|null> = [];
-
-                        if (indexOfX === indexOfY) {
-                            for (const pt of data) {
-                                xData.push(this.autoIncrement());
-                                valueData.push((pt as any)[indexOfY]);
-                            }
-                        } else {
-                            for (const pt of data) {
-                                xData.push((pt as any)[indexOfX]);
-                                valueData.push((pt as any)[indexOfY]);
-                            }
+                        for (const value of data) {
+                            x.push(this.autoIncrement());
+                            valueData.push(value as number|null);
                         }
                         table.setColumns({
-                            x: xData,
+                            x,
                             [pointValKey]: valueData
                         });
-                    }
-                } else {
-                    // Highcharts expects configs to be numbers or arrays in
-                    // turbo mode
-                    runTurbo = false;
-                }
-            }
 
-            if (!runTurbo) {
-                const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
-                    DataTable.ColumnCollection => {
-                        columns[columnName] = [];
-                        return columns;
-                    }, {} as DataTable.ColumnCollection);
-                for (i = 0; i < dataLength; i++) {
-                    const pt = series.pointClass.prototype.applyOptions.apply(
-                        { series },
-                        [data[i]]
+                    // Assume all points are arrays when first point is
+                    } else if (
+                        isShortArray(firstPoint) &&
+                        isShortArray(lastPoint)
+                    ) {
+                        if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+
+                            // When autoX is 1, the x is skipped: [low, high].
+                            // When autoX is 0, the x is included: [x, low,
+                            // high]
+                            const autoX = firstPoint.length === valueCount ?
+                                    1 : 0,
+                                colArray = new Array(dataColumnKeys.length)
+                                    .fill(0).map((): Array<number> => []);
+                            for (const pt of data as number[][]) {
+                                if (autoX) {
+                                    colArray[0].push(this.autoIncrement());
+                                }
+                                for (let j = autoX; j <= valueCount; j++) {
+                                    colArray[j]?.push(pt[j - autoX]);
+                                }
+                            }
+
+                            table.setColumns(dataColumnKeys.reduce(
+                                (columns, columnName, i):
+                                DataTable.ColumnCollection => {
+                                    columns[columnName] = colArray[i];
+                                    return columns;
+                                }, {} as DataTable.ColumnCollection));
+
+                        } else { // [x, y]
+                            if (keys) {
+                                indexOfX = keys.indexOf('x');
+                                indexOfY = keys.indexOf('y');
+
+                                indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                                indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                            }
+
+                            if (firstPoint.length === 1) {
+                                indexOfY = 0;
+                            }
+
+                            const xData: Array<number> = [],
+                                valueData: Array<number|null> = [];
+
+                            if (indexOfX === indexOfY) {
+                                for (const pt of data) {
+                                    xData.push(this.autoIncrement());
+                                    valueData.push((pt as any)[indexOfY]);
+                                }
+                            } else {
+                                for (const pt of data) {
+                                    xData.push((pt as any)[indexOfX]);
+                                    valueData.push((pt as any)[indexOfY]);
+                                }
+                            }
+                            table.setColumns({
+                                x: xData,
+                                [pointValKey]: valueData
+                            });
+                        }
+                    } else {
+                        // Highcharts expects configs to be numbers or arrays in
+                        // turbo mode
+                        runTurbo = false;
+                    }
+                }
+
+                if (!runTurbo) {
+                    const columns = dataColumnKeys.reduce(
+                        (columns, columnName):
+                        DataTable.ColumnCollection => {
+                            columns[columnName] = [];
+                            return columns;
+                        }, {} as DataTable.ColumnCollection);
+                    for (i = 0; i < dataLength; i++) {
+                        const pt = series.pointClass.prototype.applyOptions
+                            .apply({ series }, [data[i]]);
+                        for (const key of dataColumnKeys) {
+                            columns[key][i] = (pt as any)[key];
+                        }
+                    }
+
+                    table.setColumns(columns);
+                }
+
+            // Data table passed as option
+            } else {
+                const dataTable = data || chart.dataTable;
+
+                // Resolve column assignment
+                const getTableSpecificColumns = (
+                    dataTable?: DataTableCore|DataTableOptions
+                ): DataTableCore.ColumnCollection => [
+                    'x',
+                    ...(this.pointArrayMap || ['y'])
+                ].reduce((acc, key): DataTableCore.ColumnCollection => {
+                    const assignment = options.columnAssignment?.find(
+                        (assignment): boolean => assignment.key === key
                     );
-                    for (const key of dataColumnKeys) {
-                        columns[key][i] = (pt as any)[key];
-                    }
+                    acc[key] = dataTable?.columns?.[
+                        assignment?.columnName || key
+                    ] || [];
+                    return acc;
+                }, {} as DataTableCore.ColumnCollection);
+
+                // If a DataTable is passed directly by reference, bind events
+                // to keep the series updated
+                if (dataTable instanceof DataTableCore) {
+
+                    const queueRedraw = (): void => {
+                        clearTimeout(chart.redrawTimeout);
+                        chart.redrawTimeout = setTimeout(
+                            (): void => chart.redraw(),
+                            0
+                        );
+                    };
+
+                    addEvent(
+                        dataTable,
+                        'afterSetRows',
+                        (e: DataTableCore.RowEvent): void => {
+                            const row = dataTable.getRow.call({
+                                    columns: getTableSpecificColumns(dataTable)
+                                }, e.rowIndex),
+                                point = this.points[e.rowIndex];
+
+                            if (row) {
+                                if (point) {
+                                    point.update(
+                                        row as unknown as PointOptions,
+                                        false
+                                    );
+                                } else {
+                                    this.addPoint(
+                                        row as unknown as PointOptions,
+                                        false
+                                    );
+                                }
+
+                                queueRedraw();
+                            }
+                        }
+                    );
+
+                    addEvent(
+                        dataTable,
+                        'afterDeleteRows',
+                        (e: DataTableCore.RowEvent): void => {
+                            const { rowCount, rowIndex } = e;
+
+                            for (
+                                let i = rowIndex + rowCount - 1;
+                                i >= rowIndex;
+                                i--
+                            ) {
+                                this.removePoint(i, false);
+                            }
+
+                            queueRedraw();
+                        }
+                    );
                 }
 
+                const columns = getTableSpecificColumns(dataTable);
                 table.setColumns(columns);
             }
 
@@ -1467,7 +1559,9 @@ class Series {
             }
 
             series.data = [];
-            series.options.data = series.userOptions.data = data;
+            if (isArray(data)) {
+                series.options.data = series.userOptions.data = data;
+            }
 
             // Destroy old points
             i = oldDataLength;

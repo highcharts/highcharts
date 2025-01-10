@@ -25,81 +25,6 @@ const previewTable = () => {
     document.getElementById('data-table').innerHTML = html;
 };
 
-
-(({ addEvent, DataTableCore, Series, wrap }) => {
-
-    let chartRedrawTimer;
-
-    wrap(Series.prototype, 'init', function (proceed, chart, options) {
-        const dataTable = chart.options.dataTable;
-
-        const getTableSpecificColumns = () => [
-            'x',
-            ...(this.pointArrayMap || ['y'])
-        ].reduce((acc, key) => {
-            const assignment = options.columnAssignment.find(
-                assignment => assignment.key === key
-            );
-            acc[key] = dataTable.getColumn(
-                assignment?.columnName || key
-            );
-            return acc;
-        }, {});
-
-        if (dataTable) {
-
-            // Create a new DataTable for each series. This is the simplest way
-            // to handle aliases, and doesn't come with a memory cost if we copy
-            // the columns by reference.
-            // @todo Copy the columns by reference.
-            this.dataTable = new DataTableCore({
-                columns: getTableSpecificColumns()
-            });
-
-            addEvent(dataTable, 'afterSetRows', e => {
-                const row = dataTable.getRow.call({
-                    columns: getTableSpecificColumns()
-                }, e.rowIndex);
-
-                if (this.points[e.rowIndex]) {
-                    this.points[e.rowIndex].update(row, false);
-                } else {
-                    this.addPoint(row, false);
-                }
-
-                clearTimeout(chartRedrawTimer);
-                chartRedrawTimer = setTimeout(() => chart.redraw(), 0);
-            });
-
-            addEvent(dataTable, 'afterDeleteRows', e => {
-                const { rowCount, rowIndex } = e;
-
-                for (let i = rowIndex + rowCount - 1; i >= rowIndex; i--) {
-                    this.removePoint(i, false);
-                }
-
-                clearTimeout(chartRedrawTimer);
-                chartRedrawTimer = setTimeout(() => chart.redraw(), 0);
-            });
-        }
-
-        proceed.apply(this, [].slice.call(arguments, 1));
-    });
-
-    wrap(Series.prototype, 'setData', function (
-        proceed,
-        data,
-        redraw,
-        animation,
-        updatePoints
-    ) {
-        if (this.chart.options.dataTable) {
-            return;
-        }
-        proceed.call(this, data, redraw, animation, updatePoints);
-    });
-})(Highcharts);
-
 previewTable();
 
 Highcharts.chart('container', {
@@ -157,7 +82,7 @@ document.getElementById('updaterow').addEventListener('click', e => {
 });
 
 document.getElementById('deleterow').addEventListener('click', e => {
-    dataTable.deleteRows(1);
+    dataTable.deleteRows(0);
     e.target.disabled = true;
     previewTable();
 });

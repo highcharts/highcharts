@@ -1220,8 +1220,10 @@ class Point {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                (series.options.data as any)[series.data.indexOf(point)] =
-                    point.options;
+                if (series.options.data) {
+                    series.options.data[series.data.indexOf(point)] =
+                        point.options;
+                }
 
                 point.setState((selected as any) && 'select');
 
@@ -1230,21 +1232,24 @@ class Point {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
                     ): void {
-                        const loopSeries = loopPoint.series;
+                        const loopSeries = loopPoint.series,
+                            loopSeriesOptions = loopSeries.options;
 
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            (loopSeries.options.data as any)[
-                                loopSeries.data.indexOf(loopPoint)
-                            ] = loopPoint.options;
+                            if (loopSeriesOptions.data) {
+                                loopSeriesOptions.data[
+                                    loopSeries.data.indexOf(loopPoint)
+                                ] = loopPoint.options;
+                            }
 
                             // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
                                 chart.hoverPoints &&
-                                    loopSeries.options.inactiveOtherPoints ?
+                                    loopSeriesOptions.inactiveOtherPoints ?
                                     'inactive' : ''
                             );
                             loopPoint.firePointEvent('unselect');
