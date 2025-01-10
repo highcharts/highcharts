@@ -177,11 +177,12 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([\p{L}\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/gu,
+    // Notice: using u flag will require a refactor for ES5 (#22450).
+    const regex = /\{([a-zA-Z\u00C0-\u017F\d:\.,;\-\/<>\[\]%_@+"'’= #\(\)]+)\}/g, // eslint-disable-line max-len
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([\p{L}\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/gu,
+        subRegex = /\(([a-zA-Z\u00C0-\u017F\d:\.,;\-\/<>\[\]%_@+"'= ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,

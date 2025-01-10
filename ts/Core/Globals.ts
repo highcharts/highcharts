@@ -201,9 +201,11 @@ namespace Globals {
         svg = !!(
             doc?.createElementNS?.(SVG_NS, 'svg') as SVGSVGElement|undefined
         )?.createSVGRect,
-        pageLang = (
-            doc?.documentElement?.closest('[lang]') as HTMLDOMElement|null
-        )?.lang,
+        // Notice: optimizing pageLang might cause ES5 build error (#22450).
+        pageLang = typeof doc?.documentElement?.closest === 'function' &&
+            (
+                doc.documentElement.closest('[lang]') as HTMLDOMElement|null
+            )?.lang,
         userAgent = win.navigator?.userAgent || '',
         isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
