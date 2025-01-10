@@ -99,8 +99,7 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'token'
         }
     }
 };
@@ -113,7 +112,7 @@ const ISINMap = {
 };
 
 // eslint-disable-next-line no-undef
-const FANGPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
+const FANGPriceConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
         type: 'Price'
