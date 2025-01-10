@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -230,6 +230,25 @@ class Column {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[hovered ? 'add' : 'remove'](
                 Globals.classNames.hoveredColumn
+            );
+        }
+    }
+
+    /**
+     * Adds or removes the synced CSS class to the column element
+     * and its cells.
+     *
+     * @param synced
+     * Whether the column should have synced state.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.header?.htmlElement?.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedColumn
+        );
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].htmlElement.classList[synced ? 'add' : 'remove'](
+                Globals.classNames.syncedColumn
             );
         }
     }

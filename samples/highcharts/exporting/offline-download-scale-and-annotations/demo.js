@@ -40,7 +40,20 @@ Highcharts.chart('container', {
     },
 
     exporting: {
-        scale: 2
+        scale: 2,
+        buttons: {
+            contextButton: {
+                menuItems: [
+                    'viewFullscreen',
+                    'printChart',
+                    'separator',
+                    'downloadPNG',
+                    'downloadJPEG',
+                    'downloadSVG',
+                    'downloadPDF'
+                ]
+            }
+        }
     },
 
     series: [{

@@ -13,13 +13,11 @@
     Highcharts.chart('container', {
 
         title: {
-            text: 'Hourly forecast temperatures in Reykjavík, Iceland',
-            align: 'left'
+            text: 'Hourly forecast temperatures in Reykjavík, Iceland'
         },
 
         subtitle: {
-            text: 'Dotted line typically signifies prognosis',
-            align: 'left'
+            text: 'Dotted line typically signifies prognosis'
         },
 
         xAxis: {

@@ -1,29 +1,60 @@
-DataGrid with Vue
-===
+# DataGrid with Vue
+To create a DataGrid with Vue, please follow the steps below:
 
-To create a DataGrid with Angular please follow the steps below: <br>
+## 1. Install the Dashboards package
+The Dashboards package contains the DataGrid
+```bash
+npm install @highcharts/dashboards
+```
 
-1. Install the Dashboards package, that contains DataGrid
+## 2. Create a DataGrid Vue component:
 
-    ```bash
-    npm install @highcharts/dashboards
-    ```
+```html
+// DataGrid.vue
 
-2. Import the Dashboards package.
+<script setup lang="ts">
+import { watch, ref } from 'vue';
+import DataGrid from '@highcharts/dashboards/datagrid';
+import "@highcharts/dashboards/css/datagrid.css";
 
-    ```typescript
-    import * as Dashboards from '@highcharts/dashboards';
-    ```
+const props = defineProps(['config']);
+const datagridContainer = ref(null);
 
-3. Create a HTML container.  
+watch(datagridContainer, () => {
+    if (datagridContainer.value) {
+        DataGrid.dataGrid(datagridContainer.value, props.config);
+    }
+});
+</script>
 
-    Add a div where you want to render the dashboard:
-    ```html
-    <div id="container"></div>
-    ```
+<template>
+    <div ref="datagridContainer"></div>
+</template>
+```
 
-    You can refer to the element by its id or you can use the `ElementRef` to get the element.
+## 3. Use the component in your application:
+```html
+// App.vue
 
-4. Create a DataGrid using the factory function `DataGrid.dataGrid`. The function takes three arguments:
-    - `container` - the element where the DataGrid will be rendered, can be an id of the element or the direct reference to the element
-    - `options` - the options object for the DataGrid
+<script setup lang="ts">    
+import DataGrid from './components/DataGrid.vue';
+
+const config: DataGrid.Options = {
+    dataTable: {
+        columns: {
+            name: ['Alice', 'Bob', 'Charlie', 'David'],
+            age: [23, 34, 45, 56],
+            city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+        }
+    }
+}
+</script>
+
+<template>
+    <div id="app">
+        <DataGrid :config="config" />
+    </div>
+</template>
+```
+
+See the live example [here](https://stackblitz.com/edit/highcharts-datagrid-vue-ts?file=src%2FApp.vue,src%2Fcomponents%2FDataGrid.vue).

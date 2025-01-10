@@ -26,7 +26,7 @@ if (MSPointer.isRequired()) {
     MSPointer.compose(G.Chart);
 }
 // SVG 1.1 shadow filter override, IE11 compatible. #21098
-G.SVGRenderer.getShadowFilterContent = function (
+G.SVGRenderer.prototype.getShadowFilterContent = function (
     options: ShadowOptionsObject
 ): any[] {
     return [
@@ -58,9 +58,9 @@ G.SVGRenderer.getShadowFilterContent = function (
         {
             tagName: 'feGaussianBlur',
             attributes: {
-            in: 'offsetShadow',
+                in: 'offsetShadow',
                 stdDeviation: options.width / 2,
-                result: 'offsetShadow'
+                result: 'blurredShadow'
             }
         },
         {

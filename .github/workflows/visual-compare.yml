@@ -24,10 +24,10 @@ jobs:
         with:
           ref: master
 
-      - name: Use Node.js lts/*
+      - name: Use Node.js lts/iron
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -51,10 +51,10 @@ jobs:
           clean: false
           fetch-depth: 0
 
-      - name: Use Node.js lts/*
+      - name: Use Node.js lts/iron
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -165,7 +165,7 @@ jobs:
 
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: visual-test-results

@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Columns Resizer class.
+ *  DataGrid Columns Resizer class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -28,7 +28,9 @@ import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import DGUtils from '../../Utils.js';
 import Cell from '../Cell.js';
+import Utils from '../../../Core/Utilities.js';
 const { makeHTMLElement } = DGUtils;
+const { getStyle } = Utils;
 
 
 /* *
@@ -105,46 +107,6 @@ class ColumnsResizer {
      * */
 
     /**
-     * Resizes the columns in the full distribution mode.
-     *
-     * @param diff
-     * The X position difference in pixels.
-     */
-    private fullDistributionResize(diff: number): void {
-        const vp = this.viewport;
-
-        const column = this.draggedColumn;
-        if (!column) {
-            return;
-        }
-
-        const nextColumn = vp.columns[column.index + 1];
-        if (!nextColumn) {
-            return;
-        }
-
-        const leftColW = this.columnStartWidth ?? 0;
-        const rightColW = this.nextColumnStartWidth ?? 0;
-        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
-
-        let newLeftW = leftColW + diff;
-        let newRightW = rightColW - diff;
-
-        if (newLeftW < MIN_WIDTH) {
-            newLeftW = MIN_WIDTH;
-            newRightW = leftColW + rightColW - MIN_WIDTH;
-        }
-
-        if (newRightW < MIN_WIDTH) {
-            newRightW = MIN_WIDTH;
-            newLeftW = leftColW + rightColW - MIN_WIDTH;
-        }
-
-        column.width = vp.getRatioFromWidth(newLeftW);
-        nextColumn.width = vp.getRatioFromWidth(newRightW);
-    }
-
-    /**
      * Render the drag handle for resizing columns.
      *
      * @param column
@@ -169,10 +131,52 @@ class ColumnsResizer {
                 className: Globals.classNames.resizerHandles
             }, cell.htmlElement);
 
+            handle.setAttribute('aria-hidden', true);
+
             vp.columnsResizer?.addHandleListeners(
                 handle, column
             );
         }
+    }
+
+    /**
+     * Resizes the columns in the full distribution mode.
+     *
+     * @param diff
+     * The X position difference in pixels.
+     */
+    private fullDistributionResize(diff: number): void {
+        const vp = this.viewport;
+
+        const column = this.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const nextColumn = vp.columns[column.index + 1];
+        if (!nextColumn) {
+            return;
+        }
+
+        const leftColW = this.columnStartWidth ?? 0;
+        const rightColW = this.nextColumnStartWidth ?? 0;
+        const minWidth = ColumnsResizer.getMinWidth(column);
+
+        let newLeftW = leftColW + diff;
+        let newRightW = rightColW - diff;
+
+        if (newLeftW < minWidth) {
+            newLeftW = minWidth;
+            newRightW = leftColW + rightColW - minWidth;
+        }
+
+        if (newRightW < minWidth) {
+            newRightW = minWidth;
+            newLeftW = leftColW + rightColW - minWidth;
+        }
+
+        column.width = vp.getRatioFromWidth(newLeftW);
+        nextColumn.width = vp.getRatioFromWidth(newRightW);
     }
 
     /**
@@ -188,11 +192,11 @@ class ColumnsResizer {
         }
 
         const colW = this.columnStartWidth ?? 0;
-        const MIN_WIDTH = Column.MIN_COLUMN_WIDTH;
+        const minWidth = ColumnsResizer.getMinWidth(column);
 
         let newW = colW + diff;
-        if (newW < MIN_WIDTH) {
-            newW = MIN_WIDTH;
+        if (newW < minWidth) {
+            newW = minWidth;
         }
 
         column.width = newW;
@@ -210,16 +214,21 @@ class ColumnsResizer {
         }
 
         const diff = e.pageX - (this.dragStartX || 0);
+        const vp = this.viewport;
 
-        if (this.viewport.columnDistribution === 'full') {
+        if (vp.columnDistribution === 'full') {
             this.fullDistributionResize(diff);
         } else {
             this.fixedDistributionResize(diff);
         }
 
-        this.viewport.reflow();
-        this.viewport.rowsVirtualizer.adjustRowHeights();
-        this.viewport.dataGrid.options?.events?.column?.afterResize?.call(
+        vp.reflow(true);
+
+        if (vp.dataGrid.options?.rendering?.rows?.virtualization) {
+            vp.rowsVirtualizer.adjustRowHeights();
+        }
+
+        vp.dataGrid.options?.events?.column?.afterResize?.call(
             this.draggedColumn
         );
     };
@@ -253,6 +262,16 @@ class ColumnsResizer {
         column: Column
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
+            const vp = column.viewport;
+
+            if (!vp.dataGrid.options?.rendering?.rows?.virtualization) {
+                vp.dataGrid.contentWrapper?.classList.add(
+                    Globals.classNames.resizerWrapper
+                );
+                // Apply widths before resizing
+                this.viewport.reflow(true);
+            }
+
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
@@ -281,6 +300,36 @@ class ColumnsResizer {
             const [handle, listener] = this.handles[i];
             handle.removeEventListener('mousedown', listener);
         }
+    }
+
+    /**
+     * Returns the minimum width of the column.
+     *
+     * @param column
+     * The column to get the minimum width for.
+     *
+     * @returns
+     * The minimum width in pixels.
+     */
+    private static getMinWidth(column: Column): number {
+        const tableColumnEl = column.cells[1].htmlElement;
+        const headerColumnEl = column.header?.htmlElement;
+
+        const getElPaddings = (el: HTMLElement): number => (
+            (getStyle(el, 'padding-left', true) || 0) +
+            (getStyle(el, 'padding-right', true) || 0) +
+            (getStyle(el, 'border-left', true) || 0) +
+            (getStyle(el, 'border-right', true) || 0)
+        );
+
+        let result = Column.MIN_COLUMN_WIDTH;
+        if (tableColumnEl) {
+            result = Math.max(result, getElPaddings(tableColumnEl));
+        }
+        if (headerColumnEl) {
+            result = Math.max(result, getElPaddings(headerColumnEl));
+        }
+        return result;
     }
 }
 

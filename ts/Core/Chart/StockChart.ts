@@ -163,7 +163,7 @@ function getForcedAxisOptions(
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
         const navigatorEnabled = pick(
-            chartOptions.navigator && chartOptions.navigator.enabled,
+            chartOptions.navigator?.enabled,
             NavigatorDefaults.enabled,
             true
         );
@@ -232,7 +232,7 @@ class StockChart extends Chart {
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
             navigatorEnabled = pick(
-                userOptions.navigator && userOptions.navigator.enabled,
+                userOptions.navigator?.enabled,
                 NavigatorDefaults.enabled,
                 true
             );
@@ -276,7 +276,7 @@ class StockChart extends Chart {
                 },
                 tooltip: {
                     split: pick(
-                        defaultOptions.tooltip && defaultOptions.tooltip.split,
+                        defaultOptions.tooltip?.split,
                         true
                     ),
                     crosshairs: true
@@ -426,12 +426,12 @@ namespace StockChart {
 
         // Check if the label has to be drawn
         if (
-            !axis.crosshair ||
-            !axis.crosshair.label ||
-            !axis.crosshair.label.enabled ||
-            !axis.cross ||
-            !isNumber(axis.min) ||
-            !isNumber(axis.max)
+            !(
+                axis.crosshair?.label?.enabled &&
+                axis.cross &&
+                isNumber(axis.min) &&
+                isNumber(axis.max)
+            )
         ) {
             return;
         }
@@ -446,7 +446,7 @@ namespace StockChart {
             width = axis.width,
             tickInside = axis.options.tickPosition === 'inside',
             snap = axis.crosshair.snap !== false,
-            e = event.e || (axis.cross && axis.cross.e),
+            e = event.e || (axis.cross?.e),
             point = event.point;
 
         let crossLabel = axis.crossLabel, // The svgElement
@@ -480,7 +480,7 @@ namespace StockChart {
                 )
                 .addClass(
                     'highcharts-crosshair-label highcharts-color-' + (
-                        point && point.series ?
+                        point?.series ?
                             point.series.colorIndex :
                             axis.series[0] && this.series[0].colorIndex
                     )
@@ -498,10 +498,7 @@ namespace StockChart {
                 crossLabel
                     .attr({
                         fill: options.backgroundColor ||
-                            ( // #14888
-                                point && point.series &&
-                                point.series.color
-                            ) ||
+                            point?.series?.color || // #14888
                             Palette.neutralColor60,
                         stroke: options.borderColor || '',
                         'stroke-width': options.borderWidth || 0
@@ -538,7 +535,7 @@ namespace StockChart {
 
         // Crosshair should be rendered within Axis range (#7219) and the point
         // of currentPriceIndicator should be inside the plot area (#14879).
-        const isInside = point && point.series ?
+        const isInside = point?.series ?
             point.series.isPointInside(point) :
             (isNumber(value) && value > min && value < max);
 
@@ -601,8 +598,8 @@ namespace StockChart {
 
         // Show the crosslabel
         crossLabel.attr({
-            x: posx + offset,
-            y: posy,
+            x: Math.max(0, posx + offset),
+            y: Math.max(0, posy),
             // First set x and y, then anchorX and anchorY, when box is actually
             // calculated, #5702
             anchorX: horiz ?

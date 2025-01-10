@@ -49,7 +49,8 @@ const {
     doc,
     svg,
     SVG_NS,
-    win
+    win,
+    isFirefox
 } = H;
 import U from '../../Utilities.js';
 const {
@@ -62,8 +63,10 @@ const {
     erase,
     extend,
     fireEvent,
+    getAlignFactor,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -163,7 +166,6 @@ class SVGElement implements SVGElementLike {
     public fakeTS?: boolean;
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
-    public hasBoxWidthChanged?: boolean;
     public height?: number;
     public imgwidth?: number;
     public imgheight?: number;
@@ -191,6 +193,7 @@ class SVGElement implements SVGElementLike {
     public SVG_NS = SVG_NS;
     public symbolName?: string;
     public text?: SVGElement;
+    public textPxLength?: number;
     public textStr?: string;
     public textWidth?: number;
     // @todo public textPxLength?: number;
@@ -407,15 +410,9 @@ class SVGElement implements SVGElementLike {
         alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs: SVGAttributes = {},
-            renderer = this.renderer,
+        const renderer = this.renderer,
             alignedObjects = renderer.alignedObjects,
             initialAlignment = Boolean(alignOptions);
-
-        let x: number,
-            y: number,
-            alignFactor: number|undefined,
-            vAlignFactor: number|undefined;
 
         // First call on instanciate
         if (alignOptions) {
@@ -433,6 +430,7 @@ class SVGElement implements SVGElementLike {
         const alignToKey = !alignTo || isString(alignTo) ?
             alignTo || 'renderer' :
             void 0;
+
         // When aligned to a key, automatically re-align on redraws
         if (alignToKey) {
             // Prevent duplicates, like legendGroup after resize
@@ -443,42 +441,23 @@ class SVGElement implements SVGElementLike {
         }
 
         const alignToBox: BBoxObject = pick(
-            alignTo,
-            (renderer as any)[alignToKey as any],
-            renderer
-        );
+                alignTo,
+                (renderer as any)[alignToKey as any],
+                renderer
+            ),
+            // Default: left align
+            x = (alignToBox.x || 0) + (alignOptions.x || 0) +
+                ((alignToBox.width || 0) - (alignOptions.width || 0)) *
+                getAlignFactor(alignOptions.align),
+            // Default: top align
+            y = (alignToBox.y || 0) + (alignOptions.y || 0) +
+                ((alignToBox.height || 0) - (alignOptions.height || 0)) *
+                getAlignFactor(alignOptions.verticalAlign),
+            attribs: SVGAttributes = {
+                'text-align': alignOptions?.align
+            };
 
-        // Assign variables
-        const align = alignOptions.align,
-            vAlign = alignOptions.verticalAlign;
-        // Default: left align
-        x = (alignToBox.x || 0) + (alignOptions.x || 0);
-        // Default: top align
-        y = (alignToBox.y || 0) + (alignOptions.y || 0);
-
-        // Align
-        if (align === 'right') {
-            alignFactor = 1;
-        } else if (align === 'center') {
-            alignFactor = 2;
-        }
-        if (alignFactor) {
-            x += ((alignToBox.width || 0) - (alignOptions.width || 0)) /
-                alignFactor;
-        }
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
-
-
-        // Vertical align
-        if (vAlign === 'bottom') {
-            vAlignFactor = 1;
-        } else if (vAlign === 'middle') {
-            vAlignFactor = 2;
-        }
-        if (vAlignFactor) {
-            y += ((alignToBox.height || 0) - (alignOptions.height || 0)) /
-                vAlignFactor;
-        }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
@@ -1125,11 +1104,24 @@ class SVGElement implements SVGElementLike {
                 textWidth = this.textWidth = pInt(styles.width);
             }
 
+
             // Store object
             extend(this.styles, styles);
 
             if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
+            }
+
+            const fontSize = isFirefox && styles.fontSize || null;
+
+            // Necessary in firefox to be able to set font-size, #22124
+            if (
+                fontSize && (
+                    isNumber(fontSize) ||
+                    /^\d+$/.test(fontSize)
+                )
+            ) {
+                styles.fontSize += 'px';
             }
 
             const stylesToApply = merge(styles);
@@ -1140,8 +1132,8 @@ class SVGElement implements SVGElementLike {
                 // added to the DOM. In styled mode, no CSS should find its way
                 // to the DOM whatsoever (#6173, #6474).
                 (
-                    ['textOutline', 'textOverflow', 'width'] as
-                    ('textOutline'|'textOverflow'|'width')[]
+                    ['textOutline', 'textOverflow', 'whiteSpace', 'width'] as
+                    ('textOutline'|'textOverflow'|'whiteSpace'|'width')[]
                 ).forEach(
                     (key): boolean|undefined => (
                         stylesToApply &&
@@ -1188,8 +1180,8 @@ class SVGElement implements SVGElementLike {
         if (strokeWidth as unknown as string === 'inherit') {
             strokeWidth = 1;
         }
-        value = value && value.toLowerCase();
         if (value) {
+            value = value.toLowerCase();
             const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
@@ -1270,8 +1262,7 @@ class SVGElement implements SVGElementLike {
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
         while (
-            parentToClean &&
-            parentToClean.div &&
+            parentToClean?.div &&
             parentToClean.div.childNodes.length === 0
         ) {
             grandParent = (parentToClean as any).parentGroup;
@@ -1324,7 +1315,7 @@ class SVGElement implements SVGElementLike {
             this.pathArray = value;
             value = value.reduce(
                 (acc, seg, i): string => {
-                    if (!seg || !seg.join) {
+                    if (!seg?.join) {
                         return (seg || '').toString();
                     }
                     return (i ? acc + ' ' : '') + seg.join(' ');
@@ -1453,6 +1444,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
+                styles.lineClamp,
                 styles.textOverflow, // #5968
                 styles.fontWeight // #12163
             ].join(',');
@@ -1596,10 +1588,7 @@ class SVGElement implements SVGElementLike {
                 rotationOriginX = 0,
                 rotationOriginY = 0
             } = this,
-            alignFactor = ({
-                'right': 1,
-                'center': 0.5
-            } as Record<string, number>)[alignValue || 0] || 0,
+            alignFactor = getAlignFactor(alignValue),
             baseline = Number(this.element.getAttribute('y') || 0) -
                 (translateY ? 0 : boxY),
             rad = rotation * deg2rad,
@@ -1925,13 +1914,13 @@ class SVGElement implements SVGElementLike {
         const existingGradient = (
             this.element.gradient &&
             this.renderer.gradients[this.element.gradient]
-        );
+        ) || void 0;
 
         this.element.radialReference = coordinates;
 
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
-        if (existingGradient && existingGradient.radAttr) {
+        if (existingGradient?.radAttr) {
             existingGradient.animate(
                 this.renderer.getRadialAttr(
                     coordinates,

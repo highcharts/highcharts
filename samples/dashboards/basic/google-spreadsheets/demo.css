@@ -1,7 +1,17 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 body {
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
 }
 
 #container {
@@ -22,6 +32,11 @@ body {
     position: relative;
     margin: 10px;
     background-clip: border-box;
+    height: 250px;
+}
+
+.highcharts-datagrid-container {
+    min-height: auto;
 }
 
 .highcharts-dashboards-component-title {

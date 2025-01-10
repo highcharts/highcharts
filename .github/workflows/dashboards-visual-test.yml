@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -138,7 +138,7 @@ jobs:
 
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: post-tests

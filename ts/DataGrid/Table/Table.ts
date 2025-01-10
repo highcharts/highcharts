@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -24,8 +24,10 @@
 
 import type { ColumnDistribution } from '../Options';
 import type TableCell from './Content/TableCell';
+import type TableRow from './Content/TableRow';
 
 import DGUtils from '../Utils.js';
+import Utils from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
@@ -33,12 +35,10 @@ import DataGrid from '../DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Utils from '../../Core/Utilities.js';
 import CellEditing from './Actions/CellEditing.js';
-import TableRow from './Content/TableRow';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
+const { getStyle, defined } = Utils;
 
 /* *
  *
@@ -60,7 +60,7 @@ class Table {
     /**
      * The data grid instance which the table (viewport) belongs to.
      */
-    public dataGrid: DataGrid;
+    public readonly dataGrid: DataGrid;
 
     /**
      * The presentation version of the data table. It has applied modifiers
@@ -74,12 +74,12 @@ class Table {
     /**
      * The HTML element of the table head.
      */
-    public theadElement: HTMLElement;
+    public readonly theadElement?: HTMLElement;
 
     /**
      * The HTML element of the table body.
      */
-    public tbodyElement: HTMLElement;
+    public readonly tbodyElement: HTMLElement;
 
     /**
      * The head of the table.
@@ -128,11 +128,6 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The caption of the data grid.
-     */
-    public captionElement?: HTMLElement;
-
-    /**
      * The input element of a cell after mouse focus.
      * @internal
      */
@@ -144,6 +139,22 @@ class Table {
      * @internal
      */
     public cellEditing: CellEditing;
+
+    /**
+     * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
+     * table cell is not focused.
+     */
+    public focusCursor?: [number, number];
+
+    /**
+     * The flag that indicates if the table rows are virtualized.
+     */
+    public virtualRows: boolean;
+
+    /**
+     * The flag that indicates if the table is scrollable vertically.
+     */
+    public scrollable: boolean;
 
 
     /* *
@@ -173,11 +184,18 @@ class Table {
 
         this.columnDistribution =
             dgOptions?.rendering?.columns?.distribution as ColumnDistribution;
+        this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
+        this.scrollable = !!(
+            this.dataGrid.initialContainerHeight || this.virtualRows
+        );
 
-        this.renderCaption();
-
-        this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        if (dgOptions?.rendering?.header?.enabled) {
+            this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        if (this.virtualRows) {
+            tableElement.classList.add(Globals.classNames.virtualization);
+        }
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
         if (dgOptions?.columnDefaults?.resizing) {
@@ -195,7 +213,17 @@ class Table {
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        if (this.virtualRows) {
+            // For now, scroll event is only needed for virtualization.
+            this.tbodyElement.addEventListener('scroll', this.onScroll);
+        }
+
+        if (this.scrollable) {
+            tableElement.classList.add(Globals.classNames.scrollableContent);
+        }
+
+        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
     }
 
     /* *
@@ -208,18 +236,40 @@ class Table {
      * Initializes the data grid table.
      */
     private init(): void {
+        this.setTbodyMinHeight();
+
         // Load columns
         this.loadColumns();
 
         // Load & render head
-        this.header = new TableHeader(this);
-        this.header.render();
+        if (this.dataGrid.options?.rendering?.header?.enabled) {
+            this.header = new TableHeader(this);
+            this.header.render();
+        }
 
         // TODO: Load & render footer
         // this.footer = new TableFooter(this);
         // this.footer.render();
 
         this.rowsVirtualizer.initialRender();
+    }
+
+    /**
+     * Sets the minimum height of the table body.
+     */
+    private setTbodyMinHeight(): void {
+        const { options } = this.dataGrid;
+        const minVisibleRows = options?.rendering?.rows?.minVisibleRows;
+
+        const tbody = this.tbodyElement;
+        if (
+            defined(minVisibleRows) &&
+            !getStyle(tbody, 'min-height', true)
+        ) {
+            tbody.style.minHeight = (
+                minVisibleRows * this.rowsVirtualizer.defaultRowHeight
+            ) + 'px';
+        }
     }
 
     /**
@@ -245,6 +295,7 @@ class Table {
      */
     public loadPresentationData(): void {
         this.dataTable = this.dataGrid.presentationTable as DataTable;
+
         for (const column of this.columns) {
             column.loadData();
         }
@@ -254,21 +305,14 @@ class Table {
 
     /**
      * Reflows the table's content dimensions.
+     *
+     * @param reflowColumns
+     * Force reflow columns and recalculate widths.
+     *
      */
-    public reflow(): void {
-        const tableEl = this.dataGrid.tableElement;
-        const borderWidth = tableEl ? (
-            (getStyle(tableEl, 'border-top-width', true) || 0) +
-            (getStyle(tableEl, 'border-bottom-width', true) || 0)
-        ) : 0;
-
-        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            (this.dataGrid.container?.clientHeight || 0) -
-            this.theadElement.offsetHeight -
-            (this.captionElement?.offsetHeight || 0) -
-            borderWidth -
-            (this.dataGrid.credits?.getHeight() || 0)
-        }px`;
+    public reflow(reflowColumns: boolean = false): void {
+        const isVirtualization =
+            this.dataGrid.options?.rendering?.rows?.virtualization;
 
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
@@ -279,18 +323,33 @@ class Table {
             this.rowsWidth = rowsWidth;
         }
 
-        // Reflow the head
-        this.header?.reflow();
+        if (isVirtualization || reflowColumns) {
+            // Reflow the head
+            this.header?.reflow();
 
-        // Reflow rows content dimensions
-        this.rowsVirtualizer.reflowRows();
+            // Reflow rows content dimensions
+            this.rowsVirtualizer.reflowRows();
+        }
     }
+
+    /**
+     * Handles the focus event on the table body.
+     *
+     * @param e
+     * The focus event.
+     */
+    private onTBodyFocus = (e: FocusEvent): void => {
+        e.preventDefault();
+
+        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
+            ?.cells[0]?.htmlElement.focus();
+    };
 
     /**
      * Handles the resize event.
      */
     private onResize = (): void => {
-        this.reflow();
+        this.reflow(this.scrollable);
     };
 
     /**
@@ -310,8 +369,22 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop =
-            index * this.rowsVirtualizer.defaultRowHeight;
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.scrollTop =
+                index * this.rowsVirtualizer.defaultRowHeight;
+            return;
+        }
+
+        const rowClass = '.' + Globals.classNames.rowElement;
+        const firstRowTop = this.tbodyElement
+            .querySelectorAll(rowClass)[0]
+            .getBoundingClientRect().top;
+
+        this.tbodyElement.scrollTop = (
+            this.tbodyElement
+                .querySelectorAll(rowClass)[index]
+                .getBoundingClientRect().top
+        ) - firstRowTop;
     }
 
     /**
@@ -345,32 +418,13 @@ class Table {
     }
 
     /**
-     * Render caption above the datagrid
-     * @internal
-     */
-    public renderCaption(): void {
-        const captionOptions = this.dataGrid.options?.caption;
-        if (!captionOptions?.text) {
-            return;
-        }
-
-        this.captionElement = makeHTMLElement('caption', {
-            innerText: captionOptions.text,
-            className: Globals.classNames.captionElement
-        }, this.dataGrid.tableElement);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
-    }
-
-    /**
      * Destroys the data grid table.
      */
     public destroy(): void {
-        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
+        if (this.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        }
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
 
@@ -391,7 +445,8 @@ class Table {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
             columnDistribution: this.columnDistribution,
-            columnWidths: this.columns.map((column): number => column.width)
+            columnWidths: this.columns.map((column): number => column.width),
+            focusCursor: this.focusCursor
         };
     }
 
@@ -417,6 +472,13 @@ class Table {
                 this.columns[i].width = widths[i];
             }
             this.reflow();
+
+            if (meta.focusCursor) {
+                const [rowIndex, columnIndex] = meta.focusCursor;
+
+                const row = this.rows[rowIndex - this.rows[0].index];
+                row?.cells[columnIndex]?.htmlElement.focus();
+            }
         }
     }
 
@@ -462,6 +524,7 @@ namespace Table {
         scrollLeft: number;
         columnDistribution: ColumnDistribution;
         columnWidths: number[];
+        focusCursor?: [number, number];
     }
 }
 

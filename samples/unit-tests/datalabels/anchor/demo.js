@@ -55,7 +55,10 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                inverted: true
+                inverted: true,
+                style: {
+                    fontFamily: 'Helvetica, Arial, sans-serif'
+                }
             },
             xAxis: {
                 height: 100,

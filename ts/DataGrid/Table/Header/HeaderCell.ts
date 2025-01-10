@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -33,7 +33,7 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement, isHTML } = DGUtils;
-const { merge } = Utilities;
+const { merge, isString } = Utilities;
 
 
 /* *
@@ -122,12 +122,13 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const options = merge(column.options, this.options);
+        const options = merge(column.options, this.options); // ??
         const headerCellOptions = options.header || {};
+        const isSortableData = options.sorting?.sortable && column.data;
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
-        } else if (headerCellOptions.format) {
+        } else if (isString(headerCellOptions.format)) {
             this.value = column.format(headerCellOptions.format);
         } else {
             this.value = column.id;
@@ -135,7 +136,8 @@ class HeaderCell extends Cell {
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
-        this.headerContent = makeHTMLElement('div', {
+
+        this.headerContent = makeHTMLElement('span', {
             className: Globals.classNames.headerCellContent
         }, this.htmlElement);
 
@@ -148,9 +150,13 @@ class HeaderCell extends Cell {
             this.headerContent.innerText = this.value;
         }
 
-        // Set the accessibility attributes.
+        if (isSortableData) {
+            column.viewport.dataGrid.accessibility?.addSortableColumnHint(
+                this.headerContent
+            );
+        }
+
         this.htmlElement.setAttribute('scope', 'col');
-        this.htmlElement.setAttribute('data-column-id', column.id);
 
         if (this.options.className) {
             this.htmlElement.classList.add(
@@ -159,6 +165,8 @@ class HeaderCell extends Cell {
         }
 
         if (this.isMain) {
+            this.htmlElement.setAttribute('data-column-id', column.id);
+
             // Add user column classname
             if (column.options.className) {
                 this.htmlElement.classList.add(
@@ -191,16 +199,31 @@ class HeaderCell extends Cell {
         let width = 0;
 
         if (cell.columns) {
-            for (const col of cell.columns) {
-                width += (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
+            const columnsIds = vp.dataGrid.getColumnIds(cell.columns);
+            for (const columnId of columnsIds) {
+                width += (vp.getColumn(columnId || '')?.getWidth()) || 0;
             }
         } else {
             width = cell.column.getWidth();
         }
-
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';
+    }
+
+    protected override onKeyDown(e: KeyboardEvent): void {
+        if (e.target !== this.htmlElement) {
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            if (this.column.options.sorting?.sortable) {
+                this.column.sorting?.toggle();
+            }
+            return;
+        }
+
+        super.onKeyDown(e);
     }
 
     protected override onClick(e: MouseEvent): void {

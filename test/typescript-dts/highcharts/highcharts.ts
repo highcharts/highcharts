@@ -9,6 +9,7 @@
 import * as Highcharts from "highcharts";
 
 test_legend();
+test_selectEvent();
 test_seriesArea();
 test_seriesBar();
 test_seriesColumn();
@@ -31,6 +32,21 @@ function test_legend() {
                     return JSON.stringify(series.legendItem as Record<string, SVGElement>);
                 }
                 return '';
+            }
+        }
+    });
+}
+
+/**
+ * Tests type of select event.
+ */
+function test_selectEvent() {
+    Highcharts.chart('container', {
+        chart: {
+            events: {
+                selection: function (e: Highcharts.SelectEventObject): undefined {
+                    e.preventDefault();
+                }
             }
         }
     });

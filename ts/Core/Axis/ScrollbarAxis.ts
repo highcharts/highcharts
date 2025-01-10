@@ -105,11 +105,11 @@ namespace ScrollbarAxis {
         axis: ScrollbarAxis
     ): Record<string, number> {
         const axisMin = pick(
-            axis.options && axis.options.min,
+            axis.options?.min,
             axis.min as any
         );
         const axisMax = pick(
-            axis.options && axis.options.max,
+            axis.options?.max,
             axis.max as any
         );
         return {
@@ -161,11 +161,7 @@ namespace ScrollbarAxis {
     ): void {
         const axis = this as ScrollbarAxis;
 
-        if (
-            axis.options &&
-            axis.options.scrollbar &&
-            axis.options.scrollbar.enabled
-        ) {
+        if (axis.options?.scrollbar?.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
             axis.options.startOnTick = axis.options.endOnTick = false;

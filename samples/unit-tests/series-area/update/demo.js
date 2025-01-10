@@ -14,7 +14,7 @@ QUnit.test('Updating series stacked property', assert => {
                 'Bananas',
                 'Grapes',
                 'Plums',
-                'Strawberries',
+                'Sweet strawberries',
                 'Raspberries'
             ],
             labels: {

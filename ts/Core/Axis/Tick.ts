@@ -43,6 +43,7 @@ const {
     destroyObjectProperties,
     extend,
     fireEvent,
+    getAlignFactor,
     isNumber,
     merge,
     objectEach,
@@ -207,7 +208,7 @@ class Tick {
             names = axis.names,
             pos = tick.pos,
             labelOptions: AxisLabelOptions = pick(
-                tick.options && tick.options.labels,
+                tick.options?.labels,
                 options.labels
             ) as any,
             tickPositions = axis.tickPositions,
@@ -308,7 +309,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        const list = dateTimeLabelFormats?.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
@@ -385,9 +386,9 @@ class Tick {
         xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
-            chart = axis.chart,
+            { renderer, styledMode } = axis.chart,
             label = defined(str) && labelOptions.enabled ?
-                chart.renderer
+                renderer
                     .text(
                         str,
                         xy?.x,
@@ -399,12 +400,15 @@ class Tick {
 
         // Un-rotated length
         if (label) {
+            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
             // Without position absolute, IE export sometimes is wrong
-            if (!chart.styledMode) {
-                label.css(merge(labelOptions.style));
+            if (!styledMode) {
+                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
             }
-
             label.textPxLength = label.getBBox().width;
+            if (!styledMode) {
+                label.css({ whiteSpace });
+            }
         }
 
         return label;
@@ -654,13 +658,9 @@ class Tick {
             ),
             label = this.label,
             rotation = this.rotation,
-            factor = ({
-                left: 0,
-                center: 0.5,
-                right: 1
-            } as Record<string, number>)[
+            factor = getAlignFactor(
                 axis.labelAlign || (label as any).attr('align')
-            ],
+            ),
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
             xCorrection = factor,
@@ -706,7 +706,7 @@ class Tick {
             // limited by the box (#3938).
             if (
                 labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && ((label as any).styles || {}).width)
+                (axis.autoRotation && label?.styles?.width)
             ) {
                 textWidth = modifiedSlotWidth;
             }
@@ -730,16 +730,14 @@ class Tick {
             );
         }
 
-        if (textWidth) {
+        if (textWidth && label) {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = Math.floor(textWidth) + 'px';
-                if (!(labelOptions.style || {}).textOverflow) {
-                    css.textOverflow = 'ellipsis';
-                }
-                (label as any).css(css);
-
+                label.css(extend(css, {
+                    width: Math.floor(textWidth) + 'px',
+                    lineClamp: axis.isRadial ? 0 : 1
+                }));
             }
         }
     }
@@ -837,7 +835,7 @@ class Tick {
 
         const labelOpacity = pick(
             opacity,
-            tick.label && tick.label.newOpacity, // #15528
+            tick.label?.newOpacity, // #15528
             1
         );
         opacity = pick(opacity, 1);

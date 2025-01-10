@@ -378,7 +378,7 @@ function onAfterGetTitlePosition(
             width: axisWidth
         } = axis;
         const tickSize = axis.tickSize();
-        const titleWidth = axisTitle && axisTitle.getBBox().width;
+        const titleWidth = axisTitle?.getBBox().width;
         const xOption = options.title.x;
         const yOption = options.title.y;
         const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
@@ -525,7 +525,7 @@ function onAfterRender(this: Axis): void {
         Into this:    |______|______|______|__|
                                                 */
 
-        if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
+        if (axis.grid?.isOuterAxis() && axis.axisLine) {
 
             const lineWidth = options.lineWidth;
             if (lineWidth) {
@@ -631,17 +631,14 @@ function onAfterRender(this: Axis): void {
             }
         }
 
-        (grid && grid.columns || []).forEach((column): void => column.render());
+        (grid?.columns || []).forEach((column): void => column.render());
 
         // Manipulate the tick mark visibility
         // based on the axis.max- allows smooth scrolling.
         if (
             !axis.horiz &&
             axis.chart.hasRendered &&
-            (
-                axis.scrollbar ||
-                (axis.linkedParent && axis.linkedParent.scrollbar)
-            ) &&
+            (axis.scrollbar || axis.linkedParent?.scrollbar) &&
             axis.tickPositions.length
         ) {
             const tickmarkOffset = axis.tickmarkOffset,
@@ -700,7 +697,7 @@ function onAfterRender(this: Axis): void {
  */
 function onAfterSetAxisTranslation(this: Axis): void {
     const axis = this;
-    const tickInfo = axis.tickPositions && axis.tickPositions.info;
+    const tickInfo = axis.tickPositions?.info;
     const options = axis.options;
     const gridOptions = options.grid || {};
     const userLabels = axis.userOptions.labels || {};
@@ -779,16 +776,16 @@ function onAfterSetOptions(
 
             dateTimeLabelFormats: {
                 hour: {
-                    list: ['%H:%M', '%H']
+                    list: ['%[HM]', '%[H]']
                 },
                 day: {
-                    list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                    list: ['%[AeB]', '%[aeb]', '%[E]']
                 },
                 week: {
                     list: ['Week %W', 'W%W']
                 },
                 month: {
-                    list: ['%B', '%b', '%o']
+                    list: ['%[B]', '%[b]', '%o']
                 }
             },
 
@@ -875,11 +872,7 @@ function onAfterSetOptions(
                     max: number
                 ): (TickPositionsArray|undefined) {
 
-                    const parentInfo = (
-                        this.linkedParent &&
-                        this.linkedParent.tickPositions &&
-                        this.linkedParent.tickPositions.info
-                    );
+                    const parentInfo = this.linkedParent?.tickPositions?.info;
 
                     if (parentInfo) {
                         const units = (gridAxisOptions.units || []);
@@ -904,7 +897,7 @@ function onAfterSetOptions(
                         if (unit) {
                             unitName = unit[0] || 'year';
                             const counts = unit[1];
-                            count = counts && counts[0] || 1;
+                            count = counts?.[0] || 1;
 
                         // In case the base X axis shows years, make the
                         // secondary axis show ten times the years (#11427)
@@ -961,7 +954,7 @@ function onAfterSetOptions2(
 ): void {
     const axis = this;
     const userOptions = e.userOptions;
-    const gridOptions = userOptions && userOptions.grid || {};
+    const gridOptions = userOptions?.grid || {};
     const columns = gridOptions.columns;
 
     // Add column options to the parent axis. Children has their column options
@@ -1018,7 +1011,7 @@ function onAfterTickSize(
  */
 function onChartAfterSetChartSize(this: Chart): void {
     this.axes.forEach((axis): void => {
-        (axis.grid && axis.grid.columns || []).forEach((column): void => {
+        (axis.grid?.columns || []).forEach((column): void => {
             column.setAxisSize();
             column.setAxisTranslation();
         });
@@ -1202,10 +1195,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
         axis,
         value
     } = ctx;
-    if (
-        axis.options.grid &&
-        axis.options.grid.enabled
-    ) {
+    if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
         const series = (
             axis.linkedParent || axis
@@ -1225,7 +1215,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
             // to do not change the original point
             pointCopy = merge(point);
             H.seriesTypes.gantt.prototype.pointClass
-                .setGanttPointAliases(pointCopy as any);
+                .setGanttPointAliases(pointCopy as any, axis.chart);
         }
         // Make additional properties available for the
         // formatter
@@ -1264,8 +1254,8 @@ function onTrimTicks(this: Axis): void {
         secondPos = tickPositions[1],
         lastPos = tickPositions[tickPositions.length - 1],
         beforeLastPos = tickPositions[tickPositions.length - 2],
-        linkedMin = axis.linkedParent && axis.linkedParent.min,
-        linkedMax = axis.linkedParent && axis.linkedParent.max,
+        linkedMin = axis.linkedParent?.min,
+        linkedMax = axis.linkedParent?.max,
         min = linkedMin || axis.min,
         max = linkedMax || axis.max,
         tickInterval = axis.tickInterval,
@@ -1472,27 +1462,29 @@ dateFormats.E = function (this: Time, timestamp: number): string {
 
 // Adds week date format
 dateFormats.W = function (this: Time, timestamp: number): string {
-    const time = this,
-        d = new this.Date(timestamp),
-        unitsToOmit = (['Hours', 'Milliseconds', 'Minutes', 'Seconds'] as Array<Time.TimeUnitValue>);
+    const d = this.toParts(timestamp),
+        firstDay = (d[7] + 6) % 7,
+        thursday = d.slice(0);
 
-    unitsToOmit.forEach(function (format): void { // #16550
-        time.set(format, d, 0);
+    thursday[2] = d[2] - firstDay + 3;
+
+    const firstThursday = this.toParts(this.makeTime(thursday[0], 0, 1));
+
+    if (firstThursday[7] !== 4) {
+        d[1] = 0; // Set month to January
+        d[2] = 1 + (11 - firstThursday[7]) % 7;
     }
-    );
-    const firstDay = (this.get('Day', d) + 6) % 7;
-    const thursday = new this.Date(d.valueOf());
-    this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
 
-    const firstThursday = new this.Date(this.get('FullYear', thursday), 0, 1);
+    const thursdayTS = this.makeTime(thursday[0], thursday[1], thursday[2]),
+        firstThursdayTS = this.makeTime(
+            firstThursday[0],
+            firstThursday[1],
+            firstThursday[2]
+        );
 
-    if (this.get('Day', firstThursday) !== 4) {
-        this.set('Month', d, 0);
-        this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
-    }
     return (
         1 +
-        Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000)
+        Math.floor((thursdayTS - firstThursdayTS) / 604800000)
     ).toString();
 };
 

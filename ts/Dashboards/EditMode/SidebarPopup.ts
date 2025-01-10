@@ -22,6 +22,7 @@ import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
@@ -187,6 +188,16 @@ class SidebarPopup extends BaseForm {
      */
     private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
 
+    /**
+     * Content wrapper for sticking.
+     */
+    private sidebarWrapper?: HTMLElement;
+
+    /**
+     * Content wrapper for the header.
+     */
+    private headerWrapper?: HTMLElement;
+
     /* *
      *
      *  Functions
@@ -276,7 +287,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove highlight from the row.
         if (
-            editMode.editCellContext instanceof Cell &&
+            Cell.isCell(editMode.editCellContext) &&
             editMode.editCellContext.row
         ) {
             editMode.editCellContext.row.setHighlight();
@@ -291,6 +302,8 @@ class SidebarPopup extends BaseForm {
     }
 
     public generateContent(context?: Cell | Row | CellHTML): void {
+        // Reset
+        this.container.innerHTML = AST.emptyHTML;
 
         // Title
         this.renderHeader(
@@ -298,6 +311,16 @@ class SidebarPopup extends BaseForm {
                 this.editMode.lang.settings :
                 this.editMode.lang.addComponent,
             ''
+        );
+
+        // Render content wrapper
+        this.sidebarWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarWrapper
+            },
+            void 0,
+            this.container
         );
 
         if (!context) {
@@ -312,7 +335,11 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordionMenu.renderContent(this.container, component);
+            this.accordionMenu.renderContent(
+                this.sidebarWrapper,
+                component,
+                this.container
+            );
         }
     }
 
@@ -323,7 +350,7 @@ class SidebarPopup extends BaseForm {
 
         const gridWrapper = createElement('div', {
             className: EditGlobals.classNames.editGridItems
-        }, {}, sidebar.container);
+        }, {}, sidebar.sidebarWrapper);
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             gridElement = createElement(
@@ -336,7 +363,10 @@ class SidebarPopup extends BaseForm {
             // Drag drop new component.
             gridElement.addEventListener('mousedown', (e: Event): void => {
                 e.preventDefault();
-                if (sidebar.editMode.dragDrop) {
+
+                const dragDrop = sidebar.editMode.dragDrop;
+
+                if (dragDrop) {
 
                     // Workaround for Firefox, where mouseleave is not triggered
                     // correctly when dragging.
@@ -366,7 +396,7 @@ class SidebarPopup extends BaseForm {
                     document.addEventListener('mousemove', onMouseMove);
                     document.addEventListener('mouseup', onMouseUp);
 
-                    sidebar.editMode.dragDrop.onDragStart(
+                    dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
@@ -389,10 +419,20 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
+                            if (!dropContext) {
+                                const layouts = sidebar.editMode.board.layouts;
+                                dragDrop.dropContext = dropContext =
+                                    layouts[layouts.length - 1].addRow(
+                                        {},
+                                        void 0
+                                    );
+                            }
+
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
+                                dropContext.setHighlight();
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
@@ -418,43 +458,44 @@ class SidebarPopup extends BaseForm {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
 
-        if (dragDrop) {
-            const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                ),
-                newCell = row.addCell({
-                    id: GUIElement.getElementId('col')
-                });
-
-            dragDrop.onCellDragEnd(newCell);
-            const options = merge(componentOptions, {
-                cell: newCell.id
+        if (!dragDrop) {
+            return;
+        }
+        const row = (
+                dropContext.getType() === 'cell' ?
+                    (dropContext as Cell).row :
+                    (dropContext as Row)
+            ),
+            newCell = row.addCell({
+                id: GUIElement.getElementId('col')
             });
 
-            const componentPromise =
-                Bindings.addComponent(options, sidebar.editMode.board, newCell);
-            sidebar.editMode.setEditOverlay();
+        dragDrop.onCellDragEnd(newCell);
+        const options = merge(componentOptions, {
+            cell: newCell.id
+        });
 
-            void (async (): Promise<void> => {
-                const component = await componentPromise;
-                if (!component) {
-                    return;
+        const componentPromise =
+            Bindings.addComponent(options, sidebar.editMode.board, newCell);
+        sidebar.editMode.setEditOverlay();
+
+        void (async (): Promise<void> => {
+            const component = await componentPromise;
+            if (!component) {
+                return;
+            }
+
+            fireEvent(
+                this.editMode,
+                'layoutChanged',
+                {
+                    type: 'newComponent',
+                    target: component
                 }
+            );
+        })();
 
-                fireEvent(
-                    this.editMode,
-                    'layoutChanged',
-                    {
-                        type: 'newComponent',
-                        target: component
-                    }
-                );
-            })();
-
-            return newCell;
-        }
+        return newCell;
     }
 
     /**
@@ -472,12 +513,12 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext instanceof Cell && editCellContext.row) {
+        if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
             editCellContext.setHighlight(true);
         } else if (
-            editCellContext instanceof CellHTML && editMode.cellToolbar
+            CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {
             editMode.cellToolbar.showToolbar(editCellContext);
             editCellContext.setHighlight();
@@ -501,7 +542,23 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderHeader(title: string, iconURL: string): void {
-        const icon = EditRenderer.renderIcon(this.container, {
+        if (!this.container) {
+            return;
+        }
+
+        const headerWrapper = createElement(
+            'div',
+            {
+                className: EditGlobals.classNames.editSidebarHeader
+            },
+            {},
+            this.container
+        );
+        this.container.appendChild(headerWrapper);
+
+        this.headerWrapper = headerWrapper;
+
+        const icon = EditRenderer.renderIcon(this.headerWrapper, {
             icon: iconURL,
             className: EditGlobals.classNames.editSidebarTitle
         });
@@ -509,6 +566,8 @@ class SidebarPopup extends BaseForm {
         if (icon) {
             icon.textContent = title;
         }
+
+        this.headerWrapper?.appendChild(this.closeButton);
     }
 
     /**

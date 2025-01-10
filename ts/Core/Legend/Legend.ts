@@ -26,6 +26,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
+import type { LegendItemObject } from './LegendItem';
 import type LegendOptions from './LegendOptions';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -357,8 +358,12 @@ class Legend {
         item: Legend.Item,
         visible?: boolean
     ): void {
-        const { area, group, label, line, symbol } = item.legendItem || {};
+        const originalColor = item.color,
+            { area, group, label, line, symbol } = item.legendItem || {};
 
+        if (item instanceof Series || item instanceof Point) {
+            item.color = item.options?.legendSymbolColor || originalColor;
+        }
         group?.[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'
         );
@@ -398,6 +403,8 @@ class Legend {
             }));
         }
 
+        item.color = originalColor;
+
         fireEvent(this, 'afterColorizeItem', { item, visible });
     }
 
@@ -434,7 +441,7 @@ class Legend {
             ltr = !options.rtl,
             checkbox = item.checkbox;
 
-        if (group && group.element) {
+        if (group?.element) {
             const attribs = {
                 translateX: ltr ?
                     x :
@@ -528,7 +535,7 @@ class Legend {
      * @function Highcharts.Legend#positionCheckboxes
      */
     public positionCheckboxes(): void {
-        const alignAttr = this.group && this.group.alignAttr,
+        const alignAttr = this.group?.alignAttr,
             clipHeight = this.clipHeight || this.legendHeight,
             titleHeight = this.titleHeight;
         let translateY: number;
@@ -780,7 +787,7 @@ class Legend {
 
         // Calculate the positions for the next line
         const bBox = label.getBBox();
-        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
+        const fontMetricsH = legend.fontMetrics?.h || 0;
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
@@ -892,7 +899,7 @@ class Legend {
         let allItems: Array<Legend.Item> = [];
 
         this.chart.series.forEach(function (series): void {
-            const seriesOptions = series && series.options;
+            const seriesOptions = series?.options;
 
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
@@ -904,7 +911,7 @@ class Legend {
                 // Use points or series for the legend item depending on
                 // legendType
                 allItems = allItems.concat(
-                    (series.legendItem || {}).labels as any ||
+                    (series.legendItem?.labels as any) ||
                     (
                         seriesOptions.legendType === 'point' ?
                             series.data :
@@ -1119,8 +1126,8 @@ class Legend {
 
         // Sort by legendIndex
         stableSort(allItems, (a, b): number =>
-            ((a.options && a.options.legendIndex) || 0) -
-            ((b.options && b.options.legendIndex) || 0)
+            (a.options?.legendIndex || 0) -
+            (b.options?.legendIndex || 0)
         );
 
         // Reversed legend
@@ -1311,7 +1318,8 @@ class Legend {
             };
         let clipHeight: number,
             lastY: number,
-            legendItem,
+            legendItem: LegendItemObject|undefined,
+            lastLegendItem: LegendItemObject|undefined,
             spaceHeight = (
                 chart.spacingBox.height +
                 (alignTop ? -optionsY : optionsY) - padding
@@ -1366,8 +1374,8 @@ class Legend {
 
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (lastY) {
-                    (allItems[i - 1].legendItem || {}).pageIx = len - 1;
+                if (lastY && lastLegendItem) {
+                    lastLegendItem.pageIx = len - 1;
                 }
 
                 // Add the last page if needed (#2617, #13683)
@@ -1385,6 +1393,7 @@ class Legend {
                 if (y !== lastY) {
                     lastY = y;
                 }
+                lastLegendItem = legendItem;
             });
 
             // Only apply clipping if needed. Clipping causes blurred legend in

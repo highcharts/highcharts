@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid class
+ *  DataGrid class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -28,8 +28,10 @@ import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import DGUtils from '../../Utils.js';
+import Utils from '../../../Core/Utilities.js';
 
 const { sanitizeText } = DGUtils;
+const { isString } = Utils;
 
 /* *
  *
@@ -63,7 +65,7 @@ class HeaderRow extends Row {
      * Constructs a row in the data grid.
      *
      * @param viewport
-     * The Data Grid Table instance which the row belongs to.
+     * The DataGrid Table instance which the row belongs to.
      *
      * @param level
      * The current level of header that is rendered.
@@ -95,7 +97,7 @@ class HeaderRow extends Row {
         const enabledColumns = vp.dataGrid.enabledColumns;
 
         // Render element
-        vp.theadElement.appendChild(this.htmlElement);
+        vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.classNames.headerRow);
 
         if (!header) {
@@ -138,7 +140,13 @@ class HeaderRow extends Row {
                 )
             );
 
-            if (headerFormat) {
+            if (typeof column !== 'string') {
+                vp.dataGrid.accessibility?.addHeaderCellDescription(
+                    headerCell.htmlElement, column.accessibility?.description
+                );
+            }
+
+            if (isString(headerFormat)) {
                 if (!headerCell.options.header) {
                     headerCell.options.header = {};
                 }
@@ -186,7 +194,7 @@ class HeaderRow extends Row {
      * Get all headers that should be rendered in a level.
      *
      * @param scope
-     * Level that we start
+     * Level that we start from
      *
      * @param targetLevel
      * Max level
@@ -227,8 +235,8 @@ class HeaderRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', this.level);
+        const a11y = this.viewport.dataGrid.accessibility;
+        a11y?.setRowIndex(this.htmlElement, this.level);
     }
 }
 

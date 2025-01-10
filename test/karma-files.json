@@ -50,6 +50,8 @@
     "code/modules/sankey.src.js",
     "code/modules/arc-diagram.src.js",
     "code/modules/dependency-wheel.src.js",
+    "code/modules/pointandfigure.src.js",
+    "code/modules/renko.src.js",
     "code/modules/series-label.src.js",
     "code/modules/solid-gauge.src.js",
     "code/modules/sonification.src.js",
