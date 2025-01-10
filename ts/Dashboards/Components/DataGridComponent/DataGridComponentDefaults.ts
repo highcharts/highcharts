@@ -130,7 +130,7 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
             propertyPath: ['dataGridClassName'],
             type: 'input'
         }, {
-            id : 'data-grid-id',
+            id: 'data-grid-id',
             name: 'DataGrid ID',
             propertyPath: ['dataGridID'],
             type: 'input'
