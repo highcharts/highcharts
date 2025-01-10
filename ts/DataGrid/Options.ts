@@ -60,6 +60,11 @@ export type CellFormatterCallback = (this: Cell) => string;
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
+/**
+ * Data types of the column cells.
+ */
+export type ColumnDataType = 'string' | 'number' | 'bool' | 'date';
+
 
 /**
  * Options to control the content and the user experience of a grid structure.
@@ -300,10 +305,11 @@ export interface ColumnOptions {
      * The data type of the column. Can be one of `string`, `number`, `boolean`
      * or `date`.
      *
+     * TODO: Add default (?)
      * If not set, the data type is inferred from the first cell in the column.
      * If the cell is empty, the default type is `string`.
      */
-    dataType?: 'string' | 'number' | 'boolean' | 'date';
+    dataType?: ColumnDataType;
 
     /**
      * Validation options for the column.

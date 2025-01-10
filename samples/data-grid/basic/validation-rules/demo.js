@@ -29,10 +29,14 @@ DataGrid.dataGrid('container', {
     },
     columns: [{
         id: 'numbers',
-        validationRules: ['notEmpty', 'number']
+        dataType: 'number',
+        validationRules: ['notEmpty']
+    }, {
+        id: 'price',
+        dataType: 'number'
     }, {
         id: 'booleans',
-        validationRules: ['bool']
+        dataType: 'bool'
     }, {
         id: 'icon',
         validationRules: ['notEmpty', {
