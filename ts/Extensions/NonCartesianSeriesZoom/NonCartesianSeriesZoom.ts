@@ -43,8 +43,8 @@ interface ZoomBox {
     x: number;
     y: number;
     scale: number,
-    panX: number,
-    panY: number
+    panX: number;
+    panY: number;
 }
 
 declare module '../../Core/Series/SeriesLike' {
@@ -91,9 +91,15 @@ function onTransform(
                 series.isDirty = true;
                 chart.isDirtyBox = true;
                 params.hasZoomed = true;
+
+                const {
+                    plotSizeX = 0,
+                    plotSizeY = 0
+                } = chart;
+
                 if (trigger === 'pan' && series.zoomBox) {
-                    series.zoomBox.panX = to.x || 0;
-                    series.zoomBox.panY = to.y || 0;
+                    series.zoomBox.panX -= (to.x || 0) / plotSizeX;
+                    series.zoomBox.panY -= (to.y || 0) / plotSizeY;
                 } else {
                     if (Object.keys(from).length) {
                         const {
@@ -111,15 +117,11 @@ function onTransform(
                                 series.group?.scaleX ||
                                 1,
                             width = (
-                                series.zoomBox?.width ||
-                                chart.plotSizeX ||
-                                0
-                            ),
+                                series.zoomBox?.width || 1
+                            ) * plotSizeX,
                             height = (
-                                series.zoomBox?.height ||
-                                chart.plotSizeY ||
-                                0
-                            );
+                                series.zoomBox?.height || 1
+                            ) * plotSizeY;
 
                         if (Object.keys(to).length) {
                             width = width * (fromWidth / toWidth);
@@ -151,7 +153,13 @@ function onTransform(
                         }
 
                         series.zoomBox = {
-                            x, y, width, height, scale, panX: 0, panY: 0
+                            x: x / plotSizeX,
+                            y: y / plotSizeY,
+                            width: width / plotSizeX,
+                            height: height / plotSizeY,
+                            scale,
+                            panX: 0,
+                            panY: 0
                         };
 
                         if (scale < 1) {
@@ -198,10 +206,18 @@ function onGetPlotBox(
 
     if (group && zoomBox) {
         scale = zoomBox.scale;
-        left = zoomBox.x * (scale - (Math.abs(group.scaleX || 1))) -
-            (name === 'series' ? zoomBox.panX : 0);
-        top = zoomBox.y * (scale - (Math.abs(group.scaleY || 1))) -
-            (name === 'series' ? zoomBox.panY : 0);
+
+        left = zoomBox.x * plotSizeX * (scale - (Math.abs(group.scaleX || 1)));
+        top = zoomBox.y * plotSizeY * (scale - (Math.abs(group.scaleY || 1)));
+
+        if (name === 'series') {
+            zoomBox.x += zoomBox.panX;
+            left += zoomBox.panX * plotSizeX;
+            zoomBox.panX = 0;
+            zoomBox.y += zoomBox.panY;
+            top += zoomBox.panY * plotSizeY;
+            zoomBox.panY = 0;
+        }
 
         translateX = (group.translateX || initLeft) - left;
         translateY = (group.translateY || initTop) - top;
@@ -349,6 +365,24 @@ function onGetSelectionMarkerAttrs(
     return false;
 }
 
+function onAfterSetChartSize(
+    this: Chart,
+    params: ({ skipAxes: boolean })
+): void {
+    if (params.skipAxes) {
+        this.series.forEach((series): void => {
+            if (series.group && series.zoomBox) {
+                series.group.attr({
+                    translateX: 0,
+                    translateY: 0,
+                    scaleX: 1,
+                    scaleY: 1
+                });
+            }
+        });
+    }
+}
+
 /* *
  *
  *  Class
@@ -380,6 +414,7 @@ class NonCartesianSeriesZoom {
         if (pushUnique(composed, 'NonCartesianSeriesZoom')) {
             addEvent(ChartClass, 'afterDrawChartBox', onAfterDrawChartBox);
             addEvent(ChartClass, 'transform', onTransform);
+            addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
             addEvent(SeriesClass, 'getPlotBox', onGetPlotBox);
             addEvent(TooltipClass, 'getAnchor', onGetAnchor);
             addEvent(

@@ -374,7 +374,7 @@ class WordcloudSeries extends ColumnSeries {
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
             { chart, group, zoomBox } = this,
-            inverted = chart.inverted,
+            { plotSizeX = 0, plotSizeY = 0, inverted } = chart,
             // Swap axes for inverted (#2339)
             xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
             yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
@@ -416,12 +416,24 @@ class WordcloudSeries extends ColumnSeries {
 
             // Do not apply translation when zooming out
             if (scaleDiff > 0) {
-                left += scaleDiff * (zoomBox.x - (x + (width / 2)));
-                top += scaleDiff * (zoomBox.y - (y + (height / 2)));
+                left += scaleDiff *
+                    (plotSizeX * zoomBox.x - (x + (width / 2)));
+                top += scaleDiff *
+                    (plotSizeY * zoomBox.y - (y + (height / 2)));
             }
 
             left -= (name === 'series' ? zoomBox.panX : 0);
             top -= (name === 'series' ? zoomBox.panY : 0);
+
+
+            if (name === 'series') {
+                zoomBox.x += zoomBox.panX;
+                left += zoomBox.panX * plotSizeX;
+                zoomBox.panX = 0;
+                zoomBox.y += zoomBox.panY;
+                top += zoomBox.panY * plotSizeY;
+                zoomBox.panY = 0;
+            }
 
             if (isNumber(group.translateX) && isNumber(group.translateY)) {
                 initLeft = group.translateX;
