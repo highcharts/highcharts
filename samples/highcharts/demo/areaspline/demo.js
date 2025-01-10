@@ -9,7 +9,7 @@ const commonOptions = {
 };
 
 // eslint-disable-next-line no-undef
-const connector = new Connectors.Morningstar.TimeSeriesConnector({
+const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: {
         type: 'Price'
