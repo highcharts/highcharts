@@ -42,6 +42,7 @@ const HTMLComponentDefaults: Globals.DeepPartial<Options> = {
     editableOptions: [
         ...Component.defaultOptions.editableOptions || [],
         {
+            id: 'html-input',
             name: 'htmlInput',
             propertyPath: ['html'],
             type: 'textarea'

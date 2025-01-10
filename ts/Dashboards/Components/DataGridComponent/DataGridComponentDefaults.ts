@@ -42,18 +42,22 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
     dataGridOptions: {},
     editableOptions: [
         {
+            id: 'connector-name',
             name: 'connectorName',
             propertyPath: ['connector', 'id'],
             type: 'select'
         }, {
+            id: 'title',
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
         }, {
+            id: 'caption',
             name: 'caption',
             propertyPath: ['caption'],
             type: 'input'
         }, {
+            id: 'data-grid-options',
             name: 'DataGrid options',
             type: 'nested',
             nestedOptions: [{
@@ -121,10 +125,12 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 ]
             }]
         }, {
+            id: 'data-grid-class-name',
             name: 'DataGrid class name',
             propertyPath: ['dataGridClassName'],
             type: 'input'
         }, {
+            id : 'data-grid-id',
             name: 'DataGrid ID',
             propertyPath: ['dataGridID'],
             type: 'input'

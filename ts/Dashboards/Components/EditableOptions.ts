@@ -61,7 +61,7 @@ class EditableOptions {
 
         for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
-            if (option.name === 'connectorName') {
+            if (option.id === 'connector-name') {
                 const board = this.component.board;
                 const selectOptions = !board ?
                     [] :
@@ -82,6 +82,11 @@ namespace EditableOptions {
      * options defined in the detailed options.
      */
     export interface Options {
+        /**
+         * Unique option id that separates operations from the option name,
+         * making it externally customizable.
+         */
+        id: string;
         /**
          * Name of the option which will be displayed on the label.
          */

@@ -43,20 +43,24 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
     thresholdColors: ['#f45b5b', '#90ed7d'],
     editableOptions: [
         {
+            id: 'connector-name',
             name: 'connectorName',
             propertyPath: ['connector', 'id'],
             type: 'select'
         },
         ...Component.defaultOptions.editableOptions || [],
         {
+            id: 'value',
             name: 'Value',
             type: 'input',
             propertyPath: ['value']
         }, {
+            id: 'column-name',
             name: 'Column name',
             type: 'input',
             propertyPath: ['columnName']
         }, {
+            id: 'value-format',
             name: 'Value format',
             type: 'input',
             propertyPath: ['valueFormat']

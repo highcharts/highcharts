@@ -166,10 +166,12 @@ abstract class Component {
         caption: false,
         sync: Sync.defaultHandlers,
         editableOptions: [{
+            id: 'title',
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
         }, {
+            id: 'caption',
             name: 'caption',
             propertyPath: ['caption'],
             type: 'input'

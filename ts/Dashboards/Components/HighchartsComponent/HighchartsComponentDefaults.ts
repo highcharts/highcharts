@@ -51,12 +51,14 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
     chartConstructor: 'chart',
     editableOptions: [
         {
+            id: 'connector-name',
             name: 'connectorName',
             propertyPath: ['connector', 'id'],
             type: 'select'
         },
         ...Component.defaultOptions.editableOptions || [],
         {
+            id: 'chart-options',
             name: 'chartOptions',
             type: 'nested',
             nestedOptions: [{
@@ -201,14 +203,17 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
                 }]
             }]
         }, {
+            id: 'chart-config',
             name: 'chartConfig',
             propertyPath: ['chartOptions'],
             type: 'textarea'
         }, {
+            id: 'chart-class-name',
             name: 'chartClassName',
             propertyPath: ['chartClassName'],
             type: 'input'
         }, {
+            id: 'chart-id',
             name: 'chartID',
             propertyPath: ['chartID'],
             type: 'input'
