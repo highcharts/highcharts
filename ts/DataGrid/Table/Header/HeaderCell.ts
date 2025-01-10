@@ -83,22 +83,22 @@ class HeaderCell extends Cell {
     /**
      * Constructs a cell in the data grid header.
      *
-     * @param column
-     * The column of the cell.
-     *
      * @param row
      * The row of the cell.
+     *
+     * @param column
+     * The column of the cell.
      *
      * @param columnsTree
      * If the cell is a wider than one column, this property contains the
      * structure of the columns that are subordinated to the header cell.
      */
     constructor(
-        column: Column|null,
         row: Row,
+        column?: Column,
         columnsTree?: GroupedHeaderOptions[]
     ) {
-        super(column, row);
+        super(row, column);
 
         if (column) {
             column.header = this;
@@ -165,12 +165,6 @@ class HeaderCell extends Cell {
             this.headerContent.innerText = this.value;
         }
 
-        if (isSortableData) {
-            column?.viewport.dataGrid.accessibility?.addSortableColumnHint(
-                this.headerContent
-            );
-        }
-
         this.htmlElement.setAttribute('scope', 'col');
 
         if (this.options.className) {
@@ -181,6 +175,12 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
+
+            if (isSortableData) {
+                column.viewport.dataGrid.accessibility?.addSortableColumnHint(
+                    this.headerContent
+                );
+            }
 
             // Add user column classname
             if (column.options.className) {

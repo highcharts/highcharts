@@ -87,18 +87,14 @@ abstract class Cell {
     /**
      * Constructs a cell in the data grid.
      *
-     * @param column
-     * The column of the cell.
-     *
      * @param row
      * The row of the cell.
+     *
+     * @param column
+     * The column of the cell.
      */
-    constructor(column: Column|null, row: Row) {
-
-        if (column) {
-            this.column = column;
-        }
-
+    constructor(row: Row, column?: Column) {
+        this.column = column;
         this.row = row;
         this.row.registerCell(this);
 

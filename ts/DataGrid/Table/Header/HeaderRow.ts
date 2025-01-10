@@ -80,10 +80,10 @@ class HeaderRow extends Row {
     * */
 
     public override createCell(
-        column: Column|null,
+        column?: Column,
         columnsTree?: GroupedHeaderOptions[]
     ): HeaderCell {
-        return new HeaderCell(column, this, columnsTree);
+        return new HeaderCell(this, column, columnsTree);
     }
 
     /**
@@ -113,7 +113,8 @@ class HeaderRow extends Row {
                     vp.dataGrid.getColumnIds(columnOnLevel.columns).length : 0;
                 const columnId = colIsString ?
                     columnOnLevel : columnOnLevel.columnId;
-                const dataColumn = vp.getColumn(columnId || '');
+                const dataColumn = columnId ?
+                    vp.getColumn(columnId || '') : void 0;
                 const headerFormat = !colIsString ?
                     columnOnLevel.format : void 0;
                 const className = !colIsString ?
@@ -122,15 +123,15 @@ class HeaderRow extends Row {
                 // Skip hidden column or header when all columns are hidden.
                 if (
                     (
-                        columnId &&
-                        enabledColumns && enabledColumns?.indexOf(columnId) < 0
+                        columnId && enabledColumns &&
+                        enabledColumns.indexOf(columnId) < 0
                     ) || (!dataColumn && colSpan === 0)
                 ) {
                     continue;
                 }
 
                 const headerCell = this.createCell(
-                    columnId && vp.getColumn(columnId || '') || null,
+                    dataColumn,
                     !colIsString ? columnOnLevel.columns : void 0
                 );
 

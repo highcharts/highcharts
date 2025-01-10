@@ -98,7 +98,7 @@ abstract class Row {
      * @param column
      * The column the cell belongs to.
      */
-    public abstract createCell(column: Column|null): Cell;
+    public abstract createCell(column?: Column): Cell;
 
     /**
      * Renders the row's content. It does not attach the row element to the
