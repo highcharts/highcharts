@@ -28,17 +28,15 @@
         });
     }
 
-    const promises = names.map(name => new Promise(resolve => {
-        (async () => {
-            const data = await fetch(
-                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/' +
-                'samples/data/' + name.toLowerCase() + '-c.json'
-            )
-                .then(response => response.json());
-            resolve({ name, data });
-        })();
-    }));
-    const series = await Promise.all(promises);
+    const series = [];
+    for (const name of names) {
+        const response = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/' +
+            'samples/data/' + name.toLowerCase() + '-c.json'
+        );
+        const data = await response.json();
+        series.push({ name, data });
+    }
     createChart(series);
 
 })();
