@@ -1731,9 +1731,10 @@ class Tooltip {
                 }
                 (point.tooltipDateKeys || ['key']).forEach(
                     (key: string): void => {
+                        // TODO: find a way to avoid the double format
                         formatString = formatString.replace(
                             new RegExp('point\\.' + key + '([ \\)}])', ''),
-                            `(point.${key}:${xDateFormat as string})$1`
+                            `(point.${key}:${format(xDateFormat as string, point)})$1`
                         );
                     }
                 );

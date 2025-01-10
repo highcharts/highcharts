@@ -24,6 +24,8 @@ import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
+import D from '../Defaults.js';
+
 /* *
  *
  *  Namespace
@@ -3065,8 +3067,9 @@ namespace AxisDefaults {
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
+             *
              */
-            text: 'Values'
+            text: D.defaultOptions.lang.yAxisTitle
         },
 
         /**
