@@ -677,13 +677,17 @@ function groupData(
             // `name` and `color` or custom properties. Implementers can
             // override this from the approximation function, where they can
             // write custom options to `this.dataGroupInfo.options`.
-            if (series.pointClass && !defined(series.dataGroupInfo.options)) {
+            if (
+                series.pointClass &&
+                !defined(series.dataGroupInfo.options) &&
+                series.options.data
+            ) {
                 // Convert numbers and arrays into objects
                 series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
-                            { series: series },
-                            (series.options.data as any)[
+                            { series },
+                            series.options.data[
                                 (series.cropStart as any) + start
                             ]
                         )
