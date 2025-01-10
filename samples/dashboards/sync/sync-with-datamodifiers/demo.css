@@ -1,2 +1,22 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+.hcdg-theme-default {
+    --hcdg-cell-synced-background: #fffdcc;
+    --hcdg-row-synced-background: #ffffe6;
+    --hcdg-column-synced-background: #ffffe6;
+    --hcdg-column-even-synced-background: #ffffe6;
+    --hcdg-header-column-synced-background: #fffdcc;
+    --hcdg-header-cell-synced-background: #fffdcc;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcdg-theme-default {
+        --hcdg-cell-synced-background: rgb(92, 88, 65);
+        --hcdg-row-synced-background: rgb(71, 69, 58);
+        --hcdg-column-synced-background: rgb(71, 69, 58);
+        --hcdg-column-even-synced-background: rgb(71, 69, 58);
+        --hcdg-header-column-synced-background: rgb(92, 88, 65);
+        --hcdg-header-cell-synced-background: rgb(92, 88, 65);
+    }
+}
