@@ -103,6 +103,7 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     syncTimeout
 } = U;
@@ -281,6 +282,8 @@ class Series {
     public cropped?: boolean;
 
     public data!: Array<Point>;
+
+    public dataColumnKeys?: Array<string>;
 
     public dataMax?: number;
 
@@ -1226,8 +1229,8 @@ class Series {
         return true;
     }
 
-    public dataColumnKeys(): Array<string> {
-        return ['x', ...(this.pointArrayMap || ['y'])];
+    public getDataColumnKeys(): Array<string> {
+        return this.dataColumnKeys || ['x', ...(this.pointArrayMap || ['y'])];
     }
 
     /**
@@ -1297,7 +1300,7 @@ class Series {
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
             table = this.dataTable,
-            dataColumnKeys = this.dataColumnKeys(),
+            dataColumnKeys = this.getDataColumnKeys(),
             pointValKey = series.pointValKey || 'y',
             pointArrayMap = series.pointArrayMap || [],
             valueCount = pointArrayMap.length,
@@ -1472,23 +1475,36 @@ class Series {
 
             // Data table passed as option
             } else {
-                const dataTable = data || chart.dataTable;
+                const dataTable = data || chart.dataTable,
+                    columnAssignment = options.columnAssignment,
+                    keys = dataColumnKeys.slice();
+
+                // Extend the data column keys with the keys from the column
+                // assignment
+                if (columnAssignment) {
+                    columnAssignment?.forEach((assignment): void => {
+                        pushUnique(keys, assignment.key);
+                    });
+                    this.dataColumnKeys = keys;
+                }
 
                 // Resolve column assignment
                 const getTableSpecificColumns = (
                     dataTable?: DataTableCore|DataTableOptions
-                ): DataTableCore.ColumnCollection => [
-                    'x',
-                    ...(this.pointArrayMap || ['y'])
-                ].reduce((acc, key): DataTableCore.ColumnCollection => {
-                    const assignment = options.columnAssignment?.find(
-                        (assignment): boolean => assignment.key === key
-                    );
-                    acc[key] = dataTable?.columns?.[
-                        assignment?.columnName || key
-                    ] || [];
-                    return acc;
-                }, {} as DataTableCore.ColumnCollection);
+                ): DataTableCore.ColumnCollection => keys
+                    .reduce((acc, key): DataTableCore.ColumnCollection => {
+                        const assignment = columnAssignment?.find(
+                            (assignment): boolean => assignment.key === key
+                        );
+                        acc[key] = dataTable?.columns?.[
+                            assignment?.columnName || key
+                        ] || [];
+                        return acc;
+                    }, {} as DataTableCore.ColumnCollection);
+
+                // Set the columns
+                const columns = getTableSpecificColumns(dataTable);
+                table.setColumns(columns);
 
                 // If a DataTable is passed directly by reference, bind events
                 // to keep the series updated
@@ -1547,9 +1563,6 @@ class Series {
                         }
                     );
                 }
-
-                const columns = getTableSpecificColumns(dataTable);
-                table.setColumns(columns);
             }
 
             // Forgetting to cast strings to numbers is a common caveat when
@@ -1852,7 +1865,7 @@ class Series {
             }
         }
 
-        for (const key of this.dataColumnKeys()) {
+        for (const key of this.getDataColumnKeys()) {
             const column = table.getColumn(key, true);
             if (column) {
                 columns[key] = column.slice(start, end);
@@ -1890,9 +1903,8 @@ class Series {
                     0
             ),
             categories = series.xAxis?.categories,
-            pointArrayMap = series.pointArrayMap || ['y'],
             // Create a configuration object out of a data row
-            dataColumnKeys = this.dataColumnKeys();
+            dataColumnKeys = this.getDataColumnKeys();
         let dataLength,
             cursor,
             point,
@@ -1919,8 +1931,10 @@ class Series {
                 point = data[cursor];
                 pOptions = dataOptions ?
                     dataOptions[cursor] :
-                    table.getRow(i, pointArrayMap) as Array<number>;
-
+                    table.getRowObject(
+                        i,
+                        dataColumnKeys
+                    ) as unknown as PointOptions;
                 // #970:
                 if (
                     !point &&
@@ -1936,7 +1950,10 @@ class Series {
                 // Splat the y data in case of ohlc data array
                 point = new PointClass(
                     series,
-                    table.getRow(i, dataColumnKeys) as Array<number> || []
+                    table.getRowObject(
+                        i,
+                        dataColumnKeys
+                    ) as unknown as PointOptions
                 );
 
                 point.dataGroup = (series.groupMap as any)[

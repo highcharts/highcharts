@@ -245,6 +245,33 @@ class DataTableCore {
     }
 
     /**
+     * Retrieves the row at a given index.
+     *
+     * @param {number} rowIndex
+     * Row index to retrieve. First row has index 0.
+     *
+     * @param {Array<string>} [columnNames]
+     * Column names to retrieve.
+     *
+     * @return {Record<string, number|string|undefined>|undefined}
+     * Returns the row values, or `undefined` if not found.
+     */
+    public getRowObject(
+        rowIndex: number,
+        columnNames?: Array<string>
+    ): (DataTable.RowObject|undefined) {
+        const row = {} as DataTable.RowObject,
+            columns = this.columns;
+
+        columnNames ??= Object.keys(this.columns);
+
+        for (const columnName of columnNames) {
+            row[columnName] = columns[columnName]?.[rowIndex];
+        }
+        return row;
+    }
+
+    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @param {string} columnName

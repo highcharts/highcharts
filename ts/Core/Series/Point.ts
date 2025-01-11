@@ -1089,7 +1089,7 @@ class Point {
             // Record changes in the data table
             i = point.index;
             const row: DataTable.RowObject = {};
-            for (const key of series.dataColumnKeys()) {
+            for (const key of series.getDataColumnKeys()) {
                 row[key] = (point as any)[key];
             }
             series.dataTable.setRow(row, i);

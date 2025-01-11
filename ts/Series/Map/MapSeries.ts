@@ -715,7 +715,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
-    public dataColumnKeys(): Array<string> {
+    public getDataColumnKeys(): Array<string> {
         // No x data for maps
         return this.pointArrayMap;
     }
