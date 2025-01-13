@@ -38,3 +38,15 @@ h3 {
 .highcharts-button-normal-hover {
     cursor: pointer;
 }
+
+#small-font {
+    font-size: 10px !important;
+}
+
+#default-font {
+    font-size: 16px !important;
+}
+
+#large-font {
+    font-size: 22px !important;
+}

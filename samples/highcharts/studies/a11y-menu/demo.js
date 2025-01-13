@@ -1,9 +1,9 @@
 /**
- * TODO: Add preview to showing text size with aA
  * TODO: Create a short desc for points
  * TODO: Add visible alt text for the points
  * TODO: Add info region box for the chart with checkbox
  * TODO: Add white border to the columns of the chart?
+ * TODO: Screen reader handling of default font!
  * TODO: Add local storage
  */
 
@@ -12,6 +12,7 @@ let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
     isBorderChecked = false,
+    isAltChecked = false,
     defaultDesc = '';
 
 function initializeChart() {
@@ -137,17 +138,23 @@ function createPreferencesDialog(chart) {
         ${selectedVerbosity === 'full' ? 'checked' : ''}>
         <label for="ver-full">Full</label>
     </div>
+    <h3>Alt text for points</h3>
+    <div class="pref alt-points">
+    <input type="checkbox" id="contrast" name="alt-points"
+        ${isAltChecked ? 'checked' : ''}>
+        <label for="contrast">Alt text for points</label>
+    </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
         <input type="radio" id="smaller" name="textsize" value="smaller"
         ${selectedTextSize === 'smaller' ? 'checked' : ''}>
-        <label for="smaller">Smaller</label>
-        <input type="radio" id="t-size-default" name="textsize" value="default"
+        <label for="smaller">Smaller (<span id="small-font">Aa</span>)</label>
+        <input type="radio" id="t-size-def" name="textsize" value="default"
         ${selectedTextSize === 'default' ? 'checked' : ''}>
-        <label for="t-size-default">Default</label>
+        <label for="t-size-def">Default (<span id="def-font">Aa</span>)</label>
         <input type="radio" id="larger" name="textsize" value="larger"
         ${selectedTextSize === 'larger' ? 'checked' : ''}>
-        <label for="larger">Larger</label>
+        <label for="larger">Larger (<span id="large-font">Aa</span>)</label>
     </div>
     <h3>Enhance contrast:</h3>
     <div class="pref contrast">
@@ -175,10 +182,11 @@ function setupEventListeners(prefContent, chart) {
         prefContent.querySelectorAll('input[name="textsize"]');
     const verbosityRadioButtons =
         prefContent.querySelectorAll('input[name="verbosity"]');
-
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
+    const altCheckbox = prefContent.querySelector('input[name="alt-points"]');
+    console.log(altCheckbox);
 
     textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
@@ -279,6 +287,11 @@ function setupEventListeners(prefContent, chart) {
         }
         // Append button to screen reader region
         setupScreenReaderSection(selectedVerbosity, chart);
+    });
+
+    altCheckbox.addEventListener('change', event => {
+        console.log('event');
+        isAltChecked = true;
     });
 }
 
