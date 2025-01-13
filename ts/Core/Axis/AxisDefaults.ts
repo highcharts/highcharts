@@ -805,7 +805,7 @@ namespace AxisDefaults {
 
         /**
          * The dash or dot style of the grid lines. For possible values, see
-         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-dashstyle-all/).
          *
          * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
          *         Long dashes
@@ -1318,7 +1318,7 @@ namespace AxisDefaults {
 
         /**
          * The dash or dot style of the minor grid lines. For possible values,
-         * see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+         * see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-dashstyle-all/).
          *
          * @sample {highcharts} highcharts/yaxis/minorgridlinedashstyle/
          *         Long dashes on minor grid lines

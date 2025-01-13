@@ -7,7 +7,7 @@ Include the following file `modules/annotations.js` after highcharts.js or highs
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/annotations allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/annotations/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/annotations/) to check the code.
 
 The concept
 -----------
@@ -59,7 +59,7 @@ Both annotation configurations are represented on this chart (see below). Try to
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/annotations/mock-point allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/mock-point/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/annotations/mock-point/) to check the code.
 
 The labels option
 -----------------
@@ -109,7 +109,7 @@ The path type allows to define points property that takes an array of points.
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).
+It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/annotations/custom-markers).
 
 ## Build a custom UI
 

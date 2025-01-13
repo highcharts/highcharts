@@ -961,7 +961,7 @@ export default PatternFill;
  * SVG `patternTransform` to apply to the entire pattern.
  * @name Highcharts.PatternOptionsObject#patternTransform
  * @type {string|undefined}
- * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
+ * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/series/pattern-fill-transform)
  *//**
  * Pattern color, used as default path stroke.
  * @name Highcharts.PatternOptionsObject#color

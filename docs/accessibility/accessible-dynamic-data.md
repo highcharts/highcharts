@@ -15,5 +15,5 @@ By defining the [`accessibility.announceNewData.announcementFormatter`](https:/
 
 Dynamic data demos:
 
-*   [Basic demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dynamic)
-*   [High priority live alerts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/custom-dynamic)
+*   [Basic demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/accessibility/accessible-dynamic)
+*   [High priority live alerts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/accessibility/custom-dynamic)

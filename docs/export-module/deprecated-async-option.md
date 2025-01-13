@@ -7,9 +7,9 @@ Here's how to migrate from the `async` option.
 
 ### Browser
 
-In the browser, the config can be posted and the returned data be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/export-data/export-from-config/) for how to set this up with an async-await based syntax.
+In the browser, the config can be posted and the returned data be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/export-data/export-from-config/) for how to set this up with an async-await based syntax.
 
-If legacy browsers are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/export-data/export-post-request/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
+If legacy browsers are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/export-data/export-post-request/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
 
 ### Node.js
 

@@ -7,7 +7,7 @@ Visualizing relationships with more than four dimensions become challenging with
 
 <iframe style="width: 100%; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/parallel-coordinates allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/parallel-coordinates/) to check the code.
+Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/parallel-coordinates/) to check the code.
 
 How to create parallel coordinates chart
 ----------------------------------------
@@ -23,7 +23,7 @@ chart: {
   parallelCoordinates: true
 }
 ```
-    
+
 
 2. Highcharts generates all necessary yAxes according to the dataset, and `xAxis.categories` includes the yAxes’ titles:
 
@@ -52,7 +52,7 @@ yAxis: [{
 
 4. Use `chart.parallelAxes` to set general configurations to all yAxis such as `lineWidth`, `lineColor`, etc.
 
-    
+
 ```js
 chart: {
   parallelAxes: {

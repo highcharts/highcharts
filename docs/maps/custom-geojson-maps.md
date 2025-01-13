@@ -51,11 +51,11 @@ We will now go through the process of importing a Shapefile in QGIS and converti
 
 ![custom-geojson-maps-9.jpg](custom-geojson-maps-9.jpg)
 
-8. When you are satisfied with your map, you need to export it to GeoJSON format in order to use it with Highcharts Maps. To export your map, right click the layer you want to export in the table of contents, and select "Save As". Make sure to select to save in GeoJSON format. The resulting file can be used directly with Highcharts Maps. You will notice that QGIS by default includes a large amount of decimals in the GeoJSON coordinates. These can be stripped using a Regex or similar, for optimization. Try using [this jsFiddle tool](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/general/geojson-optimization "jsFiddle tool") on the resulting file contents.
+8. When you are satisfied with your map, you need to export it to GeoJSON format in order to use it with Highcharts Maps. To export your map, right click the layer you want to export in the table of contents, and select "Save As". Make sure to select to save in GeoJSON format. The resulting file can be used directly with Highcharts Maps. You will notice that QGIS by default includes a large amount of decimals in the GeoJSON coordinates. These can be stripped using a Regex or similar, for optimization. Try using [this jsFiddle tool](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/general/geojson-optimization "jsFiddle tool") on the resulting file contents.
 
 ![custom-geojson-maps-10.jpg](custom-geojson-maps-10.jpg)
 
-9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/general/geojson-test-map "GeoJSON maps boilerplate"). The result should look something like this:
+9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/general/geojson-test-map "GeoJSON maps boilerplate"). The result should look something like this:
 
 ![custom-geojson-maps-11.jpg](custom-geojson-maps-11.jpg)
 

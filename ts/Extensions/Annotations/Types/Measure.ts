@@ -975,7 +975,7 @@ Measure.prototype.defaultOptions = merge(
                 /**
                  * The dash or dot style of the crosshair's line. For possible
                  * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type    {Highcharts.DashStyleValue}
                  * @default Dash
@@ -1007,7 +1007,7 @@ Measure.prototype.defaultOptions = merge(
                 /**
                  * The dash or dot style of the crosshair's line. For possible
                  * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type      {Highcharts.DashStyleValue}
                  * @default   Dash

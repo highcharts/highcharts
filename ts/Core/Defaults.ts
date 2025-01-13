@@ -992,7 +992,7 @@ const defaultOptions: DefaultOptions = {
      * of pie charts) is represented by a symbol and its name in the legend.
      *
      * It is possible to override the symbol creator function and create
-     * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
+     * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/studies/legend-custom-symbol/).
      *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
@@ -1326,7 +1326,7 @@ const defaultOptions: DefaultOptions = {
          * overflown. Navigation works well on screen, but not in static
          * exported images. One way of working around that is to
          * [increase the chart height in
-         * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
+         * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/legend/navigation-enabled-false/).
          *
          * @sample highcharts/legend/scrollable-vertical/
          *         Legend with vertical scrollable extension

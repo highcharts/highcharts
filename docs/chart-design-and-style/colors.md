@@ -8,7 +8,7 @@ Solid colors
 
 Primarily, Highcharts supports solid colors given in hex format _#00FF00_ and rgb format _rgb(0,255,0)_.
 
-Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-parsers/).
+Secondary, any color format that is recognized by the browser, like short Hex _#0F0_ or color names (_red, brown, blue_) is supported. However, in some cases Highcharts alters the brightness of the color, like when hovering a column chart. When using the secondary color formats, this operation isn't performed. By plugging in to the Highcharts.Color object, we can make named colors work with external libraries or color definitions, like [this example with RGBColor](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/chart/colors-parsers/).
 
 ### Semi-transparent colors - opacity
 
@@ -41,7 +41,7 @@ Note that linear gradients can be differently defined (as an array or an object)
 *   **`userSpaceOnUse`** Default when gradient declared as an array. Start and end positions have to be declared as pixels on the chart.
 *   **`objectBoundingBox`** Default when gradient declared as an object. Start and end positions are in the range of 0 to 1 as described above. Using this might sometimes result in the disappearance of the coloured element.
 
-See the online example of a [linear gradient chart background](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/backgroundcolor-gradient).
+See the online example of a [linear gradient chart background](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/chart/backgroundcolor-gradient).
 
 Radial gradients
 ----------------

@@ -82,11 +82,11 @@ export interface Options extends Component.Options {
      * ```
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
      *
      */
     sync?: SyncOptions;
@@ -115,7 +115,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      * @default false
      */
@@ -127,7 +127,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
      *
      * @default false
      */
@@ -138,7 +138,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
      *
      * @default false
      */

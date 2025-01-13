@@ -157,7 +157,7 @@ code of our product packages in `highcharts/es-modules/masters` for details.
 ## Dynamic imports from CDN
 
 Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
-without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
+without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/esm/simple/)):
 ```html
 <script type="module">
     import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
@@ -180,7 +180,7 @@ const loadHighchartsAndCreateChart = async () => {
     Highcharts.chart('container', { /* options */ });
 };
 ```
-View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/);
+View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/esm/async-await/);
 
 
 

@@ -50,7 +50,7 @@ Highcharts.seriesType(
   }
 );
 ```
-    
+
 
 The method `getLinearRegression()` includes the technical indicator functionality (mathematical calculation). Notice that the indicators module `indicators.js` is included when creating technical indicators, as it includes the core-logic for all indicators.
 
@@ -132,13 +132,13 @@ series: [{
   linkedTo: 'main'
 }]
 ```
-    
+
 
 For live demos check the links below:
 
-*   [Scatter Height vs Weight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-scatter/)
-*   [AAPL Stock Price](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-aapl/)
-*   [Average Monthly Temperature and Rainfall in Tokyo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-column/)
+*   [Scatter Height vs Weight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-scatter/)
+*   [AAPL Stock Price](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-aapl/)
+*   [Average Monthly Temperature and Rainfall in Tokyo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-column/)
 
 **Remark**
 
@@ -294,7 +294,7 @@ if (multipleLinesMixin) {
 }
 ```
 
-A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-multiple-lines/).
+A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-multiple-lines/).
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highstock/series.trendline)._
 
@@ -324,7 +324,7 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
 ```
 
 
-A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-indicator-on-event/).
+A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-indicator-on-event/).
 
 
 ### 5. Custom column indicator.
@@ -361,4 +361,4 @@ Highcharts.seriesType(
 );
 ```
 
-A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/).
+A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-column-indicator/).

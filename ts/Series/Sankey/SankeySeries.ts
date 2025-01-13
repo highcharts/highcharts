@@ -797,7 +797,7 @@ export default SankeySeries;
  * An optional column index of where to place the node. The default behaviour is
  * to place it next to the preceding node.
  *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *      Specified node column
  *
  * @name Highcharts.SankeyNodeObject#column
@@ -814,7 +814,7 @@ export default SankeySeries;
  * the name is different from the `id`. Where the id must be unique for each
  * node, this is not necessary for the name.
  *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/sankey/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/css/sankey/|Highcharts-Demo:}
  *         Sankey diagram with node options
  *
  * @name Highcharts.SankeyNodeObject#name
@@ -831,7 +831,7 @@ export default SankeySeries;
  * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
  * @deprecated
@@ -846,7 +846,7 @@ export default SankeySeries;
  * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
  * @name Highcharts.SankeyNodeObject#offsetHorizontal
@@ -859,7 +859,7 @@ export default SankeySeries;
  * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
  * @name Highcharts.SankeyNodeObject#offsetVertical

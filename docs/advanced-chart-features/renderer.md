@@ -76,14 +76,14 @@ The `render` event handler can be assigned in two different ways.
 more modular and invites to keeping the options structure clean, but requires that
 other options, like for example [chart.className](https://api.highcharts.com/highcharts/chart.className), be used to identify individual charts. Read more about
 [addEvent](https://api.highcharts.com/class-reference/Highcharts#.addEvent%3CT%3E)
-and see the [addEvent and render demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/addevent/).
+and see the [addEvent and render demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/members/addevent/).
 
 Adding responsive shapes
 ------------------------------
 Let's take a closer look at how we can create a custom annotation, and keep it
 in place as we change the size of the chart.
 
-Check out the demo for [renderer on a chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/renderer-on-chart/).
+Check out the demo for [renderer on a chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/members/renderer-on-chart/).
 
 In this case the annotation is closely tied to this specific chart, so we want
 to add the `render` event handler to the options structure. The chart we are

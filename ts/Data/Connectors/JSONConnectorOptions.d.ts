@@ -55,7 +55,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
     dataRefreshRate?: number;
 
     /**
-     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
+     * URL to the JSON data. try it {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/data-tools/datapool-json-connector-dataurl/ | data fetched from url }
      */
     dataUrl?: string;
 
@@ -75,7 +75,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/data-tools/datapool-json-connector-orientation/ | JSON Connector orientation }
      *
      * @default 'rows'
      */
@@ -102,7 +102,7 @@ export interface ColumnNamesOptions {
  * Callback function allowing modification of the data before parsing it.
  * Must return a valid JSON structure.
  *
- * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
+ * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
 export interface BeforeParseCallbackFunction {
     (data: JSONConverter.Data): JSONConverter.Data;

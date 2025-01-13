@@ -48,18 +48,18 @@ Technically Highcharts Stock is implemented as a set of plugins for Highcharts. 
 
 Examples:
 
-*   [Using flags in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/series-flags/in-highcharts/)
+*   [Using flags in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/series-flags/in-highcharts/)
 
-*   [Enabling a scrollbar in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/scrollbar/in-highcharts/)
+*   [Enabling a scrollbar in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/scrollbar/in-highcharts/)
 
-*   [Gap size in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/plotoptions/gapsize-in-highcharts/)
+*   [Gap size in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/plotoptions/gapsize-in-highcharts/)
 
 * * *
 
 Can I add a data table to the exported chart?
 ---------------------------------------------
 
-If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/exporting-table/) for source code and live example.
+If you don't care about the export, a data table is simply added by the `export-data` module and a simple option, [exporting.showTable](https://api.highcharts.com/highcharts/exporting.showTable). However this table doesn't support exporting to SVG or other image formats, but with a little programming on top of the Highcharts data and drawing API you can draw a table. See [our jsFiddle demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/studies/exporting-table/) for source code and live example.
 
 * * *
 
@@ -83,7 +83,7 @@ Can I export multiple charts to the same image or PDF?
 
 Currently this isn't implemented in the core, but there are a couple of paths you can go to achieve this. 
 
-1.  Use our hack for [exporting multiple charts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
+1.  Use our hack for [exporting multiple charts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/exporting/multiple-charts/). Basically, this code gets the SVG of all charts, modifies it and applies it to one single SVG file that is sent to the server for image conversion. We also support using our client side exporting module, if sending data to our server is a concern. See [this demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/exporting/multiple-charts-offline/) for an example of this approach.
 2.  Create a HTML file on your server that contains all your desired charts, and do a pure server side conversion of this. See [Can I generate charts on the server without using a browser?](#server-side-charts)
 
 * * *
@@ -115,7 +115,7 @@ Yes. See our article, [Render charts on the server](https://highcharts.com/docs/
 How do I define irregular time data?
 ------------------------------------
 
-To add data points with irregular intervals, instead of defining `pointStart` and `pointInterval` for the series, define an X value (date) for each point. See [demo of irregular time](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/spline-irregular-time).
+To add data points with irregular intervals, instead of defining `pointStart` and `pointInterval` for the series, define an X value (date) for each point. See [demo of irregular time](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/spline-irregular-time).
 
 If you want the line to be broken for missing dates, insert null values instead.
 

@@ -1099,7 +1099,7 @@ namespace Component {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/events/ | Mount event }
          */
         events?: Record<string, Function>;
         /**
@@ -1123,7 +1123,7 @@ namespace Component {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/title/ | Changed captions }
          */
         title?: TextOptionsType;
         /**
@@ -1131,7 +1131,7 @@ namespace Component {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
 
@@ -1155,7 +1155,7 @@ namespace Component {
              * Only one component can be active at a time.
              *
              * Try it:
-             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/states/ | Active state }
              *
              * @default false
              */

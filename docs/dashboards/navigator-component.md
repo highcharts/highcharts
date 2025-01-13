@@ -43,13 +43,13 @@ The Navigator component can be synced with other components in **Dashboards**. T
 ## Crossfilter
 
 
-Alternatively, the `NavigatorComponent` can synchronize extremes in a shared `crossfilter`. The crossfilter is managed by 
+Alternatively, the `NavigatorComponent` can synchronize extremes in a shared `crossfilter`. The crossfilter is managed by
 a `RangeModifier`, which sources the connector's data table. All components must
 share the same connector and table to make the `crossfilter` work.
 
 For `crossfilter` sync, the `affectNavigators` option must be enabled, which
 causes, in addition to changing the content of the table, the content of
-other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
+other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/crossfilter-affecting-navigators).
 
 Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
 

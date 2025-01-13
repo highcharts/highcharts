@@ -672,7 +672,7 @@ namespace Cell {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/gui/nested-layout/ | Nested layout}
          **/
         layout?: LayoutType.Options;
         /**

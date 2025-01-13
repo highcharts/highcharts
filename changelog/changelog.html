@@ -875,7 +875,7 @@ import &#39;highcharts/modules/accessibility&#39;;
                   <div class="card-body">
                     <ul>
                       <li>In Highcharts version 11, released at the earliest March 1 2023, the main script files at <a href="https://code.highcharts.com">code.highcharts.com</a> and npm will be compiled for evergreen browsers. This includes files like <a href="https://code.highcharts.com/highcharts.js">highcharts.js</a>, <a href="https://code.highcharts.com/modules/exporting.js">modules/exporting.js</a>, <a href="https://code.highcharts.com/modules/accessibility.js">accessibility.js</a> etc. Should you need to continue supporting browsers more than three years old, like IE11, we will provide legacy script files in the <code>/es5</code> folder. These files are now available, and we recommend you do the switch before the release of version 11. See a <a href="https://jsfiddle.net/highcharts/Lxz6pent/">live example</a>, or read the details at <a href="https://github.com/highcharts/highcharts/issues/18070">#18070</a>.</li>
-                      <li>Lollipop series data values should now be given as <code>y</code>, not as <code>low</code>. See <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/lollipop/">live demo</a>.</li>
+                      <li>Lollipop series data values should now be given as <code>y</code>, not as <code>low</code>. See <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/lollipop/">live demo</a>.</li>
                     </ul>
 
                   </div>
@@ -1151,7 +1151,7 @@ import &#39;highcharts/modules/accessibility&#39;;
                   <div class="card-body">
                     <ul>
                       <li>In an organization chart, children of a parent with <code>hanging</code> layout will now inherit this layout. To prevent this, set <code>layout = &quot;normal&quot;</code> for these nodes.</li>
-                      <li>The <a href="https://api.highcharts.com/highcharts/drilldown.drillUpButton">drilldown.drillUpButton</a> options set is deprecated and replaced by <a href="https://api.highcharts.com/highcharts/drilldown.breadcrumbs">drilldown.breadcrumbs</a>. Some but not all settings are backwards compatible. See our <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/breadcrumbs/single-button/">demo of mimicking the legacy button style</a> with breadcrumbs. The same is true for <a href="https://api.highcharts.com/highcharts/plotOptions.treemap.traverseUpButton">treemap.traverseUpButton</a>.</li>
+                      <li>The <a href="https://api.highcharts.com/highcharts/drilldown.drillUpButton">drilldown.drillUpButton</a> options set is deprecated and replaced by <a href="https://api.highcharts.com/highcharts/drilldown.breadcrumbs">drilldown.breadcrumbs</a>. Some but not all settings are backwards compatible. See our <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/breadcrumbs/single-button/">demo of mimicking the legacy button style</a> with breadcrumbs. The same is true for <a href="https://api.highcharts.com/highcharts/plotOptions.treemap.traverseUpButton">treemap.traverseUpButton</a>.</li>
                       <li>The offline exporting module now requires version 2 of jsPDF and version 2 of svg2pdf when exporting to PDF. Our own CDN, downloads and packages are updated, but if you&#39;re loading old releases from elsewhere, it will fail.</li>
                     </ul>
 
@@ -2620,7 +2620,7 @@ import &#39;highcharts/modules/accessibility&#39;;
               <li>Added option <a href="https://api.highcharts.com/highcharts/xAxis.margin">xAxis.margin</a> to ensure a distance between multiple axes on the same side.</li>
               <li>Added options <a href="https://api.highcharts.com/highcharts/plotOptions.sankey.borderWidth">plotOptions.sankey.borderWidth</a> and <code>sankey.borderColor</code> for sankey nodes.</li>
               <li>Added force directed algorithm for improved packing of packed bubble charts.</li>
-              <li>Added support for <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/packed-bubble-split/">nested packed bubbles</a>.</li>
+              <li>Added support for <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/packed-bubble-split/">nested packed bubbles</a>.</li>
               <li>Added <a href="https://api.highcharts.com/highcharts/series.networkgraph.layoutAlgorithm.integration">Verlet integration</a> for network graphs. Generally improved network graph algorithms.</li>
               <li>Added data labels to links in network graphs.</li>
             </ul>
@@ -2951,7 +2951,7 @@ import &#39;highcharts/modules/accessibility&#39;;
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-6.2.0.zip" title="Download the zip archive for Highcharts v6.2.0"><i class="fas fa-download"></i></a></span>
             </h3>
             <ul>
-              <li>Added support for <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple/">multiple data labels</a> on each single point.</li>
+              <li>Added support for <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-datalabels-multiple/">multiple data labels</a> on each single point.</li>
               <li>Added <a href="https://api.highcharts.com/highcharts/series.line.dragDrop">draggable points plugin</a> as module.</li>
               <li>Added support for <code>pointPlacement</code> in X range charts, affecting the category Y axis. Closed #7419.</li>
             </ul>
@@ -9926,7 +9926,7 @@ import &#39;highcharts/modules/accessibility&#39;;
             </h3>
             <ul>
               <li>Most changes listed under Highcharts 5.0.7 above also apply to Highstock 5.0.7.</li>
-              <li>Added support for <a href="https://jsfiddle.net/gh/get/jquery/3.1.1/highcharts/highcharts/tree/master/samples/stock/navigator/inverted/">navigator in inverted charts</a>.</li>
+              <li>Added support for <a href="https://jsfiddle.net/gh/get/jquery/3.1.1/highcharts/highcharts/tree/main/samples/stock/navigator/inverted/">navigator in inverted charts</a>.</li>
               <li>Created new module <code>stock.src.js</code> so Highstock can be loaded as a module for Highcharts.</li>
             </ul>
             <div class="accordion card-group">
@@ -10519,7 +10519,7 @@ import &#39;highcharts/modules/accessibility&#39;;
             </h3>
             <ul>
               <li>Most changes listed under Highcharts 4.1.5 above also apply to Highstock 2.1.5.</li>
-              <li>Added feature, forced data grouping tied to range selector buttons. <a href="https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/stock/rangeselector/datagrouping/">View demo</a>.</li>
+              <li>Added feature, forced data grouping tied to range selector buttons. <a href="https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/main/samples/stock/rangeselector/datagrouping/">View demo</a>.</li>
             </ul>
             <div class="accordion card-group">
               <div class="card">

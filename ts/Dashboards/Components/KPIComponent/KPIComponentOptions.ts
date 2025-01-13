@@ -61,7 +61,7 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/kpi-component/threshold/ | Set a threshold}
      *
      */
     threshold?: number|Array<number>;
@@ -72,7 +72,7 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Threshold colors}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/kpi-component/threshold/ | Threshold colors}
      *
      */
     thresholdColors?: Array<string>;
@@ -105,7 +105,7 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/value-format/ | Add a value format}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/kpi-component/value-format/ | Add a value format}
      *
      */
     valueFormat?: string;
@@ -124,7 +124,7 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
      *
      * @example
      * ```js
@@ -146,7 +146,7 @@ export interface Options extends Component.Options {
      * ```
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      */
     sync?: SyncOptions;
@@ -156,7 +156,7 @@ export interface Options extends Component.Options {
  *
  * Try it:
  *
- * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
+ * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/kpi-component/linked-value-to | Linking KPI value to a specific point}
  */
 export interface LinkedValueToOptions {
     /**
@@ -213,7 +213,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      * @default false
      */
