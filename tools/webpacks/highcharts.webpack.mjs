@@ -13,6 +13,7 @@ import FSLib from '../libs/fs.js';
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
+import { resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -34,88 +35,6 @@ const productMasters = [
     'highstock',
     'standalone-navigator'
 ];
-
-const externals = FSLib.getFile(
-    FSLib.path([import.meta.dirname, 'externals.json']),
-    true
-);
-
-
-/* *
- *
- *  Functions
- *
- * */
-
-
-/**
- * Creates a configuration to resolve an external reference via the given path.
- *
- * @param  {...Array<string>} pathMembers
- * Path to resolve to.
- *
- * @returns 
- * UMD configuration.
- */
-function createUMDConfig(...pathMembers) {
-    const commonjs = ['highcharts', ...pathMembers];
-    return {
-        amd: ['highcharts/highcharts', ...pathMembers],
-        commonjs,
-        commonjs2: commonjs,
-        root: [namespace, ...pathMembers]
-    };
-}
-
-
-/**
- * Resolves external references of the binded master file to specific UMD paths.
- *
- * @param {*} info
- * Webpack reference information.
- *
- * @param {string} masterName
- * Master name that gets bundled.
- *
- * @return
- * UMD config for external reference, or `undefined` to include reference in
- * bundle.
- */
-export async function resolveExternals(info, masterName) {
-    // eslint-disable-next-line no-invalid-this
-    const path = Path
-        .relative(sourceFolder, Path.join(info.context, info.request))
-        .replace(/(?:\.src)?\.js$/u, '')
-        .replaceAll(Path.sep, Path.posix.sep);
-    const name = Path.basename(path);
-
-    // Quick exit on entry point
-    if (masterName === name) {
-        return void 0;
-    }
-
-    // Quick exit on standalone
-    if (masterName.includes('standalone')) {
-        return void 0;
-    }
-
-    for (const external of externals) {
-        if (external.files.includes(path)) {
-            return (
-                external.included.includes(masterName) ?
-                    void 0 :
-                    createUMDConfig(
-                        ...external.namespacePath
-                            .replace(/\{name\}/gsu, name)
-                            .split('.')
-                            .slice(1)
-                    )
-            );
-        }
-    }
-
-    return void 0;
-}
 
 
 /* *
@@ -203,7 +122,12 @@ const webpacks = FSLib
         if (!productMasters.includes(masterName)) {
             webpackConfig.externalsType = 'umd';
             webpackConfig.externals = [
-                (info) => resolveExternals(info, masterName)
+                (info) => resolveExternals(
+                    info,
+                    masterName,
+                    sourceFolder,
+                    namespace
+                )
             ];
         }
         return webpackConfig;
