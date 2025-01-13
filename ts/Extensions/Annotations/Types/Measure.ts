@@ -58,10 +58,37 @@ import { Palette } from '../../../Core/Color/Palettes.js';
 function average(
     this: Measure
 ): number {
-    let average: number = 0;
+    let average: number = 0,
+        pointsTotal: number = 0,
+        pointsAmount: number = 0;
 
-    if (isNumber(this.max) && isNumber(this.min)) {
-        average = (this.max + this.min) / 2;
+    const series = this.chart.series,
+        ext = getExtremes(
+            this.xAxisMin,
+            this.xAxisMax,
+            this.yAxisMin,
+            this.yAxisMax
+        );
+
+    series.forEach((s): void => {
+        if (
+            s.visible &&
+            s.options.id !== 'highcharts-navigator-series'
+        ) {
+            s.points.forEach((point): void => {
+                if (
+                    isPointWithinExtremes(point, ext) &&
+                    isNumber(point.y)
+                ) {
+                    pointsTotal += point.y;
+                    pointsAmount++;
+                }
+            });
+        }
+    });
+
+    if (pointsAmount > 0) {
+        average = +(pointsTotal / pointsAmount).toFixed(2);
     }
 
     return average;
