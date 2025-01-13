@@ -1,4 +1,5 @@
 /**
+ * TODO: Reset dark/light mode if contrast section is pressed?
  * TODO: Add preview to showing text size with aA
  * TODO: Add dark mode to whole website
  * TODO: Decrease contrast of the purple series
@@ -14,8 +15,7 @@
 let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
-    isBorderChecked = false,
-    selectedColorTheme = 'default';
+    isBorderChecked = false;
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -29,8 +29,7 @@ function initializeChart() {
 function getChartConfig() {
     return {
         chart: {
-            type: 'column',
-            styledMode: true
+            type: 'column'
         },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
@@ -79,7 +78,7 @@ function getChartConfig() {
 function addPrefButton(chart) {
     // TODO: Fix responsiveness of button
     chart.prefMenu.prefButton = chart.renderer.button(
-        'Preferences', 670, 10, () => handlePrefButtonClick(chart)
+        '⚙️ Preferences', 650, 5, () => handlePrefButtonClick(chart)
     )
         .attr({
             id: 'hc-pref-button'
@@ -131,18 +130,6 @@ function createPreferencesDialog(chart) {
     </button>
     <h2>Preferences</h2>
     <p>Customize your chart settings to enhance your experience.</p>
-    <h3>Color Theme</h3>
-    <div class="pref color-theme">
-        <input type="radio" id="c-default" name="color-theme" value="none"
-        ${selectedColorTheme === 'default' ? 'checked' : ''}>
-        <label for="c-default">System default</label>
-        <input type="radio" id="color-light" name="color-theme" value="light"
-        ${selectedColorTheme === 'light' ? 'checked' : ''}>
-        <label for="color-light">Light</label>
-        <input type="radio" id="color-dark" name="color-theme" value="dark"
-        ${selectedColorTheme === 'dark' ? 'checked' : ''}>
-        <label for="color-dark">Dark</label>
-    </div>
     <h3>Screen reader info:</h3>
     <div class="pref verbosity">
         <input type="radio" id="short" name="verbosity" value="short"
@@ -195,8 +182,6 @@ function setupEventListeners(prefContent, chart) {
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
-    const themeRadioButtons =
-        prefContent.querySelectorAll('input[name="color-theme"]');
 
     // For verbosity setting
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -279,27 +264,6 @@ function setupEventListeners(prefContent, chart) {
                 innerScreenReaderDiv.children[6].style.display = 'block';
 
             }
-        });
-    });
-
-    // TODO: Also add darkmode to the other elements outside of the chart?
-    themeRadioButtons.forEach(radio => {
-        radio.addEventListener('change', event => {
-            const theme = event.target.value;
-            selectedColorTheme = theme;
-
-            chart.update({
-                chart: {
-                    styledMode: true
-                }
-            }, false);
-
-            // Apply the theme class to the container
-            const container = document.getElementById('container');
-            container.className = theme === 'none' ? '' : `highcharts-${theme}`;
-
-            // Redraw the chart to apply the new styles
-            chart.redraw();
         });
     });
 
