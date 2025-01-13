@@ -1,7 +1,6 @@
 /**
- * TODO: Reset dark/light mode if contrast section is pressed?
+ * TODO: Fix verbosity randomly disappearing
  * TODO: Add preview to showing text size with aA
- * TODO: Add dark mode to whole website
  * TODO: Decrease contrast of the purple series
  * TODO: Tweak colors for contrast and border
  * TODO: Create a short desc for points
@@ -232,6 +231,8 @@ function setupEventListeners(prefContent, chart) {
                 });
                 break;
             }
+            // Append the button to the screen reader region
+            addPrefButtonScreenReader(chart);
         });
     });
     verbosityRadioButtons.forEach(radio => {
@@ -271,8 +272,6 @@ function setupEventListeners(prefContent, chart) {
         const isChecked = event.target.checked;
         isContrastChecked = isChecked; // Store state
         if (isChecked) {
-            console.log('contrast box is checked');
-
             chart.update({
                 colors: ['#247eb2', '#403b9b']
             });
@@ -281,8 +280,9 @@ function setupEventListeners(prefContent, chart) {
             chart.update({
                 colors: ['#2cb0ff', '#544fc6']
             });
-
         }
+        // Append button to screen reader region
+        addPrefButtonScreenReader(chart);
     });
 
     borderCheckbox.addEventListener('change', event => {
@@ -309,6 +309,8 @@ function setupEventListeners(prefContent, chart) {
                 }]
             });
         }
+        // Append button to screen reader region
+        addPrefButtonScreenReader(chart);
     });
 }
 
