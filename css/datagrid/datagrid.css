@@ -468,7 +468,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     overflow: hidden;
 }
 
-.highcharts-datagrid-table th:last-of-type,
+.highcharts-datagrid-table .highcharts-datagrid-last-header-cell-in-row,
 .highcharts-datagrid-table td:last-of-type {
     border-right: none;
 }

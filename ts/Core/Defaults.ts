@@ -124,6 +124,8 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
 
@@ -297,9 +299,8 @@ const defaultOptions: DefaultOptions = {
     },
 
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
