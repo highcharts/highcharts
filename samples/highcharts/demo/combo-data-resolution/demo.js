@@ -1,7 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Global temperature changes from 1880 to 2021',
-        align: 'left'
+        text: 'Global temperature changes from 1880 to 2021'
     },
     accessibility: {
         description: `

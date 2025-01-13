@@ -186,12 +186,6 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         }),
         series = chart.series;
 
-    function klingerWithRound(arr, index) {
-        return arr.map(point =>
-            (point[index] ? parseFloat(point[index].toFixed(0)) : point[index])
-        );
-    }
-
     // Klinger Oscilator needs at least 56 points to calculate the default
     // period: 55.
     assert.strictEqual(
@@ -201,13 +195,14 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         should equal the length of the main series.`
     );
 
+    const xData = series[2].getColumn('x');
     assert.strictEqual(
-        series[2].xData[0],
+        xData[0],
         1559136600000,
         'First x point should start on that day.'
     );
     assert.strictEqual(
-        series[2].xData[series[2].xData.length - 1],
+        xData[xData.length - 1],
         1560864600000,
         'The last x point should be on the last day of array.'
     );
@@ -222,7 +217,7 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        klingerWithRound(chart.series[2].yData, 0),
+        chart.series[2].getColumn('y').map(Math.round),
         [
             -4895496810,
             -4460879653,
@@ -245,7 +240,9 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        klingerWithRound(chart.series[2].yData, 1),
+        chart.series[2].getColumn('signal').map(
+            n => (typeof n === 'number' ? Math.round(n) : n)
+        ),
         [
             null,
             null,

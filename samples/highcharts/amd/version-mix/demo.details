@@ -3,5 +3,6 @@
  authors:
    - Sophie Bremer
  requiresManualTesting: true
+ applyCSP: false
  js_wrap: b
 ...

@@ -3,28 +3,28 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'token'
         }
     }
 };
 
 const NVIDIACorpId = '0P000003RE';
 
+const NVIDIAPriceConnector =
 // eslint-disable-next-line no-undef
-const NVIDIAPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'OHLCV'
-    },
-    securities: [
-        {
-            id: NVIDIACorpId,
-            idType: 'MSID'
-        }
-    ],
-    currencyId: 'EUR'
-});
+    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'OHLCV'
+        },
+        securities: [
+            {
+                id: NVIDIACorpId,
+                idType: 'MSID'
+            }
+        ],
+        currencyId: 'EUR'
+    });
 
 Promise.all([NVIDIAPriceConnector.load()]).then(() => {
     const {

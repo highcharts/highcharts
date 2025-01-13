@@ -1,7 +1,6 @@
-DataGrid with React
-===
+# DataGrid with React
 
-To create a DataGrid with React please follow the steps below:
+To create a DataGrid with React, please follow the steps below:
 
 ## 1. Install the Dashboards package
 The Dashboards package contains the DataGrid.

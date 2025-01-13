@@ -24,6 +24,7 @@
 
 import type DataGrid from '../DataGrid';
 import type { ColumnSortingOrder } from '../Options';
+import whcm from '../../Accessibility/HighContrastMode.js';
 
 import Globals from '../Globals.js';
 import DGUtils from '../Utils.js';
@@ -115,6 +116,26 @@ class Accessibility {
     }
 
     /**
+     * Add the 'sortable' hint span element for the sortable column.
+     *
+     * @param element
+     * The element to add the description to.
+     */
+    public addSortableColumnHint(element: HTMLElement): void {
+        const sortableLang =
+            this.dataGrid.options?.lang?.accessibility?.sorting?.sortable;
+
+        if (!sortableLang) {
+            return;
+        }
+
+        makeHTMLElement('span', {
+            className: Globals.classNames.visuallyHidden,
+            innerText: ', ' + sortableLang
+        }, element);
+    }
+
+    /**
      * Add the description to the header cell.
      *
      * @param thElement
@@ -167,10 +188,11 @@ class Accessibility {
      * The order of the sorting.
      */
     public userSortedColumn(order: ColumnSortingOrder): void {
-        const announcements = this.dataGrid.options?.lang
+        const { options } = this.dataGrid;
+        const announcementsLang = options?.lang
             ?.accessibility?.sorting?.announcements;
 
-        if (!announcements?.enabled) {
+        if (!options?.accessibility?.announcements?.sorting) {
             return;
         }
 
@@ -178,13 +200,13 @@ class Accessibility {
 
         switch (order) {
             case 'asc':
-                msg = announcements?.ascending;
+                msg = announcementsLang?.ascending;
                 break;
             case 'desc':
-                msg = announcements?.descending;
+                msg = announcementsLang?.descending;
                 break;
             default:
-                msg = announcements?.none;
+                msg = announcementsLang?.none;
         }
 
         if (!msg) {
@@ -201,14 +223,15 @@ class Accessibility {
      * The type of the edit message.
      */
     public userEditedCell(msgType: Accessibility.EditMsgType): void {
-        const messages = this.dataGrid.options?.lang
+        const { options } = this.dataGrid;
+        const announcementsLang = options?.lang
             ?.accessibility?.cellEditing?.announcements;
 
-        if (!messages?.enabled) {
+        if (!options?.accessibility?.announcements?.cellEditing) {
             return;
         }
 
-        const msg = messages?.[msgType];
+        const msg = announcementsLang?.[msgType];
         if (!msg) {
             return;
         }
@@ -232,6 +255,70 @@ class Accessibility {
         thElement?.setAttribute('aria-sort', state);
     }
 
+    /**
+     * Adds high contrast CSS class, if the browser is in High Contrast mode.
+     */
+    public addHighContrast(): void {
+        const highContrastMode =
+            this.dataGrid.options?.accessibility?.highContrastMode;
+
+        if (
+            highContrastMode !== false && (
+                whcm.isHighContrastModeActive() ||
+                highContrastMode === true
+            )
+        ) {
+            this.dataGrid.contentWrapper?.classList.add(
+                'hcdg-highcontrast-theme'
+            );
+        }
+    }
+
+    /**
+     * Set the row index attribute for the row element.
+     *
+     * @param el
+     * The row element to set the index to.
+     *
+     * @param idx
+     * The index of the row in the data table.
+     */
+    public setRowIndex(el: HTMLElement, idx: number): void {
+        el.setAttribute('aria-rowindex', idx);
+    }
+
+    /**
+     * Set a11y options for the DataGrid.
+     */
+    public setA11yOptions(): void {
+        const dataGrid = this.dataGrid;
+        const tableEl = dataGrid.tableElement;
+
+        if (!tableEl) {
+            return;
+        }
+
+        tableEl.setAttribute(
+            'aria-rowcount',
+            dataGrid.dataTable?.getRowCount() || 0
+        );
+
+        if (dataGrid.captionElement) {
+            tableEl.setAttribute(
+                'aria-labelledby',
+                dataGrid.captionElement.id
+            );
+        }
+
+        if (dataGrid.descriptionElement) {
+            tableEl.setAttribute(
+                'aria-describedby',
+                dataGrid.descriptionElement.id
+            );
+        }
+
+        this.addHighContrast();
+    }
 }
 
 

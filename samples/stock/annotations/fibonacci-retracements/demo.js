@@ -34,7 +34,7 @@
         const labels = [];
 
         // building options for the annotation
-        Highcharts.each(levels, function (level, i) {
+        levels.forEach(function (level, i) {
             const retracement = y2 - diff * level;
             const p1 = point(x1, retracement);
             const p2 = point(x2, retracement);
@@ -121,9 +121,9 @@
 
         annotations: [
             fibonacciRetracements(
-                Date.UTC(2016, 10, 14),
+                '2016-11-14',
                 105,
-                Date.UTC(2017, 8, 4), 170
+                '2017-09-04', 170
             )
         ],
 

@@ -4,8 +4,7 @@ Highcharts.chart('container', {
         styledMode: true
     },
     title: {
-        text: 'Mobile vendor market share, June 2024',
-        align: 'left'
+        text: 'Mobile vendor market share, June 2024'
     },
     series: [{
         type: 'pie',

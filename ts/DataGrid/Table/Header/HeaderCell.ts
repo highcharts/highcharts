@@ -33,7 +33,7 @@ import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
 const { makeHTMLElement, isHTML } = DGUtils;
-const { merge } = Utilities;
+const { merge, isString } = Utilities;
 
 
 /* *
@@ -61,18 +61,12 @@ class HeaderCell extends Cell {
     /**
      * Reference to options in settings header.
      */
-    public options: Partial<Column.Options> = {};
+    public readonly options: Partial<Column.Options> = {};
 
     /**
-     * Columns that are grouped in the header cell. In most cases is contains
-     * only one column, but can be more if the header cell is grouped.
+     * List of columns that are subordinated to the header cell.
      */
-    public columns?: GroupedHeaderOptions[];
-
-    /**
-     * Whether the cell is a main column cell in the header.
-     */
-    private isMain: boolean;
+    public readonly columns: Column[] = [];
 
     /**
      * Content value of the header cell.
@@ -89,17 +83,36 @@ class HeaderCell extends Cell {
     /**
      * Constructs a cell in the data grid header.
      *
+     * @param row
+     * The row of the cell.
+     *
      * @param column
      * The column of the cell.
      *
-     * @param row
-     * The row of the cell.
+     * @param columnsTree
+     * If the cell is a wider than one column, this property contains the
+     * structure of the columns that are subordinated to the header cell.
      */
-    constructor(column: Column, row: Row) {
-        super(column, row);
-        column.header = this;
+    constructor(
+        row: Row,
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ) {
+        super(row, column);
 
-        this.isMain = !!this.row.viewport.getColumn(this.column.id);
+        if (column) {
+            column.header = this;
+            this.columns.push(column);
+        } else if (columnsTree) {
+            const vp = this.row.viewport;
+            const columnIds = vp.dataGrid.getColumnIds(columnsTree, true);
+            for (const columnId of columnIds) {
+                const column = vp.getColumn(columnId);
+                if (column) {
+                    this.columns.push(column);
+                }
+            }
+        }
     }
 
     /* *
@@ -122,27 +135,26 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const column = this.column;
-        const options = merge(column.options, this.options); // ??
+        const options = merge(column?.options || {}, this.options);
         const headerCellOptions = options.header || {};
+        const isSortableData = options.sorting?.sortable && column?.data;
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
-        } else if (headerCellOptions.format) {
-            this.value = column.format(headerCellOptions.format);
+        } else if (isString(headerCellOptions.format)) {
+            this.value = column ?
+                column.format(headerCellOptions.format) :
+                headerCellOptions.format;
         } else {
-            this.value = column.id;
+            this.value = column?.id || '';
         }
 
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
 
-        this.headerContent = makeHTMLElement(
-            options.sorting?.sortable && column.data ? 'button' : 'span',
-            {
-                className: Globals.classNames.headerCellContent
-            },
-            this.htmlElement
-        );
+        this.headerContent = makeHTMLElement('span', {
+            className: Globals.classNames.headerCellContent
+        }, this.htmlElement);
 
         if (isHTML(this.value)) {
             this.renderHTMLCellContent(
@@ -161,8 +173,14 @@ class HeaderCell extends Cell {
             );
         }
 
-        if (this.isMain) {
+        if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
+
+            if (isSortableData) {
+                column.viewport.dataGrid.accessibility?.addSortableColumnHint(
+                    this.headerContent
+                );
+            }
 
             // Add user column classname
             if (column.options.className) {
@@ -172,8 +190,8 @@ class HeaderCell extends Cell {
             }
 
             // Add resizing
-            this.column.viewport.columnsResizer?.renderColumnDragHandles(
-                this.column,
+            column.viewport.columnsResizer?.renderColumnDragHandles(
+                column,
                 this
             );
 
@@ -185,9 +203,7 @@ class HeaderCell extends Cell {
     }
 
     public override reflow(): void {
-        const cell = this;
-        const th = cell.htmlElement;
-        const vp = cell.column.viewport;
+        const th = this.htmlElement;
 
         if (!th) {
             return;
@@ -195,12 +211,8 @@ class HeaderCell extends Cell {
 
         let width = 0;
 
-        if (cell.columns) {
-            for (const col of cell.columns) {
-                width += (vp.getColumn(col.columnId || '')?.getWidth()) || 0;
-            }
-        } else {
-            width = cell.column.getWidth();
+        for (const column of this.columns) {
+            width += column.getWidth() || 0;
         }
 
         // Set the width of the column. Max width is needed for the
@@ -209,7 +221,7 @@ class HeaderCell extends Cell {
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
-        if (e.target !== this.htmlElement) {
+        if (!this.column || e.target !== this.htmlElement) {
             return;
         }
 
@@ -227,7 +239,7 @@ class HeaderCell extends Cell {
         const column = this.column;
 
         if (
-            !this.isMain || (
+            !column || (
                 e.target !== this.htmlElement &&
                 e.target !== column.header?.headerContent
             )
@@ -247,11 +259,26 @@ class HeaderCell extends Cell {
      */
     private initColumnSorting(): void {
         const { column } = this;
+        if (!column) {
+            return;
+        }
 
         column.sorting = new ColumnSorting(
             column,
             this.htmlElement
         );
+    }
+
+    /**
+     * Check if the cell is part of the last cell in the header.
+     */
+    public isLastColumn(): boolean {
+        const vp = this.row.viewport;
+
+        const lastViewportColumn = vp.columns[vp.columns.length - 1];
+        const lastCellColumn = this.columns?.[this.columns.length - 1];
+
+        return lastViewportColumn === lastCellColumn;
     }
 }
 
