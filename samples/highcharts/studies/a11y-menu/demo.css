@@ -35,3 +35,8 @@ h3 {
     margin-top: 0 !important;
     opacity: 1 !important;
 }
+
+.highcharts-button-normal:hover,
+.highcharts-button-normal-hover {
+    cursor: pointer;
+}

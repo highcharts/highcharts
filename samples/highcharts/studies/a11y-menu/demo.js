@@ -1,10 +1,21 @@
+/**
+ * TODO: Add preview to showing text size with aA
+ * TODO: Add dark mode to whole website
+ * TODO: Decrease contrast of the purple series
+ * TODO: Tweak colors for contrast and border
+ * TODO: Create a short desc for points
+ * TODO: Add visible alt text for the points
+ * TODO: Add info region box for the chart with checkbox
+ * TODO: Add white border to the columns of the chart?
+ * TODO: Add local storage
+ */
+
 // Storing preference states globally
-let selectedVerbosity = 'default',
+let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
     isBorderChecked = false,
     selectedColorTheme = 'default';
-// const settingsImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Windows_Settings_icon.svg/639px-Windows_Settings_icon.svg.png';
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -132,14 +143,14 @@ function createPreferencesDialog(chart) {
         ${selectedColorTheme === 'dark' ? 'checked' : ''}>
         <label for="color-dark">Dark</label>
     </div>
-    <h3>Verbosity:</h3>
+    <h3>Screen reader info:</h3>
     <div class="pref verbosity">
-        <input type="radio" id="low" name="verbosity" value="low"
-        ${selectedVerbosity === 'low' ? 'checked' : ''}>
-        <label for="low">Low</label>
-        <input type="radio" id="ver-default" name="verbosity" value="default"
-        ${selectedVerbosity === 'default' ? 'checked' : ''}>
-        <label for="ver-default">Default</label>
+        <input type="radio" id="short" name="verbosity" value="short"
+        ${selectedVerbosity === 'short' ? 'checked' : ''}>
+        <label for="short">Low</label>
+        <input type="radio" id="ver-full" name="verbosity" value="full"
+        ${selectedVerbosity === 'full' ? 'checked' : ''}>
+        <label for="ver-full">Full</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
@@ -243,7 +254,7 @@ function setupEventListeners(prefContent, chart) {
             const verbosity = event.target.value;
             selectedVerbosity = verbosity;
 
-            if (verbosity === 'low') {
+            if (verbosity === 'short') {
 
                 // Shorten description
                 const descArray = description.textContent.split('. ');
@@ -277,9 +288,18 @@ function setupEventListeners(prefContent, chart) {
             const theme = event.target.value;
             selectedColorTheme = theme;
 
-            document.getElementById('container').className =
-                event.target.value === 'none' ?
-                    '' : `highcharts-${event.target.value}`;
+            chart.update({
+                chart: {
+                    styledMode: true
+                }
+            }, false);
+
+            // Apply the theme class to the container
+            const container = document.getElementById('container');
+            container.className = theme === 'none' ? '' : `highcharts-${theme}`;
+
+            // Redraw the chart to apply the new styles
+            chart.redraw();
         });
     });
 
@@ -395,7 +415,7 @@ function updateCustomComponent() {
         namespace.prefButton.attr({
             role: 'button',
             tabindex: -1,
-            ariaHidden: true
+            ariahidden: true
         });
         Highcharts.A11yChartUtilities.unhideChartElementFromAT(
             this.chart, namespace.prefButton.element
