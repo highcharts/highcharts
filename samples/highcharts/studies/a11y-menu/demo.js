@@ -11,7 +11,8 @@
 let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
-    isBorderChecked = false;
+    isBorderChecked = false,
+    defaultDesc = '';
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -131,7 +132,7 @@ function createPreferencesDialog(chart) {
     <div class="pref verbosity">
         <input type="radio" id="short" name="verbosity" value="short"
         ${selectedVerbosity === 'short' ? 'checked' : ''}>
-        <label for="short">Low</label>
+        <label for="short">Short</label>
         <input type="radio" id="ver-full" name="verbosity" value="full"
         ${selectedVerbosity === 'full' ? 'checked' : ''}>
         <label for="ver-full">Full</label>
@@ -174,16 +175,10 @@ function setupEventListeners(prefContent, chart) {
         prefContent.querySelectorAll('input[name="textsize"]');
     const verbosityRadioButtons =
         prefContent.querySelectorAll('input[name="verbosity"]');
-    const screenReaderDiv =
-        document.getElementById('highcharts-screen-reader-region-before-0');
+
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
-
-    // For verbosity setting
-    const innerScreenReaderDiv = screenReaderDiv.children[0];
-    const description = innerScreenReaderDiv.children[3];
-    const descriptionText = description.textContent;
 
     textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
@@ -205,7 +200,7 @@ function setupEventListeners(prefContent, chart) {
                 chart.update({
                     chart: {
                         style: {
-                            fontSize: '12px'
+                            fontSize: '16px'
                         }
                     }
                 });
@@ -214,7 +209,7 @@ function setupEventListeners(prefContent, chart) {
                 chart.update({
                     chart: {
                         style: {
-                            fontSize: '20px'
+                            fontSize: '22px'
                         }
                     }
                 });
@@ -223,46 +218,21 @@ function setupEventListeners(prefContent, chart) {
                 chart.update({
                     chart: {
                         style: {
-                            fontSize: '12px'
+                            fontSize: '16px'
                         }
                     }
                 });
                 break;
             }
             // Append the button to the screen reader region
-            addPrefButtonScreenReader(chart);
+            setupScreenReaderSection(selectedVerbosity, chart);
         });
     });
     verbosityRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
             const verbosity = event.target.value;
             selectedVerbosity = verbosity;
-
-            if (verbosity === 'short') {
-
-                // Shorten description
-                const descArray = description.textContent.split('. ');
-                const newDesc = descArray.slice(
-                    0, descArray.length - 2
-                ).join('. ') + '.';
-                description.textContent = newDesc;
-
-                // Remove axis information
-                innerScreenReaderDiv.children[5].style.display = 'none';
-                innerScreenReaderDiv.children[6].style.display = 'none';
-
-                // TODO: Shorten description for points somehow?
-                // Just value and unit without series?
-
-            } else {
-                // Re-apply full description
-                description.textContent = descriptionText;
-
-                // Re-apply axis information
-                innerScreenReaderDiv.children[5].style.display = 'block';
-                innerScreenReaderDiv.children[6].style.display = 'block';
-
-            }
+            applyInfoRegion(verbosity);
         });
     });
 
@@ -280,7 +250,7 @@ function setupEventListeners(prefContent, chart) {
             });
         }
         // Append button to screen reader region
-        addPrefButtonScreenReader(chart);
+        setupScreenReaderSection(selectedVerbosity, chart);
     });
 
     borderCheckbox.addEventListener('change', event => {
@@ -308,7 +278,7 @@ function setupEventListeners(prefContent, chart) {
             });
         }
         // Append button to screen reader region
-        addPrefButtonScreenReader(chart);
+        setupScreenReaderSection(selectedVerbosity, chart);
     });
 }
 
@@ -384,6 +354,49 @@ function updateCustomComponent() {
         Highcharts.A11yChartUtilities.unhideChartElementFromAT(
             this.chart, namespace.prefButton.element
         );
+    }
+}
+
+function setupScreenReaderSection(selectedVerbosity, chart) {
+    addPrefButtonScreenReader(chart);
+    applyInfoRegion(selectedVerbosity);
+}
+
+function applyInfoRegion(selectedVerbosity) {
+    const screenReaderDiv =
+    document.getElementById('highcharts-screen-reader-region-before-0');
+    const innerScreenReaderDiv = screenReaderDiv.children[0];
+    const description = innerScreenReaderDiv.children[3];
+
+    if (!defaultDesc) {
+        defaultDesc = description.textContent;
+    }
+
+    if (selectedVerbosity === 'short') {
+
+        // Shorten description
+        const descArray = description.textContent.split('. ');
+        const newDesc = descArray.slice(
+            0, descArray.length - 2
+        ).join('. ') + '.';
+        description.textContent = newDesc;
+
+        // Remove axis information
+        innerScreenReaderDiv.children[5].style.display = 'none';
+        innerScreenReaderDiv.children[6].style.display = 'none';
+        innerScreenReaderDiv.children[7].style.display = 'none';
+
+        // TODO: Shorten description for points somehow?
+        // Just value and unit without series?
+
+    } else {
+        // Re-apply full description
+        description.textContent = defaultDesc;
+
+        // Re-apply axis information
+        innerScreenReaderDiv.children[5].style.display = 'block';
+        innerScreenReaderDiv.children[6].style.display = 'block';
+        innerScreenReaderDiv.children[7].style.display = 'block';
     }
 }
 
