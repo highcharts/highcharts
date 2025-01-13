@@ -1,8 +1,5 @@
 /**
- * TODO: Fix verbosity randomly disappearing
  * TODO: Add preview to showing text size with aA
- * TODO: Decrease contrast of the purple series
- * TODO: Tweak colors for contrast and border
  * TODO: Create a short desc for points
  * TODO: Add visible alt text for the points
  * TODO: Add info region box for the chart with checkbox
@@ -60,6 +57,7 @@ function getChartConfig() {
                 borderWidth: 0
             }
         },
+        colors: ['#2caffe', '#a4a1ce'],
         series: [
             {
                 name: 'Corn',
@@ -273,12 +271,12 @@ function setupEventListeners(prefContent, chart) {
         isContrastChecked = isChecked; // Store state
         if (isChecked) {
             chart.update({
-                colors: ['#247eb2', '#403b9b']
+                colors: ['#247eb3', '#6d6aaf']
             });
 
         } else {
             chart.update({
-                colors: ['#2cb0ff', '#544fc6']
+                colors: ['#2caffe', '#a4a1ce']
             });
         }
         // Append button to screen reader region
@@ -291,10 +289,10 @@ function setupEventListeners(prefContent, chart) {
         if (isChecked) {
             chart.update({
                 series: [{
-                    borderColor: '#061823',
+                    borderColor: '#103042',
                     borderWidth: 2
                 }, {
-                    borderColor: '#000000',
+                    borderColor: '#272541',
                     borderWidth: 2
                 }]
             });
