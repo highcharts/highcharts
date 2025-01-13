@@ -58,7 +58,7 @@ paste it inline in demo.js or demo.html. These files must be loaded via `cdn.jsd
 4. Next time you push your commits, this will work online as well.
 
 **Mouse events** are emulated using the
-[TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
+[TestController](https://github.com/highcharts/highcharts/blob/main/test/test-controller.js)
 that is available in the test environment.
 
 ```js
