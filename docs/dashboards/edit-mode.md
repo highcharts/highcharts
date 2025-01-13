@@ -192,7 +192,7 @@ U.addEvent(editMode, 'layoutChanged', e => {
 });
 ```
 
-See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/edit-mode/events/).
+See the live demo [here](https://highcharts.com/samples/dashboards/edit-mode/events/).
 
 ## Styling
 

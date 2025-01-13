@@ -590,7 +590,7 @@ hapi.ajax = function(p) {
       def.samples.forEach(function (sample) {
         var a = cr('a', null, sample.name),
           aLocal;
-        a.href = 'https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/' +
+        a.href = 'https://highcharts.com/samples/' +
           sample.value;
         a.target = '_blank';
 

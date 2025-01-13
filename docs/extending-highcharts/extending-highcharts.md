@@ -43,7 +43,7 @@ H.addEvent(H.Chart, 'load', function(e) {
 });
 ```
 
-[Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/chart/events-load-class/)
+[Try it live](https://highcharts.com/samples/highcharts/chart/events-load-class/)
 
 
 
@@ -71,9 +71,9 @@ H.wrap(H.Series.types.line.prototype, 'drawGraph', function (proceed) {
 });
 ```
 
-[Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/series/wrap-drawgraph/)
+[Try it live](https://highcharts.com/samples/highcharts/series/wrap-drawgraph/)
 
-When loading ES modules, one can [access modules directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/esm/extending-members/) for further modifications.
+When loading ES modules, one can [access modules directly](https://highcharts.com/samples/highcharts/esm/extending-members/) for further modifications.
 
 
 
@@ -159,4 +159,4 @@ H.wrap(H.Tooltip.prototype, 'hide', function (proceed) {
 });
 ```
 
-That was all, the whole [sample can be viewed in jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/tooltip/trackball-plugin/).
+That was all, the whole [sample can be viewed in jsFiddle](https://highcharts.com/samples/highcharts/tooltip/trackball-plugin/).

@@ -33,7 +33,7 @@ const topology = await fetch(
 ```js
 map: topology
 ```
-Alternatively, you can apply different maps for different series ([view demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/series/affectsmapview/)):
+Alternatively, you can apply different maps for different series ([view demo](https://highcharts.com/samples/maps/series/affectsmapview/)):
 ```js
 series: [{
     mapData: topology,
@@ -114,12 +114,12 @@ Some maps may provide additional properties that are not mentioned in the above 
 Using parts of a map
 --------------------
 
-If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/plotoptions/series-allareas-false/).
+If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://highcharts.com/samples/maps/plotoptions/series-allareas-false/).
 
 Combine maps
 ------------
 
-Another way to approach the same problem, is to combine two or more map sources into the same chart. This is supported since Highcharts v9.3, where client-side projection is available. To achieve this, the unprojected TopoJSON maps must be used. See the [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/series/mapdata-multiple/). See also the demo for the [series.affectsMapView](https://api.highcharts.com/highmaps/series.map.affectsMapView) feature, which lets you load one map as a [backdrop that doesn't affect the map view](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/maps/series/affectsmapview/).
+Another way to approach the same problem, is to combine two or more map sources into the same chart. This is supported since Highcharts v9.3, where client-side projection is available. To achieve this, the unprojected TopoJSON maps must be used. See the [demo on jsFiddle](https://highcharts.com/samples/maps/series/mapdata-multiple/). See also the demo for the [series.affectsMapView](https://api.highcharts.com/highmaps/series.map.affectsMapView) feature, which lets you load one map as a [backdrop that doesn't affect the map view](https://highcharts.com/samples/maps/series/affectsmapview/).
 
 Modify our maps
 ---------------

@@ -7,7 +7,7 @@ _For more detailed samples and documentation check the [API](https://api.highcha
 
 <iframe style="width: 100%; height: 432px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/histogram allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/histogram/) to check the code.
+Click [here](https://highcharts.com/samples/highcharts/demo/histogram/) to check the code.
 
 How to create a Histogram
 -------------------------

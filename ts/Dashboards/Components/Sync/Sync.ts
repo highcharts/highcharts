@@ -383,7 +383,7 @@ namespace Sync {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/sync/groups | Sync groups for the same connector }
+         * {@link https://highcharts.com/samples/dashboards/sync/groups | Sync groups for the same connector }
          *
          * @default undefined
          */

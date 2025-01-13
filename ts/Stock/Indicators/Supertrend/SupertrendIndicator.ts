@@ -170,7 +170,7 @@ class SupertrendIndicator extends SMAIndicator {
                 /**
                  * The dash or dot style of the grid lines. For possible
                  * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 * [this demonstration](https://highcharts.com/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
                  *         Long dashes

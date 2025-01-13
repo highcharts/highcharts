@@ -19,7 +19,7 @@ Allows the use of steps instead of a straight line.
 
 ![step_demo.png](step_demo.png)
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/line-step/)
+[Try it here](https://highcharts.com/samples/highcharts/plotoptions/line-step/)
 
 Code to enable step:
 

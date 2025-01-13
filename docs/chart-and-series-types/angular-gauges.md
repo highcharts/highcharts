@@ -24,7 +24,7 @@ Since Highcharts 4, we also provide a second type of gauges, the `solidgauge`. I
 Gauge examples
 --------------
 
-*   [Simple gauge with rounded plot bands](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/xaxis/plotbands-gauge-borderradius)
-*   [Speedometer with dual axes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/gauge-dual)
-*   [The Highcharts Clock](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/gauge-clock)
-*   [VU meter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/gauge-vu-meter)
+*   [Simple gauge with rounded plot bands](https://highcharts.com/samples/highcharts/xaxis/plotbands-gauge-borderradius)
+*   [Speedometer with dual axes](https://highcharts.com/samples/highcharts/demo/gauge-dual)
+*   [The Highcharts Clock](https://highcharts.com/samples/highcharts/demo/gauge-clock)
+*   [VU meter](https://highcharts.com/samples/highcharts/demo/gauge-vu-meter)

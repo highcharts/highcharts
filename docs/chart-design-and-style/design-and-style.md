@@ -145,7 +145,7 @@ Many layout elements including series types in Highcharts have shadow options. G
         offsetY: 0
     }
 
-See [live demo of using shadow options](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-shadow).
+See [live demo of using shadow options](https://highcharts.com/samples/highcharts/plotoptions/series-shadow).
 
 Styling axes
 ------------
@@ -175,4 +175,4 @@ In Highcharts, animation is enabled or disabled in two separate places.
 The animation can either be set as a boolean or a configuration object. If true, it will use the "swing" jQuery easing and a duration of 500 ms. If used as a configuration object, the following properties are supported:
 
 *   duration - The duration of the animation in milliseconds.
-*   easing - Custom easing can be applied to all animation. See [Easing Functions](https://easings.net/) for a nice overview over some possible functions. Easing functions can either be passed directly, or registered on the `Math` object and referenced by name. See [chart/animation-easing](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/chart/animation-easing) for a live demo. The default easing is `easeInOutSine`.
+*   easing - Custom easing can be applied to all animation. See [Easing Functions](https://easings.net/) for a nice overview over some possible functions. Easing functions can either be passed directly, or registered on the `Math` object and referenced by name. See [chart/animation-easing](https://highcharts.com/samples/highcharts/chart/animation-easing) for a live demo. The default easing is `easeInOutSine`.

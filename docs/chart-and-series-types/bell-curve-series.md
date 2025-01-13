@@ -7,7 +7,7 @@ _For more detailed samples and documentation check the [API.](https://api.highch
 
 <iframe style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/bellcurve/) to check the code.
+Click [here](https://highcharts.com/samples/highcharts/demo/bellcurve/) to check the code.
 
 How to create a Bell Curve
 --------------------------
@@ -55,7 +55,7 @@ series: [{
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval allow="fullscreen"></iframe>
 
-Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
+Click [here](https://highcharts.com/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
 
 The black markers indicate the borders of the intervals - four intervals for each side of the curve. Within one interval there are four markers plus the border black marker. On the left side intervals are left-closed, on the right side right-closed. The interval length is the bell curve’s standard deviation.
 

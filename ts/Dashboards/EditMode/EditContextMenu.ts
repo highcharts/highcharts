@@ -219,7 +219,7 @@ namespace EditContextMenu {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/edit-mode/change-ctx-icon/ | Change icon}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/change-ctx-icon/ | Change icon}
          */
         icon?: string;
         /**
@@ -227,7 +227,7 @@ namespace EditContextMenu {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/edit-mode/change-ctx-icon/|Add text next to icon}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/change-ctx-icon/|Add text next to icon}
          *
          * @default undefined
          */
@@ -237,7 +237,7 @@ namespace EditContextMenu {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/edit-mode/ctx-menu-width/ | Change width}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/ctx-menu-width/ | Change width}
          */
         width?: number;
     }

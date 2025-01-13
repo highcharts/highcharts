@@ -151,7 +151,7 @@ const DrilldownDefaults: DrilldownOptions = {
      *
      * - `easing`: A string reference to an easing function set on the `Math`
      *   object. See
-     *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-animation-easing/).
+     *   [the easing demo](https://highcharts.com/samples/highcharts/plotoptions/series-animation-easing/).
      *
      * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @since   3.0.8

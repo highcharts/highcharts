@@ -44,10 +44,10 @@ our CDN using RequireJS.
     </body>
 </html>
 ```
-See it [live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/amd/simple/).
+See it [live on jsFiddle](https://highcharts.com/samples/highcharts/amd/simple/).
 
 When using AMD modules, Highcharts also allows mixing [multiple versions in the
-same page](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/amd/version-mix/).
+same page](https://highcharts.com/samples/highcharts/amd/version-mix/).
 
 
 ## CommonJS

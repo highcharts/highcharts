@@ -99,7 +99,7 @@ function fillInfo(mapName, mapKey) {
     });
 
     setAttributes(cleanDemoButton, {
-        href: `https://jsfiddle.net/gh/get/jquery/1.11.0/highcharts/highcharts/tree/main/samples/mapdata/${mapKey}`
+        href: `https://highcharts.com/samples/mapdata/${mapKey}`
     });
 
     mapNameHeader.innerText = mapName;

@@ -73,7 +73,7 @@ Example:
 }
 ```
 
-Instead of regular CSS media queries, you can also use [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries), which will make more sense if your dashboard does not cover the entire window horizontally. See [a demo that uses this](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/accounting/).
+Instead of regular CSS media queries, you can also use [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries), which will make more sense if your dashboard does not cover the entire window horizontally. See [a demo that uses this](https://highcharts.com/samples/dashboards/demo/accounting/).
 
 Example:
 ```css

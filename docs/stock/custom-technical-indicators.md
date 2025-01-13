@@ -136,9 +136,9 @@ series: [{
 
 For live demos check the links below:
 
-*   [Scatter Height vs Weight](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-scatter/)
-*   [AAPL Stock Price](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-aapl/)
-*   [Average Monthly Temperature and Rainfall in Tokyo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-column/)
+*   [Scatter Height vs Weight](https://highcharts.com/samples/stock/indicators/custom-regression-scatter/)
+*   [AAPL Stock Price](https://highcharts.com/samples/stock/indicators/custom-regression-aapl/)
+*   [Average Monthly Temperature and Rainfall in Tokyo](https://highcharts.com/samples/stock/indicators/custom-regression-column/)
 
 **Remark**
 
@@ -294,7 +294,7 @@ if (multipleLinesMixin) {
 }
 ```
 
-A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-regression-multiple-lines/).
+A live demo of the above multiline indicator can be found [here](https://highcharts.com/samples/stock/indicators/custom-regression-multiple-lines/).
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highstock/series.trendline)._
 
@@ -324,7 +324,7 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
 ```
 
 
-A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-indicator-on-event/).
+A live demo of the example above can be found [here](https://highcharts.com/samples/stock/indicators/custom-indicator-on-event/).
 
 
 ### 5. Custom column indicator.
@@ -361,4 +361,4 @@ Highcharts.seriesType(
 );
 ```
 
-A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/stock/indicators/custom-column-indicator/).
+A live demo of the example above can be found [here](https://highcharts.com/samples/stock/indicators/custom-column-indicator/).

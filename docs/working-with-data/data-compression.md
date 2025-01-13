@@ -26,7 +26,7 @@ pointStart: 1577836800000, // Date.UTC(2020, 0, 1)
 pointInterval: 36e5, // one hour
 ```
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-pointstart-datetime/)
+[View live demo](https://highcharts.com/samples/highcharts/plotoptions/series-pointstart-datetime/)
 
 #### Irregular data
 But those simplified settings won't work when the X values are irregular. Since v9.1.2, the [relativeXValue](https://api.highcharts.com/highcharts/series.line.relativeXValue) option is available. This allows us to redefine what the `x` value means, so that it is first multiplied by `pointInterval` (and respecting `pointIntervalUnit`), then `pointStart` is added to it. As a result, we can compress any X values by the `f(x) = ax + b` formula where `a` = `pointInterval` and `b` = `pointStart`. Non-datetime X values can also be compressed this way. Our data set is now 78 kB, but can express irregularly spaced X values.
@@ -46,5 +46,5 @@ pointInterval: 36e5, // one hour
 relativeXValue: true
 ```
 
-[View live demo of relativeXValue](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/plotoptions/series-relativexvalue/)
+[View live demo of relativeXValue](https://highcharts.com/samples/highcharts/plotoptions/series-relativexvalue/)
 

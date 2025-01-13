@@ -50,7 +50,7 @@ export interface Options extends Component.Options {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
+     * {@link https://highcharts.com/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
      *
      * @default true
      */
@@ -111,11 +111,11 @@ export interface Options extends Component.Options {
      * ```
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://highcharts.com/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+     * {@link https://highcharts.com/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+     * {@link https://highcharts.com/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
      *
      */
     sync?: SyncOptions;
@@ -136,11 +136,11 @@ export interface ConnectorOptions extends ConnectorHandler.ConnectorOptions {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
      *
      * @example
      * ```
@@ -200,11 +200,11 @@ export interface ColumnAssignmentOptions {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
+     * {@link https://highcharts.com/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
      *
      */
     data: string | string[] | Record<string, string>;
@@ -228,7 +228,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+     * {@link https://highcharts.com/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
      *
      * @default false
      */
@@ -240,7 +240,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+     * {@link https://highcharts.com/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
      *
      * @default false
      */
@@ -251,7 +251,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
+     * {@link https://highcharts.com/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
      *
      * @default false
      */
@@ -279,7 +279,7 @@ export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/dashboards/sync/highcharts-highlight-affected-series | Affected Series ID Option }
+     * {@link https://highcharts.com/samples/dashboards/sync/highcharts-highlight-affected-series | Affected Series ID Option }
      *
      * @default null
      */

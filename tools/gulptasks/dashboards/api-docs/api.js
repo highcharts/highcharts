@@ -426,7 +426,7 @@ hapi.ajax = function(p) {
       def.samples.forEach(function (sample) {
         var a = cr('a', null, sample.name),
           aLocal;
-        a.href = 'http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/' +
+        a.href = 'http://highcharts.com/samples/' +
           sample.value;
 
         if (isLocal) {

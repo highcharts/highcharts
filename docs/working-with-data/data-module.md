@@ -67,7 +67,7 @@ Highcharts.chart('container', {
 });
 ```
 
-View a live sample of [data fetched from a table](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/demo/column-parsed/).
+View a live sample of [data fetched from a table](https://highcharts.com/samples/highcharts/demo/column-parsed/).
 
 Loading from Google Spreadsheets
 --------------------------------

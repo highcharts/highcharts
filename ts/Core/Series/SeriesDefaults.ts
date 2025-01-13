@@ -331,7 +331,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * the outline of each shape.
      *
      * In styled mode, the
-     * [stroke dash-array](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/css/series-dashstyle/)
+     * [stroke dash-array](https://highcharts.com/samples/highcharts/css/series-dashstyle/)
      * can be set with the same classes as listed under
      * [series.color](#plotOptions.series.color).
      *
@@ -2420,7 +2420,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * In styled mode, the color zones are styled with the
      * `.highcharts-zone-{n}` class, or custom classed from the `className`
      * option
-     * ([view live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/main/samples/highcharts/css/color-zones/)).
+     * ([view live demo](https://highcharts.com/samples/highcharts/css/color-zones/)).
      *
      * @see [zoneAxis](#plotOptions.series.zoneAxis)
      *
