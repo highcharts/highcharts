@@ -1,6 +1,5 @@
 /**
  * TODO: Make points work with verbosity settings
- * TODO: Hide visible point divs for screen readers
  * TODO: Add white border to the columns of the chart?
  * TODO: Add local storage
  */
@@ -17,6 +16,7 @@ let selectedVerbosity = 'full',
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
     chart.prefMenu = {};
+    chart.altTextDivs = [];
     addPrefButton(chart);
     addCustomA11yComponent(chart);
     addPrefButtonScreenReader(chart);
@@ -214,7 +214,6 @@ function setupEventListeners(prefContent, chart) {
     const altPointCheckbox = prefContent
         .querySelector('input[name="alt-points"]');
     const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
-    const altTextDivs = [];
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
     );
@@ -256,7 +255,7 @@ function setupEventListeners(prefContent, chart) {
             description.style.fontSize = fontSize;
 
             // Only visible if alt-text for point is checked
-            altTextDivs.forEach(div => {
+            chart.altTextDivs.forEach(div => {
                 div.style.fontSize = fontSize;
             });
 
@@ -324,6 +323,10 @@ function setupEventListeners(prefContent, chart) {
             .querySelectorAll('path.highcharts-point[aria-label');
         const chartRect = chart.container.getBoundingClientRect();
 
+        // Clear existing altTextDivs
+        chart.altTextDivs.forEach(div => div.remove());
+        chart.altTextDivs = [];
+
         if (isChecked) {
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
@@ -331,7 +334,9 @@ function setupEventListeners(prefContent, chart) {
 
                 // Create label div
                 const altTextDiv = document.createElement('div');
-                altTextDiv.textContent = ariaLabel;
+                altTextDiv.textContent =
+                    getPointAltText(ariaLabel, selectedVerbosity);
+                altTextDiv.setAttribute('data-original-content', ariaLabel);
                 altTextDiv.classList.add('alt-text-div');
                 altTextDiv.setAttribute('aria-hidden', 'true');
 
@@ -345,7 +350,8 @@ function setupEventListeners(prefContent, chart) {
                 chart.container.appendChild(altTextDiv);
 
                 // Add divs to array for setting text size if applicable
-                altTextDivs.push(altTextDiv);
+                chart.altTextDivs.push(altTextDiv);
+
             });
 
             // Turning of tooltip to avoid duplicate information
@@ -356,10 +362,14 @@ function setupEventListeners(prefContent, chart) {
             });
 
         } else {
+
+            chart.altTextDivs.forEach(div => div.remove());
+            chart.altTextDivs = [];
+
             document.querySelectorAll('.alt-text-div').forEach(
                 label => label.remove()
             );
-            altTextDivs.length = 0;
+            chart.altTextDivs.length = 0;
             chart.update({
                 tooltip: {
                     enabled: true
@@ -487,7 +497,17 @@ function applyInfoRegion(selectedVerbosity, chart) {
         innerScreenReaderDiv.children[6].style.display = 'none';
         innerScreenReaderDiv.children[7].style.display = 'none';
 
-        // Shortened description for points
+        // Get original content before shortening the aria-label
+        if (chart.altTextDivs) {
+            // Update visible alt text divs
+            chart.altTextDivs.forEach(div => {
+                const originalContent =
+                    div.getAttribute('data-original-content');
+                div.textContent =
+                    getPointAltText(originalContent, selectedVerbosity);
+            });
+        }
+        // Shortened description for points in aria label
         const firstSeries = chart.series[0];
         const secondSeries = chart.series[1];
 
@@ -506,6 +526,16 @@ function applyInfoRegion(selectedVerbosity, chart) {
         innerScreenReaderDiv.children[5].style.display = 'block';
         innerScreenReaderDiv.children[6].style.display = 'block';
         innerScreenReaderDiv.children[7].style.display = 'block';
+
+        console.log(chart.altTextDivs);
+        // Update visible alt text divs
+        if (chart.altTextDivs) {
+            chart.altTextDivs.forEach(div => {
+                const originalContent =
+                    div.getAttribute('data-original-content');
+                div.textContent = originalContent; // Reset to original
+            });
+        }
     }
 }
 
@@ -554,6 +584,14 @@ function createKeyboardNavigationHandler() {
             }
         }
     });
+}
+
+function getPointAltText(ariaLabel, verbosity) {
+    if (verbosity === 'short') {
+        const [value] = ariaLabel.match(/\d{1,3}(?:,\d{3})*(?:\.\d+)?/);
+        return `${value} (MT)`; // Short alt text
+    }
+    return ariaLabel; // Full alt text
 }
 
 // Initialize chart
