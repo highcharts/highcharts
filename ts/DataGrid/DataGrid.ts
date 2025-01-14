@@ -37,7 +37,7 @@ import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 
-const { makeHTMLElement, renderHTMLElementContent } = DataGridUtils;
+const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
 const { merge, getStyle } = U;
 
@@ -688,7 +688,7 @@ class DataGrid {
         }, this.contentWrapper);
 
         // Render the caption element content.
-        renderHTMLElementContent(captionText, this.captionElement);
+        setHTMLContent(this.captionElement, captionText);
 
         if (captionOptions.className) {
             this.captionElement.classList.add(
@@ -717,7 +717,7 @@ class DataGrid {
         }, this.contentWrapper);
 
         // Render the description element content.
-        renderHTMLElementContent(descriptionText, this.descriptionElement);
+        setHTMLContent(this.descriptionElement, descriptionText);
 
         if (descriptionOptions.className) {
             this.descriptionElement.classList.add(

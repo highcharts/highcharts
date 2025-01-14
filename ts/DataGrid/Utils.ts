@@ -134,27 +134,27 @@ namespace DataGridUtils {
     }
 
     /**
-     * Renders a HTML element content.
-     *
-     * @param elementContent
-     * Content to render.
-     *
-     * @param parentElement
+     * Sets an element's content, checking whether it is HTML or plain text.
+     * Should be used instead of element.innerText when the content can be HTML.
+     * 
+     * @param element
      * Parent element where the content should be.
+     *
+     * @param content
+     * Content to render.
      */
-    export function renderHTMLElementContent(
-        elementContent: string,
-        parentElement: HTMLElement
+    export function setHTMLContent(
+        element: HTMLElement,
+        content: string
     ): void {
-        if (isHTML(elementContent)) {
-            const formattedNodes = new AST(elementContent);
-            formattedNodes.addToDOM(parentElement);
+        if (isHTML(content)) {
+            const formattedNodes = new AST(content);
+            formattedNodes.addToDOM(element);
         } else {
-            parentElement.innerText = elementContent;
+            element.innerText = content;
         }
     }
 }
-
 
 /* *
  *

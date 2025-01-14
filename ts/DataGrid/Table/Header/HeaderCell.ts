@@ -32,7 +32,7 @@ import Globals from '../../Globals.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
-const { makeHTMLElement, renderHTMLElementContent } = DGUtils;
+const { makeHTMLElement, setHTMLContent } = DGUtils;
 const { merge, isString } = Utilities;
 
 
@@ -142,7 +142,7 @@ class HeaderCell extends Cell {
         }, this.htmlElement);
 
         // Render the header cell element content.
-        renderHTMLElementContent(this.value, this.headerContent);
+        setHTMLContent(this.headerContent, this.value);
 
         if (isSortableData) {
             column.viewport.dataGrid.accessibility?.addSortableColumnHint(

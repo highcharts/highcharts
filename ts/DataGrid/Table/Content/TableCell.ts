@@ -31,7 +31,7 @@ import Utils from '../../../Core/Utilities.js';
 import DGUtils from '../../Utils.js';
 
 const { defined, fireEvent } = Utils;
-const { renderHTMLElementContent } = DGUtils;
+const { setHTMLContent } = DGUtils;
 
 
 /* *
@@ -234,7 +234,7 @@ class TableCell extends Cell {
         const cellContent = this.formatCell();
 
         // Render the table cell element content.
-        renderHTMLElementContent(cellContent, element);
+        setHTMLContent(element, cellContent);
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
