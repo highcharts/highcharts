@@ -1,7 +1,6 @@
 /**
  * TODO: Make points work with verbosity settings
- * TODO: Make <h6> a <h1>
- * TODO: Make all text work with text size, including alt text and info region
+ * TODO: Hide visible point divs for screen readers
  * TODO: Add white border to the columns of the chart?
  * TODO: Add local storage
  */
@@ -221,6 +220,7 @@ function setupEventListeners(prefContent, chart) {
     );
     const description = document
         .getElementsByClassName('highcharts-description')[0];
+    let fontSize = '';
 
     textSizeRadioButtons.forEach(radio => {
 
@@ -228,7 +228,6 @@ function setupEventListeners(prefContent, chart) {
             const selectedSize = event.target.value;
             selectedTextSize = selectedSize;
 
-            let fontSize;
             switch (selectedSize) {
             case 'smaller':
                 fontSize = '10px';
@@ -339,6 +338,7 @@ function setupEventListeners(prefContent, chart) {
                 altTextDiv.style.left =
                     `${rect.left + rect.width / 2 - chartRect.left}px`;
                 altTextDiv.style.top = `${rect.top - chartRect.top}px`;
+                altTextDiv.style.fontSize = fontSize;
 
                 // Add to chart container
                 chart.container.appendChild(altTextDiv);
