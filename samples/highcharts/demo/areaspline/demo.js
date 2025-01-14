@@ -23,9 +23,8 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     currencyId: 'EUR'
 });
 
-Promise.all([
-    connector.load()
-]).then(() => {
+(async () => {
+    await connector.load();
 
     Highcharts.chart('container', {
         chart: {
@@ -81,4 +80,4 @@ Promise.all([
             data: connector.table.getRows(0, undefined)
         }]
     });
-});
+})();
