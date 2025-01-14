@@ -90,7 +90,7 @@ function getChartConfig() {
 function addPrefButton(chart) {
     // TODO: Fix responsiveness of button
     chart.prefMenu.prefButton = chart.renderer.button(
-        '⚙️ Preferences', 650, 5, () => handlePrefButtonClick(chart)
+        '⚙️', 715, 1, () => handlePrefButtonClick(chart)
     )
         .attr({
             id: 'hc-pref-button'

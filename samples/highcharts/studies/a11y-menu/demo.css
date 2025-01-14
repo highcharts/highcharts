@@ -60,3 +60,17 @@ h3 {
     transform: translate(-50%, -100%);
     pointer-events: none;
 }
+
+#hc-pref-button text {
+    font-size: 1.2em !important;
+}
+
+#hc-pref-button rect {
+    fill: rgb(255, 255, 255) !important;
+    stroke: rgb(255, 255, 255) !important;
+}
+
+#hc-pref-button:hover rect {
+    fill: rgb(211, 211, 211) !important;
+    stroke: rgb(211, 211, 211) !important;
+}
