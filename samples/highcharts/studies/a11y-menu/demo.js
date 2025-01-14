@@ -1,7 +1,9 @@
 /**
+ * TODO: Make preferences only an icon
  * TODO: Make points work with verbosity settings
  * TODO: Add white border to the columns of the chart?
  * TODO: Add local storage
+ * TODO: Calculate contrast with function instead of hardcoded
  */
 
 // Storing preference states globally
@@ -483,7 +485,25 @@ function applyInfoRegion(selectedVerbosity, chart) {
         defaultDesc = description.textContent;
     }
 
+    // Store original aria labels once
+    chart.series.forEach(series => {
+        series.points.forEach(point => {
+            const pointElement = point.graphic?.element;
+            if (
+                pointElement && !pointElement
+                    .hasAttribute('data-stored-original-label')
+            ) {
+                const originalLabel = pointElement.getAttribute('aria-label');
+                // Save original label
+                pointElement
+                    .setAttribute('data-stored-original-label', originalLabel);
+            }
+        });
+    });
+
     if (selectedVerbosity === 'short') {
+
+        console.log('selectedVerbosity is short');
 
         // Shorten description
         const descArray = description.textContent.split('. ');
@@ -508,17 +528,16 @@ function applyInfoRegion(selectedVerbosity, chart) {
             });
         }
         // Shortened description for points in aria label
-        const firstSeries = chart.series[0];
-        const secondSeries = chart.series[1];
-
-        firstSeries.points.forEach(point => {
-            point.graphic.element.setAttribute('aria-label', `${point.y} (MT)`);
-        });
-        secondSeries.points.forEach(point => {
-            point.graphic.element.setAttribute('aria-label', `${point.y} (MT)`);
+        chart.series.forEach(series => {
+            series.points.forEach(point => {
+                console.log(point);
+                point.graphic.element
+                    .setAttribute('aria-label', `${point.y} (MT)`);
+            });
         });
 
     } else {
+        console.log('selectedVerbosity is full');
         // Re-apply full description
         description.textContent = defaultDesc;
 
@@ -527,15 +546,27 @@ function applyInfoRegion(selectedVerbosity, chart) {
         innerScreenReaderDiv.children[6].style.display = 'block';
         innerScreenReaderDiv.children[7].style.display = 'block';
 
-        console.log(chart.altTextDivs);
         // Update visible alt text divs
         if (chart.altTextDivs) {
             chart.altTextDivs.forEach(div => {
                 const originalContent =
                     div.getAttribute('data-original-content');
-                div.textContent = originalContent; // Reset to original
+                div.textContent = originalContent;
             });
         }
+
+        chart.series.forEach(series => {
+            series.points.forEach(point => {
+                const originalLabel =
+                    point.graphic.element
+                        .getAttribute('data-stored-original-label');
+                if (originalLabel) {
+                    // Reset to original label
+                    point.graphic.element
+                        .setAttribute('aria-label', originalLabel);
+                }
+            });
+        });
     }
 }
 
