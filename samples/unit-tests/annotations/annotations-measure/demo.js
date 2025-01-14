@@ -7,7 +7,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
             },
             typeOptions: {
                 point: {
-                    x: 0,
+                    x: 0.5,
                     y: 6
                 },
                 background: {
@@ -33,7 +33,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
 
     assert.strictEqual(
         chart.annotations[0].average,
-        3.9,
+        3.625,
         'Average should be calculated correctly.'
     );
     assert.strictEqual(
@@ -48,7 +48,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
     );
     assert.strictEqual(
         chart.annotations[0].bins,
-        5,
+        4,
         'Bins should be calculated correctly.'
     );
 });
