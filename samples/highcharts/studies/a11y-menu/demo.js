@@ -1,5 +1,4 @@
 /**
- * TODO: Create a short desc for points
  * TODO: Add visible alt text for the points
  * TODO: Add info region box for the chart with checkbox
  * TODO: Add white border to the columns of the chart?
@@ -13,6 +12,7 @@ let selectedVerbosity = 'full',
     isContrastChecked = false,
     isBorderChecked = false,
     isAltChecked = false,
+    isInfoChecked = false,
     defaultDesc = '';
 
 function initializeChart() {
@@ -138,11 +138,14 @@ function createPreferencesDialog(chart) {
         ${selectedVerbosity === 'full' ? 'checked' : ''}>
         <label for="ver-full">Full</label>
     </div>
-    <h3>Alt text for points</h3>
-    <div class="pref alt-points">
-    <input type="checkbox" id="contrast" name="alt-points"
+    <h3>Visible alt text</h3>
+    <div class="pref alt-text">
+    <input type="checkbox" id="alt-info" name="alt-info"
+        ${isInfoChecked ? 'checked' : ''}>
+        <label for="alt-info">Show info region</label>
+    <input type="checkbox" id="alt-points" name="alt-points"
         ${isAltChecked ? 'checked' : ''}>
-        <label for="contrast">Alt text for points</label>
+        <label for="contrast">Show points</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
@@ -185,8 +188,12 @@ function setupEventListeners(prefContent, chart) {
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
-    const altCheckbox = prefContent.querySelector('input[name="alt-points"]');
-    console.log(altCheckbox);
+    const altPointCheckbox = prefContent
+        .querySelector('input[name="alt-points"]');
+    const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
+    const infoRegion = document.querySelector(
+        '#highcharts-screen-reader-region-before-0 > div:first-child'
+    );
 
     textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
@@ -240,7 +247,7 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             const verbosity = event.target.value;
             selectedVerbosity = verbosity;
-            applyInfoRegion(verbosity);
+            applyInfoRegion(verbosity, chart);
         });
     });
 
@@ -288,10 +295,20 @@ function setupEventListeners(prefContent, chart) {
         // Append button to screen reader region
         setupScreenReaderSection(selectedVerbosity, chart);
     });
-
-    altCheckbox.addEventListener('change', event => {
-        console.log('event');
+    altPointCheckbox.addEventListener('change', event => {
+        console.log(event);
         isAltChecked = true;
+    });
+
+    altInfoCheckbox.addEventListener('change', event => {
+        if (event.target.checked) {
+            console.log('checked the info region box');
+            infoRegion.classList.add('hide-section');
+        } else {
+            console.log('unchecked the info region box');
+            infoRegion.classList.remove('hide-section');
+        }
+        isInfoChecked = true;
     });
 }
 
@@ -372,10 +389,10 @@ function updateCustomComponent() {
 
 function setupScreenReaderSection(selectedVerbosity, chart) {
     addPrefButtonScreenReader(chart);
-    applyInfoRegion(selectedVerbosity);
+    applyInfoRegion(selectedVerbosity, chart);
 }
 
-function applyInfoRegion(selectedVerbosity) {
+function applyInfoRegion(selectedVerbosity, chart) {
     const screenReaderDiv =
     document.getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -399,8 +416,17 @@ function applyInfoRegion(selectedVerbosity) {
         innerScreenReaderDiv.children[6].style.display = 'none';
         innerScreenReaderDiv.children[7].style.display = 'none';
 
-        // TODO: Shorten description for points somehow?
-        // Just value and unit without series?
+        // Shortened description for points
+        const firstSeries = chart.series[0];
+        const secondSeries = chart.series[1];
+
+        firstSeries.points.forEach(point => {
+            console.log(point);
+            point.graphic.element.setAttribute('aria-label', `${point.y} (MT)`);
+        });
+        secondSeries.points.forEach(point => {
+            point.graphic.element.setAttribute('aria-label', `${point.y} (MT)`);
+        });
 
     } else {
         // Re-apply full description

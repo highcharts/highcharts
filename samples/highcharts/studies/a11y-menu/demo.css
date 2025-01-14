@@ -23,7 +23,7 @@ h3 {
 }
 
 /* To avoid screen reader region disappearing after chart.update() */
-#highcharts-screen-reader-region-before-0 > div:first-child {
+.hide-section {
     position: static !important;
     width: auto !important;
     height: auto !important;
