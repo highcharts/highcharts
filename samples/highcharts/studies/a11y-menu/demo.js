@@ -29,6 +29,18 @@ function getChartConfig() {
         chart: {
             type: 'column'
         },
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h1>{chartTitle}</h1>' +
+                '<div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>' +
+                '<div>{viewTableButton}</div>' +
+                '<div>{xAxisDescription}</div>' +
+                '<div>{yAxisDescription}</div>'
+            }
+        },
         title: {
             text: 'Corn vs wheat estimated production for 2023'
         },
@@ -203,6 +215,7 @@ function setupEventListeners(prefContent, chart) {
     const altPointCheckbox = prefContent
         .querySelector('input[name="alt-points"]');
     const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
+    const altTextDivs = [];
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
     );
@@ -215,53 +228,39 @@ function setupEventListeners(prefContent, chart) {
             const selectedSize = event.target.value;
             selectedTextSize = selectedSize;
 
-            // Apply the selected size
+            let fontSize;
             switch (selectedSize) {
             case 'smaller':
-                chart.update({
-                    chart: {
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                });
-                infoRegion.style.fontSize = '10px';
-                description.style.fontSize = '10px';
+                fontSize = '10px';
                 break;
             case 'normal':
-                chart.update({
-                    chart: {
-                        style: {
-                            fontSize: '16px'
-                        }
-                    }
-                });
-                infoRegion.style.fontSize = '16px';
-                description.style.fontSize = '16px';
+                fontSize = '16px';
                 break;
             case 'larger':
-                chart.update({
-                    chart: {
-                        style: {
-                            fontSize: '22px'
-                        }
-                    }
-                });
-                infoRegion.style.fontSize = '22px';
-                description.style.fontSize = '22px';
+                fontSize = '22px';
                 break;
             default:
-                chart.update({
-                    chart: {
-                        style: {
-                            fontSize: '16px'
-                        }
-                    }
-                });
-                infoRegion.style.fontSize = '16px';
-                description.style.fontSize = '16px';
-                break;
+                fontSize = '16px';
             }
+
+            // Update chart with font sizes
+            chart.update({
+                chart: {
+                    style: {
+                        fontSize: fontSize
+                    }
+                }
+            });
+
+            // Only visible if info region is checked
+            infoRegion.style.fontSize = fontSize;
+            description.style.fontSize = fontSize;
+
+            // Only visible if alt-text for point is checked
+            altTextDivs.forEach(div => {
+                div.style.fontSize = fontSize;
+            });
+
             // Append the button to the screen reader region
             setupScreenReaderSection(selectedVerbosity, chart);
         });
@@ -318,6 +317,7 @@ function setupEventListeners(prefContent, chart) {
         // Append button to screen reader region
         setupScreenReaderSection(selectedVerbosity, chart);
     });
+
     altPointCheckbox.addEventListener('change', event => {
         const isChecked = event.target.checked;
         isAltPointChecked = isChecked;
@@ -342,6 +342,9 @@ function setupEventListeners(prefContent, chart) {
 
                 // Add to chart container
                 chart.container.appendChild(altTextDiv);
+
+                // Add divs to array for setting text size if applicable
+                altTextDivs.push(altTextDiv);
             });
 
             // Turning of tooltip to avoid duplicate information
@@ -355,6 +358,7 @@ function setupEventListeners(prefContent, chart) {
             document.querySelectorAll('.alt-text-div').forEach(
                 label => label.remove()
             );
+            altTextDivs.length = 0;
             chart.update({
                 tooltip: {
                     enabled: true
