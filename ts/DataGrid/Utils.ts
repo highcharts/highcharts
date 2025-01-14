@@ -13,6 +13,7 @@
  *
  * */
 
+import AST from '../Core/Renderer/HTML/AST.js';
 
 /* *
  *
@@ -129,6 +130,27 @@ namespace DataGridUtils {
                 .body.textContent || '';
         } catch (error) {
             return '';
+        }
+    }
+
+    /**
+     * Renders a HTML element content.
+     *
+     * @param elementContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     */
+    export function renderHTMLElementContent(
+        elementContent: string,
+        parentElement: HTMLElement
+    ): void {
+        if (isHTML(elementContent)) {
+            const formattedNodes = new AST(elementContent);
+            formattedNodes.addToDOM(parentElement);
+        } else {
+            parentElement.innerText = elementContent;
         }
     }
 }

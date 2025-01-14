@@ -25,7 +25,6 @@
 import type DataTable from '../../Data/DataTable';
 import type TableRow from './Content/TableRow';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
 import Templating from '../../Core/Templating.js';
@@ -268,25 +267,6 @@ abstract class Cell {
 
         element.classList.add(...newClassName.split(/\s+/g));
         this.customClassName = newClassName;
-    }
-
-    /**
-     * Renders content of cell.
-     *
-     * @param cellContent
-     * Content to render.
-     *
-     * @param parentElement
-     * Parent element where the content should be.
-     *
-     * @internal
-     */
-    public renderHTMLCellContent(
-        cellContent: string,
-        parentElement: HTMLElement
-    ): void {
-        const formattedNodes = new AST(cellContent);
-        formattedNodes.addToDOM(parentElement);
     }
 
     /**

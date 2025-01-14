@@ -37,7 +37,7 @@ import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 
-const { makeHTMLElement } = DataGridUtils;
+const { makeHTMLElement, renderHTMLElementContent } = DataGridUtils;
 const { win } = Globals;
 const { merge, getStyle } = U;
 
@@ -675,15 +675,20 @@ class DataGrid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        if (!captionOptions?.text) {
+        const captionText = captionOptions?.text;
+
+        if (!captionText) {
             return;
         }
 
+        // Create a caption element.
         this.captionElement = makeHTMLElement('div', {
-            innerText: captionOptions.text,
             className: Globals.classNames.captionElement,
             id: this.id + '-caption'
         }, this.contentWrapper);
+
+        // Render the caption element content.
+        renderHTMLElementContent(captionText, this.captionElement);
 
         if (captionOptions.className) {
             this.captionElement.classList.add(
@@ -699,15 +704,20 @@ class DataGrid {
      */
     public renderDescription(): void {
         const descriptionOptions = this.options?.description;
-        if (!descriptionOptions?.text) {
+        const descriptionText = descriptionOptions?.text;
+
+        if (!descriptionText) {
             return;
         }
 
+        // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            innerText: descriptionOptions.text,
             className: Globals.classNames.descriptionElement,
             id: this.id + '-description'
         }, this.contentWrapper);
+
+        // Render the description element content.
+        renderHTMLElementContent(descriptionText, this.descriptionElement);
 
         if (descriptionOptions.className) {
             this.descriptionElement.classList.add(
