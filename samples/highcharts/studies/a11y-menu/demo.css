@@ -50,3 +50,13 @@ h3 {
 #large-font {
     font-size: 22px !important;
 }
+
+.chart-label {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 4px;
+    font-size: 12px;
+    transform: translate(-50%, -100%); /* Center horizontally and place above the column */
+    pointer-events: none;
+}

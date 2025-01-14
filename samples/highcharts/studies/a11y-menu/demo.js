@@ -10,7 +10,7 @@ let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
     isBorderChecked = false,
-    isAltChecked = false,
+    isAltPointChecked = false,
     isInfoChecked = false,
     defaultDesc = '';
 
@@ -143,7 +143,7 @@ function createPreferencesDialog(chart) {
         ${isInfoChecked ? 'checked' : ''}>
         <label for="alt-info">Show info region</label>
     <input type="checkbox" id="alt-points" name="alt-points"
-        ${isAltChecked ? 'checked' : ''}>
+        ${isAltPointChecked ? 'checked' : ''}>
         <label for="contrast">Show points</label>
     </div>
     <h3>Text size:</h3>
@@ -307,16 +307,44 @@ function setupEventListeners(prefContent, chart) {
         setupScreenReaderSection(selectedVerbosity, chart);
     });
     altPointCheckbox.addEventListener('change', event => {
-        console.log(event);
-        isAltChecked = true;
+        const isChecked = event.target.checked;
+        isAltPointChecked = isChecked;
+        const paths = document
+            .querySelectorAll('path.highcharts-point[aria-label');
+        const chartRect = chart.container.getBoundingClientRect();
+
+        if (isChecked) {
+            paths.forEach(path => {
+                const ariaLabel = path.getAttribute('aria-label');
+                const rect = path.getBoundingClientRect();
+
+                // Create label div
+                const altTextDiv = document.createElement('div');
+                altTextDiv.textContent = ariaLabel;
+                altTextDiv.classList.add('chart-label');
+
+                // Position label on top of column
+                altTextDiv.style.left =
+                    `${rect.left + rect.width / 2 - chartRect.left}px`;
+                altTextDiv.style.top = `${rect.top - chartRect.top}px`;
+
+                // Add to chart container
+                chart.container.appendChild(altTextDiv);
+            });
+        } else {
+            document.querySelectorAll('.chart-label').forEach(
+                label => label.remove()
+            );
+        }
     });
 
     altInfoCheckbox.addEventListener('change', event => {
-        if (event.target.checked) {
-            console.log('checked the info region box');
+        const isChecked = event.target.checked;
+        isInfoChecked = isChecked;
+
+        if (isChecked) {
             infoRegion.classList.add('hide-section');
         } else {
-            console.log('unchecked the info region box');
             infoRegion.classList.remove('hide-section');
         }
         isInfoChecked = true;
@@ -432,7 +460,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
         const secondSeries = chart.series[1];
 
         firstSeries.points.forEach(point => {
-            console.log(point);
             point.graphic.element.setAttribute('aria-label', `${point.y} (MT)`);
         });
         secondSeries.points.forEach(point => {
