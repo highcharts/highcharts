@@ -1,7 +1,8 @@
 /**
- * TODO: Add visible alt text for the points
+ * TODO: Make points work with verbosity settings
+ * TODO: Make <h6> a <h1>
+ * TODO: Make all text work with text size, including alt text and info region
  * TODO: Add white border to the columns of the chart?
- * TODO: Screen reader handling of default font!
  * TODO: Add local storage
  */
 
@@ -205,8 +206,11 @@ function setupEventListeners(prefContent, chart) {
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
     );
+    const description = document
+        .getElementsByClassName('highcharts-description')[0];
 
     textSizeRadioButtons.forEach(radio => {
+
         radio.addEventListener('change', event => {
             const selectedSize = event.target.value;
             selectedTextSize = selectedSize;
@@ -221,6 +225,8 @@ function setupEventListeners(prefContent, chart) {
                         }
                     }
                 });
+                infoRegion.style.fontSize = '10px';
+                description.style.fontSize = '10px';
                 break;
             case 'normal':
                 chart.update({
@@ -230,6 +236,8 @@ function setupEventListeners(prefContent, chart) {
                         }
                     }
                 });
+                infoRegion.style.fontSize = '16px';
+                description.style.fontSize = '16px';
                 break;
             case 'larger':
                 chart.update({
@@ -239,6 +247,8 @@ function setupEventListeners(prefContent, chart) {
                         }
                     }
                 });
+                infoRegion.style.fontSize = '22px';
+                description.style.fontSize = '22px';
                 break;
             default:
                 chart.update({
@@ -248,6 +258,8 @@ function setupEventListeners(prefContent, chart) {
                         }
                     }
                 });
+                infoRegion.style.fontSize = '16px';
+                description.style.fontSize = '16px';
                 break;
             }
             // Append the button to the screen reader region
@@ -321,7 +333,7 @@ function setupEventListeners(prefContent, chart) {
                 // Create label div
                 const altTextDiv = document.createElement('div');
                 altTextDiv.textContent = ariaLabel;
-                altTextDiv.classList.add('chart-label');
+                altTextDiv.classList.add('alt-text-div');
 
                 // Position label on top of column
                 altTextDiv.style.left =
@@ -331,11 +343,26 @@ function setupEventListeners(prefContent, chart) {
                 // Add to chart container
                 chart.container.appendChild(altTextDiv);
             });
+
+            // Turning of tooltip to avoid duplicate information
+            chart.update({
+                tooltip: {
+                    enabled: false
+                }
+            });
+
         } else {
-            document.querySelectorAll('.chart-label').forEach(
+            document.querySelectorAll('.alt-text-div').forEach(
                 label => label.remove()
             );
+            chart.update({
+                tooltip: {
+                    enabled: true
+                }
+            });
         }
+        // Append button to screen reader region
+        setupScreenReaderSection(selectedVerbosity, chart);
     });
 
     altInfoCheckbox.addEventListener('change', event => {
