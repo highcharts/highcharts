@@ -68,6 +68,7 @@ namespace Globals {
         container: classNamePrefix + 'container',
         tableElement: classNamePrefix + 'table',
         captionElement: classNamePrefix + 'caption',
+        descriptionElement: classNamePrefix + 'description',
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
@@ -77,9 +78,14 @@ namespace Globals {
         columnElement: classNamePrefix + 'column',
         hoveredCell: classNamePrefix + 'hovered-cell',
         hoveredColumn: classNamePrefix + 'hovered-column',
+        syncedRow: classNamePrefix + 'synced-row',
+        syncedCell: classNamePrefix + 'synced-cell',
+        syncedColumn: classNamePrefix + 'synced-column',
         editedCell: classNamePrefix + 'edited-cell',
+        mockedCell: classNamePrefix + 'mocked-cell',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         virtualization: classNamePrefix + 'virtualization',
+        scrollableContent: classNamePrefix + 'scrollable-content',
         headerCell: classNamePrefix + 'header-cell',
         headerCellContent: classNamePrefix + 'header-cell-content',
         headerRow: classNamePrefix + 'head-row-content',
@@ -94,7 +100,8 @@ namespace Globals {
         resizedColumn: classNamePrefix + 'column-resized',
         creditsContainer: classNamePrefix + 'credits-container',
         creditsText: classNamePrefix + 'credits',
-        visuallyHidden: classNamePrefix + 'visually-hidden'
+        visuallyHidden: classNamePrefix + 'visually-hidden',
+        lastHeaderCellInRow: classNamePrefix + 'last-header-cell-in-row'
     };
 
     export const win = window;

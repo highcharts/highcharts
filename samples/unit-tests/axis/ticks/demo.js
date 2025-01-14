@@ -990,7 +990,7 @@ QUnit.test('Ticks and setSize', assert => {
     }
 });
 
-QUnit.only(
+QUnit.test(
     'Expected space for ticks, calculation of chart plot height (#19896).',
     function (assert) {
         const optionsToCheck = [{
@@ -1087,11 +1087,15 @@ QUnit.only(
             let precision = 2;
 
             // A strange case of shifting, only when the font-family contains
-            // the `-apple-system` font, and only with FirefoxHeadless. Not
-            // reproducible with Firefox regular or Chrome.
+            // the `-apple-system` font, and only with FirefoxHeadless (and
+            // ChromeHeadless on Windows). Not reproducible with regular Firefox
+            // or Chrome.
             if (
                 options.chart?.styledMode &&
-                navigator.userAgent.indexOf('Firefox') !== -1
+                (
+                    navigator.userAgent.indexOf('Firefox') !== -1 ||
+                    window.navigator.platform.indexOf('Win') >= 0
+                )
             ) {
                 precision = 9;
             }

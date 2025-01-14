@@ -703,8 +703,7 @@ namespace ColumnDataLabel {
                                 )
                             ) + 'px',
                             textOverflow: (
-                                (dataLabel.options?.style || {})
-                                    .textOverflow ||
+                                dataLabel.options?.style?.textOverflow ||
                                 'ellipsis'
                             )
                         });

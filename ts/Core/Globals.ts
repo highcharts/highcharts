@@ -17,6 +17,7 @@
  * */
 
 import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -197,14 +198,13 @@ namespace Globals {
                 {}
         ) as (Window&typeof globalThis), // eslint-disable-line node/no-unsupported-features/es-builtins
         doc = win.document,
-        svg = (
-            doc &&
-            doc.createElementNS &&
-            !!(
-                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
-            ).createSVGRect
-        ),
-        userAgent = (win.navigator && win.navigator.userAgent) || '',
+        svg = !!(
+            doc?.createElementNS?.(SVG_NS, 'svg') as SVGSVGElement|undefined
+        )?.createSVGRect,
+        pageLang = (
+            doc?.documentElement?.closest('[lang]') as HTMLDOMElement|null
+        )?.lang,
+        userAgent = win.navigator?.userAgent || '',
         isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,

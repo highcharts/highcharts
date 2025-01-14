@@ -61,6 +61,19 @@ QUnit.module('Format', () => {
             'Localized format'
         );
 
+        // European thousands separator and decimal point
+        Highcharts.setOptions({
+            lang: {
+                decimalPoint: ',',
+                thousandsSep: '.'
+            }
+        });
+        assert.strictEqual(
+            '12.345,68',
+            format('{point.long:,.2f}', { point: point }),
+            'European format (#22402)'
+        );
+
         // default thousands separator and decimal point
         Highcharts.setOptions({
             lang: {
@@ -200,12 +213,8 @@ QUnit.module('Format', () => {
         );
 
         // Reset
-        Highcharts.setOptions({
-            lang: {
-                decimalPoint: '.',
-                thousandsSep: ' '
-            }
-        });
+        delete Highcharts.defaultOptions.lang.decimalPoint;
+        delete Highcharts.defaultOptions.lang.thousandsSep;
     });
 
     QUnit.test('if helper', assert => {

@@ -238,7 +238,7 @@ class LineSeries extends Series {
             let pathToPoint: SVGPath;
 
             if (
-                (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+                (point.leftCliff || lastPoint?.rightCliff) &&
                 !connectCliffs
             ) {
                 gap = true; // ... and continue

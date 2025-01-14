@@ -43,6 +43,12 @@ namespace A11yOptions {
         enabled?: boolean;
 
         /**
+         * The default option is auto, which applies the high contrast theme the
+         * user's system has a high contrast theme active.
+         */
+        highContrastMode?: boolean | 'auto';
+
+        /**
          * VoiceOver announcer options for DataGrid actions.
          */
         announcements?: {
@@ -120,6 +126,14 @@ namespace A11yOptions {
      * Accessibility options for the DataGrid sorting functionality.
      */
     export interface SortingLangA11yOptions {
+
+        /**
+         * An additional hint (a visually hidden span) read by the voice over
+         * after the column name.
+         *
+         * @default 'Sortable.'
+         */
+        sortable?: string;
 
         /**
          * Accessibility lang options for the sorting announcements.

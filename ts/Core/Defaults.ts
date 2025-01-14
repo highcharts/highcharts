@@ -124,6 +124,8 @@ const defaultOptions: DefaultOptions = {
      *     }
      * });
      * ```
+     *
+     * @optionparent lang
      */
     lang: {
 
@@ -297,9 +299,8 @@ const defaultOptions: DefaultOptions = {
     },
 
     /**
-     * Global options that don't apply to each chart. These options, like
-     * the `lang` options, must be set using the `Highcharts.setOptions`
-     * method.
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
      *
      * ```js
      * Highcharts.setOptions({
@@ -2823,15 +2824,6 @@ const defaultOptions: DefaultOptions = {
 
     }
 };
-
-/* eslint-disable spaced-comment */
-/*= if (!build.classic) { =*/
-// Legacy build for styled mode, set the styledMode option to true by default.
-(defaultOptions.chart as any).styledMode = true;
-/*= } else { =*/
-(defaultOptions.chart as any).styledMode = false;
-/*= } =*/
-'';
 
 const defaultTime = new Time(defaultOptions.time);
 
