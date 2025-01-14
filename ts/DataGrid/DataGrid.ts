@@ -39,7 +39,7 @@ import QueryingController from './Querying/QueryingController.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
-const { merge, getStyle } = U;
+const { merge, getStyle, pick } = U;
 
 
 /* *
@@ -173,6 +173,16 @@ class DataGrid {
      * The description element of the data grid.
      */
     public descriptionElement?: HTMLElement;
+
+    /**
+     * The container element of the loading indicator overlaying the data grid.
+     */
+    public loadingWrapper?: HTMLElement;
+
+    /**
+     * The loading message span element.
+     */
+    public loadingSpan?: HTMLElement;
 
     /**
      * The presentation table of the data grid. It contains a modified version
@@ -901,6 +911,39 @@ class DataGrid {
         });
 
         DataGrid.dataGrids.splice(dgIndex, 1);
+    }
+
+    /**
+     * Grey out the data grid and show a loading indicator.
+     *
+     * @param message
+     * The message to display in the loading indicator.
+     */
+    public showLoading(message: string): void {
+        if (!this.loadingWrapper) {
+            this.loadingWrapper = makeHTMLElement(
+                'div',
+                {
+                    className: 'highcharts-datagrid-loading-wrapper',
+                },
+                this.contentWrapper
+            )
+        }
+
+        if (!this.loadingSpan) {
+            this.loadingSpan = makeHTMLElement(
+                'span',
+                {
+                    className: 'highcharts-datagrid-loading-message'
+                },
+                this.loadingWrapper
+            );
+        }
+
+        AST.setElementHTML(
+            this.loadingSpan,
+            pick(message, '')
+        );
     }
 
     /**

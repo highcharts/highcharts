@@ -270,6 +270,7 @@
     --idg-positive-border-size: var(--hcdg-positive-border-size, var(--idg-highlight-border-size));
     --idg-positive-background: var(--hcdg-positive-background, var(--idg-positive-default-background));
 
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -689,6 +690,17 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .highcharts-datagrid-table thead tr th.hcdg-left,
 .highcharts-datagrid-table tbody tr td.hcdg-left {
     text-align: left;
+}
+
+.highcharts-datagrid-loading-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--highcharts-neutral-color-60);
+    opacity: 0.5;
 }
 
 /* End DataGrid CSS Helpers Classes */
