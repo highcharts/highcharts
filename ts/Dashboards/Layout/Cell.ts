@@ -572,6 +572,12 @@ class Cell extends GUIElement {
  * */
 
 namespace Cell {
+    /**
+     * Checks if a valid cell instance.
+     */
+    export function isCell(cell: unknown): cell is Cell {
+        return cell instanceof Cell;
+    }
 
     /**
      * Responsive options of the cell.
