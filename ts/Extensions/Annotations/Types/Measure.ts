@@ -88,7 +88,7 @@ function average(
     });
 
     if (pointsAmount > 0) {
-        average = +(pointsTotal / pointsAmount).toFixed(2);
+        average = pointsTotal / pointsAmount;
     }
 
     return average;

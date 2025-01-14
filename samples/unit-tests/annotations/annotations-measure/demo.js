@@ -36,6 +36,21 @@ QUnit.test('General tests for measure annotation', function (assert) {
         3.9,
         'Average should be calculated correctly.'
     );
+    assert.strictEqual(
+        chart.annotations[0].min,
+        1.5,
+        'Min should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].max,
+        6,
+        'Max should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].bins,
+        5,
+        'Bins should be calculated correctly.'
+    );
 });
 
 
