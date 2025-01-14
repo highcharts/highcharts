@@ -27,7 +27,9 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     currencyId: 'EUR'
 });
 
-Promise.all([connector.load()]).then(() => {
+(async () => {
+    await connector.load();
+
     const cols = connector.table.getColumns();
 
     const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
@@ -227,4 +229,4 @@ Promise.all([connector.load()]).then(() => {
             }
         ]
     });
-});
+})();
