@@ -257,7 +257,12 @@ class TimelinePoint extends LinePoint {
         );
 
         if (!x) {
-            x = this.x || this.series.xIncrement || 0;
+            x = (options as any)?.x || this.x || this.series.xIncrement || 0;
+
+            if (typeof x === 'string') {
+                x = Math.floor((new Date(x)).getTime() / 1000);
+            }
+
             this.series.autoIncrement();
         }
 
