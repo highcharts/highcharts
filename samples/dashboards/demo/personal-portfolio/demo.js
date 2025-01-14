@@ -338,7 +338,7 @@ const getCurrentTotal = arrOfArr => {
     });
 
     // Creating the dashboard
-    const board = Dashboards.board('container', {
+    const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'investment-data',
@@ -541,31 +541,30 @@ const getCurrentTotal = arrOfArr => {
     }, true);
 
     // Update the goal analysis KPIs after loading the connector
-    board.then(res => {
+    const res = await board;
 
-        // Access relevant metadata
-        const {
-            years,
-            probabilityOfReachingTarget,
-            financialGoal
-        } = res.dataPool.connectors['goal-analysis'].metadata;
+    // Access relevant metadata
+    const {
+        years,
+        probabilityOfReachingTarget,
+        financialGoal
+    } = res.dataPool.connectors['goal-analysis'].metadata;
 
-        // Get relevant components
-        const goalYearsCpt = res.getComponentById('cpt-goal-years'),
-            goalCpt = res.getComponentById('cpt-goal-prob'),
-            goalTargetCpt = res.getComponentById('cpt-goal-target');
+    // Get relevant components
+    const goalYearsCpt = res.getComponentById('cpt-goal-years'),
+        goalCpt = res.getComponentById('cpt-goal-prob'),
+        goalTargetCpt = res.getComponentById('cpt-goal-target');
 
-        // Updates
-        goalYearsCpt.update({
-            value: years
-        });
+    // Updates
+    goalYearsCpt.update({
+        value: years
+    });
 
-        goalCpt.update({
-            value: probabilityOfReachingTarget
-        });
+    goalCpt.update({
+        value: probabilityOfReachingTarget
+    });
 
-        goalTargetCpt.update({
-            value: financialGoal
-        });
+    goalTargetCpt.update({
+        value: financialGoal
     });
 })();
