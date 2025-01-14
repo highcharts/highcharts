@@ -333,6 +333,7 @@ function setupEventListeners(prefContent, chart) {
                 const altTextDiv = document.createElement('div');
                 altTextDiv.textContent = ariaLabel;
                 altTextDiv.classList.add('alt-text-div');
+                altTextDiv.setAttribute('aria-hidden', 'true');
 
                 // Position label on top of column
                 altTextDiv.style.left =
