@@ -563,6 +563,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
      *
+     * @sample {highcharts} highcharts/series-timeline/null-interaction/
+     *         Timeline series with `null` points
+     *
      * @type      {boolean|undefined}
      * @product   highcharts highstock
      * @apioption plotOptions.series.nullInteraction

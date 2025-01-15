@@ -256,7 +256,7 @@ class TimelinePoint extends LinePoint {
             (options as PointOptions).y === null
         );
 
-        if (!x) {
+        if (!x && this.series.options.nullInteraction) {
             x = (options as any)?.x || this.x || this.series.xIncrement || 0;
 
             if (typeof x === 'string') {
