@@ -869,7 +869,7 @@ class DataGrid {
      * Extracts all references to columnIds on all levels below defined level
      * in the settings.header structure.
      *
-     * @param columns
+     * @param columnsTree
      * Structure that we start calculation
      *
      * @param [onlyEnabledColumns=true]
@@ -877,13 +877,13 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions|string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
         const { enabledColumns } = this;
 
-        for (const column of columns) {
+        for (const column of columnsTree) {
             const columnId: string | undefined =
                 typeof column === 'string' ? column : column.columnId;
 
