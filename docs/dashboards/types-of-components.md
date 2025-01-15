@@ -161,7 +161,7 @@ Code snippet with data embedded in the `DataGrid` data table; no data connector 
     }
 }
 ```
-The above code snippet is part of a [DataGrid example](http://utils.highcharts.local/samples/#view/data-grid/demo/your-first-datagrid) that uses embedded data.
+The above code snippet is part of a [DataGrid example](https://www.highcharts.com/samples/embed/data-grid/demo/your-first-datagrid) that uses embedded data.
 
 Code snippet using a data connector.
 ```js
