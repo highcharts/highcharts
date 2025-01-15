@@ -272,6 +272,19 @@ class DataTableCore {
     }
 
     /**
+     * Output the table in the console.
+     * @todo remove/comment out this method before production
+     */
+    public log(limit = Infinity): void {
+        /* eslint-disable-next-line no-console */
+        console.table(
+            new Array(Math.min(this.rowCount, limit))
+                .fill(void 0)
+                .map((_, i): DataTable.RowObject => this.getRowObject(i) || {})
+        );
+    }
+
+    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @param {string} columnName

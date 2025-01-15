@@ -365,6 +365,8 @@ class Series {
 
     public trackerGroups?: Array<string>;
 
+    public useDataTable = false;
+
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
     public xAxis!: AxisType;
@@ -391,9 +393,6 @@ class Series {
     ): void {
 
         fireEvent(this, 'init', { options: userOptions });
-
-        // Create the data table
-        this.dataTable ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -430,6 +429,10 @@ class Series {
         series.options = series.setOptions(userOptions);
         const options = series.options,
             visible = options.visible !== false;
+
+        // Create the data table
+        this.dataTable ??= options.dataTable instanceof DataTableCore ?
+            options.dataTable : new DataTableCore(options.dataTable);
 
         /**
          * All child series that are linked to the current series through the
@@ -1456,17 +1459,26 @@ class Series {
                 }
 
                 if (!runTurbo) {
-                    const columns = dataColumnKeys.reduce(
-                        (columns, columnName):
-                        DataTable.ColumnCollection => {
-                            columns[columnName] = [];
-                            return columns;
-                        }, {} as DataTable.ColumnCollection);
+                    const columns = {
+                        x: []
+                    } as DataTable.ColumnCollection;
                     for (i = 0; i < dataLength; i++) {
                         const pt = series.pointClass.prototype.applyOptions
                             .apply({ series }, [data[i]]);
-                        for (const key of dataColumnKeys) {
-                            columns[key][i] = (pt as any)[key];
+                        columns.x[i] = pt.x;
+                        for (const key of Object.keys(pt.options)) {
+                            if (key !== 'x') {
+                                columns[key] ||= new Array(dataLength);
+                                columns[key][i] = (pt as any).options[key];
+                            }
+                        }
+                        // Needed for 3d scatter because x is not part of
+                        // options, but appended in the `applyOptions` call
+                        // itself. z in pt is for scatter, indexOf is for
+                        // bubbles. Find a better solution for this.
+                        if ('z' in pt || dataColumnKeys.indexOf('z') !== -1) {
+                            columns.z ||= new Array(dataLength);
+                            columns.z[i] = pt.z;
                         }
                     }
 
@@ -1502,9 +1514,13 @@ class Series {
                         return acc;
                     }, {} as DataTableCore.ColumnCollection);
 
-                // Set the columns
-                const columns = getTableSpecificColumns(dataTable);
-                table.setColumns(columns);
+                // If a DataTable is passed and no column assignment is set,
+                // use it directly
+                if (columnAssignment || !options.dataTable) {
+                    // Set the columns
+                    const columns = getTableSpecificColumns(dataTable);
+                    table.setColumns(columns);
+                }
 
                 // If a DataTable is passed directly by reference, bind events
                 // to keep the series updated
@@ -1563,6 +1579,16 @@ class Series {
                         }
                     );
                 }
+            }
+
+            // Test for DataTable-based data handling
+            if (this.useDataTable) {
+                /* eslint-disable-next-line no-console */
+                console.group(`@setData: ${series.name}, ${table.rowCount} rows`);
+                table.log(10);
+                /* eslint-disable-next-line no-console */
+                console.groupEnd();
+                data = void 0;
             }
 
             // Forgetting to cast strings to numbers is a common caveat when
@@ -1912,7 +1938,6 @@ class Series {
             data = series.data,
             pOptions: PointShortOptions|PointOptions;
 
-
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
 
@@ -1929,12 +1954,17 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
-                pOptions = dataOptions ?
-                    dataOptions[cursor] :
-                    table.getRowObject(
-                        i,
-                        dataColumnKeys
-                    ) as unknown as PointOptions;
+                if (!this.useDataTable) {
+                    pOptions = dataOptions ?
+                        dataOptions[cursor] :
+                        table.getRowObject(
+                            i,
+                            dataColumnKeys
+                        ) as unknown as PointOptions;
+                } else {
+                    pOptions = table.getRowObject(i) as unknown as PointOptions;
+                }
+
                 // #970:
                 if (
                     !point &&
