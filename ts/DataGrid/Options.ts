@@ -643,6 +643,13 @@ export interface LangOptions {
     accessibility?: A11yOptions.LangAccessibilityOptions;
 
     /**
+     * The text to display when the loading indicator is shown.
+     *
+     * @default 'Loading...'
+     */
+    loading?: string;
+
+    /**
      * The text to display when there is no data to show.
      *
      * @default 'No data to display'

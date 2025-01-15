@@ -180,11 +180,6 @@ class DataGrid {
     public loadingWrapper?: HTMLElement;
 
     /**
-     * The loading message span element.
-     */
-    public loadingSpan?: HTMLElement;
-
-    /**
      * The presentation table of the data grid. It contains a modified version
      * of the data table that is used for rendering the data grid content. If
      * not modified, just a reference to the original data table.
@@ -919,31 +914,47 @@ class DataGrid {
      * @param message
      * The message to display in the loading indicator.
      */
-    public showLoading(message: string): void {
-        if (!this.loadingWrapper) {
-            this.loadingWrapper = makeHTMLElement(
-                'div',
-                {
-                    className: 'highcharts-datagrid-loading-wrapper',
-                },
-                this.contentWrapper
-            )
-        }
+    public showLoading(message?: string): void {
+        // Create loading wrapper.
+        this.loadingWrapper = makeHTMLElement(
+            'div',
+            {
+                className: 'highcharts-datagrid-loading-wrapper',
+            },
+            this.contentWrapper
+        )
 
-        if (!this.loadingSpan) {
-            this.loadingSpan = makeHTMLElement(
-                'span',
-                {
-                    className: 'highcharts-datagrid-loading-message'
-                },
-                this.loadingWrapper
-            );
-        }
+        // Create spinner element.
+        makeHTMLElement(
+            'div',
+            {
+                className: 'highcharts-datagrid-spinner'
+            },
+            this.loadingWrapper
+        );
+
+
+        // Create loading message span element.
+        const loadingSpan = makeHTMLElement(
+            'span',
+            {
+                className: 'highcharts-datagrid-loading-message'
+            },
+            this.loadingWrapper
+        );
 
         AST.setElementHTML(
-            this.loadingSpan,
-            pick(message, '')
+            loadingSpan,
+            pick(message, this.options?.lang?.loading, '')
         );
+    }
+
+    /**
+     * Removes the loading indicator.
+     */
+    public hideLoading(): void {
+        this.loadingWrapper?.remove();
+        this.loadingWrapper = void 0;
     }
 
     /**

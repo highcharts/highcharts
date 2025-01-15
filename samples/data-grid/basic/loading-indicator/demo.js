@@ -10,7 +10,7 @@ const dg = DataGrid.dataGrid('container', {
 
 document.getElementById('load').addEventListener('click', () => {
     // Show the loading indicator
-    dg.showLoading('Loading...');
+    dg.showLoading('Loading data...');
 
     // Simulate a get request
     setTimeout(() => {
@@ -18,10 +18,15 @@ document.getElementById('load').addEventListener('click', () => {
             dataTable: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-                    weight: [100, 40, 0.5, 200],
-                    price: [1.5, 2.53, 5, 4.5]
+                    weight: Array.from({ length: 4 }, () =>
+                        Math.round(Math.random() * 100)
+                    ),
+                    price: Array.from({ length: 4 }, () =>
+                        Math.round(Math.random() * 10)
+                    )
                 }
             }
         });
-    }, 1000);
+        dg.hideLoading();
+    }, 2000);
 });

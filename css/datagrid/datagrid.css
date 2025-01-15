@@ -699,8 +699,32 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     position: absolute;
     width: 100%;
     height: 100%;
-    background: var(--highcharts-neutral-color-60);
+    background: var(--highcharts-neutral-color-0);
     opacity: 0.5;
+    gap: 10px;
+}
+
+.highcharts-datagrid-loading-wrapper .highcharts-datagrid-loading-message {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-datagrid-loading-wrapper .highcharts-datagrid-spinner {
+    border: 4px solid var(--highcharts-neutral-color-60);
+    border-top: 4px solid var(--highcharts-neutral-color-100);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* End DataGrid CSS Helpers Classes */
