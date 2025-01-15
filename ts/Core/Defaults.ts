@@ -133,7 +133,7 @@ const defaultOptions: DefaultOptions = {
         stockLow: 'Low',
         stockClose: 'Close',
 
-        weekFrom: 'Week from',
+        weekFrom: 'week from',
 
         /**
          * The default chart title.
@@ -2440,7 +2440,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%[AebY]',
             /** @internal */
-            week: '{options.lang.weekFrom} %[AebY]',
+            week: '%v %[AebY]',
             /** @internal */
             month: '%[BY]',
             /** @internal */

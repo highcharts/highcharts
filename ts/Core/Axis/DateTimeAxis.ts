@@ -21,8 +21,6 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
-import T from '../Templating.js';
-const { format } = T;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -296,7 +294,7 @@ namespace DateTimeAxis{
             const { axis } = this,
                 time = axis.chart.time;
 
-            let xDateFormat = axis.closestPointRange ?
+            return axis.closestPointRange ?
                 time.getDateFormat(
                     axis.closestPointRange,
                     x,
@@ -306,12 +304,6 @@ namespace DateTimeAxis{
                 // #2546, 2581
                 time.resolveDTLFormat(dateTimeLabelFormats.year).main :
                 time.resolveDTLFormat(dateTimeLabelFormats.day).main;
-
-            if (typeof xDateFormat === 'string' && xDateFormat.includes('{')) {
-                xDateFormat = format(xDateFormat, axis.chart, axis.chart);
-            }
-
-            return xDateFormat;
         }
     }
 
