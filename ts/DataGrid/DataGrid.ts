@@ -36,10 +36,15 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
+import Time from '../Core/Time.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
-const { merge, getStyle } = U;
+const {
+    merge,
+    getStyle,
+    extend
+} = U;
 
 
 /* *
@@ -239,6 +244,16 @@ class DataGrid {
     public querying: QueryingController;
 
     /**
+     * The time instance.
+     */
+    public time: Time;
+
+    /**
+     * The locale of the data grid.
+     */
+    public locale?: string | string[];
+
+    /**
      * The initial height of the container. Can be 0 also if not set.
      */
     public initialContainerHeight: number = 0;
@@ -281,6 +296,15 @@ class DataGrid {
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
+        this.locale = this.options?.lang?.locale || (
+            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+        );
+
+        this.time = new Time(extend<Time.TimeOptions>(
+            this.options?.time,
+            { locale: this.locale }
+        ), this.options?.lang);
+
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
@@ -297,7 +321,7 @@ class DataGrid {
      *
      * */
 
-    /**
+    /*
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
