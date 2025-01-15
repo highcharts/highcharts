@@ -274,9 +274,11 @@ class TimelinePoint extends LinePoint {
             )
         );
 
-        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
         const p = super.applyOptions(options, x);
+
+        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
         p.isNull = isNull;
+
         return p;
     }
 
