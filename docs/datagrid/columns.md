@@ -112,8 +112,8 @@ Alternatively, you can programmatically sort a column using the `column.sorting.
 ## Formatting
 
 ### Time formatting
-Time formatting is handled by the [Intl.DateTimeFormat.prototype.format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format) and can be aware of the locale of the user.  
-Priority is given to the locale set in the `lang.locale` option, next the lang attribute of the closes parent is considered. But if that is not set, the browser's locale is used.  
+Time formatting is handled by the [Intl.DateTimeFormat.prototype.format](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format) and can be aware of the locale of the user.
+Priority is given to the locale set in the `lang.locale` option, next the lang attribute of the closes parent is considered. But if that is not set, the browser's locale is used.
 To set the `locale` use the `setOptions` method shown in the snippet below:
 
 ```js
@@ -124,7 +124,7 @@ DataGrid.setOptions({
 });
 ```
 To properly format the time use one of [the supported formats](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat)
-Fore example:
+For example:
 ```js
 columns: [
     {
