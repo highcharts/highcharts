@@ -1,6 +1,4 @@
 /**
- * TODO: Make preferences only an icon
- * TODO: Make points work with verbosity settings
  * TODO: Add white border to the columns of the chart?
  * TODO: Add local storage
  * TODO: Calculate contrast with function instead of hardcoded
@@ -338,7 +336,9 @@ function setupEventListeners(prefContent, chart) {
                 const altTextDiv = document.createElement('div');
                 altTextDiv.textContent =
                     getPointAltText(ariaLabel, selectedVerbosity);
-                altTextDiv.setAttribute('data-original-content', ariaLabel);
+
+                altTextDiv
+                    .setAttribute('data-stored-original-label', ariaLabel);
                 altTextDiv.classList.add('alt-text-div');
                 altTextDiv.setAttribute('aria-hidden', 'true');
 
@@ -475,100 +475,78 @@ function setupScreenReaderSection(selectedVerbosity, chart) {
     applyInfoRegion(selectedVerbosity, chart);
 }
 
+
 function applyInfoRegion(selectedVerbosity, chart) {
-    const screenReaderDiv =
-    document.getElementById('highcharts-screen-reader-region-before-0');
+    const screenReaderDiv = document
+        .getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     const description = innerScreenReaderDiv.children[3];
 
+    // Save default description if not already saved
     if (!defaultDesc) {
         defaultDesc = description.textContent;
     }
 
-    // Store original aria labels once
     chart.series.forEach(series => {
         series.points.forEach(point => {
             const pointElement = point.graphic?.element;
-            if (
-                pointElement && !pointElement
-                    .hasAttribute('data-stored-original-label')
-            ) {
-                const originalLabel = pointElement.getAttribute('aria-label');
-                // Save original label
+
+            if (!pointElement) {
+                return;
+            }
+
+            // Store the original label
+            let originalLabel = pointElement
+                .getAttribute('data-stored-original-label');
+
+            if (!originalLabel) {
+                originalLabel = pointElement.getAttribute('aria-label');
                 pointElement
                     .setAttribute('data-stored-original-label', originalLabel);
+            }
+
+            if (selectedVerbosity === 'short') {
+                // Apply short label
+                const shortLabel = getPointAltText(originalLabel, 'short');
+
+                // Shortening aria-label for point element
+                pointElement.setAttribute('aria-label', shortLabel);
+
+                // Update visible alt text divs
+                chart.altTextDivs.forEach(div => {
+
+                    // Shortening label for point alt text div
+                    div.textContent = shortLabel;
+                });
+            } else if (selectedVerbosity === 'full') {
+                // Restore original label for point element
+                pointElement.setAttribute('aria-label', originalLabel);
+                chart.altTextDivs.forEach(div => {
+                    // Restoring original label
+                    div.textContent = originalLabel;
+                });
             }
         });
     });
 
+    // Update description and axis visibility
     if (selectedVerbosity === 'short') {
-
-        console.log('selectedVerbosity is short');
-
-        // Shorten description
         const descArray = description.textContent.split('. ');
-        const newDesc = descArray.slice(
-            0, descArray.length - 2
-        ).join('. ') + '.';
+        const newDesc =
+            descArray.slice(0, descArray.length - 2).join('. ') + '.';
         description.textContent = newDesc;
 
-        // Remove axis information
         innerScreenReaderDiv.children[5].style.display = 'none';
         innerScreenReaderDiv.children[6].style.display = 'none';
         innerScreenReaderDiv.children[7].style.display = 'none';
-
-        // Get original content before shortening the aria-label
-        if (chart.altTextDivs) {
-            // Update visible alt text divs
-            chart.altTextDivs.forEach(div => {
-                const originalContent =
-                    div.getAttribute('data-original-content');
-                div.textContent =
-                    getPointAltText(originalContent, selectedVerbosity);
-            });
-        }
-        // Shortened description for points in aria label
-        chart.series.forEach(series => {
-            series.points.forEach(point => {
-                console.log(point);
-                point.graphic.element
-                    .setAttribute('aria-label', `${point.y} (MT)`);
-            });
-        });
-
-    } else {
-        console.log('selectedVerbosity is full');
-        // Re-apply full description
+    } else if (selectedVerbosity === 'full') {
         description.textContent = defaultDesc;
-
-        // Re-apply axis information
         innerScreenReaderDiv.children[5].style.display = 'block';
         innerScreenReaderDiv.children[6].style.display = 'block';
         innerScreenReaderDiv.children[7].style.display = 'block';
-
-        // Update visible alt text divs
-        if (chart.altTextDivs) {
-            chart.altTextDivs.forEach(div => {
-                const originalContent =
-                    div.getAttribute('data-original-content');
-                div.textContent = originalContent;
-            });
-        }
-
-        chart.series.forEach(series => {
-            series.points.forEach(point => {
-                const originalLabel =
-                    point.graphic.element
-                        .getAttribute('data-stored-original-label');
-                if (originalLabel) {
-                    // Reset to original label
-                    point.graphic.element
-                        .setAttribute('aria-label', originalLabel);
-                }
-            });
-        });
     }
 }
+
 
 // Define keyboard navigation for this component
 function createKeyboardNavigationHandler() {
@@ -619,8 +597,9 @@ function createKeyboardNavigationHandler() {
 
 function getPointAltText(ariaLabel, verbosity) {
     if (verbosity === 'short') {
-        const [value] = ariaLabel.match(/\d{1,3}(?:,\d{3})*(?:\.\d+)?/);
-        return `${value} (MT)`; // Short alt text
+        const [value] = ariaLabel
+            .match(/\d{1,3}(?:,\d{3})*(?:\.\d+)?/) || [];
+        return `${value || ''} (1000 MT)`; // Short alt text
     }
     return ariaLabel; // Full alt text
 }
