@@ -37,7 +37,7 @@ const languageOptions = {
     "stockHigh": "Haut",
     "stockLow": "Bas",
     "stockClose": "Clôture",
-    "weekFrom": "Semaine à partir de",
+    "weekFrom": "semaine à partir de",
     "exitFullscreen": "Quitter le plein écran",
     "printChart": "Imprimer le graphique",
     "downloadPNG": "Télécharger l'image PNG",

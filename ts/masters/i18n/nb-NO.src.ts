@@ -37,7 +37,7 @@ const languageOptions = {
     "stockLow": "Lav",
     "stockClose": "Slutt",
     "viewFullscreen": "Vis i fullskjerm",
-    "weekFrom": "Uke fra",
+    "weekFrom": "uka fra",
     "exitFullscreen": "Avslutt fullskjerm",
     "printChart": "Skriv ut diagram",
     "downloadPNG": "Last ned PNG",
