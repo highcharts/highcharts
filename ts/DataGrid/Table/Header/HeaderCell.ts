@@ -32,7 +32,7 @@ import Globals from '../../Globals.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Utilities from '../../../Core/Utilities.js';
 
-const { makeHTMLElement, isHTML } = DGUtils;
+const { makeHTMLElement, setHTMLContent } = DGUtils;
 const { merge, isString } = Utilities;
 
 
@@ -156,14 +156,8 @@ class HeaderCell extends Cell {
             className: Globals.classNames.headerCellContent
         }, this.htmlElement);
 
-        if (isHTML(this.value)) {
-            this.renderHTMLCellContent(
-                this.value,
-                this.headerContent
-            );
-        } else {
-            this.headerContent.innerText = this.value;
-        }
+        // Render the header cell element content.
+        setHTMLContent(this.headerContent, this.value);
 
         this.htmlElement.setAttribute('scope', 'col');
 
