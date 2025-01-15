@@ -91,7 +91,8 @@ function addPrefButton(chart) {
         '⚙️', 715, 1, () => handlePrefButtonClick(chart)
     )
         .attr({
-            id: 'hc-pref-button'
+            id: 'hc-pref-button',
+            'aria-label': 'Preferences'
         })
         .add();
 }
@@ -156,7 +157,7 @@ function createPreferencesDialog(chart) {
         <label for="alt-info">Show info region</label>
     <input type="checkbox" id="alt-points" name="alt-points"
         ${isAltPointChecked ? 'checked' : ''}>
-        <label for="contrast">Show points</label>
+        <label for="alt-points">Show points</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
