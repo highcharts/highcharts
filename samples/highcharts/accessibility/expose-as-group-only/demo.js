@@ -23,7 +23,25 @@ Highcharts.chart('container', {
     yAxis: {
         title: {
             text: 'Steps'
-        }
+        },
+        min: 0,
+        max: 20000,
+        plotLines: [{
+            value: 10000,
+            color: '#FE4F4D',
+            width: 2,
+            zIndex: 5,
+            label: {
+                text: 'Goal: 10.0000 steps',
+                align: 'right',
+                style: {
+                    color: 'black'
+                }
+            }
+        }]
+    },
+    tooltip: {
+        pointFormat: '{point.series.name}: <b>{point.y}</b> steps'
     },
     series: [{
         name: 'Emma',
@@ -38,7 +56,7 @@ Highcharts.chart('container', {
         accessibility: {
             exposeAsGroupOnly: true,
             descriptionFormat: 'Emma did not reach her step goal which was ' +
-                '70000 steps in one week. She walked {sum} steps.'
+                '700000 steps in one week. She walked {sum} steps.'
         },
         name: 'Total step count',
         color: '#009AFA',
