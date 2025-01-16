@@ -113,11 +113,8 @@ async function scriptsTS(argv) {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
-    const {
-        bundleTargetFolder,
-        typeScriptFolder,
-        typeScriptFolderDatagrid
-    } = require('./dashboards/_config.json');
+    const dashCfg = require('./dashboards/_config.json');
+    const gridCfg = require('./grid/_config.json');
 
     try {
         let library = 'Highcharts';
@@ -126,14 +123,19 @@ async function scriptsTS(argv) {
             library = 'Dashboards';
         } else if (argv.datagrid) {
             library = 'DataGrid';
+        } else if (argv.grid) {
+            library = 'Grid';
         }
+
         logLib.message(`Generating files for ${library}...`);
 
         processLib.isRunning('scripts-ts', true);
 
         if (argv.dashboards) {
-            fsLib.deleteDirectory(bundleTargetFolder, true);
+            fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
             // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
+        } else if (argv.grid) {
+            fsLib.deleteDirectory(gridCfg.bundleTargetFolder, true);
         }
 
         fsLib.deleteDirectory('js', true);
@@ -147,10 +149,13 @@ async function scriptsTS(argv) {
 
         if (argv.dashboards) {
             await processLib
-                .exec(`npx tsc -p ${typeScriptFolder} --outDir js`);
+                .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
         } else if (argv.datagrid) {
             await processLib
-                .exec(`npx tsc -p ${typeScriptFolderDatagrid} --outDir js`);
+                .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
+        } else if (argv.grid) {
+            await processLib
+                .exec(`npx tsc -p ${gridCfg.typeScriptFolder} --outDir js`);
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
@@ -193,12 +198,15 @@ async function scriptsTS(argv) {
             fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']), true);
             fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
 
+            // Remove Grid
+            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']), true);
+
             // Fix masters
             fs.renameSync(
                 fsLib.path(['js', 'masters-dashboards']),
                 fsLib.path(['js', 'masters'])
             );
-        } else if (argv.datagrid) {
+        } else if (argv.datagrid) { // Should be completely replaced by grid
             removeHighcharts();
 
             // Fix masters
@@ -206,10 +214,25 @@ async function scriptsTS(argv) {
                 fsLib.path(['js', 'masters-datagrid']),
                 fsLib.path(['js', 'masters'])
             );
+        } else if (argv.grid) {
+            removeHighcharts();
+
+            // Remove Dashboards
+            fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
+
+            // Fix masters
+            fs.renameSync(
+                fsLib.path(['js', 'masters-grid']),
+                fsLib.path(['js', 'masters'])
+            );
         } else {
             // Remove Dashboards
             fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']), true);
             fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
+
+            // Remove Grid
+            fsLib.deleteDirectory(fsLib.path(['js', 'Grid']), true);
         }
 
         processLib.isRunning('scripts-ts', false);
@@ -221,7 +244,8 @@ async function scriptsTS(argv) {
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
     '--dashboards': 'Build dashboards files only',
-    '--datagrid': 'Build datagrid files only'
+    '--datagrid': 'Build datagrid files only',
+    '--grid': 'Build grid files only'
 };
 gulp.task(
     'scripts-ts',
