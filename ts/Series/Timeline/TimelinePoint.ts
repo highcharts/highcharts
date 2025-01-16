@@ -203,9 +203,11 @@ class TimelinePoint extends LinePoint {
 
         this.name ??= (
             // If options is null, we are dealing with a null point
-            (options || !series.options.nullInteraction) &&
-                'Event' ||
-                'Null'
+            (
+                (options && options.y !== null) ||
+                !series.options.nullInteraction) &&
+                    'Event' ||
+                    'Null'
         );
 
         this.y = 1;
@@ -251,25 +253,25 @@ class TimelinePoint extends LinePoint {
         x?: number
     ): Point {
         const isNull = (
-            this.isNull ||
-            options === null ||
-            (options as PointOptions).y === null
-        );
+                this.isNull ||
+                options === null ||
+                (options as PointOptions).y === null
+            ),
+            series = this.series;
 
-        if (!x && this.series.options.nullInteraction) {
-            x = (options as any)?.x || this.x || this.series.xIncrement || 0;
-
-            if (typeof x === 'string') {
-                x = Math.floor((new Date(x)).getTime() / 1000);
+        if (!x && !(options as any)?.x) {
+            if (isNumber(this.x)) {
+                x = this.x;
+            } else if (isNumber(series?.xIncrement) || NaN) {
+                x = series.xIncrement || 0;
+                series.autoIncrement();
             }
-
-            this.series.autoIncrement();
         }
 
         options = Point.prototype.optionsToObject.call(
             this,
             options ?? (
-                (this.series.options.nullInteraction && { y: 0 }) ||
+                (series.options.nullInteraction && { y: 0 }) ||
                     null
             )
         );
