@@ -18,6 +18,7 @@
 
 import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+import type { LangOptionsCore } from './Options';
 
 import H from './Globals.js';
 const {
@@ -156,9 +157,11 @@ class Time {
      * */
 
     public constructor(
-        options?: Time.TimeOptions
+        options?: Time.TimeOptions,
+        lang?: LangOptionsCore
     ) {
         this.update(options);
+        this.lang = lang;
     }
 
     /* *
@@ -170,6 +173,8 @@ class Time {
     public options: Time.TimeOptions = {
         timezone: 'UTC'
     };
+
+    private lang?: LangOptionsCore;
 
     public timezone?: string;
 
@@ -184,6 +189,7 @@ class Time {
     private weekdays!: Array<string>;
 
     private shortWeekdays!: Array<string>;
+
 
     /* *
      *
@@ -667,7 +673,7 @@ class Time {
         timestamp?: number,
         upperCaseFirst?: boolean
     ): string {
-        const lang = H.defaultOptions?.lang;
+        const lang = this.lang;
 
         if (!defined(timestamp) || isNaN(timestamp)) {
             return lang?.invalidDate || '';
@@ -682,7 +688,8 @@ class Time {
             while ((match = localeAwareRegex.exec(format))) {
                 format = format.replace(match[0], this.dateTimeFormat(
                     match[1],
-                    timestamp
+                    timestamp,
+                    lang?.locale
                 ));
             }
         }
@@ -726,7 +733,7 @@ class Time {
 
                         // Week
                         // 'W': weekNumber(), // Only implemented for Gantt
-                        v: lang.weekFrom,
+                        v: lang?.weekFrom ?? '',
 
                         // Month
                         // Short month, like 'Jan'

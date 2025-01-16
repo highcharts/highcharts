@@ -31,18 +31,9 @@ export interface LabelsItemsOptions {
     style?: CSSObject;
 }
 
-export interface LangOptions {
-    // StockOpen: string;
-    // stockHigh: string;
-    // stockLow: string;
-    // stockClose: string;
-    weekFrom: string;
+export interface LangOptions extends LangOptionsCore {
     chartTitle: string;
-    decimalPoint?: string;
-    invalidDate?: string;
     loading: string;
-    locale?: string|Array<string>;
-    months?: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     pieSliceName: string;
@@ -50,12 +41,20 @@ export interface LangOptions {
     resetZoomTitle: string;
     seriesName: string;
     yAxisTitle: string;
+    zoomIn?: string;
+    zoomOut?: string;
+}
+
+export interface LangOptionsCore {
+    decimalPoint?: string;
+    invalidDate?: string;
+    locale?: string|Array<string>;
+    months?: Array<string>;
     shortMonths?: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep?: string;
     weekdays?: Array<string>;
-    zoomIn?: string;
-    zoomOut?: string;
+    weekFrom: string;
 }
 
 export interface LoadingOptions {

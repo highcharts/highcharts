@@ -2857,7 +2857,7 @@ const defaultOptions: DefaultOptions = {
     }
 };
 
-const defaultTime = new Time(defaultOptions.time);
+const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions

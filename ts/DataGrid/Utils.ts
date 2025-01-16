@@ -13,6 +13,7 @@
  *
  * */
 
+import AST from '../Core/Renderer/HTML/AST.js';
 
 /* *
  *
@@ -131,8 +132,29 @@ namespace DataGridUtils {
             return '';
         }
     }
-}
 
+    /**
+     * Sets an element's content, checking whether it is HTML or plain text.
+     * Should be used instead of element.innerText when the content can be HTML.
+     * 
+     * @param element
+     * Parent element where the content should be.
+     *
+     * @param content
+     * Content to render.
+     */
+    export function setHTMLContent(
+        element: HTMLElement,
+        content: string
+    ): void {
+        if (isHTML(content)) {
+            const formattedNodes = new AST(content);
+            formattedNodes.addToDOM(element);
+        } else {
+            element.innerText = content;
+        }
+    }
+}
 
 /* *
  *

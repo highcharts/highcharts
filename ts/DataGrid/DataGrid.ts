@@ -36,10 +36,15 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
+import Time from '../Core/Time.js';
 
-const { makeHTMLElement } = DataGridUtils;
+const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
-const { merge, getStyle } = U;
+const {
+    merge,
+    getStyle,
+    extend
+} = U;
 
 
 /* *
@@ -239,6 +244,16 @@ class DataGrid {
     public querying: QueryingController;
 
     /**
+     * The time instance.
+     */
+    public time: Time;
+
+    /**
+     * The locale of the data grid.
+     */
+    public locale?: string | string[];
+
+    /**
      * The initial height of the container. Can be 0 also if not set.
      */
     public initialContainerHeight: number = 0;
@@ -281,6 +296,15 @@ class DataGrid {
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
 
+        this.locale = this.options?.lang?.locale || (
+            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+        );
+
+        this.time = new Time(extend<Time.TimeOptions>(
+            this.options?.time,
+            { locale: this.locale }
+        ), this.options?.lang);
+
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
@@ -297,7 +321,7 @@ class DataGrid {
      *
      * */
 
-    /**
+    /*
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
@@ -675,15 +699,20 @@ class DataGrid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        if (!captionOptions?.text) {
+        const captionText = captionOptions?.text;
+
+        if (!captionText) {
             return;
         }
 
+        // Create a caption element.
         this.captionElement = makeHTMLElement('div', {
-            innerText: captionOptions.text,
             className: Globals.classNames.captionElement,
             id: this.id + '-caption'
         }, this.contentWrapper);
+
+        // Render the caption element content.
+        setHTMLContent(this.captionElement, captionText);
 
         if (captionOptions.className) {
             this.captionElement.classList.add(
@@ -699,15 +728,20 @@ class DataGrid {
      */
     public renderDescription(): void {
         const descriptionOptions = this.options?.description;
-        if (!descriptionOptions?.text) {
+        const descriptionText = descriptionOptions?.text;
+
+        if (!descriptionText) {
             return;
         }
 
+        // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            innerText: descriptionOptions.text,
             className: Globals.classNames.descriptionElement,
             id: this.id + '-description'
         }, this.contentWrapper);
+
+        // Render the description element content.
+        setHTMLContent(this.descriptionElement, descriptionText);
 
         if (descriptionOptions.className) {
             this.descriptionElement.classList.add(
