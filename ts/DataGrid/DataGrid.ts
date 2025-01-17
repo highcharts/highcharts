@@ -186,11 +186,6 @@ class DataGrid {
     public loadingWrapper?: HTMLElement;
 
     /**
-     * Whether the loading indicator is shown.
-     */
-    private loadingShown = false;
-
-    /**
      * The presentation table of the data grid. It contains a modified version
      * of the data table that is used for rendering the data grid content. If
      * not modified, just a reference to the original data table.
@@ -955,17 +950,15 @@ class DataGrid {
      * The message to display in the loading indicator.
      */
     public showLoading(message?: string): void {
-        if (this.loadingShown) {
+        if (this.loadingWrapper) {
             return;
         }
-
-        this.loadingShown = true;
 
         // Create loading wrapper.
         this.loadingWrapper = makeHTMLElement(
             'div',
             {
-                className: 'highcharts-datagrid-loading-wrapper',
+                className: Globals.classNames.loadingWrapper
             },
             this.contentWrapper
         )
@@ -974,7 +967,7 @@ class DataGrid {
         makeHTMLElement(
             'div',
             {
-                className: 'highcharts-datagrid-spinner'
+                className: Globals.classNames.loadingSpinner
             },
             this.loadingWrapper
         );
@@ -984,15 +977,15 @@ class DataGrid {
         const loadingSpan = makeHTMLElement(
             'span',
             {
-                className: 'highcharts-datagrid-loading-message'
+                className: Globals.classNames.loadingMessage
             },
             this.loadingWrapper
         );
 
-        AST.setElementHTML(
+        setHTMLContent(
             loadingSpan,
             pick(message, this.options?.lang?.loading, '')
-        );
+        )
     }
 
     /**
@@ -1000,8 +993,7 @@ class DataGrid {
      */
     public hideLoading(): void {
         this.loadingWrapper?.remove();
-        this.loadingWrapper = void 0;
-        this.loadingShown = false;
+        delete this.loadingWrapper;
     }
 
     /**

@@ -270,6 +270,10 @@
     --idg-positive-border-size: var(--hcdg-positive-border-size, var(--idg-highlight-border-size));
     --idg-positive-background: var(--hcdg-positive-background, var(--idg-positive-default-background));
 
+    /* Loading indicator */
+    --idg-loading-wrapper-background: var(--hcdg-loading-wrapper-background, var(--idg-neutral-default-background));
+    --idg-loading-wrapper-border-size: var(--hcdg-loading-wrapper-border-size, 4px);
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -699,7 +703,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     position: absolute;
     width: 100%;
     height: 100%;
-    background: var(--highcharts-neutral-color-0);
+    background: var(--idg-loading-wrapper-background);
     opacity: 0.5;
     gap: 10px;
 }
@@ -708,9 +712,13 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     color: var(--highcharts-neutral-color-100);
 }
 
+.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-no-data {
+    opacity: 0;
+}
+
 .highcharts-datagrid-loading-wrapper .highcharts-datagrid-spinner {
-    border: 4px solid var(--highcharts-neutral-color-60);
-    border-top: 4px solid var(--highcharts-neutral-color-100);
+    border: var(--idg-loading-wrapper-border-size) solid var(--highcharts-neutral-color-60);
+    border-top: var(--idg-loading-wrapper-border-size) solid var(--highcharts-neutral-color-100);
     border-radius: 50%;
     width: 20px;
     height: 20px;
