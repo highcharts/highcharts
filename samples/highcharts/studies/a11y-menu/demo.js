@@ -62,7 +62,8 @@ function getChartConfig() {
             }
         },
         tooltip: {
-            valueSuffix: ' (1000 MT)'
+            valueSuffix: ' (1000 MT)',
+            stickOnContact: true
         },
         plotOptions: {
             column: {
