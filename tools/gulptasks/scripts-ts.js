@@ -114,7 +114,6 @@ async function scriptsTS(argv) {
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
     const dashCfg = require('./dashboards/_config.json');
-    const gridCfg = require('./grid/_config.json');
 
     try {
         let library = 'Highcharts';
@@ -135,17 +134,19 @@ async function scriptsTS(argv) {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
             // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
         } else if (argv.grid) {
-            fsLib.deleteDirectory(gridCfg.bundleTargetFolder, true);
+            fsLib.deleteDirectory(fsLib.path(['code', 'grid']), true);
         }
 
         fsLib.deleteDirectory('js', true);
 
-        fsLib.copyAllFiles(
-            'ts',
-            argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
-            true,
-            sourcePath => sourcePath.endsWith('.d.ts')
-        );
+        if (!argv.grid) {
+            fsLib.copyAllFiles(
+                'ts',
+                argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
+            );
+        }
 
         if (argv.dashboards) {
             await processLib
@@ -155,7 +156,7 @@ async function scriptsTS(argv) {
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
         } else if (argv.grid) {
             await processLib
-                .exec(`npx tsc -p ${gridCfg.typeScriptFolder} --outDir js`);
+                .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
@@ -212,18 +213,6 @@ async function scriptsTS(argv) {
             // Fix masters
             fs.renameSync(
                 fsLib.path(['js', 'masters-datagrid']),
-                fsLib.path(['js', 'masters'])
-            );
-        } else if (argv.grid) {
-            removeHighcharts();
-
-            // Remove Dashboards
-            fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']), true);
-            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
-
-            // Fix masters
-            fs.renameSync(
-                fsLib.path(['js', 'masters-grid']),
                 fsLib.path(['js', 'masters'])
             );
         } else {
