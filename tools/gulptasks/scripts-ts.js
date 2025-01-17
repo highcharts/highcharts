@@ -133,9 +133,10 @@ async function scriptsTS(argv) {
         if (argv.dashboards) {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
             // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
-        } else if (argv.grid) {
-            fsLib.deleteDirectory(fsLib.path(['code', 'grid']), true);
         }
+        // else if (argv.grid) {
+        //     fsLib.deleteDirectory(fsLib.path(['code', 'grid']), true);
+        // }
 
         fsLib.deleteDirectory('js', true);
 
