@@ -4,7 +4,7 @@ const jsonBtn = document.querySelector('#json'),
 /**
  * DataGrid init
  */
-const dataGrid = Grid.grid('container', {
+const grid = Grid.grid('container', {
     dataTable: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],

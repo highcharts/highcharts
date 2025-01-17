@@ -1,4 +1,4 @@
-const dataGrid = new Grid.grid('container', {
+const grid = new Grid.grid('container', {
     dataTable: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),

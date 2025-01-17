@@ -18,7 +18,7 @@ const initialOptions = {
     }]
 };
 
-const dataGrid = Grid.grid('container', {
+const grid = Grid.grid('container', {
     dataTable: {
         columns: {
             product: [

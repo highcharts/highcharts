@@ -9,7 +9,7 @@ const dataTable = new DataGrid.DataTable({
     }
 });
 
-const dataGrid = Grid.grid('container', {
+const grid = Grid.grid('container', {
     dataTable: dataTable
 });
 
