@@ -28,10 +28,17 @@ async function scriptsWebpack() {
 
     LogLib.message('Packing code...');
 
-    const configs = {
-        Highcharts: 'highcharts.webpack.mjs',
-        HighchartsES5: 'highcharts-es5.webpack.mjs'
-    };
+    let configs;
+    if (argv.grid) {
+        configs = {
+            Grid: 'grid.webpack.mjs'
+        };
+    } else {
+        configs = {
+            Highcharts: 'highcharts.webpack.mjs',
+            HighchartsES5: 'highcharts-es5.webpack.mjs'
+        };
+    }
 
     let config;
     let log = '';
