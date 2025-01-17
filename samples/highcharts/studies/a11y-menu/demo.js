@@ -70,7 +70,7 @@ function getChartConfig() {
                 borderWidth: 0
             }
         },
-        colors: ['#2caffe', '#a4a1ce'],
+        colors: ['#90D2FE', '#CBC9E3'],
         series: [
             {
                 name: 'Corn',
