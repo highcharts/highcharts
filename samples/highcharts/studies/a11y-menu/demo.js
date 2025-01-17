@@ -141,7 +141,7 @@ function createPreferencesDialog(chart) {
     </button>
     <h2>Preferences</h2>
     <p>Customize your chart settings to enhance your experience.</p>
-    <h3>Screen reader info:</h3>
+    <h3>Text description:</h3>
     <div class="pref verbosity">
         <input type="radio" id="short" name="verbosity" value="short"
         ${selectedVerbosity === 'short' ? 'checked' : ''}>
@@ -154,7 +154,7 @@ function createPreferencesDialog(chart) {
     <div class="pref alt-text">
     <input type="checkbox" id="alt-info" name="alt-info"
         ${isInfoChecked ? 'checked' : ''}>
-        <label for="alt-info">Show info region</label>
+        <label for="alt-info">Show chart overview</label>
     <input type="checkbox" id="alt-points" name="alt-points"
         ${isAltPointChecked ? 'checked' : ''}>
         <label for="alt-points">Show points</label>
