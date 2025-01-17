@@ -158,7 +158,7 @@ function createPreferencesDialog(chart) {
         <label for="alt-info">Show chart overview</label>
     <input type="checkbox" id="alt-points" name="alt-points"
         ${isAltPointChecked ? 'checked' : ''}>
-        <label for="alt-points">Show points</label>
+        <label for="alt-points">Show point labels</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
