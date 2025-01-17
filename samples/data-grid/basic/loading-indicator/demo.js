@@ -8,7 +8,13 @@ const dg = DataGrid.dataGrid('container', {
     }
 });
 
+let isLoading = false;
 document.getElementById('load').addEventListener('click', () => {
+    if (isLoading) {
+        return;
+    }
+    isLoading = true;
+
     // Show the loading indicator
     dg.showLoading('Loading data...');
 
@@ -28,5 +34,6 @@ document.getElementById('load').addEventListener('click', () => {
             }
         });
         dg.hideLoading();
+        isLoading = false;
     }, 2000);
 });
