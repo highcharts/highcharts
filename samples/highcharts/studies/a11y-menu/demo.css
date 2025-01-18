@@ -76,6 +76,11 @@ h3 {
     transition: fill 0.2s ease;
 }
 
+.hc-pref-button-bg {
+    fill: transparent;
+    transition: fill 0.2s ease;
+}
+
 .hc-pref-button {
     cursor: pointer;
 }
