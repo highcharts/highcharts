@@ -4,6 +4,13 @@
  * TODO: Calculate contrast with function instead of hardcoded
  */
 
+
+// Creating patterns for normal and contrast colors
+const defaultColors = ['#90D2FE', '#CBC9E3'],
+    contrastColors = ['#247eb3', '#6d6aaf'],
+    borderColors = contrastColors,
+    borderColorsWithContrast = ['#103042', '#272541'];
+
 // Storing preference states globally
 let selectedVerbosity = 'full',
     selectedTextSize = 'default',
@@ -13,8 +20,6 @@ let selectedVerbosity = 'full',
     isInfoChecked = false,
     isPatternChecked = false,
     defaultDesc = '';
-
-isPatternChecked = true;
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -74,7 +79,7 @@ function getChartConfig() {
                 borderWidth: 0
             }
         },
-        colors: ['#90D2FE', '#CBC9E3'],
+        colors: defaultColors,
         series: [
             {
                 name: 'Corn',
@@ -242,7 +247,7 @@ function createPreferencesDialog(chart) {
         <input type="checkbox" id="border" name="border"
         ${isBorderChecked ? 'checked' : ''}>
         <label for="border">Add border</label>
-        <input type="checkbox" id="pattern" name="pattern
+        <input type="checkbox" id="pattern" name="pattern"
         ${isPatternChecked ? 'checked' : ''}>
         <label for="pattern">Pattern instead of colors</label>
     </div>
@@ -266,6 +271,7 @@ function setupEventListeners(prefContent, chart) {
     const contrastCheckbox =
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
+    const patternCheckbox = prefContent.querySelector('input[name="pattern"]');
     const altPointCheckbox = prefContent
         .querySelector('input[name="alt-points"]');
     const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
@@ -276,8 +282,8 @@ function setupEventListeners(prefContent, chart) {
         .getElementsByClassName('highcharts-description')[0];
     let fontSize = '';
 
-    textSizeRadioButtons.forEach(radio => {
 
+    textSizeRadioButtons.forEach(radio => {
         radio.addEventListener('change', event => {
             const selectedSize = event.target.value;
             selectedTextSize = selectedSize;
@@ -329,44 +335,23 @@ function setupEventListeners(prefContent, chart) {
     contrastCheckbox.addEventListener('change', event => {
         const isChecked = event.target.checked;
         isContrastChecked = isChecked; // Store state
-        if (isChecked) {
-            chart.update({
-                colors: ['#247eb3', '#6d6aaf']
-            });
 
-        } else {
-            chart.update({
-                colors: ['#2caffe', '#a4a1ce']
-            });
-        }
+        updateChartColorLogic(chart);
         // Append button to screen reader region
+        setupScreenReaderSection(selectedVerbosity, chart);
+    });
+
+    patternCheckbox.addEventListener('change', event => {
+        const isChecked = event.target.checked;
+        isPatternChecked = isChecked; // Store state
+        updateChartColorLogic(chart);
         setupScreenReaderSection(selectedVerbosity, chart);
     });
 
     borderCheckbox.addEventListener('change', event => {
         const isChecked = event.target.checked;
         isBorderChecked = isChecked; // Store state
-        if (isChecked) {
-            chart.update({
-                series: [{
-                    borderColor: '#103042',
-                    borderWidth: 2
-                }, {
-                    borderColor: '#272541',
-                    borderWidth: 2
-                }]
-            });
-        } else {
-            chart.update({
-                series: [{
-                    borderColor: null,
-                    borderWidth: 0
-                }, {
-                    borderColor: null,
-                    borderWidth: 0
-                }]
-            });
-        }
+        updateChartColorLogic(chart);
         // Append button to screen reader region
         setupScreenReaderSection(selectedVerbosity, chart);
     });
@@ -449,6 +434,44 @@ function setupEventListeners(prefContent, chart) {
         isInfoChecked = true;
     });
 }
+
+function updateChartColorLogic(chart) {
+    const seriesOptions = [{
+        color: isPatternChecked ? {
+            pattern: {
+                path: 'M 0 0 L 5 5 M 5 0 L 0 5', // Diagonal stripes
+                color: isContrastChecked ? contrastColors[0] : defaultColors[0],
+                backgroundColor: isContrastChecked ? contrastColors[0] + '40' :
+                    defaultColors[0] + '40',
+                width: 6,
+                height: 6
+            }
+        } :
+            isContrastChecked ? contrastColors[0] : defaultColors[0],
+        borderColor: isBorderChecked ? isContrastChecked ?
+            borderColorsWithContrast[0] : borderColors[0] : null,
+        borderWidth: isBorderChecked ? 2 : 0
+    }, {
+        color: isPatternChecked ? {
+            pattern: {
+                path: 'M 0 3 L 3 0 M 3 6 L 6 3', // Crosshatch
+                color: isContrastChecked ? contrastColors[1] : defaultColors[1],
+                backgroundColor: isContrastChecked ? contrastColors[1] + '40' :
+                    defaultColors[1] + '40',
+                width: 6,
+                height: 6
+            }
+        } : isContrastChecked ? contrastColors[1] : defaultColors[1],
+        borderColor: isBorderChecked ? isContrastChecked ?
+            borderColorsWithContrast[1] : borderColors[1] : null,
+        borderWidth: isBorderChecked ? 2 : 0
+    }];
+
+    chart.update({
+        series: seriesOptions
+    });
+}
+
 
 function trapFocusInDialog(dialog) {
 
