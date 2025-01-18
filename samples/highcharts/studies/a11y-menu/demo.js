@@ -4,12 +4,16 @@
  * TODO: Calculate contrast with function instead of hardcoded
  */
 
-
 // Creating patterns for normal and contrast colors
 const defaultColors = ['#90D2FE', '#CBC9E3'],
     contrastColors = ['#247eb3', '#6d6aaf'],
     borderColors = contrastColors,
     borderColorsWithContrast = ['#103042', '#272541'];
+
+// Defining description formats for verbosity
+const shortDescriptionFormat = '{point.y} (1000 MT).';
+const fullDescriptionFormat =  '{point.category}, {point.series.name}: ' +
+            '{point.y} (1000 MT).';
 
 // Storing preference states globally
 let selectedVerbosity = 'full',
@@ -46,6 +50,9 @@ function getChartConfig() {
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>'
+            },
+            point: {
+                descriptionFormat: fullDescriptionFormat
             }
         },
         title: {
@@ -159,16 +166,23 @@ function addPrefButtonScreenReader(chart) {
     const screenReaderDivInnerDiv = screenReaderDiv.children[0];
     const tableButton =
         document.getElementById('hc-linkto-highcharts-data-table-0');
-    const prefButton = document.createElement('button');
-    prefButton.textContent = 'Preferences';
-    prefButton.id = 'hc-pref-button';
-    prefButton.addEventListener('click', () => handlePrefButtonClick(chart));
+    const existingPrefButton =
+        screenReaderDivInnerDiv?.querySelector('#hc-pref-button');
 
-    // Ensure screenReaderDiv and tableButton exist
-    if (screenReaderDiv && tableButton) {
-        screenReaderDivInnerDiv.insertBefore(
-            prefButton, screenReaderDivInnerDiv.children[4]
+    if (!existingPrefButton) {
+        const prefButton = document.createElement('button');
+        prefButton.textContent = 'Preferences';
+        prefButton.id = 'hc-pref-button';
+        prefButton.addEventListener('click', () =>
+            handlePrefButtonClick(chart)
         );
+
+        // Ensure screenReaderDiv and tableButton exist
+        if (screenReaderDiv && tableButton) {
+            screenReaderDivInnerDiv.insertBefore(
+                prefButton, screenReaderDivInnerDiv.children[4]
+            );
+        }
     }
 }
 
@@ -328,7 +342,7 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             const verbosity = event.target.value;
             selectedVerbosity = verbosity;
-            applyInfoRegion(verbosity, chart);
+            setupScreenReaderSection(selectedVerbosity, chart);
         });
     });
 
@@ -359,26 +373,32 @@ function setupEventListeners(prefContent, chart) {
     altPointCheckbox.addEventListener('change', event => {
         const isChecked = event.target.checked;
         isAltPointChecked = isChecked;
-        const paths = document
-            .querySelectorAll('path.highcharts-point[aria-label');
-        const chartRect = chart.container.getBoundingClientRect();
+
+        chart.update({
+            accessibility: {
+                point: {
+                    descriptionFormat: selectedVerbosity === 'short' ?
+                        shortDescriptionFormat : fullDescriptionFormat
+                }
+            }
+        });
 
         // Clear existing altTextDivs
         chart.altTextDivs.forEach(div => div.remove());
         chart.altTextDivs = [];
 
         if (isChecked) {
+            const paths = document
+                .querySelectorAll('path.highcharts-point[aria-label');
+            const chartRect = chart.container.getBoundingClientRect();
+
             paths.forEach(path => {
                 const ariaLabel = path.getAttribute('aria-label');
                 const rect = path.getBoundingClientRect();
 
-                // Create label div
+                // Create and position alt text div
                 const altTextDiv = document.createElement('div');
-                altTextDiv.textContent =
-                    getPointAltText(ariaLabel, selectedVerbosity);
-
-                altTextDiv
-                    .setAttribute('data-stored-original-label', ariaLabel);
+                altTextDiv.textContent = ariaLabel;
                 altTextDiv.classList.add('alt-text-div');
                 altTextDiv.setAttribute('aria-hidden', 'true');
 
@@ -404,14 +424,6 @@ function setupEventListeners(prefContent, chart) {
             });
 
         } else {
-
-            chart.altTextDivs.forEach(div => div.remove());
-            chart.altTextDivs = [];
-
-            document.querySelectorAll('.alt-text-div').forEach(
-                label => label.remove()
-            );
-            chart.altTextDivs.length = 0;
             chart.update({
                 tooltip: {
                     enabled: true
@@ -471,7 +483,6 @@ function updateChartColorLogic(chart) {
         series: seriesOptions
     });
 }
-
 
 function trapFocusInDialog(dialog) {
 
@@ -554,7 +565,9 @@ function setupScreenReaderSection(selectedVerbosity, chart) {
 }
 
 
+// TODO: Refactor function to be only about applying info region and rename
 function applyInfoRegion(selectedVerbosity, chart) {
+
     const screenReaderDiv = document
         .getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -565,6 +578,8 @@ function applyInfoRegion(selectedVerbosity, chart) {
         defaultDesc = description.textContent;
     }
 
+    let globalIndex = 0;
+
     chart.series.forEach(series => {
         series.points.forEach(point => {
             const pointElement = point.graphic?.element;
@@ -573,55 +588,47 @@ function applyInfoRegion(selectedVerbosity, chart) {
                 return;
             }
 
-            // Store the original label
-            let originalLabel = pointElement
-                .getAttribute('data-stored-original-label');
+            // Generate alt text based on verbosity
+            const altText = selectedVerbosity === 'short' ?
+                `${point.y} (1000 MT).` :
+                `${point.category}, ${point.series.name}: 
+                ${point.y} (1000 MT).`;
 
-            if (!originalLabel) {
-                originalLabel = pointElement.getAttribute('aria-label');
-                pointElement
-                    .setAttribute('data-stored-original-label', originalLabel);
+            // Update corresponding alt text div
+            const altTextDiv = chart.altTextDivs[globalIndex];
+            if (altTextDiv) {
+                altTextDiv.textContent = altText;
             }
 
-            if (selectedVerbosity === 'short') {
-                // Apply short label
-                const shortLabel = getPointAltText(originalLabel, 'short');
+            globalIndex++;
 
-                // Shortening aria-label for point element
-                pointElement.setAttribute('aria-label', shortLabel);
-
-                // Update visible alt text divs
-                chart.altTextDivs.forEach(div => {
-
-                    // Shortening label for point alt text div
-                    div.textContent = shortLabel;
-                });
-            } else if (selectedVerbosity === 'full') {
-                // Restore original label for point element
-                pointElement.setAttribute('aria-label', originalLabel);
-                chart.altTextDivs.forEach(div => {
-                    // Restoring original label
-                    div.textContent = originalLabel;
-                });
-            }
         });
     });
 
-    // Update description and axis visibility
+    const chartInfoElements = innerScreenReaderDiv.querySelectorAll('div');
+
     if (selectedVerbosity === 'short') {
         const descArray = description.textContent.split('. ');
-        const newDesc =
-            descArray.slice(0, descArray.length - 2).join('. ') + '.';
+        const newDesc = descArray
+            .slice(0, descArray.length - 2).join('. ') + '.';
         description.textContent = newDesc;
 
-        innerScreenReaderDiv.children[5].style.display = 'none';
-        innerScreenReaderDiv.children[6].style.display = 'none';
-        innerScreenReaderDiv.children[7].style.display = 'none';
+        // Hide specific elements
+        chartInfoElements.forEach((el, index) => {
+            console.log(index);
+            if (index >= 4) {
+                console.log(chartInfoElements[index]);
+                el.style.display = 'none';
+            }
+        });
     } else if (selectedVerbosity === 'full') {
+        // Restore full description
         description.textContent = defaultDesc;
-        innerScreenReaderDiv.children[5].style.display = 'block';
-        innerScreenReaderDiv.children[6].style.display = 'block';
-        innerScreenReaderDiv.children[7].style.display = 'block';
+
+        // Show all divs
+        chartInfoElements.forEach(el => {
+            el.style.display = 'block';
+        });
     }
 }
 
@@ -671,15 +678,6 @@ function createKeyboardNavigationHandler() {
             }
         }
     });
-}
-
-function getPointAltText(ariaLabel, verbosity) {
-    if (verbosity === 'short') {
-        const [value] = ariaLabel
-            .match(/\d{1,3}(?:,\d{3})*(?:\.\d+)?/) || [];
-        return `${value || ''} (1000 MT)`; // Short alt text
-    }
-    return ariaLabel; // Full alt text
 }
 
 // Initialize chart
