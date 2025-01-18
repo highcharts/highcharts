@@ -87,16 +87,63 @@ function getChartConfig() {
 
 
 function addPrefButton(chart) {
-    // TODO: Fix responsiveness of button
-    chart.prefMenu.prefButton = chart.renderer.button(
-        '⚙️', 715, 1, () => handlePrefButtonClick(chart)
+    const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.pngg';
+    const fallbackText = '⚙️';
+
+    const buttonGroup = chart.renderer.g()
+        .attr({
+            id: 'hc-pref-button-group',
+            class: 'hc-pref-button',
+            cursor: 'pointer',
+            role: 'button',
+            tabindex: 0,
+            'aria-label': 'Preferences'
+        })
+        .on('click', () => handlePrefButtonClick(chart))
+        .add();
+
+    // Add a background rectangle
+    chart.renderer
+        .rect(710, 3, 32, 32)
+        .attr({
+            class: 'hc-pref-button-bg',
+            rx: 4,
+            fill: 'transparent'
+        })
+        .add(buttonGroup);
+
+    // Add the image on top
+    const prefButton = chart.renderer.image(
+        settingImgSrc, 715, 7, 24, 24
     )
         .attr({
             id: 'hc-pref-button',
-            'aria-label': 'Preferences'
+            'aria-hidden': 'false'
         })
-        .add();
+        .add(buttonGroup);
+
+    // Add fallback logic
+    prefButton.element.onerror = () => {
+        prefButton.destroy(); // Remove broken image
+
+        chart.renderer
+            .text(fallbackText, 720, 25) // x, y for the text
+            .attr({
+                class: 'hc-pref-button-text',
+                'aria-hidden': 'false'
+            })
+            .css({
+                fontSize: '20px',
+                textAnchor: 'middle',
+                cursor: 'pointer'
+            })
+            .add(buttonGroup);
+    };
+
+    // Assign button group to chart namespace
+    chart.prefMenu.prefButton = buttonGroup;
 }
+
 
 function addPrefButtonScreenReader(chart) {
     const screenReaderDiv =

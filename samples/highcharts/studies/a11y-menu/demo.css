@@ -61,16 +61,21 @@ h3 {
     pointer-events: none;
 }
 
-#hc-pref-button text {
+#hc-pref-button-fallback text {
     font-size: 1.2em !important;
 }
 
-#hc-pref-button rect {
+#hc-pref-button-fallback rect {
     fill: rgb(255, 255, 255) !important;
     stroke: rgb(255, 255, 255) !important;
 }
 
-#hc-pref-button:hover rect {
-    fill: rgb(211, 211, 211) !important;
-    stroke: rgb(211, 211, 211) !important;
+.hc-pref-button:hover,
+.hc-pref-button-bg {
+    fill: rgb(211, 211, 211);
+    transition: fill 0.2s ease;
+}
+
+.hc-pref-button {
+    cursor: pointer;
 }
