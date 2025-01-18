@@ -11,7 +11,10 @@ let selectedVerbosity = 'full',
     isBorderChecked = false,
     isAltPointChecked = false,
     isInfoChecked = false,
+    isPatternChecked = false,
     defaultDesc = '';
+
+isPatternChecked = true;
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -87,7 +90,7 @@ function getChartConfig() {
 
 
 function addPrefButton(chart) {
-    const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.pngg';
+    const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.png';
     const fallbackText = '⚙️';
 
     const buttonGroup = chart.renderer.g()
@@ -239,6 +242,9 @@ function createPreferencesDialog(chart) {
         <input type="checkbox" id="border" name="border"
         ${isBorderChecked ? 'checked' : ''}>
         <label for="border">Add border</label>
+        <input type="checkbox" id="pattern" name="pattern
+        ${isPatternChecked ? 'checked' : ''}>
+        <label for="pattern">Pattern instead of colors</label>
     </div>
     `;
 
