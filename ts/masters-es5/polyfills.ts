@@ -56,6 +56,35 @@ if (!Object.values) {
     };
 }
 
+const ElementPrototype = window.Element.prototype;
+
+if (typeof ElementPrototype.matches !== 'function') {
+    ElementPrototype.matches = function matches(selector: string): boolean {
+        let element = this;
+        const elements = element.ownerDocument.querySelectorAll(selector);
+        let index = 0;
+        while (elements[index] && elements[index] !== element) {
+            ++index;
+        }
+        return Boolean(elements[index]);
+    };
+}
+
+if (typeof ElementPrototype.closest !== 'function') {
+    ElementPrototype.closest = function closest(
+        selector: keyof HTMLElementTagNameMap
+    ): Element | null {
+        let element: Element | null = this;
+        while (element && element.nodeType === 1) {
+            if (element?.matches(selector)) {
+                return element;
+            }
+            element = (element.parentNode as Element | null) || null;
+        }
+        return null;
+    };
+}
+
 (function () {
     if (typeof window.CustomEvent === "function") return false;
 
