@@ -84,3 +84,7 @@ h3 {
 .hc-pref-button {
     cursor: pointer;
 }
+
+.alt-text-div {
+    max-width: 50px;
+}
