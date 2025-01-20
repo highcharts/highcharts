@@ -18,7 +18,8 @@ let selectedVerbosity = 'full',
     isAltPointChecked = false,
     isInfoChecked = false,
     isPatternChecked = false,
-    defaultDesc = '';
+    defaultDesc = '',
+    fontSize = '';
 
 function initializeChart() {
     const chart = Highcharts.chart('container', getChartConfig());
@@ -287,7 +288,6 @@ function setupEventListeners(prefContent, chart) {
     );
     const description = document
         .getElementsByClassName('highcharts-description')[0];
-    let fontSize = '';
 
 
     textSizeRadioButtons.forEach(radio => {
@@ -576,6 +576,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
     // Toggle visibility based on isInfoChecked
     if (isInfoChecked) {
         infoRegion.classList.add('hide-section');
+        infoRegion.style.fontSize = fontSize;
     } else {
         infoRegion.classList.remove('hide-section');
     }
