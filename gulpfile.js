@@ -44,6 +44,8 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/scripts-watch',
     'dashboards/test',
     'dashboards/lint',
+    'grid/scripts',
+    'grid/scripts-dts',
     'default',
     'dist',
     'dist-clean',
