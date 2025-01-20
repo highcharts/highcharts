@@ -2,3 +2,17 @@
     height: 400px;
     min-width: 310px;
 }
+
+.highcharts-figure {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.highcharts-figure p {
+    margin: 10px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
