@@ -128,6 +128,19 @@ const defaultOptions: DefaultOptions = {
      * @optionparent lang
      */
     lang: {
+        stockOpen: 'Open',
+        stockHigh: 'High',
+        stockLow: 'Low',
+        stockClose: 'Close',
+
+        weekFrom: 'week from',
+
+        /**
+         * The default chart title.
+         *
+         * @since next
+         */
+        chartTitle: 'Chart title',
 
         /**
          * The browser locale to use for date and number formatting. The actual
@@ -167,6 +180,13 @@ const defaultOptions: DefaultOptions = {
          * @type    {Array<string>}
          */
         months: void 0,
+
+        /**
+         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+         *
+         * @since next
+         */
+        seriesName: 'Series {add index 1}',
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
@@ -259,6 +279,13 @@ const defaultOptions: DefaultOptions = {
         numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
 
         /**
+         * The default name for a pie slice (point).
+         * @since next
+         */
+
+        pieSliceName: 'Slice',
+
+        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.
@@ -295,6 +322,12 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 1.2.4
          */
+        /**
+         * The default title of the Y axis
+         *
+         * @since next
+         */
+        yAxisTitle: 'Values',
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 
@@ -650,7 +683,6 @@ const defaultOptions: DefaultOptions = {
          * @default {highstock} undefined
          */
         text: 'Chart title',
-
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"
          * and "right".
@@ -2408,7 +2440,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%[AebY]',
             /** @internal */
-            week: 'Week from %[AebY]',
+            week: '%v %[AebY]',
             /** @internal */
             month: '%[BY]',
             /** @internal */
@@ -2871,6 +2903,13 @@ function setOptions(
         defaultTime.update({
             locale: options.lang.locale as string|Array<string>
         });
+    }
+
+    if (options.lang?.chartTitle) {
+        defaultOptions.title = {
+            ...defaultOptions.title,
+            text: options.lang.chartTitle
+        } as DefaultOptions['title'];
     }
 
     return defaultOptions;
