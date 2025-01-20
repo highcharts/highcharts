@@ -87,4 +87,6 @@ h3 {
 
 .alt-text-div {
     max-width: 50px;
+    border: 1px solid black;
+    border-radius: 2px;
 }
