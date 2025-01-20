@@ -24,8 +24,6 @@ import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
-import D from '../Defaults.js';
-
 /* *
  *
  *  Namespace
@@ -3058,18 +3056,17 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`.
+             * `text` option to `undefined`. The default value is overriden by
+             * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
              *
-             * @type    {string|null}
+             * @type    {string|undefined}
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
-             *
              */
-            text: D.defaultOptions.lang.yAxisTitle
         },
 
         /**

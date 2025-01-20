@@ -12,6 +12,10 @@ body {
         sans-serif;
 }
 
+figure.highcharts-figure {
+    margin: 0;
+}
+
 #lang-select-wrapper {
     margin: 10px;
 }
