@@ -215,6 +215,12 @@ namespace FocusBorderComposition {
         }
 
         this.focusElement = svgElement;
+
+        // Render focusborder if window is resized
+        const updateFocusBorder = (): void => this.renderFocusBorder();
+        window.removeEventListener('resize', updateFocusBorder);
+        window.addEventListener('resize', updateFocusBorder);
+
         this.renderFocusBorder();
     }
 
