@@ -95,7 +95,6 @@ function getChartConfig() {
     };
 }
 
-
 function addPrefButton(chart) {
     const settingImgSrc = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Cog_wheel_icon.svg/1024px-Cog_wheel_icon.svg.png';
     const fallbackText = '⚙️';
@@ -153,7 +152,6 @@ function addPrefButton(chart) {
     // Assign button group to chart namespace
     chart.prefMenu.prefButton = buttonGroup;
 }
-
 
 function addPrefButtonScreenReader(chart) {
     const screenReaderDiv =
@@ -377,7 +375,6 @@ function setupEventListeners(prefContent, chart) {
                 }
             }
         });
-
         // Clear existing altTextDivs
         chart.altTextDivs.forEach(div => div.remove());
         chart.altTextDivs = [];
@@ -433,12 +430,8 @@ function setupEventListeners(prefContent, chart) {
         const isChecked = event.target.checked;
         isInfoChecked = isChecked;
 
-        if (isChecked) {
-            infoRegion.classList.add('hide-section');
-        } else {
-            infoRegion.classList.remove('hide-section');
-        }
-        isInfoChecked = true;
+        // Refresh screen reader section
+        setupScreenReaderSection(selectedVerbosity, chart);
     });
 }
 
@@ -567,10 +560,24 @@ function applyInfoRegion(selectedVerbosity, chart) {
         .getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     const description = innerScreenReaderDiv.children[3];
+    const infoRegion = document.querySelector(
+        '#highcharts-screen-reader-region-before-0 > div:first-child'
+    );
 
-    // Save default description if not already saved
+    // Check if info region is already displayed
+    if (!infoRegion) {
+        return;
+    }
+
     if (!defaultDesc) {
         defaultDesc = description.textContent;
+    }
+
+    // Toggle visibility based on isInfoChecked
+    if (isInfoChecked) {
+        infoRegion.classList.add('hide-section');
+    } else {
+        infoRegion.classList.remove('hide-section');
     }
 
     let globalIndex = 0;
@@ -625,7 +632,6 @@ function applyInfoRegion(selectedVerbosity, chart) {
         });
     }
 }
-
 
 // Define keyboard navigation for this component
 function createKeyboardNavigationHandler() {
