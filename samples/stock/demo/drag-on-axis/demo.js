@@ -65,7 +65,45 @@
     });
 }(Highcharts));
 
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => {
+const commonOptions = {
+    api: {
+        url: 'https://demo-live-data.highcharts.com',
+        access: {
+            url: 'https://demo-live-data.highcharts.com/token/oauth',
+            token: 'token'
+        }
+    }
+};
+
+const AMDPriceConnector =
+    // eslint-disable-next-line no-undef
+    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'Price'
+        },
+        securities: [{
+            id: 'US0079031078',
+            idType: 'ISIN'
+        }],
+        startDate: '2021-01-01',
+        endDate: '2022-12-31',
+        currencyId: 'EUR'
+    });
+
+(async () => {
+    await AMDPriceConnector.load();
+
+    const rawData = Object.values(AMDPriceConnector.table.getColumns());
+    const data = [];
+
+    for (let i = 0; i < rawData[0].length; i++) {
+        data.push([
+            rawData[0][i],
+            rawData[1][i]
+        ]);
+    }
+
     Highcharts.stockChart('container', {
         yAxis: [{
             startOnTick: false,
@@ -80,8 +118,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         series: [{
             data
         }, {
-            data,
-            yAxis: 1
+            yAxis: 1,
+            type: 'macd',
+            linkedTo: ':previous'
         }]
     });
-});
+})();
