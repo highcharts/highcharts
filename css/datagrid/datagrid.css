@@ -712,7 +712,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     color: var(--highcharts-neutral-color-100);
 }
 
-.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-no-data {
+.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-no-data,
+.highcharts-datagrid-container:has(.highcharts-datagrid-loading-wrapper) .highcharts-datagrid-credits-container {
     opacity: 0;
 }
 
