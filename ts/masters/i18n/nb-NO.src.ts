@@ -57,7 +57,7 @@ const languageOptions = {
     "resetZoom": "Tilbakestill zoom",
     "resetZoomTitle": "Tilbakestill zoomnivå 1:1",
     "rangeSelectorZoom": "Zoom",
-    "rangeSelectorFrom": "Fra",
+    "rangeSelectorFrom": "",
     "rangeSelectorTo": "→",
     "zoomIn": "Zoom inn",
     "zoomOut": "Zoom ut",
