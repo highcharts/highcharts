@@ -7,7 +7,7 @@ The offline-exporting module allows for image export of charts without sending d
 *   Want to save the cost of setting up your own server
 *   Don't require the export to work with old browsers
 
-[View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-demo/).
+[View it live on jsFiddle](https://highcharts.com/samples/highcharts/exporting/offline-download-demo/).
 
 The module makes use of modern browser technology to accomplish this, and therefore does not work flawlessly with older browsers. For a detailed table of supported browsers, see below. In the case of an unsupported browser, the module will by default fall back to the export server, but this can be disabled with the [exporting.fallbackToExportServer](https://api.highcharts.com/highcharts/exporting.fallbackToExportServer) option.
 
@@ -59,4 +59,4 @@ exporting: {
     }
 }
 ```
-[View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-pdffont/)
+[View it live on jsFiddle](https://highcharts.com/samples/highcharts/exporting/offline-download-pdffont/)

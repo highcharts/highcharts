@@ -19,7 +19,7 @@ tooltip: {
 }
 ```
 
-The background color can also be set to a gradient, see [an example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/backgroundcolor-gradient/). Text properties can be set using the [style](https://api.highcharts.com/highcharts/tooltip.style) option.
+The background color can also be set to a gradient, see [an example](https://highcharts.com/samples/highcharts/tooltip/backgroundcolor-gradient/). Text properties can be set using the [style](https://api.highcharts.com/highcharts/tooltip.style) option.
 
 Alternatively, the tooltip can be styled with CSS by enabling [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css):
 

@@ -2,7 +2,7 @@ name: Notify docs changes
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     paths:
       - 'docs/**/*.md'
 

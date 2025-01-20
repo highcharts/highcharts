@@ -64,7 +64,7 @@ type NullType = (null|undefined);
  *
  * @param {number|string} code
  *        The error code. See
- *        [errors.xml](https://github.com/highcharts/highcharts/blob/master/errors/errors.xml)
+ *        [errors.xml](https://github.com/highcharts/highcharts/blob/main/errors/errors.xml)
  *        for available codes. If it is a string, the error message is printed
  *        directly in the console.
  *

@@ -289,7 +289,7 @@ function checkForCleanWorkingDirectory(workingDir) {
  */
 async function checkIfNotMasterBranch(repoName, workingDir) {
     const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', { cwd: workingDir });
-    if (branch.toString().trim() !== 'master') {
+    if (branch.toString().trim() !== 'main') {
         const answer = await askUser(`\nThe current ${repoName} branch is ${branch}. Is this correct [Y/n]?`);
         if (answer !== 'Y') {
             throw new Error('Aborting since current branch is not as expected.');

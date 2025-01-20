@@ -34,5 +34,5 @@
         "build.properties",
         "build.xml"
     ],
-    "license": "https://raw.githubusercontent.com/highcharts/highcharts/master/license.txt"
+    "license": "https://raw.githubusercontent.com/highcharts/highcharts/main/license.txt"
 }

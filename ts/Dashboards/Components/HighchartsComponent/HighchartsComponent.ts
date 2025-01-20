@@ -154,7 +154,7 @@ class HighchartsComponent extends Component {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/highcharts/  | Chart options}
+     * {@link https://highcharts.com/samples/dashboards/highcharts-components/highcharts/  | Chart options}
      *
      */
     public chartOptions: Partial<ChartOptions>;
@@ -180,11 +180,11 @@ class HighchartsComponent extends Component {
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-maps/ | Map constructor}
+     * {@link https://highcharts.com/samples/dashboards/highcharts-components/chart-constructor-maps/ | Map constructor}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-gantt/ | Gantt constructor}
+     * {@link https://highcharts.com/samples/dashboards/highcharts-components/chart-constructor-gantt/ | Gantt constructor}
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-and-stock-constructors/ | Chart and Stock constructors}
+     * {@link https://highcharts.com/samples/dashboards/highcharts-components/chart-and-stock-constructors/ | Chart and Stock constructors}
      *
      */
     public chartConstructor: ConstructorType;

@@ -10,7 +10,7 @@ Packed Bubble chart are part of the [highcharts-more](https://code.highcharts.co
 
 The configuration of `packedbubble` differs little from other series types like scatter and bubble charts, and many other settings have defaults for responsiveness, tooltip, colors, legends, etc. A few lines of code are needed to get started with Packed Bubble.
 
-Here is an [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/packed-bubble-basic) of a packed bubble chart in its simplest form:
+Here is an [example](https://highcharts.com/samples/highcharts/blog/packed-bubble-basic) of a packed bubble chart in its simplest form:
 
     Highcharts.chart('container', {
         chart: {

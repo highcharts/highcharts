@@ -16381,7 +16381,7 @@ highed.highchartsErrors = {
     10: {
         title: 'Can\'t plot zero or subzero values on a logarithmic axis',
         text:
-      'This error occurs in the following situations:<ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithimic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul>As of Highcharts 5.0.8 it is possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to<code>true</code> and add custom conversion functions. <ahref="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/samples/highcharts/yaxis/type-log-negative/">View live demo</a>.'
+      'This error occurs in the following situations:<ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithimic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul>As of Highcharts 5.0.8 it is possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to<code>true</code> and add custom conversion functions. <ahref="https://highcharts.com/samples/highcharts/yaxis/type-log-negative/">View live demo</a>.'
     },
     // Can't link axes of different types
     11: { title: 'Can\'t link axes of different type', text: 'This error occurs if you are using the linkedTo option to link two axes of different types, for example a logarithmic axis to a linear axis.' },

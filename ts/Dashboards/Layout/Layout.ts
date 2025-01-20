@@ -497,7 +497,7 @@ namespace Layout {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/cell-class-name/ | Set cell class names}
+         * {@link https://highcharts.com/samples/dashboards/gui/cell-class-name/ | Set cell class names}
          **/
         cellClassName?: string;
         /**

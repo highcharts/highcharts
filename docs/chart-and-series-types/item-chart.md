@@ -12,7 +12,7 @@ Circular layout
 
 Item charts can be laid out either as a rectangle or a circle. The circular layout is enabled by setting a [startAngle](https://api.highcharts.com/highcharts/plotOptions.item.startAngle) and an [endAngle](https://api.highcharts.com/highcharts/plotOptions.item.endAngle). To achieve the typical parliament hemisphere, set the `startAngle` to -100 and the `endAngle` to 100. Then, as the default center is in the middle of the plot area and the default size is that the full circle will fill out the plot area, we can adjust the `size` and `center`. These options provide a reasonable fit for the parliament:
 
-    
+
     // Circular options
     center: ['50%', '88%'],
     size: '170%',
@@ -29,7 +29,7 @@ When the angles are not given, the layout will be rectangular, and the [layout](
 Symbols
 -------
 
-When used as an infographic, we would typically use custom symbols to denote the type of data, for example a count of men vs women. This is done in the [marker](https://api.highcharts.com/highcharts/plotOptions.item.marker.symbol) options. See the [live demo at jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-item/symbols).
+When used as an infographic, we would typically use custom symbols to denote the type of data, for example a count of men vs women. This is done in the [marker](https://api.highcharts.com/highcharts/plotOptions.item.marker.symbol) options. See the [live demo at jsFiddle](https://highcharts.com/samples/highcharts/series-item/symbols).
 
 API options
 -----------
