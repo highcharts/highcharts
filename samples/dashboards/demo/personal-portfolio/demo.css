@@ -1,0 +1,107 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+/* Dashboards */
+
+:root {
+    --highcharts-color-0: #c963ff;
+    --highcharts-color-1: #30cbea;
+}
+
+.dashboard-description {
+    background-color: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
+    margin: 0;
+    padding-left: 20px;
+}
+
+.dotted-line {
+    stroke-dasharray: 2, 12;
+}
+
+.highcharts-gauge-chart .highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.highcharts-datagrid-table {
+    border: 0;
+}
+
+#kpi-gauge-risk {
+    flex: 0 1 37.5%;
+}
+
+.highcharts-yaxis .highcharts-tick {
+    stroke-width: 4px;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-radial-axis-grid {
+    stroke-width: 0;
+}
+
+.highcharts-dashboards-component-kpi-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.highcharts-dashboards-component-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.highcharts-datagrid-table tbody td {
+    padding-left: 14px;
+}
+
+#goal-analysis-wrapper .highcharts-dashboards-component-title {
+    margin-top: 48px;
+    margin-bottom: 8px;
+    color: var(--highcharts-neutral-color-100);
+}
+
+#goal-analysis-wrapper .highcharts-dashboards-component-subtitle {
+    font-weight: 100;
+    color: var(--highcharts-neutral-color-60);
+}
+
+#kpi-wrapper .highcharts-dashboards-component-title {
+    margin-top: 20px;
+}
+
+#kpi-gauge-risk .highcharts-dashboards-component-kpi-value,
+#kpi-gauge-goal .highcharts-dashboards-component-kpi-value,
+.highcharts-data-label-box {
+    display: none;
+}
+
+#wallet-chart .highcharts-point {
+    fill: none;
+    stroke: none;
+}
+
+.hidden-title .highcharts-title {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    #data-grid,
+    #kpi-gauge-risk {
+        flex: 1 1 100%;
+    }
+
+    #kpi-goal-target,
+    #kpi-goal-years,
+    #kpi-goal-annual,
+    #kpi-gauge-goal {
+        flex: 1 1 50%;
+        height: 186px;
+    }
+}
+
+@media (max-width: 500px) {
+    .highcharts-dashboards-component-kpi-value {
+        font-size: 1.2rem;
+    }
+}
