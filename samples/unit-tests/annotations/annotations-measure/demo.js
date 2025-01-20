@@ -1,4 +1,38 @@
-// 1
+QUnit.test('General tests for measure annotation', function (assert) {
+    const chart = Highcharts.chart('container', {
+        annotations: [{
+            type: 'measure',
+            controlPointOptions: {
+                visible: true
+            },
+            typeOptions: {
+                point: {
+                    x: 0,
+                    y: 6
+                },
+                background: {
+                    width: 200 + 'px',
+                    height: 150 + 'px'
+                }
+            }
+        }],
+
+        series: [{
+            data: [
+                2, 3, 4, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.annotations[0].controlPoints[0].graphic.visibility,
+        'inherit',
+        `Control point should be visible and setting it should not throw any
+        errors (#21879).`
+    );
+});
+
+
 QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: {
