@@ -4,6 +4,11 @@
  * TODO: Calculate contrast with function instead of hardcoded
  */
 
+// Custom helper to log the context
+Highcharts.Templating.helpers.log = function () {
+    console.log(arguments[0].ctx);
+};
+
 // Creating patterns for normal and contrast colors
 const defaultColors = ['#90D2FE', '#CBC9E3'],
     contrastColors = ['#247eb3', '#6d6aaf'],
@@ -12,8 +17,9 @@ const defaultColors = ['#90D2FE', '#CBC9E3'],
 
 // Defining description formats for verbosity
 const shortDescriptionFormat = '{point.y} (1000 MT).';
-const fullDescriptionFormat =  '{point.category}, {point.series.name}: ' +
-            '{point.y} (1000 MT).';
+const fullDescriptionFormat =  'Bar {add index 1} of ' +
+    '{point.series.points.length} in series {point.category}, ' +
+    '{point.series.name}: {point.y} (1000 MT).';
 
 // Storing preference states globally
 let selectedVerbosity = 'full',
@@ -396,6 +402,8 @@ function setupEventListeners(prefContent, chart) {
                 const ariaLabel = path.getAttribute('aria-label');
                 const rect = path.getBoundingClientRect();
 
+                console.log(ariaLabel);
+
                 // Create and position alt text div
                 const altTextDiv = document.createElement('div');
                 altTextDiv.textContent = ariaLabel;
@@ -591,9 +599,11 @@ function applyInfoRegion(selectedVerbosity, chart) {
             // Generate alt text based on verbosity
             const altText = selectedVerbosity === 'short' ?
                 `${point.y} (1000 MT).` :
-                `${point.category}, ${point.series.name}: 
+                `Bar ${point.index + 1} of ${point.series.points.length}
+                 in series ${point.category}, ${point.series.name}: 
                 ${point.y} (1000 MT).`;
 
+            console.log(altText);
             // Update corresponding alt text div
             const altTextDiv = chart.altTextDivs[globalIndex];
             if (altTextDiv) {
@@ -615,9 +625,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
 
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
-            console.log(index);
             if (index >= 4) {
-                console.log(chartInfoElements[index]);
                 el.style.display = 'none';
             }
         });
