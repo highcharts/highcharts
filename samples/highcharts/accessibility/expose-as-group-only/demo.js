@@ -32,7 +32,7 @@ Highcharts.chart('container', {
             width: 2,
             zIndex: 5,
             label: {
-                text: 'Goal: 10.0000 steps',
+                text: 'Goal: 10,0000 steps',
                 align: 'right',
                 style: {
                     color: 'black'
@@ -68,12 +68,12 @@ Highcharts.chart('container', {
         }],
         tooltip: {
             headerFormat: void 0,
-            pointFormat: '<b>Steps walked this week:</b> {sum}/70000'
+            pointFormat: '{(sum):,.0f} / {70000:,.0f} steps this week.'
         },
         dataLabels: {
             color: '#ffffff',
             enabled: true,
-            format: '{sum} / 70000 steps this week.',
+            format: '{(sum):,.0f} / {70000:,.0f} steps this week.',
             verticalAlign: 'top',
             style: {
                 fontSize: '12px',
