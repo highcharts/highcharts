@@ -66,6 +66,7 @@ namespace Defaults {
                     }
                 }
             },
+            loading: 'Loading...',
             noData: 'No data to display'
         },
         time: {
