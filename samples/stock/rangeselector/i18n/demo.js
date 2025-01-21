@@ -1,12 +1,12 @@
 (async () => {
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@master/samples/data/range.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@master/samples/data/ohlcv.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
         chart: {
-            type: 'arearange'
+            type: 'candlestick'
         },
         rangeSelector: {
             selected: 2,
