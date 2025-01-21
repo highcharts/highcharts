@@ -1,4 +1,7 @@
 (function (Highcharts) {
+    // Configurable
+    const MOUSE_SENSITIVITY = 0.002,
+        SCROLL_SENSITIVITY = 0.0002;
     function centerZoom(axis, strength) {
         let zoomOffset = (axis.max - axis.min) / 2;
         const center = axis.min + zoomOffset;
@@ -10,6 +13,10 @@
         }
 
         axis.setExtremes(center - zoomOffset, center + zoomOffset, true, false);
+        if (axis.chart.resetZoomButton) {
+            axis.chart.resetZoomButton = axis.chart.resetZoomButton.destroy();
+        }
+        axis.chart.showResetZoom();
     }
 
     Highcharts.addEvent(Highcharts.Axis, 'afterInit', function () {
@@ -31,7 +38,7 @@
 
             // Enabled zooming via mousewheel scroll
             axis.axisZoomRect.on('mousewheel', event => {
-                centerZoom(axis, event.deltaY * 0.0001);
+                centerZoom(axis, event.deltaY * SCROLL_SENSITIVITY);
             });
 
             // Enable zooming by drag on mouse click
@@ -42,7 +49,7 @@
             // Zoom on yAxis while dragging the mouse
             document.addEventListener('mousemove', event => {
                 if (axis.drag) {
-                    centerZoom(axis, event.movementY * 0.001);
+                    centerZoom(axis, event.movementY * MOUSE_SENSITIVITY);
                 }
             });
 
@@ -94,17 +101,10 @@ const AMDPriceConnector =
 (async () => {
     await AMDPriceConnector.load();
 
-    const rawData = Object.values(AMDPriceConnector.table.getColumns());
-    const data = [];
-
-    for (let i = 0; i < rawData[0].length; i++) {
-        data.push([
-            rawData[0][i],
-            rawData[1][i]
-        ]);
-    }
-
     Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 4
+        },
         yAxis: [{
             startOnTick: false,
             endOnTick: false,
@@ -116,7 +116,12 @@ const AMDPriceConnector =
             top: '50%'
         }],
         series: [{
-            data
+            name: 'AMD',
+            data: AMDPriceConnector.table.getRows(),
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix: ' EUR'
+            }
         }, {
             yAxis: 1,
             type: 'macd',
