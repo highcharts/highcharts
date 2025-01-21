@@ -24,7 +24,7 @@ In RTL languages you may want to put the Y axis on the right side and reverse th
 Setting the locale of the chart
 -------------------------------
 
-Since v12, date and number formatting can be applied through the [lang.locale](https://api.highcharts.com/highcharts/lang.locale) option. It uses the browser's built-in `Intl` API to provide full translation of dates, including the sentence structure. If not set, the locale is picked up from the page's `html.lang` attribute or the browser's default. See the example of [Arabic digits and dates in Highcharts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/highcharts-numberformat/). 
+Since v12, date and number formatting can be applied through the [lang.locale](https://api.highcharts.com/highcharts/lang.locale) option. It uses the browser's built-in `Intl` API to provide full translation of dates, including the sentence structure. If not set, the locale is picked up from the page's `html.lang` attribute or the browser's default. See the example of [Arabic digits and dates in Highcharts](https://highcharts.com/samples/highcharts/members/highcharts-numberformat/). 
 
 Live demos
 ----------

@@ -9,7 +9,7 @@ We took great care to reuse existing options and patterns when designing the opt
 
 To create a polar chart set chart.polar to be true:
 
-    
+
     chart: {
         polar: true
     }
@@ -32,5 +32,5 @@ Options related to polar charts
 Polar chart examples
 --------------------
 
-*   [A polar chart with different series types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/polar-chart)
-*   [A spider web](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/polar-spider)
+*   [A polar chart with different series types](https://highcharts.com/samples/highcharts/blog/polar-chart)
+*   [A spider web](https://highcharts.com/samples/highcharts/demo/polar-spider)

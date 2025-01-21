@@ -546,7 +546,7 @@ namespace Resizer {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/resize-disabled/ | Resize disabled}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/resize-disabled/ | Resize disabled}
          */
         enabled: boolean;
         /**

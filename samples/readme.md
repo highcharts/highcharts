@@ -42,7 +42,7 @@ test is to copy and modify an existing one.
 The tests that are added to `/samples/unit-tests` are also part of the
 pre-commit tests that run via karma, and in CircleCI tests in multiple browsers.
 Run `gulp test` on the root to pre-check. Read more at
-[highcharts/test](https://github.com/highcharts/highcharts/tree/master/test).
+[highcharts/test](https://github.com/highcharts/highcharts/tree/main/test).
 
 
 
@@ -58,7 +58,7 @@ paste it inline in demo.js or demo.html. These files must be loaded via `cdn.jsd
 4. Next time you push your commits, this will work online as well.
 
 **Mouse events** are emulated using the
-[TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
+[TestController](https://github.com/highcharts/highcharts/blob/main/test/test-controller.js)
 that is available in the test environment.
 
 ```js
@@ -134,7 +134,7 @@ specific test case should be made only during the test when calling the
 `TestTemplate.test` function.
 
 If you have a new series, that is lacking a test template, you can create one in
-[/test/templates](https://github.com/highcharts/highcharts/tree/master/test/tesmplates).
+[/test/templates](https://github.com/highcharts/highcharts/tree/main/test/tesmplates).
 The option set has to be as simple as possible to cover the common test
 scenarios for this series. The name for the template should follow the file
 path, so if the template is named `highmaps/geoseries`, it should be placed in

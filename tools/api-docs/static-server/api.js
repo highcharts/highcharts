@@ -453,7 +453,7 @@ hapi.ajax = function (p) {
             if (children) {
                 /*setTimeout(
                   function() {
-        
+
                   },
                   1000 * parseFloat(
                     getComputedStyle(children)['transitionDuration']
@@ -559,7 +559,7 @@ hapi.ajax = function (p) {
             def.samples.forEach(function (sample) {
                 var a = cr('a', null, sample.name),
                     aLocal;
-                a.href = 'https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/' +
+                a.href = 'https://highcharts.com/samples/' +
                     sample.value;
                 a.target = '_blank';
 

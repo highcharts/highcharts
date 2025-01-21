@@ -12,7 +12,7 @@ _Example of loading both files in a webpage_
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/networkgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
 ```
 
 Data format
@@ -35,7 +35,7 @@ series: [{
     ]
 }]
 ```
-    
+
 
 _See simple Network Graph demo_
 
@@ -81,7 +81,7 @@ Node Configuration Options
 
 Nodes are generated automatically from `series.data` connections. Nodes are instances of [Highcharts.Point](https://api.highcharts.com/class-reference/Highcharts.Point) and are available from the `series.nodes` array.
 
-In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, `series.nodes`, to the series options and linking nodes by `id`. For example: [data-option](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-networkgraph/data-options/)
+In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, `series.nodes`, to the series options and linking nodes by `id`. For example: [data-option](https://highcharts.com/samples/highcharts/series-networkgraph/data-options/)
 
 Datalabels Options
 ------------------

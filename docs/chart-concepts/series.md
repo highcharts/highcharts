@@ -27,7 +27,7 @@ The actual data is represented as an array, by the data attribute, and can be pr
 data: [0, 5, 3, 5]
 ```
 
-[Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/reflow-true/)
+[Online example](https://highcharts.com/samples/highcharts/chart/reflow-true/)
 
 2.  A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a date string and the x-axis is of type `datetime`, the string is parsed into a date. Otherwise if the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, [like arearange](https://api.highcharts.com/highcharts/series.arearange.data), accept more than two values. See API documentation for each series type. Example:
 
@@ -35,7 +35,7 @@ data: [0, 5, 3, 5]
 data: [[5, 2], [6, 3], [8, 2]]
 ```
 
-[Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-arrays/)
+[Online example](https://highcharts.com/samples/highcharts/series/data-array-of-arrays/)
 
 3.  A list of objects with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
@@ -52,7 +52,7 @@ data: [{
 ```
 
 
-[Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-objects/)
+[Online example](https://highcharts.com/samples/highcharts/series/data-array-of-objects/)
 
 Point and marker
 ----------------
@@ -104,7 +104,7 @@ Allows the selection and highlighting of a single point. Can be used to remove, 
 
 ![point_selection.png](point_selection.png)
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-allowpointselect-line/)
+[Try it here](https://highcharts.com/samples/highcharts/plotoptions/series-allowpointselect-line/)
 
 Code to enable point selection:
 
@@ -130,7 +130,7 @@ Allows altering the width of a line.
 
 ![linewidth_demo.png](linewidth_demo.png)
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-linewidth-specific/)
+[Try it here](https://highcharts.com/samples/highcharts/plotoptions/series-linewidth-specific/)
 
 Code to alter line width:
 
@@ -154,7 +154,7 @@ Allows data labels to be displayed for each point of data in a series on the cha
 
 ![datalabels_demo.png](datalabels_demo.png)
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/line-labels/)
+[Try it here](https://highcharts.com/samples/highcharts/demo/line-labels/)
 
 Code example showing how to enable datalabels:
 
@@ -179,7 +179,7 @@ Allows to use dashed lines instead of solid, there are several different dash op
 
 ![dashedline_demo.png](dashedline_demo.png)
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle/)
+[Try it here](https://highcharts.com/samples/highcharts/plotoptions/series-dashstyle/)
 
 Code to set dashed lines for an individual series (the dashStyle can also be set in plotOptions):
 

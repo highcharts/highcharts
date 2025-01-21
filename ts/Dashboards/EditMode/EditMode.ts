@@ -1081,7 +1081,7 @@ namespace EditMode {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
          *
          * @default false
          *
@@ -1103,7 +1103,7 @@ namespace EditMode {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/lang/ | Norwegian language}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/lang/ | Norwegian language}
          */
         lang?: EditGlobals.LangOptions;
         /**
@@ -1119,7 +1119,7 @@ namespace EditMode {
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
+         * {@link https://highcharts.com/samples/dashboards/edit-mode/toolbars-disabled}
          */
         toolbars?: Toolbars;
         /**

@@ -10,14 +10,14 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 
 **Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
 
-*   Two decimal places: `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
-*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
-*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
+*   Two decimal places: `"{point.y:.2f}"` [[Demo](https://highcharts.com/samples/highcharts/labels/two-decimal-places)]
+*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://highcharts.com/samples/highcharts/labels/no-decimal-places)]
+*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://highcharts.com/samples/highcharts/labels/one-decimal-place)]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat). For example:
 
-*   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
-*   Locale-aware full date: `{value:%[Ymd]}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
+*   Full date: `{value:%Y-%m-%d}` [[Demo](https://highcharts.com/samples/highcharts/labels/full-date)]
+*   Locale-aware full date: `{value:%[Ymd]}` [[Demo](https://highcharts.com/samples/highcharts/labels/full-date)]
 
 ## Helpers
 Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of [built-in helpers](#built-in-helpers), and allows custom helpers to be added.
@@ -38,7 +38,7 @@ format: '{#if point.isNull}Null{else}{point.y:.2f} USD{/if}'
 // A block helper looping through points, with nested expressions
 format: '{#each points}{add this.index 1}) {this.name}<br>{/each}
 ```
-[See demo of an #each helper in a shared tooltip](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/format-shared).
+[See demo of an #each helper in a shared tooltip](https://highcharts.com/samples/highcharts/tooltip/format-shared).
 
 **Custom helpers** can be defined by extending `Highcharts.Templating.helpers`. Each helper has a fixed number of arguments. A `match` object is then appended to the arguments, for use in case a block helper needs access to the context or the body of the block. Helpers can either return a boolean, in which case the helper works as a condition, or a string or number, in which case that is inserted for the whole block or expression.
 
@@ -49,7 +49,7 @@ Highcharts.Templating.helpers.abs = value => Math.abs(value);
 // Use it like this
 format: 'Absolute value: {abs point.y}'
 ```
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bar-negative-stack).
+[View live demo](https://highcharts.com/samples/highcharts/demo/bar-negative-stack).
 
 ## Subexpressions
 Subexpressions provide a powerful way to invoke multiple helpers, and pass the results of the inner helper to the outer helper. Subexpressions are delimited by parentheses.
@@ -67,7 +67,7 @@ When doing math like this, we sometimes end up with too many decimals or other r
 format: '{(add (multiply point.y (divide 9 5)) 32):.1f}℉'
 ```
 
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+[View live demo](https://highcharts.com/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 
 Subexpressions can also be used inside conditions to asses whether a statement is truthy.
 ```js
@@ -88,19 +88,19 @@ Highcharts.Templating.helpers.log = function () {
 // Usage
 format: '{log}'
 ```
-[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/format-log).
+[View live demo](https://highcharts.com/samples/highcharts/members/format-log).
 
 ## Built-in helpers
-* **add**. Add two numbers. For example `{add index 1}` where `index` is a zero-based index from the context. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
-* **divide**. Divide the first number with the second. For example `{divide 10 2}` prints 5. Division by zero returns an empty string. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **add**. Add two numbers. For example `{add index 1}` where `index` is a zero-based index from the context. [Demo](https://highcharts.com/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **divide**. Divide the first number with the second. For example `{divide 10 2}` prints 5. Division by zero returns an empty string. [Demo](https://highcharts.com/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 * **eq**. Returns `true` for loose equality (JavaScript `==`) between the first and second argument. Can be used either as a block helper, `{#eq index 0}First item{/eq}`, or in a subexpression `{#if (eq index 0)}First item{/if}`.
-* **#each**. Iterate over an array of items. The context of each child is given as `{this}` in the block body. Additional variables in the block body are `@index`, `@first` and `@last`. Example `{#each points}{@index}) {name}, {#if @last}and {/if}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/format-shared).
+* **#each**. Iterate over an array of items. The context of each child is given as `{this}` in the block body. Additional variables in the block body are `@index`, `@first` and `@last`. Example `{#each points}{@index}) {name}, {#if @last}and {/if}`. [Demo](https://highcharts.com/samples/highcharts/tooltip/format-shared).
 * **ge**. Greater than or equal, JavaScript `>=`. Doubles as block helper and subexpression.
 * **gt**. Greater than, JavaScript `>`. Doubles as block helper and subexpression.
 * **#if**. Conditional block helper. `{#if point.isNull}The point is null{else}The value is {point.y}{/if}`.
 * **le**. Less than or equal, JavaScript `<=`. Doubles as block helper and subexpression.
 * **lt**. Less than, JavaScript `<`. Doubles as block helper and subexpression.
-* **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://highcharts.com/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 * **ne**. Not equal, JavaScript `!=`. Doubles as block helper and subexpression.
 * **subtract**. Subtract the second number from the first. Example `{subtract 5 2}` prints 3.
 * **#unless**. The inverse of `#if`. `{#unless point.isNull}The value is {point.y}{/unless}`.
@@ -110,7 +110,7 @@ The templating system only works on the context that is passed in to each item. 
 
 In cases where helpers are not sufficient to reach the desired formatting, it is better to preprocess the data set. Use [the custom option](https://api.highcharts.com/highcharts/series.line.custom) for series and points, and access that from the format string.
 
-In the [column-comparison demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/column-comparison), we prepare a lookup object for axis labels and the tooltip, append that to the options on chart level, and access it from the axis and tooltip format strings.
+In the [column-comparison demo](https://highcharts.com/samples/highcharts/demo/column-comparison), we prepare a lookup object for axis labels and the tooltip, append that to the options on chart level, and access it from the axis and tooltip format strings.
 
 
 ## Deprecated format functions

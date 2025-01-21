@@ -2,7 +2,7 @@ name: Test tooling
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'main' ]
     paths:
       - 'package.json'
       - 'tools/**/*'

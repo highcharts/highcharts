@@ -8,7 +8,7 @@ The highcharts.zip package comes with several themes that can be easily applied 
 <script src="/js/themes/gray.js"></script>
 ```
 
-The Typescript sources for the themes can be found on the [Highcharts repository](https://github.com/highcharts/highcharts/tree/master/ts/masters/themes).
+The Typescript sources for the themes can be found on the [Highcharts repository](https://github.com/highcharts/highcharts/tree/main/ts/masters/themes).
 
 When using [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css), themes can be applied by loading [additional CSS files](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode#featured-themes).
 
