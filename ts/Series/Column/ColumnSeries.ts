@@ -499,8 +499,6 @@ class ColumnSeries extends Series {
             //      - normal/null points are spaced similarily,
             //      - focusborders of null points are like those of "0" points
             // This ensures consistent dimensions between null/normal points.
-            minimumSpace = 8,
-            nullMinSpace = options.nullInteraction && minimumSpace || 0,
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(
@@ -643,9 +641,9 @@ class ColumnSeries extends Series {
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
                 // the middle of the chart.
-                point.isNull ? translatedThreshold - nullMinSpace : barY,
-                barW || point.isNull && nullMinSpace || 0,
-                point.isNull ? nullMinSpace : barH
+                barY,
+                barW,
+                barH
             );
         });
 
@@ -697,9 +695,9 @@ class ColumnSeries extends Series {
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            opacity = (point?.isNull && this.options.nullInteraction) ?
+            opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
-                pick(point && point.opacity, options.opacity, 1);
+                (point?.opacity ?? options.opacity ?? 1);
 
         // Handle zone colors
         if (point && this.zones.length) {

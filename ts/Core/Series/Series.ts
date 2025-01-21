@@ -2144,7 +2144,7 @@ class Series {
             stackThreshold = options.startFromThreshold ? threshold : 0,
             nullYSubstitute = (
                 options?.nullInteraction &&
-                series.chart.plotSizeY
+                yAxis.len
             );
         let i,
             plotX,
