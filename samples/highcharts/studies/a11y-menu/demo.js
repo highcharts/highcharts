@@ -47,6 +47,19 @@ function getChartConfig() {
         chart: {
             type: 'column'
         },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    menuItems: [
+                        'printChart',
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadPDF',
+                        'downloadSVG'
+                    ]
+                }
+            }
+        },
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat: '<h1>{chartTitle}</h1>' +
