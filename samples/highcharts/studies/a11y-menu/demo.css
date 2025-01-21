@@ -70,19 +70,14 @@ h3 {
     stroke: rgb(255, 255, 255) !important;
 }
 
-.hc-pref-button:hover,
-.hc-pref-button-bg {
-    fill: rgb(211, 211, 211);
-    transition: fill 0.2s ease;
-}
-
 .hc-pref-button-bg {
     fill: transparent;
     transition: fill 0.2s ease;
+    pointer-events: all;
 }
 
-.hc-pref-button {
-    cursor: pointer;
+.hc-pref-button:hover .hc-pref-button-bg {
+    fill: rgb(211, 211, 211) !important;
 }
 
 .alt-text-div {
