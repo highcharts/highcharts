@@ -5,7 +5,7 @@ const defaultColors = ['#90D2FE', '#CBC9E3'],
     borderColorsWithContrast = ['#103042', '#272541'];
 
 // Defining description formats for verbosity
-const shortPointDescriptionFormat = '{point.y} (1000 MT).';
+const shortPointDescriptionFormat = '{point.category}, {point.y} (1000 MT).';
 const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {point.y} (1000 MT).';
@@ -614,10 +614,10 @@ function applyInfoRegion(selectedVerbosity, chart) {
 
             // Generate alt text based on verbosity
             const altText = selectedVerbosity === 'short' ?
-                `${point.y} (1000 MT).` :
+                `${point.category}, ${point.y} (1000 MT).` :
                 `Bar ${point.index + 1} of ${point.series.points.length}
                    in series ${point.category}, ${point.series.name}: 
-                   ${point.y} (1000 MT).`;
+                   ${point.category}, ${point.y} (1000 MT).`;
 
             // Update corresponding alt text div
             const altTextDiv = chart.altTextDivs[globalIndex];
