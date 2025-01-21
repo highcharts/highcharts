@@ -35,6 +35,71 @@ function removeHighcharts() {
 }
 
 /**
+ * Replaces product placeholders with date and given data.
+ *
+ * @param {string} fileOrFolder
+ * File or folder of files to replace in. (recursive)
+ *
+ * @param {string} productName
+ * Official product name to replace with.
+ *
+ * @param {string} version
+ * Version string to replace with.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function replaceProductPlaceholders(
+    fileOrFolder,
+    productName,
+    productVersion,
+    productDate = new Date()
+) {
+    const fsp = require('node:fs/promises');
+    const fsLib = require('../libs/fs');
+
+    if (fsLib.isFile(fileOrFolder)) {
+        const fileContent = await fsp.readFile(fileOrFolder, 'utf8');
+
+        if (!fileContent.includes('@product.')) {
+            return;
+        }
+
+        await fsp.writeFile(fileOrFolder, fileContent.replace(
+            /@product\.(\w+)@/gsu,
+            (match, group1) => {
+                switch (group1) {
+                    case 'assetPrefix':
+                        return 'dashboards';
+                    case 'date':
+                        return productDate.toISOString().substring(0, 10);
+                    case 'name':
+                        return productName;
+                    case 'version':
+                        return productVersion;
+                    default:
+                        return match;
+                }
+            }
+        ), 'utf8');
+    }
+
+    if (fsLib.isDirectory(fileOrFolder)) {
+        for (const file of fsLib.getFilePaths(fileOrFolder)) {
+            if (file.endsWith('.src.js')) {
+                await replaceProductPlaceholders(
+                    file,
+                    productName,
+                    productVersion,
+                    productDate
+                );
+            }
+        }
+    }
+
+}
+
+/**
  * Builds files of `/ts` folder into `/js` folder.
  *
  * @param  {object} argv
@@ -71,49 +136,80 @@ async function scriptsTS(argv) {
             // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
         }
 
-        fsLib.deleteDirectory('js/', true);
+        fsLib.deleteDirectory('js', true);
 
         fsLib.copyAllFiles(
             'ts',
-            argv.assembler ? 'js' : 'code/es-modules/',
+            argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
 
         if (argv.dashboards) {
             await processLib
-                .exec(`npx tsc -p ${typeScriptFolder} --outDir js/`);
+                .exec(`npx tsc -p ${typeScriptFolder} --outDir js`);
         } else if (argv.datagrid) {
             await processLib
-                .exec(`npx tsc -p ${typeScriptFolderDatagrid} --outDir js/`);
+                .exec(`npx tsc -p ${typeScriptFolderDatagrid} --outDir js`);
         } else if (argv.assembler) {
             await processLib
-                .exec('npx tsc -p ts --outDir js/');
+                .exec('npx tsc -p ts --outDir js');
         } else {
             await processLib
                 .exec('npx tsc -p ts');
             await processLib
-                .exec('npx tsc -p ts/masters-es5');
+                .exec('npx tsc -p ' + fsLib.path(['ts', 'masters-es5']));
+
+            const buildPropertiesJSON =
+                fsLib.getFile('build-properties.json', true);
+            const packageJSON =
+                fsLib.getFile('package.json', true);
+            const esmFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'es-modules']), true);
+
+            for (const file of esmFiles) {
+                if (
+                    file.includes('dashboards') ||
+                    file.includes('datagrid')
+                ) {
+                    continue;
+                }
+                await replaceProductPlaceholders(
+                    file,
+                    'Highcharts',
+                    (
+                        argv.release ||
+                        buildPropertiesJSON.version ||
+                        packageJSON.version
+                    )
+                );
+            }
         }
 
         if (argv.dashboards) {
             removeHighcharts();
 
             // Remove DataGrid
-            fsLib.deleteDirectory('js/datagrid/', true);
-            fsLib.deleteDirectory('js/DataGrid/', true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'datagrid']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
 
             // Fix masters
-            fs.renameSync('js/masters-dashboards/', 'js/masters/');
+            fs.renameSync(
+                fsLib.path(['js', 'masters-dashboards']),
+                fsLib.path(['js', 'masters'])
+            );
         } else if (argv.datagrid) {
             removeHighcharts();
 
             // Fix masters
-            fs.renameSync('js/masters-datagrid/', 'js/masters/');
+            fs.renameSync(
+                fsLib.path(['js', 'masters-datagrid']),
+                fsLib.path(['js', 'masters'])
+            );
         } else {
             // Remove Dashboards
-            fsLib.deleteDirectory('js/Dashboards/', true);
-            fsLib.deleteDirectory('js/DataGrid/', true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'Dashboards']), true);
+            fsLib.deleteDirectory(fsLib.path(['js', 'DataGrid']), true);
         }
 
         processLib.isRunning('scripts-ts', false);
