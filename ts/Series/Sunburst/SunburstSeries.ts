@@ -175,6 +175,8 @@ function getDlOptions(
                         enabled: true
                     };
                 }
+                // Set a reasonable width for fitting into the open slice
+                (options.style as any).width = (shape.radius as any) * 0.7;
             } else if (
                 innerArcLength > 1 &&
                 outerArcLength > 1.5 * (shape.radius as any)
@@ -237,12 +239,22 @@ function getDlOptions(
             // yet because the label is not rendered. A better approach for this
             // would be to hide the label from the `alignDataLabel` function
             // when the actual line height is known.
-            if (outerArcLength < 16) {
+            const h = 16;
+            if (outerArcLength < h) {
                 (options.style as any).width = 1;
-            } else {
+            } else if (shape.radius) {
                 (options.style as any).lineClamp = Math.floor(
-                    innerArcLength / 16
+                    innerArcLength / h
                 ) || 1;
+                // When the slice is narrow (< 16px) in the inner end, compute a
+                // safe margin to avoid the label overlapping the border.
+                const safeMargin = innerArcLength < h ?
+                    shape.radius * (
+                        (h - innerArcLength) /
+                        (outerArcLength - innerArcLength)
+                    ) :
+                    0;
+                (options.style as any).width = shape.radius - safeMargin;
             }
         }
 
