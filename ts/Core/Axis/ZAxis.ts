@@ -191,7 +191,7 @@ class ZAxis extends Axis implements AxisLike {
                     threshold = void 0;
                 }
 
-                const zData: Array<(number|null|undefined)> = series.zData as any;
+                const zData = series.getColumn('z');
 
                 if (zData.length) {
                     this.dataMin = Math.min(
@@ -215,10 +215,7 @@ class ZAxis extends Axis implements AxisLike {
 
         super.setAxisSize();
 
-        this.width = this.len = (
-            chart.options.chart.options3d &&
-            chart.options.chart.options3d.depth
-        ) || 0;
+        this.width = this.len = chart.options.chart.options3d?.depth || 0;
         this.right = chart.chartWidth - this.width - this.left;
     }
 

@@ -35,6 +35,7 @@ const { format } = F;
 import H from './Globals.js';
 const {
     composed,
+    dateFormats,
     doc,
     isSafari
 } = H;
@@ -52,6 +53,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     pick,
@@ -230,7 +232,7 @@ class Tooltip {
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
-            const tt = series && series.tt;
+            const tt = series?.tt;
 
             if (tt) {
                 if (!tt.isActive || force) {
@@ -318,8 +320,7 @@ class Tooltip {
         // If reversedStacks are false the tooltip position should be taken from
         // the last point (#17948)
         if (
-            points[0].series &&
-            points[0].series.yAxis &&
+            points[0].series?.yAxis &&
             !points[0].series.yAxis.options.reversedStacks
         ) {
             points = points.slice().reverse();
@@ -398,7 +399,7 @@ class Tooltip {
             !isHeader && 'highcharts-color-' + pick(
                 point.colorIndex, series.colorIndex
             ),
-            (seriesOptions && seriesOptions.className)
+            seriesOptions?.className
         ].filter(isString).join(' ');
     }
 
@@ -466,7 +467,7 @@ class Tooltip {
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
-                        (chartStyle && chartStyle.zIndex || 0) + 3
+                        (chartStyle?.zIndex || 0) + 3
                     )
                 });
 
@@ -959,6 +960,9 @@ class Tooltip {
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
+        } else {
+            // Clear anchor with NaN to prevent animation (#22295)
+            attr.anchorX = attr.anchorY = NaN;
         }
 
         animation.step = (): void => tooltip.drawTracker();
@@ -1096,7 +1100,8 @@ class Tooltip {
                                 label.x || 0,
                                 0,
                                 this.getPlayingField().width -
-                                (label.width || 0)
+                                (label.width || 0) -
+                                1
                             )
                         });
                     }
@@ -1192,7 +1197,7 @@ class Tooltip {
 
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
-        const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+        const headerTop = Boolean(chart.xAxis[0]?.opposite);
         const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
@@ -1692,12 +1697,12 @@ class Tooltip {
         const series = point.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
-            dateTime = xAxis && xAxis.dateTime,
+            dateTime = xAxis?.dateTime,
             e: Tooltip.HeaderFormatterEventObject = {
                 isFooter,
                 point
             };
-        let xDateFormat = tooltipOptions.xDateFormat,
+        let xDateFormat = tooltipOptions.xDateFormat || '',
             formatString = tooltipOptions[
                 isFooter ? 'footerFormat' : 'headerFormat'
             ];
@@ -1718,12 +1723,17 @@ class Tooltip {
 
             // Insert the footer date format if any
             if (dateTime && xDateFormat) {
-                ((point.point && point.point.tooltipDateKeys) ||
-                        ['key']).forEach(
-                    function (key: string): void {
+                if (isObject(xDateFormat)) {
+                    const format = xDateFormat;
+                    dateFormats[0] = (timestamp): string =>
+                        series.chart.time.dateFormat(format, timestamp);
+                    xDateFormat = '%0';
+                }
+                (point.tooltipDateKeys || ['key']).forEach(
+                    (key: string): void => {
                         formatString = formatString.replace(
-                            '{point.' + key + '}',
-                            '{point.' + key + ':' + xDateFormat + '}'
+                            new RegExp('point\\.' + key + '([ \\)}])', ''),
+                            `(point.${key}:${xDateFormat as string})$1`
                         );
                     }
                 );

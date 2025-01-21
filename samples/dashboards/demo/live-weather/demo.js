@@ -1,8 +1,12 @@
 Highcharts.setOptions({
     chart: {
         styledMode: true
+    },
+    lang: {
+        locale: 'en-us'
     }
 });
+
 // Index of the data to be displayed in map, KPI and spline chart.
 // The number is an offset from the current hour.
 const rangeConfig = {
@@ -390,8 +394,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'temperature', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -442,8 +445,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'wind', false
                         ) + ' (latest)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,
@@ -488,8 +490,7 @@ async function setupDashboard() {
                         text: paramConfig.getColumnHeader(
                             'precipitation', false
                         ) + ' (next 24 hours)',
-                        verticalAlign: 'bottom',
-                        widthAdjust: 0
+                        verticalAlign: 'bottom'
                     },
                     yAxis: {
                         ...kpiGaugeOptions.yAxis,

@@ -71,7 +71,7 @@ class CellEditToolbar extends EditToolbar {
                         if (
                             dragDrop &&
                             cellEditToolbar.cell &&
-                            cellEditToolbar.cell instanceof Cell
+                            Cell.isCell(cellEditToolbar.cell)
                         ) {
                             dragDrop.onDragStart(e, cellEditToolbar.cell);
                         }
@@ -259,7 +259,7 @@ class CellEditToolbar extends EditToolbar {
     public onCellDestroy(): void {
         const toolbar = this;
 
-        if (toolbar.cell && toolbar.cell instanceof Cell) {
+        if (toolbar.cell && Cell.isCell(toolbar.cell)) {
             const row = toolbar.cell.row;
             const cellId = toolbar.cell.id;
 

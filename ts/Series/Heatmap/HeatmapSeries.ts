@@ -273,7 +273,7 @@ class HeatmapSeries extends ScatterSeries {
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
         const { dataMin, dataMax } = Series.prototype.getExtremes
-            .call(this, this.valueData);
+            .call(this, this.getColumn('value'));
 
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;
@@ -309,7 +309,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.xData; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -365,12 +365,10 @@ class HeatmapSeries extends ScatterSeries {
             const pointMarkerOptions = point.options.marker || {},
                 seriesMarkerOptions = this.options.marker || {},
                 seriesStateOptions = (
-                    seriesMarkerOptions.states &&
-                    seriesMarkerOptions.states[state]
+                    seriesMarkerOptions.states?.[state]
                 ) || {},
                 pointStateOptions = (
-                    pointMarkerOptions.states &&
-                    pointMarkerOptions.states[state]
+                    pointMarkerOptions.states?.[state]
                 ) || {};
 
             // Set new width and height basing on state options.
@@ -421,12 +419,12 @@ class HeatmapSeries extends ScatterSeries {
             heatmapPlotOptions = plotOptions.heatmap || {},
             // Get old properties in order to keep backward compatibility
             borderColor =
-                (point && point.options.borderColor) ||
+                point?.options.borderColor ||
                 seriesOptions.borderColor ||
                 heatmapPlotOptions.borderColor ||
                 seriesPlotOptions.borderColor,
             borderWidth =
-                (point && point.options.borderWidth) ||
+                point?.options.borderWidth ||
                 seriesOptions.borderWidth ||
                 heatmapPlotOptions.borderWidth ||
                 seriesPlotOptions.borderWidth ||
@@ -434,8 +432,8 @@ class HeatmapSeries extends ScatterSeries {
 
         // Apply lineColor, or set it to default series color.
         attr.stroke = (
-            (point && point.marker && point.marker.lineColor) ||
-            (seriesOptions.marker && seriesOptions.marker.lineColor) ||
+            point?.marker?.lineColor ||
+            seriesOptions.marker?.lineColor ||
             borderColor ||
             this.color
         );
@@ -444,20 +442,9 @@ class HeatmapSeries extends ScatterSeries {
 
         if (state && state !== 'normal') {
             const stateOptions = merge(
-                (
-                    seriesOptions.states &&
-                    seriesOptions.states[state]
-                ),
-                (
-                    seriesOptions.marker &&
-                    seriesOptions.marker.states &&
-                    seriesOptions.marker.states[state]
-                ),
-                (
-                    point &&
-                    point.options.states &&
-                    point.options.states[state] || {}
-                )
+                seriesOptions.states?.[state],
+                seriesOptions.marker?.states?.[state],
+                point?.options.states?.[state] || {}
             );
 
             attr.fill =
@@ -481,15 +468,9 @@ class HeatmapSeries extends ScatterSeries {
         const series = this,
             options = series.options,
             { borderRadius, marker } = options,
-            symbol = marker && marker.symbol || 'rect',
+            symbol = marker?.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
-
-        if (!series.processedXData) {
-            const { xData, yData } = series.getProcessedData();
-            series.processedXData = xData;
-            series.processedYData = yData;
-        }
 
         series.generatePoints();
         for (const point of series.points) {
@@ -501,7 +482,7 @@ class HeatmapSeries extends ScatterSeries {
                 height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
 
             point.hasImage = (
-                point.marker && point.marker.symbol || symbol || ''
+                point.marker?.symbol || symbol || ''
             ).indexOf('url') === 0;
 
             // If marker shape is regular (square), find the shorter cell's
@@ -575,6 +556,8 @@ extend(HeatmapSeries.prototype, {
     directTouch: true,
 
     getExtremesFromAll: true,
+
+    keysAffectYAxis: ['y'],
 
     parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 

@@ -84,7 +84,8 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
 
     chart.update({
         time: {
-            timezone: 'America/Chicago'
+            timezone: 'America/Chicago',
+            locale: 'en'
         },
         xAxis: {
             type: 'datetime'

@@ -25,7 +25,6 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -144,9 +143,11 @@ class WaterfallSeries extends ColumnSeries {
         // Parent call:
         ColumnSeries.prototype.generatePoints.apply(this);
 
+        const processedYData = this.getColumn('y', true);
+
         for (let i = 0, len = this.points.length; i < len; i++) {
             const point = this.points[i],
-                y = this.processedYData[i];
+                y = processedYData[i];
 
             // Override point value for sums. #3710 Update point does not
             // propagate to sum
@@ -163,7 +164,8 @@ class WaterfallSeries extends ColumnSeries {
     ): undefined {
         const series = this,
             options = series.options,
-            yData = series.yData,
+            yData = series.getColumn('y') as
+                Array<number|'intermediateSum'|'sum'>,
             // #3710 Update point does not propagate to sum
             points = options.data,
             dataLength = yData.length,
@@ -180,7 +182,7 @@ class WaterfallSeries extends ColumnSeries {
 
         for (let i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = points && points[i] ? points[i] : {};
+            point = points?.[i] || {};
 
             if (y === 'sum' || (point as any).isSum) {
                 yData[i] = correctFloat(sum);
@@ -219,21 +221,6 @@ class WaterfallSeries extends ColumnSeries {
             return 'intermediateSum';
         }
         return pt.y;
-    }
-
-    public updateParallelArrays(
-        point: Point,
-        i: (number|string)
-    ): void {
-        super.updateParallelArrays.call(
-            this,
-            point,
-            i
-        );
-        // Prevent initial sums from triggering an error (#3245, #7559)
-        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
-            this.yData[0] = null;
-        }
     }
 
     // Postprocess mapping between options and SVG attributes
@@ -389,7 +376,8 @@ class WaterfallSeries extends ColumnSeries {
             waterfallStacks = axis.waterfall?.stacks,
             seriesThreshold = options.threshold || 0,
             stackKey = series.stackKey,
-            xData = series.xData,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
             xLength = xData.length;
 
         let stackThreshold = seriesThreshold,
@@ -479,7 +467,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         actualStackX = actualStack[x];
-                        yVal = series.yData[i];
+                        yVal = yData[i];
 
                         if (yVal >= 0) {
                             actualStackX.posTotal += yVal;
@@ -497,7 +485,7 @@ class WaterfallSeries extends ColumnSeries {
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
 
-                        if (xPoint && xPoint.isIntermediateSum) {
+                        if (xPoint?.isIntermediateSum) {
                             calculateStackState(
                                 prevSum,
                                 actualSum,
@@ -512,7 +500,7 @@ class WaterfallSeries extends ColumnSeries {
                             stackThreshold ^= interSum;
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
-                        } else if (xPoint && xPoint.isSum) {
+                        } else if (xPoint?.isSum) {
                             calculateStackState(
                                 seriesThreshold,
                                 totalYVal,
@@ -629,7 +617,8 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,
-        actualStack = yAxis.waterfall.stacks[series.stackKey];
+        actualStack = yAxis.waterfall.stacks[series.stackKey],
+        processedYData = series.getColumn('y', true);
 
     let previousIntermediate = threshold,
         previousY = threshold,
@@ -640,7 +629,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
-            yValue = series.processedYData[i] as number,
+            yValue = processedYData[i],
             shapeArgs = point.shapeArgs,
             box: BBoxObject = extend({
                 x: 0,

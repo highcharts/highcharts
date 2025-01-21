@@ -369,7 +369,7 @@ class AxisResizer {
                         plotHeight
                     ));
 
-                if (!isFirst) {
+                if (!isFirst && axesGroup === nextAxes) {
                     // Try to change height first. yDelta could had changed
                     yDelta = chartY - resizer.lastPos;
 

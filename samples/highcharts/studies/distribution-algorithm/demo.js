@@ -1,5 +1,4 @@
-const each = Highcharts.each,
-    len = 600;
+const len = 600;
 let boxes;
 
 function getBoxes() {
@@ -51,7 +50,7 @@ function visualize(boxes, len, y) {
         })
         .add();
 
-    each(boxes, function (box, i) {
+    boxes.forEach(function (box, i) {
         if (box.pos !== undefined) {
             renderer.rect(box.pos + 0.5, y + 0.5, box.size - 1, 20)
                 .attr({
@@ -91,7 +90,7 @@ visualize(boxes, len, 10);
 // Left
 renderer.text('Left', 610, 125).add();
 boxes = getBoxes();
-each(boxes, function (box) {
+boxes.forEach(function (box) {
     box.align = 0;
 });
 Highcharts.distribute(boxes, len);
@@ -100,7 +99,7 @@ visualize(boxes, len, 110);
 // Right
 renderer.text('Right', 610, 225).add();
 boxes = getBoxes();
-each(boxes, function (box) {
+boxes.forEach(function (box) {
     box.align = 1;
 });
 Highcharts.distribute(boxes, len);

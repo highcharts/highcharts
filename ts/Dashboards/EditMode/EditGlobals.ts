@@ -20,9 +20,6 @@ import DG from '../Globals.js';
 
 const PREFIX = DG.classNamePrefix + 'edit-';
 
-/**
- * @internal
- */
 const EditGlobals: EditGlobals = {
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
@@ -164,9 +161,6 @@ const EditGlobals: EditGlobals = {
     }
 };
 
-/**
- * @internal
- */
 interface EditGlobals {
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
