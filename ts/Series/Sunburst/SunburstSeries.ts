@@ -174,8 +174,11 @@ function getDlOptions(
                         enabled: true
                     };
                 }
-                // Set a reasonable width for fitting into the open slice
-                width = radius * 0.7;
+                // If the slice is less than 180 degrees, set a reasonable width
+                // for fitting into the open slice (#22532)
+                if (end - start < Math.PI) {
+                    width = radius * 0.7;
+                }
 
             } else if (innerArcLength > 1 && outerArcLength > 1.5 * radius) {
                 if (rotationMode === 'circular') {
@@ -235,7 +238,8 @@ function getDlOptions(
                 style.lineClamp = Math.floor(innerArcLength / h) || 1;
 
                 // When the slice is narrow (< 16px) in the inner end, compute a
-                // safe margin to avoid the label overlapping the border.
+                // safe margin to avoid the label overlapping the border
+                // (#22532)
                 const safeMargin = innerArcLength < h ?
                     radius * (
                         (h - innerArcLength) /
