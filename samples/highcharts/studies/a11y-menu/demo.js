@@ -359,6 +359,17 @@ function setupEventListeners(prefContent, chart) {
         radio.addEventListener('change', event => {
             const verbosity = event.target.value;
             selectedVerbosity = verbosity;
+
+            chart.update({
+                accessibility: {
+                    point: {
+                        descriptionFormat: selectedVerbosity === 'short' ?
+                            shortPointDescriptionFormat :
+                            fullPointDescriptionFormat
+                    }
+                }
+            });
+
             setupScreenReaderSection(selectedVerbosity, chart);
         });
     });
@@ -391,14 +402,6 @@ function setupEventListeners(prefContent, chart) {
         const isChecked = event.target.checked;
         isAltPointChecked = isChecked;
 
-        chart.update({
-            accessibility: {
-                point: {
-                    descriptionFormat: selectedVerbosity === 'short' ?
-                        shortPointDescriptionFormat : fullPointDescriptionFormat
-                }
-            }
-        });
         // Clear existing altTextDivs
         chart.altTextDivs.forEach(div => div.remove());
         chart.altTextDivs = [];
