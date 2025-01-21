@@ -5,10 +5,14 @@ const defaultColors = ['#90D2FE', '#CBC9E3'],
     borderColorsWithContrast = ['#103042', '#272541'];
 
 // Defining description formats for verbosity
-const shortDescriptionFormat = '{point.y} (1000 MT).';
-const fullDescriptionFormat =  'Bar {add index 1} of ' +
+const shortPointDescriptionFormat = '{point.y} (1000 MT).';
+const fullPointDescriptionFormat =  'Bar {add index 1} of ' +
     '{point.series.points.length} in series {point.category}, ' +
     '{point.series.name}: {point.y} (1000 MT).';
+
+let longDesc = '';
+let shortDesc = '';
+
 
 // Storing preference states globally
 let selectedVerbosity = 'full',
@@ -18,7 +22,6 @@ let selectedVerbosity = 'full',
     isAltPointChecked = false,
     isInfoChecked = false,
     isPatternChecked = false,
-    defaultDesc = '',
     fontSize = '';
 
 function initializeChart() {
@@ -28,6 +31,14 @@ function initializeChart() {
     addPrefButton(chart);
     addCustomA11yComponent(chart);
     addPrefButtonScreenReader(chart);
+
+    // Storing descriptions
+    const screenReaderDiv = document
+        .getElementById('highcharts-screen-reader-region-before-0');
+    const innerScreenReaderDiv = screenReaderDiv.children[0];
+    longDesc = innerScreenReaderDiv.children[3].textContent;
+    shortDesc = longDesc.split('. ')[0] + '.';
+
     return chart;
 }
 
@@ -48,7 +59,7 @@ function getChartConfig() {
                 '<div>{yAxisDescription}</div>'
             },
             point: {
-                descriptionFormat: fullDescriptionFormat
+                descriptionFormat: fullPointDescriptionFormat
             }
         },
         title: {
@@ -371,7 +382,7 @@ function setupEventListeners(prefContent, chart) {
             accessibility: {
                 point: {
                     descriptionFormat: selectedVerbosity === 'short' ?
-                        shortDescriptionFormat : fullDescriptionFormat
+                        shortPointDescriptionFormat : fullPointDescriptionFormat
                 }
             }
         });
@@ -555,7 +566,6 @@ function setupScreenReaderSection(selectedVerbosity, chart) {
 
 // TODO: Refactor function to be only about applying info region and rename
 function applyInfoRegion(selectedVerbosity, chart) {
-
     const screenReaderDiv = document
         .getElementById('highcharts-screen-reader-region-before-0');
     const innerScreenReaderDiv = screenReaderDiv.children[0];
@@ -563,14 +573,9 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
     );
-
     // Check if info region is already displayed
     if (!infoRegion) {
         return;
-    }
-
-    if (!defaultDesc) {
-        defaultDesc = description.textContent;
     }
 
     // Toggle visibility based on isInfoChecked
@@ -595,8 +600,8 @@ function applyInfoRegion(selectedVerbosity, chart) {
             const altText = selectedVerbosity === 'short' ?
                 `${point.y} (1000 MT).` :
                 `Bar ${point.index + 1} of ${point.series.points.length}
-                 in series ${point.category}, ${point.series.name}: 
-                ${point.y} (1000 MT).`;
+                   in series ${point.category}, ${point.series.name}: 
+                   ${point.y} (1000 MT).`;
 
             // Update corresponding alt text div
             const altTextDiv = chart.altTextDivs[globalIndex];
@@ -612,10 +617,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
     const chartInfoElements = innerScreenReaderDiv.querySelectorAll('div');
 
     if (selectedVerbosity === 'short') {
-        const descArray = description.textContent.split('. ');
-        const newDesc = descArray
-            .slice(0, descArray.length - 2).join('. ') + '.';
-        description.textContent = newDesc;
+        description.textContent = shortDesc;
 
         // Hide specific elements
         chartInfoElements.forEach((el, index) => {
@@ -625,7 +627,7 @@ function applyInfoRegion(selectedVerbosity, chart) {
         });
     } else if (selectedVerbosity === 'full') {
         // Restore full description
-        description.textContent = defaultDesc;
+        description.textContent = longDesc;
 
         // Show all divs
         chartInfoElements.forEach(el => {
