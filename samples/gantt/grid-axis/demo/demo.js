@@ -147,13 +147,13 @@ Highcharts.chart('container', {
         yAxis: 2,
         data: [{
             x: 7,
-            y: '2014-11-19'
+            y: Date.UTC(2014, 10, 19)
         }, {
             x: 7,
-            y: '2014-11-20'
+            y: Date.UTC(2014, 10, 20)
         }, {
             x: 12,
-            y: '2014-11-21'
+            y: Date.UTC(2014, 10, 21)
         }]
     }, {
         name: 'Project 4',

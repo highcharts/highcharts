@@ -208,7 +208,7 @@ class Tick {
             names = axis.names,
             pos = tick.pos,
             labelOptions: AxisLabelOptions = pick(
-                tick.options && tick.options.labels,
+                tick.options?.labels,
                 options.labels
             ) as any,
             tickPositions = axis.tickPositions,
@@ -309,7 +309,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        const list = dateTimeLabelFormats?.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
@@ -706,7 +706,7 @@ class Tick {
             // limited by the box (#3938).
             if (
                 labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && ((label as any).styles || {}).width)
+                (axis.autoRotation && label?.styles?.width)
             ) {
                 textWidth = modifiedSlotWidth;
             }
@@ -835,7 +835,7 @@ class Tick {
 
         const labelOpacity = pick(
             opacity,
-            tick.label && tick.label.newOpacity, // #15528
+            tick.label?.newOpacity, // #15528
             1
         );
         opacity = pick(opacity, 1);

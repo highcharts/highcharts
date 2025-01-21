@@ -1,6 +1,0 @@
----
- name: DST analysis
- authors:
-   - Torstein Hønsi
- js_wrap: b
-...

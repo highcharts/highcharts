@@ -182,7 +182,7 @@ function onExit(name, callback) {
                 if (exit) {
                     // Handle typeErrors
                     if (typeof code !== 'number') {
-                        LogLib.error(code);
+                        LogLib.failure(code);
                         code = 1;
                     }
 

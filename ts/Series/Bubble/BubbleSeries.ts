@@ -23,7 +23,8 @@ import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-
+import type KDPointSearchObjectLike from '../../Core/Series/KDPointSearchObjectLike';
+import type PointerEvent from '../../Core/PointerEvent';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
@@ -78,6 +79,9 @@ declare module '../../Core/Series/SeriesLike' {
 type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
+
+interface KDPointSearchObject extends KDPointSearchObjectLike {
+}
 
 /* *
  *
@@ -853,6 +857,58 @@ class BubbleSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.Series#searchKDTree
+     */
+    public searchKDTree(
+        point: KDPointSearchObject,
+        compareX?: boolean,
+        e?: PointerEvent,
+        suppliedPointEvaluator: Function = noop,
+        suppliedBSideCheckEvaluator: Function = noop
+    ): (Point|undefined) {
+
+        suppliedPointEvaluator = (
+            p1: Point,
+            p2: Point,
+            comparisonProp: 'dist' | 'distX'
+        ): [Point, boolean] => {
+            const p1Dist = p1[comparisonProp] || 0;
+            const p2Dist = p2[comparisonProp] || 0;
+
+            let ret,
+                flip = false;
+
+            if (p1Dist < 0 && p2Dist < 0) {
+                ret = (
+                    p1Dist - (p1.marker?.radius || 0) >=
+                    p2Dist - (p2.marker?.radius || 0)
+                ) ?
+                    p1 :
+                    p2;
+
+                flip = true;
+            } else {
+                ret = p1Dist < p2Dist ? p1 : p2;
+            }
+
+            return [ret, flip];
+        };
+
+        suppliedBSideCheckEvaluator = (
+            a: number,
+            b: number,
+            flip: boolean
+        ): boolean => !flip && (a > b) || (a < b);
+        return super.searchKDTree(
+            point,
+            compareX,
+            e,
+            suppliedPointEvaluator,
+            suppliedBSideCheckEvaluator
+        );
+    }
 }
 
 /* *

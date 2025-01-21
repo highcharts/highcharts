@@ -62,7 +62,7 @@ const getInitialData = time => ualf.slice(
 
 const displayTime = time => {
     document.getElementById('report-time').innerText = Highcharts.dateFormat(
-        '%B %e, %Y %H:%M',
+        '%[BeYHM]',
         time
     );
 };

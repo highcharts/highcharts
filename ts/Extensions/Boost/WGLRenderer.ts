@@ -258,7 +258,10 @@ class WGLRenderer {
     // Opengl context
     private gl?: WebGLRenderingContext;
 
-    // The data to render - array of coordinates
+    /**
+     * The data to render - array of coordinates.
+     * Repeating sequence of [x, y, checkThreshold, pointSize].
+     */
     private data: Array<number> = [];
 
     // Height of our viewport in pixels
@@ -864,6 +867,11 @@ class WGLRenderer {
                 isYInside = y >= yMin && y <= yMax;
             }
 
+            // Do not render points outside the zoomed range (#19701)
+            if (!sorted && !isYInside) {
+                continue;
+            }
+
             if (x > xMax && closestRight.x < xMax) {
                 closestRight.x = x;
                 closestRight.y = y;
@@ -879,17 +887,30 @@ class WGLRenderer {
             }
 
             // Cull points outside the extremes
-            if (y === null || (!isYInside && !nextInside && !prevInside)) {
+
+            // Continue if `sdata` has only one point as `nextInside` asserts
+            // whether the next point exists and will thus be false. (#22194)
+            if (
+                y === null || (
+                    !isYInside && sdata.length > 1 &&
+                    !nextInside && !prevInside
+                )
+            ) {
                 beginSegment();
                 continue;
             }
 
             // The first point before and first after extremes should be
             // rendered (#9962, 19701)
+            // Make sure series with a single point are rendered (#21897)
             if (
-                sorted &&
-                (nx >= xMin || x >= xMin) &&
-                (px <= xMax || x <= xMax)
+                sorted && (
+                    (nx >= xMin || x >= xMin) &&
+                    (px <= xMax || x <= xMax)
+                ) ||
+                !sorted && (
+                    (x >= xMin) && (x <= xMax)
+                )
             ) {
                 isXInside = true;
             }

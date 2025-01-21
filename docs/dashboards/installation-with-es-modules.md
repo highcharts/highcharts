@@ -1,14 +1,13 @@
-Installation with ES6 modules
-=============================
+# Installation with ES6 modules
 
 Highcharts Dashboards packages are available as ES6-compatible modules.
 
 ## Including a product package (ES6 module)
 
-For debugging and development purposes you can load core files directly in your
-browser page and make use of tree shaking. Please note that this results in a
-decreased download size but in an increased delay caused by the amount of
-(small) files to load. This approach is therefore not recommended for
+For debugging and development purposes, you can load core files directly from your
+browser page and use tree shaking. Please note that this results in a
+decreased download size but an increased delay caused by the amount of
+(small) files to load. This approach is, therefore, not recommended for
 production.
 
 ```html
@@ -50,9 +49,9 @@ production.
 ```
 
 ## To load a plugin
-A plugin is a third party/community made Highcharts Dashboards addon.
-First, make sure that a plugin supports loading over NPM and load the required files.
-In the example `DataGrid` supports NPM loading, so after installing the package you could initialize and register it like this:
+A plugin is a third-party/community-made Highcharts Dashboards addon.
+First, make sure that a plugin supports loading over NPM. Then, load the required files.
+In the example, `DataGrid` supports NPM loading, so after installing the package, you could initialize and register it like this:
 
 ```ts
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';

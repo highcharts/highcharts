@@ -14,7 +14,7 @@
 
 /**
  *
- *  Dashboards/Datagrid specific
+ *  Layout
  *
  **/
 
@@ -35,6 +35,11 @@
     padding: 5px;
 }
 
+/**
+ *
+ *  Dashboards/Datagrid specific
+ *
+ **/
 .highcharts-dashboards-wrapper {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
@@ -84,7 +89,7 @@
     font-family: "Courier New", Courier, monospace;
     font-size: 0.9em;
     overflow: auto;
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 /**
@@ -119,7 +124,10 @@
 #app-control button {
     font-size: 1em;
     padding: 5px 10px;
-    cursor: pointer;
+}
+
+#app-control button:hover {
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 /**
@@ -133,39 +141,30 @@ body {
 }
 
 div#description {
-    background-color: var(--highcharts-neutral-color-5);
+    background-color: var(--highcharts-neutral-color-3);
     color: var(--text-color);
     padding: 5px 10px;
     max-width: 100%;
     text-align: justify;
 
     & a {
-        color: var(--highcharts-highlight-color-100);
+        color: var(--highcharts-highlight-color-80);
     }
 
     pre.json {
         padding: 5px;
         color: var(--highcharts-highlight-color-80);
+        border-radius: 5px;
     }
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    #column-chart-1,
-    #data-grid-1,
-    #column-chart-2,
-    #data-grid-2 {
-        flex: 1 1 50%;
-    }
-}
-
-/* MEDIUM */
+/* LARGE, MEDIUM: the page resides in an IFRAME */
 @media (max-width: 992px) {
     #column-chart-1,
     #data-grid-1,
     #column-chart-2,
     #data-grid-2 {
-        flex: 1 1 100%;
+        flex: 1 1 50%;
     }
 }
 

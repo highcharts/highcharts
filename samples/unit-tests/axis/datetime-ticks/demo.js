@@ -39,7 +39,7 @@ QUnit.test(
         // Reset
         Highcharts.setOptions({
             time: {
-                timezone: undefined
+                timezone: 'UTC'
             }
         });
     }
@@ -89,7 +89,7 @@ QUnit.test('Time zone with small interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         time: {
-            timezone: undefined
+            timezone: 'UTC'
         }
     });
 });
@@ -160,7 +160,7 @@ QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         time: {
-            timezone: undefined
+            timezone: 'UTC'
         }
     });
 });
