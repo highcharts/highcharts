@@ -155,7 +155,7 @@ jobs:
         if: ${{ always() }}
         run: |
           aws s3 sync ./samples \
-          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/$PR_NUMBER/" \
+          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
           --exclude "*" \
           --include "*/reference.svg" \
           --include "*/candidate.svg" \
