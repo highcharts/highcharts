@@ -34,5 +34,5 @@ jobs:
         run: npm i
 
       - name: Run test
-        run: node --test "./tools/gulptasks-tests/*.mjs"
+        run: npx ts-node --test "./tools/gulptasks-tests/*.mjs"
 

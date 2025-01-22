@@ -3,7 +3,7 @@ import { ok } from 'node:assert';
 
 import { stat } from 'node:fs/promises';
 
-import '../../gulpfile.js';
+import '../../gulpfile.ts';
 
 import { run } from '../gulptasks/lib/gulp.js';
 
