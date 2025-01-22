@@ -2280,7 +2280,7 @@ class Series {
             if (isNumber(yValue) && point.plotX !== void 0) {
                 plotY = yAxis.translate(yValue, false, true, false, true);
                 plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
-            } else if (yValue === null && nullYSubstitute) {
+            } else if (!isNumber(yValue) && nullYSubstitute) {
                 plotY = nullYSubstitute;
             }
             /**
@@ -2649,12 +2649,11 @@ class Series {
                     shouldDrawMarker = (
                         (
                             globallyEnabled &&
-                        typeof pointMarkerOptions.enabled === 'undefined'
+                            !defined(pointMarkerOptions.enabled)
                         ) || pointMarkerOptions.enabled
-                    ) && (
-                        !isNull ||
-                    nullInteraction
-                    ) && point.visible !== false;
+                    ) &&
+                    (!isNull || nullInteraction) &&
+                    point.visible !== false;
 
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
@@ -2872,7 +2871,8 @@ class Series {
         point?: Point,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const seriesMarkerOptions = this.options.marker,
+        const options = this.options,
+            seriesMarkerOptions = options.marker,
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
@@ -2887,7 +2887,7 @@ class Series {
                 pointMarkerOptions.lineWidth,
                 (seriesMarkerOptions as any).lineWidth
             ),
-            opacity = (point?.isNull && this.options.nullInteraction) ? 0 : 1;
+            opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
             pointColorOption ||

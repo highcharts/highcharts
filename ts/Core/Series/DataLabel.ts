@@ -621,13 +621,11 @@ namespace DataLabel {
                         labelText = defined(formatString) ?
                             format(formatString, point, chart) :
                             (
-                                (
-                                    (labelOptions as any)[
-                                        point.formatPrefix + 'Formatter'
-                                    ] ||
-                                    labelOptions.formatter
-                                ).call(point, labelOptions)
-                            );
+                                (labelOptions as any)[
+                                    point.formatPrefix + 'Formatter'
+                                ] ||
+                                labelOptions.formatter
+                            ).call(point, labelOptions);
 
                         rotation = labelOptions.rotation;
 
