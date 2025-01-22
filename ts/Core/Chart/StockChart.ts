@@ -238,16 +238,8 @@ class StockChart extends Chart {
         // Avoid doing these twice
         userOptions.xAxis = userOptions.yAxis = void 0;
 
-        const langOptions = {
-            stockOpen: 'Open',
-            stockHigh: 'High',
-            stockLow: 'Low',
-            stockClose: 'Close'
-        };
-
         const options = merge(
             {
-                lang: langOptions,
                 chart: {
                     panning: {
                         enabled: true,
@@ -991,15 +983,6 @@ namespace StockChart {
         return points;
     }
 
-}
-
-declare module '../Options'{
-    interface LangOptions {
-        stockOpen?: string;
-        stockHigh?: string;
-        stockLow?: string;
-        stockClose?: string;
-    }
 }
 
 /* *

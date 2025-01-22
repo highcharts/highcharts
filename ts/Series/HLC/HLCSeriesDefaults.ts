@@ -24,6 +24,7 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
  *
  * */
 
+
 /**
  * An HLC chart is a style of financial chart used to describe price
  * movements over time. It displays high, low and close values per

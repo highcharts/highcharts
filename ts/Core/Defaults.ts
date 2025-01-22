@@ -128,11 +128,6 @@ const defaultOptions: DefaultOptions = {
      * @optionparent lang
      */
     lang: {
-        stockOpen: 'Open',
-        stockHigh: 'High',
-        stockLow: 'Low',
-        stockClose: 'Close',
-
         weekFrom: 'week from',
 
         /**
