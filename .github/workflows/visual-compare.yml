@@ -151,6 +151,22 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
           AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
 
+      - name: Sync test images
+        if: ${{ always() }}
+        run: |
+          aws s3 sync ./samples \
+          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/$PR_NUMBER/" \
+          --exclude "*" \
+          --include "*/reference.svg" \
+          --include "*/candidate.svg" \
+          --include "*/diff.gif"
+        env:
+          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+          PR_NUMBER: ${{github.event.pull_request.number}}
+
       - name: Comment on PR
         uses: actions/github-script@v7
         if: ${{ always() }}
