@@ -78,6 +78,10 @@ async function task() {
                 if (argv.dts) {
                     buildTasks.task('jsdoc-dts')();
                 }
+
+                if (argv.dashboards || argv.grid) {
+                    buildTasks.push('scripts-ts');
+                }
             }
 
             const newCssHash = fsLib.getDirectoryHash('css', true);
