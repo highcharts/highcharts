@@ -3,29 +3,27 @@ import { ok } from 'node:assert';
 
 import { stat } from 'node:fs/promises';
 
-import '../../gulpfile.ts';
-
-import { run } from '../gulptasks/lib/gulp.js';
+import { exec } from '../libs/process.js';
 
 describe('dashboards/dist', async () => {
     before(async () => {
         process.env.DASH_RELEASE = '1.2.3';
-        await run(['dist-clean']);
+        await exec('npx gulp dist-clean');
     });
 
     after(async () => {
         delete process.env.DASH_RELEASE;
-        // await run(['dist-clean']);
+        // await exec('npx gulp dist-clean');
     });
 
     await it.skip('dashboards/dist-examples creates build/dist directory', async () => {
-        await run(['dashboards/dist-build']);
+        await exec('npx gulp dashboards/dist-build');
 
         ok(await stat('build/dist'));
     });
 
     await it('dashboards/dist-examples creates build/dist/dashboards/index.html ', async () => {
-        await run(['dashboards/dist-examples']);
+        await exec('npx gulp dashboards/dist-examples');
 
         ok(await stat('build/dist/dashboards/index.html'));
         ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
