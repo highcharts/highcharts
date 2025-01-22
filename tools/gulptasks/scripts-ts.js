@@ -122,13 +122,13 @@ async function scriptsTS(argv) {
 
         processLib.isRunning('scripts-ts', true);
 
-        if (product === 'Dashboards') {
+        if (argv.dashboards) {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
         }
 
         fsLib.deleteDirectory('js', true);
 
-        if (!argv.grid) {
+        if (product !== 'Grid') {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
@@ -137,10 +137,10 @@ async function scriptsTS(argv) {
             );
         }
 
-        if (product === 'Dashboards') {
+        if (argv.dashboards) {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
-        } else if (product === 'DataGrid') {
+        } else if (argv.datagrid) {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
         } else if (product === 'Grid') {
@@ -181,7 +181,7 @@ async function scriptsTS(argv) {
             }
         }
 
-        if (product === 'Dashboards') {
+        if (argv.dashboards) {
             removeHighcharts();
 
             // Remove DataGrid
@@ -196,7 +196,7 @@ async function scriptsTS(argv) {
                 fsLib.path(['js', 'masters-dashboards']),
                 fsLib.path(['js', 'masters'])
             );
-        } else if (product === 'DataGrid') { // Should be completely replaced by grid
+        } else if (argv.datagrid) { // Should be completely replaced by grid
             removeHighcharts();
 
             // Fix masters
@@ -222,7 +222,7 @@ async function scriptsTS(argv) {
 
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
-    '--product': 'Build the product, Highcharts, Grid, Dashboards, default: Highcharts'
+    '--product': 'The project to build: Highcharts, Grid, Dashboards, default: Highcharts'
 };
 gulp.task(
     'scripts-ts',

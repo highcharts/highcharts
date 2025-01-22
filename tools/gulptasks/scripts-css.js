@@ -117,7 +117,7 @@ function scriptCSS(argv) {
             copyCSS(dashboardsConfig);
             copyCSS(datagridConfig);
             log.success('Copied dashboards CSS');
-        } else if (argv.grid) {
+        } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
             log.success('Copied grid CSS');
