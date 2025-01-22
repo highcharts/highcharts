@@ -2890,6 +2890,11 @@ function setOptions(
     // Copy in the default options
     merge(true, defaultOptions, options);
 
+    // Apply chart title from language options
+    merge(true, defaultOptions.title, {
+        text: options.lang?.chartTitle
+    });
+
     // Update the time object
     if (options.time) {
         defaultTime.update(defaultOptions.time);
@@ -2898,13 +2903,6 @@ function setOptions(
         defaultTime.update({
             locale: options.lang.locale as string|Array<string>
         });
-    }
-
-    if (options.lang?.chartTitle) {
-        defaultOptions.title = {
-            ...defaultOptions.title,
-            text: options.lang.chartTitle
-        } as DefaultOptions['title'];
     }
 
     return defaultOptions;
