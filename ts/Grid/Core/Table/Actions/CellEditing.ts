@@ -24,8 +24,8 @@
  * */
 
 import TableCell from '../Content/TableCell.js';
-import Globals from '../../Globals.js';
 import GridUtils from '../../GridUtils.js';
+import Table from '../Table.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -48,6 +48,11 @@ class CellEditing {
     * */
 
     /**
+     * The viewport the edited cells are part of.
+     */
+    public readonly viewport: Table;
+
+    /**
      * The cell being currently edited.
      */
     public editedCell?: TableCell;
@@ -56,6 +61,17 @@ class CellEditing {
      * Input element for the cell.
      */
     private inputElement?: HTMLInputElement;
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(viewport: Table) {
+        this.viewport = viewport;
+    }
 
 
     /* *
@@ -71,6 +87,8 @@ class CellEditing {
      * The cell that is to be edited.
      */
     public startEditing(cell: TableCell): void {
+        const vp = this.viewport;
+
         if (this.editedCell === cell) {
             return;
         }
@@ -83,9 +101,9 @@ class CellEditing {
         const cellElement = cell.htmlElement;
 
         cellElement.innerHTML = '';
-        cellElement.classList.add(Globals.classNames.editedCell);
+        cellElement.classList.add(vp.grid.globals.getClassName('editedCell'));
 
-        cell.row.viewport.grid.accessibility?.userEditedCell('started');
+        vp.grid.accessibility?.userEditedCell('started');
         this.renderInput();
     }
 
@@ -98,6 +116,7 @@ class CellEditing {
     public stopEditing(submit = true): void {
         const cell = this.editedCell;
         const input = this.inputElement;
+        const vp = this.viewport;
 
         if (!cell || !input) {
             return;
@@ -107,7 +126,9 @@ class CellEditing {
         let newValue: string | number = input.value;
 
         this.destroyInput();
-        cell.htmlElement.classList.remove(Globals.classNames.editedCell);
+        cell.htmlElement.classList.remove(
+            vp.grid.globals.getClassName('editedCell')
+        );
 
         cell.htmlElement.focus();
 
@@ -122,7 +143,7 @@ class CellEditing {
         );
 
         grid.options?.events?.cell?.afterEdit?.call(cell);
-        cell.row.viewport.grid.accessibility?.userEditedCell(
+        vp.grid.accessibility?.userEditedCell(
             submit ? 'edited' : 'cancelled'
         );
 

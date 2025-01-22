@@ -25,7 +25,6 @@
 
 import Table from '../Table.js';
 import Column from '../Column.js';
-import Globals from '../../Globals.js';
 import GridUtils from '../../GridUtils.js';
 import Cell from '../Cell.js';
 import Utils from '../../../../Core/Utilities.js';
@@ -128,7 +127,7 @@ class ColumnsResizer {
             )
         ) {
             const handle = makeHTMLElement('div', {
-                className: Globals.classNames.resizerHandles
+                className: vp.grid.globals.getClassName('resizerHandles')
             }, cell.htmlElement);
 
             handle.setAttribute('aria-hidden', true);
@@ -238,7 +237,7 @@ class ColumnsResizer {
      */
     private onDocumentMouseUp = (): void => {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
-            Globals.classNames.resizedColumn
+            this.viewport.grid.globals.getClassName('resizedColumn')
         );
 
         this.dragStartX = void 0;
@@ -263,10 +262,11 @@ class ColumnsResizer {
     ): void {
         const onHandleMouseDown = (e: MouseEvent): void => {
             const vp = column.viewport;
+            const { grid } = vp;
 
-            if (!vp.grid.options?.rendering?.rows?.virtualization) {
-                vp.grid.contentWrapper?.classList.add(
-                    Globals.classNames.resizerWrapper
+            if (!grid.options?.rendering?.rows?.virtualization) {
+                grid.contentWrapper?.classList.add(
+                    grid.globals.getClassName('resizerWrapper')
                 );
                 // Apply widths before resizing
                 this.viewport.reflow(true);
@@ -280,7 +280,7 @@ class ColumnsResizer {
                 this.viewport.columns[column.index + 1]?.getWidth();
 
             column.header?.htmlElement.classList.add(
-                Globals.classNames.resizedColumn
+                grid.globals.getClassName('resizedColumn')
             );
         };
 

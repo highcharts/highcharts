@@ -24,7 +24,6 @@
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
 
-import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -84,11 +83,11 @@ class Credits {
         this.options = grid.options?.credits ?? {};
 
         this.containerElement = makeHTMLElement('div', {
-            className: Globals.classNames.creditsContainer
+            className: grid.globals.getClassName('creditsContainer')
         });
 
         this.textElement = makeHTMLElement<HTMLAnchorElement>('a', {
-            className: Globals.classNames.creditsText
+            className: grid.globals.getClassName('creditsText')
         }, this.containerElement);
         this.textElement.setAttribute('target', '_top');
 

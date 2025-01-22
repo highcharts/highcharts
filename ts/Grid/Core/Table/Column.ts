@@ -28,7 +28,6 @@ import type HeaderCell from './Header/HeaderCell';
 
 import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
-import Globals from '../Globals.js';
 import Utils from '../../../Core/Utilities.js';
 import GridUtils from '../GridUtils.js';
 import ColumnSorting from './Actions/ColumnSorting';
@@ -174,6 +173,8 @@ class Column {
      * The cell to register.
      */
     public registerCell(cell: Cell): void {
+        const grid = this.viewport.grid;
+
         cell.htmlElement.setAttribute('data-column-id', this.id);
         if (this.options.className) {
             cell.htmlElement.classList.add(
@@ -181,7 +182,9 @@ class Column {
             );
         }
         if (this.viewport.grid.hoveredColumnId === this.id) {
-            cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
+            cell.htmlElement.classList.add(
+                grid.globals.getClassName('hoveredColumn')
+            );
         }
         this.cells.push(cell);
     }
@@ -219,13 +222,15 @@ class Column {
      * Whether the column should be hovered.
      */
     public setHoveredState(hovered: boolean): void {
+        const grid = this.viewport.grid;
+
         this.header?.htmlElement?.classList[hovered ? 'add' : 'remove'](
-            Globals.classNames.hoveredColumn
+            grid.globals.getClassName('hoveredColumn')
         );
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[hovered ? 'add' : 'remove'](
-                Globals.classNames.hoveredColumn
+                grid.globals.getClassName('hoveredColumn')
             );
         }
     }
@@ -238,13 +243,15 @@ class Column {
      * Whether the column should have synced state.
      */
     public setSyncedState(synced: boolean): void {
+        const globals = this.viewport.grid.globals;
+
         this.header?.htmlElement?.classList[synced ? 'add' : 'remove'](
-            Globals.classNames.syncedColumn
+            globals.getClassName('syncedColumn')
         );
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             this.cells[i].htmlElement.classList[synced ? 'add' : 'remove'](
-                Globals.classNames.syncedColumn
+                globals.getClassName('syncedColumn')
             );
         }
     }
@@ -259,9 +266,11 @@ class Column {
     private getInitialWidth(): number {
         let result: number;
         const { viewport } = this;
+        const globals = viewport.grid.globals;
+
         // Set the initial width of the column.
         const mock = makeHTMLElement('div', {
-            className: Globals.classNames.columnElement
+            className: globals.getClassName('columnElement')
         }, viewport.grid.container);
 
         mock.setAttribute('data-column-id', this.id);

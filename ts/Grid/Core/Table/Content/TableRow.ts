@@ -29,7 +29,7 @@ import type DataTable from '../../../../Data/DataTable';
 import Row from '../Row.js';
 import Table from '../Table.js';
 import TableCell from './TableCell.js';
-import Globals from '../../Globals.js';
+
 
 /* *
  *
@@ -122,8 +122,10 @@ class TableRow extends Row {
      * Whether the row should be hovered.
      */
     public setHoveredState(hovered: boolean): void {
+        const { globals } = this.viewport.grid;
+
         this.htmlElement.classList[hovered ? 'add' : 'remove'](
-            Globals.classNames.hoveredRow
+            globals.getClassName('hoveredRow')
         );
 
         if (hovered) {
@@ -138,8 +140,10 @@ class TableRow extends Row {
      * Whether the row should be synced.
      */
     public setSyncedState(synced: boolean): void {
+        const { globals } = this.viewport.grid;
+
         this.htmlElement.classList[synced ? 'add' : 'remove'](
-            Globals.classNames.syncedRow
+            globals.getClassName('syncedRow')
         );
 
         if (synced) {
@@ -151,11 +155,12 @@ class TableRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
+        const { globals } = this.viewport.grid;
         const idx = this.index;
         const el = this.htmlElement;
         const a11y = this.viewport.grid.accessibility;
 
-        el.classList.add(Globals.classNames.rowElement);
+        el.classList.add(globals.getClassName('rowElement'));
 
         // Index of the row in the presentation data table
         el.setAttribute('data-row-index', idx);
@@ -169,14 +174,14 @@ class TableRow extends Row {
         a11y?.setRowIndex(el, idx + (this.viewport.header?.levels ?? 1) + 1);
 
         // Indexing from 0, so rows with even index are odd.
-        el.classList.add(Globals.classNames[idx % 2 ? 'rowEven' : 'rowOdd']);
+        el.classList.add(globals.getClassName(idx % 2 ? 'rowEven' : 'rowOdd'));
 
         if (this.viewport.grid.hoveredRowIndex === idx) {
-            el.classList.add(Globals.classNames.hoveredRow);
+            el.classList.add(globals.getClassName('hoveredRow'));
         }
 
         if (this.viewport.grid.syncedRowIndex === idx) {
-            el.classList.add(Globals.classNames.syncedRow);
+            el.classList.add(globals.getClassName('syncedRow'));
         }
     }
 

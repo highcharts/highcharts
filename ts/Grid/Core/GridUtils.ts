@@ -24,6 +24,29 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 namespace GridUtils {
 
     /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    /**
+     * Utility type to mark recursively all properties and sub-properties
+     * optional.
+     */
+    export type DeepPartial<T> = {
+        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
+    };
+
+    /**
+     * Utility type to mark recursively all properties and sub-properties
+     * required.
+     */
+    export type DeepRequired<T> = {
+        [K in keyof T]-?: DeepRequired<T[K]>;
+    };
+
+
+    /* *
     *
     *  Functions
     *
@@ -136,7 +159,7 @@ namespace GridUtils {
     /**
      * Sets an element's content, checking whether it is HTML or plain text.
      * Should be used instead of element.innerText when the content can be HTML.
-     * 
+     *
      * @param element
      * Parent element where the content should be.
      *

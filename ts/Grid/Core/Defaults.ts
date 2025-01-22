@@ -23,8 +23,8 @@
  * */
 
 import type Options from './Options';
+import type GridUtils from './GridUtils';
 
-import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
 
 const { merge } = Utils;
@@ -38,7 +38,7 @@ namespace Defaults {
     /**
      * Default options for the Grid.
      */
-    export const defaultOptions: Globals.DeepPartial<Options> = {
+    export const defaultOptions: GridUtils.DeepPartial<Options> = {
         accessibility: {
             enabled: true,
             highContrastMode: 'auto',
@@ -109,7 +109,7 @@ namespace Defaults {
      * The new custom chart options.
      */
     export function setOptions(
-        options: Globals.DeepPartial<Options>
+        options: GridUtils.DeepPartial<Options>
     ): void {
         merge(true, Defaults.defaultOptions, options);
     }

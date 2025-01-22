@@ -25,7 +25,6 @@
 import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
-import Globals from '../../Globals.js';
 import GridUtils from '../../GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -80,16 +79,20 @@ class ColumnSorting {
         this.addHeaderElementAttributes();
 
         if (column.options.sorting?.sortable) {
+            const globals = column.viewport.grid.globals;
+
             makeHTMLElement(
                 'span',
                 {
-                    className: Globals.classNames.columnSortableIcon,
+                    className: globals.getClassName('columnSortableIcon'),
                     innerText: '▲'
                 },
                 headerCellElement
             ).setAttribute('aria-hidden', true);
 
-            headerCellElement.classList.add(Globals.classNames.columnSortable);
+            headerCellElement.classList.add(
+                globals.getClassName('columnSortable')
+            );
         }
     }
 
@@ -108,12 +111,15 @@ class ColumnSorting {
         const a11y = col.viewport.grid.accessibility;
         const sortingOptions = col.options.sorting;
         const { currentSorting } = col.viewport.grid.querying.sorting;
+        const globals = col.viewport.grid.globals;
+        const sortedAscClassName = globals.getClassName('columnSortedAsc');
+        const sortedDescClassName = globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
 
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
-            el.classList.remove(Globals.classNames.columnSortedAsc);
-            el.classList.remove(Globals.classNames.columnSortedDesc);
+            el.classList.remove(sortedAscClassName);
+            el.classList.remove(sortedDescClassName);
 
             if (sortingOptions?.sortable) {
                 a11y?.setColumnSortState(el, 'none');
@@ -124,13 +130,13 @@ class ColumnSorting {
 
         switch (currentSorting?.order) {
             case 'asc':
-                el.classList.add(Globals.classNames.columnSortedAsc);
-                el.classList.remove(Globals.classNames.columnSortedDesc);
+                el.classList.add(sortedAscClassName);
+                el.classList.remove(sortedDescClassName);
                 a11y?.setColumnSortState(el, 'ascending');
                 break;
             case 'desc':
-                el.classList.remove(Globals.classNames.columnSortedAsc);
-                el.classList.add(Globals.classNames.columnSortedDesc);
+                el.classList.remove(sortedAscClassName);
+                el.classList.add(sortedDescClassName);
                 a11y?.setColumnSortState(el, 'descending');
                 break;
         }

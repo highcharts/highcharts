@@ -34,7 +34,6 @@ import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
-import Globals from '../Globals.js';
 import CellEditing from './Actions/CellEditing.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -194,7 +193,9 @@ class Table {
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
         if (this.virtualRows) {
-            tableElement.classList.add(Globals.classNames.virtualization);
+            tableElement.classList.add(
+                grid.globals.getClassName('virtualization')
+            );
         }
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -202,7 +203,7 @@ class Table {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
-        this.cellEditing = new CellEditing();
+        this.cellEditing = new CellEditing(this);
 
         if (customClassName) {
             tableElement.classList.add(...customClassName.split(/\s+/g));
@@ -220,7 +221,9 @@ class Table {
         }
 
         if (this.scrollable) {
-            tableElement.classList.add(Globals.classNames.scrollableContent);
+            tableElement.classList.add(
+                grid.globals.getClassName('scrollableContent')
+            );
         }
 
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
@@ -375,7 +378,7 @@ class Table {
             return;
         }
 
-        const rowClass = '.' + Globals.classNames.rowElement;
+        const rowClass = '.' + this.grid.globals.getClassName('rowElement');
         const firstRowTop = this.tbodyElement
             .querySelectorAll(rowClass)[0]
             .getBoundingClientRect().top;

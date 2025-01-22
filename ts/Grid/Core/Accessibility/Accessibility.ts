@@ -26,7 +26,6 @@ import type Grid from '../Grid';
 import type { ColumnSortingOrder } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
-import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -80,7 +79,7 @@ class Accessibility {
         this.grid = grid;
 
         this.element = document.createElement('div');
-        this.element.classList.add(Globals.classNames.visuallyHidden);
+        this.element.classList.add(grid.globals.getClassName('visuallyHidden'));
         this.grid.container?.prepend(this.element);
 
         this.announcerElement = document.createElement('p');
@@ -102,15 +101,16 @@ class Accessibility {
      * The cell element to add the description to.
      */
     public addEditableCellHint(cellElement: HTMLElement): void {
+        const { grid } = this;
         const editableLang =
-            this.grid.options?.lang?.accessibility?.cellEditing?.editable;
+            grid.options?.lang?.accessibility?.cellEditing?.editable;
 
         if (!editableLang) {
             return;
         }
 
         makeHTMLElement('span', {
-            className: Globals.classNames.visuallyHidden,
+            className: grid.globals.getClassName('visuallyHidden'),
             innerText: ', ' + editableLang
         }, cellElement);
     }
@@ -122,15 +122,16 @@ class Accessibility {
      * The element to add the description to.
      */
     public addSortableColumnHint(element: HTMLElement): void {
+        const { grid } = this;
         const sortableLang =
-            this.grid.options?.lang?.accessibility?.sorting?.sortable;
+            grid.options?.lang?.accessibility?.sorting?.sortable;
 
         if (!sortableLang) {
             return;
         }
 
         makeHTMLElement('span', {
-            className: Globals.classNames.visuallyHidden,
+            className: grid.globals.getClassName('visuallyHidden'),
             innerText: ', ' + sortableLang
         }, element);
     }
