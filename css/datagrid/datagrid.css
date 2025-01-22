@@ -8,36 +8,63 @@
 
 :root,
 .highcharts-light {
-  --highcharts-background-color: #ffffff;
+    --highcharts-background-color: #ffffff;
 
-  /* Neutral colors */
-  --highcharts-neutral-color-100: #000000;
-  --highcharts-neutral-color-80: #333333;
-  --highcharts-neutral-color-60: #666666;
-  --highcharts-neutral-color-40: #999999;
-  --highcharts-neutral-color-20: #cccccc;
-  --highcharts-neutral-color-10: #e6e6e6;
-  --highcharts-neutral-color-5: #f2f2f2;
-  --highcharts-neutral-color-3: #f7f7f7;
-  --highcharts-neutral-color-0: #ffffff;
+    /* Neutral colors */
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-40: #999999;
+    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-10: #e6e6e6;
+    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-0: #ffffff;
 
-  /* Highlight colors */
-  --highcharts-highlight-color-100: #0022ff;
-  --highcharts-highlight-color-80: #334eff;
-  --highcharts-highlight-color-60: #667aff;
-  --highcharts-highlight-color-20: #ccd3ff;
-  --highcharts-highlight-color-10: #e6e9ff;
+    /* Highlight colors */
+    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-80: #334eff;
+    --highcharts-highlight-color-60: #667aff;
+    --highcharts-highlight-color-20: #ccd3ff;
+    --highcharts-highlight-color-10: #e6e9ff;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+    :root {
+        /* UI colors */
+        --highcharts-background-color: #333333;
+
+        /*
+        * Neutral color variations
+        * https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
+    }
+}
+
+.highcharts-dark {
     /* UI colors */
     --highcharts-background-color: #333333;
 
     /*
-             Neutral color variations
-             https://www.highcharts.com/samples/highcharts/css/palette-helper
-         */
+    * Neutral color variations
+    * https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
     --highcharts-neutral-color-100: rgb(255, 255, 255);
     --highcharts-neutral-color-80: rgb(214, 214, 214);
     --highcharts-neutral-color-60: rgb(173, 173, 173);
@@ -46,7 +73,6 @@
     --highcharts-neutral-color-10: rgb(71, 71, 71);
     --highcharts-neutral-color-5: rgb(61, 61, 61);
     --highcharts-neutral-color-3: rgb(57, 57, 57);
-    --highcharts-neutral-color-0: rgb(0, 0, 0);
 
     /* Highlight color variations */
     --highcharts-highlight-color-100: rgb(122, 167, 255);
@@ -54,55 +80,29 @@
     --highcharts-highlight-color-60: rgb(94, 121, 173);
     --highcharts-highlight-color-20: rgb(65, 74, 92);
     --highcharts-highlight-color-10: rgb(58, 63, 71);
-  }
-}
-
-.highcharts-dark {
-  /* UI colors */
-  --highcharts-background-color: #333333;
-
-  /*
-         Neutral color variations
-         https://www.highcharts.com/samples/highcharts/css/palette-helper
-     */
-  --highcharts-neutral-color-100: rgb(255, 255, 255);
-  --highcharts-neutral-color-80: rgb(214, 214, 214);
-  --highcharts-neutral-color-60: rgb(173, 173, 173);
-  --highcharts-neutral-color-40: rgb(133, 133, 133);
-  --highcharts-neutral-color-20: rgb(92, 92, 92);
-  --highcharts-neutral-color-10: rgb(71, 71, 71);
-  --highcharts-neutral-color-5: rgb(61, 61, 61);
-  --highcharts-neutral-color-3: rgb(57, 57, 57);
-
-  /* Highlight color variations */
-  --highcharts-highlight-color-100: rgb(122, 167, 255);
-  --highcharts-highlight-color-80: rgb(108, 144, 214);
-  --highcharts-highlight-color-60: rgb(94, 121, 173);
-  --highcharts-highlight-color-20: rgb(65, 74, 92);
-  --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
 /*  ==== Start DataGrid Color Scheme  ==== */
 .highcharts-datagrid-container {
-  --ig-default-color: #000000;
-  --ig-negative-default-border-color: hsl(0, 100%, 50%);
-  --ig-negative-default-background: hsl(0, 100%, 95%);
-  --ig-neutral-default-border-color: hsl(0, 0%, 35%);
-  --ig-neutral-default-background: hsl(0, 0%, 82%);
-  --ig-positive-default-border-color: hsl(120, 100%, 25%);
-  --ig-positive-default-background: hsl(120, 22%, 90%);
+    --ig-default-color: #000000;
+    --ig-negative-default-border-color: hsl(0, 100%, 50%);
+    --ig-negative-default-background: hsl(0, 100%, 95%);
+    --ig-neutral-default-border-color: hsl(0, 0%, 35%);
+    --ig-neutral-default-background: hsl(0, 0%, 82%);
+    --ig-positive-default-border-color: hsl(120, 100%, 25%);
+    --ig-positive-default-background: hsl(120, 22%, 90%);
 }
 
 @media (prefers-color-scheme: dark) {
-  .highcharts-datagrid-container {
-    --ig-default-color: #ffffff;
-    --ig-negative-default-border-color: hsl(0, 100%, 33%);
-    --ig-negative-default-background: hsl(0, 100%, 21%);
-    --ig-neutral-default-border-color: hsl(0, 0%, 70%);
-    --ig-neutral-default-background: hsl(0, 0%, 39%);
-    --ig-positive-default-border-color: hsl(120, 100%, 25%);
-    --ig-positive-default-background: hsl(120, 41%, 25%);
-  }
+    .highcharts-datagrid-container {
+        --ig-default-color: #ffffff;
+        --ig-negative-default-border-color: hsl(0, 100%, 33%);
+        --ig-negative-default-background: hsl(0, 100%, 21%);
+        --ig-neutral-default-border-color: hsl(0, 0%, 70%);
+        --ig-neutral-default-background: hsl(0, 0%, 39%);
+        --ig-positive-default-border-color: hsl(120, 100%, 25%);
+        --ig-positive-default-background: hsl(120, 41%, 25%);
+    }
 }
 
 /*  ==== End DataGrid Color Scheme  ==== */
@@ -111,783 +111,794 @@
 
 /* ==== Start DataGrid Variables ==== */
 .highcharts-datagrid-container * {
-  --ig-border-radius: var(--hcg-border-radius, 0);
+    --ig-border-radius: var(--hcg-border-radius, 0);
 
-  /* Fonts */
+    /* Fonts */
 
-  /* Global fonts */
-  --ig-font-weight: var(--hcg-font-weight, normal);
-  --ig-font-size: var(--hcg-font-size, 1rem);
-  --ig-font-family: var(--hcg-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif);
-  --ig-color: var(--hcg-color, var(--ig-default-color));
-  --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
-  --ig-text-align: var(--hcg-text-align, left);
+    /* Global fonts */
+    --ig-font-weight: var(--hcg-font-weight, normal);
+    --ig-font-size: var(--hcg-font-size, 1rem);
+    --ig-font-family: var(--hcg-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif);
+    --ig-color: var(--hcg-color, var(--ig-default-color));
+    --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
+    --ig-text-align: var(--hcg-text-align, left);
 
-  /* Header fonts */
-  --ig-header-font-weight: var(--hcg-header-font-weight, var(--ig-font-weight));
-  --ig-header-font-size: var(--hcg-header-font-size, var(--ig-font-size));
-  --ig-header-font-family: var(--hcg-header-font-family, var(--ig-font-family));
-  --ig-header-color: var(--hcg-header-color, var(--ig-color));
-  --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
-  --ig-header-text-align: var(--hcg-header-text-align, var(--ig-text-align));
+    /* Header fonts */
+    --ig-header-font-weight: var(--hcg-header-font-weight, var(--ig-font-weight));
+    --ig-header-font-size: var(--hcg-header-font-size, var(--ig-font-size));
+    --ig-header-font-family: var(--hcg-header-font-family, var(--ig-font-family));
+    --ig-header-color: var(--hcg-header-color, var(--ig-color));
+    --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
+    --ig-header-text-align: var(--hcg-header-text-align, var(--ig-text-align));
 
-  /* Caption fonts */
-  --ig-caption-font-weight: var(--hcg-caption-font-weight, var(--ig-font-weight));
-  --ig-caption-font-size: var(--hcg-caption-font-size, var(--ig-font-size));
-  --ig-caption-font-family: var(--hcg-caption-font-family, var(--ig-font-family));
-  --ig-caption-color: var(--hcg-caption-color, var(--ig-color));
-  --ig-caption-font: var(--ig-caption-font-weight) var(--ig-caption-font-size) var(--ig-caption-font-family);
-  --ig-caption-text-align: var(--hcg-caption-text-align, var(--ig-text-align));
+    /* Caption fonts */
+    --ig-caption-font-weight: var(--hcg-caption-font-weight, var(--ig-font-weight));
+    --ig-caption-font-size: var(--hcg-caption-font-size, var(--ig-font-size));
+    --ig-caption-font-family: var(--hcg-caption-font-family, var(--ig-font-family));
+    --ig-caption-color: var(--hcg-caption-color, var(--ig-color));
+    --ig-caption-font: var(--ig-caption-font-weight) var(--ig-caption-font-size) var(--ig-caption-font-family);
+    --ig-caption-text-align: var(--hcg-caption-text-align, var(--ig-text-align));
 
-  /* Description fonts */
-  --ig-description-font-weight: var(--hcg-description-font-weight, var(--ig-font-weight));
-  --ig-description-font-size: var(--hcg-description-font-size, var(--ig-font-size));
-  --ig-description-font-family: var(--hcg-description-font-family, var(--ig-font-family));
-  --ig-description-color: var(--hcg-description-color, var(--ig-color));
-  --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
-  --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
+    /* Description fonts */
+    --ig-description-font-weight: var(--hcg-description-font-weight, var(--ig-font-weight));
+    --ig-description-font-size: var(--hcg-description-font-size, var(--ig-font-size));
+    --ig-description-font-family: var(--hcg-description-font-family, var(--ig-font-family));
+    --ig-description-color: var(--hcg-description-color, var(--ig-color));
+    --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
+    --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
 
-  /* Credits fonts */
-  --ig-credits-font-size: var(--hcg-credits-font-size, 0.7em);
-  --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
-  --ig-credits-text-align: var(--hcg-credits-text-align, right);
+    /* Credits fonts */
+    --ig-credits-font-size: var(--hcg-credits-font-size, 0.7em);
+    --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
+    --ig-credits-text-align: var(--hcg-credits-text-align, right);
 
-  /* Default borders */
-  --ig-border-width: var(--hcg-border-width, 0);
-  --ig-border-style: var(--hcg-border-style, solid);
-  --ig-border-color: var(--hcg-border-color, var(--ig-color));
-  --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
+    /* Default borders */
+    --ig-border-width: var(--hcg-border-width, 0);
+    --ig-border-style: var(--hcg-border-style, solid);
+    --ig-border-color: var(--hcg-border-color, var(--ig-color));
+    --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
 
-  /* Row borders */
-  --ig-row-border-width: var(--hcg-row-border-width, var(--ig-border-width));
-  --ig-row-border-style: var(--hcg-row-border-style, var(--ig-border-style));
-  --ig-row-border-color: var(--hcg-row-border-color, var(--ig-border-color));
-  --ig-row-border: var(--ig-row-border-width) var(--ig-row-border-style) var(--ig-row-border-color);
+    /* Row borders */
+    --ig-row-border-width: var(--hcg-row-border-width, var(--ig-border-width));
+    --ig-row-border-style: var(--hcg-row-border-style, var(--ig-border-style));
+    --ig-row-border-color: var(--hcg-row-border-color, var(--ig-border-color));
+    --ig-row-border: var(--ig-row-border-width) var(--ig-row-border-style) var(--ig-row-border-color);
 
-  /* Header row borders */
-  --ig-header-row-border-width: var(--hcg-header-row-border-width, var(--ig-row-border-width));
-  --ig-header-row-border-style: var(--hcg-header-row-border-style, var(--ig-row-border-style));
-  --ig-header-row-border-color: var(--hcg-header-row-border-color, var(--ig-row-border-color));
-  --ig-header-row-border: var(--ig-header-row-border-width) var(--ig-header-row-border-style) var(--ig-header-row-border-color);
+    /* Header row borders */
+    --ig-header-row-border-width: var(--hcg-header-row-border-width, var(--ig-row-border-width));
+    --ig-header-row-border-style: var(--hcg-header-row-border-style, var(--ig-row-border-style));
+    --ig-header-row-border-color: var(--hcg-header-row-border-color, var(--ig-row-border-color));
+    --ig-header-row-border: var(--ig-header-row-border-width) var(--ig-header-row-border-style) var(--ig-header-row-border-color);
 
-  /* Column borders */
-  --ig-column-border-width: var(--hcg-column-border-width, var(--ig-border-width));
-  --ig-column-border-style: var(--hcg-column-border-style, var(--ig-border-style));
-  --ig-column-border-color: var(--hcg-column-border-color, var(--ig-border-color));
-  --ig-column-border: var(--ig-column-border-width) var(--ig-column-border-style) var(--ig-column-border-color);
+    /* Column borders */
+    --ig-column-border-width: var(--hcg-column-border-width, var(--ig-border-width));
+    --ig-column-border-style: var(--hcg-column-border-style, var(--ig-border-style));
+    --ig-column-border-color: var(--hcg-column-border-color, var(--ig-border-color));
+    --ig-column-border: var(--ig-column-border-width) var(--ig-column-border-style) var(--ig-column-border-color);
 
-  /* Header column borders */
-  --ig-header-column-border-width: var(--hcg-header-column-border-width, var(--ig-column-border-width));
-  --ig-header-column-border-style: var(--hcg-header-column-border-style, var(--ig-column-border-style));
-  --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
-  --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
+    /* Header column borders */
+    --ig-header-column-border-width: var(--hcg-header-column-border-width, var(--ig-column-border-width));
+    --ig-header-column-border-style: var(--hcg-header-column-border-style, var(--ig-column-border-style));
+    --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
+    --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
 
-  /* Default padding */
-  --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
-  --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
-  --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
+    /* Default padding */
+    --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
+    --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
+    --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
 
-  /* Header padding */
-  --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
-  --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-  --ig-header-padding: var(--ig-header-vertical-padding) max(var(--ig-header-horizontal-padding), 20px) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
+    /* Header padding */
+    --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
+    --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
+    --ig-header-padding: var(--ig-header-vertical-padding) max(var(--ig-header-horizontal-padding), 20px) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
 
-  /* Caption padding */
-  --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
-  --ig-caption-vertical-padding: var(--hcg-caption-vertical-padding, var(--hcg-caption-padding, var(--ig-vertical-padding)));
-  --ig-caption-padding: 0 var(--ig-caption-horizontal-padding) var(--ig-caption-vertical-padding) var(--ig-caption-horizontal-padding);
+    /* Caption padding */
+    --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
+    --ig-caption-vertical-padding: var(--hcg-caption-vertical-padding, var(--hcg-caption-padding, var(--ig-vertical-padding)));
+    --ig-caption-padding: 0 var(--ig-caption-horizontal-padding) var(--ig-caption-vertical-padding) var(--ig-caption-horizontal-padding);
 
-  /* Description padding */
-  --ig-description-horizontal-padding: var(--hcg-description-horizontal-padding, var(--hcg-description-padding, var(--ig-horizontal-padding)));
-  --ig-description-vertical-padding: var(--hcg-description-vertical-padding, var(--hcg-description-padding, var(--ig-vertical-padding)));
-  --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
+    /* Description padding */
+    --ig-description-horizontal-padding: var(--hcg-description-horizontal-padding, var(--hcg-description-padding, var(--ig-horizontal-padding)));
+    --ig-description-vertical-padding: var(--hcg-description-vertical-padding, var(--hcg-description-padding, var(--ig-vertical-padding)));
+    --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
 
-  /* Credits padding */
-  --ig-credits-padding: 0 var(--ig-horizontal-padding);
+    /* Credits padding */
+    --ig-credits-padding: 0 var(--ig-horizontal-padding);
 
-  /* Default backgrounds and colors */
-  --ig-background: var(--hcg-background, transparent);
-  --ig-row-background: var(--hcg-row-background, transparent);
-  --ig-row-even-background: var(--hcg-row-even-background, var(--ig-row-background));
-  --ig-header-background: var(--hcg-header-background, var(--ig-row-background));
-  --ig-row-even-color: var(--hcg-row-even-color, var(--ig-color));
+    /* Default backgrounds and colors */
+    --ig-background: var(--hcg-background, transparent);
+    --ig-row-background: var(--hcg-row-background, transparent);
+    --ig-row-even-background: var(--hcg-row-even-background, var(--ig-row-background));
+    --ig-header-background: var(--hcg-header-background, var(--ig-row-background));
+    --ig-row-even-color: var(--hcg-row-even-color, var(--ig-color));
 
-  /* Cell hovered CELL background, border and color */
-  --ig-cell-hovered-background: var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-background)));
-  --ig-cell-hovered-color: var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-color, var(--hcg-color))));
-  --ig-cell-even-hovered-background: var(--hcg-cell-hovered-even-background, var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-even-background))));
-  --ig-cell-even-hovered-color: var(--hcg-cell-even-hovered-color, var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-even-color))));
+    /* Cell hovered backgrounds and colors */
+    --ig-cell-hovered-background: var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-background)));
+    --ig-cell-hovered-color: var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-color, var(--hcg-color))));
+    --ig-cell-even-hovered-background: var(--hcg-cell-hovered-even-background, var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-even-background))));
+    --ig-cell-even-hovered-color: var(--hcg-cell-even-hovered-color, var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-even-color))));
 
-  --ig-cell-hovered-horizontal-border-width: var(--hcg-cell-hovered-border-width, var(--ig-cell-hovered-column-border-width));
-  --ig-cell-hovered-horizontal-border-style: var(--hcg-cell-hovered-border-style, var(--ig-cell-hovered-column-border-style));
-  --ig-cell-hovered-horizontal-border-color: var(--hcg-cell-hovered-border-color, var(--ig-cell-hovered-column-border-color));
-  --ig-cell-hovered-horizontal-border: var(--ig-cell-hovered-horizontal-border-width) var(--ig-cell-hovered-horizontal-border-style) var(--ig-cell-hovered-horizontal-border-color);
+    /* Cell hovered horizontal border */
+    --ig-cell-hovered-horizontal-border-width: var(--hcg-cell-hovered-border-width, var(--ig-cell-hovered-column-border-width));
+    --ig-cell-hovered-horizontal-border-style: var(--hcg-cell-hovered-border-style, var(--ig-cell-hovered-column-border-style));
+    --ig-cell-hovered-horizontal-border-color: var(--hcg-cell-hovered-border-color, var(--ig-cell-hovered-column-border-color));
+    --ig-cell-hovered-horizontal-border: var(--ig-cell-hovered-horizontal-border-width) var(--ig-cell-hovered-horizontal-border-style) var(--ig-cell-hovered-horizontal-border-color);
 
-  --ig-cell-hovered-vertical-border-width: var(--hcg-cell-hovered-border-width, var(--ig-cell-hovered-row-border-width));
-  --ig-cell-hovered-vertical-border-style: var(--hcg-cell-hovered-border-style, var(--ig-cell-hovered-row-border-style));
-  --ig-cell-hovered-vertical-border-color: var(--hcg-cell-hovered-border-color, var(--ig-cell-hovered-row-border-color));
-  --ig-cell-hovered-vertical-border: var(--ig-cell-hovered-vertical-border-width) var(--ig-cell-hovered-vertical-border-style) var(--ig-cell-hovered-vertical-border-color);
+    /* Cell hovered vertical border */
+    --ig-cell-hovered-vertical-border-width: var(--hcg-cell-hovered-border-width, var(--ig-cell-hovered-row-border-width));
+    --ig-cell-hovered-vertical-border-style: var(--hcg-cell-hovered-border-style, var(--ig-cell-hovered-row-border-style));
+    --ig-cell-hovered-vertical-border-color: var(--hcg-cell-hovered-border-color, var(--ig-cell-hovered-row-border-color));
+    --ig-cell-hovered-vertical-border: var(--ig-cell-hovered-vertical-border-width) var(--ig-cell-hovered-vertical-border-style) var(--ig-cell-hovered-vertical-border-color);
 
-  /* Cell hovered ROW background, border and color */
-  --ig-cell-hovered-row-background: var(--hcg-cell-hovered-row-background, var(--ig-row-background));
-  --ig-cell-hovered-row-color: var(--hcg-cell-hovered-row-color, var(--ig-color));
-  --ig-cell-hovered-row-even-background: var(--hcg-cell-hovered-row-even-background, var(--hcg-cell-hovered-row-background, var(--ig-row-even-background)));
-  --ig-cell-hovered-row-even-color: var(--hcg-cell-hovered-row-even-color, var(--hcg-cell-hovered-row-color, var(--ig-row-even-color)));
+    /* Cell hovered row backgrounds and colors */
+    --ig-cell-hovered-row-background: var(--hcg-cell-hovered-row-background, var(--ig-row-background));
+    --ig-cell-hovered-row-color: var(--hcg-cell-hovered-row-color, var(--ig-color));
+    --ig-cell-hovered-row-even-background: var(--hcg-cell-hovered-row-even-background, var(--hcg-cell-hovered-row-background, var(--ig-row-even-background)));
+    --ig-cell-hovered-row-even-color: var(--hcg-cell-hovered-row-even-color, var(--hcg-cell-hovered-row-color, var(--ig-row-even-color)));
 
-  --ig-cell-hovered-row-border-width: var(--hcg-cell-hovered-row-border-width, 0);
-  --ig-cell-hovered-row-border-style: var(--hcg-cell-hovered-row-border-style, var(--ig-border-style));
-  --ig-cell-hovered-row-border-color: var(--hcg-cell-hovered-row-border-color, var(--ig-border-color));
-  --ig-cell-hovered-row-border: var(--ig-cell-hovered-row-border-width) var(--ig-cell-hovered-row-border-style) var(--ig-cell-hovered-row-border-color);
+    /* Cell hovered row border */
+    --ig-cell-hovered-row-border-width: var(--hcg-cell-hovered-row-border-width, 0);
+    --ig-cell-hovered-row-border-style: var(--hcg-cell-hovered-row-border-style, var(--ig-border-style));
+    --ig-cell-hovered-row-border-color: var(--hcg-cell-hovered-row-border-color, var(--ig-border-color));
+    --ig-cell-hovered-row-border: var(--ig-cell-hovered-row-border-width) var(--ig-cell-hovered-row-border-style) var(--ig-cell-hovered-row-border-color);
 
-  /* Cell hovered COLUMN background, border and color */
-  --ig-cell-hovered-column-background: var(--hcg-cell-hovered-column-background, var(--ig-row-background));
-  --ig-cell-hovered-column-color: var(--hcg-cell-hovered-column-color, var(--ig-color));
-  --ig-cell-hovered-column-even-background: var(--hcg-cell-hovered-column-even-background, var(--hcg-cell-hovered-column-background, var(--ig-row-even-background)));
-  --ig-cell-hovered-column-even-color: var(--hcg-cell-hovered-column-even-color, var(--hcg-cell-hovered-column-color, var(--ig-row-even-color)));
+    /* Cell hovered column backgrounds and colors */
+    --ig-cell-hovered-column-background: var(--hcg-cell-hovered-column-background, var(--ig-row-background));
+    --ig-cell-hovered-column-color: var(--hcg-cell-hovered-column-color, var(--ig-color));
+    --ig-cell-hovered-column-even-background: var(--hcg-cell-hovered-column-even-background, var(--hcg-cell-hovered-column-background, var(--ig-row-even-background)));
+    --ig-cell-hovered-column-even-color: var(--hcg-cell-hovered-column-even-color, var(--hcg-cell-hovered-column-color, var(--ig-row-even-color)));
 
-  --ig-cell-hovered-column-border-width: var(--hcg-cell-hovered-column-border-width, 0);
-  --ig-cell-hovered-column-border-style: var(--hcg-cell-hovered-column-border-style, var(--ig-border-style));
-  --ig-cell-hovered-column-border-color: var(--hcg-cell-hovered-column-border-color, var(--ig-border-color));
-  --ig-cell-hovered-column-border: var(--ig-cell-hovered-column-border-width) var(--ig-cell-hovered-column-border-style) var(--ig-cell-hovered-column-border-color);
+    /* Cell hovered column border */
+    --ig-cell-hovered-column-border-width: var(--hcg-cell-hovered-column-border-width, 0);
+    --ig-cell-hovered-column-border-style: var(--hcg-cell-hovered-column-border-style, var(--ig-border-style));
+    --ig-cell-hovered-column-border-color: var(--hcg-cell-hovered-column-border-color, var(--ig-border-color));
+    --ig-cell-hovered-column-border: var(--ig-cell-hovered-column-border-width) var(--ig-cell-hovered-column-border-style) var(--ig-cell-hovered-column-border-color);
 
-  /* Cell hovered HEADER background, border and color */
-  --ig-cell-hovered-header-background: var(--hcg-cell-hovered-header-background, var(--ig-header-background));
-  --ig-cell-hovered-header-color: var(--hcg-cell-hovered-header-color, var(--ig-header-color));
+    /* Cell hovered header background and color */
+    --ig-cell-hovered-header-background: var(--hcg-cell-hovered-header-background, var(--ig-header-background));
+    --ig-cell-hovered-header-color: var(--hcg-cell-hovered-header-color, var(--ig-header-color));
 
-  --ig-cell-hovered-header-border-width: var(--hcg-cell-hovered-header-border-width, 0);
-  --ig-cell-hovered-header-border-style: var(--hcg-cell-hovered-header-border-style, var(--ig-cell-hovered-column-border-style));
-  --ig-cell-hovered-header-border-color: var(--hcg-cell-hovered-header-border-color, var(--ig-cell-hovered-column-border-color));
-  --ig-cell-hovered-header-border: var(--ig-cell-hovered-header-border-width) var(--ig-cell-hovered-header-border-style) var(--ig-cell-hovered-header-border-color);
+    /* Cell hovered header border */
+    --ig-cell-hovered-header-border-width: var(--hcg-cell-hovered-header-border-width, 0);
+    --ig-cell-hovered-header-border-style: var(--hcg-cell-hovered-header-border-style, var(--ig-cell-hovered-column-border-style));
+    --ig-cell-hovered-header-border-color: var(--hcg-cell-hovered-header-border-color, var(--ig-cell-hovered-column-border-color));
+    --ig-cell-hovered-header-border: var(--ig-cell-hovered-header-border-width) var(--ig-cell-hovered-header-border-style) var(--ig-cell-hovered-header-border-color);
 
-  /* Header hovered backgrounds and colors */
-  --ig-header-hovered-background: var(--hcg-header-hovered-background, var(--ig-header-background));
-  --ig-header-hovered-color: var(--hcg-header-hovered-color, var(--ig-header-color));
+    /* Header hovered background and color */
+    --ig-header-hovered-background: var(--hcg-header-hovered-background, var(--ig-header-background));
+    --ig-header-hovered-color: var(--hcg-header-hovered-color, var(--ig-header-color));
 
-  /* Cell synced CELL background, border and color */
-  --ig-cell-synced-background: var(--hcg-cell-synced-background, var(--ig-cell-hovered-background));
-  --ig-cell-synced-color: var(--hcg-cell-synced-color, var(--ig-cell-hovered-color));
-  --ig-cell-even-synced-background: var(--hcg-cell-synced-even-background, var(--ig-cell-even-hovered-background));
-  --ig-cell-even-synced-color: var(--hcg-cell-even-synced-color, var(--ig-cell-even-hovered-color));
+    /* Cell synced backgrounds and colors */
+    --ig-cell-synced-background: var(--hcg-cell-synced-background, var(--ig-cell-hovered-background));
+    --ig-cell-synced-color: var(--hcg-cell-synced-color, var(--ig-cell-hovered-color));
+    --ig-cell-even-synced-background: var(--hcg-cell-synced-even-background, var(--ig-cell-even-hovered-background));
+    --ig-cell-even-synced-color: var(--hcg-cell-even-synced-color, var(--ig-cell-even-hovered-color));
 
-  --ig-cell-synced-horizontal-border-width: var(--hcg-cell-synced-border-width, var(--hcg-cell-hovered-border-width, 0));
-  --ig-cell-synced-horizontal-border-style: var(--hcg-cell-synced-border-style, var(--hcg-cell-hovered-border-style, var(--ig-border-style)));
-  --ig-cell-synced-horizontal-border-color: var(--hcg-cell-synced-border-color, var(--hcg-cell-hovered-border-color, var(--ig-border-color)));
-  --ig-cell-synced-horizontal-border: var(--ig-cell-synced-horizontal-border-width) var(--ig-cell-synced-horizontal-border-style) var(--ig-cell-synced-horizontal-border-color);
+    /* Cell synced horizontal border */
+    --ig-cell-synced-horizontal-border-width: var(--hcg-cell-synced-border-width, var(--hcg-cell-hovered-border-width, 0));
+    --ig-cell-synced-horizontal-border-style: var(--hcg-cell-synced-border-style, var(--hcg-cell-hovered-border-style, var(--ig-border-style)));
+    --ig-cell-synced-horizontal-border-color: var(--hcg-cell-synced-border-color, var(--hcg-cell-hovered-border-color, var(--ig-border-color)));
+    --ig-cell-synced-horizontal-border: var(--ig-cell-synced-horizontal-border-width) var(--ig-cell-synced-horizontal-border-style) var(--ig-cell-synced-horizontal-border-color);
 
-  --ig-cell-synced-vertical-border-width: var(--hcg-cell-synced-border-width, var(--hcg-cell-hovered-border-width, 0));
-  --ig-cell-synced-vertical-border-style: var(--hcg-cell-synced-border-style, var(--hcg-cell-hovered-border-style, var(--ig-border-style)));
-  --ig-cell-synced-vertical-border-color: var(--hcg-cell-synced-border-color, var(--hcg-cell-hovered-border-color, var(--ig-border-color)));
-  --ig-cell-synced-vertical-border: var(--ig-cell-synced-vertical-border-width) var(--ig-cell-synced-vertical-border-style) var(--ig-cell-synced-vertical-border-color);
+    /* Cell synced vertical border */
+    --ig-cell-synced-vertical-border-width: var(--hcg-cell-synced-border-width, var(--hcg-cell-hovered-border-width, 0));
+    --ig-cell-synced-vertical-border-style: var(--hcg-cell-synced-border-style, var(--hcg-cell-hovered-border-style, var(--ig-border-style)));
+    --ig-cell-synced-vertical-border-color: var(--hcg-cell-synced-border-color, var(--hcg-cell-hovered-border-color, var(--ig-border-color)));
+    --ig-cell-synced-vertical-border: var(--ig-cell-synced-vertical-border-width) var(--ig-cell-synced-vertical-border-style) var(--ig-cell-synced-vertical-border-color);
 
-  /* Cell synced ROW backgrounds and colors */
-  --ig-cell-synced-row-background: var(--hcg-cell-synced-row-background, var(--ig-cell-hovered-row-background));
-  --ig-cell-synced-row-color: var(--hcg-cell-synced-row-color, var(--ig-cell-hovered-row-color));
-  --ig-cell-synced-row-even-background: var(--hcg-cell-synced-row-even-background, var(--ig-cell-hovered-row-even-background));
-  --ig-cell-synced-row-even-color: var(--hcg-cell-synced-row-even-color, var(--ig-cell-hovered-row-even-color));
+    /* Cell synced row backgrounds and colors */
+    --ig-cell-synced-row-background: var(--hcg-cell-synced-row-background, var(--ig-cell-hovered-row-background));
+    --ig-cell-synced-row-color: var(--hcg-cell-synced-row-color, var(--ig-cell-hovered-row-color));
+    --ig-cell-synced-row-even-background: var(--hcg-cell-synced-row-even-background, var(--ig-cell-hovered-row-even-background));
+    --ig-cell-synced-row-even-color: var(--hcg-cell-synced-row-even-color, var(--ig-cell-hovered-row-even-color));
 
-  --ig-cell-synced-row-border-width: var(--hcg-cell-synced-row-border-width, var(--ig-cell-hovered-row-border-width));
-  --ig-cell-synced-row-border-style: var(--hcg-cell-synced-row-border-style, var(--ig-cell-hovered-row-border-style));
-  --ig-cell-synced-row-border-color: var(--hcg-cell-synced-row-border-color, var(--ig-cell-hovered-row-border-color));
-  --ig-cell-synced-row-border: var(--ig-cell-synced-row-border-width) var(--ig-cell-synced-row-border-style) var(--ig-cell-synced-row-border-color);
+    /* Cell synced row border */
+    --ig-cell-synced-row-border-width: var(--hcg-cell-synced-row-border-width, var(--ig-cell-hovered-row-border-width));
+    --ig-cell-synced-row-border-style: var(--hcg-cell-synced-row-border-style, var(--ig-cell-hovered-row-border-style));
+    --ig-cell-synced-row-border-color: var(--hcg-cell-synced-row-border-color, var(--ig-cell-hovered-row-border-color));
+    --ig-cell-synced-row-border: var(--ig-cell-synced-row-border-width) var(--ig-cell-synced-row-border-style) var(--ig-cell-synced-row-border-color);
 
-  /* Cell synced COLUMN backgrounds and colors */
-  --ig-cell-synced-column-background: var(--hcg-cell-synced-column-background, var(--ig-cell-hovered-column-background));
-  --ig-cell-synced-column-color: var(--hcg-cell-synced-column-color, var(--ig-cell-hovered-column-color));
-  --ig-cell-synced-column-even-background: var(--hcg-cell-synced-column-even-background, var(--hcg-cell-synced-column-background, var(--ig-cell-hovered-column-even-background)));
-  --ig-cell-synced-column-even-color: var(--hcg-cell-synced-column-even-color, var(--ig-cell-hovered-column-even-color));
+    /* Cell synced column backgrounds and colors */
+    --ig-cell-synced-column-background: var(--hcg-cell-synced-column-background, var(--ig-cell-hovered-column-background));
+    --ig-cell-synced-column-color: var(--hcg-cell-synced-column-color, var(--ig-cell-hovered-column-color));
+    --ig-cell-synced-column-even-background: var(--hcg-cell-synced-column-even-background, var(--hcg-cell-synced-column-background, var(--ig-cell-hovered-column-even-background)));
+    --ig-cell-synced-column-even-color: var(--hcg-cell-synced-column-even-color, var(--ig-cell-hovered-column-even-color));
 
-  --ig-cell-synced-column-border-width: var(--hcg-cell-synced-column-border-width, var(--ig-cell-hovered-column-border-width));
-  --ig-cell-synced-column-border-style: var(--hcg-cell-synced-column-border-style, var(--ig-cell-hovered-column-border-style));
-  --ig-cell-synced-column-border-color: var(--hcg-cell-synced-column-border-color, var(--ig-cell-hovered-column-border-color));
-  --ig-cell-synced-column-border: var(--ig-cell-synced-column-border-width) var(--ig-cell-synced-column-border-style) var(--ig-cell-synced-column-border-color);
+    /* Cell synced column border */
+    --ig-cell-synced-column-border-width: var(--hcg-cell-synced-column-border-width, var(--ig-cell-hovered-column-border-width));
+    --ig-cell-synced-column-border-style: var(--hcg-cell-synced-column-border-style, var(--ig-cell-hovered-column-border-style));
+    --ig-cell-synced-column-border-color: var(--hcg-cell-synced-column-border-color, var(--ig-cell-hovered-column-border-color));
+    --ig-cell-synced-column-border: var(--ig-cell-synced-column-border-width) var(--ig-cell-synced-column-border-style) var(--ig-cell-synced-column-border-color);
 
-  /* Cell synced HEADER backgrounds and colors */
-  --ig-cell-synced-header-background: var(--hcg-cell-synced-header-background, var(--ig-cell-hovered-header-background));
-  --ig-cell-synced-header-color: var(--hcg-cell-synced-header-color, var(--ig-cell-hovered-header-color));
+    /* Cell synced header background and color */
+    --ig-cell-synced-header-background: var(--hcg-cell-synced-header-background, var(--ig-cell-hovered-header-background));
+    --ig-cell-synced-header-color: var(--hcg-cell-synced-header-color, var(--ig-cell-hovered-header-color));
 
-  --ig-cell-synced-header-border-width: var(--hcg-cell-synced-header-border-width, var(--ig-cell-hovered-header-border-width));
-  --ig-cell-synced-header-border-style: var(--hcg-cell-synced-header-border-style, var(--ig-cell-synced-column-border-style));
-  --ig-cell-synced-header-border-color: var(--hcg-cell-synced-header-border-color, var(--ig-cell-synced-column-border-color));
-  --ig-cell-synced-header-border: var(--ig-cell-synced-header-border-width) var(--ig-cell-synced-header-border-style) var(--ig-cell-synced-header-border-color);
+    /* Cell synced header border */
+    --ig-cell-synced-header-border-width: var(--hcg-cell-synced-header-border-width, var(--ig-cell-hovered-header-border-width));
+    --ig-cell-synced-header-border-style: var(--hcg-cell-synced-header-border-style, var(--ig-cell-synced-column-border-style));
+    --ig-cell-synced-header-border-color: var(--hcg-cell-synced-header-border-color, var(--ig-cell-synced-column-border-color));
+    --ig-cell-synced-header-border: var(--ig-cell-synced-header-border-width) var(--ig-cell-synced-header-border-style) var(--ig-cell-synced-header-border-color);
 
-  /* CSS helpers */
-  --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
 
-  /* Negative colors */
-  --ig-negative-border-color: var(--hcg-negative-border-color, var(--ig-negative-default-border-color));
-  --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
-  --ig-negative-background: var(--hcg-negative-background, var(--ig-negative-default-background));
-  --ig-negative-color: var(--hcg-negative-color, var(--ig-color));
+    /* Negative colors */
+    --ig-negative-border-color: var(--hcg-negative-border-color, var(--ig-negative-default-border-color));
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+    --ig-negative-background: var(--hcg-negative-background, var(--ig-negative-default-background));
+    --ig-negative-color: var(--hcg-negative-color, var(--ig-color));
 
-  /* Neutral colors */
-  --ig-neutral-border-color: var(--hcg-neutral-border-color, var(--ig-neutral-default-border-color));
-  --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
-  --ig-neutral-background: var(--hcg-neutral-background, var(--ig-neutral-default-background));
-  --ig-neutral-color: var(--hcg-neutral-color, var(--ig-color));
+    /* Neutral colors */
+    --ig-neutral-border-color: var(--hcg-neutral-border-color, var(--ig-neutral-default-border-color));
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+    --ig-neutral-background: var(--hcg-neutral-background, var(--ig-neutral-default-background));
+    --ig-neutral-color: var(--hcg-neutral-color, var(--ig-color));
 
-  /* Positive colors */
-  --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
-  --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
-  --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
-  --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+    /* Positive colors */
+    --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+    --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
+    --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 
-  box-sizing: border-box;
-  font: var(--ig-font);
+    box-sizing: border-box;
+    font: var(--ig-font);
 }
 
 /* ==== End DataGrid Variables ==== */
 
 .highcharts-datagrid-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .highcharts-datagrid-column {
-  width: 0;
+    width: 0;
 }
 
 /* Table */
 .highcharts-datagrid-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: var(--ig-border);
-  background: var(--ig-background);
-  table-layout: fixed;
-  border-radius: var(--ig-border-radius);
-  flex: 1;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: var(--ig-border);
+    background: var(--ig-background);
+    table-layout: fixed;
+    border-radius: var(--ig-border-radius);
+    flex: 1;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 /* Table Header */
 .highcharts-datagrid-table.highcharts-datagrid-virtualization thead {
-  display: block;
+    display: block;
 }
 
 .highcharts-datagrid-table thead th {
-  position: relative;
-  border-right: var(--ig-header-column-border);
-  border-bottom: var(--ig-header-row-border);
-  background: var(--ig-header-background);
-  padding: var(--ig-header-padding);
-  color: var(--ig-header-color);
+    position: relative;
+    border-right: var(--ig-header-column-border);
+    border-bottom: var(--ig-header-row-border);
+    background: var(--ig-header-background);
+    padding: var(--ig-header-padding);
+    color: var(--ig-header-color);
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
-  width: 100%;
-  font: var(--ig-header-font);
-  text-align: var(--ig-header-text-align);
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-  padding: 0;
-  user-select: none; /* Standard syntax */
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
+    width: 100%;
+    font: var(--ig-header-font);
+    text-align: var(--ig-header-text-align);
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .highcharts-datagrid-resizer-content thead,
 .highcharts-datagrid-resizer-content tbody {
-  display: block;
-  overflow: hidden;
-  width: 100%;
+    display: block;
+    overflow: hidden;
+    width: 100%;
 }
 
 .highcharts-datagrid-table thead tr:first-of-type th:first-child {
-  border-top-left-radius: var(--ig-border-radius);
+    border-top-left-radius: var(--ig-border-radius);
 }
 
 .highcharts-datagrid-table thead tr:first-of-type th:last-child {
-  border-top-right-radius: var(--ig-border-radius);
+    border-top-right-radius: var(--ig-border-radius);
 }
 
 .highcharts-datagrid-table tbody tr:last-of-type td:first-child {
-  border-bottom-left-radius: var(--ig-border-radius);
+    border-bottom-left-radius: var(--ig-border-radius);
 }
 
 .highcharts-datagrid-table tbody tr:last-of-type td:last-child {
-  border-bottom-right-radius: var(--ig-border-radius);
+    border-bottom-right-radius: var(--ig-border-radius);
 }
 
 .highcharts-datagrid-resizer-content tr {
-  width: 100%;
+    width: 100%;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer {
-  position: absolute;
-  top: 0;
-  width: 16px;
-  right: -9px;
-  height: 100%;
-  cursor: col-resize;
-  user-select: none;
-  z-index: 10;
+    position: absolute;
+    top: 0;
+    width: 16px;
+    right: -9px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 10;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer::after {
-  content: "";
-  position: absolute;
-  display: block;
-  height: 20px;
-  width: 7px;
-  margin-top: -10px;
-  top: 50%;
-  left: 2px;
+    content: "";
+    position: absolute;
+    display: block;
+    height: 20px;
+    width: 7px;
+    margin-top: -10px;
+    top: 50%;
+    left: 2px;
 }
 
 .highcharts-datagrid-table thead th .highcharts-datagrid-column-resizer:hover::after {
-  border-left: 2px solid var(--ig-header-color);
-  border-right: 2px solid var(--ig-header-color);
+    border-left: 2px solid var(--ig-header-color);
+    border-right: 2px solid var(--ig-header-color);
 }
 
 /* Sorting */
 .highcharts-datagrid-table thead th.highcharts-datagrid-column-sortable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-icon {
-  right: 10px;
-  top: calc(50% - 10px);
-  bottom: 50%;
-  position: absolute;
-  display: none;
-  width: 12px;
-  height: 12px;
-  user-select: none;
-  pointer-events: none;
+    right: 10px;
+    top: calc(50% - 10px);
+    bottom: 50%;
+    position: absolute;
+    display: none;
+    width: 12px;
+    height: 12px;
+    user-select: none;
+    pointer-events: none;
 }
 
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-asc .highcharts-datagrid-column-sortable-icon,
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-column-sortable-icon {
-  display: inline-block;
+    display: inline-block;
 }
 
 .highcharts-datagrid-column-sortable.highcharts-datagrid-column-sorted-desc .highcharts-datagrid-column-sortable-icon {
-  transform: rotate(180deg);
-  top: calc(50% - 2px);
-  right: 10px;
+    transform: rotate(180deg);
+    top: calc(50% - 2px);
+    right: 10px;
 }
 
 .highcharts-datagrid-container:has(.highcharts-datagrid-no-data) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 100%;
-  padding: var(--ig-description-padding);
-  text-align: var(--ig-description-text-align);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--ig-description-padding);
+    text-align: var(--ig-description-text-align);
 }
 
 /* Table body */
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody {
-  height: 100%;
-  overflow: auto;
-  min-height: 0;
-  flex: 1;
+    height: 100%;
+    overflow: auto;
+    min-height: 0;
+    flex: 1;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody {
-  display: block;
-  position: relative;
+    display: block;
+    position: relative;
 }
 
 .highcharts-datagrid-table tbody {
-  border-bottom-left-radius: var(--hcg-border-radius);
-  border-bottom-right-radius: var(--hcg-border-radius);
+    border-bottom-left-radius: var(--hcg-border-radius);
+    border-bottom-right-radius: var(--hcg-border-radius);
 }
 
 .highcharts-datagrid-table tbody tr {
-  overflow: hidden;
-  width: 100%;
+    overflow: hidden;
+    width: 100%;
 }
 
 .highcharts-datagrid-table tbody tr td,
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-mocked-cell {
-  border-right: var(--ig-column-border);
-  border-bottom: var(--ig-row-border);
-  text-align: var(--ig-text-align);
-  padding: var(--ig-padding);
-  color: var(--ig-color);
-  font: var(--ig-font);
-  line-height: 1em;
-  overflow: hidden;
+    border-right: var(--ig-column-border);
+    border-bottom: var(--ig-row-border);
+    text-align: var(--ig-text-align);
+    padding: var(--ig-padding);
+    color: var(--ig-color);
+    font: var(--ig-font);
+    line-height: 1em;
+    overflow: hidden;
 }
 
 .highcharts-datagrid-table th:last-of-type,
 .highcharts-datagrid-table td:last-of-type {
-  border-right: none;
+    border-right: none;
 }
 
 .highcharts-datagrid-table tr:last-of-type td {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-scrollable-content tbody tr {
-  display: block;
+    display: block;
 }
 
 .highcharts-datagrid-table.highcharts-datagrid-virtualization tbody tr {
-  position: absolute;
+    position: absolute;
 }
 
 .highcharts-datagrid-table tbody.highcharts-datagrid-rows-content-nowrap td {
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell {
-  padding: 0;
+    padding: 0;
 }
 
 .highcharts-datagrid-table tbody td:focus,
 .highcharts-datagrid-table thead th:focus-visible {
-  outline: none;
-  box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
 }
 
 /* Header hovered background and color */
 .highcharts-datagrid-table thead tr th.highcharts-datagrid-column-sortable:hover {
-  background: var(--ig-header-hovered-background);
+    background: var(--ig-header-hovered-background);
 }
 
 .highcharts-datagrid-table thead th.highcharts-datagrid-column-sortable:hover .highcharts-datagrid-header-cell-content {
-  color: var(--ig-header-hovered-color);
+    color: var(--ig-header-hovered-color);
 }
 
 /* Row backgrounds */
 .highcharts-datagrid-table tbody tr td {
-  background: var(--ig-row-background);
-  position: relative;
+    background: var(--ig-row-background);
+    position: relative;
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td {
-  background: var(--ig-row-even-background);
-  color: var(--ig-row-even-color);
+    background: var(--ig-row-even-background);
+    color: var(--ig-row-even-color);
 }
 
 /* Cell hovered and synced shared styles */
-.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column:before,
-.highcharts-datagrid-table tbody tr:hover td:hover:before,
-.highcharts-datagrid-table tbody tr:hover td:before,
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column:before,
-.highcharts-datagrid-table thead th.highcharts-datagrid-synced-column:before,
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-cell:before,
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td:before,
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column:before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  pointer-events: none;
+.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column::before,
+.highcharts-datagrid-table tbody tr:hover td:hover::before,
+.highcharts-datagrid-table tbody tr:hover td::before,
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column::before,
+.highcharts-datagrid-table thead th.highcharts-datagrid-synced-column::before,
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-cell::before,
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td::before,
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
 }
 
 /* Cell hovered CELL background, border and color */
 .highcharts-datagrid-table tbody tr:hover td:hover {
-  background: var(--ig-cell-hovered-background);
-  color: var(--ig-cell-hovered-color);
+    background: var(--ig-cell-hovered-background);
+    color: var(--ig-cell-hovered-color);
 }
 
-.highcharts-datagrid-table tbody tr:hover td:hover:before {
-  border-top: var(--ig-cell-hovered-vertical-border);
-  border-right: var(--ig-cell-hovered-horizontal-border);
-  border-bottom: var(--ig-cell-hovered-vertical-border);
-  border-left: var(--ig-cell-hovered-horizontal-border);
+.highcharts-datagrid-table tbody tr:hover td:hover::before {
+    border-top: var(--ig-cell-hovered-vertical-border);
+    border-right: var(--ig-cell-hovered-horizontal-border);
+    border-bottom: var(--ig-cell-hovered-vertical-border);
+    border-left: var(--ig-cell-hovered-horizontal-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even:hover td:hover {
-  background: var(--ig-cell-even-hovered-background);
-  color: var(--ig-cell-even-hovered-color);
+    background: var(--ig-cell-even-hovered-background);
+    color: var(--ig-cell-even-hovered-color);
 }
 
 /* Cell hovered ROW background, border and color */
 .highcharts-datagrid-table tbody tr:hover td {
-  background: var(--ig-cell-hovered-row-background);
-  color: var(--ig-cell-hovered-row-color);
+    background: var(--ig-cell-hovered-row-background);
+    color: var(--ig-cell-hovered-row-color);
 }
 
-.highcharts-datagrid-table tbody tr:hover td:before {
-  border-top: var(--ig-cell-hovered-row-border);
-  border-bottom: var(--ig-cell-hovered-row-border);
+.highcharts-datagrid-table tbody tr:hover td::before {
+    border-top: var(--ig-cell-hovered-row-border);
+    border-bottom: var(--ig-cell-hovered-row-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even:hover td {
-  background: var(--ig-cell-hovered-row-even-background);
-  color: var(--ig-cell-hovered-row-even-color);
+    background: var(--ig-cell-hovered-row-even-background);
+    color: var(--ig-cell-hovered-row-even-color);
 }
 
 /* Cell hovered COLUMN background, border and color */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column {
-  background: var(--ig-cell-hovered-column-background);
-  color: var(--ig-cell-hovered-column-color);
+    background: var(--ig-cell-hovered-column-background);
+    color: var(--ig-cell-hovered-column-color);
 }
 
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column:before {
-  border-left: var(--ig-cell-hovered-column-border);
-  border-right: var(--ig-cell-hovered-column-border);
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column::before {
+    border-left: var(--ig-cell-hovered-column-border);
+    border-right: var(--ig-cell-hovered-column-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td.highcharts-datagrid-hovered-column {
-  background: var(--ig-cell-hovered-column-even-background);
-  color: var(--ig-cell-hovered-column-even-color);
+    background: var(--ig-cell-hovered-column-even-background);
+    color: var(--ig-cell-hovered-column-even-color);
 }
 
 /* Cell hovered HEADER background, border and color */
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
-  background: var(--ig-cell-hovered-header-background);
+    background: var(--ig-cell-hovered-header-background);
 }
 
-.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column:before {
-  border-left: var(--ig-cell-hovered-header-border);
-  border-right: var(--ig-cell-hovered-header-border);
+.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column::before {
+    border-left: var(--ig-cell-hovered-header-border);
+    border-right: var(--ig-cell-hovered-header-border);
 }
 
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column .highcharts-datagrid-header-cell-content {
-  color: var(--ig-cell-hovered-header-color);
+    color: var(--ig-cell-hovered-header-color);
 }
 
 /* Cell synced CELL background, border and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
-  background: var(--ig-cell-synced-background);
-  color: var(--ig-cell-synced-color);
+    background: var(--ig-cell-synced-background);
+    color: var(--ig-cell-synced-color);
 }
 
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column:before {
-  border-top: var(--ig-cell-synced-vertical-border);
-  border-right: var(--ig-cell-synced-horizontal-border);
-  border-bottom: var(--ig-cell-synced-vertical-border);
-  border-left: var(--ig-cell-synced-horizontal-border);
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column::before {
+    border-top: var(--ig-cell-synced-vertical-border);
+    border-right: var(--ig-cell-synced-horizontal-border);
+    border-bottom: var(--ig-cell-synced-vertical-border);
+    border-left: var(--ig-cell-synced-horizontal-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
-  background: var(--ig-cell-even-synced-background);
-  color: var(--ig-cell-even-synced-color);
+    background: var(--ig-cell-even-synced-background);
+    color: var(--ig-cell-even-synced-color);
 }
 
 /* Cell synced ROW background, border and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td {
-  background: var(--ig-cell-synced-row-background);
-  color: var(--ig-cell-synced-row-color);
+    background: var(--ig-cell-synced-row-background);
+    color: var(--ig-cell-synced-row-color);
 }
 
-.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td:before {
-  border-top: var(--ig-cell-synced-row-border);
-  border-bottom: var(--ig-cell-synced-row-border);
+.highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td::before {
+    border-top: var(--ig-cell-synced-row-border);
+    border-bottom: var(--ig-cell-synced-row-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even.highcharts-datagrid-synced-row td {
-  background: var(--ig-cell-synced-row-even-background);
-  color: var(--ig-cell-synced-row-even-color);
+    background: var(--ig-cell-synced-row-even-background);
+    color: var(--ig-cell-synced-row-even-color);
 }
 
 /* Cell synced COLUMN background, border and color */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column {
-  background: var(--ig-cell-synced-column-background);
-  color: var(--ig-cell-synced-column-color);
+    background: var(--ig-cell-synced-column-background);
+    color: var(--ig-cell-synced-column-color);
 }
 
-.highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column:before {
-  border-left: var(--ig-cell-synced-column-border);
-  border-right: var(--ig-cell-synced-column-border);
+.highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column::before {
+    border-left: var(--ig-cell-synced-column-border);
+    border-right: var(--ig-cell-synced-column-border);
 }
 
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td.highcharts-datagrid-synced-column {
-  background: var(--ig-cell-synced-column-even-background);
-  color: var(--ig-cell-synced-column-even-color);
+    background: var(--ig-cell-synced-column-even-background);
+    color: var(--ig-cell-synced-column-even-color);
 }
 
 /* Cell synced HEADER background, border and color */
 .highcharts-datagrid-table thead th.highcharts-datagrid-synced-column {
-  background: var(--ig-cell-synced-header-background);
+    background: var(--ig-cell-synced-header-background);
 }
 
-.highcharts-datagrid-table thead th.highcharts-datagrid-synced-column:before {
-  border-left: var(--ig-cell-synced-header-border);
-  border-right: var(--ig-cell-synced-header-border);
+.highcharts-datagrid-table thead th.highcharts-datagrid-synced-column::before {
+    border-left: var(--ig-cell-synced-header-border);
+    border-right: var(--ig-cell-synced-header-border);
 }
 
 .highcharts-datagrid-table thead th.highcharts-datagrid-synced-column .highcharts-datagrid-header-cell-content {
-  color: var(--ig-cell-synced-header-color);
+    color: var(--ig-cell-synced-header-color);
 }
 
 .highcharts-datagrid-table td:first-child,
 .highcharts-datagrid-table thead th.highcharts-datagrid-column-first,
 .highcharts-datagrid-table thead tr:first-child th:first-child {
-  border-left: none;
+    border-left: none;
 }
 
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input,
 .highcharts-datagrid-table tbody td.highcharts-datagrid-edited-cell input:focus {
-  border-width: 0;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  outline: none;
-  float: left;
-  font: var(--ig-font);
-  box-shadow: inset 0 0 0 1px #0000ed;
-  padding: var(--ig-padding);
-  background: #b7d4ff;
+    border-width: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    outline: none;
+    float: left;
+    font: var(--ig-font);
+    box-shadow: inset 0 0 0 1px #0000ed;
+    padding: var(--ig-padding);
+    background: #b7d4ff;
 }
 
 /* Accessibility */
 .highcharts-datagrid-visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  white-space: nowrap;
-  clip: rect(1px, 1px, 1px, 1px);
-  margin-top: -3px;
-  opacity: 0.01;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
 }
 
 /* Caption */
 .highcharts-datagrid-caption {
-  color: var(--ig-caption-color);
-  font: var(--ig-caption-font);
-  text-align: var(--ig-caption-text-align);
-  padding: var(--ig-caption-padding);
+    color: var(--ig-caption-color);
+    font: var(--ig-caption-font);
+    text-align: var(--ig-caption-text-align);
+    padding: var(--ig-caption-padding);
 }
 
 /* Description */
 .highcharts-datagrid-description {
-  color: var(--ig-description-color);
-  font: var(--ig-description-font);
-  text-align: var(--ig-description-text-align);
-  padding: var(--ig-description-padding);
+    color: var(--ig-description-color);
+    font: var(--ig-description-font);
+    text-align: var(--ig-description-text-align);
+    padding: var(--ig-description-padding);
 }
 
 /* Credits */
 .highcharts-datagrid-credits {
-  color: var(--ig-credits-color);
-  font-size: var(--ig-credits-font-size);
-  text-decoration: none;
+    color: var(--ig-credits-color);
+    font-size: var(--ig-credits-font-size);
+    text-decoration: none;
 }
 
 .highcharts-datagrid-credits-container {
-  text-align: var(--ig-credits-text-align);
-  padding: var(--ig-credits-padding);
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
 }
 
 /* Start DataGrid CSS Helpers Classes */
-.highcharts-datagrid-table tbody tr td.hcg-negative:before,
-.highcharts-datagrid-table tbody tr:has(.hcg-negative-row) td:before,
-.highcharts-datagrid-table tbody tr td.hcg-neutral:before,
-.highcharts-datagrid-table tbody tr:has(.hcg-neutral-row) td:before,
-.highcharts-datagrid-table tbody tr td.hcg-positive:before,
-.highcharts-datagrid-table tbody tr:has(.hcg-positive-row) td:before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  pointer-events: none;
+.highcharts-datagrid-table tbody tr td.hcg-negative::before,
+.highcharts-datagrid-table tbody tr:has(.hcg-negative-row) td::before,
+.highcharts-datagrid-table tbody tr td.hcg-neutral::before,
+.highcharts-datagrid-table tbody tr:has(.hcg-neutral-row) td::before,
+.highcharts-datagrid-table tbody tr td.hcg-positive::before,
+.highcharts-datagrid-table tbody tr:has(.hcg-positive-row) td::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
 }
 
 .highcharts-datagrid-table tbody tr td.hcg-negative,
 .highcharts-datagrid-table tbody tr:has(.hcg-negative-row) td {
-  background: var(--ig-negative-background) !important;
-  color: var(--ig-negative-color) !important;
+    background: var(--ig-negative-background) !important;
+    color: var(--ig-negative-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr td.hcg-negative:before {
-  border: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+.highcharts-datagrid-table tbody tr td.hcg-negative::before {
+    border: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr:has(.hcg-negative-row) td:before {
-  border-top: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
-  border-bottom: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+.highcharts-datagrid-table tbody tr:has(.hcg-negative-row) td::before {
+    border-top: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
+    border-bottom: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
 }
 
 .highcharts-datagrid-table tbody tr td.hcg-neutral,
 .highcharts-datagrid-table tbody tr:has(.hcg-neutral-row) td {
-  background: var(--ig-neutral-background) !important;
-  color: var(--ig-neutral-color) !important;
+    background: var(--ig-neutral-background) !important;
+    color: var(--ig-neutral-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr td.hcg-neutral:before {
-  border: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+.highcharts-datagrid-table tbody tr td.hcg-neutral::before {
+    border: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr:has(.hcg-neutral-row) td:before {
-  border-top: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
-  border-bottom: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+.highcharts-datagrid-table tbody tr:has(.hcg-neutral-row) td::before {
+    border-top: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
+    border-bottom: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
 }
 
 .highcharts-datagrid-table tbody tr td.hcg-positive,
 .highcharts-datagrid-table tbody tr:has(.hcg-positive-row) td {
-  background: var(--ig-positive-background) !important;
-  color: var(--ig-positive-color) !important;
+    background: var(--ig-positive-background) !important;
+    color: var(--ig-positive-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr td.hcg-positive:before {
-  border: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+.highcharts-datagrid-table tbody tr td.hcg-positive::before {
+    border: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
 }
 
-.highcharts-datagrid-table tbody tr:has(.hcg-positive-row) td:before {
-  border-top: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
-  border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+.highcharts-datagrid-table tbody tr:has(.hcg-positive-row) td::before {
+    border-top: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
+    border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
 }
 
 .highcharts-datagrid-table thead tr th.hcg-right,
 .highcharts-datagrid-table tbody tr td.hcg-right {
-  text-align: right;
+    text-align: right;
 }
 
 .highcharts-datagrid-table thead tr th.hcg-center,
 .highcharts-datagrid-table tbody tr td.hcg-center {
-  text-align: center;
+    text-align: center;
 }
 
 .highcharts-datagrid-table thead tr th.hcg-left,
 .highcharts-datagrid-table tbody tr td.hcg-left {
-  text-align: left;
+    text-align: left;
 }
 
 /* End DataGrid CSS Helpers Classes */
 
 /* Start DataGrid Default Theme */
 .hcg-theme-default {
-  --hcg-border-radius: 5px;
-  --hcg-color: var(--highcharts-neutral-color-100);
-  --hcg-padding: 15px;
-  --hcg-border-width: 1px;
-  --hcg-border-color: var(--highcharts-neutral-color-20);
-  --hcg-background: var(--highcharts-background-color);
+    --hcg-border-radius: 5px;
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-padding: 8px;
+    --hcg-border-width: 1px;
+    --hcg-border-color: var(--highcharts-neutral-color-20);
+    --hcg-background: var(--highcharts-background-color);
 
-  /* Header background color */
-  --hcg-header-background: var(--highcharts-neutral-color-5);
+    /* Header background color */
+    --hcg-header-background: var(--highcharts-neutral-color-5);
 
-  /* Even row colors */
-  --hcg-row-even-background: var(--highcharts-neutral-color-3);
+    /* Even row colors */
+    --hcg-row-even-background: var(--highcharts-neutral-color-3);
 
-  /* Hovered colors */
-  --hcg-cell-hovered-background: var(--highcharts-highlight-color-20);
-  --hcg-cell-hovered-row-background: var(--highcharts-highlight-color-10);
-  --hcg-cell-hovered-column-background: var(--highcharts-highlight-color-10);
-  --hcg-cell-hovered-header-background: var(--highcharts-highlight-color-20);
-  --hcg-header-hovered-background: var(--highcharts-highlight-color-20);
+    /* Hovered colors */
+    --hcg-cell-hovered-background: var(--highcharts-highlight-color-20);
+    --hcg-cell-hovered-row-background: var(--highcharts-highlight-color-10);
+    --hcg-cell-hovered-column-background: var(--highcharts-highlight-color-10);
+    --hcg-cell-hovered-header-background: var(--highcharts-highlight-color-20);
+    --hcg-header-hovered-background: var(--highcharts-highlight-color-20);
 }
+
 /* End DataGrid Default Theme */
