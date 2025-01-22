@@ -27,7 +27,7 @@ async function scriptsWebpack() {
     const argv = require('yargs').argv;
 
     LogLib.message('Packing code...');
-console.log('webpack run, argv', argv.product);
+
     let configs;
     if (argv.product === 'Grid') {
         configs = {
