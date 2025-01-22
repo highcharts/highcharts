@@ -145,6 +145,21 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
           AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
 
+      - name: Purge references with no candidate
+        if: ${{ always() }}
+        run: |
+          find ./samples -type f -name "reference.svg" \
+            -exec sh -c '
+              for f do
+                dir="$(dirname "$f")"
+                candidate_path="$dir/candidate.svg"
+                if [ ! -f "$candidate_path" ]; then
+                  echo "Deleting unpaired reference: $f"
+                  rm "$f"
+                fi
+              done
+            ' sh {} +
+
       - name: Upload visual test images
         if: ${{ always() }}
         run: |
