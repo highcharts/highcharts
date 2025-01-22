@@ -22,12 +22,12 @@ import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
-import _DataGrid from '../DataGrid/DataGrid.js';
+import GridPro from '../Grid/Pro/GridPro.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
-import Defaults from '../DataGrid/Defaults.js';
-import Globals from '../DataGrid/Globals.js';
+import Defaults from '../Grid/Core/Defaults.js';
+import Globals from '../Grid/Pro/GirdProGlobals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 
 // Fill registries
@@ -51,9 +51,9 @@ declare global {
     interface DataGridNamespace {
         win: typeof Globals.win;
         AST: typeof AST;
-        DataGrid: typeof _DataGrid;
-        dataGrid: typeof _DataGrid.dataGrid;
-        dataGrids: Array<(_DataGrid|undefined)>;
+        DataGrid: typeof GridPro;
+        dataGrid: typeof GridPro.grid;
+        dataGrids: Array<(GridPro|undefined)>;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
@@ -84,9 +84,9 @@ G.AST = AST;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
-G.DataGrid = _DataGrid;
-G.dataGrid = _DataGrid.dataGrid;
-G.dataGrids = _DataGrid.dataGrids;
+G.DataGrid = GridPro;
+G.dataGrid = GridPro.grid;
+G.dataGrids = GridPro.grids;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
