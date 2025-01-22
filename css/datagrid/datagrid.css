@@ -609,12 +609,13 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     pointer-events: none;
 }
 
-/* Cell hovered CELL background, border and color */
+/* Cell hovered background and color */
 .highcharts-datagrid-table tbody tr:hover td:hover {
     background: var(--ig-cell-hovered-background);
     color: var(--ig-cell-hovered-color);
 }
 
+/* Cell hovered border */
 .highcharts-datagrid-table tbody tr:hover td:hover::before {
     border-top: var(--ig-cell-hovered-vertical-border);
     border-right: var(--ig-cell-hovered-horizontal-border);
@@ -622,63 +623,71 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: var(--ig-cell-hovered-horizontal-border);
 }
 
+/* Cell hovered background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even:hover td:hover {
     background: var(--ig-cell-even-hovered-background);
     color: var(--ig-cell-even-hovered-color);
 }
 
-/* Cell hovered ROW background, border and color */
+/* Cell hovered row background and color */
 .highcharts-datagrid-table tbody tr:hover td {
     background: var(--ig-cell-hovered-row-background);
     color: var(--ig-cell-hovered-row-color);
 }
 
+/* Cell hovered row border */
 .highcharts-datagrid-table tbody tr:hover td::before {
     border-top: var(--ig-cell-hovered-row-border);
     border-bottom: var(--ig-cell-hovered-row-border);
 }
 
+/* Cell hovered row background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even:hover td {
     background: var(--ig-cell-hovered-row-even-background);
     color: var(--ig-cell-hovered-row-even-color);
 }
 
-/* Cell hovered COLUMN background, border and color */
+/* Cell hovered column background and color */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column {
     background: var(--ig-cell-hovered-column-background);
     color: var(--ig-cell-hovered-column-color);
 }
 
+/* Cell hovered column border */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-hovered-column::before {
     border-left: var(--ig-cell-hovered-column-border);
     border-right: var(--ig-cell-hovered-column-border);
 }
 
+/* Cell hovered column background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td.highcharts-datagrid-hovered-column {
     background: var(--ig-cell-hovered-column-even-background);
     color: var(--ig-cell-hovered-column-even-color);
 }
 
-/* Cell hovered HEADER background, border and color */
+/* Cell hovered header background */
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
     background: var(--ig-cell-hovered-header-background);
 }
 
+/* Cell hovered header border */
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column::before {
     border-left: var(--ig-cell-hovered-header-border);
     border-right: var(--ig-cell-hovered-header-border);
 }
 
+/* Cell hovered header color */
 .highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column .highcharts-datagrid-header-cell-content {
     color: var(--ig-cell-hovered-header-color);
 }
 
-/* Cell synced CELL background, border and color */
+/* Cell synced background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
     background: var(--ig-cell-synced-background);
     color: var(--ig-cell-synced-color);
 }
 
+/* Cell synced border */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column::before {
     border-top: var(--ig-cell-synced-vertical-border);
     border-right: var(--ig-cell-synced-horizontal-border);
@@ -686,53 +695,60 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     border-left: var(--ig-cell-synced-horizontal-border);
 }
 
+/* Cell synced background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even.highcharts-datagrid-synced-row td.highcharts-datagrid-synced-column {
     background: var(--ig-cell-even-synced-background);
     color: var(--ig-cell-even-synced-color);
 }
 
-/* Cell synced ROW background, border and color */
+/* Cell synced row background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td {
     background: var(--ig-cell-synced-row-background);
     color: var(--ig-cell-synced-row-color);
 }
 
+/* Cell synced row border */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-synced-row td::before {
     border-top: var(--ig-cell-synced-row-border);
     border-bottom: var(--ig-cell-synced-row-border);
 }
 
+/* Cell synced row background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even.highcharts-datagrid-synced-row td {
     background: var(--ig-cell-synced-row-even-background);
     color: var(--ig-cell-synced-row-even-color);
 }
 
-/* Cell synced COLUMN background, border and color */
+/* Cell synced column background and color */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column {
     background: var(--ig-cell-synced-column-background);
     color: var(--ig-cell-synced-column-color);
 }
 
+/* Cell synced column border */
 .highcharts-datagrid-table tbody tr td.highcharts-datagrid-synced-column::before {
     border-left: var(--ig-cell-synced-column-border);
     border-right: var(--ig-cell-synced-column-border);
 }
 
+/* Cell synced column background and color */
 .highcharts-datagrid-table tbody tr.highcharts-datagrid-row-even td.highcharts-datagrid-synced-column {
     background: var(--ig-cell-synced-column-even-background);
     color: var(--ig-cell-synced-column-even-color);
 }
 
-/* Cell synced HEADER background, border and color */
+/* Cell synced header background */
 .highcharts-datagrid-table thead th.highcharts-datagrid-synced-column {
     background: var(--ig-cell-synced-header-background);
 }
 
+/* Cell synced header border */
 .highcharts-datagrid-table thead th.highcharts-datagrid-synced-column::before {
     border-left: var(--ig-cell-synced-header-border);
     border-right: var(--ig-cell-synced-header-border);
 }
 
+/* Cell synced header color */
 .highcharts-datagrid-table thead th.highcharts-datagrid-synced-column .highcharts-datagrid-header-cell-content {
     color: var(--ig-cell-synced-header-color);
 }
