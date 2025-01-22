@@ -330,6 +330,11 @@ class MenuComponent extends AccessibilityComponent {
             // enabled on chart
             validate: function (): boolean {
                 return !!chart.exporting &&
+                    chart
+                        .options
+                        .exporting
+                        ?.buttons
+                        ?.contextButton.enabled !== false &&
                     chart.options.exporting.enabled !== false &&
                     (chart.options.exporting.accessibility as any).enabled !==
                     false;
