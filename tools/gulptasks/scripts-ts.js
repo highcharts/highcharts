@@ -116,21 +116,13 @@ async function scriptsTS(argv) {
     const dashCfg = require('./dashboards/_config.json');
 
     try {
-        let library = 'Highcharts';
+        const product = argv.product || 'Highcharts';
 
-        if (argv.dashboards) {
-            library = 'Dashboards';
-        } else if (argv.datagrid) {
-            library = 'DataGrid';
-        } else if (argv.grid) {
-            library = 'Grid';
-        }
-
-        logLib.message(`Generating files for ${library}...`);
+        logLib.message(`Generating files for ${product}...`);
 
         processLib.isRunning('scripts-ts', true);
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
         }
 
@@ -145,13 +137,13 @@ async function scriptsTS(argv) {
             );
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolder} --outDir js`);
-        } else if (argv.datagrid) {
+        } else if (product === 'DataGrid') {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
-        } else if (argv.grid) {
+        } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
         } else if (argv.assembler) {
@@ -189,7 +181,7 @@ async function scriptsTS(argv) {
             }
         }
 
-        if (argv.dashboards) {
+        if (product === 'Dashboards') {
             removeHighcharts();
 
             // Remove DataGrid
@@ -204,12 +196,13 @@ async function scriptsTS(argv) {
                 fsLib.path(['js', 'masters-dashboards']),
                 fsLib.path(['js', 'masters'])
             );
-        } else if (argv.datagrid) { // Should be completely replaced by grid
+        } else if (product === 'DataGrid') { // Should be completely replaced by grid
             removeHighcharts();
 
             // Fix masters
             fs.renameSync(
                 fsLib.path(['js', 'masters-datagrid']),
+                fsLib.path(['js', 'masters-grid']),
                 fsLib.path(['js', 'masters'])
             );
         } else {
@@ -229,9 +222,7 @@ async function scriptsTS(argv) {
 
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
-    '--dashboards': 'Build dashboards files only',
-    '--datagrid': 'Build datagrid files only',
-    '--grid': 'Build grid files only'
+    '--product': 'Build the product, Highcharts, Grid, Dashboards, default: Highcharts'
 };
 gulp.task(
     'scripts-ts',

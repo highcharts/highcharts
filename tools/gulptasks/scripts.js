@@ -92,10 +92,7 @@ function shouldRun() {
     const log = require('../libs/log');
     const stringlib = require('./lib/string');
 
-    let product = 'Highcharts';
-    if (argv.grid) {
-        product = 'Grid';
-    }
+    const product = argv.product || 'Highcharts';
 
     let config = {};
     if (fs.existsSync(CONFIGURATION_FILE)) {
@@ -155,7 +152,6 @@ function task() {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
-
     if (processLib.isRunning('scripts-watch')) {
         logLib.warn('Running watch process detected. Skipping task...');
         if (argv.force) {

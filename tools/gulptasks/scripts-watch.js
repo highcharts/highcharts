@@ -79,7 +79,7 @@ async function task() {
                     buildTasks.task('jsdoc-dts')();
                 }
 
-                if (argv.dashboards || argv.grid) {
+                if (argv.product === 'Grid' || argv.product === 'Dashboards') {
                     buildTasks.push('scripts-ts');
                 }
             }
