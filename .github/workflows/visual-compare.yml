@@ -132,7 +132,7 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
-      - name: Comment on PR and upload visual test images if any produced
+      - name: Comment on PR and upload visual test result
         run: |
           npx gulp update-pr-testresults \
           --fail-silently \
@@ -145,7 +145,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
           AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
 
-      - name: Sync test images
+      - name: Upload visual test images
         if: ${{ always() }}
         run: |
           aws s3 sync ./samples \
