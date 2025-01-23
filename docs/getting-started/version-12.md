@@ -40,19 +40,28 @@ For an asynchronous approach, one needs to use the ESM variants, which can be fo
 * HTML Example:
   ```js
   <script type="module">
-  import Highcharts from 'https://code.highcharts.com/highcharts/es-modules/masters/highcharts.js';
-  import 'https://code.highcharts.com/highcharts/es-modules/masters/highcharts-more.js';
-  import 'https://code.highcharts.com/highcharts/es-modules/masters/modules/exporting.js';
-  import 'https://code.highcharts.com/highcharts/es-modules/masters/modules/accessibility.js';
+  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+  import 'https://code.highcharts.com/es-modules/masters/highcharts-more.src.js';
+  import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+  import 'https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js';
   </scripts>
   ```
 
-* Node.js / Next.js Example:
+* Node.js Example:
   ```js
-  import Highcharts from 'highcharts/es-modules/masters/highcharts.js';
-  import 'highcharts/es-modules/masters/highcharts-more.js';
-  import 'highcharts/es-modules/masters/modules/exporting.js';
-  import 'highcharts/es-modules/masters/modules/accessibility.js';
+  import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+  import 'highcharts/es-modules/masters/highcharts-more.src.js';
+  import 'highcharts/es-modules/masters/modules/exporting.src.js';
+  import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+  ```
+
+* Next.js Example:
+  ```js
+  'use client';
+  import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+  import 'highcharts/es-modules/masters/highcharts-more.src.js';
+  import 'highcharts/es-modules/masters/modules/exporting.src.js';
+  import 'highcharts/es-modules/masters/modules/accessibility.src.js';
   ```
 
 ### 3. No Highcharts._modules event
