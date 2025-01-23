@@ -20,7 +20,7 @@ function validateProduct(name) {
     const logLib = require('../libs/log');
 
     if (PRODUCTS.indexOf(name || 'Highcharts') < 0) {
-        logLib.warn('Cannot find a product' + name + '.');
+        logLib.warn('Cannot find a product: ' + name + '.');
         return false;
     }
 
