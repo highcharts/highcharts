@@ -11,7 +11,8 @@ const PRODUCTS = ['Highcharts', 'Grid'];
 
 /**
  * The validation of product name.
- * @param {*} name of product
+ * @param {string} name
+ *         Name of product
  * @return {Promise<void>}
  *    Promise to keep
  */
