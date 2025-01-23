@@ -833,7 +833,6 @@ class Tick {
         // axes in Safari.
         if (
             !axis.chart.polar &&
-            tick.isNew &&
             (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
         ) {
             opacity = 0;

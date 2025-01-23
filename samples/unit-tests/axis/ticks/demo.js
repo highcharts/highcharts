@@ -1279,13 +1279,11 @@ QUnit.test('Tick and label overflow (#16307)', assert => {
         '... but the last tick label should be visible (#20375)'
     );
 
-    /*
     chart.redraw();
     assert.strictEqual(
         chart.xAxis[0].ticks['11'].mark.opacity,
         0,
         'After redraw, the last tick mark should still not be visible'
     );
-    */
 
 });
