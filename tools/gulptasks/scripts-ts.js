@@ -202,7 +202,6 @@ async function scriptsTS(argv) {
             // Fix masters
             fs.renameSync(
                 fsLib.path(['js', 'masters-datagrid']),
-                fsLib.path(['js', 'masters-grid']),
                 fsLib.path(['js', 'masters'])
             );
         } else {
