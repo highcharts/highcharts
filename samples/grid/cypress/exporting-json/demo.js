@@ -2,7 +2,7 @@ const jsonBtn = document.querySelector('#json'),
     result = document.querySelector('#result');
 
 /**
- * DataGrid init
+ * Grid init
  */
 const grid = Grid.grid('container', {
     dataTable: {
@@ -25,8 +25,8 @@ const grid = Grid.grid('container', {
 });
 
 /**
- * DataGrid init
+ * Grid init
  */
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = dataGrid.getJSON();
+    result.innerHTML = grid.getJSON();
 });

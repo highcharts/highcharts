@@ -58,7 +58,7 @@ Grid.grid('container', {
             },
             afterSorting: function () {
                 const { order } =
-                    this.viewport.dataGrid.querying.sorting.currentSorting;
+                    this.viewport.Grid.querying.sorting.currentSorting;
 
                 switch (order) {
                 case 'asc':
