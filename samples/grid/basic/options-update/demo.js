@@ -76,5 +76,5 @@ document.getElementById('update').addEventListener('submit', e => {
         return;
     }
 
-    dataGrid.update(options);
+    grid.update(options);
 });

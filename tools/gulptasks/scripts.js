@@ -23,6 +23,8 @@ const JS_DIRECTORY = 'js';
 
 const TS_DIRECTORY = 'ts';
 
+const PRODUCTS = ['Highcharts', 'Grid'];
+
 /* *
  *
  *  Functions
@@ -42,10 +44,7 @@ function saveRun() {
     const stringlib = require('./lib/string');
     const argv = require('yargs').argv;
 
-    let product = 'Highcharts';
-    if (argv.grid) {
-        product = 'Grid';
-    }
+    const product = argv.product || 'Highcharts';
 
     let config;
     try {
@@ -92,10 +91,7 @@ function shouldRun() {
     const log = require('../libs/log');
     const stringlib = require('./lib/string');
 
-    let product = 'Highcharts';
-    if (argv.grid) {
-        product = 'Grid';
-    }
+    const product = argv.product || 'Highcharts';
 
     let config = {};
     if (fs.existsSync(CONFIGURATION_FILE)) {
@@ -155,6 +151,11 @@ function task() {
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
+
+    if (PRODUCTS.indexOf(argv.product || 'Highcharts') < 0) {
+        logLib.warn('Cannot find a product.');
+        return Promise.resolve();
+    }
 
     if (processLib.isRunning('scripts-watch')) {
         logLib.warn('Running watch process detected. Skipping task...');

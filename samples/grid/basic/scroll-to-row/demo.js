@@ -17,7 +17,7 @@ const grid = new Grid.grid('container', {
         }
     },
     caption: {
-        text: 'Title of the new Datagrid with a custom CSS class.',
+        text: 'Title of the new Grid with a custom CSS class.',
         className: 'custom-caption-class'
     },
     columnDefaults: {
@@ -43,8 +43,8 @@ document.getElementById('scroll').addEventListener('submit', e => {
     e.preventDefault();
     const value = +e.target.elements['row-to-scroll'].value;
     if (!isNaN(value)) {
-        dataGrid.viewport.scrollToRow(value);
+        grid.viewport.scrollToRow(value);
     }
 });
 
-console.log(dataGrid);
+console.log(grid);

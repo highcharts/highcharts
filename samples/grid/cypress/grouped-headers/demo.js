@@ -1,4 +1,4 @@
-window.dataGrid = Grid.grid('container', {
+window.grid = Grid.grid('container', {
     dataTable: {
         columns: {
             id: ['1', '2', '3', '4'],

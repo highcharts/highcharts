@@ -1,4 +1,4 @@
-DataGrid.setOptions({
+Grid.setOptions({
     lang: {
         locale: 'en-US'
     }
