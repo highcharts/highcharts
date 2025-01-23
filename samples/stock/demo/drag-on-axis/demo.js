@@ -38,6 +38,7 @@
 
             // Enabled zooming via mousewheel scroll
             axis.axisZoomRect.on('mousewheel', event => {
+                event.preventDefault();
                 centerZoom(axis, event.deltaY * SCROLL_SENSITIVITY);
             });
 
