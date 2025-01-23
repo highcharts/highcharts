@@ -7,7 +7,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
             },
             typeOptions: {
                 point: {
-                    x: 0,
+                    x: 0.5,
                     y: 6
                 },
                 background: {
@@ -19,7 +19,7 @@ QUnit.test('General tests for measure annotation', function (assert) {
 
         series: [{
             data: [
-                2, 3, 4, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3
+                5, 2, 1.5, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3
             ]
         }]
     });
@@ -29,6 +29,27 @@ QUnit.test('General tests for measure annotation', function (assert) {
         'inherit',
         `Control point should be visible and setting it should not throw any
         errors (#21879).`
+    );
+
+    assert.strictEqual(
+        chart.annotations[0].average,
+        3.625,
+        'Average should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].min,
+        1.5,
+        'Min should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].max,
+        6,
+        'Max should be calculated correctly.'
+    );
+    assert.strictEqual(
+        chart.annotations[0].bins,
+        4,
+        'Bins should be calculated correctly.'
     );
 });
 
