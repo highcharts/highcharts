@@ -110,9 +110,7 @@
 /* stylelint-disable max-line-length */
 
 /* ==== Start DataGrid Variables ==== */
-.highcharts-datagrid-container * {
-    --ig-border-radius: var(--hcg-border-radius, 0);
-
+.highcharts-datagrid-container {
     /* Fonts */
 
     /* Global fonts */
@@ -153,6 +151,7 @@
     --ig-credits-text-align: var(--hcg-credits-text-align, right);
 
     /* Default borders */
+    --ig-border-radius: var(--hcg-border-radius, 0);
     --ig-border-width: var(--hcg-border-width, 0);
     --ig-border-style: var(--hcg-border-style, solid);
     --ig-border-color: var(--hcg-border-color, var(--ig-color));
@@ -341,17 +340,20 @@
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 
-    box-sizing: border-box;
-    font: var(--ig-font);
+    /* Loading indicator */
+    --ig-loading-wrapper-background: var(--hcg-loading-wrapper-background, var(--ig-neutral-default-background));
+    --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
 }
 
 /* ==== End DataGrid Variables ==== */
 
-.highcharts-datagrid-container {
-    /* Loading indicator */
-    --ig-loading-wrapper-background: var(--hcg-loading-wrapper-background, var(--ig-neutral-default-background));
-    --ig-loading-wrapper-border-size: var(--hcg-loading-wrapper-border-size, 4px);
+/* DataGrid container */
+.highcharts-datagrid-container * {
+    box-sizing: border-box;
+    font: var(--ig-font);
+}
 
+.highcharts-datagrid-container {
     position: relative;
     display: flex;
     flex-direction: column;
