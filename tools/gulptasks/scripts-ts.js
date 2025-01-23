@@ -116,31 +116,19 @@ async function scriptsTS(argv) {
     const dashCfg = require('./dashboards/_config.json');
 
     try {
-        let library = 'Highcharts';
+        const product = argv.product || 'Highcharts';
 
-        if (argv.dashboards) {
-            library = 'Dashboards';
-        } else if (argv.datagrid) {
-            library = 'DataGrid';
-        } else if (argv.grid) {
-            library = 'Grid';
-        }
-
-        logLib.message(`Generating files for ${library}...`);
+        logLib.message(`Generating files for ${product}...`);
 
         processLib.isRunning('scripts-ts', true);
 
         if (argv.dashboards) {
             fsLib.deleteDirectory(dashCfg.bundleTargetFolder, true);
-            // fsLib.deleteDirectory(fsLib.path('code/datagrid'), true);
         }
-        // else if (argv.grid) {
-        //     fsLib.deleteDirectory(fsLib.path(['code', 'grid']), true);
-        // }
 
         fsLib.deleteDirectory('js', true);
 
-        if (!argv.grid) {
+        if (product !== 'Grid') {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
@@ -155,7 +143,7 @@ async function scriptsTS(argv) {
         } else if (argv.datagrid) {
             await processLib
                 .exec(`npx tsc -p ${dashCfg.typeScriptFolderDatagrid} --outDir js`);
-        } else if (argv.grid) {
+        } else if (product === 'Grid') {
             await processLib
                 .exec(`npx tsc -p ${fsLib.path(['ts', 'masters-grid'])}`);
         } else if (argv.assembler) {
@@ -235,7 +223,7 @@ scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
     '--dashboards': 'Build dashboards files only',
     '--datagrid': 'Build datagrid files only',
-    '--grid': 'Build grid files only'
+    '--product': 'The project to build: Highcharts (default), Grid'
 };
 gulp.task(
     'scripts-ts',

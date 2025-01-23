@@ -29,7 +29,7 @@ async function scriptsWebpack() {
     LogLib.message('Packing code...');
 
     let configs;
-    if (argv.grid) {
+    if (argv.product === 'Grid') {
         configs = {
             Grid: 'grid.webpack.mjs'
         };
