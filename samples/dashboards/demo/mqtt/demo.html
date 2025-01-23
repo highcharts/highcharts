@@ -1,0 +1,78 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<!-- MQTT client library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+    integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP"
+    crossorigin="anonymous"></script>
+
+<!-- Dashboards container -->
+<div id="container" class="mqtt-disconnected">
+    <!-- Top row, control and status bar -->
+    <div class="row" id="control-bar">
+        <div class="cell">
+            <h1 id="logo-text">Sognekraft</h1>
+            <img id="logo-img-1"
+                src="https://assets.highcharts.com/demos/samples/graphics/dashboards/mqtt/sognekraft_logo.png">
+        </div>
+        <div class="cell">
+            <span id="connect-status"></span>
+        </div>
+        <div class="cell" id="control-cell">
+            <div class="cell" id="connect-switch">
+                <span>Connect</span>
+                <input id="connect-toggle" type="checkbox"></input>
+                <label id="button" for="connect-toggle" title="Connect/disconnect MQTT"></label>
+            </div>
+            <!-- Dropdown for selecting power plant -->
+            <div class="cell" id="dropdown-container">
+                <button id="dropdown-button"></button>
+                <div id="dropdown-content" class="dropdown-content">
+                    <!--
+                        Populated dynamically, e.g 
+    					<a class="dropdown-select" href="#">Kråkeelvi</a>
+    				-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Middle row - data synced with MQTT connector -->
+    <div class="row el-aggr">
+        <div class="cell" id="el-kpi"></div>
+        <div class="cell" id="el-chart"></div>
+        <div class="cell" id="el-datagrid"></div>
+    </div>
+    <!-- Bottom row: information (HTML) and Highcharts map -->
+    <div class="row el-info">
+        <div class="cell" id="el-info"></div>
+        <div class="cell" id="el-map"></div>
+    </div>
+</div>
+
+<div class="highcharts-description">
+    <p>
+        This application displays key data from a selection of power stations in the area of Sogn,
+        Norway. The chart, datagrid, and KPI display the generated power in units of MW (Megawatts). Additional 
+        power generation parameters are displayed in the information section. The location of the power plant
+        with connected water intakes and reservoirs is indicated on the map.
+    </p>
+    <p>
+        How to use:
+    <ul>
+        <li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
+        <li>When connecting succeeds the available power plants (with generators) become available in the <b>Power Plant</b>
+            dropdown selection. The first power plant is selected by default and data is displayed as soon as MQTT data is received.
+        </li>
+        <li>The MQTT server name and IP port are displayed.</li>
+        <li>The application only displays one generator of one power plant simultaneously (some power plants may have multiple generators).</li>
+        <li>An alternative power plant/generator can be selected without disconnecting from the server.
+        </li>
+    </ul>
+    </p>
+</div>

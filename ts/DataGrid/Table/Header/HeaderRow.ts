@@ -27,9 +27,9 @@ import Row from '../Row.js';
 import Globals from '../../Globals.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
-import DGUtils from '../../Utils.js';
+import Utils from '../../../Core/Utilities.js';
 
-const { sanitizeText } = DGUtils;
+const { isString } = Utils;
 
 /* *
  *
@@ -79,8 +79,11 @@ class HeaderRow extends Row {
     *
     * */
 
-    public override createCell(column: Column): HeaderCell {
-        return new HeaderCell(column, this);
+    public override createCell(
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): HeaderCell {
+        return new HeaderCell(this, column, columnsTree);
     }
 
     /**
@@ -100,82 +103,83 @@ class HeaderRow extends Row {
 
         if (!header) {
             super.render();
-            return;
+        } else {
+            const columnsOnLevel = this.getColumnsAtLevel(header, level);
+
+            for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
+                const columnOnLevel = columnsOnLevel[i];
+                const colIsString = typeof columnOnLevel === 'string';
+                const colSpan = (!colIsString && columnOnLevel.columns) ?
+                    vp.dataGrid.getColumnIds(columnOnLevel.columns).length : 0;
+                const columnId = colIsString ?
+                    columnOnLevel : columnOnLevel.columnId;
+                const dataColumn = columnId ?
+                    vp.getColumn(columnId || '') : void 0;
+                const headerFormat = !colIsString ?
+                    columnOnLevel.format : void 0;
+                const className = !colIsString ?
+                    columnOnLevel.className : void 0;
+
+                // Skip hidden column or header when all columns are hidden.
+                if (
+                    (
+                        columnId && enabledColumns &&
+                        enabledColumns.indexOf(columnId) < 0
+                    ) || (!dataColumn && colSpan === 0)
+                ) {
+                    continue;
+                }
+
+                const headerCell = this.createCell(
+                    dataColumn,
+                    !colIsString ? columnOnLevel.columns : void 0
+                );
+
+                if (!colIsString) {
+                    vp.dataGrid.accessibility?.addHeaderCellDescription(
+                        headerCell.htmlElement,
+                        columnOnLevel.accessibility?.description
+                    );
+                }
+
+                if (isString(headerFormat)) {
+                    if (!headerCell.options.header) {
+                        headerCell.options.header = {};
+                    }
+                    headerCell.options.header.format = headerFormat;
+                }
+
+                if (className) {
+                    headerCell.options.className = className;
+                }
+
+                // Add class to disable left border on first column
+                if (dataColumn?.index === 0 && i === 0) {
+                    headerCell.htmlElement.classList.add(
+                        Globals.classNames.columnFirst
+                    );
+                }
+
+                headerCell.render();
+
+                if (columnId) {
+                    headerCell.htmlElement.setAttribute(
+                        'rowSpan',
+                        (this.viewport.header?.levels || 1) - level
+                    );
+                } else {
+                    if (colSpan > 1) {
+                        headerCell.htmlElement.setAttribute('colSpan', colSpan);
+                    }
+                }
+            }
         }
 
-        const columnsOnLevel = this.getColumnsAtLevel(header, level);
-
-        for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
-            const column = columnsOnLevel[i];
-            const colSpan =
-                (typeof column !== 'string' && column.columns) ?
-                    vp.dataGrid.getColumnIds(column.columns).length : 0;
-            const columnId = typeof column === 'string' ?
-                column : column.columnId;
-            const dataColumn = vp.getColumn(columnId || '');
-            const headerFormat = (typeof column !== 'string') ?
-                column.format : void 0;
-            const className = (typeof column !== 'string') ?
-                column.className : void 0;
-
-            // Skip hidden column or header when all columns are hidden.
-            if (
-                (
-                    columnId &&
-                    enabledColumns && enabledColumns?.indexOf(columnId) < 0
-                ) || (!dataColumn && colSpan === 0)
-            ) {
-                continue;
-            }
-
-            const headerCell = this.createCell(
-                vp.getColumn(columnId || '') ||
-                new Column(
-                    vp,
-                    // Remove HTML tags and empty spaces.
-                    sanitizeText(headerFormat || '').trim() || '',
-                    i
-                )
+        const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
+        if (lastCell.isLastColumn()) {
+            lastCell.htmlElement.classList.add(
+                Globals.classNames.lastHeaderCellInRow
             );
-
-            if (typeof column !== 'string') {
-                vp.dataGrid.accessibility?.addHeaderCellDescription(
-                    headerCell.htmlElement, column.accessibility?.description
-                );
-            }
-
-            if (headerFormat) {
-                if (!headerCell.options.header) {
-                    headerCell.options.header = {};
-                }
-                headerCell.options.header.format = headerFormat;
-            }
-
-            if (className) {
-                headerCell.options.className = className;
-            }
-
-            // Add class to disable left border on first column
-            if (dataColumn?.index === 0 && i === 0) {
-                headerCell.htmlElement.classList.add(
-                    Globals.classNames.columnFirst
-                );
-            }
-
-            headerCell.render();
-            headerCell.columns =
-                typeof column !== 'string' ? column.columns : void 0;
-
-            if (columnId) {
-                headerCell.htmlElement.setAttribute(
-                    'rowSpan',
-                    (this.viewport.header?.levels || 1) - level
-                );
-            } else {
-                if (colSpan > 1) {
-                    headerCell.htmlElement.setAttribute('colSpan', colSpan);
-                }
-            }
         }
     }
 
@@ -233,8 +237,8 @@ class HeaderRow extends Row {
      * Sets the row HTML element attributes and additional classes.
      */
     public setRowAttributes(): void {
-        const el = this.htmlElement;
-        el.setAttribute('aria-rowindex', this.level);
+        const a11y = this.viewport.dataGrid.accessibility;
+        a11y?.setRowIndex(this.htmlElement, this.level);
     }
 }
 

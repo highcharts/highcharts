@@ -63,9 +63,10 @@ abstract class Row {
     public viewport: Table;
 
     /**
-     * Flag to determine if the row is being destroyed.
+     * Flag to determine if the row is added to the DOM.
      */
-    private destroyed?: boolean;
+    public rendered?: boolean;
+
 
     /* *
     *
@@ -97,7 +98,7 @@ abstract class Row {
      * @param column
      * The column the cell belongs to.
      */
-    public abstract createCell(column: Column): Cell;
+    public abstract createCell(column?: Column): Cell;
 
     /**
      * Renders the row's content. It does not attach the row element to the
@@ -111,7 +112,11 @@ abstract class Row {
             cell.render();
         }
 
-        this.reflow();
+        this.rendered = true;
+
+        if (this.viewport.dataGrid.options?.rendering?.rows?.virtualization) {
+            this.reflow();
+        }
     }
 
     /**
@@ -132,13 +137,11 @@ abstract class Row {
      * Destroys the row.
      */
     public destroy(): void {
-        this.destroyed = true;
-
         if (!this.htmlElement) {
             return;
         }
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+        for (let i = this.cells.length - 1; i >= 0; --i) {
             this.cells[i].destroy();
         }
 
@@ -155,7 +158,7 @@ abstract class Row {
      * The cell with the given column ID or undefined if not found.
      */
     public getCell(columnId: string): Cell | undefined {
-        return this.cells.find((cell): boolean => cell.column.id === columnId);
+        return this.cells.find((cell): boolean => cell.column?.id === columnId);
     }
 
     /**
@@ -175,10 +178,6 @@ abstract class Row {
      * The cell to unregister.
      */
     public unregisterCell(cell: Cell): void {
-        if (this.destroyed) {
-            return;
-        }
-
         const index = this.cells.indexOf(cell);
         if (index > -1) {
             this.cells.splice(index, 1);

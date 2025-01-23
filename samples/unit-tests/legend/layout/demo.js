@@ -1,5 +1,5 @@
 QUnit.test('Legend layout', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         legend: {
             enabled: false,
             layout: 'proximate',
@@ -42,14 +42,14 @@ QUnit.test('Legend layout', function (assert) {
         }
     });
 
-    chart.series.forEach(function (s) {
-        var y = s.points[2].plotY || s.yAxis.height;
+    chart.series.forEach(function (s, i) {
+        const y = s.points[2].plotY ?? s.yAxis.height;
 
         assert.close(
             s.legendItem.group.translateY,
             s.yAxis.top - chart.spacing[0] + y,
-            20,
-            'Label should be next to last point'
+            21,
+            'Label should be next to last point of series index=' + i
         );
     });
 

@@ -34,7 +34,17 @@
 }
 
 .highcharts-popup {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     display: none;

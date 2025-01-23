@@ -50,7 +50,8 @@ Highcharts.chart('container', {
         labels: {
             distance: 30,
             style: {
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                textOverflow: 'none'
             }
         },
         gridLineWidth: 0

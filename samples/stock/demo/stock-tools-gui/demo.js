@@ -3,30 +3,32 @@ const commonOptions = {
         url: 'https://demo-live-data.highcharts.com',
         access: {
             url: 'https://demo-live-data.highcharts.com/token/oauth',
-            username: 'username',
-            password: 'password'
+            token: 'token'
         }
     }
 };
 
 const NVIDIACorpId = '0P000003RE';
 
-// eslint-disable-next-line no-undef
-const NVIDIAPriceConnector = new Connectors.Morningstar.TimeSeriesConnector({
-    ...commonOptions,
-    series: {
-        type: 'OHLCV'
-    },
-    securities: [
-        {
-            id: NVIDIACorpId,
-            idType: 'MSID'
-        }
-    ],
-    currencyId: 'EUR'
-});
+const NVIDIAPriceConnector =
+    // eslint-disable-next-line no-undef
+    new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'OHLCV'
+        },
+        securities: [
+            {
+                id: NVIDIACorpId,
+                idType: 'MSID'
+            }
+        ],
+        currencyId: 'EUR'
+    });
 
-Promise.all([NVIDIAPriceConnector.load()]).then(() => {
+(async () => {
+    await NVIDIAPriceConnector.load();
+
     const {
         [`${NVIDIACorpId}_Open`]: open,
         [`${NVIDIACorpId}_High`]: high,
@@ -132,4 +134,4 @@ Promise.all([NVIDIAPriceConnector.load()]).then(() => {
             }]
         }
     });
-});
+})();

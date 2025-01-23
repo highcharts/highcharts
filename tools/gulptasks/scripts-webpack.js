@@ -2,9 +2,10 @@
  * Copyright (C) Highsoft AS
  */
 
-const fs = require('node:fs/promises');
-const gulp = require('gulp');
-const path = require('node:path');
+
+const FSP = require('node:fs/promises');
+const Gulp = require('gulp');
+const Path = require('node:path');
 
 /* *
  *
@@ -13,59 +14,49 @@ const path = require('node:path');
  * */
 
 /**
- * Webpack task
+ * Webpack task.
  *
  * @return {Promise<void>}
- * Promise to keep
+ * Promise to keep.
  */
 async function scriptsWebpack() {
 
+    const LogLib = require('../libs/log');
+    const ProcessLib = require('../libs/process');
+
     const argv = require('yargs').argv;
-    const fsLib = require('../libs/fs');
-    const logLib = require('../libs/log');
-    const processLib = require('../libs/process');
 
-    logLib.message('Packing code...');
+    LogLib.message('Packing code...');
 
-    try {
+    const configs = {
+        Highcharts: 'highcharts.webpack.mjs',
+        HighchartsES5: 'highcharts-es5.webpack.mjs'
+    };
 
-        const configs = [
-            'highcharts.webpack.mjs'
-        ].map(
-            wp => path.join('tools', 'webpacks', wp)
-        );
+    let config;
+    let log = '';
 
-        let log = '';
+    for (const productName of Object.keys(configs)) {
+        config = Path.join('tools', 'webpacks', configs[productName]);
 
-        fsLib.copyAllFiles(
-            'js/',
-            'code/es-modules/',
-            true
-        );
-
-        for (const config of configs) {
-            if (argv.verbose) {
-                logLib.warn(config);
-            }
-            log += await processLib.exec(
-                `npx webpack -c ${config}`,
-                {
-                    silent: argv.verbose ? 1 : 2,
-                    timeout: 60000
-                }
-            );
+        if (argv.verbose) {
+            LogLib.warn(config);
         }
 
-        await fs.writeFile('webpack.log', log);
-
-        logLib.success('Finished packing.');
-
-    } catch (error) {
-
-        logLib.failure('ERROR:', error);
+        log += await ProcessLib.exec(
+            `npx webpack -c ${config}`,
+            {
+                silent: argv.verbose ? 1 : 2,
+                timeout: 60000
+            }
+        );
 
     }
 
+    await FSP.writeFile('webpack.log', log);
+
+    LogLib.success('Finished packing.');
+
 }
 
-gulp.task('scripts-webpack', scriptsWebpack);
+Gulp.task('scripts-webpack', scriptsWebpack);

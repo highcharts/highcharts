@@ -89,7 +89,7 @@ class XRangePoint extends ColumnPoint {
                 colors.length :
                 series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
-            color = colors && colors[colorIndex];
+            color = colors?.[colorIndex];
 
         return {
             colorIndex: colorIndex,
@@ -145,6 +145,21 @@ class XRangePoint extends ColumnPoint {
         if (!this.y) {
             this.y = 0;
         }
+    }
+
+    /**
+     * Extend applyOptions to handle time strings for x2
+     *
+     * @private
+     */
+    public applyOptions(
+        options: XRangePointOptions,
+        x: number
+    ): Point {
+        super.applyOptions(options, x);
+        this.x2 = this.series.chart.time.parse(this.x2);
+        this.isNull = !this.isValid?.();
+        return this;
     }
 
     /**
@@ -214,16 +229,6 @@ export default XRangePoint;
  * @name Highcharts.Point#x2
  * @type {number|undefined}
  * @requires modules/xrange
- */
-
-/**
- * Extend applyOptions so that `colorByPoint` for x-range means that one
- * color is applied per Y axis category.
- *
- * @private
- * @function Highcharts.Point#applyOptions
- *
- * @return {Highcharts.Series}
  */
 
 /**

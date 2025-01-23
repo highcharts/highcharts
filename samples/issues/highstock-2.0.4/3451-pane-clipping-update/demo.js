@@ -21,7 +21,7 @@ $(function () {
             name: 'AAPL',
             type: 'area',
             data: [1, 2, 3, 3, 4, 5, 5, 6, 5, 4, 3, 4, 3, 2],
-            pointStart: Date.UTC(2014, 0, 1),
+            pointStart: '2014-01-01',
             pointInterval: 24 * 36e5,
             tooltip: {
                 valueDecimals: 2

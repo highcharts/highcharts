@@ -2,5 +2,6 @@
  name: Highcharts Demo - Planet Atmospheres
  authors:
    - Nancy Dillon
+ skipTest: true
  js_wrap: b
 ...

@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -210,6 +211,13 @@ class Point {
      */
 
     /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
+     */
+
+    /**
      * The series object associated with the point.
      *
      * @name Highcharts.Point#series
@@ -367,6 +375,13 @@ class Point {
             point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
+
+        // If x is a string, try to parse it to a datetime
+        } else if (typeof point.x === 'string') {
+            x ??= series.chart.time.parse(point.x);
+            if (isNumber(x)) {
+                point.x = x;
+            }
         }
 
         point.isNull = this.isValid && !this.isValid();
@@ -432,7 +447,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (!dataSorting || !dataSorting.enabled) {
+            if (!dataSorting?.enabled) {
                 destroyPoint();
 
             } else {
@@ -463,7 +478,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item && item.element) {
+                if (item?.element) {
                     item.destroy();
                 }
             });
@@ -538,8 +553,13 @@ class Point {
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
             (point.options.className ? ' ' + point.options.className : '') +
-            (point.zone && point.zone.className ? ' ' +
-                point.zone.className.replace('highcharts-negative', '') : '');
+            (
+                point.zone?.className ?
+                    ' ' + point.zone.className.replace(
+                        'highcharts-negative', ''
+                    ) :
+                    ''
+            );
     }
 
     /**
@@ -632,7 +652,7 @@ class Point {
             this.nonZonedColor = this.color;
         }
 
-        if (zone && zone.color && !this.options.color) {
+        if (zone?.color && !this.options.color) {
             this.color = zone.color;
         } else {
             this.color = this.nonZonedColor;
@@ -718,7 +738,6 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
-     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
@@ -744,26 +763,30 @@ class Point {
 
         } else if (isArray(options)) {
             // With leading x value
-            if (!keys && (options as any).length > valueCount) {
-                firstItemType = typeof (options as any)[0];
+            if (!keys && options.length > valueCount) {
+                firstItemType = typeof options[0];
                 if (firstItemType === 'string') {
-                    ret.name = (options as any)[0];
+                    if (series.xAxis?.dateTime) {
+                        ret.x = series.chart.time.parse(options[0]);
+                    } else {
+                        ret.name = options[0];
+                    }
                 } else if (firstItemType === 'number') {
-                    ret.x = (options as any)[0];
+                    ret.x = options[0];
                 }
                 i++;
             }
             while (j < valueCount) {
                 // Skip undefined positions for keys
-                if (!keys || typeof (options as any)[i] !== 'undefined') {
+                if (!keys || typeof options[i] !== 'undefined') {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
                         Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
+                            ret, options[i], pointArrayMap[j]
                         );
                     } else {
-                        ret[pointArrayMap[j]] = (options as any)[i];
+                        ret[pointArrayMap[j]] = options[i];
                     }
                 }
                 i++;
@@ -1054,7 +1077,7 @@ class Point {
 
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
-                if (graphic && graphic.element) {
+                if (graphic?.element) {
                     // "null" is also a valid symbol
                     if (
                         options &&
@@ -1069,9 +1092,13 @@ class Point {
                 }
             }
 
-            // Record changes in the parallel arrays
-            i = point.index as any;
-            series.updateParallelArrays(point, i);
+            // Record changes in the data table
+            i = point.index;
+            const row: DataTable.RowObject = {};
+            for (const key of series.dataColumnKeys()) {
+                row[key] = (point as any)[key];
+            }
+            series.dataTable.setRow(row, i);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
@@ -1364,11 +1391,8 @@ class Point {
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
-            markerStateOptions = ((
-                markerOptions &&
-                markerOptions.states &&
-                (markerOptions.states as any)[state || 'normal']
-            ) || {}),
+            markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
+                {},
             stateDisabled = (markerStateOptions as any).enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
@@ -1546,13 +1570,10 @@ class Point {
         // Show me your halo
         const haloOptions = stateOptions.halo;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
-        const markerVisibility = (
-            markerGraphic && markerGraphic.visibility || 'inherit'
-        );
+        const markerVisibility = markerGraphic?.visibility || 'inherit';
 
         if (
-            haloOptions &&
-            haloOptions.size &&
+            haloOptions?.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster

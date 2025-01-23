@@ -77,7 +77,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since next
+     * @since 12.0.0
      * @apioption exporting.applyStyleSheets
      */
 
@@ -264,7 +264,7 @@ const exporting: ExportingOptions = {
      *
      * @since 2.0
      */
-    url: 'https://export.highcharts.com/',
+    url: `https://export-svg.highcharts.com?v=${H.version}`,
 
     /**
      * Settings for a custom font for the exported PDF, when using the
@@ -443,15 +443,6 @@ const exporting: ExportingOptions = {
             titleKey: 'contextButtonTitle',
 
             /**
-             * This option is deprecated, use
-             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
-             *
-             * @deprecated
-             * @type      {string}
-             * @apioption exporting.buttons.contextButton._titleKey
-             */
-
-            /**
              * A collection of strings pointing to config options for the menu
              * items. The config options are defined in the
              * `menuItemDefinitions` option.
@@ -467,7 +458,7 @@ const exporting: ExportingOptions = {
              *         Menu item definitions
              *
              * @type    {Array<string>}
-             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
+             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG"]
              * @since   2.0
              */
             menuItems: [
@@ -476,9 +467,10 @@ const exporting: ExportingOptions = {
                 'separator',
                 'downloadPNG',
                 'downloadJPEG',
-                'downloadPDF',
                 'downloadSVG'
-            ]
+            ],
+
+            y: -5
 
         }
 
@@ -740,11 +732,14 @@ const navigation: NavigationOptions = {
         align: 'right',
 
         /**
-         * The pixel spacing between buttons.
+         * The pixel spacing between buttons, and between the context button and
+         * the title.
          *
+         * @sample highcharts/title/widthadjust
+         *         Adjust the spacing when using text button
          * @since 2.0
          */
-        buttonSpacing: 3,
+        buttonSpacing: 5,
 
         /**
          * Pixel height of the buttons.
