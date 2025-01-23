@@ -221,7 +221,9 @@ async function scriptsTS(argv) {
 
 scriptsTS.description = 'Builds files of `/ts` folder into `/js` folder.';
 scriptsTS.flags = {
-    '--product': 'The project to build: Highcharts, Grid, Dashboards, default: Highcharts'
+    '--dashboards': 'Build dashboards files only',
+    '--datagrid': 'Build datagrid files only',
+    '--product': 'The project to build: Highcharts (default), Grid'
 };
 gulp.task(
     'scripts-ts',
