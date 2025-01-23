@@ -152,7 +152,7 @@ function task() {
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
 
-    if (PRODUCTS.indexOf(argv.product) < 0) {
+    if (PRODUCTS.indexOf(argv.product || 'Highcharts') < 0) {
         logLib.warn('Cannot find a product.');
         return Promise.resolve();
     }
