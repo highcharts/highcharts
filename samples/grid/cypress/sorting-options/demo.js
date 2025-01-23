@@ -31,7 +31,7 @@ Grid.grid('container', {
     events: {
         column: {
             afterSorting: function () {
-                const { sorting } = this.viewport.Grid.querying;
+                const { sorting } = this.viewport.grid.querying;
 
                 columnSelectEl.value = this.id;
                 orderSelectEl.value = sorting.currentSorting.order || '';
