@@ -39,7 +39,7 @@ Grid.grid('container', {
         }
     }
 }, true).then(dg => {
-    window.Grid = dg;
+    window.grid = dg;
 
     const currentSorting = dg.querying.sorting.currentSorting;
 
