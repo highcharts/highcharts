@@ -640,7 +640,8 @@ namespace DataLabel {
 
                                 point.contrastColor = renderer.getContrast(
                                     labelBgColor !== 'auto' && labelBgColor ||
-                                    (point.color || series.color) as any
+                                    (point.color || series.color) as any,
+                                    point.graphic
                                 );
 
                                 style.color = (
