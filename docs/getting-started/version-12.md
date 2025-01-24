@@ -1,7 +1,7 @@
 # A wind of change with Highcharts version 12
 
-Highcharts v12 has introduced new Webpack-based UMD packages to make Highcharts modules easier to use and faster.
-Thanks to this change everyone can soon also use the full potential of ESM packages.
+Highcharts v12 has introduced new Webpack-based UMDs (Universal Module Definition) to make Highcharts modules easier to use and faster.
+Thanks to this change everyone can soon also use the full potential of ESM (ES Module) packages.
 The new UMD is with some setups compatible to the previous UMD, while it also brings some changes for other setups.
 This document lays out the changes of Highcharts v12 packages.
 
@@ -38,7 +38,8 @@ The new UMD is now consistently expecting synchronous loading in all setups.
 For an asynchronous approach, one needs to use the ESM variants, which can be found in the `highcharts/es-modules/masters/` path.
 
 * HTML Example:
-  ```js
+  Note that this is not recommend for production, as ES modules in a browser should always be bundled.
+  ```html
   <script type="module">
   import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
   import 'https://code.highcharts.com/es-modules/masters/highcharts-more.src.js';
@@ -64,7 +65,7 @@ For an asynchronous approach, one needs to use the ESM variants, which can be fo
   import 'highcharts/es-modules/masters/modules/accessibility.src.js';
   ```
 
-### 3. No Highcharts._modules event
+### 3. No Highcharts._modules and HighchartsModuleLoaded event
 
 Highcharts before v12 included an internal module system to allow instant modifications.
 This internal module system has been removed.
