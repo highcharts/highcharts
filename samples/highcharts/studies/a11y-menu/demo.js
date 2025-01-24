@@ -255,25 +255,16 @@ function createPreferencesDialog(chart) {
     <div class="pref textsize">
         <input type="radio" id="smaller" name="textsize" value="smaller"
         ${selectedTextSize === 'smaller' ? 'checked' : ''}>
-        <label for="smaller">Smaller
-            <span aria-hidden="true">(
-                <span id="small-font">Aa</span>)
-            </span>
-        </label>
+        <label for="smaller">Smaller</label>
+        <span aria-hidden="true">(<span id="small-font">Aa</span>)</span>
         <input type="radio" id="t-size-def" name="textsize" value="default"
         ${selectedTextSize === 'default' ? 'checked' : ''}>
-        <label for="t-size-def">Default 
-            <span aria-hidden="true">(
-                <span id="def-font">Aa</span>)
-            </span>
-        </label>
+        <label for="t-size-def">Default </label>
+        <span aria-hidden="true">(<span id="def-font">Aa</span>)</span>
         <input type="radio" id="larger" name="textsize" value="larger"
         ${selectedTextSize === 'larger' ? 'checked' : ''}>
-        <label for="larger">Larger 
-            <span aria-hidden="true">(
-                <span id="large-font">Aa</span>)
-            </span>
-        </label>
+        <label for="larger">Larger </label>
+        <span aria-hidden="true">(<span id="large-font">Aa</span>)</span>
     </div>
     <h3>Enhance contrast:</h3>
     <div class="pref contrast">
