@@ -1,8 +1,8 @@
 // Creating patterns for normal and contrast colors
-const defaultColors = ['#90D2FE', '#CBC9E3'],
-    contrastColors = ['#247eb3', '#6d6aaf'],
+const defaultColors = ['#90D2FE', '#ffb8b8'],
+    contrastColors = ['#247eb3', '#dd3636'],
     borderColors = contrastColors,
-    borderColorsWithContrast = ['#103042', '#272541'];
+    borderColorsWithContrast = ['#103042', '#561515'];
 
 // Defining description formats for verbosity
 const shortPointDescriptionFormat =
