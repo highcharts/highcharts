@@ -58,6 +58,7 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
             mode: 'production',
             optimization: {
                 concatenateModules: true,
+                mangleExports: false,
                 minimize: false,
                 moduleIds: 'deterministic'
             },

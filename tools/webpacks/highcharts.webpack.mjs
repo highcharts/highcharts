@@ -25,7 +25,9 @@ import { resolveExternals } from './externals.mjs';
 
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
-const targetFolder = Path.join('code');
+
+const esmTargetFolder = Path.join('code', 'esm');
+const umdTargetFolder = Path.join('code');
 
 const namespace = 'Highcharts';
 const productMasters = [
@@ -61,6 +63,7 @@ const umdWebpacks = FSLib
             mode: 'production',
             optimization: {
                 concatenateModules: true,
+                mangleExports: false,
                 minimize: false,
                 moduleIds: 'deterministic'
             },
@@ -85,7 +88,7 @@ const umdWebpacks = FSLib
                     type: 'umd',
                     umdNamedDefine: true
                 },
-                path: Path.resolve(targetFolder)
+                path: Path.resolve(umdTargetFolder)
             },
             performance: {
                 hints: 'error',
@@ -141,21 +144,22 @@ const umdWebpacks = FSLib
  * ES module bundles
  */
 const esmWebpacks = umdWebpacks.map(umdWebpack => {
-    const esmWebpack = JSON.parse(JSON.stringify({
-        ...umdWebpack,
+    const esmWebpack = {
+        entry: umdWebpack.entry,
         experiments: {
             outputModule: true
         },
-        externals: void 0,
         externalsType: 'module',
+        mode: 'production',
+        optimization: umdWebpack.optimization,
         output: {
+            chunkFormat: 'module',
             filename: umdWebpack.output.filename,
             libraryTarget: 'module',
             module: true,
-            path: Path.resolve(Path.join(targetFolder, 'es-bundles'))
-        },
-        plugins: void 0
-    }));
+            path: Path.resolve(esmTargetFolder)
+        }
+    };
 
     esmWebpack.plugins = [
         new ProductMetaPlugin({
@@ -163,11 +167,11 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         })
     ];
 
-    // if (umdWebpack.externals) {
-    //     esmWebpack.externals = [
-    //         (info) => umdWebpack.externals[0](info)?.commonjs2
-    //     ];
-    // }
+    if (umdWebpack.externals) {
+        esmWebpack.externals = [
+            (info) => umdWebpack.externals[0](info)?.commonjs2
+        ];
+    }
 
     return esmWebpack;
 });
