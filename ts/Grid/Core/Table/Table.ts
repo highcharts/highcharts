@@ -366,7 +366,7 @@ class Table {
      * @param index
      * The index of the row to scroll to.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/scroll-to-row | Scroll to row}
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
         if (this.grid.options?.rendering?.rows?.virtualization) {
