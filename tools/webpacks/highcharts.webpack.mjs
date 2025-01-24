@@ -44,7 +44,10 @@ const productMasters = [
  * */
 
 
-const webpacks = FSLib
+/**
+ * UMD bundles
+ */
+const umdWebpacks = FSLib
     .getFilePaths(mastersFolder, true)
     .filter(masterFile => masterFile.endsWith('.js'))
     .map(masterFile => {
@@ -52,7 +55,7 @@ const webpacks = FSLib
         const masterName = masterPath
             .replace(/(?:\.src)?\.js$/u, '')
             .replaceAll(Path.sep, Path.posix.sep);
-        const webpackConfig = {
+        const umdWebpack = {
             // path to the main file
             entry: './' + masterFile.replaceAll(Path.sep, Path.posix.sep),
             mode: 'production',
@@ -120,8 +123,8 @@ const webpacks = FSLib
             }
         };
         if (!productMasters.includes(masterName)) {
-            webpackConfig.externalsType = 'umd';
-            webpackConfig.externals = [
+            umdWebpack.externalsType = 'umd';
+            umdWebpack.externals = [
                 (info) => resolveExternals(
                     info,
                     masterName,
@@ -130,8 +133,44 @@ const webpacks = FSLib
                 )
             ];
         }
-        return webpackConfig;
+        return umdWebpack;
     });
+
+
+/**
+ * ES module bundles
+ */
+const esmWebpacks = umdWebpacks.map(umdWebpack => {
+    const esmWebpack = JSON.parse(JSON.stringify({
+        ...umdWebpack,
+        experiments: {
+            outputModule: true
+        },
+        externals: void 0,
+        externalsType: 'module',
+        output: {
+            filename: umdWebpack.output.filename,
+            libraryTarget: 'module',
+            module: true,
+            path: Path.resolve(Path.join(targetFolder, 'es-bundles'))
+        },
+        plugins: void 0
+    }));
+
+    esmWebpack.plugins = [
+        new ProductMetaPlugin({
+            productName: 'Highcharts'
+        })
+    ];
+
+    // if (umdWebpack.externals) {
+    //     esmWebpack.externals = [
+    //         (info) => umdWebpack.externals[0](info)?.commonjs2
+    //     ];
+    // }
+
+    return esmWebpack;
+});
 
 
 /* *
@@ -141,4 +180,7 @@ const webpacks = FSLib
  * */
 
 
-export default webpacks;
+export default [
+    ...umdWebpacks,
+    ...esmWebpacks
+];
