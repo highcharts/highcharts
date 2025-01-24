@@ -20,7 +20,8 @@ let selectedVerbosity = 'full',
     selectedTextSize = 'default',
     isContrastChecked = false,
     isBorderChecked = false,
-    isAltPointChecked = false,
+    isAltPointDescChecked = false,
+    isAltPointLabelChecked = false,
     isInfoChecked = false,
     isPatternChecked = false,
     fontSize = '';
@@ -39,7 +40,6 @@ function initializeChart() {
     const innerScreenReaderDiv = screenReaderDiv.children[0];
     longDesc = innerScreenReaderDiv.children[3].textContent;
     shortDesc = longDesc.split('. ')[0] + '.';
-
     return chart;
 }
 
@@ -244,9 +244,12 @@ function createPreferencesDialog(chart) {
     <input type="checkbox" id="alt-info" name="alt-info"
         ${isInfoChecked ? 'checked' : ''}>
         <label for="alt-info">Show chart overview</label>
-    <input type="checkbox" id="alt-points" name="alt-points"
-        ${isAltPointChecked ? 'checked' : ''}>
-        <label for="alt-points">Show point labels</label>
+    <input type="checkbox" id="alt-point-label" name="alt-point-label"
+        ${isAltPointLabelChecked ? 'checked' : ''}>
+        <label for="alt-point-label">Show point labels</label>
+    <input type="checkbox" id="alt-points-desc" name="alt-points-desc"
+        ${isAltPointDescChecked ? 'checked' : ''}>
+        <label for="alt-points-desc">Show point description</label>
     </div>
     <h3>Text size:</h3>
     <div class="pref textsize">
@@ -305,8 +308,10 @@ function setupEventListeners(prefContent, chart) {
         prefContent.querySelector('input[name="contrast"]');
     const borderCheckbox = prefContent.querySelector('input[name="border"]');
     const patternCheckbox = prefContent.querySelector('input[name="pattern"]');
-    const altPointCheckbox = prefContent
-        .querySelector('input[name="alt-points"]');
+    const altPointDescCheckbox = prefContent
+        .querySelector('input[name="alt-points-desc"]');
+    const altPointLabelCheckbox = prefContent
+        .querySelector('input[name="alt-point-label"]');
     const altInfoCheckbox = prefContent.querySelector('input[name="alt-info"]');
     const infoRegion = document.querySelector(
         '#highcharts-screen-reader-region-before-0 > div:first-child'
@@ -399,9 +404,42 @@ function setupEventListeners(prefContent, chart) {
         setupScreenReaderSection(selectedVerbosity, chart);
     });
 
-    altPointCheckbox.addEventListener('change', event => {
+    altPointLabelCheckbox.addEventListener('change', event => {
         const isChecked = event.target.checked;
-        isAltPointChecked = isChecked;
+        isAltPointLabelChecked = isChecked;
+
+        if (isChecked) {
+            chart.update({
+                series: [{
+                    dataLabels: {
+                        enabled: true
+                    }
+                }, {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }]
+            });
+        } else {
+            chart.update({
+                series: [{
+                    dataLabels: {
+                        enabled: false
+                    }
+                }, {
+                    dataLabels: {
+                        enabled: false
+                    }
+                }]
+            });
+        }
+        setupScreenReaderSection(selectedVerbosity, chart);
+
+    });
+
+    altPointDescCheckbox.addEventListener('change', event => {
+        const isChecked = event.target.checked;
+        isAltPointDescChecked = isChecked;
 
         // Clear existing altTextDivs
         chart.altTextDivs.forEach(div => div.remove());
