@@ -3,6 +3,10 @@ Map collection
 
 For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON/TopoJSON maps. Instead, you can choose between hundreds of pre-generated maps of countries, regions and other administration levels.
 
+The Highcharts Maps collection maps mainly follow [United Nations cartographic standards](https://www.un.org/geospatial/mapsgeo). These maps are specifically designed to reflect internationally recognized boundaries and regions. For users requiring a specific geopolitical perspective, such as [World with Palestine areas](https://code.highcharts.com/mapdata/), the collection offers three different resolutions. These maps detail regions like the West Bank and Gaza to ensure accurate representation based on the UN's view of world borders.
+
+![west-bank-gaza.jpg](west-bank-gaza.jpg)
+
 License
 -------
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  DataGrid class
+ *  DataGrid Column class
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -97,11 +97,6 @@ class Column {
     public data?: DataTable.Column;
 
     /**
-     * The type of the column data.
-     */
-    public type?: Column.Type;
-
-    /**
      * The options of the column.
      */
     public readonly options: Column.Options;
@@ -120,6 +115,7 @@ class Column {
      * Sorting column module.
      */
     public sorting?: ColumnSorting;
+
 
     /* *
     *
@@ -235,6 +231,25 @@ class Column {
     }
 
     /**
+     * Adds or removes the synced CSS class to the column element
+     * and its cells.
+     *
+     * @param synced
+     * Whether the column should have synced state.
+     */
+    public setSyncedState(synced: boolean): void {
+        this.header?.htmlElement?.classList[synced ? 'add' : 'remove'](
+            Globals.classNames.syncedColumn
+        );
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].htmlElement.classList[synced ? 'add' : 'remove'](
+                Globals.classNames.syncedColumn
+            );
+        }
+    }
+
+    /**
      * Creates a mock element to measure the width of the column from the CSS.
      * The element is appended to the viewport container and then removed.
      * It should be called only once for each column.
@@ -309,7 +324,7 @@ class Column {
      * The formatted string.
      */
     public format(template: string): string {
-        return Templating.format(template, this);
+        return Templating.format(template, this, this.viewport.dataGrid);
     }
 }
 
@@ -321,7 +336,6 @@ class Column {
  * */
 
 namespace Column {
-    export type Type = 'number'|'date'|'string'|'boolean';
     export type Options = Omit<IndividualColumnOptions, 'id'>;
 }
 

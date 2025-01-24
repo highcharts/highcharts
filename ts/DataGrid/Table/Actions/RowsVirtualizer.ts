@@ -94,6 +94,7 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+
     /* *
     *
     *  Constructor
@@ -151,9 +152,10 @@ class RowsVirtualizer {
      * re-rendered, e.g., after a sort or filter operation.
      */
     public rerender(): void {
-        const rows = this.viewport.rows;
         const tbody = this.viewport.tbodyElement;
+        let rows = this.viewport.rows;
 
+        const oldScrollLeft = tbody.scrollLeft;
         let oldScrollTop: number | undefined;
 
         if (rows.length) {
@@ -175,10 +177,14 @@ class RowsVirtualizer {
             this.scroll();
         }
 
+        rows = this.viewport.rows;
+
         // Reflow the rendered row cells widths (check redundancy)
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             rows[i].reflow();
         }
+
+        tbody.scrollLeft = oldScrollLeft;
     }
 
     /**
@@ -243,6 +249,7 @@ class RowsVirtualizer {
             rowTop -= newHeight;
 
             row.htmlElement.style.height = newHeight + 'px';
+
             row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                 row.cells[j].htmlElement.style.transform = '';
@@ -261,7 +268,8 @@ class RowsVirtualizer {
         const { viewport: vp, buffer } = this;
         const isVirtualization = this.rowSettings?.virtualization;
         const rowsPerPage = isVirtualization ? Math.ceil(
-            vp.tbodyElement.offsetHeight / this.defaultRowHeight
+            (vp.dataGrid.tableElement?.clientHeight || 0) /
+            this.defaultRowHeight
         ) : Infinity; // Need to be refactored when add pagination
 
         let rows = vp.rows;
@@ -353,6 +361,8 @@ class RowsVirtualizer {
             }
         }
 
+        // Reset the focus anchor cell
+        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
         const firstVisibleRow = rows[rowCursor - rows[0].index];
         this.focusAnchorCell = firstVisibleRow?.cells[0];
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');
@@ -419,6 +429,7 @@ class RowsVirtualizer {
             }
         }
 
+        rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
             translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].setTranslateY(translateBuffer);
@@ -459,11 +470,20 @@ class RowsVirtualizer {
      */
     private getDefaultRowHeight(): number {
         const mockRow = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement
+            className: Globals.classNames.rowElement,
+            style: {
+                position: 'absolute'
+            }
         }, this.viewport.tbodyElement);
+
+        const mockCell = makeHTMLElement('td', {
+            innerText: 'mock',
+            className: Globals.classNames.mockedCell
+        }, mockRow);
 
         const defaultRowHeight = mockRow.offsetHeight;
         mockRow.remove();
+        mockCell.remove();
 
         return defaultRowHeight;
     }

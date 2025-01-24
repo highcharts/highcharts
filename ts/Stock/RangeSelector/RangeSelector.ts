@@ -101,6 +101,8 @@ declare module './RangeSelectorOptions' {
  * @function preferredInputType
  */
 function preferredInputType(format: Time.DateTimeFormat): string {
+    const hasTimeKey = (char: string): boolean =>
+        new RegExp(`%[[a-zA-Z]*${char}`).test(format as string);
     const ms = isString(format) ?
         format.indexOf('%L') !== -1 :
         // Implemented but not typed as of 2024
@@ -112,16 +114,11 @@ function preferredInputType(format: Time.DateTimeFormat): string {
 
     const date = isString(format) ?
         ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
-            .some((char: string): boolean =>
-                format.indexOf('%' + char) !== -1
-            ) :
+            .some(hasTimeKey) :
         format.dateStyle || format.day || format.month || format.year;
 
     const time = isString(format) ?
-        ['H', 'k', 'I', 'l', 'M', 'S']
-            .some((char: string): boolean =>
-                format.indexOf('%' + char) !== -1
-            ) :
+        ['H', 'k', 'I', 'l', 'M', 'S'].some(hasTimeKey) :
         format.timeStyle || format.hour || format.minute || format.second;
 
     if (date && time) {
@@ -450,7 +447,6 @@ class RangeSelector {
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
                     maxInput = rangeSelector.maxInput;
-
                 // #3274 in some case blur is not defined
                 if (minInput && !!minInput.blur) {
                     fireEvent(minInput, 'blur');
@@ -1961,7 +1957,8 @@ class RangeSelector {
         const {
             chart,
             buttonGroup,
-            inputGroup
+            inputGroup,
+            initialButtonGroupWidth
         } = this;
 
         const {
@@ -1990,7 +1987,7 @@ class RangeSelector {
                 moveInputsDown();
 
                 if (
-                    this.initialButtonGroupWidth >
+                    initialButtonGroupWidth >
                     chart.plotWidth + xOffsetForExportButton - 20
                 ) {
                     this.collapseButtons();
@@ -1998,7 +1995,7 @@ class RangeSelector {
                     this.expandButtons();
                 }
             } else if (
-                this.initialButtonGroupWidth -
+                initialButtonGroupWidth -
                 xOffsetForExportButton +
                 inputGroup.getBBox().width >
                 chart.plotWidth
@@ -2011,7 +2008,14 @@ class RangeSelector {
             } else {
                 this.expandButtons();
             }
+        } else if (buttonGroup && dropdown === 'responsive') {
+            if (initialButtonGroupWidth > chart.plotWidth) {
+                this.collapseButtons();
+            } else {
+                this.expandButtons();
+            }
         }
+
         // Forced states
         if (buttonGroup) {
             if (dropdown === 'always') {

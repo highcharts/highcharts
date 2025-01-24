@@ -9,8 +9,8 @@ describe('Formatting cells.', () => {
     });
 
     it('Cells should be formatted.', () => {
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).should('contain', '2022-01-01');
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('contain', '100 kg');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).should('contain', 'Jan 01, 2022');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('contain', '100.0 kg');
         cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(3).should('contain', '$ 1.50');
         cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(4).within(() => {
             cy.get('a').should('contain', 'Apples URL');
@@ -34,7 +34,7 @@ describe('Formatting cells.', () => {
         cy.get('@inputField').should('have.value', '100');
         cy.get('@inputField').clear().type('300');
         cy.get('body').click();
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('contain', '300 kg');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('contain', '300.0 kg');
         cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(2).should('have.attr', 'data-value', '300');
     });
 
@@ -44,7 +44,7 @@ describe('Formatting cells.', () => {
         cy.get('@inputField').should('have.value', '1640995200000');
         cy.get('@inputField').clear().type('1641081600000');
         cy.get('body').click();
-        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).should('contain', '2022-01-02');
+        cy.get('.highcharts-datagrid-row').eq(0).find('td').eq(0).should('contain', 'Jan 02, 2022');
     });
 
     it('The grid should adjust its width dynamically to the container width.', () => {

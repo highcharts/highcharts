@@ -1,5 +1,4 @@
-Installation with ES6 modules
-=============================
+# Installation with ES6 modules
 
 Highcharts Dashboards packages are available as ES6-compatible modules.
 

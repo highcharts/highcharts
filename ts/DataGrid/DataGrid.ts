@@ -36,10 +36,16 @@ import Globals from './Globals.js';
 import Table from './Table/Table.js';
 import U from '../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
+import Time from '../Core/Time.js';
 
-const { makeHTMLElement } = DataGridUtils;
+const { makeHTMLElement, setHTMLContent } = DataGridUtils;
 const { win } = Globals;
-const { merge } = U;
+const {
+    extend,
+    getStyle,
+    merge,
+    pick
+} = U;
 
 
 /* *
@@ -138,6 +144,11 @@ class DataGrid {
     public accessibility?: Accessibility;
 
     /**
+     * The caption element of the data grid.
+     */
+    public captionElement?: HTMLElement;
+
+    /**
      * The user options declared for the columns as an object of column ID to
      * column options.
      */
@@ -163,6 +174,16 @@ class DataGrid {
      * that was passed to the data grid.
      */
     public dataTable?: DataTable;
+
+    /**
+     * The description element of the data grid.
+     */
+    public descriptionElement?: HTMLElement;
+
+    /**
+     * The container element of the loading indicator overlaying the data grid.
+     */
+    public loadingWrapper?: HTMLElement;
 
     /**
      * The presentation table of the data grid. It contains a modified version
@@ -212,9 +233,42 @@ class DataGrid {
     public hoveredColumnId?: string;
 
     /**
+     * The synced row index.
+     * @internal
+     */
+    public syncedRowIndex?: number;
+
+    /**
+     * The synced column ID.
+     * @internal
+     */
+    public syncedColumnId?: string;
+
+    /**
      * The querying controller.
      */
     public querying: QueryingController;
+
+    /**
+     * The time instance.
+     */
+    public time: Time;
+
+    /**
+     * The locale of the data grid.
+     */
+    public locale?: string | string[];
+
+    /**
+     * The initial height of the container. Can be 0 also if not set.
+     */
+    public initialContainerHeight: number = 0;
+
+    /**
+     * The unique ID of the data grid.
+     */
+    public id: string;
+
 
     /* *
     *
@@ -242,10 +296,20 @@ class DataGrid {
         this.loadUserOptions(options);
 
         this.querying = new QueryingController(this);
+        this.id = this.options?.id || U.uniqueKey();
 
         this.initContainers(renderTo);
         this.initAccessibility();
         this.loadDataTable(this.options?.dataTable);
+
+        this.locale = this.options?.lang?.locale || (
+            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+        );
+
+        this.time = new Time(extend<Time.TimeOptions>(
+            this.options?.time,
+            { locale: this.locale }
+        ), this.options?.lang);
 
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
@@ -263,7 +327,7 @@ class DataGrid {
      *
      * */
 
-    /**
+    /*
      * Initializes the accessibility controller.
      */
     private initAccessibility(): void {
@@ -295,6 +359,8 @@ class DataGrid {
             `);
             return;
         }
+
+        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
 
         this.container = container;
         this.container.innerHTML = AST.emptyHTML;
@@ -337,6 +403,7 @@ class DataGrid {
             this.userOptions
         );
 
+        // Generate column options map
         const columnOptionsArray = this.options?.columns;
         if (!columnOptionsArray) {
             return;
@@ -345,7 +412,6 @@ class DataGrid {
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsObj[columnOptionsArray[i].id] = columnOptionsArray[i];
         }
-
         this.columnOptionsMap = columnOptionsObj;
     }
 
@@ -582,6 +648,130 @@ class DataGrid {
     }
 
     /**
+     * Sets the sync state to the row with the provided index. It removes the
+     * synced effect from the previously synced row.
+     *
+     * @param rowIndex
+     * The index of the row.
+     */
+    public syncRow(rowIndex?: number): void {
+        const rows = this.viewport?.rows;
+        if (!rows) {
+            return;
+        }
+
+        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
+
+        if (this.syncedRowIndex !== void 0) {
+            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+        }
+
+        if (rowIndex !== void 0) {
+            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+        }
+
+        this.syncedRowIndex = rowIndex;
+    }
+
+    /**
+     * Sets the sync state to the column with the provided ID. It removes the
+     * synced effect from the previously synced column.
+     *
+     * @param columnId
+     * The ID of the column.
+     */
+    public syncColumn(columnId?: string): void {
+        const vp = this.viewport;
+
+        if (!vp) {
+            return;
+        }
+
+        if (this.syncedColumnId) {
+            vp.getColumn(this.syncedColumnId)?.setSyncedState(false);
+        }
+
+        if (columnId) {
+            vp.getColumn(columnId)?.setSyncedState(true);
+        }
+
+        this.syncedColumnId = columnId;
+    }
+
+    /**
+     * Render caption above the datagrid.
+     *
+     * @internal
+     */
+    public renderCaption(): void {
+        const captionOptions = this.options?.caption;
+        const captionText = captionOptions?.text;
+
+        if (!captionText) {
+            return;
+        }
+
+        // Create a caption element.
+        this.captionElement = makeHTMLElement('div', {
+            className: Globals.classNames.captionElement,
+            id: this.id + '-caption'
+        }, this.contentWrapper);
+
+        // Render the caption element content.
+        setHTMLContent(this.captionElement, captionText);
+
+        if (captionOptions.className) {
+            this.captionElement.classList.add(
+                ...captionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
+     * Render description under the datagrid.
+     *
+     * @internal
+     */
+    public renderDescription(): void {
+        const descriptionOptions = this.options?.description;
+        const descriptionText = descriptionOptions?.text;
+
+        if (!descriptionText) {
+            return;
+        }
+
+        // Create a description element.
+        this.descriptionElement = makeHTMLElement('div', {
+            className: Globals.classNames.descriptionElement,
+            id: this.id + '-description'
+        }, this.contentWrapper);
+
+        // Render the description element content.
+        setHTMLContent(this.descriptionElement, descriptionText);
+
+        if (descriptionOptions.className) {
+            this.descriptionElement.classList.add(
+                ...descriptionOptions.className.split(/\s+/g)
+            );
+        }
+    }
+
+    /**
+     * Resets the content wrapper of the data grid. It clears the content and
+     * resets the class names.
+     */
+    public resetContentWrapper(): void {
+        if (!this.contentWrapper) {
+            return;
+        }
+
+        this.contentWrapper.innerHTML = AST.emptyHTML;
+        this.contentWrapper.className = Globals.classNames.container + ' ' + (
+            this.options?.rendering?.theme || ''
+        );
+    }
+
+    /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
@@ -596,9 +786,8 @@ class DataGrid {
         this.viewport?.destroy();
         delete this.viewport;
 
-        if (this.contentWrapper) {
-            this.contentWrapper.innerHTML = AST.emptyHTML;
-        }
+        this.resetContentWrapper();
+        this.renderCaption();
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
@@ -609,12 +798,16 @@ class DataGrid {
             this.renderNoData();
         }
 
+        this.renderDescription();
+
         if (this.options?.credits?.enabled) {
             this.credits = new Credits(this);
         }
 
-        if (this.options?.rendering?.rows?.virtualization) {
-            this.viewport?.reflow();
+        this.accessibility?.setA11yOptions();
+
+        if (this.viewport?.virtualRows) {
+            this.viewport.reflow();
         }
     }
 
@@ -629,15 +822,7 @@ class DataGrid {
             className: Globals.classNames.tableElement
         }, this.contentWrapper);
 
-        const vp = new Table(this, this.tableElement);
-
-        // Accessibility
-        this.tableElement.setAttribute(
-            'aria-rowcount',
-            this.dataTable?.getRowCount() ?? 0
-        );
-
-        return vp;
+        return new Table(this, this.tableElement);
     }
 
     /**
@@ -700,7 +885,7 @@ class DataGrid {
      * Extracts all references to columnIds on all levels below defined level
      * in the settings.header structure.
      *
-     * @param columns
+     * @param columnsTree
      * Structure that we start calculation
      *
      * @param [onlyEnabledColumns=true]
@@ -708,13 +893,13 @@ class DataGrid {
      * @returns
      */
     public getColumnIds(
-        columns: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions|string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
         const { enabledColumns } = this;
 
-        for (const column of columns) {
+        for (const column of columnsTree) {
             const columnId: string | undefined =
                 typeof column === 'string' ? column : column.columnId;
 
@@ -756,6 +941,59 @@ class DataGrid {
         });
 
         DataGrid.dataGrids.splice(dgIndex, 1);
+    }
+
+    /**
+     * Grey out the data grid and show a loading indicator.
+     *
+     * @param message
+     * The message to display in the loading indicator.
+     */
+    public showLoading(message?: string): void {
+        if (this.loadingWrapper) {
+            return;
+        }
+
+        // Create loading wrapper.
+        this.loadingWrapper = makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingWrapper
+            },
+            this.contentWrapper
+        )
+
+        // Create spinner element.
+        makeHTMLElement(
+            'div',
+            {
+                className: Globals.classNames.loadingSpinner
+            },
+            this.loadingWrapper
+        );
+
+
+        // Create loading message span element.
+        const loadingSpan = makeHTMLElement(
+            'span',
+            {
+                className: Globals.classNames.loadingMessage
+            },
+            this.loadingWrapper
+        );
+
+        setHTMLContent(
+            loadingSpan,
+            pick(message, this.options?.lang?.loading, '')
+        )
+    }
+
+    /**
+     * Removes the loading indicator.
+     */
+    public hideLoading(): void {
+        this.loadingWrapper?.remove();
+        delete this.loadingWrapper;
     }
 
     /**

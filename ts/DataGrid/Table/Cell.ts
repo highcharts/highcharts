@@ -25,7 +25,6 @@
 import type DataTable from '../../Data/DataTable';
 import type TableRow from './Content/TableRow';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
 import Column from './Column';
 import Row from './Row';
 import Templating from '../../Core/Templating.js';
@@ -52,7 +51,7 @@ abstract class Cell {
     /**
      * The column of the cell.
      */
-    public column: Column;
+    public column?: Column;
 
     /**
      * The row of the cell.
@@ -87,14 +86,13 @@ abstract class Cell {
     /**
      * Constructs a cell in the data grid.
      *
-     * @param column
-     * The column of the cell.
-     *
      * @param row
      * The row of the cell.
+     *
+     * @param column
+     * The column of the cell.
      */
-    constructor(column: Column, row: Row) {
-
+    constructor(row: Row, column?: Column) {
         this.column = column;
         this.row = row;
         this.row.registerCell(this);
@@ -177,6 +175,10 @@ abstract class Cell {
      */
     protected onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
+        if (!column) {
+            return;
+        }
+
         const vp = row.viewport;
 
         const changeFocusKeys: Record<typeof e.key, [number, number]> = {
@@ -224,6 +226,10 @@ abstract class Cell {
      */
     public reflow(): void {
         const column = this.column;
+        if (!column) {
+            return;
+        }
+
         const elementStyle = this.htmlElement.style;
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
@@ -239,7 +245,7 @@ abstract class Cell {
      * The formatted string.
      */
     public format(template: string): string {
-        return Templating.format(template, this);
+        return Templating.format(template, this, this.row.viewport.dataGrid);
     }
 
     /**
@@ -271,25 +277,6 @@ abstract class Cell {
     }
 
     /**
-     * Renders content of cell.
-     *
-     * @param cellContent
-     * Content to render.
-     *
-     * @param parentElement
-     * Parent element where the content should be.
-     *
-     * @internal
-     */
-    public renderHTMLCellContent(
-        cellContent: string,
-        parentElement: HTMLElement
-    ): void {
-        const formattedNodes = new AST(cellContent);
-        formattedNodes.addToDOM(parentElement);
-    }
-
-    /**
      * Destroys the cell.
      */
     public destroy(): void {
@@ -297,7 +284,7 @@ abstract class Cell {
             this.htmlElement.removeEventListener(pair[0], pair[1]);
         });
 
-        this.column.unregisterCell(this);
+        this.column?.unregisterCell(this);
         this.row.unregisterCell(this);
         this.htmlElement.remove();
     }

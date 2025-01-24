@@ -25,6 +25,7 @@ import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type { LangOptionsCore } from '../Core/Options';
 
 
 /* *
@@ -99,6 +100,11 @@ export interface Options {
     dataTable?: DataTable | DataTableOptions;
 
     /**
+     * Options for the description of the datagrid.
+     */
+    description?: DescriptionOptions;
+
+    /**
      * Events options triggered by the datagrid elements.
      */
     events?: DataGridEvents;
@@ -112,9 +118,19 @@ export interface Options {
     header?: Array<GroupedHeaderOptions|string>;
 
     /**
+     * The unique id of the datagrid. It is generated automatically, if not set.
+     */
+    id?: string;
+
+    /**
      * Language options for the datagrid.
      */
     lang?: LangOptions;
+
+    /**
+     * Time options for the datagrid.
+     */
+    time?: TimeOptions;
 
     /**
      * Options to control the way datagrid is rendered.
@@ -145,6 +161,14 @@ export interface RenderingSettings {
      * Options to control the table rendering.
      */
     table?: TableSettings;
+
+    /**
+     * The theme of the DataGrid. It will set the class name on the container.
+     * Can be set to the empty string to disable the theme.
+     *
+     * @default 'hcdg-theme-default'
+     */
+    theme?: string;
 }
 
 export interface ColumnsSettings {
@@ -183,6 +207,19 @@ export interface RowsSettings {
      * @default 10
      */
     bufferSize?: number;
+
+    /**
+     * Defines the minimum height of the table body (`tbody`) based on the
+     * number of rows that should be visible in the viewport.
+     *
+     * If set to `null`, the minimum height will not be enforced.
+     *
+     * It's ignored when height of the container is set or the `min-height`
+     * style is set on the `tbody` by the user.
+     *
+     * @default 2
+     */
+    minVisibleRows?: number | null;
 
     /**
      * Whether the height of the rows should be calculated automatically based
@@ -433,6 +470,18 @@ export interface CaptionOptions {
     text?: string;
 }
 
+export interface DescriptionOptions {
+    /**
+     * The custom CSS class name for the description.
+     */
+    className?: string;
+
+    /**
+     * The description of the datagrid.
+     */
+    text?: string;
+}
+
 /**
  * Events options.
  */
@@ -592,7 +641,7 @@ export interface CreditsOptions {
 /**
  * Language options for the datagrid.
  */
-export interface LangOptions {
+export interface LangOptions extends LangOptionsCore {
 
     /**
      * Configure the accessibility strings in the chart.
@@ -600,11 +649,31 @@ export interface LangOptions {
     accessibility?: A11yOptions.LangAccessibilityOptions;
 
     /**
+     * The text to display when the loading indicator is shown.
+     *
+     * @default 'Loading...'
+     */
+    loading?: string;
+
+    /**
      * The text to display when there is no data to show.
      *
      * @default 'No data to display'
      */
     noData?: string;
+}
+
+/**
+ * Options for the time settings.
+ */
+export interface TimeOptions {
+    /**
+     * The timezone to use for formatting time and date. The time zone names
+     * can be different between browsers, as described in [mdn docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+     *
+     * @default 'UTC'
+     */
+    timezone?: string;
 }
 
 

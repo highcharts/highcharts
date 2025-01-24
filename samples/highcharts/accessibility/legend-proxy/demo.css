@@ -1,0 +1,23 @@
+.container {
+    margin: 3em auto;
+}
+
+#instructions {
+    margin: 2em;
+}
+
+#area {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 800px;
+    height: 70vh;
+    background-color: #00f3;
+    padding-bottom: 1em;
+}
+
+.highcharts-a11y-proxy-element {
+    opacity: 1 !important;
+    border: 1px solid red !important;
+    z-index: 9999 !important;
+}

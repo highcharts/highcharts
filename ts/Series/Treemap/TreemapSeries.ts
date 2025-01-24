@@ -76,6 +76,7 @@ const {
     merge,
     pick,
     pushUnique,
+    splat,
     stableSort
 } = U;
 
@@ -403,27 +404,11 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         dataLabel: SVGLabel,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         labelOptions: DataLabelOptions
     ): void {
-        const style = labelOptions.style;
-
-        // #8160: Prevent the label from exceeding the point's
-        // boundaries in treemaps by applying ellipsis overflow.
-        // The issue was happening when datalabel's text contained a
-        // long sequence of characters without a whitespace.
-        if (
-            style &&
-            !defined(style.textOverflow) &&
-            dataLabel.text &&
-            dataLabel.getBBox().width > (dataLabel.text.textWidth || 0)
-        ) {
-            dataLabel.css({
-                textOverflow: 'ellipsis',
-                // Unit (px) is required when useHTML is true
-                width: style.width += 'px'
-            });
-        }
         ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
             // `point.node.zIndex` could be undefined (#6956)
@@ -581,7 +566,7 @@ class TreemapSeries extends ScatterSeries {
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
-        if (level && level.layoutStartingDirection) {
+        if (level?.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
                 0 :
                 1;
@@ -672,7 +657,8 @@ class TreemapSeries extends ScatterSeries {
                 n: TreemapPoint
             ): boolean {
                 return n.node.visible || defined(n.dataLabel);
-            });
+            }),
+            padding = splat(series.options.dataLabels || {})[0]?.padding;
 
         let options: DataLabelOptions,
             level: TreemapSeriesLevelOptions;
@@ -695,15 +681,19 @@ class TreemapSeries extends ScatterSeries {
             }
 
             // If options for level exists, include them as well
-            if (level && level.dataLabels) {
+            if (level?.dataLabels) {
                 options = merge(options, level.dataLabels);
                 series.hasDataLabels = (): boolean => true;
             }
 
-            // Set dataLabel width to the width of the point shape.
+            // Set dataLabel width to the width of the point shape minus the
+            // padding
             if (point.shapeArgs) {
                 const css = {
-                    width: `${point.shapeArgs.width || 0}px`,
+                    width: (
+                        (point.shapeArgs.width || 0) -
+                        2 * (options.padding || padding || 0)
+                    ) + 'px',
                     lineClamp: Math.floor((point.shapeArgs.height || 0) / 16)
                 };
                 extend((options.style as any), css);
@@ -1148,7 +1138,7 @@ class TreemapSeries extends ScatterSeries {
     public onClickDrillToNode(event: { point: TreemapPoint }): void {
         const series = this,
             point = event.point,
-            drillId = point && point.drillId;
+            drillId = point?.drillId;
 
         // If a drill id is returned, add click event and cursor.
         if (isString(drillId)) {
@@ -1175,7 +1165,7 @@ class TreemapSeries extends ScatterSeries {
             options = this.options,
             stateOptions =
                 state && options.states && options.states[state] || {},
-            className = (point && point.getClassName()) || '',
+            className = point?.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
             // Stroke width uses pick because it can be 0.
             attr: SVGAttributes = {
@@ -1191,11 +1181,11 @@ class TreemapSeries extends ScatterSeries {
                     options.borderWidth
                 ),
                 'dashstyle':
-                    (point && (point as any).borderDashStyle) ||
+                    (point as any)?.borderDashStyle ||
                     level.borderDashStyle ||
                     stateOptions.borderDashStyle ||
                     options.borderDashStyle,
-                'fill': (point && point.color) || this.color
+                'fill': point?.color || this.color
             };
 
         // Hide levels above the current view
@@ -1235,8 +1225,8 @@ class TreemapSeries extends ScatterSeries {
         siblings?: number
     ): void {
         const series = this,
-            chart = series && series.chart,
-            colors = chart && chart.options && chart.options.colors;
+            chart = series?.chart,
+            colors = chart?.options?.colors;
 
         if (node) {
             const colorInfo = getColor(node, {
@@ -1454,7 +1444,7 @@ class TreemapSeries extends ScatterSeries {
         ));
 
         // Set the values
-        let val = pick(point && point.options.value, childrenTotal);
+        let val = pick(point?.options.value, childrenTotal);
 
         if (point) {
             point.value = val;
@@ -1474,14 +1464,14 @@ class TreemapSeries extends ScatterSeries {
             children: children,
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
-            ignore: !(pick(point && point.visible, true) && (val > 0)),
+            ignore: !(pick(point?.visible, true) && (val > 0)),
             isLeaf: tree.visible && !childrenTotal,
             isGroup: point?.isGroup,
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)
             ),
-            name: pick(point && point.name, ''),
-            sortIndex: pick(point && point.sortIndex, -val),
+            name: pick(point?.name, ''),
+            sortIndex: pick(point?.sortIndex, -val),
             val: val
         });
         return tree;

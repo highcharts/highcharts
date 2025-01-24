@@ -61,6 +61,19 @@ QUnit.module('Format', () => {
             'Localized format'
         );
 
+        // European thousands separator and decimal point
+        Highcharts.setOptions({
+            lang: {
+                decimalPoint: ',',
+                thousandsSep: '.'
+            }
+        });
+        assert.strictEqual(
+            '12.345,68',
+            format('{point.long:,.2f}', { point: point }),
+            'European format (#22402)'
+        );
+
         // default thousands separator and decimal point
         Highcharts.setOptions({
             lang: {
@@ -200,12 +213,8 @@ QUnit.module('Format', () => {
         );
 
         // Reset
-        Highcharts.setOptions({
-            lang: {
-                decimalPoint: '.',
-                thousandsSep: ' '
-            }
-        });
+        delete Highcharts.defaultOptions.lang.decimalPoint;
+        delete Highcharts.defaultOptions.lang.thousandsSep;
     });
 
     QUnit.test('if helper', assert => {
@@ -594,6 +603,22 @@ QUnit.module('Format', () => {
             '<span>Second</span>',
             'String properties inside deep objects should resolve'
         );
+
+        // Format %O as timezone offset to local time (#22329)
+        Highcharts.dateFormats.O = () => '+0100';
+        assert.strictEqual(
+            format(
+                '{ucfirst (point.key:%d.%m.%Y %H:%M:%S %O)}',
+                {
+                    point: {
+                        key: Date.UTC(2024, 11, 11)
+                    }
+                }
+            ),
+            '11.12.2024 00:00:00 +0100',
+            'Custom date format with plus sign'
+        );
+        delete Highcharts.dateFormats.O;
 
     });
 
