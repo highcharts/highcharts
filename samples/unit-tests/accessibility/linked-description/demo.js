@@ -13,7 +13,7 @@ const html = `
 
 <div>
     <div id="containerChild"></div>
-    <div> 
+    <div>
         <p class="highcharts-description">Child</p>
     </div>
 </div>
@@ -82,7 +82,7 @@ function createChartAndAssertLongDesc(
     );
 }
 
-QUnit.module('linked-description', function (hooks) {
+QUnit.module('linked-description', function () {
     QUnit.test(
         'Charts should have descriptions from next sibling with class name.',
         function (assert) {

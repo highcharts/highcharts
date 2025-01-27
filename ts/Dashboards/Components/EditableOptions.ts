@@ -61,7 +61,11 @@ class EditableOptions {
 
         for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
-            if (option.name === 'connectorName') {
+            if (
+                option.propertyPath?.some(
+                    (path): boolean => path === 'connector'
+                )
+            ) {
                 const board = this.component.board;
                 const selectOptions = !board ?
                     [] :
@@ -90,6 +94,10 @@ namespace EditableOptions {
          * Type of the editable element.
          */
         type: ElementType;
+        /**
+         * Whether render it as a standalone element without a group.
+         */
+        isStandalone?: boolean;
         /**
          * Detailed options that should be included in the accordion menu.
          * Available for `nested` type.
@@ -126,7 +134,6 @@ namespace EditableOptions {
      */
     export type ElementType =
         | 'input'
-        | 'text'
         | 'textarea'
         | 'toggle'
         | 'select'
@@ -141,7 +148,7 @@ namespace EditableOptions {
          */
         name: string;
         /**
-         * whether the option should have a toggle to be enabled or disabled.
+         * Whether the option should have a toggle to be enabled or disabled.
          */
         showToggle?: boolean;
         /**
@@ -158,7 +165,7 @@ namespace EditableOptions {
     export interface OptionsBindings {
         keyMap: Record<string, string>;
         typeMap: Record<string, string>;
-        skipRedraw: string[]; // keys of options that should not trigger redraw
+        skipRedraw: string[]; // Keys of options that should not trigger redraw
     }
 
 }

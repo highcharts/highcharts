@@ -144,7 +144,8 @@ QUnit.test('Show-hide linked series (#3709)', function (assert) {
     );
 });
 QUnit.test(
-    'Updating master series, cause linked series to hide, with visible graph (#5618)',
+    'Updating master series, cause linked series to hide, with visible graph ' +
+    '(#5618)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({

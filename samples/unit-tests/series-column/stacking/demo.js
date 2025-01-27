@@ -125,7 +125,8 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
             },
             title: {
                 text:
-                    'Points in the same X value should be allowed in the same series'
+                    'Points in the same X value should be allowed in the ' +
+                    'same series'
             },
             plotOptions: {
                 column: {
@@ -133,7 +134,8 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
                     colorByPoint: true
                 }
             },
-            yAxis: [{},
+            yAxis: [
+                {},
                 {
                     opposite: true
                 }

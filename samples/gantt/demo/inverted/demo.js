@@ -17,7 +17,8 @@ Highcharts.ganttChart('container', {
         },
         point: {
             descriptionFormat: '{yCategory}. ' +
-                '{#if completed}Task {(multiply completed.amount 100):.1f}% completed. {/if}' +
+                '{#if completed}Task {(multiply completed.amount 100):.1f}% ' +
+                'completed. {/if}' +
                 'Start {x:%Y-%m-%d}, end {x2:%Y-%m-%d}.'
         }
     },
@@ -25,7 +26,8 @@ Highcharts.ganttChart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },
@@ -44,37 +46,37 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            start: Date.UTC(2018, 11, 1),
-            end: Date.UTC(2018, 11, 2),
+            start: '2018-12-01',
+            end: '2018-12-02',
             completed: {
                 amount: 0.95
             },
             name: 'Prototyping'
         }, {
-            start: Date.UTC(2018, 11, 2),
-            end: Date.UTC(2018, 11, 5),
+            start: '2018-12-02',
+            end: '2018-12-05',
             completed: {
                 amount: 0.5
             },
             name: 'Development'
         }, {
-            start: Date.UTC(2018, 11, 8),
-            end: Date.UTC(2018, 11, 9),
+            start: '2018-12-08',
+            end: '2018-12-09',
             completed: {
                 amount: 0.15
             },
             name: 'Testing'
         }, {
-            start: Date.UTC(2018, 11, 9),
-            end: Date.UTC(2018, 11, 19),
+            start: '2018-12-09',
+            end: '2018-12-19',
             completed: {
                 amount: 0.3,
                 fill: '#fa0'
             },
             name: 'Development'
         }, {
-            start: Date.UTC(2018, 11, 10),
-            end: Date.UTC(2018, 11, 23),
+            start: '2018-12-10',
+            end: '2018-12-23',
             name: 'Testing'
         }]
     }]

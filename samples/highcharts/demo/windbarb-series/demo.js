@@ -1,41 +1,40 @@
 const data = [
-    [4.9, 246],
-    [4.1, 242],
-    [3.2, 262],
-    [1.5, 284],
-    [1.1, 294],
-    [0.4, 192],
-    [0.2, 30],
-    [1.1, 110],
-    [1.4, 112],
+    [2.3, 147],
+    [2.0, 120],
+    [1.6, 90],
+    [2.8, 127],
+    [3.6, 131],
     [2.1, 132],
-    [1.6, 134],
-    [1.5, 128],
-    [0.7, 91],
-    [0.7, 275],
-    [0.6, 341],
-    [4.5, 236],
-    [4.9, 241],
-    [3.4, 234],
-    [0.7, 260],
-    [1.1, 274],
-    [0.9, 327],
-    [0.5, 336],
-    [0.4, 331],
-    [1.4, 157]];
+    [5.6, 132],
+    [4.0, 121],
+    [5.4, 129],
+    [6.6, 134],
+    [7.1, 133],
+    [5.2, 132],
+    [2.1, 69],
+    [2.2, 75],
+    [1.2, 65],
+    [1.5, 87],
+    [5.1, 133],
+    [4.6, 130],
+    [5.4, 138],
+    [1.2, 70],
+    [2.1, 139],
+    [2.0, 126],
+    [0.5, 29],
+    [1.0, 108]
+];
 
 Highcharts.chart('container', {
 
     title: {
-        text: 'Observed wind in Vik, 30. July 2022',
-        align: 'left'
+        text: 'Observed wind in Vik, 10. July 2024'
     },
 
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.yr.no/nb/historikk/graf/1-137598/Norge/Vestland/Vik/Vik%C3%B8yri?q=2022-07-30"' +
-            'target="_blank">YR</a>',
-        align: 'left'
+            '<a href="https://seklima.met.no/"' +
+            'target="_blank">seklima</a>'
     },
 
     xAxis: {
@@ -52,7 +51,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2022, 6, 30),
+            pointStart: '2024-07-11',
             pointInterval: 36e5
         }
     },

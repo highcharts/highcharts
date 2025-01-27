@@ -130,16 +130,18 @@ class PieSeries extends Series {
                     args = point.shapeArgs;
 
                 if (graphic && args) {
-                // start values
+                // Start values
                     graphic.attr({
-                    // animate from inner radius (#779)
-                        r: pick(point.startR,
-                            (series.center && series.center[3] / 2)),
+                    // Animate from inner radius (#779)
+                        r: pick(
+                            point.startR,
+                            (series.center && series.center[3] / 2
+                            )),
                         start: startAngleRad,
                         end: startAngleRad
                     });
 
-                    // animate
+                    // Animate
                     graphic.animate({
                         r: args.r,
                         start: args.start,
@@ -276,7 +278,7 @@ class PieSeries extends Series {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -299,7 +301,7 @@ class PieSeries extends Series {
             series.group.shadow(series.options.shadow);
         }
 
-        // draw the slices
+        // Draw the slices
         series.points.forEach(function (point): void {
             const animateTo = {};
             graphic = point.graphic;
@@ -384,7 +386,7 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // issue #172
+            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             radians = getStartAndEndRadians(

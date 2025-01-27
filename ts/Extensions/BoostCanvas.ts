@@ -35,6 +35,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { TypedArray } from '../Core/Series/SeriesOptions';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -431,7 +432,7 @@ namespace BoostCanvas {
             boost.target.clip(boost.clipRect);
 
         } else if (!(target instanceof ChartConstructor)) {
-            // ctx.clearRect(0, 0, width, height);
+            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {
@@ -476,8 +477,8 @@ namespace BoostCanvas {
                     activeBoostSettings.timeSeriesProcessing || false,
                 timeSetup: activeBoostSettings.timeSetup || false
             },
-            xData = series.processedXData,
-            yData = series.processedYData,
+            xData = series.getColumn('x', true),
+            yData = series.getColumn('y', true),
             rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
             xExtremes = xAxis.getExtremes(),
             xMin = xExtremes.min,
@@ -504,7 +505,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any> = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -558,7 +559,7 @@ namespace BoostCanvas {
             boost.clear();
         }
 
-        // if (series.canvas) {
+        // If (series.canvas) {
         //     ctx.clearRect(
         //         0,
         //         0,
@@ -588,7 +589,7 @@ namespace BoostCanvas {
             });
             U.clearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
-            chart.options.loading = loadingOptions; // reset
+            chart.options.loading = loadingOptions; // Reset
         }
 
         if (boostSettings.timeRendering) {
@@ -690,10 +691,13 @@ namespace BoostCanvas {
                 };
             },
             xDataFull: Array<number> = (
-                this.xData ||
+                (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
                 (this.options as any).xData ||
-                this.processedXData ||
-                false
+                (
+                    this.getColumn('x', true).length ?
+                        this.getColumn('x', true) :
+                        false
+                )
             ),
             //
             addKDPoint = function (
@@ -757,7 +761,7 @@ namespace BoostCanvas {
                     }
                 } else {
                     x = d;
-                    y = yData[i] as any;
+                    y = yData[i];
 
                     if (sdata[i + 1]) {
                         nx = sdata[i + 1];
@@ -796,7 +800,8 @@ namespace BoostCanvas {
                     isYInside = y >= yMin && y <= yMax;
                 }
 
-                if (!isNull &&
+                if (
+                    !isNull &&
                     (
                         (x >= xMin && x <= xMax && isYInside) ||
                         (isNextInside || isPrevInside)
@@ -828,7 +833,7 @@ namespace BoostCanvas {
                         }
                         // Add points and reset
                         if (clientX !== lastClientX) {
-                            // maxI also a number:
+                            // `maxI` also a number:
                             if (typeof minI !== 'undefined') {
                                 plotY = yAxis.toPixels(maxVal, true);
                                 yBottom = yAxis.toPixels(minVal, true);
@@ -886,7 +891,7 @@ namespace BoostCanvas {
 
             stroke();
 
-            // if (series.boostCopy || series.chart.boostCopy) {
+            // If (series.boostCopy || series.chart.boostCopy) {
             //     (series.boostCopy || series.chart.boostCopy)();
             // }
 
@@ -968,8 +973,8 @@ namespace BoostCanvas {
 
             // Draw the columns
             this.points.forEach((point): void => {
-                let plotY = point.plotY,
-                    pointAttr: SVGAttributes;
+                const plotY = point.plotY;
+                let pointAttr: SVGAttributes;
 
                 if (
                     typeof plotY !== 'undefined' &&

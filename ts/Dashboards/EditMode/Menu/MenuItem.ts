@@ -35,7 +35,6 @@ class MenuItem {
     * */
 
     public static defaultOptions: Partial<MenuItem.Options> = {
-        id: '',
         type: 'text'
     };
 
@@ -91,7 +90,7 @@ class MenuItem {
             { className: className || '' },
             merge(
                 this.options.style || {},
-                // to remove
+                // To remove
                 this.isActive ? { display: 'block' } : {}
             ),
             this.menu.container
@@ -181,8 +180,11 @@ class MenuItem {
 }
 
 namespace MenuItem {
+    export type ToolbarItemId =
+        'destroy' | 'settings' | 'drag' | 'viewFullscreen';
+
     export interface ItemOptions {
-        id: string;
+        id: ToolbarItemId;
         name?: string;
         type: 'icon'|'toggle'|'text'|'button';
         className?: string;
@@ -217,6 +219,7 @@ namespace MenuItem {
     export interface ToggleOptions extends ItemOptions {
         type: 'toggle';
         getValue?: (item: MenuItem) => boolean;
+        setValue: (item: MenuItem, value: boolean) => void;
         events: {
             update?: Function;
             click: Function;

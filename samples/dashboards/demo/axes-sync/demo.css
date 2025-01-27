@@ -1,5 +1,4 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 h1,
@@ -52,4 +51,28 @@ p {
 .highcharts-description {
     margin-top: 1em;
     padding: 0 20px;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-col-3,
+    #dashboard-col-4 {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-col-3,
+    #dashboard-col-4 {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-col-3,
+    #dashboard-col-4 {
+        flex: 1 1 100%;
+    }
 }

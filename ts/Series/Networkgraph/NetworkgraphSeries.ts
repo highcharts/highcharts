@@ -24,7 +24,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
 import GraphLayout from '../GraphLayoutComposition.js';
@@ -62,6 +62,8 @@ const {
     pick
 } = U;
 
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -148,11 +150,12 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public deferLayout(): void {
-        let layoutOptions = this.options.layoutAlgorithm,
+        const layoutOptions = this.options.layoutAlgorithm,
+            chartOptions = this.chart.options.chart;
+
+        let layout: ReingoldFruchtermanLayout,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
-            graphLayoutsLookup = this.chart.graphLayoutsLookup,
-            chartOptions = this.chart.options.chart,
-            layout: ReingoldFruchtermanLayout;
+            graphLayoutsLookup = this.chart.graphLayoutsLookup;
 
         if (!this.visible) {
             return;
@@ -197,7 +200,7 @@ class NetworkgraphSeries extends Series {
         if (this.layout) {
             this.layout.removeElementFromCollection(
                 this,
-                this.layout.series
+                this.layout.series as Array<this>
             );
         }
         NodesComposition.destroy.call(this);
@@ -275,6 +278,7 @@ class NetworkgraphSeries extends Series {
                 this.options.marker && this.options.marker.radius,
                 0
             );
+            node.key = node.name;
 
             // If node exists, but it's not available in nodeLookup,
             // then it's leftover from previous runs (e.g. setData)
@@ -365,7 +369,7 @@ class NetworkgraphSeries extends Series {
         const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
-        // series.render() is called before initial positions are set:
+        // Series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
@@ -384,13 +388,14 @@ class NetworkgraphSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
-            attribs = Series.prototype.pointAttribs.call(
-                this,
-                point,
-                pointState
-            ),
+        const pointState = state || point && point.state || 'normal',
             stateOptions = (this.options.states as any)[pointState];
+
+        let attribs = Series.prototype.pointAttribs.call(
+            this,
+            point,
+            pointState
+        );
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
@@ -443,7 +448,8 @@ class NetworkgraphSeries extends Series {
             series.redrawHalo(hoverPoint);
         }
 
-        if (series.chart.hasRendered &&
+        if (
+            series.chart.hasRendered &&
             !(series.options.dataLabels as any).allowOverlap
         ) {
             series.nodes.concat(series.points).forEach(function (node): void {
@@ -483,9 +489,7 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public translate(): void {
-        if (!this.processedXData) {
-            this.processData();
-        }
+
         this.generatePoints();
 
         this.deferLayout();
@@ -598,43 +602,6 @@ export default NetworkgraphSeries;
  * */
 
 /**
- * Formatter callback function.
- *
- * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
- *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
- *        Data label context to format
- *
- * @return {string}
- *         Formatted data label text
- */
-
-/**
- * Context for the formatter function.
- *
- * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.PointLabelObject
- * @since 7.0.0
- *//**
- * The color of the node.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#color
- * @type {Highcharts.ColorString}
- * @since 7.0.0
- *//**
- * The point (node) object. The node name, if defined, is available through
- * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
- * contains all nodes connected to this point.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- * @since 7.0.0
- *//**
- * The ID of the node.
- * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#key
- * @type {string}
- * @since 7.0.0
- */
-
-/**
  * Callback that fires after the end of Networkgraph series simulation
  * when the layout is stable.
  *
@@ -647,4 +614,4 @@ export default NetworkgraphSeries;
  *        The event that occurred.
  */
 
-''; // detach doclets above
+''; // Detach doclets above

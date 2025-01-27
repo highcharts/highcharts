@@ -76,7 +76,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         }
     });
 
-    assert.deepEqual(chart.series[1].yData, [13, 14, 15], 'Correct values');
+    assert.deepEqual(
+        chart.series[1].yData || chart.series[1].getColumn('y'),
+        [13, 14, 15],
+        'Correct values'
+    );
 
     assert.strictEqual(
         chart.series[1].graph.attr('stroke'),
@@ -87,7 +91,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[6].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].yData || chart.series[1].getColumn('y'),
         [13, 14],
         'Correct values after point.remove()'
     );
@@ -97,7 +101,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[1].points[chart.series[1].points.length - 1].x,
         chart.series[0].points[chart.series[0].points.length - 1].x,
-        'Correct last point position after addPoint() with shift parameter (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        '(#8572)'
     );
 
     secondSeries = chart.addSeries({
@@ -262,7 +267,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         pointsValue,
-        secondChart.series[1].processedYData,
+        secondChart.series[1].getColumn('y', true),
         'Correct points after setData() (#9493)'
     );
 
@@ -286,12 +291,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ]
     });
 
-    secondChart.series[1].points.forEach(function (point) {
-        pointsValue.push(point.y);
-    });
-
     assert.deepEqual(
-        pointsValue,
+        secondChart.series[1].getColumn('y', true),
         [
             212.074,
             212.23000000000002,
@@ -300,23 +301,26 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             216.27200000000002,
             216.19800000000004
         ],
-        'Correct points after update with cropped data - simulated draggable points (#9822)'
+        'Correct points after update with cropped data - simulated draggable ' +
+        'points (#9822)'
     );
 
     secondChart.series[0].addPoint(212.92, true, true);
 
     assert.strictEqual(
         secondChart.series[1].points[0].x,
-        secondChart.series[1].processedXData[0],
-        'Correct first point position after addPoint() with shift parameter and cropped data (#8572)'
+        secondChart.series[1].getColumn('x', true)[0],
+        'Correct first point position after addPoint() with shift parameter ' +
+            'and cropped data (#8572)'
     );
 
     assert.strictEqual(
         secondChart.series[1].points[secondChart.series[1].points.length - 1].x,
-        secondChart.series[1].processedXData[
-            secondChart.series[1].processedXData.length - 1
+        secondChart.series[1].getColumn('x', true)[
+            secondChart.series[1].getColumn('x', true).length - 1
         ],
-        'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        'and cropped data (#8572)'
     );
 
     const lineSeriesPoints = secondChart.series[2].points;
@@ -375,7 +379,7 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         both should be initialized.`
     );
     assert.ok(
-        chart.series[0].processedXData.length,
+        chart.series[0].getColumn('x', true).length,
         `When an indicator is declared before the main series,
         indicator data should be procesed.`
     );

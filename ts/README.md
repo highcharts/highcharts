@@ -89,7 +89,7 @@ You can also test your knowledge on the TypeScript
 
 If a type is created by multiple files, it should go into its own `*.d.ts` file.
 That way multiple files can add properties to an interface in an `*.d.ts` file.
-A good example for this kind of type interface extension is the 
+A good example for this kind of type interface extension is the
 [`SeriesLike`](./Core/Series/SeriesLike.d.ts) interface.
 
 
@@ -125,7 +125,7 @@ Coding Limitations
 
 ### Code with strict rules in mind
 
-Even though the migration is a work in progess, source will gradually comply to
+Even though the migration is a work in progress, source will gradually comply to
 strict rules of ESLint and TypeScript. You should therefor avoid insecure type
 assurance and instead use preferred
 [patterns](https://www.typescriptlang.org/docs/handbook/2/narrowing.html).
@@ -142,6 +142,8 @@ TypeScript sources yet. Instead they are based exclusively on the JSDoc doclets
 in the sources. As a consequence, types in sources and doclets share only a few
 similarities. Public interfaces for example have to be defined twice, once in
 TypeScript and a second time as JSDoclets.
+
+[More about the Doclets](./DOCLETS.md).
 
 
 

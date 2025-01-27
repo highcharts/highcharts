@@ -80,8 +80,8 @@ class TreegraphPoint extends TreemapPoint {
 
     public draw(): void {
         super.draw.apply(this, arguments);
-        // run animation of hiding/showing of the point.
-        let graphic = this.graphic;
+        // Run animation of hiding/showing of the point.
+        const graphic = this.graphic;
         if (graphic) {
             graphic.animate({
                 visibility: this.visible ? 'inherit' : 'hidden'

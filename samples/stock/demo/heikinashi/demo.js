@@ -7,7 +7,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Candlestick and Heiken Ashi series comparison.',
+            text: 'Candlestick and Heikin Ashi series comparison',
             align: 'left'
         },
         rangeSelector: {
@@ -34,7 +34,10 @@
             type: 'heikinashi',
             name: 'Heikin Ashi',
             data: data,
-            yAxis: 1
+            yAxis: 1,
+            tooltip: {
+                valueDecimals: 2
+            }
         }]
     });
 })();

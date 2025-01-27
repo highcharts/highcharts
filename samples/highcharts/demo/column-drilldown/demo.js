@@ -6,11 +6,9 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        align: 'left',
         text: 'Browser market shares. January, 2022'
     },
     subtitle: {
-        align: 'left',
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     accessibility: {
@@ -42,7 +40,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+            '<b>{point.y:.2f}%</b> of total<br/>'
     },
 
     series: [

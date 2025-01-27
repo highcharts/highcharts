@@ -1,4 +1,5 @@
-const dataSource = [4,
+const dataSource = [
+    4,
     4.3,
     4.4,
     4.4,
@@ -879,8 +880,10 @@ const dataSource = [4,
     26.8,
     26.8,
     30.3,
-    30.3];
-const dataSourceHighway = [3.9,
+    30.3
+];
+const dataSourceHighway = [
+    3.9,
     4.1,
     4.2,
     4.5,
@@ -1761,7 +1764,8 @@ const dataSourceHighway = [3.9,
     19.6,
     19.6,
     20.9,
-    20.9];
+    20.9
+];
 const xiData = [];
 const xiDataHighway = [];
 const range = 31,
@@ -1802,7 +1806,8 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: '2022 Car\'s Fuel Consumption Ratings <br/> (City vs Highway Consumption)'
+        text: '2022 Car\'s Fuel Consumption Ratings <br/> ' +
+            '(City vs Highway Consumption)'
     },
 
     subtitle: {

@@ -42,6 +42,7 @@ const {
     defined,
     extend,
     fireEvent,
+    getAlignFactor,
     isArray,
     isString,
     merge,
@@ -110,6 +111,10 @@ declare module './SeriesLike' {
             alignTo?: BBoxObject,
             isNew?: boolean
         ): (boolean|undefined);
+        mergeArrays(
+            one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
+            two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
+        ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
         setDataLabelStartPos(
             point: ColumnPoint,
@@ -185,6 +190,7 @@ namespace DataLabel {
     }
 
     export interface LabelConnectorPositionObject {
+        angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
@@ -238,9 +244,8 @@ namespace DataLabel {
         isNew?: boolean
     ): void {
         const series = this,
-            chart = this.chart,
+            { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
-            enabledDataSorting = this.enabledDataSorting,
             plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation || 0,
@@ -268,52 +273,45 @@ namespace DataLabel {
             },
             justify = rotation === 0 ? pick(
                 options.overflow,
-                (enabledDataSorting ? 'none' : 'justify')
+                (enabledDataSorting ? 'none' : 'justify'
+                )
             ) === 'justify' : false;
 
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         let visible =
-                this.visible &&
-                point.visible !== false &&
-                defined(plotX) &&
+            this.visible &&
+            point.visible !== false &&
+            defined(plotX) &&
+            (
+                point.series.forceDL ||
+                (enabledDataSorting && !justify) ||
+                isInsidePlot ||
                 (
-                    point.series.forceDL ||
-                    (enabledDataSorting && !justify) ||
-                    isInsidePlot ||
-                    (
-                        // If the data label is inside the align box, it is
-                        // enough that parts of the align box is inside the
-                        // plot area (#12370). When stacking, it is always
-                        // inside regardless of the option (#15148).
-                        pick(options.inside, !!this.options.stacking) &&
-                        alignTo &&
-                        chart.isInsidePlot(
-                            plotX,
-                            inverted ?
-                                alignTo.x + 1 :
-                                alignTo.y + alignTo.height - 1,
-                            {
-                                inverted,
-                                paneCoordinates: true,
-                                series
-                            }
-                        )
+                    // If the data label is inside the align box, it is enough
+                    // that parts of the align box is inside the plot area
+                    // (#12370). When stacking, it is always inside regardless
+                    // of the option (#15148).
+                    pick(options.inside, !!this.options.stacking) &&
+                    alignTo &&
+                    chart.isInsidePlot(
+                        plotX,
+                        inverted ?
+                            alignTo.x + 1 :
+                            alignTo.y + alignTo.height - 1,
+                        {
+                            inverted,
+                            paneCoordinates: true,
+                            series
+                        }
                     )
-                );
+                )
+            );
 
         const pos = point.pos();
         if (visible && pos) {
             const bBox = dataLabel.getBBox(),
-                unrotatedbBox = dataLabel.getBBox(void 0, 0),
-                alignFactor = ({
-                    'right': 1,
-                    'center': 0.5
-                } as Record<string, number>)[options.align || 0] || 0,
-                verticalAlignFactor = ({
-                    'bottom': 1,
-                    'middle': 0.5
-                } as Record<string, number>)[options.verticalAlign || 0] || 0;
+                unrotatedbBox = dataLabel.getBBox(void 0, 0);
 
             // The alignment box is a singular point
             alignTo = extend({
@@ -322,6 +320,12 @@ namespace DataLabel {
                 width: 0,
                 height: 0
             }, alignTo || {});
+
+            // Align to plot edges
+            if (options.alignTo === 'plotEdges' && series.isCartesian) {
+                alignTo[inverted ? 'x' : 'y'] = 0;
+                alignTo[inverted ? 'width' : 'height'] = this.yAxis?.len || 0;
+            }
 
             // Add the text size for alignment calculation
             extend<DataLabelOptions|BBoxObject>(options, {
@@ -340,12 +344,13 @@ namespace DataLabel {
                 }
             ), false, alignTo, false);
 
-            dataLabel.alignAttr.x += alignFactor *
+            dataLabel.alignAttr.x += getAlignFactor(options.align) *
                 (unrotatedbBox.width - bBox.width);
-            dataLabel.alignAttr.y += verticalAlignFactor *
+            dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x: dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
@@ -476,6 +481,7 @@ namespace DataLabel {
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
+            seriesProto.mergeArrays = mergeArrays;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
@@ -593,8 +599,7 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
-                    let labelConfig,
-                        formatString,
+                    let formatString,
                         labelText,
                         rotation,
                         attr: SVGAttributes = {},
@@ -613,15 +618,14 @@ namespace DataLabel {
                             labelOptions.format
                         );
 
-                        labelConfig = point.getLabelConfig();
                         labelText = defined(formatString) ?
-                            format(formatString, labelConfig, chart) :
+                            format(formatString, point, chart) :
                             (
                                 (labelOptions as any)[
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(labelConfig, labelOptions);
+                            ).call(point, labelOptions);
 
                         rotation = labelOptions.rotation;
 
@@ -757,30 +761,24 @@ namespace DataLabel {
                                 dataLabel.css(style).shadow(
                                     labelOptions.shadow
                                 );
+                            } else if (style.width) {
+                                // In styled mode with a width property set,
+                                // the width should be applied to the
+                                // dataLabel. (#20499). These properties affect
+                                // layout and must be applied also in styled
+                                // mode.
+                                dataLabel.css({
+                                    width: style.width,
+                                    textOverflow: style.textOverflow,
+                                    whiteSpace: style.whiteSpace
+                                });
                             }
 
-                            const textPathOptions =
-                                (labelOptions as any)[
-                                    point.formatPrefix + 'TextPath'
-                                ] || labelOptions.textPath;
-
-                            if (textPathOptions && !labelOptions.useHTML) {
-                                dataLabel.setTextPath(
-                                    point.getDataLabelPath?.(dataLabel) ||
-                                        point.graphic,
-                                    textPathOptions
-                                );
-
-                                if (
-                                    point.dataLabelPath &&
-                                    !textPathOptions.enabled
-                                ) {
-                                    // clean the DOM
-                                    point.dataLabelPath = (
-                                        point.dataLabelPath.destroy()
-                                    );
-                                }
-                            }
+                            fireEvent(
+                                dataLabel,
+                                'beforeAddingDataLabel',
+                                { labelOptions, point }
+                            );
 
                             if (!dataLabel.added) {
                                 dataLabel.add(dataLabelsGroup);
@@ -811,7 +809,7 @@ namespace DataLabel {
                 while (j--) {
                     // The item can be undefined if a disabled data label is
                     // succeeded by an enabled one (#19457)
-                    if (!dataLabels[j] || !dataLabels[j].isActive) {
+                    if (!dataLabels[j]?.isActive) {
                         dataLabels[j]?.destroy();
                         dataLabels.splice(j, 1);
                     } else {
@@ -845,14 +843,20 @@ namespace DataLabel {
         const chart = this.chart,
             align = options.align,
             verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
+            horizontalAxisShift = horizontalAxis ?
+                horizontalAxis.left - chart.plotLeft : 0,
+            verticalAxis = chart.inverted ? this.xAxis : this.yAxis,
+            verticalAxisShift = verticalAxis ?
+                verticalAxis.top - chart.plotTop : 0;
 
         let { x = 0, y = 0 } = options,
             off,
             justified;
 
         // Off left
-        off = (alignAttr.x || 0) + padding;
+        off = (alignAttr.x || 0) + padding + horizontalAxisShift;
         if (off < 0) {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
@@ -864,7 +868,7 @@ namespace DataLabel {
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding;
+        off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
@@ -876,7 +880,7 @@ namespace DataLabel {
         }
 
         // Off top
-        off = alignAttr.y + padding;
+        off = alignAttr.y + padding + verticalAxisShift;
         if (off < 0) {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
@@ -888,7 +892,7 @@ namespace DataLabel {
         }
 
         // Off bottom
-        off = (alignAttr.y || 0) + bBox.height - padding;
+        off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
@@ -1052,7 +1056,7 @@ export default DataLabel;
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PointLabelObject} this
+ * @param {Highcharts.Point} this
  * Data label context to format
  *
  * @param {Highcharts.DataLabelsOptions} options
@@ -1068,4 +1072,4 @@ export default DataLabel;
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

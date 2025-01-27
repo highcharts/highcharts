@@ -46,7 +46,7 @@ declare module './AxisType' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: AxisOptions): Axis;
+        addZAxis(options: DeepPartial<AxisOptions>): Axis;
     }
 }
 
@@ -70,7 +70,7 @@ declare module '../Options' {
  */
 function chartAddZAxis(
     this: Chart,
-    options: AxisOptions
+    options: DeepPartial<AxisOptions>
 ): Axis {
     return new ZAxis(this, options);
 }
@@ -79,7 +79,7 @@ function chartAddZAxis(
  * Get the Z axis in addition to the default X and Y.
  * @private
  */
-function onChartAfterGetAxes(this: Chart): void {
+function onChartAfterCreateAxes(this: Chart): void {
     const zAxisOptions = this.options.zAxis = splat(this.options.zAxis || {});
 
     if (!this.is3d()) {
@@ -101,6 +101,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
+ * @private
  */
 class ZAxis extends Axis implements AxisLike {
 
@@ -126,7 +127,7 @@ class ZAxis extends Axis implements AxisLike {
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
 
-            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
+            addEvent(ChartClass, 'afterCreateAxes', onChartAfterCreateAxes);
         }
 
     }
@@ -176,7 +177,7 @@ class ZAxis extends Axis implements AxisLike {
             this.stacking.buildStacks();
         }
 
-        // loop through this axis' series
+        // Loop through this axis' series
         this.series.forEach((series): void => {
 
             if (series.reserveSpace()) {
@@ -190,7 +191,7 @@ class ZAxis extends Axis implements AxisLike {
                     threshold = void 0;
                 }
 
-                const zData: Array<(number|null|undefined)> = series.zData as any;
+                const zData = series.getColumn('z');
 
                 if (zData.length) {
                     this.dataMin = Math.min(
@@ -214,10 +215,7 @@ class ZAxis extends Axis implements AxisLike {
 
         super.setAxisSize();
 
-        this.width = this.len = (
-            chart.options.chart.options3d &&
-            chart.options.chart.options3d.depth
-        ) || 0;
+        this.width = this.len = chart.options.chart.options3d?.depth || 0;
         this.right = chart.chartWidth - this.width - this.left;
     }
 

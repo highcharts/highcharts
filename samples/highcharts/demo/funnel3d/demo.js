@@ -14,7 +14,9 @@ Highcharts.chart('container', {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
         }
     },
     plotOptions: {

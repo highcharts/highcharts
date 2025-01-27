@@ -40,7 +40,8 @@ QUnit.test(
         assert.strictEqual(
             axis.hasData(),
             false,
-            'Data is empty and there is no min and max values, so hasData function should return false'
+            'Data is empty and there is no min and max values, so hasData ' +
+            'function should return false'
         );
 
         axis.update({
@@ -67,7 +68,8 @@ QUnit.test(
         assert.strictEqual(
             axis.hasData(),
             false,
-            'ShowEmpty feature is set to false, so hasData function should return false'
+            'ShowEmpty feature is set to false, so hasData function should ' +
+            'return false'
         );
     }
 );

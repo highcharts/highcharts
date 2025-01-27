@@ -19,6 +19,7 @@ import type {
     ATRParamsOptions
 } from './ATROptions';
 import type ATRPoint from './ATRPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -132,7 +133,7 @@ class ATRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            index: void 0 // Unused index, do not inherit (#15362)
         }
     } as ATROptions);
 
@@ -153,7 +154,7 @@ class ATRIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: ATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -269,4 +270,4 @@ export default ATRIndicator;
  * @apioption series.atr
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

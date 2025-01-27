@@ -30,7 +30,7 @@ import type AxisLike from './AxisLike';
  * definition file.
  */
 export interface AxisComposition extends AxisLike {
-    // add with `declare module` pattern
+    // Add with `declare module` pattern
 }
 
 /* *

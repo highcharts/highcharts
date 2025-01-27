@@ -449,4 +449,4 @@ export default MarkerClusters;
  *        Event arguments.
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

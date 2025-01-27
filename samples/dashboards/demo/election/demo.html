@@ -1,0 +1,177 @@
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+
+<!-- Dashboards container -->
+<div id="container">
+    <div class="row">
+        <div class="cell" id="elections-selector-wrapper"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="html-control"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="html-result"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="election-map"></div>
+        <div class="cell" id="election-charts">
+            <div class="col-wrapper">
+                <div class="cell" id="election-chart-year"></div>
+                <div class="cell" id="election-chart-historical"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="cell" id="election-grid"></div>
+    </div>
+</div>
+
+<!-- Demo description -->
+<div class="highcharts-description">
+    <h1>United States Election demo</h1>
+    <p>The demo shows the results of <b>United States presidential elections</b> from 2008 to 2020.</p>
+    <h2>How to use</h2>
+    <ul>
+        <li>The <i>election year</i> is selected by using the dropdown on the top left.</li>
+        <li>Select the state on the map to view <i>historical results</i>.</li>
+        <li>The state is deselected by clicking it again or clicking outside the map.</li> 
+        <li>When no state is selected, the national results are shown.</li>
+    </ul>
+    <h2>Dashboards components</h2>
+    <ul>
+        <li><b>Custom HTML and Chart</b> for national or state results (with pictures and dual-colored bar).
+        </li>
+        <li><b>Custom HTML</b> provides a dropdown for choosing the election year.
+        </li>
+        <li><b>Highcharts Maps</b> shows the winning party per state, color-coded <span class="democrat">Democrat</span>
+            and <span class="republican">Republican</span>.</li>
+        <li>Two <b>Highcharts Chart</b> show historical national or state results.</li>
+        <li><b>Datagrid</b> shows detailed results of all states.</li>
+    </ul>
+    <h2>Data sources</h2>
+    <p>Wikipedia.com and the <a href="https://www.archives.gov/electoral-college/allocation">U.S. National Archives</a>
+        provide the data used in this demo.</p>
+</div>
+
+<!-- Data for Custom HTML components and election meta data -->
+<xml id="app-data">
+    <!-- HTML custom component, top left: election results
+         Flex: 1 row, 3 cells
+    -->
+    <div id="html-result-div">
+        <!-- Row 1, cell 1: photo of Democrat candidate -->
+        <div id="dem-cand">
+            <img alt="Photo of Democrat candidate" />
+        </div>
+        <!-- Row 1, cell 2: detailed nationwide election result -->
+        <!-- Flex: 1 column, 3 cells -->
+        <div id="election-result">
+            <div class="info">
+                <!-- row 1: candidate name, votes needed to win, elector votes -->
+                <div id="info-dem1">Left</div>
+                <div id="info-to-win">xxx to win</div>
+                <div id="info-rep1">Right</div>
+            </div>
+            <div class="info" id="bar-container">
+                <!-- row 2: graphic bar with indicator on needed votes -->
+                <div id="bar-dem">
+                    <div id="info-dem2" class="bar-datalabel">Left</div>
+                </div>
+                <div id="bar-line"><span id="arrow">&#9662;</span></div>
+                <div id="bar-rep">
+                    <div id="info-rep2" class="bar-datalabel">Right</div>
+                </div>
+            </div>
+        </div>
+        <!-- Row 1, cell 3: photo of Republican candidate -->
+        <div id="rep-cand">
+            <img alt="Photo of Republican candidate" />
+        </div>
+    </div>
+
+    <!-- HTML custom component, top right: election information -->
+    <div id="html-control-div">
+        <div id="election-description-container">
+            <h1>U.S. Presidential Election</h1>
+            <div id="election-description"></div>
+        </div>
+    </div>
+
+    <!-- Data extracted from Wikipedia -->
+    <elections>
+        <year id="ei_2020">
+            <descr>The 2020 United States presidential election was the 59th quadrennial presidential election,
+                held on Tuesday, November 3, 2020. The <span class="democrat">Democratic</span> ticket of former vice
+                president <span class="democrat">Joe Biden</span> and the junior U.S. senator from California Kamala
+                Harris defeated the incumbent <span class="republican">Republican</span> president, <span
+                    class="republican">Donald Trump</span>, and vice president, Mike Pence.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2020_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Trump</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/trump.jpg</imgUrl>
+            </rep>
+            <dem>
+                <candidate>Biden</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/biden.jpg</imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2016">
+            <descr>The 2016 United States presidential election was the 58th quadrennial presidential election,
+                held on Tuesday, November 8, 2016. The <span class="republican">Republican</span> ticket, businessman
+                Donald Trump and Indiana governor Mike Pence defeated the <span class="democrat">Democratic</span>
+                ticket of former secretary of state and First Lady of the United States <span class="democrat">Hillary
+                    Clinton</span> and the junior senator from Virginia, Tim Kaine, in what was considered one of the biggest political
+                upsets in American history.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2016_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Trump</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/trump.jpg</imgUrl>
+            </rep>
+            <dem>
+                <candidate>Clinton</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/clinton.jpg</imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2012">
+            <descr>The 2012 United States presidential election was the 57th quadrennial presidential election,
+                held on Tuesday, November 6, 2012. Incumbent <span class="democrat">Democratic</span> President
+                <span class="democrat">Barack Obama</span> and his running mate, incumbent Vice President Joe Biden,
+                were re-elected to a second term. They defeated the <span class="republican">Republican</span>
+                ticket of former Governor <span class="republican">Mitt Romney</span> of Massachusetts and
+                Representative Paul Ryan of Wisconsin.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2012_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Romney</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/romney.jpg</imgUrl>
+            </rep>
+            <dem>
+                <candidate>Obama</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/obama.jpg</imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2008">
+            <descr>The 2008 United States presidential election was the 56th quadrennial presidential election,
+                held on November 4, 2008. The <span class="democrat">Democratic</span> ticket of <span
+                    class="democrat">Barack Obama</span>,
+                the junior senator from Illinois, and Joe Biden, the senior senator from Delaware, defeated the
+                <span class="republican">Republican</span> ticket of <span class="republican">John McCain</span>, the
+                senior senator from Arizona, and Sarah Palin, the governor of Alaska.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2008_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>McCain</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/mccain.jpg</imgUrl>
+            </rep>
+            <dem>
+                <candidate>Obama</candidate>
+                <imgUrl>https://assets.highcharts.com/demos/samples/graphics/dashboards/election/obama.jpg</imgUrl>
+            </dem>
+        </year>
+    </elections>
+</xml>

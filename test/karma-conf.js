@@ -4,10 +4,16 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
+const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
+
+const highchartsCSS = fs.readFileSync(
+    path.join(__dirname, '../code/css/highcharts.css'),
+    'utf8'
+);
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -74,7 +80,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 
@@ -123,7 +129,6 @@ function resolveJSON(js) {
         }
 
         if (data) {
-
             if (/json$/.test(filename)) {
                 codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
             }
@@ -132,7 +137,33 @@ function resolveJSON(js) {
             }
         }
     }
+
     codeblocks.push(js);
+
+    // Add some files that are referenced by variables in the demos, so we're
+    // not able to parse the static file name.
+    if (js.indexOf('fetch') !== -1) {
+        [
+            'aapl-c.json',
+            'goog-c.json',
+            'msft-c.json'
+        ].forEach(filename => {
+                const data = fs.readFileSync(
+                    path.join(
+                        __dirname,
+                        '..',
+                        'samples/data',
+                        filename
+                    ),
+                    'utf8'
+                );
+                codeblocks.push(`window.JSONSources[
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/samples/data/${filename}'
+                ] = ${data};`);
+            }
+        );
+    }
+
     return codeblocks.join('\n');
 }
 
@@ -163,6 +194,27 @@ function handleDetails(path) {
 }
 
 const browserStackBrowsers = require('./karma-bs.json');
+
+// Create JSONSources and write to a temporary file
+const JSONSources = {};
+if (!fs.existsSync(path.join(__dirname, '../tmp'))) {
+    fs.mkdirSync(path.join(__dirname, '../tmp'));
+}
+aliases.forEach(alias => {
+    JSONSources[alias.url] = JSON.parse(fs.readFileSync(
+        path.join(
+            __dirname,
+            '..',
+            'samples/data/json-sources',
+            alias.filename
+        ),
+        'utf8'
+    ));
+});
+fs.writeFileSync(
+    path.join(__dirname, '../tmp/json-sources.js'),
+    `window.JSONSources = ${JSON.stringify(JSONSources)};`
+);
 
 
 module.exports = function (config) {
@@ -203,7 +255,10 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
+    // Adjust karma.browsercount number to bypass disconnect problem on Windows
+    const browserCount = Number(getProperties()['karma.browsercount']) ||
+        argv.browsercount || (Math.max(1, os.cpus().length - 2));
+
     if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
@@ -248,7 +303,7 @@ module.exports = function (config) {
             'test/call-analyzer.js',
             'test/test-controller.js',
             'test/test-utilities.js',
-            'test/json-sources.js',
+            'tmp/json-sources.js',
 
             // Highcharts
             ...files,
@@ -298,7 +353,8 @@ module.exports = function (config) {
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
             'samples/highcharts/blog/gdp-growth-annual/demo.js',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/website/xmas-2021/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -307,7 +363,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/combo-meteogram/demo.js',
 
             // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-ajax/demo.js',
+            'samples/highcharts/demo/line-csv/demo.js',
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
@@ -351,7 +407,8 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         browserConsoleLogOptions: {
             path: `${process.cwd()}/test/console.log`,
-            terminal: false
+            // Show in terminal only when running specific tests for debugging
+            terminal: Boolean(argv.tests)
         },
         browsers: browsers,
         autoWatch: false,
@@ -367,30 +424,34 @@ module.exports = function (config) {
         },
 
         formatError: function (s) {
-            let ret = s.replace(
-                /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
-                function (a, b, c) {
-                    return `http://utils.highcharts.local/samples/#test/${c}`.cyan + '\n' +
-                    '\t' + a.replace(/^@/, '@ ') + '\n<<<splitter>>>';
-                }
-            );
+            let ret = s
+                .replace(
+                    /(\@samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+\n)/,
+                    (a, b, c) => (
+                        `http://localhost:3030/samples/#test/${c}`.cyan + '\n\t' +
+                        a.replace(/^@/, '@ ')
+                    )
+                )
+                .replace(/\@code\//g, '@ code/');
 
             // Insert link to utils
+            /*
             let regex = /(samples\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
             let match = s.match(regex);
 
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);
             }
+            */
 
             // Skip the call stack, it's internal QUnit stuff
-            ret = ret.split('<<<splitter>>>')[0];
+            // ret = ret.split('<<<splitter>>>')[0];
 
             return ret;
         },
@@ -459,9 +520,35 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
+
 
                     // unit tests
-                    if (path.indexOf('unit-tests') !== -1) {
+                    if (path.includes('unit-tests')) {
+                        // Inject css for
+                        if (/styledMode:\s+true/.test(js)) {
+                            js =`window.highchartsCSS = \`${highchartsCSS}\`;`
+                            + `
+                            QUnit.testStart(()=>{
+                                Highcharts.setOptions({
+                                    chart: {
+                                        events: {
+                                            load: function () {
+                                                window.setHCStyles(this);
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+
+                            QUnit.testDone(()=>{
+                                document.querySelector("#test-hc-styles")?.remove();
+                            });
+                            `
+                                + js;
+                        }
+
                         done(js);
                         return;
                     }
@@ -624,9 +711,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
-
+function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
@@ -700,10 +785,6 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
     // Include highcharts.css, to be inserted into the SVG in
     // karma-setup.js:getSVG
     if (scriptBody.indexOf('styledMode: true') !== -1) {
-        const highchartsCSS = fs.readFileSync(
-            path.join(__dirname, '../code/css/highcharts.css'),
-            'utf8'
-        );
         html += `<style id="highcharts.css">${highchartsCSS}</style>`;
 
         let demoCSS = fs.readFileSync(

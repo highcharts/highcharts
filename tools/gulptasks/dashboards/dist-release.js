@@ -27,9 +27,9 @@ async function distRelease() {
 
     const argv = require('yargs').argv;
     const config = require('./_config.json');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     const release = argv.release;
 
@@ -38,6 +38,7 @@ async function distRelease() {
     }
 
     const buildFolder = config.buildFolder;
+    const buildFolderDataGrid = config.buildFolderDataGrid;
     const distRepository = config.distRepository;
 
     if (!fs.existsSync(distRepository)) {
@@ -64,6 +65,15 @@ async function distRelease() {
     });
 
     // Remove deprecated files and folders
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'es-modules', 'Core'),
+        true
+    );
+
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'es-modules', 'DataGrid'),
+        true
+    );
 
     fsLib.deleteDirectory(
         path.join(distRepository, 'css', 'dashboards'),
@@ -80,6 +90,7 @@ async function distRelease() {
     // Copy build/dist into repository
 
     fsLib.copyAllFiles(path.join(buildFolder, 'code'), distRepository, true);
+    fsLib.copyAllFiles(path.join(buildFolderDataGrid, 'code'), distRepository, true);
 
     fsLib.copyFile(
         config.readmeFile,
@@ -98,8 +109,8 @@ async function distRelease() {
 
     dataGridFiles.forEach(file => {
         fsLib.copyFile(
-            path.join(buildFolder, 'js-gzip', file),
-            path.join(buildFolder, '../', 'datagrid/js-gzip', file)
+            path.join(buildFolderDataGrid, 'js-gzip', file),
+            path.join(buildFolderDataGrid, '../', 'datagrid/js-gzip', file)
         );
     });
 

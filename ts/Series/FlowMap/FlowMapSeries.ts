@@ -367,7 +367,7 @@ class FlowMapSeries extends MapLineSeries {
         const series = this,
             points = series.points;
 
-        if (!init) { // run the animation
+        if (!init) { // Run the animation
             points.forEach((point: FlowMapPoint): void => {
                 if (
                     point.shapeArgs &&
@@ -378,7 +378,7 @@ class FlowMapSeries extends MapLineSeries {
                         x = path[0][1],
                         y = path[0][2];
 
-                    // to animate SVG path the initial path array needs to be
+                    // To animate SVG path the initial path array needs to be
                     // same as target, but element should be visible, so we
                     // insert array elements with start (M) values
                     if (x && y) {
@@ -550,7 +550,7 @@ class FlowMapSeries extends MapLineSeries {
                         foundPoint.plotX &&
                         foundPoint.plotY
                     ) {
-                        // after linked point update flowmap point should
+                        // After linked point update flowmap point should
                         // be also updated
                         addEvent(foundPoint, 'update', dirtySeries);
 
@@ -812,7 +812,8 @@ class FlowMapSeries extends MapLineSeries {
                 markerEndOptions
             );
 
-            (shapeArgs.d as SVGPath).splice(2, 0,
+            (shapeArgs.d as SVGPath).splice(
+                2, 0,
                 ...marker
             );
         }
@@ -852,6 +853,7 @@ extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
     pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
+    dataColumnKeys: ColumnSeries.prototype.dataColumnKeys,
     // Make it work on zoom or pan.
     useMapGeometry: true
 });
@@ -1072,4 +1074,4 @@ export default FlowMapSeries;
  */
 
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

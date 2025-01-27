@@ -4,7 +4,8 @@ Highcharts JS is a JavaScript charting library based on SVG and some canvas/WebG
 * Download page: [www.highcharts.com/download](http://www.highcharts.com/download)
 * Licensing: [shop.highcharts.com](https://shop.highcharts.com/)
 * Support: [www.highcharts.com/support](http://www.highcharts.com/support)
-* Issues: [Repo guidelines](repo-guidelines.md)
+* [Contributing](CONTRIBUTING.md)
+* [Repo guidelines](repo-guidelines.md)
 
 Highcharts is a [source available](https://en.wikipedia.org/wiki/Source-available_software) product. Please refer to [shop.highcharts.com](https://shop.highcharts.com/) for details on licensing.
 
@@ -42,6 +43,12 @@ If you want to do modifications to Highcharts or fix issues, you may build your 
 npm install
 gulp
 ```
+
+### Node setup for Apple Mx CPU
+
+When running Node natively on ARM64 MacOS, some Node packages like [node-canvas](https://github.com/Automattic/node-canvas#compiling) with integrated compiling might fail. Install additional tools to resolve the problem:
+
+- [Homebrew](https://brew.sh/) and run `brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman`
 
 ## Generate API docs
 Run in this `highcharts` repository the doc generator with

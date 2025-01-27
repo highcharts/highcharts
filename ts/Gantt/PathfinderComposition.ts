@@ -139,8 +139,10 @@ function warnLegacy(chart: Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
+        error(
+            'WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.'
+        );
     }
 }
 

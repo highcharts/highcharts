@@ -144,3 +144,21 @@ describe('Chart synchronized series state', () => {
     });
 
 });
+
+describe('Components in multiple layouts', () => {
+    before(() => {
+        cy.visit('/dashboards/cypress/duplicated-ids');
+    })
+
+    it('Components should be placed in different dashboards', () => {
+        cy.window().its('Dashboards.boards').should('have.length', 2).then(boards => {
+            assert.ok(
+                boards[0].mountedComponents.length === boards[1].mountedComponents.length,
+                'Components are assigned to each dashboard.'
+            );
+
+            cy.get('#container #dashboard-col-0 .highcharts-dashboards-component-html-content').should('exist');
+            cy.get('#container2 #dashboard-col-0 .highcharts-dashboards-component-html-content').should('exist');
+        });
+    });
+});

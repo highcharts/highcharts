@@ -33,6 +33,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
+    crisp,
     defined,
     destroyObjectProperties,
     fireEvent,
@@ -323,7 +324,7 @@ class Scrollbar {
             minWidthDifference =
                 (options.minWidth as any) > (scroller.calculatedWidth as any) ?
                     options.minWidth :
-                    0; // minWidth distorts translation
+                    0; // `minWidth` distorts translation
 
         return {
             chartX:
@@ -413,9 +414,8 @@ class Scrollbar {
             rect.attr(rect.crisp({
                 x: -0.5,
                 y: -0.5,
-                // +1 to compensate for crispifying in rect method
-                width: size + 1,
-                height: size + 1,
+                width: size,
+                height: size,
                 r: options.buttonBorderRadius
             } as any, rect.strokeWidth()));
 
@@ -473,7 +473,7 @@ class Scrollbar {
 
         scroller.chart = chart;
 
-        // backward compatibility
+        // Backward compatibility
         scroller.size = pick(
             scroller.options.size,
             scroller.options.height as any
@@ -598,7 +598,7 @@ class Scrollbar {
         scroller.group.show();
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
-        scroller.width = width; // width with buttons
+        scroller.width = width; // Width with buttons
         scroller.height = height;
         scroller.xOffset = xOffset;
         scroller.yOffset = yOffset;
@@ -608,13 +608,13 @@ class Scrollbar {
             scroller.width = scroller.yOffset = width = yOffset = scroller.size;
             scroller.xOffset = xOffset = 0;
             scroller.yOffset = yOffset = buttonsEnabled ? scroller.size : 0;
-            // width without buttons
+            // Width without buttons
             scroller.barWidth = height - (buttonsEnabled ? width * 2 : 0);
             scroller.x = x = x + margin;
         } else {
             scroller.height = height = scroller.size;
             scroller.xOffset = xOffset = buttonsEnabled ? scroller.size : 0;
-            // width without buttons
+            // Width without buttons
             scroller.barWidth = width - (buttonsEnabled ? height * 2 : 0);
             scroller.y = scroller.y + margin;
         }
@@ -667,7 +667,7 @@ class Scrollbar {
                 .attr({
                     zIndex: options.zIndex
                 })
-                .hide() // initially hide the scrollbar #15863
+                .hide() // Initially hide the scrollbar #15863
                 .add();
 
         // Draw the scrollbar group
@@ -693,8 +693,8 @@ class Scrollbar {
         const trackBorderWidth = scroller.trackBorderWidth =
             scroller.track.strokeWidth();
         scroller.track.attr({
-            x: -trackBorderWidth % 2 / 2,
-            y: -trackBorderWidth % 2 / 2
+            x: -crisp(0, trackBorderWidth),
+            y: -crisp(0, trackBorderWidth)
         });
 
 
@@ -735,8 +735,8 @@ class Scrollbar {
 
         scroller.scrollbarStrokeWidth = scroller.scrollbar.strokeWidth();
         scroller.scrollbarGroup.translate(
-            -scroller.scrollbarStrokeWidth % 2 / 2,
-            -scroller.scrollbarStrokeWidth % 2 / 2
+            -crisp(0, scroller.scrollbarStrokeWidth),
+            -crisp(0, scroller.scrollbarStrokeWidth)
         );
 
         // Draw the buttons:

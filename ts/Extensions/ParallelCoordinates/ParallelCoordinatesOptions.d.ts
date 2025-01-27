@@ -26,7 +26,7 @@ import type AxisOptions from '../../Core/Axis/AxisOptions';
 
 declare module '../../Core/Chart/ChartOptions' {
     interface ChartOptions extends ParallelCoordinatesOptions {
-        // nothing to add
+        // Nothing to add
     }
 }
 

@@ -31,6 +31,7 @@ import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    crisp,
     extend,
     merge,
     pick
@@ -94,9 +95,11 @@ class VariwideSeries extends ColumnSeries {
             force
         );
 
+        const zData = this.getColumn('z');
+
         (this.xAxis.reversed ?
-            (this.zData as any).slice().reverse() :
-            (this.zData as any)
+            zData.slice().reverse() :
+            zData
         ).forEach(
             function (
                 this: VariwideSeries,
@@ -111,7 +114,7 @@ class VariwideSeries extends ColumnSeries {
 
         if (this.xAxis.categories) {
             this.xAxis.variwide = true;
-            this.xAxis.zData = this.zData; // Used for label rank
+            this.xAxis.zData = zData; // Used for label rank
         }
         return;
     }
@@ -145,12 +148,16 @@ class VariwideSeries extends ColumnSeries {
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ?
-                (axis.dataMax || 0) + axis.pointRange :
-                (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ?
-                (axis.dataMin || 0) :
-                (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMax || 0) + axis.pointRange :
+                    (axis.dataMin || 0)
+            ),
+            maxPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMin || 0) :
+                    (axis.dataMax || 0) + axis.pointRange
+            ),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
             left = this.chart.inverted ?
@@ -235,8 +242,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
 
     // Temporarily disable crisping when computing original shapeArgs
     const xAxis = this.xAxis,
-        inverted = this.chart.inverted,
-        crisp = this.borderWidth % 2 / 2;
+        inverted = this.chart.inverted;
 
     let i = -1;
 
@@ -262,8 +268,8 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
         }
 
         if (this.crispOption) {
-            left = Math.round(left) - crisp;
-            right = Math.round(right) - crisp;
+            left = crisp(left, this.borderWidth);
+            right = crisp(right, this.borderWidth);
         }
 
         shapeArgs.x = left;
@@ -303,6 +309,7 @@ interface VariwideSeries {
 
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     pointClass: VariwidePoint

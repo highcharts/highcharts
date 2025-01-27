@@ -298,9 +298,10 @@ class CSVConverter extends DataConverter {
                 }
             }
 
-            if (dataTypes.length &&
+            if (
+                dataTypes.length &&
                 dataTypes[0].length &&
-                dataTypes[0][1] === 'date' && // format is a string date
+                dataTypes[0][1] === 'date' && // Format is a string date
                 !converter.options.dateFormat
             ) {
                 converter.deduceDateFormat(
@@ -437,7 +438,11 @@ class CSVConverter extends DataConverter {
 
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
-                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substring(i))) {
+                if (
+                    !/^#[A-F\d]{3,3}|[A-F\d]{6,6}/i.test(
+                        columnStr.substring(i)
+                    )
+                ) {
                     // The rest of the row is a comment
                     push();
                     return;
@@ -636,6 +641,20 @@ namespace CSVConverter {
     export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        CSV: typeof CSVConverter;
+    }
+}
+
+DataConverter.registerType('CSV', CSVConverter);
 
 /* *
  *

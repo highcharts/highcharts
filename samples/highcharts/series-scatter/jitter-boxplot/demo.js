@@ -6,7 +6,8 @@ function getExperimentData() {
     for (let i = 0; i < 200; i++) {
         data.push(
             Math.round(
-                1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5)))
+                1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5))
+            )
         );
     }
     return data;

@@ -35,7 +35,8 @@ Highcharts.chart('container', {
         text: 'The 240 Closest Planets to the Earth other than our solar system'
     },
     subtitle: {
-        text: 'Using bubble series in polar coordinate system along with pie series'
+        text: 'Using bubble series in polar coordinate system along with pie ' +
+            'series'
     },
     colorAxis: {
         min: 0,
@@ -254,30 +255,22 @@ Highcharts.chart('container', {
 });
 
 function fillCenter(percentage, decade, chart, customLabel) {
-    const labelText = `<table class='innerTable'>
-        <tr>
-            <td class='symbol'>☉</td>
-        </tr>
-        <tr>
-            <td class='uppercase'>${decade}<small>s</small></td>
-        </tr>
-        <tr>
-            <td class='label'>Planets discovered</td>
-        </tr>
-        <tr>
-            <td class='percentage'>
-                ${percentage.toFixed(2)}
-                <sup style='font-size: 0.5em;'>%</sup>
-            </td>
-        </tr>
-    </table>`;
+    const labelText = `<div class="center-label">
+        <p class="symbol">☉</p>
+        <p class="uppercase">${decade}<small>s</p>
+        <p class="label">Planets discovered</p>
+        <p class="percentage">
+            ${percentage.toFixed(2)}
+            <sup style='font-size: 0.5em;'>%</sup>
+        </p>
+    </div>`;
 
     if (!customLabel) {
-        customLabel = chart.renderer.label(labelText, 0, 0, void 0, void 0,
+        customLabel = chart.renderer.label(
+            labelText, 0, 0, void 0, void 0,
             void 0, true
         ).css({
             color: '#000',
-            textAlign: 'center',
             pointerEvents: 'none'
         }).add();
     } else {

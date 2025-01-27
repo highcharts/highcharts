@@ -19,15 +19,15 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Temperature variation by day and hour through 2017',
+        text: 'Temperature variation by day and hour through 2023',
         align: 'left',
         x: 40
     },
 
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2017, 0, 1),
-        max: Date.UTC(2017, 11, 31, 23, 59, 59),
+        min: '2023-01-01',
+        max: '2023-12-31 23:59:59',
         labels: {
             align: 'left',
             x: 5,
@@ -79,9 +79,9 @@ Highcharts.chart('container', {
         colsize: 24 * 36e5, // one day
         tooltip: {
             headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        },
-        turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
+            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
+                '℃</b>'
+        }
     }]
 
 });

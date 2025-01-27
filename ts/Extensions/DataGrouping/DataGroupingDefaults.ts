@@ -31,47 +31,47 @@ import type {
  * @private
  */
 const common = {
-    // enabled: null, // (true for stock charts, false for basic),
+    /// enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
     groupPixelWidth: 2,
-    // the first one is the point or start value, the second is the start
+    // The first one is the point or start value, the second is the start
     // value if we're dealing with range, the third one is the end value if
     // dealing with a range
     dateTimeLabelFormats: {
         millisecond: [
-            '%A, %e %b, %H:%M:%S.%L',
-            '%A, %e %b, %H:%M:%S.%L',
-            '-%H:%M:%S.%L'
+            '%[AebHMSL]',
+            '%[AebHMSL]',
+            '-%[HMSL]'
         ],
         second: [
-            '%A, %e %b, %H:%M:%S',
-            '%A, %e %b, %H:%M:%S',
-            '-%H:%M:%S'
+            '%[AebHMS]',
+            '%[AebHMS]',
+            '-%[HMS]'
         ],
         minute: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
         ],
         hour: [
-            '%A, %e %b, %H:%M',
-            '%A, %e %b, %H:%M',
-            '-%H:%M'
+            '%[AebHM]',
+            '%[AebHM]',
+            '-%[HM]'
         ],
         day: [
-            '%A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
+            '%[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
         ],
         week: [
-            'Week from %A, %e %b %Y',
-            '%A, %e %b',
-            '-%A, %e %b %Y'
+            'week from %[AebY]',
+            '%[Aeb]',
+            '-%[AebY]'
         ],
         month: [
-            '%B %Y',
-            '%B',
-            '-%B %Y'
+            '%[BY]',
+            '%[B]',
+            '-%[BY]'
         ],
         year: [
             '%Y',
@@ -79,7 +79,7 @@ const common = {
             '-%Y'
         ]
     }
-    // smoothed = false, // enable this for navigator series only
+    /// smoothed = false, // enable this for navigator series only
 };
 
 /**
@@ -120,8 +120,8 @@ const seriesSpecific = {
  */
 const units = [
     [
-        'millisecond', // unit name
-        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+        'millisecond', // Unit name
+        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // Allowed multiples
     ], [
         'second',
         [1, 2, 5, 10, 15, 30]

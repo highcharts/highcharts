@@ -10,11 +10,15 @@
         "paths": {
             "highcharts": [
                 "../Dashboards/highcharts"
+            ],
+            "@highcharts/dashboards/datagrid": [
+                "../Dashboards/datagrid"
             ]
         }
     },
     "exclude": [
         "../masters/**/*.ts",
+        "../masters-datagrid/**/*.ts",
         "../masters-es5/**/*.ts"
     ],
     "include": [

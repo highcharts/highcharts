@@ -11,7 +11,20 @@
         },
 
         exporting: {
-            fallbackToExportServer: false
+            fallbackToExportServer: false,
+            buttons: {
+                contextButton: {
+                    menuItems: [
+                        'viewFullscreen',
+                        'printChart',
+                        'separator',
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadSVG',
+                        'downloadPDF'
+                    ]
+                }
+            }
         },
 
         title: {
@@ -20,7 +33,8 @@
 
         accessibility: {
             series: {
-                descriptionFormat: 'Timezone {series.name} with {series.points.length} countries.'
+                descriptionFormat: 'Timezone {series.name} with ' +
+                    '{series.points.length} countries.'
             },
             point: {
                 valueDescriptionFormat: '{point.name}.'

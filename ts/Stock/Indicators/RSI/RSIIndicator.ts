@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -39,6 +40,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
@@ -105,7 +109,7 @@ class RSIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period = (params.period as any),
@@ -136,7 +140,7 @@ class RSIIndicator extends SMAIndicator {
         if (isNumber(yVal[0])) {
             values = yVal as Array<number>;
         } else {
-            // in case of the situation, where the series type has data length
+            // In case of the situation, where the series type has data length
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
@@ -263,4 +267,4 @@ export default RSIIndicator;
  * @apioption series.rsi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

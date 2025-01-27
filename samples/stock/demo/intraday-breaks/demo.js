@@ -18,12 +18,12 @@
 
         xAxis: {
             breaks: [{ // Nights
-                from: Date.UTC(2011, 9, 6, 16),
-                to: Date.UTC(2011, 9, 7, 8),
+                from: '2011-10-06 16:00',
+                to: '2011-10-07 08:00',
                 repeat: 24 * 36e5
             }, { // Weekends
-                from: Date.UTC(2011, 9, 7, 16),
-                to: Date.UTC(2011, 9, 10, 8),
+                from: '2011-10-07 16:00',
+                to: '2011-10-10 08:00',
                 repeat: 7 * 24 * 36e5
             }]
         },
@@ -63,7 +63,12 @@
                 },
                 stops: [
                     [0, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    [
+                        1,
+                        Highcharts.color(
+                            Highcharts.getOptions().colors[0]
+                        ).setOpacity(0).get('rgba')
+                    ]
                 ]
             },
             threshold: null

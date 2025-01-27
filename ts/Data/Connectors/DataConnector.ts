@@ -287,20 +287,22 @@ abstract class DataConnector implements DataEvent.Emitter {
 
         window.clearTimeout(connector._polling);
 
-        connector._polling = window.setTimeout((): Promise<void> => connector
-            .load()['catch'](
-                (error): void => connector.emit<DataConnector.ErrorEvent>({
-                    type: 'loadError',
-                    error,
-                    table: connector.table
+        connector._polling = window.setTimeout(
+            (): Promise<void> => connector
+                .load()['catch'](
+                    (error): void => connector.emit<DataConnector.ErrorEvent>({
+                        type: 'loadError',
+                        error,
+                        table: connector.table
+                    })
+                )
+                .then((): void => {
+                    if (connector._polling) {
+                        connector.startPolling(refreshTime);
+                    }
                 })
-            )
-            .then((): void => {
-                if (connector._polling) {
-                    connector.startPolling(refreshTime);
-                }
-            })
-        , refreshTime);
+            , refreshTime
+        );
     }
 
     /**

@@ -175,7 +175,7 @@ class WordcloudSeries extends ColumnSeries {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
-            // concat() prevents from sorting the original array.
+            // `concat()` prevents from sorting the original array.
             points = series.points.concat().sort((a, b): number => (
                 b.weight - a.weight // Sort descending
             ));
@@ -246,7 +246,8 @@ class WordcloudSeries extends ColumnSeries {
                 attr = extend(
                     series.pointAttribs(
                         point,
-                        (point.selected && 'select' as any)
+                        (point.selected && 'select' as any
+                        )
                     ),
                     {
                         align: 'center',
@@ -321,7 +322,7 @@ class WordcloudSeries extends ColumnSeries {
                 if (!hasRendered) {
                     attr.x = 0;
                     attr.y = 0;
-                // or animate from previous position
+                // Or animate from previous position
                 } else {
                     delete attr.x;
                     delete attr.y;

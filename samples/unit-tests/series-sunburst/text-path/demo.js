@@ -122,7 +122,8 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     assert.strictEqual(
         points[2].dlOptions.textPath.enabled,
         false,
-        'Center label has changed after drilldown and should have textPath disabled'
+        'Center label has changed after drilldown and should have textPath ' +
+        'disabled'
     );
 
     assert.strictEqual(
@@ -147,7 +148,8 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     assert.strictEqual(
         points[2].dlOptions.textPath.enabled,
         true,
-        'Point have moved to initial position - is not a center point, so textPath should be enabled'
+        'Point have moved to initial position - is not a center point, so ' +
+        'textPath should be enabled'
     );
 
     assert.strictEqual(

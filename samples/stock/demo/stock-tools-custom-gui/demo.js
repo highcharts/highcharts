@@ -1,7 +1,9 @@
 (async () => {
 
     function addPopupEvents(chart) {
-        const closePopupButtons = document.getElementsByClassName('highcharts-close-popup');
+        const closePopupButtons = document.getElementsByClassName(
+            'highcharts-close-popup'
+        );
         // Close popup button:
         Highcharts.addEvent(
             closePopupButtons[0],
@@ -40,18 +42,23 @@
                     }
                 });
 
-                chart.stockToolbar.indicatorsPopupContainer.style.display = 'none';
+                chart.stockToolbar.indicatorsPopupContainer.style.display =
+                    'none';
             }
         );
 
-        // Update an annotaiton from popup
+        // Update an annotation from popup
         Highcharts.addEvent(
-            document.querySelectorAll('.highcharts-popup-annotations button')[0],
+            document.querySelectorAll(
+                '.highcharts-popup-annotations ' +
+                'button'
+            )[0],
             'click',
             function () {
                 const strokeWidth = parseInt(
                         document.querySelectorAll(
-                            '.highcharts-popup-annotations input[name="stroke-width"]'
+                            '.highcharts-popup-annotations ' +
+                            'input[name="stroke-width"]'
                         )[0].value,
                         10
                     ),
@@ -59,7 +66,8 @@
                         '.highcharts-popup-annotations input[name="stroke"]'
                     )[0].value;
 
-                // Stock/advanced annotations have common options under typeOptions
+                // Stock/advanced annotations have common options under
+                // typeOptions
                 if (chart.currentAnnotation.options.typeOptions) {
                     chart.currentAnnotation.update({
                         typeOptions: {
@@ -100,7 +108,8 @@
                         }]
                     });
                 }
-                chart.stockToolbar.annotationsPopupContainer.style.display = 'none';
+                chart.stockToolbar.annotationsPopupContainer.style.display =
+                    'none';
             }
         );
     }
@@ -138,6 +147,9 @@
                 }
             }
         },
+        rangeSelector: {
+            selected: 2
+        },
         yAxis: [{
             labels: {
                 align: 'left'
@@ -157,7 +169,8 @@
         navigationBindings: {
             events: {
                 selectButton: function (event) {
-                    let newClassName = event.button.className + ' highcharts-active';
+                    let newClassName = event.button.className + ' ' +
+                        'highcharts-active';
                     const topButton = event.button.parentNode.parentNode;
 
                     if (topButton.classList.contains('right')) {
@@ -166,7 +179,9 @@
 
                     // If this is a button with sub buttons,
                     // change main icon to the current one:
-                    if (!topButton.classList.contains('highcharts-menu-wrapper')) {
+                    if (!topButton.classList.contains(
+                        'highcharts-menu-wrapper'
+                    )) {
                         topButton.className = newClassName;
                     }
 
@@ -174,7 +189,9 @@
                     this.chart.activeButton = event.button;
                 },
                 deselectButton: function (event) {
-                    event.button.parentNode.parentNode.classList.remove('highcharts-active');
+                    event.button.parentNode.parentNode.classList.remove(
+                        'highcharts-active'
+                    );
 
                     // Remove info about active button:
                     this.chart.activeButton = null;
@@ -183,21 +200,27 @@
 
                     if (!this.indicatorsPopupContainer) {
                         this.indicatorsPopupContainer = document
-                            .getElementsByClassName('highcharts-popup-indicators')[0];
+                            .getElementsByClassName(
+                                'highcharts-popup-indicators'
+                            )[0];
                     }
 
                     if (!this.annotationsPopupContainer) {
                         this.annotationsPopupContainer = document
-                            .getElementsByClassName('highcharts-popup-annotations')[0];
+                            .getElementsByClassName(
+                                'highcharts-popup-annotations'
+                            )[0];
                     }
 
                     if (event.formType === 'indicators') {
                         this.indicatorsPopupContainer.style.display = 'block';
                     } else if (event.formType === 'annotation-toolbar') {
-                        // If user is still adding an annotation, don't show popup:
+                        // If user is still adding an annotation, don't show
+                        // popup:
                         if (!this.chart.activeButton) {
                             this.chart.currentAnnotation = event.annotation;
-                            this.annotationsPopupContainer.style.display = 'block';
+                            this.annotationsPopupContainer.style.display =
+                                'block';
                         }
                     }
 
@@ -214,7 +237,7 @@
             }
         },
         series: [{
-            type: 'ohlc',
+            type: 'candlestick',
             id: 'aapl-ohlc',
             name: 'AAPL Stock Price',
             data: ohlc

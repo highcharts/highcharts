@@ -203,6 +203,7 @@ QUnit.test('Image', assert => {
             400,
             300
         ),
+        // eslint-disable-next-line max-len
         symbol = 'url(data:image/svg+xml;base64,PHN2ZyBpZD0ibWFsZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTkyIDUxMiI+PHBhdGggZD0iTTk2IDBjMzUuMzQ2IDAgNjQgMjguNjU0IDY0IDY0cy0yOC42NTQgNjQtNjQgNjQtNjQtMjguNjU0LTY0LTY0UzYwLjY1NCAwIDk2IDBtNDggMTQ0aC0xMS4zNmMtMjIuNzExIDEwLjQ0My00OS41OSAxMC44OTQtNzMuMjggMEg0OGMtMjYuNTEgMC00OCAyMS40OS00OCA0OHYxMzZjMCAxMy4yNTUgMTAuNzQ1IDI0IDI0IDI0aDE2djEzNmMwIDEzLjI1NSAxMC43NDUgMjQgMjQgMjRoNjRjMTMuMjU1IDAgMjQtMTAuNzQ1IDI0LTI0VjM1MmgxNmMxMy4yNTUgMCAyNC0xMC43NDUgMjQtMjRWMTkyYzAtMjYuNTEtMjEuNDktNDgtNDgtNDh6IiBmaWxsPSIjMkQ1RkYzIi8+PC9zdmc+)';
 
     renderer.image(
@@ -261,13 +262,15 @@ QUnit.test('Image', assert => {
             assert.equal(
                 width1,
                 width2,
-                'Width of image-symbol should not be changed after redraw, #17315.'
+                'Width of image-symbol should not be changed after redraw, ' +
+                '#17315.'
             );
 
             assert.equal(
                 height1,
                 height2,
-                'Height of image-symbol should not be changed after redraw, #17315.'
+                'Height of image-symbol should not be changed after redraw, ' +
+                '#17315.'
             );
         }, 100);
 

@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -89,7 +90,7 @@ class PCIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             period: 20
         },
         lineWidth: 1,
@@ -145,7 +146,7 @@ class PCIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const period: number = (params.period as any),
@@ -154,7 +155,7 @@ class PCIndicator extends SMAIndicator {
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PC: Array<Array<number>> = [],
-            // middle line, top line and bottom line
+            // Middle line, top line and bottom line
             low = 2,
             high = 1,
             xData: Array<number> = [],
@@ -259,4 +260,4 @@ export default PCIndicator;
  * @apioption    series.pc
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

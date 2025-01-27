@@ -10,31 +10,8 @@ Dashboards.board('container', {
             id: 'dashboards-layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'highcharts-dashboards-cell-a0'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-
-                    },
                     id: 'highcharts-dashboards-cell-b0'
                 }]
             }, {
@@ -46,15 +23,15 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'highcharts-dashboards-cell-a0',
+            renderTo: 'highcharts-dashboards-cell-a0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('bar', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-b0',
+            renderTo: 'highcharts-dashboards-cell-b0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('pie', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-a1',
+            renderTo: 'highcharts-dashboards-cell-a1',
             type: 'Highcharts',
             chartOptions: buildChartOptions('line', vegeTable, cursor)
         }
@@ -72,13 +49,15 @@ function buildChartOptions(type, table, cursor) {
                     const chart = this;
                     const series = chart.series[0];
                     // react to table cursor
-                    cursor.addListener(table.id, 'point.mouseOver', function (e) {
-                        const point = series.data[e.cursor.row];
+                    cursor.addListener(
+                        table.id,
+                        'point.mouseOver', function (e) {
+                            const point = series.data[e.cursor.row];
 
-                        if (chart.hoverPoint !== point) {
-                            chart.tooltip.refresh(point);
-                        }
-                    });
+                            if (chart.hoverPoint !== point) {
+                                chart.tooltip.refresh(point);
+                            }
+                        });
                     cursor.addListener(table.id, 'point.mouseOut', function () {
                         chart.tooltip.hide();
                     });
@@ -138,15 +117,11 @@ function buildChartOptions(type, table, cursor) {
     };
 }
 
-// Build table with Highcharts.Series aliases
+// Build table with vegetables data
 function buildVegeTable() {
     const table = new DataTable({
-        aliases: {
-            name: 'vegetable',
-            y: 'amount'
-        },
         columns: {
-            vegetable: [
+            name: [
                 'Broccoli',
                 'Carrots',
                 'Corn',
@@ -157,7 +132,7 @@ function buildVegeTable() {
                 'Tomatos'
 
             ],
-            amount: [
+            y: [
                 44,
                 51,
                 38,

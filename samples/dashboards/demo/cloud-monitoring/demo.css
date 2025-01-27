@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 .highcharts-description {
@@ -59,35 +59,32 @@ body {
     float: left;
 }
 
-/* https://awsicons.dev/ */
+@media (prefers-color-scheme: dark) {
+    .highcharts-dashboards-wrapper,
+    .cloud-monitoring-data-controls {
+        background-color: var(--highcharts-neutral-color-10);
+    }
 
-#instance-details #instance .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg") 0 50% no-repeat;
+    .cloud-monitoring-data-controls {
+        color: #fff;
+    }
 }
 
-#instance-details #zone .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg") 0 50% no-repeat;
+#instance-details .highcharts-dashboards-component-html-content img {
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 10px;
+    border-radius: 3px;
 }
 
-#instance-details #ami .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg") 0 50% no-repeat;
-}
-
-#instance-details #os .highcharts-dashboards-component-content span {
-    background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg") 0 50% no-repeat;
-}
-
-#instances-table .highcharts-datagrid-container {
-    border: none;
-    font-weight: 100;
+#instance-details .highcharts-dashboards-component-html-content p {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #instances-table .highcharts-datagrid-row {
     cursor: pointer;
-}
-
-#instances-table .highcharts-datagrid-row .highcharts-datagrid-cell:first-child {
-    white-space: nowrap;
 }
 
 #instances-table .highcharts-datagrid-row.current {
@@ -95,8 +92,50 @@ body {
     pointer-events: none;
 }
 
-#instances-table .highcharts-datagrid-row:hover {
+#instances-table .highcharts-datagrid-hovered-row {
     background-color: var(--highcharts-neutral-color-10);
+}
+
+#instances-table .highcharts-datagrid-row td[data-column-id="HealthIndicator"] {
+    text-align: center;
+}
+
+#instances-table .highcharts-datagrid-row {
+    height: 50px;
+}
+
+#instances-table .highcharts-datagrid-row img {
+    margin-top: 5px;
+    width: 30px;
+    height: 30px;
+}
+
+#instances-table .highcharts-datagrid-table th {
+    height: 35px;
+}
+
+#instances-table .highcharts-datagrid-hovered-column {
+    background: none;
+}
+
+#instances-table .highcharts-datagrid-table {
+    border-width: 1px 0 0;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="InstanceId"] {
+    width: 31%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="InstanceType"] {
+    width: 19%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="PublicIpAddress"] {
+    width: 24%;
+}
+
+#instances-table .highcharts-datagrid-column[data-column-id="State"] {
+    width: 16%;
 }
 
 .health-title {
@@ -113,49 +152,87 @@ body {
     margin-top: 15px;
 }
 
-.highcharts-Warning-icon,
-.highcharts-datagrid-cell[data-original-data="Warning"] {
+.highcharts-Warning-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/warning-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
-.highcharts-Critical-icon,
-.highcharts-datagrid-cell[data-original-data="Critical"] {
+.highcharts-Critical-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/critical-ico.png") 50% 50% no-repeat;
     background-size: 64px 64px;
 }
 
-.highcharts-OK-icon,
-.highcharts-datagrid-cell[data-original-data="OK"] {
+.highcharts-OK-icon {
     background: url("https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ok-ico.svg") 50% 50% no-repeat;
     background-size: 64px 64px;
-}
-
-.highcharts-datagrid-cell[data-original-data="Critical"],
-.highcharts-datagrid-cell[data-original-data="Warning"],
-.highcharts-datagrid-cell[data-original-data="OK"] {
-    background-size: 24px 24px;
-    text-indent: -9999px;
 }
 
 .highcharts-dashboards-component-kpi-value {
     display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    .highcharts-dashboards-wrapper,
-    .cloud-monitoring-data-controls {
-        background-color: var(--highcharts-neutral-color-10);
+#instances-table {
+    height: 400px;
+}
+
+#cpu,
+#memory {
+    height: 200px;
+}
+
+#health,
+#disk {
+    height: 195px;
+}
+
+#disk-opt,
+#network-opt {
+    height: 300px;
+}
+
+#cpu-utilization,
+#disk-usage {
+    height: 400px;
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #instance,
+    #zone,
+    #ami,
+    #os,
+    #cpu,
+    #memory,
+    #health,
+    #disk {
+        flex: 1 1 50%;
     }
 
-    .cloud-monitoring-data-controls {
-        color: #fff;
+    #instances-table,
+    #disk-usage,
+    #cpu-utilization,
+    #kpi-wrapper {
+        flex: 1 1 100%;
+    }
+
+    #instances-table,
+    #cpu-utilization {
+        height: 300px;
     }
 }
 
-@media (prefers-color-scheme: light) {
-    #instances-table .highcharts-datagrid-column-header,
-    #instances-table .highcharts-datagrid-row {
-        background-color: var(--highcharts-neutral-color-0);
+/* SMALL */
+@media (max-width: 576px) {
+    #instance,
+    #zone,
+    #ami,
+    #os,
+    #disk-opt,
+    #network-opt,
+    #cpu,
+    #memory,
+    #health,
+    #disk {
+        flex: 1 1 100%;
     }
 }

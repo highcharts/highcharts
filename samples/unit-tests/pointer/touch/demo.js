@@ -226,7 +226,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
         chart.plotTop + chart.series[0].points[2].plotY,
         10,
-        'followPointer is false, followTouchMove is true by default, the tooltip should stay next to the top of Bananas'
+        'followPointer is false, followTouchMove is true by default, the ' +
+        'tooltip should stay next to the top of Bananas'
     );
     assert.ok(
         chart.tooltip.label.translateX >
@@ -289,7 +290,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
         chart.plotTop + chart.series[0].points[0].plotY,
         10,
-        'followPointer is false, followTouchMove is false, the tooltip should stay next to Apples'
+        'followPointer is false, followTouchMove is false, the tooltip ' +
+        'should stay next to Apples'
     );
     assert.ok(
         chart.tooltip.label.translateX <
@@ -327,7 +329,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
         chart.plotTop + chart.plotHeight - 10,
         10,
-        'followPointer is true, followTouchMove is true by default, the tooltip should stay next to the touch'
+        'followPointer is true, followTouchMove is true by default, the ' +
+        'tooltip should stay next to the touch'
     );
     assert.ok(
         chart.tooltip.label.translateX >

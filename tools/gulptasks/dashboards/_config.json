@@ -1,6 +1,6 @@
 {
     "buildFolder": "build/dist/dashboards/",
-    "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
+    "bundleSourceFolder": "code/dashboards/es-modules/masters/",
     "bundleTargetFolder": "code/dashboards/",
     "cdnFolder": "dashboards/",
     "cssFolder": "code/dashboards/css/",
@@ -11,5 +11,13 @@
     "namespace": "Dashboards",
     "product": "Highcharts Dashboards",
     "readmeFile": "ts/Dashboards/README.md",
-    "typeScriptFolder": "ts/masters-dashboards/"
+    "typeScriptFolder": "ts/masters-dashboards/",
+
+    "buildFolderDataGrid": "build/dist/datagrid/",
+    "bundleSourceFolderDataGrid": "code/datagrid/es-modules/masters/",
+    "bundleTargetFolderDataGrid": "code/datagrid/",
+    "cdnFolderDataGrid": "datagrid/",
+    "esModulesFolderDataGrid": "code/datagrid/es-modules/",
+    "productDataGrid": "Highcharts DataGrid",
+    "typeScriptFolderDatagrid": "ts/masters-datagrid/"
 }

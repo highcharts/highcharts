@@ -6,7 +6,8 @@ $(function () {
         },
 
         title: {
-            text: 'The issue caused categorized Y axis to overflow the plot area.'
+            text: 'The issue caused categorized Y axis to overflow the plot ' +
+                'area.'
         },
 
         yAxis: {

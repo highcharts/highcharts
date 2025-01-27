@@ -257,8 +257,10 @@ class MenuComponent extends AccessibilityComponent {
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach((item): void => {
                 if (item) {
-                    if (item.tagName === 'LI' &&
-                        !(item.children && item.children.length)) {
+                    if (
+                        item.tagName === 'LI' &&
+                        !(item.children && item.children.length)
+                    ) {
                         item.setAttribute('tabindex', -1);
                     } else {
                         item.setAttribute('aria-hidden', 'true');
@@ -328,6 +330,11 @@ class MenuComponent extends AccessibilityComponent {
             // enabled on chart
             validate: function (): boolean {
                 return !!chart.exporting &&
+                    chart
+                        .options
+                        .exporting
+                        ?.buttons
+                        ?.contextButton.enabled !== false &&
                     chart.options.exporting.enabled !== false &&
                     (chart.options.exporting.accessibility as any).enabled !==
                     false;

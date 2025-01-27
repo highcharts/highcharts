@@ -232,7 +232,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 });
 
-QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
+QUnit.test('Stock panning (#6276, #21319)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 600
@@ -291,8 +291,8 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     assert.strictEqual(chart.xAxis[0].max, 1514505600000, 'Initial max');
 
     // Pan
-    controller.mouseDown(100, 200, { shiftKey: true }, true);
-    controller.mouseMove(300, 200, { shiftKey: true }, true);
+    controller.mouseDown(100, 200, { shiftKey: true });
+    controller.mouseMove(300, 200, { shiftKey: true });
     controller.mouseUp();
 
     assert.ok(chart.xAxis[0].min < initialMin, 'Has panned');
@@ -302,10 +302,61 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         initialRange,
         'Has preserved range'
     );
+
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true
+        },
+        data: [
+            [1648215000000, 173.88],
+            [1648474200000, 172.17],
+            [1648560600000, 176.69],
+            [1648647000000, 178.55],
+            [1648733400000, 177.84],
+            [1648819800000, 174.03],
+            [1649079000000, 174.57],
+            [1649165400000, 177.5],
+            [1649251800000, 172.36],
+            [1649338200000, 171.16],
+            [1649424600000, 171.78],
+            [1649683800000, 168.71],
+            [1649770200000, 168.02],
+            [1649856600000, 167.39],
+            [1649943000000, 170.62],
+            [1650288600000, 163.92],
+            [1650375000000, 165.02],
+            [1650461400000, 168.76],
+            [1650547800000, 168.91],
+            [1650634200000, 166.46],
+            [1650893400000, 161.12]
+        ]
+    });
+    chart.xAxis[0].setExtremes(null, 1649424600000);
+    const oldExtremes = chart.xAxis[0].getExtremes();
+    controller.pan([100, 200], [300, 200]);
+    assert.deepEqual(
+        oldExtremes,
+        chart.xAxis[0].getExtremes(),
+        '#20809, panning outside chart extremes should not do anything.'
+    );
+
+    // #21319
+    chart.update({
+        xAxis: {
+            ordinal: false
+        }
+    });
+    controller.pan([300, 200], [100, 200]);
+    assert.strictEqual(
+        chart.resetZoomButton,
+        undefined,
+        `resetZoomButton should not be rendered while panning on non-ordinal
+        axes. (#21319)`
+    );
 });
 
 QUnit.test(
-    'Ordinal axis panning, when data is equally spaced (#13334).',
+    'Ordinal axis panning.',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -364,7 +415,36 @@ QUnit.test(
         assert.notEqual(
             initialMin,
             chart.xAxis[0].min,
-            'Chart should pan horizontally.'
+            'Chart should pan horizontally, when data is equally spaced #13334.'
+        );
+
+        const data = [];
+
+        for (let i = 0; i < 100000; i++) {
+            data.push([400 + i, 1]);
+        }
+
+        chart.series[0].update({
+            data,
+            type: 'column',
+            dataGrouping: {
+                forced: true,
+                units: [[
+                    'second',
+                    [1]
+                ]]
+            }
+        });
+
+        chart.xAxis[0].setExtremes(2000, 45000);
+
+        controller.pan([100, 200], [200, 200]);
+
+        assert.equal(
+            chart.xAxis[0].min,
+            0,
+            `It should be possible to pan to the axis minimum in a data grouped
+            ordinal column chart, #21524.`
         );
     }
 );

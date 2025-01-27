@@ -19,7 +19,8 @@ QUnit.test('Organization data', assert => {
     assert.strictEqual(
         chart.series[0].nodes[4].graphic.element.getAttribute('fill'),
         Highcharts.defaultOptions.colors[4],
-        'The last element should be rendered and filled accoring to colorByPoint'
+        'The last element should be rendered and filled accoring to ' +
+        'colorByPoint'
     );
 
     chart.update({
@@ -166,7 +167,8 @@ QUnit.test(
             assert.strictEqual(
                 chart.series[0].points[0].from,
                 'C',
-                'Drilldown should be performed and the points should be changed.'
+                'Drilldown should be performed and the points should be ' +
+                'changed.'
             );
             assert.ok(
                 chart.series[0].nodes[0].graphic.visibility !== 'hidden',
@@ -266,11 +268,13 @@ QUnit.test(
         );
         assert.ok(
             nodeB.shapeArgs.y > nodeA.shapeArgs.y,
-            'Cumulative: Node B should be placed lower than A (y should be higher).'
+            'Cumulative: Node B should be placed lower than A (y should be ' +
+            'higher).'
         );
         assert.ok(
             nodeC.shapeArgs.y > nodeB.shapeArgs.y,
-            'Cumulative: Node C should be placed lower than B (y should be higher).'
+            'Cumulative: Node C should be placed lower than B (y should be ' +
+            'higher).'
         );
     }
 );

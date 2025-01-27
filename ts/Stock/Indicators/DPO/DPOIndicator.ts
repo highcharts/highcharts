@@ -19,6 +19,7 @@ import type {
     DPOParamsOptions
 } from './DPOOptions';
 import type DPOPoint from './DPOPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -53,7 +54,8 @@ function accumulatePoints(
     subtract?: boolean
 ): number {
     const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any)
+        (yVal[i] as any)[index], (yVal[i] as any
+    )
     );
 
     if (subtract) {
@@ -134,14 +136,14 @@ class DPOIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const period: number = (params.period as any),
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
-            xVal: Array<number> = series.xData || [],
+            xVal = series.xData || [],
             yVal: (Array<number> | Array<Array<number>>) =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,
@@ -173,15 +175,16 @@ class DPOIndicator extends SMAIndicator {
             periodIndex = j + period - 1;
             rangeIndex = j + range - 1;
 
-            // adding the last period point
+            // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
+                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
+            )
             );
 
             oscillator = price - sum / period;
 
-            // subtracting the first period point
+            // Subtracting the first period point
             sum = accumulatePoints(sum, yVal, j, index, true);
 
             DPO.push([xVal[rangeIndex], oscillator]);
@@ -254,4 +257,4 @@ export default DPOIndicator;
  * @apioption series.dpo
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

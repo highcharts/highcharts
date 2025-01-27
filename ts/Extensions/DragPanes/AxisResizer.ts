@@ -300,7 +300,7 @@ class AxisResizer {
             // Main axis is included in the prev array by default
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
-            // prev and next configs
+            // Prev and next configs
             axesConfigs: Array<AnyRecord> = [],
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -339,9 +339,9 @@ class AxisResizer {
                         (
                             // If it's first elem. in first group
                             isFirst ?
-                                // then it's an Axis object
+                                // Then it's an Axis object
                                 axisInfo as any :
-                                // else it should be an id
+                                // Else it should be an id
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
@@ -352,8 +352,7 @@ class AxisResizer {
                 // Skip if axis is not found
                 // or it is navigator's yAxis (#7732)
                 if (
-                    !axisOptions ||
-                    axisOptions.id === 'navigator-y-axis'
+                    !axisOptions || axisOptions.isInternal
                 ) {
                     isFirst = false;
                     continue;
@@ -370,7 +369,7 @@ class AxisResizer {
                         plotHeight
                     ));
 
-                if (!isFirst) {
+                if (!isFirst && axesGroup === nextAxes) {
                     // Try to change height first. yDelta could had changed
                     yDelta = chartY - resizer.lastPos;
 

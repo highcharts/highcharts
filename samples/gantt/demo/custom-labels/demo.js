@@ -23,14 +23,17 @@ Highcharts.ganttChart('container', {
 
     accessibility: {
         point: {
-            valueDescriptionFormat: '{point.yCategory}, assigned to {point.assignee} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.'
+            valueDescriptionFormat: '{point.yCategory}, assigned to ' +
+                '{point.assignee} from {point.x:%Y-%m-%d} to ' +
+                '{point.x2:%Y-%m-%d}.'
         }
     },
 
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },
@@ -38,13 +41,13 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            start: Date.UTC(2018, 11, 1),
-            end: Date.UTC(2018, 11, 2),
+            start: '2018-12-01',
+            end: '2018-12-02',
             y: 0,
             assignee: 'bre1470'
         }, {
-            start: Date.UTC(2018, 11, 2),
-            end: Date.UTC(2018, 11, 5),
+            start: '2018-12-02',
+            end: '2018-12-05',
             y: 1,
             assignee: 'oysteinmoseng',
             fontSymbol: 'exclamation',
@@ -52,18 +55,18 @@ Highcharts.ganttChart('container', {
                 description: 'Exclamation symbol.'
             }
         }, {
-            start: Date.UTC(2018, 11, 8),
-            end: Date.UTC(2018, 11, 9),
+            start: '2018-12-08',
+            end: '2018-12-09',
             y: 2,
             assignee: 'TorsteinHonsi'
         }, {
-            start: Date.UTC(2018, 11, 9),
-            end: Date.UTC(2018, 11, 19),
+            start: '2018-12-09',
+            end: '2018-12-19',
             y: 1,
             assignee: 'bre1470'
         }, {
-            start: Date.UTC(2018, 11, 10),
-            end: Date.UTC(2018, 11, 23),
+            start: '2018-12-10',
+            end: '2018-12-23',
             y: 2,
             assignee: 'TorsteinHonsi',
             fontSymbol: 'smile-o',
@@ -73,14 +76,17 @@ Highcharts.ganttChart('container', {
         }],
         dataLabels: [{
             enabled: true,
-            format: '<div style="width: 20px; height: 20px; overflow: hidden; border-radius: 50%; margin-left: -25px">' +
+            format: '<div style="width: 20px; height: 20px; overflow: ' +
+                'hidden; border-radius: 50%; margin-left: -25px">' +
                 '<img src="https://github.com/{point.assignee}.png" ' +
-                'style="width: 30px; margin-left: -5px; margin-top: -2px"></div>',
+                'style="width: 30px; margin-left: -5px; margin-top: -2px">' +
+                '</div>',
             useHTML: true,
             align: 'left'
         }, {
             enabled: true,
-            format: '<i class="fa fa-{point.fontSymbol}" style="font-size: 1.5em"></i>',
+            format: '<i class="fa fa-{point.fontSymbol}" style="font-size: ' +
+                '1.5em"></i>',
             useHTML: true,
             align: 'right'
         }]

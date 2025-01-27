@@ -1,6 +1,7 @@
 /**
- * A Highcharts plugin to display the tooltip in a separate container outside the chart's
- * bounding box, so that it can utilize all space available in the page.
+ * A Highcharts plugin to display the tooltip in a separate container outside
+ * the chart 's bounding box, so that it can utilize all space available in the
+ * page.
  */
 (function (H) {
 

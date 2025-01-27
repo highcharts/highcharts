@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -74,7 +75,7 @@ class TrendLineIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
@@ -104,7 +105,7 @@ class TrendLineIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         const orgXVal: Array<number> = (series.xData as any),
@@ -224,4 +225,4 @@ export default TrendLineIndicator;
  * @apioption series.trendline
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

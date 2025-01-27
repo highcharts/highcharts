@@ -205,7 +205,8 @@ namespace ColorAxisLike {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((typeof from === 'undefined' || value >= from) &&
+                if (
+                    (typeof from === 'undefined' || value >= from) &&
                     (typeof to === 'undefined' || value <= to)
                 ) {
 

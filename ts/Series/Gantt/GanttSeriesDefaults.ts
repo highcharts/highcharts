@@ -41,7 +41,7 @@ const { isNumber } = U;
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
 
-    // options - default options merged with parent
+    // Options - default options merged with parent
 
     grouping: false,
 
@@ -58,8 +58,8 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
 
         pointFormat: null as any,
 
-        pointFormatter: function (this: GanttPoint): string {
-            const point = this,
+        pointFormatter: function (this): string {
+            const point = this as GanttPoint,
                 series = point.series,
                 xAxis = series.xAxis,
                 formats = series.tooltipOptions.dateTimeLabelFormats,
@@ -179,17 +179,17 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  */
 
 /**
- * The start time of a task.
+ * The start time of a task. May be a timestamp or a date string.
  *
- * @type      {number}
+ * @type      {number|string}
  * @product   gantt
  * @apioption series.gantt.data.start
  */
 
 /**
- * The end time of a task.
+ * The end time of a task. May be a timestamp or a date string.
  *
- * @type      {number}
+ * @type      {number|string}
  * @product   gantt
  * @apioption series.gantt.data.end
  */
@@ -289,7 +289,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.events
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

@@ -97,30 +97,27 @@ class ScatterSeries extends LineSeries {
 
         if (jitter) {
             this.points.forEach(function (point, i): void {
-                ['x', 'y'].forEach(function (dim, j): void {
-                    let axis,
-                        plotProp = 'plot' + dim.toUpperCase(),
-                        min,
-                        max,
-                        translatedJitter;
-                    if ((jitter as any)[dim] && !point.isNull) {
-                        axis = (series as any)[dim + 'Axis'];
-                        translatedJitter =
-                            (jitter as any)[dim] * axis.transA;
-                        if (axis && !axis.isLog) {
+                (['x', 'y'] as ['x', 'y']).forEach(function (dim, j): void {
+                    if (jitter[dim] && !point.isNull) {
+                        const plotProp: 'plotX'|'plotY' =
+                                `plot${dim.toUpperCase() as 'X'|'Y'}`,
+                            axis = series[`${dim}Axis`],
+                            translatedJitter = (jitter as any)[dim] *
+                                axis.transA;
+                        if (axis && !axis.logarithmic) {
 
                             // Identify the outer bounds of the jitter range
-                            min = Math.max(
-                                0,
-                                (point as any)[plotProp] - translatedJitter
-                            );
-                            max = Math.min(
-                                axis.len,
-                                (point as any)[plotProp] + translatedJitter
-                            );
+                            const min = Math.max(
+                                    0,
+                                    (point[plotProp] || 0) - translatedJitter
+                                ),
+                                max = Math.min(
+                                    axis.len,
+                                    (point[plotProp] || 0) + translatedJitter
+                                );
 
                             // Find a random position within this range
-                            (point as any)[plotProp] = min +
+                            point[plotProp] = min +
                                 (max - min) * unrandom(i + j * len);
 
                             // Update clientX for the tooltip k-d-tree

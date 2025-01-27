@@ -7,7 +7,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} to {x2:%A %e %B %Y}.'
+            descriptionFormat: '{add index 1}. {yCategory}, {x:%A %e %B %Y} ' +
+                'to {x2:%A %e %B %Y}.'
         }
     },
     xAxis: {
@@ -27,25 +28,25 @@ Highcharts.chart('container', {
         borderColor: 'gray',
         pointWidth: 20,
         data: [{
-            x: Date.UTC(2014, 10, 21),
-            x2: Date.UTC(2014, 11, 2),
+            x: '2014-11-21',
+            x2: '2014-12-02',
             y: 0,
             partialFill: 0.25
         }, {
-            x: Date.UTC(2014, 11, 2),
-            x2: Date.UTC(2014, 11, 5),
+            x: '2014-12-02',
+            x2: '2014-12-05',
             y: 1
         }, {
-            x: Date.UTC(2014, 11, 8),
-            x2: Date.UTC(2014, 11, 9),
+            x: '2014-12-08',
+            x2: '2014-12-09',
             y: 2
         }, {
-            x: Date.UTC(2014, 11, 9),
-            x2: Date.UTC(2014, 11, 19),
+            x: '2014-12-09',
+            x2: '2014-12-19',
             y: 1
         }, {
-            x: Date.UTC(2014, 11, 10),
-            x2: Date.UTC(2014, 11, 23),
+            x: '2014-12-10',
+            x2: '2014-12-23',
             y: 2
         }],
         dataLabels: {

@@ -62,7 +62,7 @@ const getInitialData = time => ualf.slice(
 
 const displayTime = time => {
     document.getElementById('report-time').innerText = Highcharts.dateFormat(
-        '%B %e, %Y %H:%M',
+        '%[BeYHM]',
         time
     );
 };
@@ -163,7 +163,6 @@ const displayTime = time => {
             name: 'Lightning strike',
             id: 'lightnings',
             type: 'mapbubble',
-            turboThreshold: Infinity,
             animation: false,
             data: getInitialData(currentTime),
             tooltip: {

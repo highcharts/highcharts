@@ -50,7 +50,8 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
             },
             useHTML: true,
             headerFormat: '',
-            pointFormat: '<div style="width: 200px; height: 300px; background-color: blue;">Hello</div>'
+            pointFormat: '<div style="width: 200px; height: 300px; ' +
+                'background-color: blue;">Hello</div>'
         }
     });
 
@@ -72,6 +73,32 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
     assert.notEqual(
         chart.tooltip.label.visibility,
         'hidden',
-        'Tooltip should show after hovering over a point even with pointer-events set (#19025)'
+        'Tooltip should show after hovering over a point even with ' +
+        'pointer-events set (#19025)'
+    );
+
+    chart.series[0].setData([{
+        x: 1706719944000,
+        y: 2
+    }], false);
+
+    chart.update({
+        time: {
+            timezone: 'America/Chicago',
+            locale: 'en'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        tooltip: {
+            pointFormat: '{#if point} {point.x: %e %b %y %I:%M} {/if}'
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.ok(
+        chart.tooltip.label.text.textStr.includes('31 Jan 24 10:52'),
+        'Timezone should be calculated correctly for templating string, #20816.'
     );
 });

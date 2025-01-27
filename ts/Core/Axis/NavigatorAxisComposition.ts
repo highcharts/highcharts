@@ -211,10 +211,7 @@ class NavigatorAxisAdditions {
         fixedMax?: number
     ): RangeSelector.RangeObject {
         const axis = this.axis,
-            chart = axis.chart,
-            overscroll = pick(axis.ordinal?.convertOverscroll(
-                axis.options.overscroll
-            ), 0);
+            halfPointRange = (axis.pointRange || 0) / 2;
 
         let newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
@@ -223,8 +220,6 @@ class NavigatorAxisAdditions {
                 fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
             );
 
-        const fixedRange = chart && chart.fixedRange,
-            halfPointRange = (axis.pointRange || 0) / 2;
 
         // Add/remove half point range to/from the extremes (#1172)
         if (!defined(fixedMin)) {
@@ -232,20 +227,6 @@ class NavigatorAxisAdditions {
         }
         if (!defined(fixedMax)) {
             newMax = correctFloat(newMax - halfPointRange);
-        }
-
-        // Make sure panning to the edges does not decrease the zoomed range
-        if (fixedRange && axis.dataMin && axis.dataMax) {
-            const maxWithOverscroll = axis.dataMax + overscroll;
-
-            if (newMax >= maxWithOverscroll) {
-                newMin = correctFloat(maxWithOverscroll - fixedRange);
-                newMax = correctFloat(maxWithOverscroll);
-            }
-
-            if (newMin <= axis.dataMin) {
-                newMax = correctFloat(axis.dataMin + fixedRange);
-            }
         }
 
         if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411

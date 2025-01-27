@@ -10,7 +10,9 @@ QUnit.test('Arc shape', function (assert) {
                 events: {
                     selection: function () {
                         selectionShape =
-                            this.pointer.selectionMarker.element.getAttribute('d');
+                            this.pointer.selectionMarker.element.getAttribute(
+                                'd'
+                            );
                     }
                 }
             },

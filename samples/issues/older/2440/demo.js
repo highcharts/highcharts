@@ -9,10 +9,14 @@ $(function () {
             }
         },
         title: {
-            text: 'Bug in 3.0.7 caused orphaned stack labels after Series.update'
+            text: 'Bug in 3.0.7 caused orphaned stack labels after ' +
+                'Series.update'
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
+            ]
         },
         yAxis: {
             stackLabels: {

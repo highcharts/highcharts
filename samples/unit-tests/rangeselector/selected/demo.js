@@ -89,7 +89,7 @@ QUnit.test(
                 events: {
                     load: function () {
                         var chart = this,
-                            now = +new Date(),
+                            now = 13e5,
                             series = chart.series[0];
 
                         chart.addSeries({
@@ -110,7 +110,8 @@ QUnit.test(
                         chart.redraw();
 
                         assert.strictEqual(
-                            chart.rangeSelector.buttonOptions[// eslint-disable-line no-underscore-dangle
+                            // eslint-disable-next-line no-underscore-dangle
+                            chart.rangeSelector.buttonOptions[
                                 chart.rangeSelector.selected
                             ]._range,
                             chart.xAxis[0].max - chart.xAxis[0].min,
@@ -139,20 +140,12 @@ QUnit.test(
             },
             series: [
                 {
-                    data: (function () {
-                        // generate an array of random data
-                        var data = [],
-                            time = +new Date(),
-                            i;
-
-                        for (i = -3; i <= 0; i += 1) {
-                            data.push([
-                                time + i * 1000,
-                                Math.round(Math.random() * 100)
-                            ]);
-                        }
-                        return data;
-                    }())
+                    data: [
+                        [13e5 + 2 - 3000, 100],
+                        [13e5 + 2 - 2000, 100],
+                        [13e5 + 2 - 1000, 100],
+                        [13e5 + 2, 100]
+                    ]
                 }
             ]
         });
@@ -160,7 +153,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Chart should be initialised when xAxis.min and rangeselector.selected are defined. (#602)',
+    'Chart should be initialised when xAxis.min and rangeselector.selected ' +
+    'are defined. (#602)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             rangeSelector: {

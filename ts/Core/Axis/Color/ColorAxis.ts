@@ -228,7 +228,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.init(chart, userOptions, 'colorAxis');
 
-        // Super.init saves the extended user options, now replace it with the
+        // `super.init` saves the extended user options, now replace it with the
         // originals
         this.userOptions = userOptions;
         if (isArray(chart.userOptions.colorAxis)) {
@@ -352,6 +352,13 @@ class ColorAxis extends Axis implements AxisLike {
             legend.render();
             this.chart.getMargins(true);
 
+            // If not drilling down/up
+            if (!this.chart.series.some((series): boolean | undefined =>
+                series.isDrilling
+            )) {
+                axis.isDirty = true; // Flag to fire drawChartBox
+            }
+
             // First time only
             if (!axis.added) {
 
@@ -471,18 +478,14 @@ class ColorAxis extends Axis implements AxisLike {
 
         let colorValArray,
             colorKey,
-            colorValIndex,
-            pointArrayMap,
             calculatedExtremes,
             cSeries,
-            i = series.length,
-            yData,
-            j;
+            i = series.length;
 
         this.dataMin = Infinity;
         this.dataMax = -Infinity;
 
-        while (i--) { // x, y, value, other
+        while (i--) { // X, y, value, other
             cSeries = series[i];
             colorKey = cSeries.colorKey = pick(
                 cSeries.options.colorKey,
@@ -492,34 +495,18 @@ class ColorAxis extends Axis implements AxisLike {
                 'y'
             );
 
-            pointArrayMap = cSeries.pointArrayMap;
             calculatedExtremes = (cSeries as any)[colorKey + 'Min'] &&
                 (cSeries as any)[colorKey + 'Max'];
 
-            if ((cSeries as any)[colorKey + 'Data']) {
-                colorValArray = (cSeries as any)[colorKey + 'Data'];
-
-            } else {
-                if (!pointArrayMap) {
-                    colorValArray = cSeries.yData;
-
-                } else {
-                    colorValArray = [];
-                    colorValIndex = pointArrayMap.indexOf(colorKey);
-                    yData = cSeries.yData;
-
-                    if (colorValIndex >= 0 && yData) {
-                        for (j = 0; j < yData.length; j++) {
-                            colorValArray.push(
-                                pick(
-                                    (yData[j] as any)[colorValIndex],
-                                    yData[j]
-                                )
-                            );
-                        }
-                    }
+            // Find the first column that has values
+            for (const key of [colorKey, 'value', 'y']) {
+                colorValArray = cSeries.getColumn(key);
+                if (colorValArray.length) {
+                    break;
                 }
             }
+
+
             // If color key extremes are already calculated, use them.
             if (calculatedExtremes) {
                 cSeries.minColorValue = (cSeries as any)[colorKey + 'Min'];
@@ -572,8 +559,8 @@ class ColorAxis extends Axis implements AxisLike {
     ): void {
         const axis = this,
             legendItem = axis.legendItem || {},
-            plotX = point && point.plotX,
-            plotY = point && point.plotY,
+            plotX = point?.plotX,
+            plotY = point?.plotY,
             axisPos = axis.pos,
             axisLen = axis.len;
 
@@ -687,7 +674,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendItem && axis.legendItem.label) {
+        if (axis.legendItem?.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -847,10 +834,12 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz
             } = axis,
             {
-                legend: legendOptions,
                 height: colorAxisHeight,
                 width: colorAxisWidth
             } = axis.options,
+            {
+                legend: legendOptions
+            } = chart.options,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
@@ -919,7 +908,7 @@ namespace ColorAxis {
 
     export interface Options extends ColorAxisLike.Options {
         dataClasses?: Array<DataClassesOptions>;
-        layout?: string;
+        layout?: 'horizontal'|'vertical';
         legend?: LegendOptions;
         marker?: MarkerOptions;
         showInLegend?: boolean;
@@ -956,4 +945,4 @@ export default ColorAxis;
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
-''; // detach doclet above
+''; // Detach doclet above

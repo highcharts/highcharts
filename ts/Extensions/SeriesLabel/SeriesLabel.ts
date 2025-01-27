@@ -155,7 +155,7 @@ function checkClearPoint(
         leastDistance = 16,
         boxesToAvoid = chart.boxesToAvoid;
 
-    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+    let distToOthersSquared = Number.MAX_VALUE, // Distance to other graphs
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
@@ -385,7 +385,7 @@ function compose(
  */
 function drawSeriesLabels(chart: Chart): void {
 
-    // console.time('drawSeriesLabels');
+    // Console.time('drawSeriesLabels');
     chart.boxesToAvoid = [];
 
     const labelSeries = chart.labelSeries || [],
@@ -449,7 +449,7 @@ function drawSeriesLabels(chart: Chart): void {
             points = series.interpolatedPoints,
             onArea = pick(labelOptions.onArea, !!series.area),
             results: Array<LabelClearPointObject> = [],
-            xData = series.xData || [];
+            xData = series.getColumn('x');
 
         let bBox: (BBoxObject|undefined),
             x: (number|undefined),
@@ -762,7 +762,7 @@ function drawSeriesLabels(chart: Chart): void {
     });
 
     fireEvent(chart, 'afterDrawSeriesLabels');
-    // console.timeEnd('drawSeriesLabels');
+    // Console.timeEnd('drawSeriesLabels');
 }
 
 /**
@@ -909,7 +909,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
                     deltaX = Math.abs(ctlPoint.chartX - last.chartX);
                     deltaY = Math.abs(ctlPoint.chartY - last.chartY);
                     delta = Math.max(deltaX, deltaY);
-                    if (delta > distance) {
+                    if (delta > distance && delta < 999) {
 
                         n = Math.ceil(delta / distance);
 
@@ -991,7 +991,8 @@ function onChartRedraw(this: Chart, e: Event): void {
         chart.series.forEach(function (series): void {
             const seriesLabelOptions = series.options.label || {},
                 label = series.labelBySeries,
-                closest = label && label.closest;
+                closest = label && label.closest,
+                yData = series.getColumn('y');
 
             if (
                 seriesLabelOptions.enabled &&
@@ -1005,9 +1006,9 @@ function onChartRedraw(this: Chart, e: Event): void {
                 if (
                     seriesLabelOptions.minFontSize &&
                     seriesLabelOptions.maxFontSize &&
-                    series.yData
+                    yData.length
                 ) {
-                    series.sum = (series.yData as any).reduce((
+                    series.sum = yData.reduce((
                         pv: number,
                         cv: number
                     ): number => (pv || 0) + (cv || 0), 0);
@@ -1137,4 +1138,4 @@ export default SeriesLabel;
  * @type {number}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

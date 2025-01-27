@@ -18,7 +18,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-
+import type DataTable from '../DataTable';
 
 /* *
  *
@@ -52,14 +52,15 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      */
     firstRowAsNames?: boolean;
     /**
-     * The key for a Google Spreadsheet to load. See [general information
-     * on GS](https://developers.google.com/gdata/samples/spreadsheet_sample).
+     * The API key for a Google Spreadsheet (user's credentials).
+     * See [general information on GS](https://developers.google.com/sheets/api/quickstart/js#create_an_api_key).
      */
     googleAPIKey: string;
     /**
-     * The Google Spreadsheet worksheet to use in combination with
-     * [googleSpreadsheetKey](#data.googleSpreadsheetKey). The available id's from
-     * your sheet can be read from `https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic`.
+     * The Google Spreadsheet key that identifies the sheet to use. See
+     * [general information on googleSpreadsheetKey](#data.googleSpreadsheetKey).
+     * The key for a sheet can be extracted from the sheet's URL
+     * `https://docs.google.com/spreadsheets/d/{key}`.
      */
     googleSpreadsheetKey: string;
     /**
@@ -80,10 +81,15 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * The number of the first row to load.
      */
     startRow?: number;
-    /**
-     * The number of the worksheet to load.
-     */
-    worksheet?: number;
+}
+
+/**
+ * Callback function allowing modification of the GoogleSheets data
+ * before parsing it. Must return an array of DataTable columns.
+ *
+ */
+export interface BeforeParseCallbackFunction {
+    (data: DataTable.Column[]): DataTable.Column[];
 }
 
 /* *

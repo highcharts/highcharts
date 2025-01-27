@@ -10,15 +10,16 @@ describe('MathModifier created columns and interaction.', () => {
             dgComponent = mComponents[1].component;
             assert.deepEqual(
                 dgComponent.dataGrid.options.columns,
-                {
-                    USD: {
+                [{
+                    id: 'USD',
+                    cells: {
                         editable: false
                     }
-                },
+                }],
                 'USD column is not editable'
             );
             hcComponent.chart.series.forEach(series => {
-                const draggableY = series.userOptions.dragDrop.draggableY;
+                const draggableY = series.options.dragDrop.draggableY;
                 if (series.name === 'USD') {
                     assert.equal(
                         draggableY,

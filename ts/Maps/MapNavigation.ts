@@ -69,12 +69,8 @@ declare module '../Core/Chart/ChartLike' {
  */
 function stopEvent(e: Event): void {
     if (e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        }
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
+        e.preventDefault?.();
+        e.stopPropagation?.();
         e.cancelBubble = true;
     }
 }
@@ -183,8 +179,7 @@ class MapNavigation {
                 stopEvent(e as any); // Stop default click event (#4444)
             };
 
-        let navOptions = chart.options.mapNavigation as MapNavigationOptions,
-            attr: ButtonThemeObject;
+        let navOptions = chart.options.mapNavigation as MapNavigationOptions;
 
         // Merge in new options in case of update, and register back to chart
         // options.
@@ -195,7 +190,7 @@ class MapNavigation {
 
         // Destroy buttons in case of dynamic update
         while (navButtons.length) {
-            (navButtons.pop() as any).destroy();
+            navButtons.pop()?.destroy();
         }
 
         if (
@@ -211,13 +206,17 @@ class MapNavigation {
             }
             objectEach(navOptions.buttons, (
                 buttonOptions: MapNavigationButtonOptions,
-                n: string
+                n: 'zoomIn'|'zoomOut'
             ): void => {
                 buttonOptions = merge(navOptions.buttonOptions, buttonOptions);
 
+                const attr: ButtonThemeObject = {
+                    padding: buttonOptions.padding
+                };
+
                 // Presentational
                 if (!chart.styledMode && buttonOptions.theme) {
-                    attr = buttonOptions.theme;
+                    extend(attr, buttonOptions.theme);
                     attr.style = merge(
                         buttonOptions.theme.style,
                         buttonOptions.style // #3203
@@ -252,8 +251,7 @@ class MapNavigation {
                     .attr({
                         width,
                         height,
-                        title: (chart.options.lang as any)[n],
-                        padding: buttonOptions.padding,
+                        title: chart.options.lang[n],
                         zIndex: 5
                     })
                     .add(mapNav.navButtonsGroup);
@@ -330,8 +328,7 @@ class MapNavigation {
             // Check the mapNavigation buttons collision with exporting button
             // and translate the mapNavigation button if they overlap.
             const adjustMapNavBtn = function (): void {
-                const expBtnBBox =
-                        chart.exportingGroup && chart.exportingGroup.getBBox();
+                const expBtnBBox = chart.exportingGroup?.getBBox();
 
                 if (expBtnBBox) {
                     const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
@@ -415,10 +412,14 @@ class MapNavigation {
                         e.target as any,
                         'highcharts-no-mousewheel'
                     )) {
+                        const initialZoom = chart.mapView?.zoom;
                         chart.pointer.onContainerMouseWheel(e);
-                        // Issue #5011, returning false from non-jQuery event
-                        // does not prevent default
-                        stopEvent(e as Event);
+
+                        // If the zoom level changed, prevent the default action
+                        // which is to scroll the page
+                        if (initialZoom !== chart.mapView?.zoom) {
+                            stopEvent(e as Event);
+                        }
                     }
                     return false;
                 }

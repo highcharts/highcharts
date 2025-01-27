@@ -16,6 +16,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -67,7 +68,7 @@ function weightedSumArray(
     // The sum is 5 + 4 + 3 + 2 + 1 = 15.
     const denominator = (pLen + 1) / 2 * pLen;
 
-    // reduce VS loop => reduce
+    // Reduce VS loop => reduce
     return (array.reduce(
         function (
             prev: [(number|null), (number|Array<number>)],
@@ -91,7 +92,7 @@ function populateAverage(
         wmaY = weightedSumArray(points, pLen),
         wmaX = xVal[i - 1];
 
-    points.shift(); // remove point until range < period
+    points.shift(); // Remove point until range < period
 
     return [wmaX, wmaY];
 }
@@ -157,7 +158,7 @@ class WMAIndicator extends SMAIndicator {
      * */
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
@@ -270,4 +271,4 @@ export default WMAIndicator;
  * @apioption series.wma
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

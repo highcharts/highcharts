@@ -86,7 +86,7 @@ class SVGElement3D extends SVGElement {
                 (renderer as any)[elem3d.pathType + 'Path'](args),
             zIndexes = (paths as any).zIndexes;
 
-        // build parts
+        // Build parts
         for (const part of elem3d.parts) {
             const attribs: SVGAttributes3D = {
                 'class': 'highcharts-3d-' + part,
@@ -129,7 +129,7 @@ class SVGElement3D extends SVGElement {
         const elem3d = this,
             newAttr = {} as AnyRecord,
             optionsToApply = [null, null, (verb || 'attr'), duration, complete],
-            hasZIndexes = values && values.zIndexes;
+            hasZIndexes = values?.zIndexes;
 
         if (!values) {
             newAttr[prop] = val;
@@ -137,7 +137,7 @@ class SVGElement3D extends SVGElement {
         } else {
             // It is needed to deal with the whole group zIndexing
             // in case of graph rotation
-            if (hasZIndexes && hasZIndexes.group) {
+            if (hasZIndexes?.group) {
                 elem3d.attr({
                     zIndex: hasZIndexes.group
                 });
@@ -146,7 +146,7 @@ class SVGElement3D extends SVGElement {
                 newAttr[part] = {};
                 newAttr[part][prop] = values[part];
 
-                // include zIndexes if provided
+                // Include zIndexes if provided
                 if (hasZIndexes) {
                     newAttr[part].zIndex = values.zIndexes[part] || 0;
                 }
@@ -171,12 +171,12 @@ class SVGElement3D extends SVGElement {
         const elem3d = this;
 
         for (const part of elem3d.parts) {
-            // if different props for different parts
+            // If different props for different parts
             if (partsProps) {
                 props = pick(partsProps[part], false);
             }
 
-            // only if something to set, but allow undefined
+            // Only if something to set, but allow undefined
             if (props !== false) {
                 elem3d[part][verb](props, duration, complete);
             }
@@ -268,7 +268,7 @@ class SVGElement3D extends SVGElement {
             ).get()
         });
 
-        // fill for animation getter (#6776)
+        // Fill for animation getter (#6776)
         elem3d.color = elem3d.fill = fill;
 
         return elem3d;

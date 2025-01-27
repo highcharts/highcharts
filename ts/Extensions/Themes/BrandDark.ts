@@ -43,8 +43,10 @@ namespace BrandDarkTheme {
      * */
 
     export const options: DeepPartial<DefaultOptions> = {
-        colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+        colors: [
+            '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+        ],
 
         chart: {
             backgroundColor: {
@@ -126,9 +128,8 @@ namespace BrandDarkTheme {
                 lowColor: '#f0f0f0'
             },
             map: {
-                borderColor: 'rgba(200, 200, 200, 1)',
+                borderColor: '#909090',
                 nullColor: '#78758C'
-
             }
         } as SeriesTypePlotOptions,
         drilldown: {
@@ -180,6 +181,18 @@ namespace BrandDarkTheme {
                 }
             }
         },
+        colorAxis: {
+            gridLineColor: '#45445d',
+            labels: {
+                style: {
+                    color: '#fff',
+                    fontSize: '12px'
+                }
+            },
+            minColor: '#342f95',
+            maxColor: '#2caffe',
+            tickColor: '#45445d'
+        },
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -213,7 +226,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#46465C',

@@ -15,7 +15,8 @@
             align: 'left'
         },
         subtitle: {
-            text: 'Click a map area to start sonifying as you interact with the map',
+            text: 'Click a map area to start sonifying as you interact with ' +
+                'the map',
             align: 'left'
         },
         sonification: {
@@ -105,7 +106,8 @@
             },
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
+                    valueDescriptionFormat: '{xDescription}, {point.value} ' +
+                        'people per square kilometer.'
                 }
             },
             events: {

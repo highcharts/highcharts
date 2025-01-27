@@ -1,0 +1,35 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+#container {
+    width: calc(100% - 30px);
+    background-color: rgb(241 245 249);
+    padding: 15px;
+}
+
+.row {
+    gap: 1rem;
+    display: flex;
+}
+
+.cell {
+    flex: 1 1 50%;
+    height: 300px;
+    background: #fff;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#dashboard-col-1 {
+    overflow: hidden;
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column;
+    }
+
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 100%;
+    }
+}

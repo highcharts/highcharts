@@ -1,7 +1,13 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 #csv {
     display: none;
+}
+
+@media screen and (max-width: 576px) {
+    #db-col-0-nolayout,
+    #db-col-2-nolayout {
+        flex: 1 1 100%;
+    }
 }

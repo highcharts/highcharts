@@ -25,10 +25,10 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type {
     SunburstDataLabelOptions,
+    SunburstSeriesLevelOptions,
     SunburstSeriesOptions
 } from './SunburstSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import CU from '../CenteredUtilities.js';
@@ -66,6 +66,9 @@ const {
     merge,
     splat
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
@@ -128,6 +131,7 @@ function getDlOptions(
     const point = params.point,
         shape: Partial<SunburstNode.NodeValuesObject> =
             isObject(params.shapeArgs) ? params.shapeArgs : {},
+        { end = 0, radius = 0, start = 0 } = shape,
         optionsPoint = (
             isObject(params.optionsPoint) ?
                 params.optionsPoint.dataLabels :
@@ -140,13 +144,15 @@ function getDlOptions(
                 params.level.dataLabels :
                 {}
         )[0],
-        options = merge<SunburstDataLabelOptions>({
-            style: {}
-        }, optionsLevel, optionsPoint);
+        options = merge<SunburstDataLabelOptions>(optionsLevel, optionsPoint),
+        style = options.style = options.style || {},
+        { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
         rotation: (number|undefined),
-        rotationMode = options.rotationMode;
+        rotationMode = options.rotationMode,
+        width: number|undefined = defined(style.width) ?
+            parseInt(style.width || '0', 10) : void 0;
 
     if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto' || rotationMode === 'circular') {
@@ -160,10 +166,7 @@ function getDlOptions(
                 rotationMode = 'auto';
             }
 
-            if (
-                (point.innerArcLength as any) < 1 &&
-                (point.outerArcLength as any) > (shape.radius as any)
-            ) {
+            if (innerArcLength < 1 && outerArcLength > radius) {
                 rotationRad = 0;
                 // Trigger setTextPath function to get textOutline etc.
                 if (point.dataLabelPath && rotationMode === 'circular') {
@@ -171,10 +174,13 @@ function getDlOptions(
                         enabled: true
                     };
                 }
-            } else if (
-                (point.innerArcLength as any) > 1 &&
-                (point.outerArcLength as any) > 1.5 * (shape.radius as any)
-            ) {
+                // If the slice is less than 180 degrees, set a reasonable width
+                // for fitting into the open slice (#22532)
+                if (end - start < Math.PI) {
+                    width = radius * 0.7;
+                }
+
+            } else if (innerArcLength > 1 && outerArcLength > 1.5 * radius) {
                 if (rotationMode === 'circular') {
                     options.textPath = {
                         enabled: true,
@@ -188,8 +194,7 @@ function getDlOptions(
             } else {
                 // Trigger the destroyTextPath function
                 if (
-                    point.dataLabel &&
-                    point.dataLabel.textPath &&
+                    point.dataLabel?.textPath &&
                     rotationMode === 'circular'
                 ) {
                     options.textPath = {
@@ -202,51 +207,56 @@ function getDlOptions(
 
         if (rotationMode !== 'auto' && rotationMode !== 'circular') {
 
-            if (point.dataLabel && point.dataLabel.textPath) {
+            if (point.dataLabel?.textPath) {
                 options.textPath = {
                     enabled: false
                 };
             }
-            rotationRad = (
-                (shape.end as any) -
-                ((shape.end as any) - (shape.start as any)) / 2
-            );
+            rotationRad = end - (end - start) / 2;
         }
 
         if (rotationMode === 'parallel') {
-            (options.style as any).width = Math.min(
-                (shape.radius as any) * 2.5,
-                ((point.outerArcLength as any) + point.innerArcLength) / 2
+            width = Math.min(
+                radius * 2.5,
+                (outerArcLength + innerArcLength) / 2
             );
         } else {
-            if (
-                !defined((options.style as any).width) &&
-                shape.radius
-            ) {
-                (options.style as any).width = point.node.level === 1 ?
-                    2 * shape.radius :
-                    shape.radius;
+            if (!defined(width) && radius) {
+                width = point.node.level === 1 ? 2 * radius : radius;
             }
         }
 
-        if (
-            rotationMode === 'perpendicular' &&
+        if (rotationMode === 'perpendicular') {
             // 16 is the inferred line height. We don't know the real line
             // yet because the label is not rendered. A better approach for this
             // would be to hide the label from the `alignDataLabel` function
             // when the actual line height is known.
-            point.outerArcLength as any < 16
-        ) {
-            (options.style as any).width = 1;
+            const h = 16;
+            if (outerArcLength < h) {
+                width = 1;
+            } else if (shape.radius) {
+                style.lineClamp = Math.floor(innerArcLength / h) || 1;
+
+                // When the slice is narrow (< 16px) in the inner end, compute a
+                // safe margin to avoid the label overlapping the border
+                // (#22532)
+                const safeMargin = innerArcLength < h ?
+                    radius * (
+                        (h - innerArcLength) /
+                        (outerArcLength - innerArcLength)
+                    ) :
+                    0;
+                width = radius - safeMargin;
+            }
         }
 
         // Apply padding (#8515)
-        (options.style as any).width = Math.max(
-            (options.style as any).width - 2 * (options.padding || 0),
+        width = Math.max(
+            (width || 0) - 2 * (options.padding || 0),
             1
         );
 
-        rotation = ((rotationRad as any) * rad2deg) % 180;
+        rotation = ((rotationRad || 0) * rad2deg) % 180;
         if (rotationMode === 'parallel') {
             rotation -= 90;
         }
@@ -271,14 +281,14 @@ function getDlOptions(
             // Center dataLabel - disable textPath
             options.textPath.enabled = false;
             // Setting width and padding
-            (options.style as any).width = Math.max(
+            width = Math.max(
                 (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         } else if (
-            point.dlOptions &&
-            point.dlOptions.textPath &&
+            point.dlOptions?.textPath &&
             !point.dlOptions.textPath.enabled &&
-            (rotationMode === 'circular')
+            rotationMode === 'circular'
         ) {
             // Bring dataLabel back if was a center dataLabel
             options.textPath.enabled = true;
@@ -287,12 +297,15 @@ function getDlOptions(
             // Enable rotation to render text
             options.rotation = 0;
             // Setting width and padding
-            (options.style as any).width = Math.max(
-                ((point.outerArcLength as any) +
-                (point.innerArcLength as any)) / 2 -
-                2 * (options.padding || 0), 1);
+            width = Math.max(
+                (outerArcLength + innerArcLength) / 2 -
+                2 * (options.padding || 0), 1
+            );
+            style.whiteSpace = 'nowrap';
         }
     }
+    style.width = width + 'px';
+
     return options;
 }
 
@@ -463,7 +476,7 @@ class SunburstSeries extends TreemapSeries {
 
     public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
     public nodeMap!: Record<string, SunburstNode>;
 
@@ -492,6 +505,11 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
+
+        // In sunburst dataLabel may be placed, but this should be reset to
+        // make sure the dataLabel can be aligned to a new position (#21913)
+        dataLabel.placed = false;
+
         return super.alignDataLabel.apply(this, arguments);
     }
 
@@ -637,11 +655,11 @@ class SunburstSeries extends TreemapSeries {
                 tooltipPos: [(shape as any).plotX, (shape as any).plotY],
                 drillId: getDrillId(point, idRoot, nodeMap),
                 name: '' + (point.name || point.id || point.index),
-                plotX: (shape as any).plotX, // used for data label position
-                plotY: (shape as any).plotY, // used for data label position
+                plotX: (shape as any).plotX, // Used for data label position
+                plotY: (shape as any).plotY, // Used for data label position
                 value: node.val,
                 isInside: visible,
-                isNull: !visible // used for dataLabels & point.draw
+                isNull: !visible // Used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
                 point: point,
@@ -696,7 +714,7 @@ class SunburstSeries extends TreemapSeries {
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
         children: Array<SunburstNode>,
-        options: SunburstSeriesOptions
+        options: (SunburstSeriesOptions|SunburstSeriesLevelOptions)
     ): Array<SunburstNode.NodeValuesObject> {
         let startAngle = parent.start;
 
@@ -778,9 +796,7 @@ class SunburstSeries extends TreemapSeries {
     public setShapeArgs(
         parent: SunburstNode,
         parentValues: SunburstNode.NodeValuesObject,
-        mapOptionsToLevel: (
-            Record<string, SunburstSeriesOptions>
-        )
+        mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>
     ): void {
         const level = parent.level + 1,
             options = mapOptionsToLevel[level],
@@ -856,15 +872,12 @@ class SunburstSeries extends TreemapSeries {
             rootId = updateRootId(series);
 
         let mapIdToNode = series.nodeMap,
-            mapOptionsToLevel: Record<string, SunburstSeriesOptions>,
+            mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // hidden series
-            series.processData();
-        }
         series.generatePoints();
 
         fireEvent(series, 'afterTranslate');
@@ -928,11 +941,11 @@ class SunburstSeries extends TreemapSeries {
             if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
-            // map
+            // Map
             nodeIds[point.id] = true;
         }
 
-        // reset object
+        // Reset object
         nodeIds = {};
     }
 
@@ -953,7 +966,7 @@ interface SunburstSeries {
 
 extend(SunburstSeries.prototype, {
     axisTypes: [],
-    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
     getCenter: getCenter,
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
@@ -992,7 +1005,7 @@ namespace SunburstSeries {
     }
 
     export interface DlOptionsParams {
-        level: SunburstSeriesOptions;
+        level: SunburstSeriesLevelOptions;
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;

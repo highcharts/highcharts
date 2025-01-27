@@ -37,6 +37,9 @@ Highcharts.setOptions({
     chart: {
         animation: false
     },
+    lang: {
+        locale: 'en-GB'
+    },
     plotOptions: {
         series: {
             animation: false,
@@ -95,6 +98,7 @@ Highcharts.setOptions({
     drilldown: {
         animation: false
     }
+
 });
 // Save default functions from the default options, as they are not stringified
 // to JSON
@@ -129,33 +133,8 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-
-/*
-// Override Highcharts and jQuery ajax functions to load from local
-function ajax(proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
-    };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
-    } else {
-        console.log('@ajax: Loading over network', attr.url);
-        attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
-            success.call(this, data);
-        };
-        return proceed.call(this, attr);
-    }
-}
-Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
-Highcharts.wrap(Highcharts, 'ajax', ajax);
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-*/
+Highcharts.radialDefaultOptionsRaw =
+    JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -246,6 +225,10 @@ function resetDefaultOptions(testName) {
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
     Highcharts.setOptions(defaultOptionsRaw);
+
+    // Restore radial axis defaults
+    Highcharts.RadialAxis.radialDefaultOptions =
+        JSON.parse(Highcharts.radialDefaultOptionsRaw);
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options
@@ -357,11 +340,39 @@ if (window.QUnit) {
         });
     };
 
+    window.setHCStyles = function (chart){
+        const styleElementID = 'test-hc-styles';
+        let styleElement = document.getElementById(styleElementID);
+
+        if (!chart.styledMode) {
+            styleElement?.remove();
+            return;
+        }
+
+        // TODO: Investigate unit-tests/boost/heatmap-styled-mode
+        if (chart.boosted) return;
+
+        if (
+            !styleElement &&
+            'highchartsCSS' in window
+        ) {
+            styleElement = document.createElement('style');
+            styleElement.id = styleElementID;
+
+            styleElement.appendChild(
+                document.createTextNode(window.highchartsCSS)
+            );
+
+            document.head.append(styleElement);
+        }
+    };
+
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {
                 console.log('Start "' + test.test.testName + '"');
             }
+
             currentTests.push(test.test.testName);
 
             // Reset container size that some tests may have modified
@@ -751,6 +762,8 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 var diff = compare(referencePixels, candidatePixels);
 
                 if (diff !== 0) {
+                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
+
                     __karma__.info({
                         filename: './samples/' + path + '/diff.gif',
                         canvasWidth: CANVAS_WIDTH,
@@ -760,7 +773,6 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                             candidatePixels
                         ]
                     });
-                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
                 }
                 resolve(diff);
             })

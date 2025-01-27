@@ -19,8 +19,9 @@
 import type CSSJSONObject from '../CSSJSONObject';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
-import type Layout from './Layout.js';
+import type Layout from './Layout';
 import type Serializable from '../Serializable';
+
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -298,7 +299,7 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
-        // copy to avoid problem with index when shifting array of cells during
+        // Copy to avoid problem with index when shifting array of cells during
         // the destroy.
         const rowCells = [...row.cells];
 
@@ -470,25 +471,10 @@ class Row extends GUIElement {
         this.changeVisibility(true, 'flex');
     }
 
-    public setHighlight(
-        remove?: boolean
-    ): void {
-        if (this.container) {
-            const cnt = this.container,
-                isSet = cnt.classList.contains(
-                    EditGlobals.classNames.rowContextHighlight
-                );
+    public setHighlight(): void {
+        const container = this.container;
 
-            if (!remove && !isSet) {
-                cnt.classList.add(
-                    EditGlobals.classNames.rowContextHighlight
-                );
-            } else if (remove && isSet) {
-                cnt.classList.remove(
-                    EditGlobals.classNames.rowContextHighlight
-                );
-            }
-        }
+        container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
     }
 
     // Row can have cells below each others.
@@ -569,6 +555,34 @@ namespace Row {
          **/
         id?: string;
         /**
+         * Options controlling the edit mode for the cell.
+         **/
+        editMode?: {
+            /**
+             * Individual options for the toolbar items.
+             **/
+            toolbarItems?: {
+                /**
+                 * Options for the `destroy` toolbar item.
+                 */
+                destroy: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                drag: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `settings` toolbar item.
+                 */
+                settings: {
+                    enabled?: boolean;
+                };
+            }
+        }
+        /**
          * The id of the container element.
          **/
         parentContainerId?: string;
@@ -609,7 +623,7 @@ namespace Row {
      * @internal
      **/
     export interface RowLevelInfo {
-        index: number; // level position in RowLevels Array
+        index: number; // Level position in RowLevels Array
         rowLevels: Array<RowLevel>;
         rowLevel: RowLevel;
     }

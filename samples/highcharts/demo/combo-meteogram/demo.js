@@ -342,7 +342,8 @@ Meteogram.prototype.getChartOptions = function () {
             shared: true,
             useHTML: true,
             headerFormat:
-                '<small>{point.x:%A, %b %e, %H:%M} - {point.point.to:%H:%M}</small><br>' +
+                '<small>{point.x:%A, %b %e, %H:%M} - ' +
+                '{point.point.to:%H:%M}</small><br>' +
                 '<b>{point.point.symbolName}</b><br>'
 
         },
@@ -369,7 +370,8 @@ Meteogram.prototype.getChartOptions = function () {
             type: 'datetime',
             tickInterval: 24 * 3600 * 1000,
             labels: {
-                format: '{value:<span style="font-size: 12px; font-weight: bold">%a</span> %b %e}',
+                format: '{value:<span style="font-size: 12px; font-weight: ' +
+                    'bold">%a</span> %b %e}',
                 align: 'left',
                 x: 3,
                 y: 8
@@ -464,7 +466,8 @@ Meteogram.prototype.getChartOptions = function () {
                 }
             },
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    ' ' +
                     '{series.name}: <b>{point.y}°C</b><br/>'
             },
             zIndex: 1,
@@ -480,8 +483,10 @@ Meteogram.prototype.getChartOptions = function () {
             pointPadding: 0,
             tooltip: {
                 valueSuffix: ' mm',
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-                    '{series.name}: <b>{point.minvalue} mm - {point.maxvalue} mm</b><br/>'
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    ' ' +
+                    '{series.name}: <b>{point.minvalue} mm - ' +
+                    '{point.maxvalue} mm</b><br/>'
             },
             grouping: false,
             dataLabels: {
@@ -572,7 +577,8 @@ Meteogram.prototype.createChart = function () {
 
 Meteogram.prototype.error = function () {
     document.getElementById('loading').innerHTML =
-        '<i class="fa fa-frown-o"></i> Failed loading data, please try again later';
+        '<i class="fa fa-frown-o"></i> Failed loading data, please try again ' +
+        'later';
 };
 
 /**

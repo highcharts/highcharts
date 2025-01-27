@@ -18,6 +18,7 @@ Highcharts.chart('container', {
         text: 'Royal Mail shares over time'
     },
     subtitle: {
-        text: 'Auto-detection of <em>mm/dd/YYYY</em> dates in Highcharts Data module'
+        text: 'Auto-detection of <em>mm/dd/YYYY</em> dates in Highcharts ' +
+            'Data module'
     }
 });

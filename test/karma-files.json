@@ -49,6 +49,8 @@
     "code/modules/sankey.src.js",
     "code/modules/arc-diagram.src.js",
     "code/modules/dependency-wheel.src.js",
+    "code/modules/pointandfigure.src.js",
+    "code/modules/renko.src.js",
     "code/modules/series-label.src.js",
     "code/modules/solid-gauge.src.js",
     "code/modules/sonification.src.js",
@@ -76,6 +78,7 @@
     "code/modules/flowmap.src.js",
     "code/modules/export-data.src.js",
     "code/modules/navigator.src.js",
+    "code/modules/textpath.src.js",
     "code/indicators/indicators-all.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",

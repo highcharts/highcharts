@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const navigatorOptions = {
     xAxis: {
         labels: {
@@ -43,12 +48,12 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Agriculture: 'y'
         },
         sync: {
@@ -61,12 +66,12 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'top-middle',
+        renderTo: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Industry: 'y'
         },
         sync: {
@@ -79,12 +84,12 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Services: 'y'
         },
         sync: {
@@ -97,23 +102,31 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'
         },
         dataGridOptions: {
-            columns: {
-                Agriculture: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Industry: {
-                    cellFormat: '{value:.1f}%'
-                },
-                Services: {
-                    cellFormat: '{value:.1f}%'
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Agriculture',
+                cells: {
+                    format: '{value:.1f}%'
                 }
-            }
+            }, {
+                id: 'Industry',
+                cells: {
+                    format: '{value:.1f}%'
+                }
+            }, {
+                id: 'Services',
+                cells: {
+                    format: '{value:.1f}%'
+                }
+            }]
         }
     }]
 });

@@ -39,6 +39,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isNumber,
     merge,
     pick
 } = U;
@@ -92,10 +93,36 @@ class DotPlotSeries extends ColumnSeries {
             options = series.options,
             renderer = series.chart.renderer,
             seriesMarkerOptions = options.marker,
-            itemPaddingTranslated = series.yAxis.transA *
-                (options.itemPadding as any),
-            borderWidth = series.borderWidth,
-            crisp = borderWidth % 2 ? 0.5 : 1;
+            total = this.points.reduce(
+                (acc, point): number => acc + Math.abs(point.y || 0),
+                0
+            ),
+            totalHeight = this.points.reduce(
+                (acc, point): number => acc + (point.shapeArgs?.height || 0),
+                0
+            ),
+            itemPadding = options.itemPadding || 0,
+            columnWidth = this.points[0]?.shapeArgs?.width || 0;
+
+        let slotsPerBar = options.slotsPerBar,
+            slotWidth = columnWidth;
+
+        // Find the suitable number of slots per column
+        if (!isNumber(slotsPerBar)) {
+            slotsPerBar = 1;
+            while (slotsPerBar < total) {
+                if (
+                    total / slotsPerBar <
+                    (totalHeight / slotWidth) * 1.2
+                ) {
+                    break;
+                }
+                slotsPerBar++;
+                slotWidth = columnWidth / slotsPerBar;
+            }
+        }
+
+        const height = (totalHeight * slotsPerBar) / total;
 
         for (const point of series.points) {
             const pointMarkerOptions = point.marker || {},
@@ -107,15 +134,21 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
                 ),
-                isSquare = symbol !== 'rect';
+                isSquare = symbol !== 'rect',
+                width = isSquare ? height : slotWidth,
+                shapeArgs = point.shapeArgs || {},
+                startX = (shapeArgs.x || 0) + (
+                    (shapeArgs.width || 0) -
+                    slotsPerBar * width
+                ) / 2,
+                positiveYValue = Math.abs(point.y ?? 0),
+                shapeY = (shapeArgs.y || 0),
+                shapeHeight = (shapeArgs.height || 0);
 
-            let yPos: number,
-                attr: SVGAttributes,
-                graphics: Array<SVGElement|undefined>,
-                size: number,
-                yTop: number,
-                x: number,
-                y: number;
+            let graphics: Array<SVGElement|undefined>,
+                x = startX,
+                y = point.negative ? shapeY : shapeY + shapeHeight - height,
+                slotColumn = 0;
 
             point.graphics = graphics = point.graphics || [];
             const pointAttr = point.pointAttr ?
@@ -133,51 +166,40 @@ class DotPlotSeries extends ColumnSeries {
                 delete pointAttr['stroke-width'];
             }
 
-            if (point.y !== null) {
+            if (typeof point.y === 'number') {
 
                 if (!point.graphic) {
                     point.graphic = renderer.g('point').add(series.group);
                 }
 
-                yTop = pick(point.stackY, point.y as any);
-                size = Math.min(
-                    point.pointWidth,
-                    series.yAxis.transA - itemPaddingTranslated
-                );
-                let i = Math.floor(yTop);
-                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--, i--) {
-
-                    x = point.barX + (
-                        isSquare ?
-                            point.pointWidth / 2 - size / 2 :
-                            0
-                    );
-                    y = series.yAxis.toPixels(yPos, true) +
-                        itemPaddingTranslated / 2;
-
-                    if (series.options.crisp) {
-                        x = Math.round(x) - crisp;
-                        y = Math.round(y) + crisp;
-                    }
-                    attr = {
-                        x: x,
-                        y: y,
-                        width: Math.round(isSquare ? size : point.pointWidth),
-                        height: Math.round(size),
+                for (let val = 0; val < positiveYValue; val++) {
+                    const attr = {
+                        x: x + width * itemPadding,
+                        y: y + height * itemPadding,
+                        width: width * (1 - 2 * itemPadding),
+                        height: height * (1 - 2 * itemPadding),
                         r: radius
                     };
 
-                    let graphic = graphics[i];
-
+                    let graphic = graphics[val];
                     if (graphic) {
                         graphic.animate(attr);
                     } else {
-                        graphic = renderer.symbol(symbol)
+                        graphic = renderer
+                            .symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
                     graphic.isActive = true;
-                    graphics[i] = graphic;
+                    graphics[val] = graphic;
+
+                    x += width;
+                    slotColumn++;
+                    if (slotColumn >= slotsPerBar) {
+                        slotColumn = 0;
+                        x = startX;
+                        y = point.negative ? y + height : y - height;
+                    }
                 }
             }
 

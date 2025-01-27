@@ -105,6 +105,12 @@ QUnit.test(
             }
         });
 
+        assert.strictEqual(
+            Highcharts.Pointer.unbindDocumentMouseUp.length,
+            1,
+            'For one document there should be one mouseUp event set, #21745.'
+        );
+
         chart1.destroy();
         chart2.destroy();
         container1.remove();
@@ -163,7 +169,9 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     point.showDragHandles();
 
     assert.strictEqual(
-        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        document.querySelector(
+            '.highcharts-drag-handle'
+        ).attributes.cursor.value,
         'grab',
         '#16470: DragHandle cursor should use general options.'
     );

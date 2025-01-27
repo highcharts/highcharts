@@ -45,7 +45,6 @@ import FormulaProcessor from '../Formula/FormulaProcessor.js';
 /**
  * Replaces formula strings in a table with calculated values.
  *
- * @private
  * @class
  * @name Highcharts.DataModifier.types.MathModifier
  * @augments Highcharts.DataModifier
@@ -178,8 +177,8 @@ class MathModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to extract column from and use as reference.
      *
-     * @param {string} columnNameOrAlias
-     * Name or alias of column to process.
+     * @param {string} columnName
+     * Name of column to process.
      *
      * @param {number} rowIndex
      * Row index to start the replacing process from.
@@ -189,11 +188,11 @@ class MathModifier extends DataModifier {
      */
     protected processColumn(
         table: DataTable,
-        columnNameOrAlias: string,
+        columnName: string,
         rowIndex: number = 0
     ): DataTable.Column {
         const alternativeSeparators = this.options.alternativeSeparators,
-            column = (table.getColumn(columnNameOrAlias, true) || [])
+            column = (table.getColumn(columnName, true) || [])
                 .slice(rowIndex > 0 ? rowIndex : 0);
 
         for (
@@ -212,7 +211,7 @@ class MathModifier extends DataModifier {
                 cell[0] === '='
             ) {
                 try {
-                    // use cache while formula string is repetitive
+                    // Use cache while formula string is repetitive
                     cacheFormula = (
                         cacheString === cell ?
                             cacheFormula :
@@ -221,7 +220,7 @@ class MathModifier extends DataModifier {
                                 alternativeSeparators
                             )
                     );
-                    // process parsed formula string
+                    // Process parsed formula string
                     column[i] =
                         FormulaProcessor.processFormula(cacheFormula, table);
                 } catch {

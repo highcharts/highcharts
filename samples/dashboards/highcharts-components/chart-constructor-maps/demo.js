@@ -13,12 +13,11 @@
             }]
         },
         components: [{
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
-                    styledMode: false,
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
@@ -30,7 +29,7 @@
                 }]
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             chartConstructor: 'chart',
             chartOptions: {

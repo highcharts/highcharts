@@ -42,11 +42,11 @@ const { isNumber } = U;
  *         Heavy heatmap
  *
  * @extends      plotOptions.scatter
- * @excluding    animationLimit, connectEnds, connectNulls, cropThreshold,
- *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
- *               linecap, lineWidth, pointInterval, pointIntervalUnit,
- *               pointRange, pointStart, shadow, softThreshold, stacking,
- *               step, threshold, cluster, dragDrop
+ * @excluding    animationLimit, cluster, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
+ *               getExtremesFromAll, jitter, legendSymbolColor, linecap,
+ *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
+ *               pointStart, shadow, softThreshold, stacking, step, threshold
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -317,7 +317,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     clip: true,
 
     /** @ignore-option */
-    pointRange: null, // dynamically set to colsize by default
+    pointRange: null, // Dynamically set to colsize by default
 
     tooltip: {
         pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
@@ -702,7 +702,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * @apioption series.heatmap.data.marker.states.select.heightPlus
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

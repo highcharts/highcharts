@@ -87,13 +87,15 @@ QUnit.test('General marker tests', function (assert) {
     assert.strictEqual(
         bBox.width - heatmap.options.marker.lineWidth,
         50,
-        'Marker\'s fixed width should set correctly through series.marker options.'
+        'Marker\'s fixed width should set correctly through series.marker ' +
+        'options.'
     );
 
     assert.strictEqual(
         bBox.height - heatmap.options.marker.lineWidth,
         50,
-        'Marker\'s fixed height should set correctly through series.marker options.'
+        'Marker\'s fixed height should set correctly through series.marker ' +
+        'options.'
     );
 
     var point = heatmap.points[4];
@@ -112,13 +114,15 @@ QUnit.test('General marker tests', function (assert) {
     assert.strictEqual(
         bBox.width - point.options.marker.lineWidth,
         20,
-        'Marker\'s fixed width lineWidth should set correctly through point.marker.'
+        'Marker\'s fixed width lineWidth should set correctly through ' +
+        'point.marker.'
     );
 
     assert.strictEqual(
         bBox.height - point.options.marker.lineWidth,
         20,
-        'Marker\'s fixed height lineWidth should set correctly through point.marker.'
+        'Marker\'s fixed height lineWidth should set correctly through ' +
+        'point.marker.'
     );
 
     assert.strictEqual(

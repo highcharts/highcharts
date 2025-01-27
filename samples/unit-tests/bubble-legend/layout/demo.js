@@ -1,26 +1,24 @@
 QUnit.test('Bubble legend ranges', function (assert) {
-    var bubbleLegendItem,
-        seriesItem,
-        chart = Highcharts.chart('container', {
-            legend: {
-                align: 'right',
-                layout: 'vertical',
-                bubbleLegend: {
-                    enabled: true,
-                    legendIndex: 0
-                }
-            },
+    const chart = Highcharts.chart('container', {
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            bubbleLegend: {
+                enabled: true,
+                legendIndex: 0
+            }
+        },
 
-            series: [
-                {
-                    type: 'bubble',
-                    data: [
-                        [1, 1, 1],
-                        [2, 2, 2]
-                    ]
-                }
-            ]
-        });
+        series: [
+            {
+                type: 'bubble',
+                data: [
+                    [1, 1, 1],
+                    [2, 2, 2]
+                ]
+            }
+        ]
+    });
 
     // Check if there is only one bubble-legend
     assert.strictEqual(
@@ -41,8 +39,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
         'Bubble legend was properly positioned'
     );
 
-    bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group;
-    seriesItem = chart.legend.allItems[0].legendItem.group;
+    const bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group,
+        seriesItem = chart.legend.allItems[0].legendItem.group;
 
     assert.strictEqual(
         bubbleLegendItem.translateY > seriesItem.translateY &&
@@ -86,17 +84,19 @@ QUnit.test('Bubble legend ranges', function (assert) {
         data: [
             [1, 4, 4],
             [2, 5, 5]
-        ],
-        events: {
-            legendItemClick(e) {
-                e.preventDefault();
-            }
-        }
+        ]
     }, false);
 
     chart.legend.update({
         enabled: true,
-        floating: false
+        floating: false,
+        events: {
+            itemClick(e) {
+                if (e.legendItem.index === 1) {
+                    e.preventDefault();
+                }
+            }
+        }
     });
 
     chart.series[1].legendItem.group.element.dispatchEvent(new Event('click'));
@@ -149,30 +149,50 @@ QUnit.test('Negative values (#9678)', function (assert) {
 });
 
 QUnit.test('Bubble legend with maps', function (assert) {
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
+        colorAxis: {},
         legend: {
             bubbleLegend: {
                 enabled: true
             }
         },
-        series: [
-            {
-                mapData: Highcharts.maps['countries/bn/bn-all']
-            },
-            {
-                joinBy: ['code', 'iso-a2'],
-                type: 'mapbubble',
-                data: [
-                    ['tu', 10],
-                    ['be', 20]
-                ]
-            }
-        ]
+        series: [{
+            mapData: Highcharts.maps['countries/bn/bn-all'],
+            data: [
+                ['bn-tu', 10],
+                ['bn-be', 20]
+            ]
+        }, {
+            type: 'mapbubble',
+            mapData: Highcharts.maps['countries/bn/bn-all'],
+            keys: ['hc-key', 'z', 'x', 'y'],
+            data: [
+                ['bn-tu', 10, 2, 3],
+                ['bn-be', 20]
+            ]
+        }]
     });
 
     assert.strictEqual(
         Object.keys(chart.yAxis[0].ticks).length,
         0,
         'Grid lines and ticks should not be rendered (#11448).'
+    );
+
+    const legendBoxBeforeRedraw = chart.legend.contentGroup.getBBox();
+
+    chart.redraw();
+
+    assert.ok(
+        chart.legend.contentGroup.getBBox().y === legendBoxBeforeRedraw.y,
+        `Vertical position of legend shouldn't be changd after chart redraw
+        (#20710).`
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].axisGroup,
+        void 0,
+        `Axis shouldn't be created for map series, mapbubble series and bubble
+        legend map chart (#20948).`
     );
 });

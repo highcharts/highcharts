@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 * {
@@ -16,10 +16,6 @@
 
 .highcharts-dark .highcharts-point {
     fill-opacity: 0.9;
-}
-
-.datagrid {
-    height: 100%;
 }
 
 #dashboard-col-0 h2 {
@@ -41,5 +37,29 @@
 @media (prefers-color-scheme: dark) {
     .highcharts-point {
         fill-opacity: 0.9;
+    }
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 100%;
     }
 }

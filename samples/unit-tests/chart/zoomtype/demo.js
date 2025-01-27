@@ -95,7 +95,8 @@ QUnit.test('Zoom type', function (assert) {
     controller.pan([500, plotTop + 10], [530, plotTop + 10]);
     assert.ok(
         chart.resetZoomButton,
-        'Y zoom should work when panning at the top of the plot on inverted chart (#18103)'
+        'Y zoom should work when panning at the top of the plot on inverted ' +
+        'chart (#18103)'
     );
 });
 
@@ -484,7 +485,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[1].min, chart.yAxis[1].max],
         yAxis1,
-        'Y zoom on the first pane should not affect y-zoom on the second pane (#1289)'
+        'Y zoom on the first pane should not affect y-zoom on the second ' +
+        'pane (#1289)'
     );
 
     chart.zoomOut();
@@ -495,7 +497,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[0].min, chart.yAxis[0].max],
         yAxis0,
-        'Y zoom on the second pane should not affect y-zoom on the first pane (#1289)'
+        'Y zoom on the second pane should not affect y-zoom on the first ' +
+        'pane (#1289)'
     );
 
     chart = Highcharts.stockChart('container', {
@@ -548,7 +551,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[1].min, chart.yAxis[1].max],
         yAxis1,
-        'Y zoom on the first pane should not affect y-zoom on the second pane when chart inverted (#1289)'
+        'Y zoom on the first pane should not affect y-zoom on the second ' +
+        'pane when chart inverted (#1289)'
     );
 
     chart.zoomOut();
@@ -559,7 +563,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[0].min, chart.yAxis[0].max],
         yAxis0,
-        'Y zoom on the second pane should not affect y-zoom on the first pane when chart inverted (#1289)'
+        'Y zoom on the second pane should not affect y-zoom on the first ' +
+        'pane when chart inverted (#1289)'
     );
 });
 

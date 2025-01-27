@@ -1,0 +1,108 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+/* HIGHCHARTS */
+:root,
+.highcharts-light {
+    --highcharts-color-0: #9a9a9a;
+}
+
+.chart-custom-label {
+    text-shadow:
+        -1px -1px 0 var(--highcharts-background-color),
+        1px -1px 0 var(--highcharts-background-color),
+        -1px 1px 0 var(--highcharts-background-color),
+        1px 0.5px 0 var(--highcharts-background-color);
+    font-weight: 600;
+    font-size: 24px;
+}
+
+/* DASHBOARDS */
+
+#slider-cell {
+    max-width: 200px;
+}
+
+.highcharts-dashboards-component-title {
+    text-align: center;
+}
+
+/* CUSTOM COMPONENT */
+
+.sc-container {
+    display: flex;
+    justify-content: center;
+}
+
+.sc-slider-side {
+    position: relative;
+    height: 330px;
+}
+
+.sc-slider {
+    appearance: slider-vertical;
+    height: 330px;
+    width: 30px;
+}
+
+.sc-handle-label-container {
+    position: relative;
+    height: 20px;
+}
+
+.sc-handle-label {
+    position: absolute;
+    pointer-events: none;
+    left: 0;
+}
+
+.sc-tick-slider-label {
+    position: absolute;
+    right: -6px;
+    font-size: 12px;
+    color: var(--highcharts-neutral-color-60);
+}
+
+.sc-tick-slider-label::after {
+    content: "\00a0-";
+}
+
+.sc-min-slider-label {
+    bottom: 1px;
+}
+
+.sc-middle-slider-label {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.sc-max-slider-label {
+    top: 4px;
+}
+
+/* RESPONSIVENESS */
+
+@media screen and (max-width: 1000px) {
+    .chart-custom-label {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #chart-cell {
+        flex: 1 1 100%;
+    }
+
+    #slider-cell {
+        max-width: 100%;
+        height: 200px;
+    }
+
+    .sc-slider-side,
+    .sc-slider {
+        height: 135px;
+    }
+}

@@ -1,6 +1,11 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Controllable image annotation'
+    },
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         events: {
             load: function () {
                 this.annotations.forEach(function (annotation) {

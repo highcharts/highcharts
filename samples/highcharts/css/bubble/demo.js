@@ -2,7 +2,9 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'bubble',
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         styledMode: true
     },
 
@@ -91,7 +93,14 @@ Highcharts.chart('container', {
             { x: 71, y: 93.2, z: 24.7, name: 'UK', country: 'United Kingdom' },
             { x: 69.2, y: 57.6, z: 10.4, name: 'IT', country: 'Italy' },
             { x: 68.6, y: 20, z: 16, name: 'RU', country: 'Russia' },
-            { x: 65.5, y: 126.4, z: 35.3, name: 'US', country: 'United States' },
+            {
+                x: 65.5,
+                y: 126.4,
+                z: 35.3,
+                name:
+                    'US',
+                country: 'United States'
+            },
             { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },
             { x: 63.4, y: 51.8, z: 15.4, name: 'PT', country: 'Portugal' },
             { x: 64, y: 82.9, z: 31.3, name: 'NZ', country: 'New Zealand' }

@@ -3,12 +3,10 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Domestic passenger transport by mode of transport, Norway',
-        align: 'left'
+        text: 'Domestic passenger transport by mode of transport, Norway'
     },
     subtitle: {
-        text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport">SSB</a>',
-        align: 'left'
+        text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport">SSB</a>'
     },
     xAxis: {
         categories: ['2019', '2020', '2021']
@@ -20,7 +18,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
         shared: true
     },
     plotOptions: {

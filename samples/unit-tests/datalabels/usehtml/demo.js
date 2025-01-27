@@ -131,7 +131,8 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
     assert.strictEqual(
         label.nodeName,
         'SPAN',
-        'Created dataLabel should be rendered as HTML element, not SVG (#10765).'
+        'Created dataLabel should be rendered as HTML element, not SVG ' +
+        '(#10765).'
     );
 
     assert.strictEqual(
@@ -163,9 +164,12 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
         'Rotated data label box should be placed higher that unrotated, #20685.'
     );
 
-    const htmlLabel = chart.renderer.label('Label', 0, 0, undefined,
-            undefined, undefined, true).add(),
-        standardLabel = chart.renderer.label('Label', 0, 0).add();
+    const htmlLabel = chart.renderer.label(
+            'Label', 0, 0, undefined,
+            undefined, undefined, true
+        ).add(),
+        standardLabel = chart.renderer.label('Label', 0, 0).add(),
+        isWindows = Highcharts.win.navigator.platform.indexOf('Win') >= 0;
 
     [-90, -60, -30, 0, 30, 60, 90].forEach(rotation => {
         htmlLabel.attr({
@@ -182,7 +186,7 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
             assert.close(
                 htmlBox[property],
                 standardBox[property],
-                3,
+                (Highcharts.isFirefox || isWindows) ? 5 : 1,
                 `For rotation ${rotation}, the ${property} property should be` +
                 ' similar for HTML and non-HTML label'
             );

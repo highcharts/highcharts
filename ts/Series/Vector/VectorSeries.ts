@@ -126,19 +126,19 @@ class VectorSeries extends ScatterSeries {
             // The stem and the arrow head. Draw the arrow first with rotation
             // 0, which is the arrow pointing down (vector from north to south).
             path: SVGPath = [
-                ['M', 0, 7 * u + o], // base of arrow
+                ['M', 0, 7 * u + o], // Base of arrow
                 ['L', -1.5 * u, 7 * u + o],
                 ['L', 0, 10 * u + o],
                 ['L', 1.5 * u, 7 * u + o],
                 ['L', 0, 7 * u + o],
-                ['L', 0, -10 * u + o] // top
+                ['L', 0, -10 * u + o] // Top
             ];
 
         return path;
     }
 
     /*
-    drawLegendSymbol: function (legend, item) {
+    DrawLegendSymbol: function (legend, item) {
         let options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
@@ -244,7 +244,7 @@ class VectorSeries extends ScatterSeries {
     public translate(): void {
         Series.prototype.translate.call(this);
 
-        this.lengthMax = arrayMax(this.lengthData as any);
+        this.lengthMax = arrayMax(this.getColumn('length'));
     }
 
 }

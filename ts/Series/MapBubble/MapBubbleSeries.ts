@@ -200,10 +200,10 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         /**
-         * The minimum for the Z value range. Defaults to the highest Z
-         * value in the data.
+         * The maximum for the Z value range. Defaults to the highest Z value in
+         * the data.
          *
-         * @see [zMax](#plotOptions.mapbubble.zMin)
+         * @see [zMin](#plotOptions.mapbubble.zMin)
          *
          * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
          *         Z has a possible range of 0-100
@@ -286,25 +286,6 @@ class MapBubbleSeries extends BubbleSeries {
         this.translateBubble();
     }
 
-    updateParallelArrays(
-        point: Point,
-        i: (number|string),
-        iArgs?: Array<any>
-    ): void {
-        super.updateParallelArrays.call(
-            this,
-            point,
-            i,
-            iArgs
-        );
-
-        let processedXData = this.processedXData,
-            xData = this.xData;
-
-        if (processedXData && xData) {
-            processedXData.length = xData.length;
-        }
-    }
 }
 
 /* *
@@ -449,4 +430,4 @@ export default MapBubbleSeries;
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

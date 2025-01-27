@@ -19,6 +19,7 @@ import type {
     AroonParamsOptions
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -112,7 +113,7 @@ class AroonIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             period: 25
         },
         marker: {
@@ -122,7 +123,7 @@ class AroonIndicator extends SMAIndicator {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
         },
         /**
-         * aroonDown line options.
+         * AroonDown line options.
          */
         aroonDown: {
             /**
@@ -166,7 +167,7 @@ class AroonIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         const period = (params.period as any),
@@ -285,4 +286,4 @@ export default AroonIndicator;
  * @apioption series.aroon
  */
 
-''; // to avoid removal of the above jsdoc
+''; // To avoid removal of the above jsdoc

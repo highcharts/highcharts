@@ -102,6 +102,8 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      *
      * @sample {highcharts} highcharts/series-column/centerincategory/
      *         Center in category
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Center in category, stacked and grouped
      *
      * @since   8.0.1
      * @product highcharts highstock gantt
@@ -138,7 +140,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      */
 
     /** @ignore-option */
-    marker: null as any, // point options are specified in the base options
+    marker: null as any, // Point options are specified in the base options
 
     /**
      * The maximum allowed pixel width for a column, translated to the
@@ -348,7 +350,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
         y: void 0
     },
 
-    // false doesn't work well: https://jsfiddle.net/highcharts/hz8fopan/14/
+    // False doesn't work well: https://jsfiddle.net/highcharts/hz8fopan/14/
     /** @ignore-option */
     startFromThreshold: true,
 
@@ -539,7 +541,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
  * @apioption series.column.states.select
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file
 
 /* *
  *

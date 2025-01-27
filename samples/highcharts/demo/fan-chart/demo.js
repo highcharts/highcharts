@@ -4,7 +4,9 @@ const colors = Highcharts.getOptions().colors;
 Highcharts.chart('container', {
     chart: {
         type: 'arearange',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'EU GDP'

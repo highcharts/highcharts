@@ -38,7 +38,7 @@ export type SymbolKey = keyof SymbolTypeRegistry;
 export type SymbolType = SymbolTypeRegistry[SymbolKey];
 
 export interface SymbolTypeRegistry {
-    // add with declare module pattern
+    // Add with declare module pattern
 }
 
 /* *

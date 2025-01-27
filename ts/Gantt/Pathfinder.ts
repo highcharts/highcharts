@@ -27,7 +27,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import PathfinderAlgorithms from './PathfinderAlgorithms.js';
-import PathfinderComposition from './PathfinderComposition.js';
+import PathfinderComposition, { PointConnectOptionsObject } from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 const {
@@ -301,21 +301,23 @@ class Pathfinder {
                             .dependency;
                     }
 
-                    const connects = (
-                        point.options?.connect &&
-                        splat(point.options.connect)
-                    );
+                    const connects = point.options?.connect ?
+                        splat(point.options.connect) :
+                        [];
 
                     let to: (Axis|Series|Point|undefined);
 
-                    if (point.visible && point.isInside !== false && connects) {
-                        connects.forEach(function (
-                            connect: (string|Record<string, string>)
-                        ): void {
-                            to = chart.get(
-                                typeof connect === 'string' ?
-                                    connect : connect.to
-                            );
+                    if (point.visible && point.isInside !== false) {
+                        connects.forEach((
+                            connect
+                        ): void => {
+                            const toId = typeof connect === 'string' ?
+                                connect :
+                                (connect as PointConnectOptionsObject).to;
+
+                            if (toId) {
+                                to = chart.get(toId);
+                            }
                             if (
                                 to instanceof Point &&
                                 to.series.visible &&
@@ -438,9 +440,12 @@ class Pathfinder {
      *
      * @param {Object} options
      *        Options for the calculation. Currently only
-     *        options.algorithmMargin.
+     *        `options.algorithmMargin`.
      *
-     * @return {Array<object>}
+     * @param {number} options.algorithmMargin
+     *        The algorithm margin to use for the obstacles.
+
+    * @return {Array<object>}
      *         An array of calculated obstacles. Each obstacle is defined as an
      *         object with xMin, xMax, yMin and yMax properties.
      */

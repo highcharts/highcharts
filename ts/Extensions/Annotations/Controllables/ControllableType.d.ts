@@ -19,7 +19,7 @@ export type ControllableLabelType = ControllableLabelTypeRegistry[
 ]['prototype'];
 
 export interface ControllableLabelTypeRegistry {
-    // placeholder to add class types
+    // Placeholder to add class types
 }
 
 export type ControllableShapeType = ControllableShapeTypeRegistry[
@@ -27,7 +27,7 @@ export type ControllableShapeType = ControllableShapeTypeRegistry[
 ]['prototype'];
 
 export interface ControllableShapeTypeRegistry {
-    // placeholder to add class types
+    // Placeholder to add class types
 }
 
 export type ControllableType = (ControllableLabelType|ControllableShapeType);

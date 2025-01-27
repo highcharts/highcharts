@@ -20,10 +20,7 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp',
-    small: 'sm',
-    medium: 'md',
-    large: 'lg'
+    dataLabels: 'Data merkelapp'
 };
 
 describe('Editable component options', () => {
@@ -38,17 +35,6 @@ describe('Editable component options', () => {
             .should('have.text', norwegianEditMode.editMode);
         cy.get('.highcharts-dashboards-edit-context-menu-item').eq(1)
             .should('have.text', norwegianEditMode.viewFullscreen);
-    });
-
-    it('Lang should be applied on responsive buttons', function() {
-        cy.get('.highcharts-dashboards-edit-tools .highcharts-dashboards-edit-tools-btn').eq(0)
-            .should('have.text', norwegianEditMode.small);
-        cy.get('.highcharts-dashboards-edit-tools .highcharts-dashboards-edit-tools-btn').eq(1)
-            .should('have.text', norwegianEditMode.medium);
-        cy.get('.highcharts-dashboards-edit-tools .highcharts-dashboards-edit-tools-btn').eq(2)
-            .should('have.text', norwegianEditMode.large);
-        cy.get('.highcharts-dashboards-edit-tools .highcharts-dashboards-edit-tools-btn').eq(3)
-            .should('have.text', norwegianEditMode.addComponent);
     });
 
     it('Lang should be applied on sidebar options', function() {
@@ -104,7 +90,7 @@ describe('Editable component options', () => {
         cy.get('.highcharts-dashboards-component').first().click({ force: true });
 
         // Delete row
-        cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-content > .highcharts-dashboards-edit-label-text')
             .should('have.text', norwegianEditMode.confirmDestroyRow);
         cy.get('.highcharts-dashboards-edit-popup-close').eq(0).click();

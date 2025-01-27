@@ -1,5 +1,8 @@
 // theme for planets
-const themeColors = ['#31dcff', '#88e276', '#fe874c', '#c1e160', '#53f7fc', '#64E572', '#ff81ce', '#ffe372', '#d5b5e7'];
+const themeColors = [
+    '#31dcff', '#88e276', '#fe874c', '#c1e160', '#53f7fc', '#64E572',
+    '#ff81ce', '#ffe372', '#d5b5e7'
+];
 
 Highcharts.theme = {
     colors: themeColors,
@@ -14,9 +17,25 @@ Highcharts.setOptions(Highcharts.theme);
 const animate = true;
 
 // planet data/info
-const gasLabels = ['C0<sub>2</sub>', 'N', 'CH<sub>4</sub>', 'Ar', 'O', 'Na', 'H', 'He', 'Other'];
-const gases = ['Carbon<br>Dioxide', 'Nitrogen', 'Methane', 'Argon', 'Oxygen',  'Sodium', 'Hydrogen', 'Helium', 'Other'];
-const gasStyles = ['carbon-dioxide', 'nitrogen', 'methane', 'argon', 'oxygen', 'sodium', 'hydrogen', 'helium', 'other'];
+const gasLabels = [
+    'C0<sub>2</sub>',
+    'N',
+    'CH<sub>4</sub>',
+    'Ar',
+    'O',
+    'Na',
+    'H',
+    'He',
+    'Other'
+];
+const gases = [
+    'Carbon<br>Dioxide', 'Nitrogen', 'Methane', 'Argon', 'Oxygen',
+    'Sodium', 'Hydrogen', 'Helium', 'Other'
+];
+const gasStyles = [
+    'carbon-dioxide', 'nitrogen', 'methane', 'argon', 'oxygen', 'sodium',
+    'hydrogen', 'helium', 'other'
+];
 const srcURL = 'https://www.highcharts.com/samples/graphics/homepage/';
 const planetImages = [
     'sun',
@@ -38,7 +57,8 @@ const planets = [
     'Jupiter',
     'Saturn',
     'Uranus',
-    'Neptune'];
+    'Neptune'
+];
 // /these correspond to the gases
 const atmosphereData = [
     [0, 0, 96, 0, 95, 0, 0, 0, 0],
@@ -93,15 +113,24 @@ function buildData(chart, planet) {
                     const planet = planetImages[planetIndex];
                     const gas = gasStyles[series];
                     const label = $('#gas' + series);
-                    const dataLabel = $('.highcharts-data-label-color-' + seriesToShow[jj] + ' .gas-label');
+                    const dataLabel = $(
+                        '.highcharts-data-label-color-' + seriesToShow[jj] +
+                        ' .gas-label'
+                    );
                     $(dataLabel).addClass('on');
-                    const color = '#000';// Highcharts.color(themeColors[seriesToShow[jj]]).brighten(-0.7).get('rgb');
+                    const color = '#000';
                     // chart.series[series].show();
                     $(label).addClass(gas);
                     $(label).addClass('on');
-                    $(label).find('.planets-element-value').css({ color: color });
-                    $(label).find('.planets-element-symbol').css({ color: color });
-                    $(label).find('.planets-element-name').css({ color: color });
+                    $(label).find(
+                        '.planets-element-value'
+                    ).css({ color: color });
+                    $(label).find(
+                        '.planets-element-symbol'
+                    ).css({ color: color });
+                    $(label).find(
+                        '.planets-element-name'
+                    ).css({ color: color });
                     $(dataLabel).addClass(planet);
                     $(dataLabel).addClass(gas);
 
@@ -117,7 +146,8 @@ function buildData(chart, planet) {
 // /and series properties based on chart size
 const planetStyles = function (index, chart) {
     const title = planets[index];
-    let titleHTML = '<div class="planets-chart-title">Atmospheric composition of</div>';
+    let titleHTML = '<div class="planets-chart-title">Atmospheric ' +
+        'composition of</div>';
     titleHTML += '<div class="planets-title-container" style="display:none">';
     titleHTML += ' <h3 class="planets">' + title + '</h3></div>';
     chart.update({
@@ -126,7 +156,10 @@ const planetStyles = function (index, chart) {
         }
     });
     // /set the background image to the right planet and show it
-    $('.planets-title-container').css({ backgroundImage: 'url(' + srcURL + planetImages[index] + '.png)' });
+    $('.planets-title-container')
+        .css({
+            backgroundImage: 'url(' + srcURL + planetImages[index] + '.png)'
+        });
     $('.planets-title-container').fadeIn(1000);
 
 };
@@ -164,15 +197,21 @@ Highcharts.chart('container', {
         zIndex: 20,
         useHTML: true,
         labelFormatter: function () {
-            let data = this.yData[0] + '%';
+            let data = this.getColumn('y')[0] + '%';
             const index = this.index;
             if (data === 'undefined%') {
                 data = '--';
             }
-            let htmlString = '<div id="gas' + index + '" class="planets-element-box">';
-            htmlString += '<div class="planets-element-symbol">' + gasLabels[index] + '</div>';
-            htmlString += '<div class="planets-element-value">' + data + '</div>';
-            htmlString += '<div class="planets-element-name">'  + gases[index] + '</div></div>';
+            let htmlString =
+                '<div id="gas' + index + '" class="planets-element-box">';
+            htmlString +=
+                '<div class="planets-element-symbol">' + gasLabels[index] +
+                '</div>';
+            htmlString +=
+                '<div class="planets-element-value">' + data + '</div>';
+            htmlString +=
+                '<div class="planets-element-name">'  + gases[index] +
+                '</div></div>';
             return htmlString;
         }
     },
@@ -216,9 +255,11 @@ Highcharts.chart('container', {
                 useHTML: true,
                 formatter: function () {
                     const index = this.colorIndex;
-                    let htmlString = '<div class="gas-label" style="position:absolute;';
+                    let htmlString = '<div class="gas-label" ' +
+                        'style="position:absolute;';
                     htmlString += 'border-radius:4px;padding:4px;';
-                    htmlString += ';background-color:#fff;">' + gases[index] + ': ' + this.y + '% </div>';
+                    htmlString += ';background-color:#fff;">' +
+                        gases[index] + ': ' + this.y + '% </div>';
                     if (this.y > 0) {
                         return htmlString;
                     }

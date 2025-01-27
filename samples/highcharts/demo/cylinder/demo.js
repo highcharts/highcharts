@@ -18,7 +18,10 @@ Highcharts.chart('container', {
             'target="_blank">FHI</a>'
     },
     xAxis: {
-        categories: ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+'],
+        categories: [
+            '0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69',
+            '70-79', '80-89', '90+'
+        ],
         title: {
             text: 'Age groups'
         },
@@ -36,7 +39,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<b>Age: {point.x}</b><br>'
+        headerFormat: '<b>Age: {category}</b><br>'
     },
     plotOptions: {
         series: {
@@ -45,8 +48,10 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [95321, 169339, 121105, 136046, 106800, 58041, 26766, 14291,
-            7065, 3283],
+        data: [
+            95321, 169339, 121105, 136046, 106800, 58041, 26766, 14291,
+            7065, 3283
+        ],
         name: 'Cases',
         showInLegend: false
     }]

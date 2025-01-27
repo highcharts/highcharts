@@ -9,7 +9,10 @@ Highcharts.chart('container', {
         text: 'Source: <a href="https://theblog.okcupid.com/your-looks-and-your-inbox-8715c0f1561e">theblog.okcupid</a>'
     },
     xAxis: {
-        categories: ['Least attractive male recipients', '', '', 'Medium male recipients', '', '', 'Most attractive male recipients']
+        categories: [
+            'Least attractive male recipients', '', '',
+            'Medium male recipients', '', '', 'Most attractive male recipients'
+        ]
     },
 
     yAxis: {
@@ -19,7 +22,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         formatter: function () {
-            return 'Category: <b>' + this.point.series.name + '</b><br>Message success percentage is <b>' + this.y + '</b>%';
+            return 'Category: <b>' + this.point.series.name +
+                '</b><br>Message success percentage is <b>' + this.y + '</b>%';
         }
     },
     legend: {

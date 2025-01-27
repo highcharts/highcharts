@@ -634,6 +634,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', '')
             .replace(/>/g, '>\n'),
+        // eslint-disable-next-line max-len
         '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\">Category</th><th class=\"highcharts-text\" scope=\"col\">Drop 2</th><th class=\"highcharts-text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
             .replace(/>/g, '>\n'),
         'Empty data in table'
@@ -679,6 +680,7 @@ QUnit.test('Multiple X axes (#119)', function (assert) {
 
     assert.equal(
         chart.getCSV(),
+        // eslint-disable-next-line max-len
         '"Category","Series 1","Category","Series 2","Series 3"\n"Jan",3,"Apples",8,3\n"Feb",5,"Bananas",9,6\n"Mar",6,"Oranges",6,2',
         'Multiple X axes'
     );
@@ -712,6 +714,7 @@ QUnit.test('Stock chart', function (assert) {
 
     assert.equal(
         chart.getCSV(),
+        // eslint-disable-next-line max-len
         '"DateTime","Series 1"\n"2013-01-01",1\n"2013-01-02",3\n"2013-01-03",2\n"2013-01-04",4',
         'Stock chart'
     );
@@ -798,7 +801,7 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         'Auto-detect Anglo-american locale'
     );
     // Reset
-    Number.prototype.toLocaleString = toLocaleString; // eslint-disable-line no-extend-native
+    Number.prototype.toLocaleString = toLocaleString;
 
     // Explicit options
     chart.update({
@@ -1302,12 +1305,11 @@ QUnit.test('Point without y data, but with value (#13785)', function (assert) {
                 showTable: true
             }
         }),
-        csv =
-            '"Category","Series 1"\n' +
-            '"test",\n' +
-            '"test1",5\n' +
-            '"test2",10\n' +
-            '"test3",15';
+        csv = `"Category","Series 1 (value)","Series 1 (colorValue)"
+"test",,
+"test1",5,
+"test2",10,
+"test3",15,`;
 
     assert.strictEqual(
         chart.getCSV(),
@@ -1588,5 +1590,24 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         series,
         `Exported data of multiple series with xAxis type set to category
         should be same as actual, #17639.`
+    );
+});
+
+
+QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [5, 10]
+                ],
+                keys: ['y', 'custom.test']
+            }]
+        }),
+        csv = '"Category","Series 1 (y)","Series 1 (custom.test)"\n0,5,10';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'Key notation values should be visible in exported data, #20470.'
     );
 });

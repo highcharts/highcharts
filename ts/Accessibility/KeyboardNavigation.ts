@@ -53,7 +53,7 @@ const { getElement, simulatedEventTarget } = HTMLUtilities;
  * The KeyboardNavigation class, containing the overall keyboard navigation
  * logic for the chart.
  *
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @private
  * @class
@@ -124,15 +124,21 @@ class KeyboardNavigation {
 
         this.update();
 
-        ep.addEvent(this.tabindexContainer, 'keydown',
-            (e: KeyboardEvent): void => this.onKeydown(e));
+        ep.addEvent(
+            this.tabindexContainer, 'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e)
+        );
 
-        ep.addEvent(this.tabindexContainer, 'focus',
-            (e: FocusEvent): void => this.onFocus(e));
+        ep.addEvent(
+            this.tabindexContainer, 'focus',
+            (e: FocusEvent): void => this.onFocus(e)
+        );
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName,
-                (e): void => this.onMouseUp(e as MouseEvent))
+            ep.addEvent(
+                doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent)
+            )
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -342,7 +348,8 @@ class KeyboardNavigation {
 
         let preventDefault;
         const target = (e.target as HTMLElement|undefined);
-        if (target &&
+        if (
+            target &&
             target.nodeName === 'INPUT' &&
             !target.classList.contains('highcharts-a11y-proxy-element')
         ) {
@@ -447,10 +454,11 @@ class KeyboardNavigation {
         // Remove event from element and from eventRemovers array to prevent
         // memory leak (#20329).
         if (this.exitAnchor) {
-            if (defined((this.exitAnchor as any).focusEventRemover)) {
-                this.eventProvider.removeEvent(
-                    (this.exitAnchor as any).focusEventRemover);
-                delete (this.exitAnchor as any).focusEventRemover;
+            const el = this.eventProvider.eventRemovers.find((el): boolean =>
+                el.element === this.exitAnchor
+            );
+            if (el && defined(el.remover)) {
+                this.eventProvider.removeEvent(el.remover);
             }
 
             if (this.exitAnchor.parentNode) {
@@ -472,7 +480,7 @@ class KeyboardNavigation {
         const chart = this.chart,
             keyboardNavigation = this;
 
-        (element as any).focusEventRemover = this.eventProvider.addEvent(
+        this.eventProvider.addEvent(
             element,
             'focus',
             function (ev: MouseEvent): void {

@@ -100,7 +100,7 @@ function ajax(
     }
 
     r.open((settings.type || 'get').toUpperCase(), settings.url, true);
-    if (!settings.headers || !settings.headers['Content-Type']) {
+    if (!settings.headers?.['Content-Type']) {
         r.setRequestHeader(
             'Content-Type',
             headers[settings.dataType || 'json'] || headers.text
@@ -133,7 +133,7 @@ function ajax(
                         }
                     }
                 }
-                return settings.success && settings.success(res, r);
+                return settings.success?.(res, r);
             }
 
             handleError(r, r.responseText);
@@ -189,13 +189,16 @@ function getJSON(
  * Additional attributes for the post request
  */
 
+/**
+ *
+ */
 function post(
     url: string,
     data: Record<string, any>,
     fetchOptions?: RequestInit
 ): Promise<void> {
     const formData = new win.FormData();
-    // add the data
+    // Add the data
     objectEach(data, function (val: string, name: string): void {
         formData.append(name, val);
     });
@@ -275,4 +278,4 @@ export default HttpUtilities;
  * @type {string}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

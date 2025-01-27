@@ -118,7 +118,23 @@ QUnit.test('Credits', function (assert) {
     assert.strictEqual(
         chart.credits.element.textContent,
         'PrecedenceMapTextFullPrecedenceTestPrecedenceMapText',
-        'Setting map credits default options as well as inline, inline takes precedence'
+        'Setting map credits default options as well as inline, inline takes ' +
+        'precedence'
+    );
+
+    const href = 'www.example.com';
+
+    chart.update({
+        credits: {
+            href
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.credits.href,
+        href,
+        `Setting credits.href in MapChart should work and shouldn't be removed,
+        #21581.`
     );
 
     // Reset

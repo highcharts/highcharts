@@ -102,7 +102,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         typeDescription:
-      'Sunburst chart with 2 levels. The inner level represents continents, and the outer level represents the countries within the continents.',
+      'Sunburst chart with 2 levels. The inner level represents continents, ' +
+      'and the outer level represents the countries within the continents.',
         point: {
             valueSuffix: ' visitors'
         }

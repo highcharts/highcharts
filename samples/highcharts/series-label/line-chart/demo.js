@@ -1,10 +1,19 @@
 Highcharts.setOptions({
     lang: {
-        months: ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli',
-            'august', 'september', 'oktober', 'november', 'desember'],
-        weekdays: ['sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag', 'laurdag']
+        months: [
+            'januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli',
+            'august', 'september', 'oktober', 'november', 'desember'
+        ],
+        weekdays: [
+            'sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag',
+            'laurdag'
+        ]
     },
-    colors: ['#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
+    colors: [
+        '#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B',
+        '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D',
+        '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
+    ]
 });
 Highcharts.chart('container', {
     chart: {
@@ -37,11 +46,12 @@ Highcharts.chart('container', {
             x: 3
         },
         plotLines: [{
-            value: Date.UTC(1971, 0, 1),
+            value: '1971-01-01',
             color: '#444444',
             width: 3
         }],
-        dateTimeLabelFormats: { // TODO: should this be a language setting as well?
+        dateTimeLabelFormats: { // TODO: should this be a language setting
+        // as well?
             weekly: '%e. %b %y',
             twicemonthly: '%e. %b %y',
             monthly: '%b %y',
@@ -521,10 +531,12 @@ Highcharts.chart('container', {
     }, {
         type: 'spline',
         name: '2014',
-        data: [[26049600000, 0.00], [27000000000, 0.40], [28900800000, 0.25],
+        data: [
+            [26049600000, 0.00], [27000000000, 0.40], [28900800000, 0.25],
             [31579200000, 1.66], [32356800000, 1.80], [35812800000, 1.76],
             [38750400000, 2.62], [40906800000, 2.41], [41857200000, 2.05],
-            [43066800000, 1.70], [43930800000, 1.10], [45399600000, 0.00]],
+            [43066800000, 1.70], [43930800000, 1.10], [45399600000, 0.00]
+        ],
         visible: true
     }, {
         type: 'areaspline',
@@ -538,7 +550,8 @@ Highcharts.chart('container', {
             enabled: true
         },
         fillColor: 'rgba(170, 238, 238, .4)',
-        data: [[28382400000, 0.00], [29332800000, 0.25], [30542400000, 1.41],
+        data: [
+            [28382400000, 0.00], [29332800000, 0.25], [30542400000, 1.41],
             [30974400000, 1.64], [31838400000, 1.60], [32961600000, 2.55],
             [33566400000, 2.62], [34516800000, 2.50], [35380800000, 2.42],
             [37108800000, 2.74], [37800000000, 2.62], [38664000000, 2.60],
@@ -546,7 +559,8 @@ Highcharts.chart('container', {
             [42289200000, 2.68], [42721200000, 2.56], [43153200000, 2.39],
             [43585200000, 2.30], [44967600000, 2.00], [45399600000, 1.85],
             [45831600000, 1.49], [46263600000, 1.27], [46695600000, 0.99],
-            [47041200000, 0.74]],
+            [47041200000, 0.74]
+        ],
         visible: true
     }, {
         name: 'Snitt',

@@ -23,6 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -120,13 +121,13 @@ class GoogleSheetsConverter extends DataConverter {
         eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
         const converter = this,
-            parseOptions = merge(converter.options, options),
-            columns = ((
-                parseOptions.json &&
-                parseOptions.json.values
-            ) || []).map(
-                (column): DataTable.Column => column.slice()
-            );
+            parseOptions = merge(converter.options, options);
+
+        let columns = ((
+            parseOptions.json?.values
+        ) || []).map(
+            (column): DataTable.Column => column.slice()
+        );
 
         if (columns.length === 0) {
             return false;
@@ -142,9 +143,14 @@ class GoogleSheetsConverter extends DataConverter {
             headers: converter.header
         });
 
-        converter.columns = columns;
+        // If beforeParse is defined, use it to modify the data
+        const { beforeParse, json } = parseOptions;
+        if (beforeParse && json) {
+            columns = beforeParse(json.values);
+        }
 
         let column;
+        converter.columns = columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             column = columns[i];
@@ -217,11 +223,32 @@ namespace GoogleSheetsConverter {
     }
 
     /**
+     * Options that are not compatible with ClassJSON
+     */
+    export interface SpecialOptions {
+        beforeParse?: BeforeParseCallbackFunction;
+    }
+
+    /**
      * Available options of the GoogleSheetsConverter.
      */
-    export type UserOptions = Partial<Options>;
+    export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        GoogleSheets: typeof GoogleSheetsConverter;
+    }
+}
+
+DataConverter.registerType('GoogleSheets', GoogleSheetsConverter);
 
 /* *
  *

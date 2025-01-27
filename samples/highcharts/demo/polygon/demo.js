@@ -1,13 +1,11 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Average height and weight for men by country',
-        align: 'left'
+        text: 'Average height and weight for men by country'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.worlddata.info/average-bodyheight.php"' +
-            'target="_blank">WorldData</a>',
-        align: 'left'
+            'target="_blank">WorldData</a>'
     },
     xAxis: {
         gridLineWidth: 1,
@@ -31,14 +29,19 @@ Highcharts.chart('container', {
     series: [{
         name: 'Target',
         type: 'polygon',
-        data: [[163, 42], [162, 46], [162, 55], [163, 64], [164, 70], [170, 90],
-            [181, 100], [182, 90], [173, 52], [166, 45]],
-        color: Highcharts.color(Highcharts.getOptions()
-            .colors[0]).setOpacity(0.5).get(),
+        data: [
+            [163, 42], [162, 46], [162, 55], [163, 64], [164, 70], [170, 90],
+            [181, 100], [182, 90], [173, 52], [166, 45]
+        ],
+        color: Highcharts.color(
+            Highcharts.getOptions()
+                .colors[0]
+        ).setOpacity(0.5).get(),
         enableMouseTracking: false,
         accessibility: {
             exposeAsGroupOnly: true,
-            description: 'Target ranges in an upwards trending diagonal from 161 to 182 on the x axis, and 42 to 100 on the y axis.'
+            description: 'Target ranges in an upwards trending diagonal from ' +
+                '161 to 182 on the x axis, and 42 to 100 on the y axis.'
         }
     }, {
         name: 'Observations',

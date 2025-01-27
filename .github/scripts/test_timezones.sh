@@ -19,33 +19,22 @@ case $i in
 esac
 done
 
+SCRIPTS_DIR="$(pwd)/.github/scripts"
 
 echo "Triggering timezone tests.."
 
-orig_timezone=$(cat /etc/timezone)
+orig_timezone=$(cat /etc/timezone || node -e "require('$SCRIPTS_DIR/print_timezone.js').timezone()")
+
+echo "Original timezone: $orig_timezone"
+
 trap "sudo ln -sf /usr/share/zoneinfo/${orig_timezone} /etc/localtime && export TZ=${orig_timezone}" EXIT
 
-export TZ=Australia/Melbourne
-sudo ln -sf /usr/share/zoneinfo/Australia/Melbourne /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone Australia/Melbourne
+TZ_TESTS=("Australia/Melbourne" "America/Los_Angeles" "Asia/Kolkata" "UTC" "Atlantic/Reykjavik" "Pacific/Fiji")
 
-export TZ=America/Los_Angeles
-sudo ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone America/Los_Angeles
-
-export TZ=Asia/Kolkata
-sudo ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone Asia/Kolkata
-
-export TZ=UTC
-sudo ln -sf /usr/share/zoneinfo/UTC /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone UTC
-
-export TZ=Atlantic/Reykjavik
-sudo ln -sf /usr/share/zoneinfo/Atlantic/Reykjavik /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone Atlantic/Reykjavik
-
-export TZ=Pacific/Fiji
-sudo ln -sf /usr/share/zoneinfo/Pacific/Fiji /etc/localtime && node -e 'require("./.circleci/scripts/print_timezone.js").timezone()'
-npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone Pacific/Fiji
+for tz in "${TZ_TESTS[@]}"
+do
+    export TZ=$tz
+    sudo ln -sf /usr/share/zoneinfo/$tz /etc/localtime && node -e "require('$SCRIPTS_DIR/print_timezone.js').timezone()"
+    npx karma start test/karma-conf.js --single-run --splitbrowsers ${BROWSER} --browsercount 1 --tests unit-tests/time/* --timezone $tz
+done
 

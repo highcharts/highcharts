@@ -36,7 +36,9 @@
         });
 
         // Activate the button
-        document.getElementById('setdata').addEventListener('click', function () {
+        document.getElementById(
+            'setdata'
+        ).addEventListener('click', function () {
             data.forEach(function (p) {
                 p.value = Math.round(Math.random() * 1000);
             });

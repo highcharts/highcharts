@@ -15,7 +15,7 @@
  * */
 
 export interface ChartLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 

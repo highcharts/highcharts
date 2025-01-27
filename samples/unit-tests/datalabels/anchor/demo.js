@@ -55,7 +55,10 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                inverted: true
+                inverted: true,
+                style: {
+                    fontFamily: 'Helvetica, Arial, sans-serif'
+                }
             },
             xAxis: {
                 height: 100,
@@ -95,7 +98,9 @@ QUnit.test(
                 assert.close(
                     chart.xAxis[0].toPixels(point.y, true),
                     point.dataLabel.translateY,
-                    30, // marker radius and dataLabel font size - it's translated to the top
+                    // marker radius and dataLabel font size - it's translated
+                    // to the top
+                    30,
                     'Point: [' +
                         point.x +
                         ', ' +

@@ -1,15 +1,32 @@
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 <script src="https://code.highcharts.com/gantt/modules/gantt.js"></script>
 <script src="https://code.highcharts.com/modules/series-label.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 
 <div class="dashboard-header">
     <h2 class="dashboard-title" >Project management dashboard</h2>
     <p class="dashboard-description">Current progress in <b>week 22</b></p>
 </div>
-<div id="container"></div>
+<div id="container">
+    <div class="row">
+        <div class="cell" id="current-sprint-kpi">
+            <div class="row" id="current-sprint">
+                <div class="cell" id="dashboard-kpi-1"></div>
+                <div class="cell" id="dashboard-kpi-2"></div>
+            </div>
+        </div>
+        <div class="cell" id="dashboard-kpi-4"></div>
+    </div>
+    <div class="row" id="charts-1">
+        <div class="cell" id="dashboard-chart-1"></div>
+        <div class="cell" id="dashboard-chart-2"></div>
+    </div>
+    <div class="row" id="cumulative">
+        <div class="cell" id="dashboard-chart-cumulative"></div>
+    </div>
+</div>
 
 <p class="highcharts-description">
     This demo shows how to use the Highcharts dashboards to create a project

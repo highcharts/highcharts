@@ -36,10 +36,13 @@ Highcharts.chart('container1', {
         marginTop: 40
     },
     title: {
-        text: '2017 YTD'
+        text: '2024 YTD'
     },
     xAxis: {
-        categories: ['<span class="hc-cat-title">Revenue</span><br/>U.S. $ (1,000s)']
+        categories: [
+            '<span class="hc-cat-title">Revenue</span><br/>U.S. $ ' +
+            '(1,000s)'
+        ]
     },
     yAxis: {
         plotBands: [{
@@ -105,7 +108,10 @@ Highcharts.chart('container2', {
 
 Highcharts.chart('container3', {
     xAxis: {
-        categories: ['<span class="hc-cat-title">New Customers</span><br/>Count']
+        categories: [
+            '<span class="hc-cat-title">New Customers</span><br/>' +
+            'Count'
+        ]
     },
     yAxis: {
         plotBands: [{

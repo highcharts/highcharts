@@ -1,4 +1,3 @@
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
@@ -7,11 +6,12 @@
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 
 <div id="container">Loading...</div>
 
-<div id="description">
+<div class="highcharts-description">
     <h1>Live Weather Demo</h1>
     <p>The demo shows weather forecasts from the <a
             href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank">Norwegian
@@ -35,8 +35,8 @@
         selection of weather stations in North America.</p>
     <ul>
         <li>The station is selected by clicking on the map.</li>
-        <li>The weather parameter (e.g. wind) by clicking on a gauge in the KPI component.</li>
-        <li>All date/time indications are UTC.</li>
+        <li>The weather parameter (e.g. wind) is selected by clicking on a gauge in the KPI component.</li>
+        <li>All date/time indications are in US date/time format, localized per time zone.</li>
     </ul>
     </p>
     <h2>Customizing the demo</h2>

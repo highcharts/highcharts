@@ -9,10 +9,17 @@
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat:
-            '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+            '<{headingTagName}>{chartTitle}</{headingTagName}><div>' +
+            '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+            '{chartLongdesc}</div>'
             },
             description:
-          'Tree map detailing exported goods from Denmark in 2018. The services category is the largest, and makes up 39% of the total export. Transport services are the most exported. Chemicals are the second most exported category with 13%, then agriculture with 12%, and machinery with 10%. The other categories are textiles, electronics, metals, minerals, vehicles, stone, and other.'
+          'Tree map detailing exported goods from Denmark in 2018. The ' +
+          'services category is the largest, and makes up 39% of the total ' +
+          'export. Transport services are the most exported. Chemicals are ' +
+          'the second most exported category with 13%, then agriculture with ' +
+          '12%, and machinery with 10%. The other categories are textiles, ' +
+          'electronics, metals, minerals, vehicles, stone, and other.'
         },
         series: [
             {
@@ -20,7 +27,6 @@
                 type: 'treemap',
                 layoutAlgorithm: 'squarified',
                 allowDrillToNode: true,
-                turboThreshold: dataJson.length,
                 dataLabels: {
                     enabled: false
                 },

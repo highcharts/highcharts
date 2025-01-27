@@ -32,7 +32,7 @@ export type DataModifierTypeOptions = DataModifierType['prototype']['options'];
  * constructor.
  */
 export interface DataModifierTypes {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

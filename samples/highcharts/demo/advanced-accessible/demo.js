@@ -1,12 +1,16 @@
-// Define custom series type for displaying low/med/high values using boxplot as a base
+// Define custom series type for displaying low/med/high values using
+// boxplot as a base
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: ' +
-            'Low <b>{point.low} NOK</b> - Median <b>{point.median} NOK</b> - High <b>{point.high} NOK</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: ' +
+            'Low <b>{point.low} NOK</b> - Median <b>{point.median} NOK</b> - ' +
+            'High <b>{point.high} NOK</b><br/>'
     }
 }, {
-    // Change point shape to a line with three crossing lines for low/median/high
+    // Change point shape to a line with three crossing lines for
+    // low/median/high
     // Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
         const series = this;
@@ -61,29 +65,32 @@ const chart = Highcharts.chart('container', {
         type: 'lowmedhigh'
     },
     title: {
-        text: 'Monthly earnings, by level of education in Norway',
-        align: 'left'
+        text: 'Monthly earnings, by level of education in Norway'
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>',
-        align: 'left'
+            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>'
     },
     accessibility: {
         point: {
-            descriptionFormat: '{#unless isNull}{category}, low {low}, median {median}, high {high}{/unless}'
+            descriptionFormat: '{#unless isNull}{category}, low {low}, ' +
+                'median {median}, high {high}{/unless}'
         },
         series: {
-            descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
+            descriptionFormat: '{series.name}, series {seriesNumber} of ' +
+                '{chart.series.length} with {series.points.length} data points.'
         },
-        typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
+        typeDescription: 'Low, median, high. Each data point has a low, ' +
+            'median and high value, depicted vertically as small ticks.' //
+            // Describe the chart type to screen reader users, since this is
+            // not a traditional boxplot chart
     },
     xAxis: [{
         accessibility: {
             description: 'Year'
         },
         crosshair: true,
-        categories: [2015, 2016, 2017, 2018, 2019, 2020, 2021]
+        categories: [2017, 2018, 2019, 2020, 2021, 2022, 2023]
     }],
     yAxis: {
         title: {
@@ -104,38 +111,40 @@ const chart = Highcharts.chart('container', {
     series: [{
         name: 'Scientific research and development',
         data: [
-            [46240, 56720, 69540],
-            [46360, 55050, 67710],
-            [47600,  57040, 69250],
-            [48610, 59030, 72070],
-            [49690, 60770, 75040],
-            [50000, 61170, 75660],
-            [50500, 63020, 78630]
+            [48230, 57210, 71900],
+            [49360, 58450, 73490],
+            [50610, 60240, 75770],
+            [51150, 60600, 75950],
+            [53060, 63080, 79130],
+            [55480, 66210, 82020],
+            [58740, 69870, 86360]
         ]
     }, {
         name: 'Hospital activities',
         data: [
-            [43310, 53510, 71450],
-            [44280, 53440, 66040],
-            [45790, 55080, 68720],
-            [47500, 56660, 70850],
-            [48420, 58250, 73430],
-            [48560, 58390, 74060],
-            [51100, 63050, 78280]
+            [50830, 66240, 87490],
+            [52490, 67620, 89250],
+            [53690, 69430, 91790],
+            [53720, 69210, 92380],
+            [56510, 72640, 97000],
+            [58840, 75490, 100400],
+            [62280, 79790, 107100]
         ]
     }, {
         name: 'Fire service activities',
         data: [
-            [null, null, null],
-            [37380, 44560, 51450],
-            [38020, 47080, 55230],
-            [null, null,  null],
-            [37360, 44940, 50230],
-            [40560, 46800, 55880],
-            [42390, 47450, 57400]
+            [46760, 52350, 61050],
+            [47920, 53860, 62090],
+            [47900, 51830, 64170],
+            [48820, 53330, 64500],
+            [50980, 56090, 67870],
+            [52870, 58330, 72250],
+            [56670, 61110, 79620]
         ]
     }]
+
 });
+
 
 // Remove click events on container to avoid having "clickable" announced by AT
 // These events are needed for custom click events, drag to zoom, and navigator

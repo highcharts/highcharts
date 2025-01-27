@@ -25,7 +25,8 @@ import U from '../Utilities.js';
 const {
     isNumber,
     merge,
-    pInt
+    pInt,
+    defined
 } = U;
 
 /* *
@@ -66,11 +67,12 @@ class Color implements ColorLike {
     /**
      * Collection of parsers. This can be extended from the outside by pushing
      * parsers to `Color.parsers`.
+     * @private
      */
     public static parsers = [{
         // RGBA color
         // eslint-disable-next-line max-len
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+        regex: /rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d?(?:\.\d+)?)\s*\)/,
         parse: function (result: RegExpExecArray): Color.RGBA {
             return [
                 pInt(result[1]),
@@ -82,9 +84,37 @@ class Color implements ColorLike {
     }, {
         // RGB color
         regex:
-            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+            /rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)/,
         parse: function (result: RegExpExecArray): Color.RGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+        }
+    }, {
+        // RGBA 3 & 4 digit hex color, e.g. #F0F, #F0FA
+        regex:
+            /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])?$/i,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            // #abcd => #aabbccdd, hence result + result.
+            return [
+                (pInt(result[1] + result[1], 16)),
+                (pInt(result[2] + result[2], 16)),
+                (pInt(result[3] + result[3], 16)),
+                !defined(result[4]) ?
+                    1 :
+                    (pInt(result[4] + result[4], 16) / 255)
+            ];
+        }
+    }, {
+        // RGBA 6 & 8 digit hex color, e.g. #FFCC00, #FFCC00FF
+        regex: /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})?$/i,
+        parse: function (result: RegExpExecArray): Color.RGBA {
+            return [
+                pInt(result[1], 16),
+                pInt(result[2], 16),
+                pInt(result[3], 16),
+                !defined(result[4]) ?
+                    1 :
+                    (pInt(result[4], 16) / 255)
+            ];
         }
     }];
 
@@ -148,50 +178,12 @@ class Color implements ColorLike {
         } else if (typeof input === 'string') {
             this.input = input = (Color.names[input.toLowerCase()] || input);
 
-            // Bitmasking as input[0] is not working for legacy IE.
-            if (input.charAt(0) === '#') {
-                const len = input.length,
-                    col = parseInt(input.substr(1), 16);
-
-                // Handle long-form, e.g. #AABBCC
-                if (len === 7) {
-
-                    rgba = [
-                        (col & 0xFF0000) >> 16,
-                        (col & 0xFF00) >> 8,
-                        (col & 0xFF),
-                        1
-                    ];
-
-                // Handle short-form, e.g. #ABC
-                // In short form, the value is assumed to be the same
-                // for both nibbles for each component. e.g. #ABC = #AABBCC
-                } else if (len === 4) {
-
-                    rgba = [
-                        (
-                            ((col & 0xF00) >> 4) |
-                            (col & 0xF00) >> 8
-                        ),
-                        (
-                            ((col & 0xF0) >> 4) |
-                            (col & 0xF0)
-                        ),
-                        ((col & 0xF) << 4) | (col & 0xF),
-                        1
-                    ];
-                }
-            }
-
-            // Otherwise, check regex parsers
-            if (!rgba) {
-                i = Color.parsers.length;
-                while (i-- && !rgba) {
-                    parser = Color.parsers[i];
-                    result = parser.regex.exec(input);
-                    if (result) {
-                        rgba = parser.parse(result);
-                    }
+            i = Color.parsers.length;
+            while (i-- && !rgba) {
+                parser = Color.parsers[i];
+                result = parser.regex.exec(input);
+                if (result) {
+                    rgba = parser.parse(result);
                 }
             }
         }
@@ -247,7 +239,7 @@ class Color implements ColorLike {
             return ret;
         }
 
-        // it's NaN if gradient colors on a column chart
+        // It's NaN if gradient colors on a column chart
         if (rgba && isNumber(rgba[0])) {
             if (format === 'rgb' || (!format && rgba[3] === 1)) {
                 return 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
@@ -338,23 +330,16 @@ class Color implements ColorLike {
 
         // Check for has alpha, because rgba colors perform worse due to
         // lack of support in WebKit.
-        const hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
+        const hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1),
+            channel = (to: number, i: number): number =>
+                to + (fromRgba[i] - to) * (1 - pos),
+            rgba = toRgba.slice(0, 3).map(channel).map(Math.round);
 
-        return (hasAlpha ? 'rgba(' : 'rgb(') +
-            Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
-            ',' +
-            Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
-            ',' +
-            Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
-            (
-                hasAlpha ?
-                    (
-                        ',' +
-                        (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
-                    ) :
-                    ''
-            ) +
-            ')';
+        if (hasAlpha) {
+            rgba.push(channel(toRgba[3], 3));
+        }
+
+        return (hasAlpha ? 'rgba(' : 'rgb(') + rgba.join(',') + ')';
     }
 }
 
@@ -512,4 +497,4 @@ export default Color;
  *         Color instance
  */
 
-(''); // detach doclets above
+(''); // Detach doclets above

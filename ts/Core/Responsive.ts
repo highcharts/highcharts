@@ -81,6 +81,7 @@ namespace Responsive {
         ): void;
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
+        updatingResponsive: boolean;
     }
 
     export interface CurrentObject {
@@ -202,21 +203,17 @@ namespace Responsive {
         const mergedOptions = merge(
             ...ruleIds
                 .map((ruleId): (RuleOptions|undefined) => find(
-                    (options || {}).rules || [],
+                    options?.rules || [],
                     (rule): boolean => (rule._id === ruleId)
                 ))
-                .map((rule): (GlobalOptions|undefined) => (
-                    rule && rule.chartOptions
-                ))
+                .map((rule): (GlobalOptions|undefined) => rule?.chartOptions)
         );
 
         mergedOptions.isResponsiveOptions = true;
 
         // Stringified key for the rules that currently apply.
         ruleIds = ((ruleIds.toString() as any) || void 0);
-        const currentRuleIds = (
-            currentResponsive && currentResponsive.ruleIds
-        );
+        const currentRuleIds = currentResponsive?.ruleIds;
 
         // Changes in what rules apply
         if ((ruleIds as any) !== currentRuleIds) {
@@ -224,7 +221,10 @@ namespace Responsive {
             // Undo previous rules. Before we apply a new set of rules, we
             // need to roll back completely to base options (#6291).
             if (currentResponsive) {
+                this.currentResponsive = void 0;
+                this.updatingResponsive = true;
                 this.update(currentResponsive.undoOptions, redraw, true);
+                this.updatingResponsive = false;
             }
 
             if (ruleIds) {
@@ -243,9 +243,9 @@ namespace Responsive {
                     mergedOptions: mergedOptions,
                     undoOptions: undoOptions
                 };
-
-                this.update(mergedOptions, redraw, true);
-
+                if (!this.updatingResponsive) {
+                    this.update(mergedOptions, redraw, true);
+                }
             } else {
                 this.currentResponsive = void 0;
             }
@@ -281,7 +281,7 @@ export default Responsive;
  * Return `true` if it applies.
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
 
 /* *
  *
@@ -405,4 +405,4 @@ export default Responsive;
  * @apioption responsive.rules.condition.minWidth
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

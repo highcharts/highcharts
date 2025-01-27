@@ -52,7 +52,7 @@ import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    // indirect dependency to keep product size low
+    // Indirect dependency to keep product size low
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
@@ -302,7 +302,7 @@ class MapSeries extends ScatterSeries {
                             'highcharts-name-' +
                             point.name.replace(/ /g, '-').toLowerCase();
                     }
-                    if (point.properties && point.properties['hc-key']) {
+                    if (point.properties?.['hc-key']) {
                         className +=
                             ' highcharts-key-' +
                             point.properties['hc-key'].toString().toLowerCase();
@@ -331,8 +331,10 @@ class MapSeries extends ScatterSeries {
                         ) ? 'inherit' : 'hidden'
                     });
 
-                    graphic.animate = function (params,
-                        options, complete): SVGElement {
+                    graphic.animate = function (
+                        params,
+                        options, complete
+                    ): SVGElement {
 
                         const animateIn = (
                                 isNumber(params['stroke-width']) &&
@@ -352,8 +354,7 @@ class MapSeries extends ScatterSeries {
                                 inheritedStrokeWidth = (
                                     strokeWidth /
                                     (
-                                        chart.mapView &&
-                                        chart.mapView.getScale() ||
+                                        chart.mapView?.getScale() ||
                                         1
                                     )
                                 );
@@ -415,8 +416,7 @@ class MapSeries extends ScatterSeries {
                     let strokeWidth;
 
                     if (
-                        graphic &&
-                        graphic['stroke-width'] &&
+                        graphic?.['stroke-width'] &&
                         (strokeWidth = this.getStrokeWidth(point.options))
                     ) {
                         graphic.attr({
@@ -481,7 +481,7 @@ class MapSeries extends ScatterSeries {
                                 typeof renderer.globalAnimation !== 'boolean' &&
                                 renderer.globalAnimation.complete
                             ) {
-                                // fire complete only from this place
+                                // Fire complete only from this place
                                 renderer.globalAnimation.complete({
                                     applyDrilldown: true
                                 });
@@ -600,8 +600,7 @@ class MapSeries extends ScatterSeries {
         const pointAttrToOptions = this.pointAttrToOptions;
 
         return (options as AnyRecord)[
-            pointAttrToOptions &&
-            pointAttrToOptions['stroke-width'] || 'borderWidth'
+            pointAttrToOptions?.['stroke-width'] || 'borderWidth'
         ];
     }
 
@@ -611,7 +610,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.dataTable.rowCount;
     }
 
     /**
@@ -716,6 +715,11 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    public dataColumnKeys(): Array<string> {
+        // No x data for maps
+        return this.pointArrayMap;
+    }
+
     /**
      * Extend processData to join in mapData. If the allAreas option is true,
      * all areas from the mapData are used, and those that don't correspond to a
@@ -741,7 +745,7 @@ class MapSeries extends ScatterSeries {
             // Pick up transform definitions for chart
             mapTransforms = chart.mapTransforms =
                 chartOptions.mapTransforms ||
-                mapDataObject && mapDataObject['hc-transform'] ||
+                mapDataObject?.['hc-transform'] ||
                 chart.mapTransforms;
 
         let mapPoint,
@@ -897,8 +901,8 @@ class MapSeries extends ScatterSeries {
             }
         }
         // The processedXData array is used by general chart logic for checking
-        // data length in various scanarios
-        this.processedXData = new Array(processedData.length);
+        // data length in various scanarios.
+        this.dataTable.rowCount = processedData.length;
 
         return void 0;
     }
@@ -916,9 +920,11 @@ class MapSeries extends ScatterSeries {
         if (options.joinBy === null) {
             joinBy = '_i';
         }
-        joinBy = this.joinBy = splat(joinBy);
-        if (!joinBy[1]) {
-            joinBy[1] = joinBy[0];
+        if (joinBy) {
+            this.joinBy = splat(joinBy);
+            if (!this.joinBy[1]) {
+                this.joinBy[1] = this.joinBy[0];
+            }
         }
 
         return options;
@@ -933,7 +939,7 @@ class MapSeries extends ScatterSeries {
         const series = this,
             doFullTranslate = series.doFullTranslate(),
             mapView = this.chart.mapView,
-            projection = mapView && mapView.projection;
+            projection = mapView?.projection;
 
         // Recalculate box on updated data
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {

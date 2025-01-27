@@ -1,0 +1,11 @@
+---
+name: Renko vs Heikin Ashi vs Candlestick
+authors:
+  - Pawel Lysy
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 15
+...

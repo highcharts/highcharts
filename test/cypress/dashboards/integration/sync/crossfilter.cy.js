@@ -28,7 +28,7 @@ describe('Crossfilter with affectNavigator option', () => {
             handle: 5, // 3rd navigator, left handle
             pageX: 770
         }];
-    
+
         for (const { handle, pageX } of moves) {
             cy.get('.highcharts-navigator-handle')
                 .eq(handle).trigger('mouseenter').trigger('mousedown')
@@ -41,12 +41,20 @@ describe('Crossfilter with affectNavigator option', () => {
                 dataTable.modified.rowCount < dataTable.rowCount,
                 'The modified table should have less rows than the original one.'
             );
-            
+
             assert.ok(
                 board.mountedComponents[1].component.chart
-                    .series[0].yData.filter(y => y !== null).length < 30,
+                    .series[0]
+                    .getColumn('y')
+                    .filter(y => y !== null).length < 30,
                 'The middle navigator should have less than 30 points with non null y-value.'
             );
+
+            console.log(board.mountedComponents[0].component.connectorHandlers[0].tableEvents);
+            assert.ok(
+                board.mountedComponents[0].component.connectorHandlers[0].tableEvents.length < 6,
+                'The table events array should be cleared after the table is modified.'
+            )
         });
     });
 });

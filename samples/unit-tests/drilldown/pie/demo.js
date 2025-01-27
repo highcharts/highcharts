@@ -25,7 +25,8 @@ QUnit.test('Pie color and data labels', function (assert) {
             headerFormat:
                 '<span style="font-size:11px">{series.name}</span><br>',
             pointFormat:
-                '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                '<span style="color:{point.color}">{point.name}</span>: <b>' +
+                '{point.y:.2f}%</b> of total<br/>'
         },
         series: [
             {
@@ -222,7 +223,8 @@ QUnit.test('Pie color and data labels', function (assert) {
             assert.strictEqual(
                 chart.legend.contentGroup.element.children[0].children.length,
                 6,
-                'The number of the legend items should be adapted to the current drilldown level.'
+                'The number of the legend items should be adapted to the ' +
+                'current drilldown level.'
             );
 
             assert.strictEqual(
@@ -517,7 +519,8 @@ QUnit.test(
                 assert.strictEqual(
                     Highcharts.color(tweeningGraphic.attr('fill')).get(),
                     Highcharts.color(chart.options.colors[3]).get(),
-                    'Time 1500 - Fill color should match options after finished tweening'
+                    'Time 1500 - Fill color should match options after ' +
+                    'finished tweening'
                 );
                 done();
             }, 1500);

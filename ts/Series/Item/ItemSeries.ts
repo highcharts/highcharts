@@ -52,7 +52,7 @@ const {
 /**
  * The item series type.
  *
- * @requires module:modules/item-series
+ * @requires modules/item-series
  *
  * @private
  * @class
@@ -121,7 +121,7 @@ class ItemSeries extends PieSeries {
         if (this.center && this.slots) {
             super.drawDataLabels();
 
-        // or it's just a dot chart with no natural place to put the data labels
+        // Or it's just a dot chart with no natural place to put the data labels
         } else {
             for (const point of this.points) {
                 point.destroyElements({ dataLabel: 1 });
@@ -462,7 +462,7 @@ class ItemSeries extends PieSeries {
     public translate(positions?: Array<number>): void {
         // Initialize chart without setting data, #13379.
         if (
-            this.total === 0 && // check if that is a (semi-)circle
+            this.total === 0 && // Check if that is a (semi-)circle
             isNumber(this.options.startAngle) &&
             isNumber(this.options.endAngle)
         ) {

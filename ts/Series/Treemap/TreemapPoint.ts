@@ -54,7 +54,11 @@ class TreemapPoint extends ScatterPoint {
 
     public drillId?: (boolean|string);
 
+    public isGroup?: boolean;
+
     public imageUrl?: string;
+
+    public groupedPointsAmount: number = 0;
 
     public name!: string;
 
@@ -93,16 +97,25 @@ class TreemapPoint extends ScatterPoint {
         let className = super.getClassName();
 
         // Above the current level
-        if (this.node.level <= series.nodeMap[series.rootNode].level) {
+        if (
+            this.node.level <= series.nodeMap[series.rootNode].level &&
+            this.node.children.length
+        ) {
             className += ' highcharts-above-level';
 
         } else if (
+            !this.node.isGroup &&
             !this.node.isLeaf &&
-        !pick(options.interactByLeaf, !options.allowTraversingTree)
+            !series.nodeMap[series.rootNode].isGroup &&
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
         ) {
             className += ' highcharts-internal-node-interactive';
 
-        } else if (!this.node.isLeaf) {
+        } else if (
+            !this.node.isGroup &&
+            !this.node.isLeaf &&
+            !series.nodeMap[series.rootNode].isGroup
+        ) {
             className += ' highcharts-internal-node';
         }
 

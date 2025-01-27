@@ -1,15 +1,18 @@
 Highcharts.chart('container', {
 
-    colors: ['#293462', '#a64942', '#fe5f55', '#fff1c1', '#5bd1d7', '#ff502f', '#004d61', '#ff8a5c', '#fff591', '#f5587b', '#fad3cf', '#a696c8', '#5BE7C4', '#266A2E', '#593E1A'],
 
     title: {
         text: 'Main train connections in Europe'
     },
 
     accessibility: {
-        description: 'Arc diagram chart with circles of different sizes along the X axis, and connections drawn as arcs between them. From the chart we can see that Paris is the city with the most connections to other cities.',
+        description: 'Arc diagram chart with circles of different sizes ' +
+            'along the X axis, and connections drawn as arcs between them. ' +
+            'From the chart we can see that Paris is the city with the most ' +
+            'connections to other cities.',
         point: {
-            valueDescriptionFormat: 'Connection from {point.from} to {point.to}.'
+            valueDescriptionFormat: 'Connection from {point.from} to ' +
+                '{point.to}.'
         }
     },
 
@@ -17,7 +20,7 @@ Highcharts.chart('container', {
         keys: ['from', 'to', 'weight'],
         type: 'arcdiagram',
         name: 'Train connections',
-        linkWeight: 1,
+        linkWeight: 1.5,
         centeredLinks: true,
         dataLabels: {
             rotation: 90,

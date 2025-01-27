@@ -137,6 +137,15 @@ const NavigatorDefaults: NavigatorOptions = {
         width: 7,
 
         /**
+         * Border radius of the handles.
+         *
+         * @sample {highstock} stock/navigator/handles-border-radius/
+         *      Border radius on the navigator handles.
+         *
+         * @since 11.4.2
+         */
+        borderRadius: 0,
+        /**
          * Height for handles.
          *
          * @sample {highstock} stock/navigator/styled-handles/
@@ -480,6 +489,8 @@ const NavigatorDefaults: NavigatorOptions = {
 
         gridLineColor: Palette.neutralColor10,
 
+        id: 'navigator-x-axis',
+
         gridLineWidth: 1,
 
         tickPixelInterval: 200,
@@ -549,6 +560,8 @@ const NavigatorDefaults: NavigatorOptions = {
 
         minPadding: 0.1,
 
+        id: 'navigator-y-axis',
+
         maxPadding: 0.1,
 
         labels: {
@@ -596,4 +609,4 @@ export default NavigatorDefaults;
  * @apioption xAxis.maxRange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

@@ -1,4 +1,5 @@
-const dataSource = [4,
+const dataSource = [
+    4,
     4.3,
     4.4,
     4.4,
@@ -879,7 +880,8 @@ const dataSource = [4,
     26.8,
     26.8,
     30.3,
-    30.3];
+    30.3
+];
 const xiData = [];
 const range = 31,
     startPoint = 2;

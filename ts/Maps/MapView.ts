@@ -44,17 +44,17 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import MapViewDefaults from './MapViewDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
+import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
+const { pointInPolygon } = GeometryUtilities;
 const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
-const {
-    boundsFromPath,
-    pointInPolygon
-} = MU;
+const { boundsFromPath } = MU;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    crisp,
     fireEvent,
     isArray,
     isNumber,
@@ -147,7 +147,7 @@ function recommendedMapViewAfterDrill(
 }
 
 /*
-const mergeCollections = <
+Const mergeCollections = <
     T extends Array<AnyRecord|undefined>
 >(a: T, b: T): T => {
     b.forEach((newer, i): void => {
@@ -776,7 +776,7 @@ class MapView {
      *
      * @function Highcharts.MapView#recommendMapView
      *
-     * @since @next
+     * @since 11.4.0
      *
      * @param {Highcharts.Chart} chart
      *        Chart object
@@ -799,7 +799,8 @@ class MapView {
 
         // Handle the global map and series-level mapData
         const geoMaps = mapDataArray.map((mapData): GeoJSON|undefined =>
-            this.getGeoMap(mapData));
+            this.getGeoMap(mapData)
+        );
 
         const allGeoBounds: MapBounds[] = [];
         geoMaps.forEach((geoMap): void => {
@@ -945,7 +946,8 @@ class MapView {
                 ],
                 isDrilling = this.chart.series.some(
                     (series): boolean | undefined =>
-                        series.isDrilling);
+                        series.isDrilling
+                );
 
             if (!isDrilling) {
                 // Constrain to data bounds
@@ -1278,14 +1280,15 @@ class MapView {
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        const newProjection = options.projection;
-        let isDirtyProjection = newProjection && (
+        const newProjection = options.projection,
+            isDirtyProjection = newProjection && (
                 (
                     Projection.toString(newProjection) !==
                     Projection.toString(this.options.projection)
                 )
-            ),
-            isDirtyInsets = false;
+            );
+
+        let isDirtyInsets = false;
 
         merge(true, this.userOptions, options);
         merge(true, this.options, options);
@@ -1334,7 +1337,7 @@ class MapView {
             // Fit to natural bounds if center/zoom are not explicitly given
             if (
                 !options.center &&
-                // do not fire fitToBounds if user don't want to set zoom
+                // Do not fire fitToBounds if user don't want to set zoom
                 Object.hasOwnProperty.call(
                     options,
                     'zoom'
@@ -1594,7 +1597,7 @@ class MapViewInset extends MapView {
                 });
             }
 
-            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2,
+            const strokeWidth = this.border.strokeWidth(),
                 field = (
                     options.relativeTo === 'mapBoundingBox' &&
                     mapView.getMapBBox()
@@ -1616,8 +1619,8 @@ class MapViewInset extends MapView {
                                 field.y
                             );
                         }
-                        x = Math.floor(x) + crisp;
-                        y = Math.floor(y) + crisp;
+                        x = crisp(x, strokeWidth);
+                        y = crisp(y, strokeWidth);
                         d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
                         return d;
                     }, d)

@@ -19,6 +19,7 @@ import type {
     OBVParamsOptions
 } from './OBVOptions';
 import type OBVPoint from './OBVPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -116,7 +117,7 @@ class OBVIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: OBVParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const volumeSeries = series.chart.get(params.volumeSeriesID as string),
@@ -137,7 +138,7 @@ class OBVIndicator extends SMAIndicator {
 
         // Checks if volume series exists.
         if (volumeSeries) {
-            volume = ((volumeSeries as Series).yData as any);
+            volume = (volumeSeries as Series).getColumn('y');
 
             // Add first point and get close value.
             OBVPoint = [xVal[0], previousOBV];
@@ -152,11 +153,11 @@ class OBVIndicator extends SMAIndicator {
                 curentClose = hasOHLC ?
                     (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
 
-                if (curentClose > previousClose) { // up
+                if (curentClose > previousClose) { // Up
                     curentOBV = previousOBV + volume[i];
-                } else if (curentClose === previousClose) { // constant
+                } else if (curentClose === previousClose) { // Constant
                     curentOBV = previousOBV;
-                } else { // down
+                } else { // Down
                     curentOBV = previousOBV - volume[i];
                 }
 
@@ -246,4 +247,4 @@ export default OBVIndicator;
  * @apioption series.obv
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

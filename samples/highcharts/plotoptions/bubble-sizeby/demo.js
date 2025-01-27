@@ -3,14 +3,17 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     title: {
         text: 'Highcharts Bubbles Sizing'
     },
     subtitle: {
-        text: 'Smallest and largest bubbles are equal, intermediate bubbles different.'
+        text: 'Smallest and largest bubbles are equal, intermediate bubbles ' +
+            'different.'
     },
 
     xAxis: {

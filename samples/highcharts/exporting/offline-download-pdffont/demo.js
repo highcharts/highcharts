@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'беручи до уваги, що <b>народи</b> Об <i>єднаних</i> Націй <b><i>підтвердили</i></b> в Статуті'
+        text: 'беручи до уваги, що <b>народи</b> Об <i>єднаних</i> Націй <b>' +
+            '<i>підтвердили</i></b> в Статуті'
     },
 
     xAxis: {
@@ -29,6 +30,19 @@ Highcharts.chart('container', {
             bold: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Bold.ttf',
             bolditalic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-BoldItalic.ttf',
             italic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Italic.ttf'
+        },
+        buttons: {
+            contextButton: {
+                menuItems: [
+                    'viewFullscreen',
+                    'printChart',
+                    'separator',
+                    'downloadPNG',
+                    'downloadJPEG',
+                    'downloadSVG',
+                    'downloadPDF'
+                ]
+            }
         }
     }
 

@@ -18,11 +18,13 @@
  *
  * */
 
+import type XAxisOptions from '../Core/Axis/AxisOptions';
 import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
@@ -68,11 +70,19 @@ declare module '../Core/Options' {
 type DataValueType = (number|string|null);
 
 interface DataAfterCompleteCallbackFunction {
-    (dataOptions?: Partial<Options>): void;
+    (dataInstance: Data, dataOptions?: Partial<Options>): void;
 }
 
 interface DataBeforeParseCallbackFunction {
     (csv: string): string;
+}
+
+interface DataColumnsArray extends Array<DataValueType> {
+    isDatetime?: boolean;
+    isNumeric?: boolean;
+    mixed?: boolean;
+    name?: string;
+    unsorted?: boolean;
 }
 
 interface DataCompleteCallbackFunction {
@@ -82,7 +92,7 @@ interface DataCompleteCallbackFunction {
 interface DataOptions {
     afterComplete?: DataAfterCompleteCallbackFunction;
     beforeParse?: DataBeforeParseCallbackFunction;
-    columns?: Array<Array<DataValueType>>;
+    columns?: Array<DataColumnsArray>;
     columnsURL?: string;
     columnTypes?: Array<'string'|'number'|'float'|'date'>;
     complete?: DataCompleteCallbackFunction;
@@ -104,7 +114,7 @@ interface DataOptions {
     lineDelimiter?: string;
     parsed?: DataParsedCallbackFunction;
     parseDate?: DataParseDateCallbackFunction;
-    rows?: Array<Array<DataValueType>>;
+    rows?: Array<DataColumnsArray>;
     rowsURL?: string;
     seriesMapping?: Array<Record<string, number>>;
     sort?: boolean;
@@ -117,7 +127,7 @@ interface DataParseDateCallbackFunction {
     (dateValue: string): number;
 }
 interface DataParsedCallbackFunction {
-    (columns: Array<Array<DataValueType>>): (boolean|undefined);
+    (columns: Array<DataColumnsArray>): (boolean|undefined);
 }
 interface DataValueCountObject {
     global: number;
@@ -175,6 +185,9 @@ function getFreeIndexes(
     return freeIndexValues;
 }
 
+/**
+ *
+ */
 function hasURLOption(options: DataOptions): boolean {
     return Boolean(
         options &&
@@ -191,7 +204,7 @@ function hasURLOption(options: DataOptions): boolean {
 /**
  * The Data class
  *
- * @requires module:modules/data
+ * @requires modules/data
  *
  * @class
  * @name Highcharts.Data
@@ -229,13 +242,13 @@ class Data {
      * @function Highcharts.Data.rowsToColumns
      */
     public static rowsToColumns(
-        rows: (Array<Array<DataValueType>>|undefined)
-    ): (Array<Array<DataValueType>>|undefined) {
+        rows: (Array<DataColumnsArray>|undefined)
+    ): (Array<DataColumnsArray>|undefined) {
         let row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<DataValueType>>|undefined);
+            columns: (Array<DataColumnsArray>|undefined);
 
         if (rows) {
             columns = [];
@@ -281,15 +294,19 @@ class Data {
     public alternativeFormat?: string;
     public chart: Chart;
     public chartOptions: Partial<Options>;
-    public columns?: Array<Array<DataValueType>>;
+    public columns?: Array<DataColumnsArray>;
     public dateFormat?: string;
     public decimalRegex?: RegExp;
     public firstRowAsNames?: boolean;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>>;
-    public rowsToColumns = Data.rowsToColumns; // backwards compatibility
+    public rowsToColumns = Data.rowsToColumns; // Backwards compatibility
     public options: DataOptions;
     public valueCount?: DataValueCountObject;
+    public xAxisOptions?: {
+        type?: XAxisOptions['type'];
+        uniqueNames?: false;
+    };
 
     /* *
      *
@@ -380,7 +397,7 @@ class Data {
         }
 
         if (!hasData && dataOptions.afterComplete) {
-            dataOptions.afterComplete();
+            dataOptions.afterComplete(this);
         }
     }
 
@@ -391,47 +408,39 @@ class Data {
      *
      * @function Highcharts.Data#getColumnDistribution
      */
-    public getColumnDistribution(): void {
+    public getColumnDistribution(): asserts this is this & {
+        valueCount: DataValueCountObject
+    } {
         const chartOptions = this.chartOptions,
             options = this.options,
             xColumns: Array<number> = [],
-            getValueCount = function (type: string): number {
+            getValueCount = function (type: string = 'line'): number {
                 return (
-                    seriesTypes[type || 'line'].prototype.pointArrayMap || [0]
+                    seriesTypes[type].prototype.pointArrayMap || [0]
                 ).length;
             },
             getPointArrayMap = function (
-                type: string
+                type: string = 'line'
             ): (Array<string>|undefined) {
-                return seriesTypes[type || 'line'].prototype.pointArrayMap;
+                return seriesTypes[type].prototype.pointArrayMap;
             },
-            globalType: string = (
-                chartOptions &&
-                chartOptions.chart &&
-                chartOptions.chart.type
-            ) as any,
+            globalType = chartOptions?.chart?.type,
             individualCounts: Array<number> = [],
             seriesBuilders: Array<SeriesBuilder> = [],
 
             // If no series mapping is defined, check if the series array is
             // defined with types.
             seriesMapping = (
-                (options && options.seriesMapping) ||
-                (
-                    chartOptions &&
-                    chartOptions.series &&
-                    chartOptions.series.map(function (
-                    ): Record<string, number> {
-                        return { x: 0 };
-                    })
-                ) ||
+                options?.seriesMapping ||
+                chartOptions?.series?.map(function (): Record<string, number> {
+                    return { x: 0 };
+                }) ||
                 []
             );
 
-        let seriesIndex = 0,
-            i;
+        let seriesIndex = 0;
 
-        ((chartOptions && chartOptions.series) || []).forEach(
+        (chartOptions?.series || []).forEach(
             (series): void => {
                 individualCounts.push(getValueCount(series.type || globalType));
             }
@@ -454,12 +463,12 @@ class Data {
             const builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
-                seriesArr = (chartOptions && chartOptions.series) || [],
-                series = seriesArr[seriesIndex] || {},
+                seriesArr = chartOptions?.series ?? [],
+                series = seriesArr[seriesIndex] ?? {},
                 defaultPointArrayMap = getPointArrayMap(
                     series.type || globalType
                 ),
-                pointArrayMap = defaultPointArrayMap || ['y'];
+                pointArrayMap = defaultPointArrayMap ?? ['y'];
 
             if (
                 // User-defined x.mapping
@@ -483,7 +492,7 @@ class Data {
             });
 
             // Add missing columns
-            for (i = 0; i < numberOfValueColumnsNeeded; i++) {
+            for (let i = 0; i < numberOfValueColumnsNeeded; i++) {
                 if (!builder.hasReader(pointArrayMap[i])) {
                     // Create and add a column reader for the next free column
                     // index
@@ -502,7 +511,7 @@ class Data {
         }
 
         this.valueCount = {
-            global: getValueCount(globalType as any),
+            global: getValueCount(globalType),
             xColumns: xColumns,
             individual: individualCounts,
             seriesBuilders: seriesBuilders,
@@ -542,14 +551,11 @@ class Data {
      *
      * @function Highcharts.Data#parseCSV
      */
-    public parseCSV(inOptions?: DataOptions): Array<Array<DataValueType>> {
+    public parseCSV(inOptions?: DataOptions): NonNullable<Data['columns']> {
         const self = this,
-            columns: Array<Array<DataValueType>> = this.columns = [],
+            columns: NonNullable<Data['columns']> = this.columns = [],
             options = inOptions || this.options,
-            startColumn = (
-                typeof options.startColumn !== 'undefined' &&
-                options.startColumn
-            ) ? options.startColumn : 0,
+            startColumn = options.startColumn || 0,
             endColumn = options.endColumn || Number.MAX_VALUE,
             dataTypes: Array<Array<string>> = [],
             // We count potential delimiters in the prepass, and use the
@@ -561,15 +567,10 @@ class Data {
             };
 
         let csv = options.csv,
-            startRow = (
-                typeof options.startRow !== 'undefined' && options.startRow ?
-                    options.startRow :
-                    0
-            ),
+            startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             itemDelimiter: string,
             lines,
-            // activeRowNo = 0,
             rowIt = 0;
 
         /*
@@ -716,7 +717,7 @@ class Data {
                     }
 
                 // Perform "plugin" handling
-                } else if (callbacks && callbacks[c]) {
+                } else if (callbacks?.[c]) {
                     if (callbacks[c](c, token)) {
                         push();
                     }
@@ -868,12 +869,11 @@ class Data {
                 stable = [],
                 max: Array<number> = [];
 
-            let thing: Array<DataValueType>,
+            let thing: DataColumnsArray,
                 guessedFormat: Array<string> = [],
                 calculatedFormat: string,
                 i = 0,
                 madeDeduction = false,
-                // candidates = {},
                 j;
 
             if (!limit || limit > data.length) {
@@ -883,7 +883,7 @@ class Data {
             for (; i < limit; i++) {
                 if (
                     typeof data[i] !== 'undefined' &&
-                    data[i] && data[i].length
+                    data[i]?.length
                 ) {
                     thing = data[i]
                         .trim()
@@ -925,7 +925,6 @@ class Data {
                                     } else {
                                         guessedFormat[j] = 'YYYY';
                                     }
-                                    // madeDeduction = true;
                                 } else if (
                                     (thing[j] as any) > 12 &&
                                     (thing[j] as any) <= 31
@@ -960,9 +959,11 @@ class Data {
 
                 // If the middle one is dd, and the last one is dd,
                 // the last should likely be year.
-                if (guessedFormat.length === 3 &&
+                if (
+                    guessedFormat.length === 3 &&
                     guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] === 'dd'
+                ) {
                     guessedFormat[2] = 'YY';
                 }
 
@@ -975,7 +976,7 @@ class Data {
                     !(options.dateFormats || self.dateFormats)[calculatedFormat]
                 ) {
                     // This should emit an event instead
-                    (fireEvent as any)('deduceDateFailed');
+                    fireEvent(self, 'deduceDateFailed');
                     return format;
                 }
 
@@ -983,18 +984,6 @@ class Data {
             }
 
             return format;
-        }
-
-        /**
-         * @todo
-         * Figure out the best axis types for the data
-         * - If the first column is a number, we're good
-         * - If the first column is a date, set to date/time
-         * - If the first column is a string, set to categories
-         * @private
-         */
-        function deduceAxisTypes(): void {
-
         }
 
         if (csv && options.beforeParse) {
@@ -1019,7 +1008,6 @@ class Data {
             if (options.itemDelimiter) {
                 itemDelimiter = options.itemDelimiter;
             } else {
-                itemDelimiter = null as any;
                 itemDelimiter = guessDelimiter(lines);
             }
 
@@ -1033,23 +1021,18 @@ class Data {
                 }
             }
 
-            // //Make sure that there's header columns for everything
-            // columns.forEach(function (col) {
-
-            // });
-
-            deduceAxisTypes();
-
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
+            if (
+                (!options.columnTypes || options.columnTypes.length === 0) &&
                 dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
+                !options.dateFormat
+            ) {
                 options.dateFormat = deduceDateFormat(columns[0] as any);
             }
 
 
-            // lines.forEach(function (line, rowNo) {
+            /// lines.forEach(function (line, rowNo) {
             //    let trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
@@ -1086,7 +1069,7 @@ class Data {
      *
      * @function Highcharts.Data#parseTable
      */
-    public parseTable(): Array<Array<DataValueType>> {
+    public parseTable(): Array<DataColumnsArray> {
         const options = this.options,
             columns = this.columns || [],
             startRow = options.startRow || 0,
@@ -1110,7 +1093,7 @@ class Data {
                         item: Element,
                         colNo: number
                     ): void => {
-                        const row = (columns as any)[colNo - startColumn];
+                        const row = columns[colNo - startColumn];
                         let i = 1;
 
                         if (
@@ -1121,11 +1104,11 @@ class Data {
                             colNo >= startColumn &&
                             colNo <= endColumn
                         ) {
-                            if (!(columns as any)[colNo - startColumn]) {
-                                (columns as any)[colNo - startColumn] = [];
+                            if (!columns[colNo - startColumn]) {
+                                columns[colNo - startColumn] = [];
                             }
 
-                            (columns as any)[colNo - startColumn][
+                            columns[colNo - startColumn][
                                 rowNo - startRow
                             ] = item.innerHTML;
 
@@ -1143,7 +1126,7 @@ class Data {
                 }
             });
 
-            this.dataFound(); // continue
+            this.dataFound(); // Continue
         }
         return columns;
     }
@@ -1228,7 +1211,7 @@ class Data {
                     success: function (
                         res: (string|JSON.Type)
                     ): void {
-                        if (chart && chart.series) {
+                        if (chart?.series) {
                             done(res);
                         }
 
@@ -1243,7 +1226,7 @@ class Data {
                             poll();
                         }
 
-                        return options.error && options.error(text, xhr);
+                        return options.error?.(text, xhr);
                     }
                 });
 
@@ -1264,7 +1247,7 @@ class Data {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: Array<Array<DataValueType>>
+                    res: Array<DataColumnsArray>
                 ): void {
                     chart.update({
                         data: {
@@ -1273,7 +1256,7 @@ class Data {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: Array<Array<DataValueType>>
+                        res: Array<DataColumnsArray>
                     ): void {
                         chart.update({
                             data: {
@@ -1364,7 +1347,7 @@ class Data {
                     xhr: XMLHttpRequest,
                     text: (string|Error)
                 ): void {
-                    return options.error && options.error(text, xhr);
+                    return options.error?.(text, xhr);
                 }
             });
         }
@@ -1402,7 +1385,7 @@ class Data {
                     }
                 });
 
-                if (chart && chart.series) {
+                if (chart?.series) {
                     chart.update({
                         data: {
                             columns: columns
@@ -1441,7 +1424,7 @@ class Data {
             str = str.replace(/^\s+|\s+$/g, '');
 
             // Clear white space inside the string, like thousands separators
-            if (inside && /^-?[0-9\s]+$/.test(str)) {
+            if (inside && /[\d\s]+/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
 
@@ -1479,22 +1462,21 @@ class Data {
      *        Column index
      */
     public parseColumn(
-        column: Array<DataValueType> & { name?: string },
+        column: NonNullable<Data['columns']>[number],
         col: number
     ): void {
         const rawColumns = this.rawColumns,
-            columns = this.columns,
+            columns = this.columns = this.columns || [],
             firstRowAsNames = this.firstRowAsNames,
-            isXColumn = (this.valueCount as any).xColumns.indexOf(col) !== -1,
-            backup: Array<DataValueType> = [],
+            isXColumn = this.valueCount?.xColumns.indexOf(col) !== -1,
+            backup: DataColumnsArray = [],
             chartOptions = this.chartOptions,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
             forceCategory = (
                 isXColumn &&
                 (
-                    chartOptions &&
-                    chartOptions.xAxis &&
+                    chartOptions?.xAxis &&
                     splat(chartOptions.xAxis)[0].type === 'category'
                 )
             ) || columnType === 'string',
@@ -1532,7 +1514,7 @@ class Data {
             ) {
                 column[row] = '' + trimVal;
 
-            } else if (+trimInsideVal === floatVal) { // is numeric
+            } else if (+trimInsideVal === floatVal) { // Is numeric
 
                 column[row] = floatVal;
 
@@ -1542,9 +1524,9 @@ class Data {
                     floatVal > 365 * 24 * 3600 * 1000 &&
                     columnType !== 'float'
                 ) {
-                    (column as any).isDatetime = true;
+                    column.isDatetime = true;
                 } else {
-                    (column as any).isNumeric = true;
+                    column.isNumeric = true;
                 }
 
                 if (typeof column[row + 1] !== 'undefined') {
@@ -1554,7 +1536,7 @@ class Data {
             // String, continue to determine if it is a date string or really a
             // string
             } else {
-                if (trimVal && trimVal.length) {
+                if (trimVal?.length) {
                     dateVal = this.parseDate(val as any);
                 }
 
@@ -1562,7 +1544,7 @@ class Data {
                 if (isXColumn && isNumber(dateVal) && columnType !== 'float') {
                     backup[row] = val;
                     column[row] = dateVal;
-                    (column as any).isDatetime = true;
+                    column.isDatetime = true;
 
                     // Check if the dates are uniformly descending or ascending.
                     // If they are not, chances are that they are a different
@@ -1580,22 +1562,22 @@ class Data {
                                     this.dateFormats[this.dateFormat]
                                         .alternative;
                             } else {
-                                (column as any).unsorted = true;
+                                column.unsorted = true;
                             }
                         }
                         descending = diff;
                     }
 
-                } else { // string
+                } else { // String
                     column[row] = trimVal === '' ? null : trimVal;
                     if (
                         row !== 0 &&
                         (
-                            (column as any).isDatetime ||
-                            (column as any).isNumeric
+                            column.isDatetime ||
+                            column.isNumeric
                         )
                     ) {
-                        (column as any).mixed = true;
+                        column.mixed = true;
                     }
                 }
             }
@@ -1606,17 +1588,20 @@ class Data {
         // intended to display as numbers or dates and parsing is too
         // aggressive. Fall back to categories. Demonstrated in the
         // highcharts/demo/column-drilldown sample.
-        if (isXColumn && (column as any).mixed) {
-            (columns as any)[col] = rawColumns[col];
+        if (isXColumn && column.mixed) {
+            columns[col] = rawColumns[col];
         }
 
         // If the 0 column is date or number and descending, reverse all
         // columns.
         if (isXColumn && descending && this.options.sort) {
-            for (col = 0; col < (columns as any).length; col++) {
-                (columns as any)[col].reverse();
+            for (col = 0; col < columns.length; col++) {
+                columns[col].reverse();
                 if (firstRowAsNames) {
-                    (columns as any)[col].unshift((columns as any)[col].pop());
+                    const poppedColumn = columns[col].pop();
+                    if (poppedColumn) {
+                        columns[col].unshift(poppedColumn);
+                    }
                 }
             }
         }
@@ -1631,38 +1616,38 @@ class Data {
      */
     public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
+            regex: /^(\d{4})[\-\/\.](\d{1,2})[\-\/\.](\d{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[1], (match[2] as any) - 1, +match[3]) :
+                        Date.UTC(+match[1], +match[2] - 1, +match[3]) :
                         NaN
                 );
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3], (match[2] as any) - 1, +match[1]) :
+                        Date.UTC(+match[3], +match[2] - 1, +match[1]) :
                         NaN
                 );
             },
-            alternative: 'mm/dd/YYYY' // different format with the same regex
+            alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3], (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(+match[3], +match[1] - 1, +match[2]) :
                         NaN
                 );
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 if (!match) {
                     return NaN;
@@ -1678,18 +1663,18 @@ class Data {
                     year += 2000;
                 }
 
-                return Date.UTC(year, (match[2] as any) - 1, +match[1]);
+                return Date.UTC(year, +match[2] - 1, +match[1]);
             },
-            alternative: 'mm/dd/YY' // different format with the same regex
+            alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
                         Date.UTC(
                             +match[3] + 2000,
-                            (match[1] as any) - 1,
+                            +match[1] - 1,
                             +match[2]
                         ) :
                         NaN
@@ -1747,13 +1732,13 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
-                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                if (val.match(/:.+(GMT|UTC|[Z+\-])/)) {
                     val = val
                         .replace(
-                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            /\s*(?:GMT|UTC)?([+\-])(\d\d)(\d\d)$/,
                             '$1$2:$3'
                         )
-                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(?:\s+|GMT|UTC)([+\-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
                 match = Date.parse(val);
@@ -1791,11 +1776,11 @@ class Data {
      *
      * @function Highcharts.Data#getData
      *
-     * @return {Array<Array<(number|string)>>|undefined} Data rows
+     * @return {Array<Array<DataValueType>>|undefined} Data rows
      */
-    public getData(): (Array<Array<(number|string)>>|undefined) {
+    public getData(): (Array<DataColumnsArray>|undefined) {
         if (this.columns) {
-            return (this.rowsToColumns(this.columns) as any).slice(1);
+            return this.rowsToColumns(this.columns)?.slice(1);
         }
     }
 
@@ -1814,34 +1799,36 @@ class Data {
      * If a complete callback function is provided in the options, interpret the
      * columns into a Highcharts options object.
      *
+     * The function requires that the context has the `valueCount` property set.
+     *
      * @function Highcharts.Data#complete
      */
-    public complete(): void {
-        const columns = this.columns,
+    public complete(this: Data & { valueCount: DataValueCountObject }): void {
+        const columns = this.columns = this.columns || [],
             xColumns = [],
             options = this.options,
-            allSeriesBuilders = [];
+            allSeriesBuilders: SeriesBuilder[] = [];
 
-        let type,
+        let type: XAxisOptions['type'] = 'linear',
             series: Array<SeriesOptions>,
-            data,
+            data: SeriesOptions['data'],
             i: number,
             j: number,
             r: number,
             seriesIndex,
             chartOptions: Partial<Options>,
-            builder,
+            builder: SeriesBuilder,
             freeIndexes,
             typeCol,
             index: number;
 
-        xColumns.length = (columns as any).length;
+        xColumns.length = columns.length;
         if (options.complete || options.afterComplete) {
 
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
-                for (i = 0; i < (columns as any).length; i++) {
-                    const curCol = (columns as any)[i];
+                for (i = 0; i < columns.length; i++) {
+                    const curCol = columns[i];
                     if (!defined(curCol.name)) {
                         curCol.name = pick(
                             curCol.shift(),
@@ -1854,17 +1841,17 @@ class Data {
             // Use the next columns for series
             series = [];
             freeIndexes = getFreeIndexes(
-                (columns as any).length,
-                (this.valueCount as any).seriesBuilders
+                columns?.length || 0,
+                this.valueCount.seriesBuilders
             );
 
             // Populate defined series
             for (
                 seriesIndex = 0;
-                seriesIndex < (this.valueCount as any).seriesBuilders.length;
+                seriesIndex < this.valueCount.seriesBuilders.length;
                 seriesIndex++
             ) {
-                builder = (this.valueCount as any).seriesBuilders[seriesIndex];
+                builder = this.valueCount.seriesBuilders[seriesIndex];
 
                 // If the builder can be populated with remaining columns, then
                 // add it to allBuilders
@@ -1884,12 +1871,12 @@ class Data {
                     freeIndexes.splice(index, 1);
                 }
 
-                for (i = 0; i < (this.valueCount as any).global; i++) {
+                for (i = 0; i < this.valueCount.global; i++) {
                     // Create and add a column reader for the next free column
                     // index
                     builder.addColumnReader(
                         void 0,
-                        (this.valueCount as any).globalPointArrayMap[i]
+                        this.valueCount.globalPointArrayMap[i]
                     );
                 }
 
@@ -1905,8 +1892,8 @@ class Data {
                 allSeriesBuilders.length > 0 &&
                 allSeriesBuilders[0].readers.length > 0
             ) {
-                typeCol = (columns as any)[
-                    allSeriesBuilders[0].readers[0].columnIndex
+                typeCol = columns?.[
+                    allSeriesBuilders[0].readers[0].columnIndex ?? -1
                 ];
                 if (typeof typeCol !== 'undefined') {
                     if (typeCol.isDatetime) {
@@ -1944,47 +1931,83 @@ class Data {
                 // Iterate down the cells of each column and add data to the
                 // series
                 data = [];
-                for (j = 0; j < (columns as any)[0].length; j++) {
-                    data[j] = builder.read(columns as any, j);
+                for (j = 0; j < columns[0].length; j++) {
+                    data[j] = builder.read(columns, j);
                 }
 
                 // Add the series
                 series[seriesIndex] = {
-                    data: data
+                    data,
+                    pointStart: data[0] && (builder.pointIsArray ?
+                        (data[0] as Array<number>)?.[0] :
+                        (data[0] as Record<string, number>)?.x
+                    ) || void 0
                 };
                 if (builder.name) {
                     series[seriesIndex].name = builder.name;
                 }
                 if (type === 'category') {
                     series[seriesIndex].turboThreshold = 0;
+                    series[seriesIndex].pointStart = 0;
                 }
             }
-
 
             // Do the callback
-            chartOptions = {
-                series: series
-            };
-            if (type) {
-                chartOptions.xAxis = {
-                    type: type
-                } as any;
+            chartOptions = { series };
+
+            // Prepare the axis options
+            if (
+                type === 'linear' && (
+                    !this.xAxisOptions ||
+                    this.xAxisOptions.type === type
+                )
+            ) {
+                // Clear default value ('linear') if it is not changing the
+                // axis type to avoid loosing animation
+                type = this.xAxisOptions = void 0;
+            } else {
+                this.xAxisOptions = { type };
                 if (type === 'category') {
-                    (chartOptions.xAxis as any).uniqueNames = false;
+                    this.xAxisOptions.uniqueNames = false;
                 }
             }
 
-            if (options.complete) {
-                options.complete(chartOptions);
+            // Merge the xAxisOptions for the standalone Data module
+            if (!this.chart) {
+                merge(true, chartOptions, { xAxis: this.xAxisOptions || {} });
             }
+
+            options.complete?.(chartOptions);
 
             // The afterComplete hook is used internally to avoid conflict with
             // the externally available complete option.
-            if (options.afterComplete) {
-                options.afterComplete(chartOptions);
-            }
+            options.afterComplete?.(this, chartOptions);
+        }
+    }
+
+    /**
+     * Sets properties directly on the xAxis object.
+     *
+     * @private
+     */
+    public xAxisUpdateHandler(axis: Axis): void {
+        const options = this.xAxisOptions;
+
+        if (!options) {
+            return;
         }
 
+        // Set the axis properties if not blocked by the axis options that could
+        // have changed in the update event.
+        if (!axis.options.type && options.type) {
+            axis.type = options.type;
+        }
+        if (
+            !axis.options.uniqueNames &&
+            options.uniqueNames === false
+        ) {
+            axis.uniqueNames = options.uniqueNames;
+        }
     }
 
     /**
@@ -1993,8 +2016,10 @@ class Data {
      * @function Highcharts.Data#update
      *
      * @param {Highcharts.DataOptions} options
+     *        The new data options.
      *
      * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the new options are set.
      */
     public update(
         options: DataOptions,
@@ -2006,40 +2031,69 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
+                dataInstance: Data,
                 dataOptions?: Partial<Options>
             ): void {
-                // Avoid setting axis options unless the type changes. Running
-                // Axis.update will cause the whole structure to be destroyed
-                // and rebuilt, and animation is lost.
-                if (dataOptions) {
-                    if (
-                        dataOptions.xAxis &&
-                        chart.xAxis[0] &&
-                        (dataOptions.xAxis as any).type ===
-                        chart.xAxis[0].options.type
-                    ) {
-                        delete dataOptions.xAxis;
-                    }
-
-                    // @todo looks not right:
-                    chart.update(dataOptions as any, redraw, true);
+                if (!dataOptions) {
+                    return;
                 }
+
+                // Avoid setting axis options unless they change. Running
+                // Axis.update will cause the whole structure to be
+                // destroyed and rebuilt, and animation is lost.
+                const xAxis = chart.xAxis[0],
+                    xAxisOptions = dataInstance.xAxisOptions;
+
+                // Update axis if xAxisOptions are different from the current
+                // and not blocked by the axis options.
+                if (xAxisOptions && xAxis && (
+                    (xAxis.type !== xAxisOptions.type && !xAxis.options.type) ||
+                    (
+                        xAxis.uniqueNames &&
+                        xAxisOptions.uniqueNames === false &&
+                        xAxis.options.uniqueNames === void 0
+                    )
+                )) {
+                    xAxis.update({}, false);
+                } else {
+                    // Prefer smooth points update when no axis update
+                    (dataOptions?.series || []).forEach(function (
+                        seriesOptions: SeriesOptions
+                    ): void {
+                        delete seriesOptions.pointStart;
+                    });
+                }
+
+                chart.update(dataOptions, redraw, true);
             };
             // Apply it
             merge(true, chartOptions.data, options);
 
             // Reset columns if fetching spreadsheet, to force a re-fetch
-            if (
-                chartOptions.data && chartOptions.data.googleSpreadsheetKey &&
-                !options.columns
-            ) {
+            if (chartOptions.data?.googleSpreadsheetKey && !options.columns) {
                 delete chartOptions.data.columns;
             }
 
-            this.init(chartOptions.data as any);
+            this.init(chartOptions.data || {}, chartOptions);
         }
     }
 }
+
+// Fire 1st xAxis properties modifier after the options are set.
+addEvent(
+    Axis,
+    'afterSetOptions',
+    function (): void {
+        // Target first xAxis only
+        if (
+            this.isXAxis &&
+            // Init or update
+            (!this.chart.xAxis.length || this.chart.xAxis[0] === this)
+        ) {
+            this.chart.data?.xAxisUpdateHandler(this);
+        }
+    }
+);
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
 // option group, data.
@@ -2075,8 +2129,8 @@ addEvent(
             const dataOptions = merge(defaultDataOptions, userOptions.data);
 
             chart.data = new Data(extend(dataOptions, {
-
                 afterComplete: function (
+                    dataInstance: Data,
                     dataOptions?: Partial<Options>
                 ): void {
                     let i, series;
@@ -2091,17 +2145,13 @@ addEvent(
                         if (typeof userOptions.series === 'object') {
                             i = Math.max(
                                 userOptions.series.length,
-                                dataOptions && dataOptions.series ?
-                                    dataOptions.series.length :
-                                    0
+                                dataOptions?.series?.length ?? 0
                             );
                             while (i--) {
                                 series = userOptions.series[i] || {};
                                 userOptions.series[i] = merge(
                                     series,
-                                    dataOptions && dataOptions.series ?
-                                        dataOptions.series[i] :
-                                        {}
+                                    dataOptions?.series?.[i] ?? {}
                                 );
                             }
                         } else { // Allow merging in dataOptions.series (#2856)
@@ -2111,6 +2161,9 @@ addEvent(
 
                     // Do the merge
                     userOptions = merge(dataOptions, userOptions);
+
+                    // Register for access in events (Axis' afterSetOptions)
+                    chart.data = dataInstance;
 
                     // Run chart.init again
                     chart.init(userOptions, callback);
@@ -2432,7 +2485,7 @@ export default Data;
  * A callback function to modify the CSV before parsing it. Return the modified
  * string.
  *
- * @sample {highcharts} highcharts/demo/line-ajax/
+ * @sample {highcharts} highcharts/demo/line-csv/
  *         Modify CSV before parse
  *
  * @type      {Highcharts.DataBeforeParseCallbackFunction}
@@ -2468,10 +2521,10 @@ export default Data;
  * @sample {highmaps} highcharts/data/column-types-map/
  *         Map chart created with fips from CSV
  *
- * @type      {Array<'string'|'number'|'float'|'date'>}
- * @since     @next
+ * @type       {Array<'string'|'number'|'float'|'date'>}
+ * @since      11.3.0
  * @validvalue ["string", "number", "float", "date"]
- * @apioption data.columnTypes
+ * @apioption  data.columnTypes
  */
 
 /**
@@ -2852,4 +2905,4 @@ export default Data;
  * @apioption data.enablePolling
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

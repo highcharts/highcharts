@@ -20,7 +20,8 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b><br><b>{point.y}</b> ' +
-                    '<span style="opacity: 0.5">({point.percentage:.1f}%)</span>',
+                    '<span style="opacity: 0.5">' +
+                    '({point.percentage:.1f}%)</span>',
                 style: {
                     fontWeight: 'normal'
                 },

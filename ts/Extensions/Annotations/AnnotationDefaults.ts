@@ -707,7 +707,7 @@ const AnnotationDefaults: AnnotationOptions = {
      */
     zIndex: 6
 
-} as AnnotationOptions; // typeOptions are expected but not set
+} as AnnotationOptions; // Type options are expected but not set
 
 /* *
  *

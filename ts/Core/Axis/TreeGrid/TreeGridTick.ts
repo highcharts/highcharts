@@ -190,13 +190,12 @@ function wrapGetLabelPosition(
 ): PositionObject {
     const tick = this,
         lbOptions = pick(
-            tick.options && tick.options.labels,
+            tick.options?.labels,
             labelOptions
         ),
         pos = tick.pos,
         axis = tick.axis,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid',
+        isTreeGrid = axis.type === 'treegrid',
         result = proceed.apply(
             tick,
             [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
@@ -221,8 +220,8 @@ function wrapGetLabelPosition(
                     0
             );
         mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode;
-        node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
-        level = (node && node.depth) || 1;
+        node = mapOfPosToGridNode?.[pos];
+        level = node?.depth || 1;
         result.x += (
             // Add space for symbols
             (width + (padding * 2)) +
@@ -264,14 +263,14 @@ function wrapRenderLabel(
                 labelOptions.symbol :
                 {}
         ),
-        node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
+        node = mapOfPosToGridNode?.[pos],
         {
             descendants,
             depth
         } = node || {},
         hasDescendants = node && descendants && descendants > 0,
         level = depth,
-        isTreeGridElement = (axisOptions.type === 'treegrid') && labelElement,
+        isTreeGridElement = (axis.type === 'treegrid') && labelElement,
         shouldRender = tickPositions.indexOf(pos) > -1,
         prefixClassName = 'highcharts-treegrid-node-',
         prefixLevelClass = prefixClassName + 'level-',
@@ -387,7 +386,7 @@ class TreeGridTickAdditions {
             wrap(tickProto, 'getLabelPosition', wrapGetLabelPosition);
             wrap(tickProto, 'renderLabel', wrapRenderLabel);
 
-            // backwards compatibility
+            // Backwards compatibility
             tickProto.collapse = function (
                 this: TreeGridTick,
                 redraw?: boolean

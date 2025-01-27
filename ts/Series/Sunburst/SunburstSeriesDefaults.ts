@@ -43,7 +43,7 @@ import type SunburstSeriesOptions from './SunburstSeriesOptions';
  *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *               minSize, navigatorOptions, pointRange
  * @product      highcharts
- * @requires     modules/sunburst.js
+ * @requires     modules/sunburst
  * @optionparent plotOptions.sunburst
  *
  * @private
@@ -57,7 +57,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      * @since 10.0.0
      * @product   highcharts
      * @extends   navigation.breadcrumbs
-     * @optionparent plotOptions.sunburst.breadcrumbs
+     * @apioption plotOptions.sunburst.breadcrumbs
      */
 
     /**
@@ -340,7 +340,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
  * @excluding dataParser, dataURL, stack, dataSorting, boostThreshold,
  *            boostBlending
  * @product   highcharts
- * @requires  modules/sunburst.js
+ * @requires  modules/sunburst
  * @apioption series.sunburst
  */
 
@@ -393,7 +393,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
   * @apioption series.sunburst.data.sliced
   */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

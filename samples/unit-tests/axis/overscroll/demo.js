@@ -1,6 +1,7 @@
 // Test both, ordinal and non-ordinal axes:
 [true, false].forEach(ordinal => {
-    // Highcharts Stock modifies "series" property, so use separate object each time:
+    // Highcharts Stock modifies "series" property, so use separate object
+    // each time:
     function getOptions() {
         return {
             chart: {
@@ -57,10 +58,11 @@
     }
 
     QUnit.test(
-        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons',
+        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons' +
+        ' + panning.',
         function (assert) {
-            var options = getOptions(),
-                xAxis;
+            const options = getOptions();
+            let xAxis;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
@@ -69,11 +71,12 @@
                 options.rangeSelector.buttons[0].count,
                 'Correct range with preselected button (1s)'
             );
-
-            options = getOptions();
             options.rangeSelector.selected = null;
 
-            xAxis = Highcharts.stockChart('container', options).xAxis[0];
+            const chart = Highcharts.stockChart('container', options),
+                controller = new TestController(chart);
+
+            xAxis = chart.xAxis[0];
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
@@ -81,6 +84,15 @@
                     1 +
                     xAxis.options.overscroll,
                 'Correct range with ALL'
+            );
+
+            xAxis.setExtremes(10, null);
+            controller.pan([100, 200], [300, 200]);
+            assert.close(
+                xAxis.min,
+                9.5,
+                0.5,
+                'Panning should work with overscroll option, #21316'
             );
         }
     );
@@ -281,5 +293,59 @@
                 'Correct range with updated overscroll set in %'
             );
         }
+    );
+});
+
+QUnit.test('Overscroll with rangeSelector (#22334)', function (assert) {
+    const overscrollPixelValue = 200,
+        overscrollPercentageValue = 25;
+
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 820 // Gives us axis.len of 800px
+        },
+
+        xAxis: {
+            overscroll: overscrollPixelValue + 'px'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            pointStart: '2017-01-01',
+            pointInterval: 1000 * 60 * 60 * 24, // 1 day
+            data: (function () {
+                const data = [];
+
+                for (let i = 0; i <= 1000; i += 1) {
+                    data.push(
+                        Math.round(Math.random() * 100)
+                    );
+                }
+                return data;
+            }())
+        }]
+    });
+
+    const points = chart.series[0].points,
+        lastPoint = points[points.length - 1];
+
+    assert.strictEqual(
+        lastPoint.plotX,
+        chart.xAxis[0].width - overscrollPixelValue,
+        'Pixel overscroll correct range with rangeSelector enabled'
+    );
+
+    chart.xAxis[0].update({
+        overscroll: overscrollPercentageValue + '%'
+    });
+
+    assert.strictEqual(
+        lastPoint.plotX,
+        chart.xAxis[0].width -
+            (chart.xAxis[0].len * overscrollPercentageValue / 100),
+        'Percent overscroll correct range with rangeSelector enabled'
     );
 });

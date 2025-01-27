@@ -99,7 +99,7 @@ function onAxisAfterDrawCrosshair(
     if (this.variwide && this.cross) {
         this.cross.attr(
             'stroke-width',
-            (e.point && e.point.crosshairWidth) as any
+            e.point?.crosshairWidth
         );
     }
 }
@@ -113,7 +113,7 @@ function onAxisAfterRender(
 ): void {
     const axis = this;
 
-    if (!this.horiz && this.variwide) {
+    if (this.variwide) {
         this.chart.labelCollectors.push(
             function (): Array<SVGElement> {
                 return axis.tickPositions

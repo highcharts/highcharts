@@ -231,7 +231,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             626460184,
             506662835
         ],
-        'volumeDataArray is correct after add two points on the base and the volume series.'
+        'volumeDataArray is correct after add two points on the base and the ' +
+        'volume series.'
     );
 
     base.data[base.data.length - 1].remove(false);
@@ -253,7 +254,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             626460184,
             506662835
         ],
-        'volumeDataArray is correct after point remove on the base and the volume series.'
+        'volumeDataArray is correct after point remove on the base and the ' +
+        'volume series.'
     );
 
     chart.series[0].points[14].update({
@@ -262,7 +264,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         low: 55,
         close: 80
     });
-    const yData = chart.series[2].yData.slice();
+    const yData = chart.series[2].getColumn('y').slice();
     chart.series[0].points[14].update({
         open: 60,
         high: 150,

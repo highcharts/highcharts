@@ -88,9 +88,17 @@
                         visible: true
                     });
 
-                    const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
-                    const candlestick =  document.querySelector('#stock .stick');
-                    const column = document.querySelector('#stock .highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '#stock .highcharts-range-selector-group'
+                    );
+                    const candlestick =  document.querySelector(
+                        '#stock ' +
+                        '.stick'
+                    );
+                    const column = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-column-series.column'
+                    );
                     candlestick.classList.add('fade-in');
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
@@ -98,8 +106,12 @@
                 },
                 redraw: function () {
                     const candlestick =  document.querySelector('.stick');
-                    const rangeSelectorGroup =  document.querySelector('.highcharts-range-selector-group');
-                    const column = document.querySelector('.highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '.highcharts-range-selector-group'
+                    );
+                    const column = document.querySelector(
+                        '.highcharts-column-series.column'
+                    );
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
                     candlestick.classList.add('fade-in');
@@ -155,8 +167,6 @@
         xAxis: [
             // 0
             {
-                min: Date.UTC(2021, 5, 2),
-                max: Date.UTC(2021, 8, 4),
                 visible: true
 
             }
@@ -238,7 +248,12 @@
         },
         accessibility: {
             screenReaderSection: {
-                beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive candlestick chart showing Apple (AAPL) stock prices and trading volume over time for the past 2 years.</p><p>The X-axis is showing time, and there are two Y-axes. One Y-axis is showing stock price, and the other is showing trading volume.</p>'
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive ' +
+                    'candlestick chart showing Apple (AAPL) stock prices and ' +
+                    'trading volume over time for the past 2 years.</p><p>' +
+                    'The X-axis is showing time, and there are two Y-axes. ' +
+                    'One Y-axis is showing stock price, and the other is ' +
+                    'showing trading volume.</p>'
             }
         },
         tooltip: {

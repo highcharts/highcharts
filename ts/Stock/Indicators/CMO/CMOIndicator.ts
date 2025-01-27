@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
@@ -91,7 +91,7 @@ class CMOIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: CMOParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
         const period = params.period as any,
@@ -235,4 +235,4 @@ export default CMOIndicator;
  * @apioption series.cmo
  */
 
-(''); // to include the above in the js output
+(''); // To include the above in the js output

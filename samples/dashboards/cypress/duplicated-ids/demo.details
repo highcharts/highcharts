@@ -1,0 +1,6 @@
+---
+ name: Dashboards cypress test
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

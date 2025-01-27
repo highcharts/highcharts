@@ -196,6 +196,7 @@ QUnit.test('Pie dataLabels and contrast', function (assert) {
         Highcharts.color(
             points[0].dataLabel.element.childNodes[0].style.color
         ).get(),
-        'DataLabels outside the pie chart should not get contrast color (#11140).'
+        'DataLabels outside the pie chart should not get contrast color ' +
+        '(#11140).'
     );
 });

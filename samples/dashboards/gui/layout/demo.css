@@ -1,3 +1,38 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#dashboard-col-2,
+#dashboard-col-21,
+#dashboard-col-22 {
+    flex: 1 1 33.333%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-col-2,
+    #dashboard-col-21,
+    #dashboard-col-22 {
+        flex: 1 1 33.333%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-col-2 {
+        flex: 1 1 100%;
+    }
+
+    #dashboard-col-21,
+    #dashboard-col-22 {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-col-2,
+    #dashboard-col-21,
+    #dashboard-col-22 {
+        flex: 1 1 100%;
+    }
+}

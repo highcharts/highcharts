@@ -155,7 +155,7 @@ const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
  * @apioption plotOptions.tiledwebmap.provider.url
  */
 
-''; // keeps doclets above detached
+''; // Keeps doclets above detached
 
 /* *
  *

@@ -227,7 +227,7 @@ interface GanttSeries{
     pointClass: typeof GanttPoint;
 }
 
-extend(GanttSeries.prototype, { // props - series member overrides
+extend(GanttSeries.prototype, { // Props - series member overrides
     pointArrayMap: ['start', 'end', 'y'],
     pointClass: GanttPoint,
     setData: Series.prototype.setData

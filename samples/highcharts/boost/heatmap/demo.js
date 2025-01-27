@@ -11,7 +11,7 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        margin: [60, 10, 80, 50]
+        margin: [60, 10, 80, 60]
     },
 
     boost: {
@@ -21,19 +21,19 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts boosted heat map',
         align: 'left',
-        x: 40
+        x: 50
     },
 
     subtitle: {
         text: 'Temperature variation by day and hour through 2013',
         align: 'left',
-        x: 40
+        x: 50
     },
 
     xAxis: {
         type: 'datetime',
-        min: Date.UTC(2013, 0, 1),
-        max: Date.UTC(2014, 0, 1),
+        min: '2013-01-01',
+        max: '2014-01-01',
         labels: {
             align: 'left',
             x: 5,
@@ -85,11 +85,10 @@ Highcharts.chart('container', {
         colsize: 24 * 36e5, // one day
         tooltip: {
             headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        },
-        turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
+            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
+                '℃</b>'
+        }
     }]
-
 });
 
-console.log('Rendered in ' + (new Date() - start) + ' ms'); // eslint-disable-line no-console
+console.log('Rendered in ' + (new Date() - start) + ' ms');

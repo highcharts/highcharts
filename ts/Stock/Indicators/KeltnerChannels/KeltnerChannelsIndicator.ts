@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     KeltnerChannelsOptions,
@@ -183,7 +183,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period = (params.period as any),
@@ -198,20 +198,22 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
-            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(
+                series,
                 {
                     period: period,
                     index: index
                 }),
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
-            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(
+                series,
                 {
                     period: periodATR
                 }),
             xData: Array<number> = [],
             yData: Array<Array<number>> = [];
-            // middle line, top line and bottom lineI
+            // Middle line, top line and bottom lineI
         let ML: number,
             TL: number,
             BL: number,
@@ -310,4 +312,4 @@ export default KeltnerChannelsIndicator;
  * @apioption    series.keltnerchannels
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

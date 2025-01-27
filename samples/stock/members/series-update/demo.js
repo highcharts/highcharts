@@ -5,9 +5,12 @@
         'https://demo-live-data.highcharts.com/aapl-ohlc.json'
     ).then(response => response.json());
 
-    // The data point configurations are arrays on the form [x, open, high, low, close].
-    // In order to make this understandable for different series types like line, column
-    // and ranges, we need to transform it to objects. Single-value series types like
+    // The data point configurations are arrays on the form [x, open, high,
+    // low, close].
+    // In order to make this understandable for different series types like
+    // line, column
+    // and ranges, we need to transform it to objects. Single-value series
+    // types like
     // line will use the y option, ranges will use low and high, and OHLC will
     // use all.
     data = data.map(config =>
@@ -17,7 +20,8 @@
             high: config[2],
             low: config[3],
             close: config[4],
-            y: config[4] // let the closing value represent the data in single-value series
+            y: config[4] // let the closing value represent the data in
+            // single-value series
         })
     );
 
@@ -35,8 +39,7 @@
         series: [{
             name: 'AAPL Stock Price',
             data: data,
-            threshold: null,
-            turboThreshold: 2000 // to accept point object configuration
+            threshold: null
         }]
     });
 
@@ -62,7 +65,10 @@
     });
 
     // Set type
-    ['line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'].forEach(function (type) {
+    [
+        'line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange',
+        'candlestick', 'ohlc'
+    ].forEach(function (type) {
         document.getElementById(type).addEventListener('click', function () {
             chart.series[0].update({
                 type: type

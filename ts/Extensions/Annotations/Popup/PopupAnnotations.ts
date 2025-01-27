@@ -72,7 +72,7 @@ function addForm(
     const popupDiv = this.container,
         lang = this.lang;
 
-    // create title of annotations
+    // Create title of annotations
     let lhsCol = createElement('h2', {
         className: 'highcharts-popup-main-title'
     }, void 0, popupDiv);
@@ -82,7 +82,7 @@ function addForm(
         )
     );
 
-    // left column
+    // Left column
     lhsCol = createElement(
         'div',
         {
@@ -143,18 +143,18 @@ function addToolbar(
         showForm = this.showForm,
         toolbarClass = 'highcharts-annotation-toolbar';
 
-    // set small size
+    // Set small size
     if (popupDiv.className.indexOf(toolbarClass) === -1) {
         popupDiv.className += ' ' + toolbarClass + ' highcharts-no-mousewheel';
     }
 
-    // set position
+    // Set position
     if (chart) {
         popupDiv.style.top = chart.plotTop + 10 + 'px';
     }
 
-    // create label
-    let label = createElement(
+    // Create label
+    const label = createElement(
         'p',
         {
             className: 'highcharts-annotation-label'
@@ -175,7 +175,7 @@ function addToolbar(
         )
     );
 
-    // add buttons
+    // Add buttons
 
     let button = this.addButton(
         popupDiv,
@@ -248,14 +248,14 @@ function addFormFields(
 
     objectEach(options, (value, option): void => {
 
-        // create name like params.styles.fontSize
+        // Create name like params.styles.fontSize
         parentFullName = parentNode !== '' ? parentNode + '.' + option : option;
 
         if (isObject(value)) {
             if (
-                // value is object of options
+                // Value is object of options
                 !isArray(value) ||
-                // array of objects with params. i.e labels in Fibonacci
+                // Array of objects with params. i.e labels in Fibonacci
                 (isArray(value) && isObject(value[0]))
             ) {
                 titleName = lang[option] || option;

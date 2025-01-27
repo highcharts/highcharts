@@ -1,0 +1,18 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#dashboard-col-0 h1 {
+    height: 400px;
+    text-align: center;
+}
+
+.highcharts-dashboards-cell {
+    border: 1px solid red;
+}
+
+#container {
+    border: 1px solid black;
+}
+
+#container2 {
+    border: 1px solid yellow;
+}

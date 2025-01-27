@@ -40,7 +40,9 @@ console.time('line');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -55,7 +57,10 @@ Highcharts.chart('container', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>' +
+                '{yAxisDescription}</div>'
         }
     },
 

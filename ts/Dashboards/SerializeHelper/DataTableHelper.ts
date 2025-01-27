@@ -21,6 +21,7 @@
 
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Globals from '../Globals';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import DataTable from '../../Data/DataTable.js';
@@ -75,30 +76,18 @@ function jsonSupportFor(
 function toJSON(
     obj: DataTable
 ): DataTableHelper.JSON {
-    const aliases = obj.aliases,
-        aliasKeys = Object.keys(aliases),
-        json: DataTableHelper.JSON = {
-            $class: 'Data.DataTable',
-            columns: obj.getColumns()
-        };
+    const json: DataTableHelper.JSON = {
+        $class: 'Data.DataTable',
+        columns: obj.getColumns()
+    };
 
-    // aliases
-
-    if (aliasKeys.length) {
-        const jsonAliases: JSON.Object = json.aliases = {};
-
-        for (let i = 0, iEnd = aliasKeys.length; i < iEnd; ++i) {
-            jsonAliases[aliasKeys[i]] = aliases[aliasKeys[i]];
-        }
-    }
-
-    // custom ID
+    // Custom ID
 
     if (!obj.autoId) {
         json.id = obj.id;
     }
 
-    // done
+    // Done
 
     return json;
 }
@@ -119,7 +108,7 @@ namespace DataTableHelper {
 
     export type ColumnJSON = JSON.Array<JSON.Primitive>;
 
-    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTableOptions);
+    export type JSON = (Serializable.JSON<'Data.DataTable'> & DataTableOptions);
 
 }
 

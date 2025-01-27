@@ -76,6 +76,7 @@ declare module '../Core/Series/SeriesOptions' {
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
+        cumulativeStart?: boolean;
     }
 }
 
@@ -368,32 +369,27 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#processData
      */
     function afterProcessData(this: Series): void {
-        const series = this;
-
-        if (
-            series.xAxis && // not pies
-            series.processedYData &&
-            series.dataModify
-        ) {
-            const processedXData = series.processedXData,
-                processedYData = series.processedYData,
-                length = processedYData.length,
-                compareStart = series.options.compareStart === true ? 0 : 1;
-            let keyIndex = -1,
-                i;
+        const series = this,
 
             // For series with more than one value (range, OHLC etc), compare
             // against close or the pointValKey (#4922, #3112, #9854)
-            if (series.pointArrayMap) {
-                keyIndex = series.pointArrayMap.indexOf(
-                    series.options.pointValKey || series.pointValKey || 'y'
-                );
-            }
+            compareColumn = this.getColumn((
+                series.pointArrayMap &&
+                (series.options.pointValKey || series.pointValKey)
+            ) || 'y', true);
 
-            // find the first value for comparison
-            for (i = 0; i < length - compareStart; i++) {
-                const compareValue = processedYData[i] && keyIndex > -1 ?
-                    (processedYData[i] as any)[keyIndex] : processedYData[i];
+        if (
+            series.xAxis && // Not pies
+            compareColumn.length &&
+            series.dataModify
+        ) {
+            const processedXData = series.getColumn('x', true),
+                length = series.dataTable.rowCount,
+                compareStart = series.options.compareStart === true ? 0 : 1;
+
+            // Find the first value for comparison
+            for (let i = 0; i < length - compareStart; i++) {
+                const compareValue = compareColumn[i];
 
                 if (
                     isNumber(compareValue) &&
@@ -625,7 +621,7 @@ namespace DataModifyComposition {
                             (compareBase === 100 ? 0 : 100);
                     }
 
-                    // record for tooltip etc.
+                    // Record for tooltip etc.
                     if (typeof index !== 'undefined') {
                         const point = this.series.points[index];
 
@@ -666,8 +662,19 @@ namespace DataModifyComposition {
                     // Record for tooltip etc.
                     const point = this.series.points[index];
 
+                    const cumulativeStart =
+                            point.series.options.cumulativeStart,
+                        withinRange =
+                            point.x <= this.series.xAxis.max! &&
+                            point.x >= this.series.xAxis.min!;
+
+
                     if (point) {
-                        point.cumulativeSum = value;
+                        if (!cumulativeStart || withinRange) {
+                            point.cumulativeSum = value;
+                        } else {
+                            point.cumulativeSum = void 0;
+                        }
                     }
 
                     return value;
@@ -720,7 +727,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
@@ -773,4 +780,22 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+/**
+ * Defines if cumulation should start from the first point within the visible
+ * range or should start from the last point **before** the range.
+ *
+ * In other words, this flag determines if first point within the visible range
+ * will start at 0 (`cumulativeStart=true`) or should have been already calculated
+ * according to the previous point (`cumulativeStart=false`).
+ *
+ * @sample {highstock} stock/plotoptions/series-cumulativestart/
+ *         Cumulative Start
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since 11.4.2
+ * @product   highstock
+ * @apioption plotOptions.series.cumulativeStart
+ */
+
+''; // Keeps doclets above in transpiled file

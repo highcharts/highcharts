@@ -67,7 +67,10 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
         }
     });
 
-    assert.strictEqual(chart.mapNavigation.navButtons[0], undefined, 'No button');
+    assert.strictEqual(
+        chart.mapNavigation.navButtons[0], undefined, 'No ' +
+        'button'
+    );
 
     chart.update({
         mapNavigation: {

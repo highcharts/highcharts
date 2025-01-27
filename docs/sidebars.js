@@ -35,11 +35,14 @@ module.exports = {
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
+            'stock/advanced-annotations',
             'stock/candlestick-chart',
             'stock/compare',
             'stock/cumulative-sum',
             'stock/hollow-candlestick-chart',
             'stock/heikinashi',
+            'stock/renko',
+            'stock/pointandfigure',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
@@ -61,6 +64,7 @@ module.exports = {
             'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
+            'maps/map-drill-down',
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
@@ -104,6 +108,22 @@ module.exports = {
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
             'dashboards/frequently-asked-questions',
+        ],
+        'DataGrid': [
+            'datagrid/general',
+            'datagrid/installation',
+            'datagrid/understanding-datagrid',
+            'datagrid/columns',
+            'datagrid/header',
+            'datagrid/events',
+            'datagrid/performance',
+            'datagrid/style-by-css',
+            'datagrid/accessibility',
+            'datagrid/datagrid-v2-migration',
+            'datagrid/datagrid-with-angular',
+            'datagrid/datagrid-with-react',
+            'datagrid/datagrid-with-vue'
+            
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -163,6 +183,7 @@ module.exports = {
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
             'advanced-chart-features/data-sorting',
@@ -190,7 +211,30 @@ module.exports = {
             'working-with-data/live-data',
             'working-with-data/data-from-a-database',
             'working-with-data/getting-data-across-domains-jsonp',
-            'working-with-data/server-side-data-grouping'
+            'working-with-data/server-side-data-grouping',
+            {
+                'Morningstar Connectors': [
+                    'morningstar/morningstar',
+                    'morningstar/goal-analysis',
+                    'morningstar/risk-score',
+                    'morningstar/regulatory-news-announcements',
+                    'morningstar/security-details',
+                    'morningstar/x-ray',
+                    {
+                        'Time Series': [
+                            'morningstar/time-series/time-series',
+                            'morningstar/time-series/cumulative-return',
+                            'morningstar/time-series/dividend',
+                            'morningstar/time-series/growth',
+                            'morningstar/time-series/ohlcv',
+                            'morningstar/time-series/price'
+                        ],
+                        'Screeners': [
+                            'morningstar/screeners/investment-screener',
+                        ]
+                    }
+                ]
+            }
         ],
         'Chart design and style': [
             'chart-design-and-style/design-and-style',

@@ -60,8 +60,16 @@ QUnit.test(
             number of the main series' points plus period.`
         );
 
+        const getValues = indicator => (
+            indicator.getColumn('x').map((x, i) => [
+                indicator.getColumn('y')[i],
+                indicator.getColumn('plusDI')[i],
+                indicator.getColumn('minusDI')[i]
+            ])
+        );
+
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [43.297380585516, 31.98074277854195, 12.65474552957359],
                 [46.826720017784, 32.94264339151991, 11.930174563590466],
@@ -86,7 +94,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [43.297380585516, 31.98074277854195, 12.65474552957359],
                 [46.826720017784, 32.94264339151991, 11.930174563590466],
@@ -133,7 +141,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [65.536917892157, 6.749418735468388, 32.419560489012234],
                 [68.725990520516, 6.291978073515623, 33.94576680306143],
@@ -224,7 +232,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            DMIIndicator.yData,
+            getValues(DMIIndicator),
             [
                 [76.08491199785, 4.1133243980219065, 30.28608402273882],
                 [79.462994811667, 3.543787173680344, 30.96744892118592],
@@ -238,7 +246,8 @@ QUnit.test(
                 [43.927350477024, 10.91939104592899, 28.027907285157493],
                 [21.91966974528, 16.535109503389695, 25.81898774350347]
             ],
-            'After period update: the DMI (DX, +DI, -DI) values should be correct.'
+            'After period update: the DMI (DX, +DI, -DI) values should be ' +
+            'correct.'
         );
 
         chart.series[0].points[chart.series[0].points.length - 1].remove();
@@ -249,7 +258,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            chart.series[1].yData,
+            getValues(chart.series[1]),
             [
                 [76.08491199785, 4.1133243980219065, 30.28608402273882],
                 [79.462994811667, 3.543787173680344, 30.96744892118592],
@@ -262,6 +271,7 @@ QUnit.test(
                 [70.364402600831, 5.887796348038017, 33.84682596265047],
                 [43.927350477024, 10.91939104592899, 28.027907285157493]
             ],
-            'After point remove: the DMI (DX, +DI, -DI) values should be correct.'
+            'After point remove: the DMI (DX, +DI, -DI) values should be ' +
+            'correct.'
         );
     });

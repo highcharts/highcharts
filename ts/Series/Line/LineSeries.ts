@@ -161,10 +161,8 @@ class LineSeries extends Series {
                 }
 
                 graph[verb](attribs)
-                // Add shadow to normal series (0) or to first
-                // zone (1) #3932
+                    // Add shadow to normal series as well as zones
                     .shadow(
-                        (i < 2) &&
                         options.shadow &&
                         // If shadow is defined, call function with
                         // `filterUnits: 'userSpaceOnUse'` to avoid known
@@ -198,7 +196,7 @@ class LineSeries extends Series {
         const series = this,
             options = series.options,
             graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>;
+            xMap: Array<(number|null)> = [];
         let gap: boolean,
             step = options.step as any;
 
@@ -232,11 +230,11 @@ class LineSeries extends Series {
                 plotY = point.plotY,
                 lastPoint = (points as any)[i - 1],
                 isNull = point.isNull || typeof plotY !== 'number';
-            // the path to this point from the previous
+            // The path to this point from the previous
             let pathToPoint: SVGPath;
 
             if (
-                (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+                (point.leftCliff || lastPoint?.rightCliff) &&
                 !connectCliffs
             ) {
                 gap = true; // ... and continue
@@ -274,14 +272,14 @@ class LineSeries extends Series {
 
                 } else if (step) {
 
-                    if (step === 1) { // right
+                    if (step === 1) { // Right
                         pathToPoint = [[
                             'L',
                             lastPoint.plotX as any,
                             plotY as any
                         ]];
 
-                    } else if (step === 2) { // center
+                    } else if (step === 2) { // Center
                         pathToPoint = [[
                             'L',
                             ((lastPoint.plotX as any) + plotX) / 2,
@@ -306,7 +304,7 @@ class LineSeries extends Series {
                     ]);
 
                 } else {
-                    // normal line to next point
+                    // Normal line to next point
                     pathToPoint = [[
                         'L',
                         plotX as any,
@@ -319,7 +317,7 @@ class LineSeries extends Series {
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
+                    if (step === 2) { // Step = center (#8073)
                         xMap.push(point.x);
                     }
                 }
@@ -329,7 +327,7 @@ class LineSeries extends Series {
             }
         });
 
-        (graphPath as any).xMap = xMap;
+        graphPath.xMap = xMap;
         series.graphPath = graphPath;
 
         return graphPath;
@@ -607,10 +605,14 @@ export default LineSeries;
  */
 
 /**
- * The x value of the point. For datetime axes, the X value is the timestamp
- * in milliseconds since 1970.
+ * The x value of the point.
  *
- * @type      {number}
+ * For datetime axes, a number value is the timestamp in milliseconds since
+ * 1970, while a date string is parsed according to the [current time zone]
+ * (https://api.highcharts.com/highcharts/time.timezone) of the
+ * chart. Date strings are supported since v12.
+ *
+ * @type      {number|string}
  * @product   highcharts highstock
  * @apioption series.line.data.x
  */
@@ -640,4 +642,4 @@ export default LineSeries;
  * @apioption series.line.data.marker
  */
 
-''; // include precedent doclets in transpiled
+''; // Include precedent doclets in transpiled

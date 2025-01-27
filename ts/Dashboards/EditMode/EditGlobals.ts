@@ -20,9 +20,6 @@ import DG from '../Globals.js';
 
 const PREFIX = DG.classNamePrefix + 'edit-';
 
-/**
- * @internal
- */
 const EditGlobals: EditGlobals = {
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
@@ -43,6 +40,7 @@ const EditGlobals: EditGlobals = {
         editSidebar: PREFIX + 'sidebar',
         editSidebarShow: PREFIX + 'sidebar-show',
         editSidebarHide: PREFIX + 'sidebar-hide',
+        editSidebarHeader: PREFIX + 'sidebar-header',
         editSidebarTitle: PREFIX + 'sidebar-title',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         rowContextHighlight: PREFIX + 'row-context-highlight',
@@ -97,14 +95,17 @@ const EditGlobals: EditGlobals = {
         accordionContainer: PREFIX + 'accordion',
         accordionHeader: PREFIX + 'accordion-header',
         accordionHeaderBtn: PREFIX + 'accordion-header-btn',
+        accordionHeaderWrapper: PREFIX + 'accordion-header-wrapper',
         accordionHeaderIcon: PREFIX + 'accordion-header-icon',
         accordionContent: PREFIX + 'accordion-content',
         accordionNestedWrapper: PREFIX + 'accordion-nested',
         accordionMenuButtonsContainer:
             PREFIX + 'accordion-menu-buttons-container',
         accordionMenuButton: PREFIX + 'accordion-menu-button',
+        accordionStandaloneWrapper: PREFIX + 'accordion-standalone-wrapper',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
+        standaloneElement: PREFIX + 'standalone-element',
 
         // Custom dropdown with icons
         collapsedElement: PREFIX + 'collapsed-element',
@@ -136,24 +137,23 @@ const EditGlobals: EditGlobals = {
         confirmButton: 'Confirm',
         confirmDestroyCell: 'Do you really want to destroy the cell?',
         confirmDestroyRow: 'Do you really want to destroy the row?',
+        confirmDiscardChanges: 'Do you really want to discard the changes?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
+        htmlInput: 'HTML',
         id: 'Id',
-        large: 'Large',
-        medium: 'Medium',
         off: 'off',
         on: 'on',
         pointFormat: 'Point format',
         settings: 'Settings',
-        small: 'Small',
         style: 'Styles',
         title: 'Title',
         viewFullscreen: 'View in full screen',
         sidebar: {
             HTML: 'HTML',
-            layout: 'Layout',
+            row: 'Row',
             Highcharts: 'Highcharts',
             DataGrid: 'DataGrid',
             KPI: 'KPI'
@@ -161,9 +161,6 @@ const EditGlobals: EditGlobals = {
     }
 };
 
-/**
- * @internal
- */
 interface EditGlobals {
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
@@ -180,6 +177,8 @@ namespace EditGlobals {
         accordionMenuButton: string;
         accordionMenuButtonsContainer: string;
         accordionNestedWrapper: string;
+        accordionStandaloneWrapper: string;
+        accordionHeaderWrapper: string;
         button: string;
         cellEditHighlight: string;
         collapsableContentHeader: string;
@@ -206,6 +205,7 @@ namespace EditGlobals {
         editOverlayActive: string;
         editSidebar: string;
         editSidebarHide: string;
+        editSidebarHeader: string;
         editSidebarMenuItem: string;
         editSidebarRight: string;
         editSidebarRightShow: string;
@@ -246,6 +246,7 @@ namespace EditGlobals {
         separator: string;
         sidebarCloseButton: string;
         sidebarNavButton: string;
+        standaloneElement: string;
         toggleContainer: string;
         toggleLabels: string;
         toggleSlider: string;
@@ -308,6 +309,10 @@ namespace EditGlobals {
          */
         confirmDestroyRow: string;
         /**
+         * @default 'Do you really want to discard the changes?'
+         */
+        confirmDiscardChanges: string;
+        /**
          * @default 'Data labels'
          */
         dataLabels: string;
@@ -328,14 +333,6 @@ namespace EditGlobals {
          */
         id: string;
         /**
-         * @default 'Large'
-         */
-        large: string;
-        /**
-         * @default 'Medium'
-         */
-        medium: string;
-        /**
          * @default 'off'
          */
         off: string;
@@ -355,10 +352,6 @@ namespace EditGlobals {
          * Options for the sidebar and its components.
          */
         sidebar:SidebarLangOptions
-        /**
-         * @default 'Small'
-         */
-        small: string;
         /**
          * @default 'Styles'
          */
@@ -381,9 +374,9 @@ namespace EditGlobals {
          */
         HTML: string;
         /**
-         * @default 'Layout'
+         * @default 'Row'
          */
-        layout: string;
+        row: string;
         /**
          * @default 'Highcharts'
          */

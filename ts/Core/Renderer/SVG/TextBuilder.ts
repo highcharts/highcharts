@@ -41,6 +41,10 @@ const {
     pick
 } = U;
 
+// Function used to test string length including an ellipsis
+const stringWithEllipsis = (text: string, currentIndex: number): string =>
+    text.substring(0, currentIndex) + '\u2026';
+
 /* *
  *
  *  Class
@@ -62,15 +66,15 @@ class TextBuilder {
         this.svgElement = svgElement;
         this.width = svgElement.textWidth;
 
-        this.textLineHeight = textStyles && textStyles.lineHeight;
-        this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(
-            textStyles && textStyles.textOverflow === 'ellipsis'
-        );
-        this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
+        this.textLineHeight = textStyles?.lineHeight;
+        this.textOutline = textStyles?.textOutline;
+        this.ellipsis = Boolean(textStyles?.textOverflow === 'ellipsis');
+        this.lineClamp = textStyles?.lineClamp;
+        this.noWrap = Boolean(textStyles?.whiteSpace === 'nowrap');
     }
 
     public ellipsis: boolean;
+    public lineClamp?: number;
     public noWrap: boolean;
     public renderer: SVGRenderer;
     public svgElement: SVGElement;
@@ -104,6 +108,7 @@ class TextBuilder {
                 this.textLineHeight,
                 this.textOutline,
                 wrapper.getStyle('font-size'),
+                wrapper.styles.lineClamp,
                 this.width
             ].join(',');
 
@@ -137,7 +142,7 @@ class TextBuilder {
         } else if (textStr !== '') {
 
             if (tempParent) {
-                // attach it to the DOM to read offset width and font size
+                // Attach it to the DOM to read offset width and font size
                 tempParent.appendChild(textNode);
             }
 
@@ -251,31 +256,18 @@ class TextBuilder {
                 words.length > 1 || wrapper.element.childNodes.length > 1
             );
 
-            const dy = this.getLineHeight(parentElement);
+            const dy = this.getLineHeight(parentElement),
+                ellipsisWidth = Math.max(
+                    0,
+                    // Subtract the font face to make room for
+                    // the ellipsis itself
+                    width - 0.8 * dy
+                );
 
             let lineNo = 0;
             let startAt = wrapper.actualWidth;
 
-            if (this.ellipsis) {
-                if (text) {
-                    this.truncate(
-                        textNode,
-                        text,
-                        void 0,
-                        0,
-                        // Target width
-                        Math.max(
-                            0,
-                            // Subtract the font face to make room for the
-                            // ellipsis itself
-                            width - 0.8 * dy
-                        ),
-                        // Build the text to test for
-                        (text: string, currentIndex: number): string =>
-                            text.substring(0, currentIndex) + '\u2026'
-                    );
-                }
-            } else if (hasWhiteSpace) {
+            if (hasWhiteSpace) {
                 const lines: string[] = [];
 
                 // Remove preceding siblings in order to make the text length
@@ -307,6 +299,7 @@ class TextBuilder {
                         words,
                         lineNo === 0 ? (startAt || 0) : 0,
                         width,
+                        ellipsisWidth,
                         // Build the text to test for
                         (t: string, currentIndex: number): string =>
                             words
@@ -317,6 +310,29 @@ class TextBuilder {
 
                     startAt = wrapper.actualWidth;
                     lineNo++;
+
+                    // Line clamp. Break out after n lines and append an
+                    // ellipsis regardless of the text length.
+                    if (this.lineClamp && lineNo >= this.lineClamp) {
+                        // Only if there are remaining words that should have
+                        // been rendered.
+                        if (words.length) {
+                            this.truncate(
+                                textNode,
+                                textNode.textContent || '',
+                                void 0,
+                                0,
+                                // Target width
+                                width,
+                                ellipsisWidth,
+                                stringWithEllipsis
+                            );
+
+                            textNode.textContent = textNode.textContent
+                                ?.replace('\u2026', '') + '\u2026';
+                        }
+                        break;
+                    }
                 }
 
                 // Reinsert the preceding child nodes
@@ -338,11 +354,24 @@ class TextBuilder {
                         SVG_NS,
                         'tspan'
                     ) as SVGDOMElement;
-                    br.textContent = '\u200B'; // zero-width space
+                    br.textContent = '\u200B'; // Zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
 
+            } else if (this.ellipsis) {
+                if (text) {
+                    this.truncate(
+                        textNode,
+                        text,
+                        void 0,
+                        0,
+                        // Target width
+                        width,
+                        ellipsisWidth,
+                        stringWithEllipsis
+                    );
+                }
             }
         };
 
@@ -370,9 +399,8 @@ class TextBuilder {
 
     /**
      * Get the rendered line height of a <text>, <tspan> or pure text node.
-     *
+     * @private
      * @param {DOMElementType|Text} node The node to check for
-     *
      * @return {number} The rendered line height
      */
     private getLineHeight(node: DOMElementType|Text): number {
@@ -424,18 +452,18 @@ class TextBuilder {
             }
 
             // Modify styling
-            if (style && style.color) {
+            if (style?.color) {
                 style.fill = style.color;
             }
 
             // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
-                node.textContent = '\u200B'; // zero-width space
+                node.textContent = '\u200B'; // Zero-width space
 
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
-                if (nextNode && nextNode.textContent) {
+                if (nextNode?.textContent) {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }
@@ -482,6 +510,7 @@ class TextBuilder {
         words: (Array<string>|undefined),
         startAt: number,
         width: number,
+        ellipsisWidth: number,
         getString: Function
     ): void {
         const svgElement = this.svgElement;
@@ -491,17 +520,21 @@ class TextBuilder {
 
         // Word wrap cannot be truncated to shorter than one word, ellipsis
         // text can be completely blank.
-        let minIndex = words ? 1 : 0;
+        let minIndex = words && !startAt ? 1 : 0;
         let maxIndex = (text || words || '').length;
         let currentIndex = maxIndex;
         let str;
         let actualWidth: number;
 
+        if (!words) {
+            width = ellipsisWidth;
+        }
+
         const getSubStringLength = function (
             charEnd: number,
             concatenatedEnd?: number
         ): number {
-            // charEnd is used when finding the character-by-character
+            // `charEnd` is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
             const end = concatenatedEnd || charEnd;
@@ -528,7 +561,7 @@ class TextBuilder {
             return lengths[end];
         };
 
-        svgElement.rotation = 0; // discard rotation when computing box
+        svgElement.rotation = 0; // Discard rotation when computing box
         actualWidth = getSubStringLength((textNode.textContent as any).length);
 
         if (startAt + actualWidth > width) {
@@ -572,6 +605,19 @@ class TextBuilder {
                 textNode.textContent = str || getString(
                     text || words,
                     currentIndex
+                );
+            }
+
+            // Add ellipsis on individual lines
+            if (this.ellipsis && actualWidth > width) {
+                this.truncate(
+                    textNode,
+                    textNode.textContent || '',
+                    void 0,
+                    0,
+                    width,
+                    ellipsisWidth,
+                    stringWithEllipsis
                 );
             }
         }

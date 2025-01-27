@@ -283,7 +283,7 @@ class Fullscreen {
             // Handle exitFullscreen() method when user clicks 'Escape' button.
             if (fullscreen.browserProps) {
                 const unbindChange = addEvent(
-                    chart.container.ownerDocument, // chart's document
+                    chart.container.ownerDocument, // Chart's document
                     fullscreen.browserProps.fullscreenChange,
                     function (): void {
                         // Handle lack of async of browser's
@@ -470,7 +470,7 @@ export default Fullscreen;
  *        The event that occurred.
  */
 
-(''); // keeps doclets above separated from following code
+(''); // Keeps doclets above separated from following code
 
 /* *
  *
@@ -507,4 +507,4 @@ export default Fullscreen;
  * @apioption chart.events.fullscreenOpen
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

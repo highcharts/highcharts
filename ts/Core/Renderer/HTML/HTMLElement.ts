@@ -35,6 +35,8 @@ const {
     createElement,
     defined,
     extend,
+    getAlignFactor,
+    isNumber,
     pInt,
     pushUnique
 } = U;
@@ -250,8 +252,6 @@ class HTMLElement extends SVGElement {
             })
         });
 
-        // Keep the whiteSpace style outside the `HTMLElement.styles` collection
-        this.element.style.whiteSpace = 'nowrap';
     }
 
     /**
@@ -290,10 +290,23 @@ class HTMLElement extends SVGElement {
             doTransform = true;
         }
 
+        // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
-            styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
+        if (styles?.lineClamp) {
+            styles.display = '-webkit-box';
+            styles.WebkitLineClamp = styles.lineClamp;
+            styles.WebkitBoxOrient = 'vertical';
+            styles.overflow = 'hidden';
+        }
+
+        // SVG natively supports setting font size as numbers. With HTML, the
+        // font size should behave in the same way (#21624).
+        if (isNumber(Number(styles?.fontSize))) {
+            styles.fontSize = styles.fontSize + 'px';
+        }
+
         extend(this.styles, styles);
         css(element, styles);
 
@@ -341,6 +354,8 @@ class HTMLElement extends SVGElement {
                 rotation,
                 rotationOriginX,
                 rotationOriginY,
+                scaleX,
+                scaleY,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -349,10 +364,7 @@ class HTMLElement extends SVGElement {
                 x = 0,
                 y = 0
             } = this,
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[textAlign],
-            whiteSpace = styles.whiteSpace;
+            { display = 'block', whiteSpace } = styles;
 
         // Get the pixel length of the text
         const getTextPxLength = (): number => {
@@ -384,8 +396,7 @@ class HTMLElement extends SVGElement {
                 ].join(','),
                 parentPadding = (this.parentGroup?.padding * -1) || 0;
 
-            let baseline,
-                hasBoxWidthChanged = false;
+            let baseline;
 
             // Update textWidth. Use the memoized textPxLength if possible, to
             // avoid the getTextPxLength function using elem.offsetWidth.
@@ -408,17 +419,19 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     css(element, {
-                        width: (textPxLength > textWidthNum) || rotation ?
+                        width: (
+                            (textPxLength > textWidthNum) ||
+                            rotation ||
+                            scaleX
+                        ) ?
                             textWidth + 'px' :
                             'auto', // #16261
-                        display: 'block',
+                        display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
                     this.oldTextWidth = textWidth;
-                    hasBoxWidthChanged = true; // #8159
                 }
             }
-            this.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
 
 
             // Do the calculations and DOM access only if properties changed
@@ -445,11 +458,15 @@ class HTMLElement extends SVGElement {
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
                     (
-                        (!defined(rotation) && this.textPxLength) || // #7920
+                        (
+                            !defined(rotation) &&
+                            !this.textWidth &&
+                            this.textPxLength
+                        ) || // #7920
                         element.offsetWidth
                     ),
                     baseline,
-                    alignCorrection
+                    getAlignFactor(textAlign)
                 );
             }
 
@@ -460,8 +477,14 @@ class HTMLElement extends SVGElement {
                 styles: CSSObject = {
                     left: `${x + xCorr}px`,
                     top: `${y + yCorr}px`,
+                    textAlign,
                     transformOrigin: `${rotOriginX}px ${rotOriginY}px`
                 };
+
+            if (scaleX || scaleY) {
+                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
+            }
+
             css(element, styles);
 
 

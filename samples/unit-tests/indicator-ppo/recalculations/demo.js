@@ -68,7 +68,8 @@ QUnit.test(
             chart.series[1].points.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After addPoint number of Percentage Price Oscillator points is correct'
+            'After addPoint number of Percentage Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[0].setData(
@@ -97,7 +98,8 @@ QUnit.test(
             chart.series[1].data.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After setData number of Percentage Price Oscillator points is correct'
+            'After setData number of Percentage Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[1].update({
@@ -109,7 +111,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastPPOWithRound(chart.series[1].yData),
+            toFastPPOWithRound(chart.series[1].getColumn('y')),
             [
                 1.1028,
                 0.6585,
@@ -135,7 +137,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toFastPPOWithRound(chart.series[1].yData),
+            toFastPPOWithRound(chart.series[1].getColumn('y')),
             [
                 1.1028,
                 0.6585,

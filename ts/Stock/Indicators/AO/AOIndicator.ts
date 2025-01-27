@@ -16,6 +16,7 @@
 
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -164,11 +165,11 @@ class AOIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries
+        series: TLinkedSeries&IndicatorLinkedSeriesLike
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const shortPeriod = 5,
             longPeriod = 34,
-            xVal: Array<number> = series.xData || [],
+            xVal = series.xData || [],
             yVal: Array<number|null|undefined> =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,
@@ -317,4 +318,4 @@ export default AOIndicator;
  * @apioption series.ao
  */
 
-''; // for including the above in the doclets
+''; // For including the above in the doclets

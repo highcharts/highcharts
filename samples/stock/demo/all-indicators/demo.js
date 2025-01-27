@@ -39,9 +39,13 @@
             series: {
                 descriptionFormat: '{seriesDescription}.'
             },
-            description: 'Use the dropdown menus above to display different indicator series on the chart.',
+            description: 'Use the dropdown menus above to display different ' +
+                'indicator series on the chart.',
             screenReaderSection: {
-                beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+                beforeChartFormat: '<{headingTagName}>' +
+                    '{chartTitle}</{headingTagName}><div>' +
+                    '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+                    '{chartLongdesc}</div>'
             }
         },
         legend: {
@@ -90,7 +94,9 @@
             yAxis: 2
         }]
     }, function (chart) {
-        document.getElementById('overlays').addEventListener('change', function (e) {
+        document.getElementById(
+            'overlays'
+        ).addEventListener('change', function (e) {
             const series = chart.get('overlay');
 
             if (series) {
@@ -103,7 +109,9 @@
             }
         });
 
-        document.getElementById('oscillators').addEventListener('change', function (e) {
+        document.getElementById(
+            'oscillators'
+        ).addEventListener('change', function (e) {
             const series = chart.get('oscillator');
 
             if (series) {

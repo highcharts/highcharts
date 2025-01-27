@@ -124,7 +124,7 @@ function onNavigationBindingsShowPopup(
 }
 
 /**
- * onContainerMouseDown blocks internal popup events, due to e.preventDefault.
+ * `onContainerMouseDown` blocks internal popup events, due to e.preventDefault.
  * Related issue #4606
  * @private
  */
@@ -133,7 +133,7 @@ function wrapPointerOnContainerMouserDown(
     proceed: Function,
     e: MouseEvent
 ): void {
-    // elements is not in popup
+    // Elements is not in popup
     if (!this.inClass(
         e.target as (HTMLDOMElement|SVGDOMElement),
         'highcharts-popup'

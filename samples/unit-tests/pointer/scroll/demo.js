@@ -1,4 +1,5 @@
-QUnit.test(
+// Skip: failing test on CI/Linux. Try again in Chrome v129+. See #21808.
+QUnit.skip(
     'Wheel scroll with middle click should hide tooltip (#11635)',
     function (assert) {
         var container1 = document.getElementById('container'),
@@ -77,7 +78,8 @@ QUnit.test(
                 'Tooltip of second chart should be hidden. (2)'
             );
 
-            // simulate wheel scroll effect with middle click in Chrome-based browsers
+            // simulate wheel scroll effect with middle click in
+            // Chrome-based browsers
             controller1.moveTo(
                 point1Position.x,
                 chart1.plotHeight + point2Position.y

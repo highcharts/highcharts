@@ -225,9 +225,11 @@ const chart = {
             min: 0,
             max: 20,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         },
         // 1
         {
@@ -235,18 +237,22 @@ const chart = {
             max: 20,
             reversed: true,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         },
         // 2
         {
             min: 0,
             max: 20,
             visible: false,
-            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7,
+            tickPositions: [
+                0, 1, 2, 3, 4, 5, 6, 7,
                 8, 9, 10, 11, 12, 13, 14,
-                15, 16, 17, 18, 19, 20]
+                15, 16, 17, 18, 19, 20
+            ]
         }
     ],
     yAxis: [

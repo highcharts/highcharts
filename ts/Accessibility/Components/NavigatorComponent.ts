@@ -97,9 +97,10 @@ class NavigatorComponent extends AccessibilityComponent {
      */
     public onChartUpdate(): void {
         const chart = this.chart,
-            options = chart.options;
+            options = chart.options,
+            navigator = options.navigator;
 
-        if (options.navigator.accessibility?.enabled) {
+        if (navigator.enabled && navigator.accessibility?.enabled) {
             const verbosity = options.accessibility.landmarkVerbosity,
                 groupFormatStr = options.lang
                     .accessibility?.navigator.groupLabel;
@@ -122,8 +123,10 @@ class NavigatorComponent extends AccessibilityComponent {
                             click: handle
                         }, 'input', {
                             type: 'range',
-                            'aria-label': format(handleFormatStr,
-                                { handleIx: n, chart }, chart)
+                            'aria-label': format(
+                                handleFormatStr,
+                                { handleIx: n, chart }, chart
+                            )
                         }
                     );
 
@@ -311,7 +314,8 @@ class NavigatorComponent extends AccessibilityComponent {
             clearTimeout(this.updateNavigatorThrottleTimer);
         }
         this.updateNavigatorThrottleTimer = setTimeout(
-            performUpdate.bind(this, beforeAnnounce), 20);
+            performUpdate.bind(this, beforeAnnounce), 20
+        );
     }
 }
 

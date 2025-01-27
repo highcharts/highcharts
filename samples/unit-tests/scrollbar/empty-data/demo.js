@@ -14,7 +14,8 @@ QUnit.test('Update to non-ordinal (#4202)', function (assert) {
         }
     });
 
-    // In an ordinal axis, the point distance is the same even though the actual time distance is
+    // In an ordinal axis, the point distance is the same even though the
+    // actual time distance is
     // different.
     assert.equal(
         typeof chart.scroller.scrollbarGroup,

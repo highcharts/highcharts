@@ -18,7 +18,8 @@
             },
 
             title: {
-                text: '#2373 caused the two remaining series to be drawn between 2007 and 2008'
+                text: '#2373 caused the two remaining series to be drawn ' +
+                    'between 2007 and 2008'
             },
 
             rangeSelector: {
@@ -45,7 +46,9 @@
 
 
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                pointFormat: '<span style="color:{series.color}">' +
+                    '{series.name}</span>: <b>{point.y}</b> ' +
+                    '({point.change}%)<br/>',
                 valueDecimals: 2
             },
 
@@ -62,7 +65,8 @@
         };
 
         // As we're loading the data asynchronously, we don't know what order it
-        // will arrive. So we keep a counter and create the chart when all the data is loaded.
+        // will arrive. So we keep a counter and create the chart when all
+        // the data is loaded.
         seriesCounter += 1;
 
         if (seriesCounter === names.length) {

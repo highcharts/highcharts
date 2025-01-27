@@ -16,6 +16,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -42,6 +43,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function populateAverage(
     xVal: Array<number>,
     yVal: (Array<number>|Array<Array<number>>),
@@ -59,13 +63,13 @@ function populateAverage(
         rocY: (number|null);
 
     if (index < 0) {
-        // y data given as an array of values
+        // Y data given as an array of values
         nDaysAgoY = (yVal[i - period] as any);
         rocY = nDaysAgoY ?
             ((yVal as any)[i] - nDaysAgoY) / nDaysAgoY * 100 :
             null;
     } else {
-        // y data given as an array of arrays and the index should be used
+        // Y data given as an array of arrays and the index should be used
         nDaysAgoY = (yVal as any)[i - period][index];
         rocY = nDaysAgoY ?
             ((yVal as any)[i][index] - nDaysAgoY) / nDaysAgoY * 100 :
@@ -146,7 +150,7 @@ class ROCIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -171,7 +175,7 @@ class ROCIndicator extends SMAIndicator {
             index = (params.index as any);
         }
 
-        // i = period <-- skip first N-points
+        // I = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
             ROCPoint = populateAverage(xVal, yVal, i, period, index);
@@ -255,4 +259,4 @@ export default ROCIndicator;
  * @apioption series.roc
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

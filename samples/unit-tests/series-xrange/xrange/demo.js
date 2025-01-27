@@ -291,7 +291,9 @@ QUnit.test('X-Range', function (assert) {
     assert.ok(result, 'Drag handles should be in correct positions (#12872).');
 
     assert.strictEqual(
-        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        document.querySelector(
+            '.highcharts-drag-handle'
+        ).attributes.cursor.value,
         'grab',
         '#16470: DragHandle cursor should use general options.'
     );
@@ -854,6 +856,9 @@ QUnit.test('XRange series tooltip correct formatting (#19362)', assert => {
         chart: {
             type: 'xrange'
         },
+        lang: {
+            locale: 'es' // Consistent between browsers
+        },
         title: {
             text: 'X-range standard'
         },
@@ -933,9 +938,292 @@ QUnit.test('XRange series tooltip correct formatting (#19362)', assert => {
 
     tooltipText = chart.tooltip.label.text.textStr;
 
+    const expectedText = 'Sábado, 2 de dic de 2023 - martes, 5 de dic de 2023';
     assert.ok(
-        tooltipText.includes('Saturday,  2 Dec 2023 - Tuesday,  5 Dec 2023'),
-        'Tooltip for datetime axis is correctly formatted.'
+        tooltipText.includes(expectedText),
+        `Tooltip for datetime axis should include "${expectedText}"`
     );
 
+});
+
+QUnit.test('X-range zooming', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange',
+            zoomType: 'x',
+            width: 600
+        },
+        title: {
+            text: 'Highcharts X-range'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: ''
+            },
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            // pointPadding: 0,
+            // groupPadding: 0,
+            borderColor: 'gray',
+            pointWidth: 20,
+            data: [{
+                x: Date.UTC(2014, 10, 21),
+                x2: Date.UTC(2014, 11, 2),
+                y: 0,
+                partialFill: 0.25
+            }, {
+                x: Date.UTC(2014, 11, 2),
+                x2: Date.UTC(2014, 11, 5),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 11, 24),
+                x2: Date.UTC(2014, 11, 25),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 11, 26),
+                x2: Date.UTC(2014, 11, 27),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 11, 28),
+                x2: Date.UTC(2014, 11, 29),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 1),
+                x2: Date.UTC(2014, 12, 2),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 3),
+                x2: Date.UTC(2014, 12, 4),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 5),
+                x2: Date.UTC(2014, 12, 6),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 7),
+                x2: Date.UTC(2014, 12, 8),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 9),
+                x2: Date.UTC(2014, 12, 10),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 11),
+                x2: Date.UTC(2014, 12, 12),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 13),
+                x2: Date.UTC(2014, 12, 14),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 15),
+                x2: Date.UTC(2014, 12, 16),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 17),
+                x2: Date.UTC(2014, 12, 18),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 19),
+                x2: Date.UTC(2014, 12, 20),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 21),
+                x2: Date.UTC(2014, 12, 22),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 23),
+                x2: Date.UTC(2014, 12, 24),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 12, 25),
+                x2: Date.UTC(2014, 12, 26),
+                y: 2
+            }, {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 11, 24),
+                x2: Date.UTC(2014, 11, 25),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 11, 26),
+                x2: Date.UTC(2014, 11, 27),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 11, 28),
+                x2: Date.UTC(2014, 11, 29),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 1),
+                x2: Date.UTC(2014, 12, 2),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 3),
+                x2: Date.UTC(2014, 12, 4),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 5),
+                x2: Date.UTC(2014, 12, 6),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 7),
+                x2: Date.UTC(2014, 12, 8),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 9),
+                x2: Date.UTC(2014, 12, 10),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 11),
+                x2: Date.UTC(2014, 12, 12),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 13),
+                x2: Date.UTC(2014, 12, 14),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 15),
+                x2: Date.UTC(2014, 12, 16),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 17),
+                x2: Date.UTC(2014, 12, 18),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 19),
+                x2: Date.UTC(2014, 12, 20),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 21),
+                x2: Date.UTC(2014, 12, 22),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 23),
+                x2: Date.UTC(2014, 12, 24),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 12, 25),
+                x2: Date.UTC(2014, 12, 26),
+                y: 0
+            }, {
+                x: Date.UTC(2014, 11, 8),
+                x2: Date.UTC(2014, 11, 9),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 9),
+                x2: Date.UTC(2014, 11, 19),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 10),
+                x2: Date.UTC(2014, 11, 23),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 24),
+                x2: Date.UTC(2014, 11, 25),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 26),
+                x2: Date.UTC(2014, 11, 27),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 11, 28),
+                x2: Date.UTC(2014, 11, 29),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 1),
+                x2: Date.UTC(2014, 12, 2),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 3),
+                x2: Date.UTC(2014, 12, 4),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 5),
+                x2: Date.UTC(2014, 12, 6),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 7),
+                x2: Date.UTC(2014, 12, 8),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 9),
+                x2: Date.UTC(2014, 12, 10),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 11),
+                x2: Date.UTC(2014, 12, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 13),
+                x2: Date.UTC(2014, 12, 14),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 15),
+                x2: Date.UTC(2014, 12, 16),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 17),
+                x2: Date.UTC(2014, 12, 18),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 19),
+                x2: Date.UTC(2014, 12, 20),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 21),
+                x2: Date.UTC(2014, 12, 22),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 23),
+                x2: Date.UTC(2014, 12, 24),
+                y: 1
+            }, {
+                x: Date.UTC(2014, 12, 25),
+                x2: Date.UTC(2014, 12, 26),
+                y: 1
+            }],
+            dataLabels: {
+                enabled: true
+            }
+        }]
+
+    });
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2014, 11, 30),
+        Date.UTC(2015, 0, 10, 12)
+    );
+
+    assert.ok(
+        chart.series[0].points.length >= 15,
+        'Points within the plot area (at least) should be kept (#21003)'
+    );
 });

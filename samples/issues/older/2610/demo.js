@@ -4,7 +4,8 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Highcharts <= 3.0.9: minRange and single column caused 1px columns on top of each other'
+            text: 'Highcharts <= 3.0.9: minRange and single column caused ' +
+                '1px columns on top of each other'
         },
         xAxis: {
             type: 'datetime',
@@ -13,17 +14,17 @@ $(function () {
         series: [{
             name: 'Series 1',
             data: [
-                [Date.UTC(1970, 0, 1), 10]
+                ['1970-01-01', 10]
             ]
         }, {
             name: 'Series 2',
             data: [
-                [Date.UTC(1970, 0, 1), 20]
+                ['1970-01-01', 20]
             ]
         }, {
             name: 'Series 3',
             data: [
-                [Date.UTC(1970, 0, 1), 30]
+                ['1970-01-01', 30]
             ]
         }]
     });

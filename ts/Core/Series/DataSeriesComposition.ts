@@ -82,8 +82,8 @@ function wrapSeriesGeneratePoints(
         cropStart = this.cropStart || 0,
         data = this.data || [],
         points = [],
-        processedXData = this.processedXData,
-        processedYData = this.processedYData;
+        processedXData = this.getColumn('x', true),
+        processedYData = this.getColumn('y', true);
 
     let cursor: number,
         point: typeof PointClass.prototype;
@@ -134,7 +134,7 @@ function wrapSeriesSetData(
         keys = (this.options.keys || this.parallelArrays).slice();
 
     if (isNumber(data[0]) || keys.length === 1) {
-        // first column is implicit index
+        // First column is implicit index
         const xData: Array<number> = columns.x = [];
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             xData.push(this.autoIncrement());
@@ -142,7 +142,7 @@ function wrapSeriesSetData(
         columns[keys[1] || 'y'] = data as Array<number>;
     } else {
         if (keys.indexOf('x') === -1 && keys.length > data.length) {
-            // first column is implicit index
+            // First column is implicit index
             const xData: Array<number> = columns.x = [];
             for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
                 xData.push(this.autoIncrement());
@@ -330,7 +330,7 @@ class DataSeriesAdditions {
         }
 
         if (failure) {
-            // fallback to index
+            // Fallback to index
             const columnNames = table.getColumnNames(),
                 emptyColumn: DataTable.Column = [];
 
@@ -339,7 +339,7 @@ class DataSeriesAdditions {
             let columnOffset = 0;
 
             if (columnNames.length === keys.length - 1) {
-                // table index becomes x
+                // Table index becomes x
                 columnOffset = 1;
                 indexAsX = true;
             }
@@ -408,7 +408,7 @@ class DataSeriesAdditions {
             anySeries: AnyRecord = series,
             onChange = (e: DataTable.Event): void => {
                 if (e.type === 'afterDeleteColumns') {
-                    // deletion affects all points
+                    // Deletion affects all points
                     this.setTable(table, true);
                     return;
                 }
@@ -417,7 +417,7 @@ class DataSeriesAdditions {
                         e.rowIndex > 0 &&
                         e.rowIndex + e.rowCount < series.points.length
                     ) {
-                        // deletion affects trailing points
+                        // Deletion affects trailing points
                         this.setTable(table, true);
                         return;
                     }
@@ -475,11 +475,9 @@ export default DataSeriesAdditions;
 /* *
  * Indicates data is structured as columns instead of rows.
  *
- * @requires  es-modules/Data/DataSeriesComposition.js
- *
  * @type      {boolean}
  * @since     Future
  * @apioption plotOptions.series.dataAsColumns
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

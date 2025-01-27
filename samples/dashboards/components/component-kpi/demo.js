@@ -1,18 +1,24 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 function random(max, min = 0) {
     return Math.floor(min + Math.random() * (max - min));
 }
 
 const board = Dashboards.board('container', {
     components: [{
-        cell: 'kpi-00',
+        renderTo: 'kpi-00',
         type: 'KPI',
         value: 888
     }, {
-        cell: 'kpi-01',
+        renderTo: 'kpi-01',
         type: 'KPI',
         value: 900
     },  {
-        cell: 'kpi-02',
+        renderTo: 'kpi-02',
         type: 'KPI',
         title: 'Cakes',
         value: 7,
@@ -26,17 +32,17 @@ const board = Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'kpi-03',
+        renderTo: 'kpi-03',
         type: 'KPI',
         title: 'Active users'
     }, {
-        cell: 'kpi-10',
+        renderTo: 'kpi-10',
         type: 'KPI',
         title: 'Change',
         value: 222,
         valueFormatter: v => `${(v / 10).toFixed(1)}%`
     }, {
-        cell: 'kpi-11',
+        renderTo: 'kpi-11',
         type: 'KPI',
         title: 'Cash',
         value: 88,
@@ -45,7 +51,7 @@ const board = Dashboards.board('container', {
             type: 'diffpercent'
         }
     }, {
-        cell: 'kpi-12',
+        renderTo: 'kpi-12',
         type: 'KPI',
         title: 'Progress',
         value: 70,
@@ -78,7 +84,7 @@ const board = Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'kpi-13',
+        renderTo: 'kpi-13',
         type: 'KPI',
         title: 'Visits last 24 hours',
         linkedValueTo: {

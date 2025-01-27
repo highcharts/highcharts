@@ -143,7 +143,11 @@ let chartOne = {
 const optionsTwo = {
     xAxis: {
         name: '',
-        categories: ['Bluetooth Headset', 'Body Camera', 'Chest Strap', 'Head Mounted Display', 'Other', 'Smart Glasses', 'Smart Watch', 'Sports Watch', 'Wristband'],
+        categories: [
+            'Bluetooth Headset', 'Body Camera', 'Chest Strap',
+            'Head Mounted Display', 'Other', 'Smart Glasses', 'Smart Watch',
+            'Sports Watch', 'Wristband'
+        ],
         labels: {
             enabled: false
         }
@@ -210,7 +214,7 @@ let chartTwo = {
     series: []
 };
 
-fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv').then(function (response) {
+fetch('https://www.highcharts.com/samples/data/iot-devices.csv').then(function (response) {
     return response.text();
 }).then(function (result) {
     const lines = result.split('\n');
@@ -270,10 +274,10 @@ fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-device
     chartTwo.series.push(dtsObject);
 
     chartOne = Highcharts.merge(optionsOne, chartOne);
-    const chartOneRendered = new Highcharts.Chart(chartOne);
+    Highcharts.chart(chartOne);
 
     chartTwo = Highcharts.merge(optionsTwo, chartTwo);
-    const chartTwoRendere = new Highcharts.Chart(chartTwo);
+    Highcharts.chart(chartTwo);
 
     console.log(chartOne);
     console.log(chartTwo);

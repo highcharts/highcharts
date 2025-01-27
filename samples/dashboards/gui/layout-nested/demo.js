@@ -17,8 +17,7 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
@@ -71,34 +70,34 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-nolayout-0',
+        renderTo: 'dashboard-col-nolayout-0',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-1',
+        renderTo: 'dashboard-col-layout-1',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-2a',
+        renderTo: 'dashboard-col-layout-2a',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-2b',
+        renderTo: 'dashboard-col-layout-2b',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-2c',
+        renderTo: 'dashboard-col-layout-2c',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-2d',
+        renderTo: 'dashboard-col-layout-2d',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-3',
+        renderTo: 'dashboard-col-layout-3',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-4',
+        renderTo: 'dashboard-col-layout-4',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-5',
+        renderTo: 'dashboard-col-layout-5',
         ...chartComponentOptions
     }, {
-        cell: 'dashboard-col-layout-2f',
+        renderTo: 'dashboard-col-layout-2f',
         ...chartComponentOptions
     }]
 });

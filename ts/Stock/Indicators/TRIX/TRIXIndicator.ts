@@ -158,4 +158,4 @@ export default TRIXIndicator;
  * @apioption series.trix
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

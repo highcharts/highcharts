@@ -37,6 +37,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    crisp,
     extend,
     merge,
     pushUnique
@@ -85,7 +86,7 @@ function onSeriesInit(
     ) {
         extend(series, {
             pointValKey: OHLCSeries.prototype.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
+            // Keys: ohlcProto.keys, // @todo potentially nonsense
             pointArrayMap: OHLCSeries.prototype.pointArrayMap,
             toYData: OHLCSeries.prototype.toYData
         });
@@ -159,15 +160,11 @@ class OHLCSeries extends HLCSeries {
     public getPointPath(point: OHLCPoint, graphic: SVGElement): SVGPath {
         const path = super.getPointPath(point, graphic),
             strokeWidth = graphic.strokeWidth(),
-            crispCorr = (strokeWidth % 2) / 2,
-            crispX = Math.round(point.plotX as any) - crispCorr,
+            crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
-        let plotOpen = point.plotOpen;
-        // crisp vector coordinates
-
         if (point.open !== null) {
-            plotOpen = Math.round(point.plotOpen) + crispCorr;
+            const plotOpen = crisp(point.plotOpen, strokeWidth);
             path.push(
                 ['M', crispX, plotOpen],
                 ['L', crispX - halfWidth, plotOpen]
@@ -203,7 +200,7 @@ class OHLCSeries extends HLCSeries {
     }
 
     public toYData(point: OHLCPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
 

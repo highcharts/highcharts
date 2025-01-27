@@ -28,7 +28,7 @@ export interface DPOOptions extends SMAOptions {
 }
 
 export interface DPOParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

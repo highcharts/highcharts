@@ -16,7 +16,7 @@
 interface Callback{
     type: string;
     func: Function;
-    // args: [];
+    /// args: [];
     // context?: ThisType<any>;
 }
 

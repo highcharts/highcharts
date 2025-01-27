@@ -4,8 +4,8 @@ Highcharts.ganttChart('container', {
     },
 
     xAxis: {
-        min: Date.UTC(2014, 10, 17),
-        max: Date.UTC(2014, 10, 30),
+        min: '2014-11-17',
+        max: '2014-11-30',
         currentDateIndicator: true
     },
 
@@ -22,39 +22,39 @@ Highcharts.ganttChart('container', {
     series: [{
         name: 'Project 1',
         data: [{
-            start: Date.UTC(2014, 10, 18),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-18',
+            end: '2014-11-25',
             name: 'Start prototype'
         }, {
-            start: Date.UTC(2014, 10, 27),
-            end: Date.UTC(2014, 10, 29),
+            start: '2014-11-27',
+            end: '2014-11-29',
             name: 'Test prototype'
         }, {
-            start: Date.UTC(2014, 10, 20),
-            end: Date.UTC(2014, 10, 25),
+            start: '2014-11-20',
+            end: '2014-11-25',
             name: 'Develop'
         }, {
-            start: Date.UTC(2014, 10, 23),
-            end: Date.UTC(2014, 10, 26),
+            start: '2014-11-23',
+            end: '2014-11-26',
             name: 'Run acceptance tests'
         }]
     }, {
         name: 'Project 2',
         data: [{
-            start: Date.UTC(2014, 10, 18),
-            end: Date.UTC(2014, 10, 19),
+            start: '2014-11-18',
+            end: '2014-11-19',
             name: 'Create protoype'
         }, {
-            start: Date.UTC(2014, 10, 19),
-            end: Date.UTC(2014, 10, 23),
+            start: '2014-11-19',
+            end: '2014-11-23',
             name: 'Write unit tests'
         }, {
-            start: Date.UTC(2014, 10, 24),
-            end: Date.UTC(2014, 10, 28),
+            start: '2014-11-24',
+            end: '2014-11-28',
             name: 'Develop'
         }, {
-            start: Date.UTC(2014, 10, 27),
-            end: Date.UTC(2014, 10, 28),
+            start: '2014-11-27',
+            end: '2014-11-28',
             name: 'Run user tests'
         }]
     }]

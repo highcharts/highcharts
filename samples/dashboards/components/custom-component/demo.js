@@ -3,15 +3,25 @@ const { ComponentRegistry, Component } = Dashboards;
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
-        return this;
-    }
 
-    resize(width, height) {
-        super.resize.call(this, width, height);
-        this.youTubeElement.setAttribute('width', width - 10); // padding
-        this.youTubeElement.setAttribute('height', height - 10); // padding
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
+        return this;
     }
 
     async load() {
@@ -44,7 +54,7 @@ class YouTubeComponent extends Component {
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
-            cell: '',
+            renderTo: '',
             type: 'YouTube',
             videoId: '115hdz9NsrY'
         };
@@ -57,7 +67,10 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         lang: {
-            videoId: 'Video ID'
+            videoId: 'Video ID',
+            sidebar: {
+                YouTube: 'YouTube'
+            }
         },
         contextMenu: {
             enabled: true
@@ -80,7 +93,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -88,21 +101,8 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'yt-highsoft',
+        renderTo: 'yt-highsoft',
         type: 'YouTube',
-        videoId: '115hdz9NsrY',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
+        videoId: '115hdz9NsrY'
     }]
 });

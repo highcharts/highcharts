@@ -128,16 +128,20 @@
     }
 
     /* QUnit.test('Navigator update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], getStockConfig()),
-            originalPlotHeight = document.querySelector('.highcharts-plot-background').getBBox().height;
+        var chart = Highcharts.stockChart($(
+            '<div>').appendTo('#container')[0], getStockConfig()),
+            originalPlotHeight = document.querySelector(
+                '.highcharts-plot-background').getBBox().height;
 
         assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
+            typeof chart.container.querySelector(
+                '.highcharts-navigator-mask-inside').getBBox().height,
             'number',
             'Height is valid'
         );
         assert.ok(
-            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height < 60,
+            chart.container.querySelector(
+                '.highcharts-navigator-mask-inside').getBBox().height < 60,
             'Height is 40'
         );
 
@@ -148,7 +152,8 @@
         });
 
         assert.ok(
-            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height > 60,
+            chart.container.querySelector(
+                '.highcharts-navigator-mask-inside').getBBox().height > 60,
             'Height is updated'
         );
 
@@ -165,7 +170,9 @@
         );
 
         assert.ok(
-            document.querySelector('.highcharts-plot-background').getBBox().height > originalPlotHeight,
+            document.querySelector(
+                '.highcharts-plot-background'
+            ).getBBox().height > originalPlotHeight,
             'Plot area is now higher than it was'
         );
 
@@ -182,17 +189,20 @@
             'Navigator element added'
         );
         assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
+            typeof chart.container.querySelector(
+                '.highcharts-navigator-mask-inside').getBBox().height,
             'number',
             'Height is valid'
         );
     });
 
     QUnit.test('Scrollbar update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], getStockConfig());
+        var chart = Highcharts.stockChart($(
+            '<div>').appendTo('#container')[0], getStockConfig());
 
         assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-scrollbar').getBBox().height,
+            typeof chart.container.querySelector(
+                '.highcharts-scrollbar').getBBox().height,
             'number',
             'Height is valid'
         );
@@ -217,9 +227,7 @@
         );
 
         assert.strictEqual(
-            chart.container.querySelectorAll(
-                'g.highcharts-range-selector-buttons .highcharts-button'
-            ).length,
+            chart.rangeSelector.buttons.length,
             6,
             '6 range selector buttons'
         );
@@ -276,9 +284,7 @@
         });
 
         assert.strictEqual(
-            chart.container.querySelectorAll(
-                'g.highcharts-range-selector-buttons .highcharts-button'
-            ).length,
+            chart.rangeSelector.buttons.length,
             6,
             '6 range selector buttons'
         );

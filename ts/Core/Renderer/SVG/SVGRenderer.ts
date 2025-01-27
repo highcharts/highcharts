@@ -37,6 +37,8 @@ import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
 import AST from '../HTML/AST.js';
+import D from '../../Defaults.js';
+const { defaultOptions } = D;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -51,7 +53,6 @@ const {
     symbolSizes,
     win
 } = H;
-import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -62,6 +63,7 @@ const {
     addEvent,
     attr,
     createElement,
+    crisp,
     css,
     defined,
     destroyObjectProperties,
@@ -284,10 +286,10 @@ class SVGRenderer implements SVGRendererLike {
                 });
             };
 
-            // run the fix now
+            // Run the fix now
             subPixelFix();
 
-            // run it on resize
+            // Run it on resize
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     }
@@ -423,19 +425,17 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (
-                    hitElement && hitElement.id
-                ) === 'hitme';
+                hasInternalReferenceBug = hitElement?.id === 'hitme';
                 doc.body.removeChild(svg);
             }
 
             if (hasInternalReferenceBug) {
                 // Scan alert #[72]: Loop for nested patterns
                 return replaceNested(
-                    win.location.href.split('#')[0], // remove hash
-                    [/<[^>]*>/g, ''], // wing cut HTML
-                    [/([\('\)])/g, '\\$1'], // escape parantheses and quotes
-                    [/ /g, '%20'] // replace spaces (needed for Safari only)
+                    win.location.href.split('#')[0], // Remove hash
+                    [/<[^>]*>/g, ''], // Wing cut HTML
+                    [/([\('\)])/g, '\\$1'], // Escape parantheses and quotes
+                    [/ /g, '%20'] // Replace spaces (needed for Safari only)
                 );
             }
         }
@@ -456,8 +456,9 @@ class SVGRenderer implements SVGRendererLike {
      */
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
-
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", ' +
+                'Roboto, Helvetica, Arial, "Apple Color Emoji", ' +
+                '"Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
             fontSize: '1rem'
 
         }, style);
@@ -581,7 +582,7 @@ class SVGRenderer implements SVGRendererLike {
                     .map((key: string): string =>
                         `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
@@ -597,22 +598,38 @@ class SVGRenderer implements SVGRendererLike {
                     id,
                     filterUnits: options.filterUnits
                 },
-                children: [{
-                    tagName: 'feDropShadow',
-                    attributes: {
-                        dx: options.offsetX,
-                        dy: options.offsetY,
-                        'flood-color': options.color,
-                        // Tuned and modified to keep a preserve compatibility
-                        // with the old settings
-                        'flood-opacity': Math.min(options.opacity * 5, 1),
-                        stdDeviation: options.width / 2
-                    }
-                }]
+                children: this.getShadowFilterContent(options)
             });
         }
 
         return id;
+    }
+
+    /**
+     * Get shadow filter content.
+     * NOTE! Overridden in es5 module for IE11 compatibility.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#getShadowFilterContent
+     *
+     * @param {ShadowOptionsObject} options
+     * The shadow options.
+     * @return {Array<AST.Node>}
+     * The shadow filter content.
+     */
+    private getShadowFilterContent(options: ShadowOptionsObject): AST.Node[] {
+        return [{
+            tagName: 'feDropShadow',
+            attributes: {
+                dx: options.offsetX,
+                dy: options.offsetY,
+                'flood-color': options.color,
+                // Tuned and modified to keep a preserve compatibility
+                // with the old settings
+                'flood-opacity': Math.min(options.opacity * 5, 1),
+                stdDeviation: options.width / 2
+            }
+        }];
     }
 
     /**
@@ -662,7 +679,9 @@ class SVGRenderer implements SVGRendererLike {
     }
 
     /**
-     * Create a button with preset states.
+     * Create a button with preset states. Styles for the button can either be
+     * set as arguments, or a general theme for all buttons can be set by the
+     * `global.buttonTheme` option.
      *
      * @function Highcharts.SVGRenderer#button
      *
@@ -723,71 +742,46 @@ class SVGRenderer implements SVGRendererLike {
                 'button'
             ),
             styledMode = this.styledMode,
-            states = theme.states || {};
+            args = arguments;
 
         let curState = 0;
 
-        theme = merge(theme);
-        delete theme.states;
+        theme = merge(defaultOptions.global.buttonTheme, theme);
 
-        const normalStyle = merge({
-            color: Palette.neutralColor80,
-            cursor: 'pointer',
-            fontSize: '0.8em',
-            fontWeight: 'normal'
-        }, theme.style);
+        // @todo Consider moving this to a lower level, like .attr
+        if (styledMode) {
+            delete theme.fill;
+            delete theme.stroke;
+            delete theme['stroke-width'];
+        }
+
+        const states = theme.states || {},
+            normalStyle = theme.style || {};
+        delete theme.states;
         delete theme.style;
 
-        // Remove stylable attributes. Pass in the ButtonThemeObject and get the
-        // SVGAttributes subset back.
-        let normalState = AST.filterUserAttributes(theme);
-
-        // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState));
-
-        // Presentational. The string type is a mistake, it is just for
-        // compliance with SVGAttribute and is not used in button theme.
-        let hoverStyle: CSSObject|string|undefined,
-            selectStyle: CSSObject|string|undefined,
-            disabledStyle: CSSObject|string|undefined;
+        // Presentational
+        const stateAttribs: Array<SVGAttributes> = [
+                AST.filterUserAttributes(theme)
+            ],
+            // The string type is a mistake, it is just for compliance with
+            // SVGAttribute and is not used in button theme.
+            stateStyles: Array<CSSObject|string|undefined> = [normalStyle];
 
         if (!styledMode) {
-
-            // Normal state - prepare the attributes
-            normalState = merge({
-                fill: Palette.neutralColor3,
-                stroke: Palette.neutralColor20,
-                'stroke-width': 1
-            }, normalState);
-
-            // Hover state
-            hoverState = merge(normalState, {
-                fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || states.hover || {}));
-            hoverStyle = hoverState.style;
-            delete hoverState.style;
-
-            // Pressed state
-            selectState = merge(normalState, {
-                fill: Palette.highlightColor10,
-                style: {
-                    color: Palette.neutralColor100,
-                    fontWeight: 'bold'
-                }
-            }, AST.filterUserAttributes(selectState || states.select || {}));
-            selectStyle = selectState.style;
-            delete selectState.style;
-
-            // Disabled state
-            disabledState = merge(normalState, {
-                style: {
-                    color: Palette.neutralColor20
-                }
-            }, AST.filterUserAttributes(
-                disabledState || states.disabled || {}
-            ));
-            disabledStyle = disabledState.style;
-            delete disabledState.style;
+            (
+                ['hover', 'select', 'disabled'] as
+                Array<'hover'|'select'|'disabled'>
+            ).forEach((stateName, i): void => {
+                stateAttribs.push(merge(
+                    stateAttribs[0],
+                    AST.filterUserAttributes(
+                        args[i + 5] || states[stateName] || {}
+                    )
+                ));
+                stateStyles.push(stateAttribs[i + 1].style);
+                delete stateAttribs[i + 1].style;
+            });
         }
 
         // Add the events. IE9 and IE10 need mouseover and mouseout to function
@@ -809,7 +803,7 @@ class SVGRenderer implements SVGRendererLike {
             }
         );
 
-        label.setState = function (state: number): void {
+        label.setState = (state: number = 0): void => {
             // Hover state is temporary, don't record it
             if (state !== 1) {
                 label.state = curState = state;
@@ -821,35 +815,23 @@ class SVGRenderer implements SVGRendererLike {
                 )
                 .addClass(
                     'highcharts-button-' +
-                    ['normal', 'hover', 'pressed', 'disabled'][state || 0]
+                    ['normal', 'hover', 'pressed', 'disabled'][state]
                 );
 
             if (!styledMode) {
-                label
-                    .attr([
-                        normalState,
-                        hoverState,
-                        selectState,
-                        disabledState
-                    ][state || 0]);
-                const css = [
-                    normalStyle,
-                    hoverStyle,
-                    selectStyle,
-                    disabledStyle
-                ][state || 0];
+                label.attr(stateAttribs[state]);
+                const css = stateStyles[state];
                 if (isObject(css)) {
                     label.css(css);
                 }
             }
         };
 
+        label.attr(stateAttribs[0]);
 
         // Presentational attributes
         if (!styledMode) {
-            label
-                .attr(normalState)
-                .css(extend({ cursor: 'default' } as CSSObject, normalStyle));
+            label.css(extend({ cursor: 'default' } as CSSObject, normalStyle));
 
             // HTML labels don't need to handle pointer events because click and
             // mouseenter/mouseleave is bound to the underlying <g> element.
@@ -882,31 +864,21 @@ class SVGRenderer implements SVGRendererLike {
      * @param {number} width
      *        The width of the line.
      *
-     * @param {string} [roundingFunction=round]
-     *        The rounding function name on the `Math` object, can be one of
-     *        `round`, `floor` or `ceil`.
-     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
     public crispLine(
         points: SVGPath,
-        width: number,
-        roundingFunction: ('round'|'floor'|'ceil') = 'round'
+        width: number
     ): SVGPath {
-        const start = points[0];
-        const end = points[1];
+        const [start, end] = points;
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Subtract due to #1129. Now bottom and left axis gridlines behave
-            // the same.
-            start[1] = end[1] =
-                Math[roundingFunction](start[1]) - (width % 2 / 2);
+            start[1] = end[1] = crisp(start[1], width);
         }
         if (defined(start[2]) && start[2] === end[2]) {
-            start[2] = end[2] =
-                Math[roundingFunction](start[2]) + (width % 2 / 2);
+            start[2] = end[2] = crisp(start[2], width);
         }
         return points;
     }
@@ -950,7 +922,7 @@ class SVGRenderer implements SVGRendererLike {
 
         if (isArray(path)) {
             attribs.d = path;
-        } else if (isObject(path)) { // attributes
+        } else if (isObject(path)) { // Attributes
             extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
@@ -1395,7 +1367,7 @@ class SVGRenderer implements SVGRendererLike {
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
             sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
-            // get the symbol definition function
+            // Get the symbol definition function
             symbolFn = (sym && this.symbols[sym]);
 
         let obj: (SVGElement|undefined),
@@ -1408,8 +1380,8 @@ class SVGRenderer implements SVGRendererLike {
             if (typeof x === 'number') {
                 path = (symbolFn as any).call(
                     this.symbols,
-                    Math.round(x || 0),
-                    Math.round(y || 0),
+                    x || 0,
+                    y || 0,
                     width || 0,
                     height || 0,
                     options
@@ -1421,7 +1393,7 @@ class SVGRenderer implements SVGRendererLike {
                 obj.attr('fill', 'none');
             }
 
-            // expando properties for use in animate and attr
+            // Expando properties for use in animate and attr
             extend(obj, {
                 symbolName: (sym || void 0),
                 x: x,
@@ -1447,12 +1419,12 @@ class SVGRenderer implements SVGRendererLike {
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
             img.imgwidth = pick(
-                options && options.width,
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].width
+                options?.width,
+                symbolSizes[imageSrc]?.width
             );
             img.imgheight = pick(
-                options && options.height,
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].height
+                options?.height,
+                symbolSizes[imageSrc]?.height
             );
             /**
              * Set the size and position
@@ -1532,6 +1504,7 @@ class SVGRenderer implements SVGRendererLike {
                 });
             }
             img.isImg = true;
+            img.symbolUrl = symbol;
 
             if (defined(img.imgwidth) && defined(img.imgheight)) {
                 centerImage(img);
@@ -2417,4 +2390,4 @@ export default SVGRenderer;
  * @type {number|undefined}
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

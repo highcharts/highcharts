@@ -41,6 +41,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    crisp,
     defined,
     extend,
     fireEvent,
@@ -143,8 +144,9 @@ class ColumnSeries extends Series {
         const series = this,
             yAxis = this.yAxis,
             yAxisPos = yAxis.pos,
+            reversed = yAxis.reversed,
             options = series.options,
-            inverted = this.chart.inverted,
+            { clipOffset, inverted } = this.chart,
             attr: SVGAttributes = {},
             translateProp: 'translateX'|'translateY' = inverted ?
                 'translateX' :
@@ -152,20 +154,31 @@ class ColumnSeries extends Series {
         let translateStart: number,
             translatedThreshold;
 
-        if (init) {
+        if (init && clipOffset) {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
+                yAxis.toPixels(options.threshold || 0),
                 yAxisPos,
                 yAxisPos + yAxis.len
             );
+
             if (inverted) {
+                // Make sure the columns don't cover the axis line during
+                // entrance animation
+                translatedThreshold += reversed ?
+                    -Math.floor(clipOffset[0]) :
+                    Math.ceil(clipOffset[2]);
                 attr.translateX = translatedThreshold - yAxis.len;
             } else {
+                // Make sure the columns don't cover the axis line during
+                // entrance animation
+                translatedThreshold += reversed ?
+                    Math.ceil(clipOffset[0]) :
+                    -Math.floor(clipOffset[2]);
                 attr.translateY = translatedThreshold;
             }
 
-            // apply final clipping (used in Highcharts Stock) (#7083)
+            // Apply final clipping (used in Highcharts Stock) (#7083)
             // animation is done by scaleY, so clipping is for panes
             if (series.clipBox) {
                 series.setClip();
@@ -173,7 +186,7 @@ class ColumnSeries extends Series {
 
             series.group.attr(attr);
 
-        } else { // run the animation
+        } else { // Run the animation
             translateStart = Number(series.group.attr(translateProp));
             series.group.animate(
                 { scaleY: 1 },
@@ -210,7 +223,7 @@ class ColumnSeries extends Series {
 
         chart = series.chart;
 
-        // if the series is added dynamically, force redraw of other
+        // If the series is added dynamically, force redraw of other
         // series affected by a new column
         if (chart.hasRendered) {
             chart.series.forEach(function (otherSeries): void {
@@ -332,40 +345,26 @@ class ColumnSeries extends Series {
     public crispCol(
         x: number,
         y: number,
-        w: number,
-        h: number
+        width: number,
+        height: number
     ): BBoxObject {
         const borderWidth = this.borderWidth,
-            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
-        let right,
-            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
+            inverted = this.chart.inverted,
+            bottom = crisp(y + height, borderWidth, inverted);
+
+        // Vertical
+        y = crisp(y, borderWidth, inverted);
+        height = bottom - y;
 
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
         if (this.options.crisp) {
-            right = Math.round(x + w) + xCrisp;
-            x = Math.round(x) + xCrisp;
-            w = right - x;
+            const right = crisp(x + width, borderWidth);
+            x = crisp(x, borderWidth);
+            width = right - x;
         }
 
-        // Vertical
-        const bottom = Math.round(y + h) + yCrisp,
-            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-        y = Math.round(y) + yCrisp;
-        h = bottom - y;
-
-        // Top edges are exceptions
-        if (fromTop && h) { // #5146
-            y -= 1;
-            h += 1;
-        }
-
-        return {
-            x: x,
-            y: y,
-            width: w,
-            height: h
-        };
+        return { x, y, width, height };
     }
 
     /**
@@ -412,39 +411,61 @@ class ColumnSeries extends Series {
             objectEach(
                 this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
-                    if (typeof point.x === 'number') {
-                        const stackItem = stack[point.x.toString()];
+                    const points = typeof point.x === 'number' ?
+                            stack[point.x.toString()]?.points :
+                            void 0,
+                        pointValues = points?.[this.index],
+                        yStackMap: Record<string, number> = {};
 
-                        if (stackItem) {
-                            const pointValues = stackItem.points[this.index];
+                    // Look for the index
+                    if (points && isArray(pointValues)) {
+                        let baseIndex = this.index;
 
-                            // Look for the index
-                            if (isArray(pointValues)) {
-                                // If there are multiple points with the same X
-                                // then gather all series in category, and
-                                // assign index
-                                const seriesIndexes = Object
-                                    .keys(stackItem.points)
-                                    .filter((pointKey): boolean =>
-                                        // Filter out duplicate X's
-                                        !pointKey.match(',') &&
-                                        // Filter out null points
-                                        stackItem.points[pointKey] &&
-                                        stackItem.points[pointKey].length > 1
-                                    )
-                                    .map(parseFloat)
-                                    .filter((index): boolean =>
-                                        visibleSeries.indexOf(index) !== -1
-                                    )
-                                    .sort((a, b): number => b - a);
+                        // If there are multiple points with the same X then
+                        // gather all series in category, and assign index
+                        const seriesIndexes = Object
+                            .keys(points)
+                            .filter((pointKey): boolean =>
+                                // Filter out duplicate X's
+                                !pointKey.match(',') &&
+                                // Filter out null points
+                                points[pointKey] &&
+                                points[pointKey].length > 1
+                            )
+                            .map(parseFloat)
+                            .filter((index): boolean =>
+                                visibleSeries.indexOf(index) !== -1
+                            )
 
-                                indexInCategory = seriesIndexes.indexOf(
-                                    this.index
-                                );
-                                totalInCategory = seriesIndexes.length;
+                            // When the series `stack` option is defined, assign
+                            // all subsequent column of the same stack to the
+                            // same index as the base column of the stack, then
+                            // filter out the original series index so that
+                            // `seriesIndexes` is shortened to the amount of
+                            // stacks, not the amount of series (#20550).
+                            .filter((index): boolean => {
+                                const otherOptions = this.chart.series[index]
+                                        .options,
+                                    yStack = otherOptions.stacking &&
+                                        otherOptions.stack;
 
-                            }
-                        }
+                                if (defined(yStack)) {
+                                    if (isNumber(yStackMap[yStack])) {
+                                        if (baseIndex === index) {
+                                            baseIndex = yStackMap[yStack];
+                                        }
+
+                                        return false;
+                                    }
+                                    yStackMap[yStack] = index;
+                                }
+                                return true;
+                            })
+                            .sort((a, b): number => b - a);
+
+                        indexInCategory = seriesIndexes.indexOf(baseIndex);
+                        totalInCategory = seriesIndexes.length;
+
                     }
                 }
             );
@@ -487,22 +508,18 @@ class ColumnSeries extends Series {
             seriesPointWidth = metrics.width,
             seriesXOffset = series.pointXOffset = metrics.offset,
             dataMin = series.dataMin,
-            dataMax = series.dataMax;
-        // postprocessed for border width
-        let seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            dataMax = series.dataMax,
             translatedThreshold = series.translatedThreshold =
                 yAxis.getThreshold(threshold as any);
-
-        if (chart.inverted) {
-            translatedThreshold -= 0.5; // #3355
-        }
+        // Postprocessed for border width
+        let seriesBarW = series.barW =
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         // When the pointPadding is 0, we want the columns to be packed
         // tightly, so we allow individual columns to have individual sizes.
         // When pointPadding is greater, we strive for equal-width columns
         // (#2694).
-        if (options.pointPadding) {
+        if (options.pointPadding && options.crisp) {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
@@ -540,9 +557,9 @@ class ColumnSeries extends Series {
                     isNumber(dataMax) &&
                     point.y === threshold &&
                     dataMax <= threshold &&
-                    // and if there's room for it (#7311)
+                    // And if there's room for it (#7311)
                     (yAxis.min || 0) < threshold &&
-                    // if all points are the same value (i.e zero) not draw
+                    // If all points are the same value (i.e zero) not draw
                     // as negative points (#10646), but only if there's room
                     // for it (#14876)
                     (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
@@ -573,7 +590,7 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
-            if (options.centerInCategory && !options.stacking) {
+            if (options.centerInCategory) {
                 barX = series.adjustForMissingColumns(
                     barX,
                     pointWidth,
@@ -581,6 +598,7 @@ class ColumnSeries extends Series {
                     metrics
                 );
             }
+
 
             // Cache for access in polar
             point.barX = barX;
@@ -661,7 +679,7 @@ class ColumnSeries extends Series {
             zone,
             brightness,
             fill = (point && point.color) || this.color,
-            // set to fill when borderColor null:
+            // Set to fill when borderColor null:
             stroke = (
                 (point && (point as any)[strokeOption]) ||
                 (options as any)[strokeOption] ||
@@ -746,7 +764,7 @@ class ColumnSeries extends Series {
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
 
-        // draw the columns
+        // Draw the columns
         points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
@@ -790,7 +808,7 @@ class ColumnSeries extends Series {
                     }
                 }
 
-                if (graphic && hasGraphic) { // update
+                if (graphic && hasGraphic) { // Update
                     graphic[verb](
                         merge(shapeArgs)
                     );
@@ -830,13 +848,25 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                const point = pointer?.getPointFromEvent(e);
+                pointer?.normalize(e);
+
+                const point = pointer?.getPointFromEvent(e),
+                    // Run point events only for points inside plot area, #21136
+                    isInsidePlot = chart.scrollablePlotArea ?
+                        chart.isInsidePlot(
+                            e.chartX - chart.plotLeft,
+                            e.chartY - chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
+                        ) : true;
 
                 // Undefined on graph in scatterchart
                 if (
                     pointer &&
                     point &&
-                    series.options.enableMouseTracking
+                    series.options.enableMouseTracking &&
+                    isInsidePlot
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
@@ -866,7 +896,7 @@ class ColumnSeries extends Series {
         if (!series._hasTracking) {
             (series.trackerGroups as any).forEach(function (key: string): void {
                 if ((series as any)[key]) {
-                    // we don't always have dataLabelsGroup
+                    // We don't always have dataLabelsGroup
                     (series as any)[key]
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
@@ -897,7 +927,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart;
 
-        // column and bar series affects other series of the same type
+        // Column and bar series affects other series of the same type
         // as they are either stacked or grouped
         if (chart.hasRendered) {
             chart.series.forEach(function (otherSeries): void {
@@ -978,4 +1008,4 @@ export default ColumnSeries;
  * @type {number}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

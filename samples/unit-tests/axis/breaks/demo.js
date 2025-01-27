@@ -639,7 +639,8 @@ QUnit.test(
         assert.strictEqual(
             initialWidth,
             chart.series[0].points[0].shapeArgs.width,
-            'Presence of axis.breaks option should not affect the columns width, #16368.'
+            'Presence of axis.breaks option should not affect the columns ' +
+            'width, #16368.'
         );
 
         chart.series[0].update({
@@ -896,7 +897,8 @@ QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].brokenAxis.hasBreaks,
         true,
-        'Axis.breaks with correct config results in Axis.brokenAxis.hasBreaks: true.'
+        'Axis.breaks with correct config results in ' +
+        'Axis.brokenAxis.hasBreaks: true.'
     );
 });
 
@@ -945,7 +947,7 @@ QUnit.test('Axis breaks with categories', function (assert) {
     var gridBox = chart.xAxis[0].gridGroup.getBBox();
 
     assert.strictEqual(
-        gridBox.x + 0.5,
+        gridBox.x - 0.5,
         chart.plotLeft,
         'Left tick is left of plot area'
     );
@@ -1086,7 +1088,9 @@ QUnit.test('#14833: Column series axis break regression', assert => {
     });
 
     assert.ok(
-        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
+        chart.series[0].points.slice(6, 10).every(
+            point => point.graphic.visibility === 'hidden'
+        ),
         'Points in break should not render'
     );
 });
@@ -1118,33 +1122,96 @@ QUnit.test('connectNulls and stacking', assert => {
     );
 });
 
-QUnit.test('Axis with breaks and toValue method calculation, #13238.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            width: 400
-        },
-        xAxis: {
-            breaks: [{
-                from: 3,
-                to: 7
+QUnit.test(
+    'Axis with breaks and toValue method calculation, #13238.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 400,
+                style: {
+                    fontFamily: 'Helvetica, Arial, sans-serif'
+                }
+            },
+            xAxis: {
+                breaks: [{
+                    from: 3,
+                    to: 7
+                }]
+            },
+            series: [{
+                data: [
+                    [0, 1],
+                    [1, 1],
+                    [5, 2],
+                    [6, 2],
+                    [7, 2],
+                    [8, 2]
+                ]
             }]
-        },
-        series: [{
-            data: [
-                [0, 1],
-                [1, 1],
-                [5, 2],
-                [6, 2],
-                [7, 2],
-                [8, 2]
-            ]
-        }]
+        });
+
+        assert.close(
+            chart.xAxis[0].toValue(100),
+            0.26227,
+            0.07,
+            'The toValue method should return correct value when breakes ' +
+            'enabled.'
+        );
     });
 
-    assert.close(
-        chart.xAxis[0].toValue(100),
-        0.26227,
-        0.05,
-        'The toValue method should return correct value when breakes enabled.'
+QUnit.test('Range of BrokenAxis', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: [{
+            minorGridLineColor: '#C0C0C0',
+            minorGridLineWidth: 1,
+            minorGridLineDashStyle: 'Dot',
+            minorTickInterval: 40,
+            min: 0,
+            max: 10000,
+            breaks: [{
+                from: 3000,
+                to: 8000,
+                breakSize: 200
+            }]
+        }],
+        series: [{
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1000,
+                y: 2
+            }, {
+                x: 2000,
+                y: 1
+            }, {
+                x: 3000,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 8000,
+                y: 1
+            }, {
+                x: 9000,
+                y: 3
+            }, {
+                x: 10000,
+                y: 2
+            }]
+        }]
+    });
+    const minorGridLines = chart.container.querySelectorAll(
+        '.highcharts-minor-grid-line'
+    );
+
+    assert.notEqual(
+        minorGridLines.length,
+        0,
+        'Minor grid lines should be rendered outside of a break when' +
+        'breaks are set (#21740)'
     );
 });

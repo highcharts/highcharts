@@ -161,6 +161,7 @@ QUnit.test('Item width after update. #6646', function (assert) {
     assert.strictEqual(
         chart.legend.symbolWidth,
         18,
-        '#15463: symbolWidth should default to symbolHeight which defaults to fontSize'
+        '#15463: symbolWidth should default to symbolHeight which defaults ' +
+        'to fontSize'
     );
 });

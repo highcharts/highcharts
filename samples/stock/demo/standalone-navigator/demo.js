@@ -4,11 +4,11 @@
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
 
-    // split the data set into price and volume
+    // Split the data set into price and volume
     const price = [],
         volume = [],
         dataLength = data.length,
-        // set the allowed units for data grouping
+        // Set the allowed units for data grouping
         groupingUnits = [[
             'week',                         // unit name
             [1]                             // allowed multiples
@@ -28,8 +28,12 @@
             data[i][5] // the volume
         ]);
     }
-    // create the standalone navigator
+    // Create the standalone navigator
     const nav = Highcharts.navigator('navigator-container', {
+        xAxis: {
+            // Configure the x axis to match the price and volume x axis
+            ordinal: true
+        },
         series: [{
             data: price
         }]
@@ -54,7 +58,7 @@
         }
     };
 
-    // create charts
+    // Create charts
     const priceChart = Highcharts.stockChart('price-chart', {
         ...baseConfing,
         chart: {
@@ -78,7 +82,7 @@
         }]
     });
 
-    // bind charts to the standalone navigator
+    // Bind charts to the standalone navigator
     nav.bind(priceChart);
     nav.bind(volumeChart);
 })();

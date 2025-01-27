@@ -108,7 +108,8 @@ function shouldDoLegendA11y(chart: Chart): boolean {
             (chart.options.legend as any).accessibility || {}
         ),
         unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
-            (c): boolean => !c.dataClasses || !c.dataClasses.length);
+            (c): boolean => !c.dataClasses || !c.dataClasses.length
+        );
 
     return !!(
         items && items.length &&
@@ -677,7 +678,7 @@ namespace LegendComponent {
 
             const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
-                itemToHighlight.a11yProxyElement.element;
+                itemToHighlight.a11yProxyElement.innerElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }

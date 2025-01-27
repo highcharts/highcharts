@@ -183,19 +183,22 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
     assert.strictEqual(
         chart.exportDivElements[0].innerText,
         'Hide data table',
-        'There should be text indicating that the table is visible and can be hidden.'
+        'There should be text indicating that the table is visible and can ' +
+        'be hidden.'
     );
 
     chart.toggleDataTable();
     assert.strictEqual(
         chart.exportDivElements[0].innerText,
         'View data table',
-        'There should be text indicating that the table is hidden and can be visible again.'
+        'There should be text indicating that the table is hidden and can be ' +
+        'visible again.'
     );
 });
 
 QUnit.test(
-    'When chart initialized with the table, show a proper button for hiding the table, #14352.',
+    'When chart initialized with the table, show a proper button for hiding ' +
+    'the table, #14352.',
     function (assert) {
         const chart = Highcharts.chart('container', {
             exporting: {
@@ -223,14 +226,16 @@ QUnit.test(
         assert.strictEqual(
             chart.exportDivElements[0].innerText,
             'Hide data table',
-            'There should be text indicating that the table is visible and can be hidden.'
+            'There should be text indicating that the table is visible and ' +
+            'can be hidden.'
         );
 
         chart.toggleDataTable();
         assert.strictEqual(
             chart.exportDivElements[0].innerText,
             'View data table',
-            'There should be text indicating that the table is hidden and can be visible again.'
+            'There should be text indicating that the table is hidden and ' +
+            'can be visible again.'
         );
     }
 );

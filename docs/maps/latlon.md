@@ -3,7 +3,7 @@ Latitude/longitude
 
 Note: The following content is only relevant to legacy versions of Highcharts. Since Highcharts v9.3, experimental projection is built in, allowing the use of `lat` and `lon` properties to be handled without the use of proj4js, as well as applying GeoJSON-compliant [geometry](https://api.highcharts.com/highmaps/series.data.geometry) configuration to points, maplines and map points directly.
 
-<iframe style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 550px; border: 0;" src="https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced" allow="fullscreen"></iframe>
 
 Highcharts Maps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highcharts Maps. The latest version of the _proj4js_ library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 

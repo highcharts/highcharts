@@ -10,17 +10,28 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
+        "brackets",
         "highcharts",
         "@typescript-eslint"
     ],
     "rules": {
+        "brackets/array-bracket-newline": 2,
+        "brackets/call-parens-newline": 2,
+        "brackets/conditional-parens-newline": 2,
+        "brackets/func-parens-newline": 2,
+        "brackets/object-curly-newline": 2,
         "camelcase": [
             2,
             {
                 "properties": "always"
             }
         ],
-        "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }],
+        "capitalized-comments": [
+            "error",
+            "always", {
+                "ignoreConsecutiveComments": true
+            }
+        ],
         "class-methods-use-this": 0,
         "comma-dangle": [
             2,
@@ -46,6 +57,7 @@
         "no-inner-declarations": 0, // deprecated with ES6
         "no-invalid-this": 0, // covered by TypeScript
         "no-shadow": 0, // @todo
+        "no-sequences": 0,
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo
         "no-unused-expressions": 0,
@@ -55,7 +67,7 @@
         "no-useless-return": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
-        "prefer-const": [1, {
+        "prefer-const": [2, {
             "destructuring": "all"
         }], // @todo
         "prefer-spread": 0, // @todo
@@ -63,6 +75,7 @@
         "require-unicode-regexp": 0, // incompatible with ES2017- targets
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
+        "spaced-comment": ["error", "always", { "markers": ["/"] }],
         "valid-jsdoc": 0,
         "@typescript-eslint/array-type": 0,
         "@typescript-eslint/ban-types": 0, // @todo
@@ -100,6 +113,7 @@
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-as-const": 1, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
+        "@typescript-eslint/prefer-optional-chain": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/restrict-plus-operands": 0,

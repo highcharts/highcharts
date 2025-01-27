@@ -248,8 +248,8 @@ function getFakeMouseEvent(
                 false,
                 false,
                 false,
-                0, // button
-                null // related target
+                0, // Button
+                null // Related target
             );
             return evt;
         }
@@ -281,7 +281,7 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
         return 'h' + newLevel;
     };
 
-    const isHeading = (tagName: string): boolean => /H[1-6]/.test(tagName);
+    const isHeading = (tagName: string): boolean => /^H[1-6]$/i.test(tagName);
 
     const getPreviousSiblingsHeading = (el: HTMLDOMElement): string => {
         let sibling: ChildNode|null = el;
@@ -302,7 +302,7 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
         // No previous siblings are headings, try parent node
         const parent = el.parentElement;
         if (!parent) {
-            return 'p';
+            return 'h6';
         }
         const parentTagName = parent.tagName;
         if (isHeading(parentTagName)) {

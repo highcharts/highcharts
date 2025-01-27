@@ -71,30 +71,8 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-                    },
                     id: 'dashboard-col-0'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '1/3'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-                    },
                     id: 'dashboard-col-1'
                 }, {
                     id: 'dashboard-col-2'
@@ -103,31 +81,23 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
             id: 'synchro-data'
         },
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         chartOptions: chartOptions
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'synchro-data'
         },
         type: 'Highcharts',
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         allowConnectorUpdate: false,
         chartOptions: Highcharts.merge(chartOptions, {
@@ -146,14 +116,24 @@ Dashboards.board('container', {
             }
         })
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'synchro-data'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true
+        },
+        dataGridOptions: {
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Vitamin A',
+                cells: {
+                    editable: true
+                }
+            }]
         }
     }]
 });

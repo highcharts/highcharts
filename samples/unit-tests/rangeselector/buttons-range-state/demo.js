@@ -165,10 +165,15 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
             .join(',');
     }
 
-    assert.strictEqual(getStates(), '0,0,3,2', 'Initial state. If selected range is greater than data, all should be selected (#19922).');
+    assert.strictEqual(
+        getStates(),
+        '0,0,3,0',
+        'Initial state. If selected range is greater than data, all should ' +
+        'be selected (#19922).'
+    );
 
     chart.rangeSelector.clickButton(1);
-    assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');
+    assert.strictEqual(getStates(), '0,2,3,0', 'Selected 2h');
 
     chart.rangeSelector.clickButton(0);
     assert.strictEqual(getStates(), '2,0,3,0', 'Selected 1h');
@@ -177,13 +182,14 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
     assert.strictEqual(getStates(), '0,0,3,2', 'Selected All');
 
     chart.rangeSelector.clickButton(1);
-    assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');
+    assert.strictEqual(getStates(), '0,2,3,0', 'Selected 2h');
 
     chart.rangeSelector.clickButton(2);
     assert.strictEqual(
         chart.fixedRange,
         chart.xAxis[0].dataMax - chart.xAxis[0].dataMin,
-        'chart.fixedRange should be equal to maximum range if the clicked button is outside data range, #20327'
+        'chart.fixedRange should be equal to maximum range if the clicked ' +
+        'button is outside data range, #20327'
     );
 
     // #19808
@@ -212,7 +218,10 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         }
     });
     chart.xAxis[0].setExtremes(1706592000000, 1706764800000);
-    assert.strictEqual(getStates(), '0', 'Week button should not be selected, #19808.');
+    assert.strictEqual(
+        getStates(),
+        '0', 'Week button should not be selected, #19808.'
+    );
 
     chart.series[0].setData([
         [1706227200000, 2],    // 26.01
@@ -221,5 +230,8 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         [1706764800000, 2],    // 01.02
         [1707123200000, 3]     // 05.02
     ]);
-    assert.strictEqual(getStates(), '2', 'Week button should be selected, #19808.');
+    assert.strictEqual(
+        getStates(),
+        '2', 'Week button should be selected, #19808.'
+    );
 });

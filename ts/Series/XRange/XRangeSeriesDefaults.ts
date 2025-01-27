@@ -97,8 +97,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
 
     dataLabels: {
         formatter: function (): (string|undefined) {
-            let point = this.point as XRangePoint,
-                amount = point.partialFill;
+            let amount = (this as XRangePoint).partialFill;
 
             if (isObject(amount)) {
                 amount = (amount as any).amount;
@@ -116,7 +115,7 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
 
     tooltip: {
 
-        headerFormat: '<span style="font-size: 0.8em">{point.x} - {point.x2}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>',
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
@@ -252,4 +251,4 @@ export default XRangeSeriesDefaults;
  * @apioption series.xrange.data.partialFill.fill
  */
 
-(''); // adds doclets above to transpiled file
+(''); // Adds doclets above to transpiled file

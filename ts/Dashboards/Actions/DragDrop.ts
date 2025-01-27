@@ -347,12 +347,12 @@ class DragDrop {
                 if (dragDrop.editMode.editCellContext) {
                     dragDrop.editMode.showToolbars(
                         ['row', 'cell'],
-                        dragDrop.editMode.editCellContext
+                        dragDrop.editMode.editCellContext as Cell
                     );
 
                     if (dragDrop.editMode.resizer) {
                         dragDrop.editMode.resizer.setSnapPositions(
-                            dragDrop.editMode.editCellContext
+                            dragDrop.editMode.editCellContext as Cell
                         );
                     }
                 }
@@ -431,6 +431,8 @@ class DragDrop {
 
     /**
      * Unmounts dropped row and mounts it in a new position.
+     *
+     * @fires DragDrop#layoutChanged
      */
     public onRowDragEnd(): void {
         const dragDrop = this,
@@ -468,6 +470,16 @@ class DragDrop {
 
         dragDrop.hideDropPointer();
         draggedRow.show();
+
+        fireEvent(
+            dragDrop.editMode,
+            'layoutChanged',
+            {
+                type: 'rowDragEnd',
+                target: draggedRow,
+                board: dragDrop.editMode.board
+            }
+        );
     }
 
     /**
@@ -530,7 +542,8 @@ class DragDrop {
 
         if (align === 'right' || align === 'left') {
             const dropContextOffsets = GUIElement.getOffsets(
-                dragDrop.dropContext, dragDrop.editMode.board.container);
+                dragDrop.dropContext, dragDrop.editMode.board.container
+            );
             const { width, height } =
                 GUIElement.getDimFromOffsets(dropContextOffsets);
 
@@ -688,6 +701,8 @@ class DragDrop {
      *
      * @param {Cell} contextCell
      * Cell used as a dragDrop context.
+     *
+     * @fires DragDrop#layoutChanged
      */
     public onCellDragEnd(
         contextCell?: Cell
@@ -730,7 +745,7 @@ class DragDrop {
                 row.unmountCell(dropContextCell);
 
                 const newCell = row.addCell({
-                    id: GUIElement.createElementId('col-nested-'),
+                    id: GUIElement.getElementId('col-nested'),
                     layout: {
                         rows: [{}, {}]
                     }
@@ -765,6 +780,16 @@ class DragDrop {
 
         dragDrop.hideDropPointer();
         draggedCell.show();
+
+        fireEvent(
+            dragDrop.editMode,
+            'layoutChanged',
+            {
+                type: 'cellDragEnd',
+                target: draggedCell,
+                board: dragDrop.editMode.board
+            }
+        );
     }
 }
 
@@ -806,8 +831,6 @@ namespace DragDrop {
          *
          * Try it:
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/dragdrop-disabled/ | Drag drop disabled}
-         *
-         * @default true
          */
         enabled?: boolean;
 

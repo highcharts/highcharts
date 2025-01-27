@@ -227,9 +227,11 @@ class HTMLTableConverter extends DataConverter {
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
+                    htmlRows.push(
+                        '<tr>' +
                         rowArray[rowIndex].join('') +
-                        '</tr>');
+                        '</tr>'
+                    );
                 }
             }
         }
@@ -565,6 +567,20 @@ namespace HTMLTableConverter {
     export type UserOptions = Partial<Options>;
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataConverterType' {
+    interface DataConverterTypes {
+        HTMLTable: typeof HTMLTableConverter;
+    }
+}
+
+DataConverter.registerType('HTMLTable', HTMLTableConverter);
 
 /* *
  *

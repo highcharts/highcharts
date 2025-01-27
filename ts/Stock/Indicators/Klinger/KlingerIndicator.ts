@@ -19,6 +19,7 @@ import type {
     KlingerParamsOptions
 } from './KlingerOptions';
 import type KlingerPoint from './KlingerPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -191,8 +192,8 @@ class KlingerIndicator extends SMAIndicator {
 
         const isLengthValid = [series, volumeSeries].every(
             function (series): boolean|undefined {
-                return series && series.xData && series.xData.length >=
-                (options.params as any).slowAvgPeriod;
+                return series && series.dataTable.rowCount >=
+                    (options.params as any).slowAvgPeriod;
             });
 
         return !!(isLengthValid && isSeriesOHLC);
@@ -220,12 +221,12 @@ class KlingerIndicator extends SMAIndicator {
     public getVolumeForce(yVal: Array<Array<number>>): Array<Array<number>> {
         const volumeForce: Array<Array<number>> = [];
 
-        let CM: number = 0, // cumulative measurement
-            DM: number, // daily measurement
+        let CM: number = 0, // Cumulative measurement
+            DM: number, // Daily measurement
             force: number,
-            i: number = 1, // start from second point
+            i: number = 1, // Start from second point
             previousCM: number = 0,
-            previousDM: number = yVal[0][1] - yVal[0][2], // initial DM
+            previousDM: number = yVal[0][1] - yVal[0][2], // Initial DM
             previousTrend: number = 0,
             trend: number;
 
@@ -238,7 +239,7 @@ class KlingerIndicator extends SMAIndicator {
             // (in this iteration, previousCM can be raplaced with the DM).
             CM = this.getCM(previousCM, DM, trend, previousTrend, previousDM);
 
-            force = (this.volumeSeries.yData as any)[i] *
+            force = this.volumeSeries.getColumn('y')[i] *
                 trend * Math.abs(2 * ((DM / CM) - 1)) * 100;
             volumeForce.push([force]);
 
@@ -282,7 +283,7 @@ class KlingerIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: KlingerParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const Klinger: Array<Array<number>> = [],
@@ -296,7 +297,6 @@ class KlingerIndicator extends SMAIndicator {
             i: number = 0,
             fastEMA: number = 0,
             slowEMA: number,
-            // signalEMA: number|undefined = void 0,
             previousFastEMA: number | undefined = void 0,
             previousSlowEMA: number | undefined = void 0,
             signal: any = null;
@@ -353,7 +353,8 @@ class KlingerIndicator extends SMAIndicator {
                 if (calcSingal.length >= params.signalPeriod) {
                     signal = calcSingal.slice(-params.signalPeriod)
                         .reduce((prev, curr): number =>
-                            prev + curr) / params.signalPeriod;
+                            prev + curr
+                        ) / params.signalPeriod;
                 }
 
                 Klinger.push([xVal[i], KO, signal]);
@@ -435,4 +436,4 @@ export default KlingerIndicator;
  * @apioption series.klinger
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

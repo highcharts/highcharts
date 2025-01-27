@@ -34,7 +34,8 @@ const dl = {
 function getDistance(pt1, pt2) {
     const toRad = Math.PI / 180;
     const R = 6371; // Radius of the earth in km
-    const dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in radians
+    const dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in
+    // radians
     const dLon = (pt2.lon - pt1.lon) * toRad;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(pt1.lat * toRad) * Math.cos(pt2.lat * toRad) *

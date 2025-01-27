@@ -1,6 +1,8 @@
 const chartOptions = {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Average Monthly Weather Data for Tokyo',
@@ -15,8 +17,10 @@ const chartOptions = {
         text: 'Theme created by https://jkunst.com/highcharts-themes-collection/'
     },
     xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
         crosshair: true
     }],
     yAxis: [{ // Primary yAxis
@@ -103,7 +107,8 @@ const chartOptions = {
             1013.1,
             1016.9,
             1018.2,
-            1016.7],
+            1016.7
+        ],
         marker: {
             enabled: false
         },
@@ -115,7 +120,8 @@ const chartOptions = {
     }, {
         name: 'Temperature',
         type: 'spline',
-        data: [7.0,
+        data: [
+            7.0,
             6.9,
             9.5,
             14.5,
@@ -126,7 +132,8 @@ const chartOptions = {
             23.3,
             18.3,
             13.9,
-            9.6],
+            9.6
+        ],
 
         tooltip: {
             valueSuffix: ' °C'
@@ -169,7 +176,8 @@ const chartOptions = {
 };
 
 const theme0 = {
-    colors: ['#f1c40f',
+    colors: [
+        '#f1c40f',
         '#2ecc71',
         '#9b59b6',
         '#e74c3c',
@@ -177,7 +185,8 @@ const theme0 = {
         '#3498db',
         '#1abc9c',
         '#f39c12',
-        '#d35400'],
+        '#d35400'
+    ],
     chart: {
         backgroundColor: '#34495e'
     },
@@ -248,7 +257,8 @@ const theme0 = {
     }
 };
 const theme1 = {
-    colors: ['#6794a7',
+    colors: [
+        '#6794a7',
         '#014d64',
         '#76c0c1',
         '#01a2d9',
@@ -259,7 +269,8 @@ const theme1 = {
         '#7c260b',
         '#ee8f71',
         '#76c0c1',
-        '#a18376'],
+        '#a18376'
+    ],
     chart: {
         backgroundColor: '#d5e4eb',
         style: {

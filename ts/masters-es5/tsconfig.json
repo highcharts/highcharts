@@ -5,7 +5,7 @@
         "declaration": false,
         "module": "es6",
         "moduleResolution": "node",
-        "outDir": "../../js/",
+        "outDir": "../../code/es5/es-modules/",
         "rootDir": "../",
         "target": "es5",
         "lib": [
@@ -13,12 +13,14 @@
             "ES5",
             "ES2017.Object",
             "ES2015.Promise",
-            "ES2016.Array.Include"
+            "ES2016.Array.Include",
+            "ES2015.Core"
         ]
     },
     "exclude": [
         "../Dashboards/**/*.ts",
-        "../masters-dashboards/**/*.ts"
+        "../masters-dashboards/**/*.ts",
+        "../masters-datagrid/**/*.ts"
     ],
     "include": [
         "../**/*.ts"

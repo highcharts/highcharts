@@ -57,7 +57,8 @@
         series: [{
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
+                    valueDescriptionFormat: '{xDescription}, {point.value} ' +
+                        'people per square kilometer.'
                 }
             },
             animation: {

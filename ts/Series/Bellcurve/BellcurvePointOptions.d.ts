@@ -25,7 +25,7 @@ import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
  * */
 
 export interface BellcurvePointOptions extends AreaSplinePointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

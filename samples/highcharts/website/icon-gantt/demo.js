@@ -39,7 +39,6 @@ const ganttChart = function () {
 
     const day = 1000 * 60 * 60 * 24,
         each = Highcharts.each,
-        reduce = Highcharts.reduce,
         btnShowDialog = document.getElementById('btnShowDialog'),
         btnRemoveTask = document.getElementById('btnRemoveSelected'),
         btnAddTask = document.getElementById('btnAddTask'),
@@ -60,7 +59,8 @@ const ganttChart = function () {
     today.setUTCMilliseconds(0);
     today = today.getTime();
 
-    // Update disabled status of the remove button, depending on whether or not we
+    // Update disabled status of the remove button,
+    // depending on whether or not we
     // have any selected points.
     function updateRemoveButtonStatus() {
         const chart = this.series.chart;
@@ -87,8 +87,12 @@ const ganttChart = function () {
                     const chart = this;
 
                     const buttonGroup = document.getElementById('button-group');
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -110,8 +114,12 @@ const ganttChart = function () {
 
                 },
                 redraw: function () {
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
@@ -135,7 +143,10 @@ const ganttChart = function () {
                 enabled: true
             },
             screenReaderSection: {
-                beforeChartFormat: '<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>'
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>' +
+                    '{typeDescription}</p><p>{chartSubtitle}</p><p>' +
+                    'Interactive Gantt diagram showing tasks and milestones ' +
+                    'across three departments, Tech, Marketing, and Sales.</p>'
             },
             point: {
                 descriptionFormatter: function (point) {
@@ -487,7 +498,7 @@ const ganttChart = function () {
             );
 
         let undef,
-            maxEnd = reduce(series.points, function (acc, point) {
+            maxEnd = series.points.reduce(function (acc, point) {
                 return point.y === y && point.end ?
                     Math.max(acc, point.end) : acc;
             }, 0);
@@ -541,10 +552,18 @@ const gantt = {
                 const rcount = startSeries;
                 const flag = document.querySelector('.flag');
                 const flagpole = document.querySelector('.pole');
-                const particle2 = document.getElementsByClassName('particle-2')[1];
-                const particle3 = document.getElementsByClassName('particle-3')[1];
-                const particle5 = document.getElementsByClassName('particle-5')[1];
-                const particle6 = document.getElementsByClassName('particle-6')[1];
+                const particle2 = document.getElementsByClassName(
+                    'particle-2'
+                )[1];
+                const particle3 = document.getElementsByClassName(
+                    'particle-3'
+                )[1];
+                const particle5 = document.getElementsByClassName(
+                    'particle-5'
+                )[1];
+                const particle6 = document.getElementsByClassName(
+                    'particle-6'
+                )[1];
                 const cover = document.querySelector('.cover');
 
                 // /if reduced motion....

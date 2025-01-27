@@ -36,7 +36,8 @@ import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
  *         Draggable 3d scatter
  *
  * @extends      plotOptions.scatter
- * @excluding    dragDrop, cluster, boostThreshold, boostBlending
+ * @excluding    boostThreshold, boostBlending, cluster, dragDrop,
+ *               legendSymbolColor
  * @product      highcharts
  * @requires     highcharts-3d
  * @optionparent plotOptions.scatter3d
@@ -127,7 +128,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @apioption series.scatter3d.data.z
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

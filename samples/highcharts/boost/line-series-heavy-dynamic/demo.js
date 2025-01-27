@@ -1,9 +1,11 @@
+const pointStart = Date.UTC(2024, 0, 1),
+    pointInterval = 36e5;
 function getData(n) {
     const arr = [];
 
     for (let i = 0; i < n; i = i + 1) {
         arr.push([
-            i,
+            pointStart + pointInterval * i,
             2 * Math.sin(i / 100) + Math.random()
         ]);
     }
@@ -22,9 +24,10 @@ function getSeries(n, s) {
             animation: false,
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true,
-            requireSorting: false
+            requireSorting: false,
+            pointStart,
+            pointInterval
         });
     }
 
@@ -36,22 +39,23 @@ let n = 20;
 const s = 600,
     series = getSeries(n, s);
 
-Highcharts.setOptions({
-    global: {
-        useUTC: false
-    }
-});
-
 console.time('line');
-const chart =  Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
 
     chart: {
         animation: false,
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
+    },
+
+    lang: {
+        timezone: undefined
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     navigator: {
@@ -102,8 +106,8 @@ function addPoint() {
     ++n;
 
     chart.series.forEach(function dynAddPoint(se) {
-        const x = n,
-            y = 2 * Math.sin(x / 100) + Math.random();
+        const x = pointStart + pointInterval * n,
+            y = 2 * Math.sin(n / 100) + Math.random();
 
         // Yeah...
         if (se.options.className === 'highcharts-navigator-series') {

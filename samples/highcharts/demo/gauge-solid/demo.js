@@ -12,7 +12,8 @@ const gaugeOptions = {
         endAngle: 90,
         background: {
             backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
+                Highcharts.defaultOptions.legend.backgroundColor || '#fafafa',
+            borderRadius: 5,
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -48,6 +49,7 @@ const gaugeOptions = {
 
     plotOptions: {
         solidgauge: {
+            borderRadius: 3,
             dataLabels: {
                 y: 5,
                 borderWidth: 0,
@@ -58,64 +60,66 @@ const gaugeOptions = {
 };
 
 // The speed gauge
-const chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 200,
-        title: {
-            text: 'Speed'
-        }
-    },
+const chartSpeed = Highcharts.chart(
+    'container-speed', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
+        },
 
-    credits: {
-        enabled: false
-    },
+        credits: {
+            enabled: false
+        },
 
-    series: [{
-        name: 'Speed',
-        data: [80],
-        dataLabels: {
-            format:
+        series: [{
+            name: 'Speed',
+            data: [80],
+            dataLabels: {
+                format:
                 '<div style="text-align:center">' +
                 '<span style="font-size:25px">{y}</span><br/>' +
                 '<span style="font-size:12px;opacity:0.4">km/h</span>' +
                 '</div>'
-        },
-        tooltip: {
-            valueSuffix: ' km/h'
-        }
-    }]
+            },
+            tooltip: {
+                valueSuffix: ' km/h'
+            }
+        }]
 
-}));
+    }));
 
 // The RPM gauge
-const chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 5,
-        title: {
-            text: 'RPM'
-        }
-    },
+const chartRpm = Highcharts.chart(
+    'container-rpm', Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 5,
+            title: {
+                text: 'RPM'
+            }
+        },
 
-    series: [{
-        name: 'RPM',
-        data: [1],
-        dataLabels: {
-            format:
+        series: [{
+            name: 'RPM',
+            data: [1],
+            dataLabels: {
+                format:
                 '<div style="text-align:center">' +
                 '<span style="font-size:25px">{y:.1f}</span><br/>' +
                 '<span style="font-size:12px;opacity:0.4">' +
                 '* 1000 / min' +
                 '</span>' +
                 '</div>'
-        },
-        tooltip: {
-            valueSuffix: ' revolutions/min'
-        }
-    }]
+            },
+            tooltip: {
+                valueSuffix: ' revolutions/min'
+            }
+        }]
 
-}));
+    }));
 
 // Bring life to the dials
 setInterval(function () {

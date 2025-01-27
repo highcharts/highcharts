@@ -233,8 +233,8 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
      * @private
      */
     public redrawLink(): void {
-        let path = this.getLinkPath(),
-            attribs: SVGAttributes;
+        const path = this.getLinkPath();
+        let attribs: SVGAttributes;
 
         if (this.graphic) {
             this.shapeArgs = {
@@ -285,10 +285,11 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
         redraw?: boolean,
         animation?: boolean
     ): void {
-        let point = this,
+        const point = this,
             series = point.series,
-            nodesOptions = series.options.nodes || [],
-            index: number,
+            nodesOptions = series.options.nodes || [];
+
+        let index: number,
             i = nodesOptions.length;
 
         // For nodes, remove all connected links:

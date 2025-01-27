@@ -32,16 +32,20 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y',
-                USD: 'custom.usd'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'EUR',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'Rate',
+                    data: ['Day', 'Rate']
+                }, {
+                    seriesId: 'USD',
+                    data: ['Day', 'USD']
+                }]
             },
             sync: {
                 highlight: true
@@ -76,15 +80,27 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             type: 'DataGrid',
             connector: {
                 id: 'EUR-USD'
             },
+            dataGridOptions: {
+                columnDefaults: {
+                    cells: {
+                        editable: true
+                    }
+                },
+                columns: [{
+                    id: 'USD',
+                    cells: {
+                        editable: false
+                    }
+                }]
+            },
             sync: {
                 highlight: true
-            },
-            editable: true
+            }
         }
     ]
 });

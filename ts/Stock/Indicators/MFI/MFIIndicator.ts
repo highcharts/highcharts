@@ -18,6 +18,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -45,6 +46,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function sumArray(array: Array<number>): number {
 
     return array.reduce(function (prev: number, cur: number): number {
@@ -52,14 +56,23 @@ function sumArray(array: Array<number>): number {
     });
 }
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateTypicalPrice(point: Array<number>): number {
     return (point[1] + point[2] + point[3]) / 3;
 }
 
+/**
+ *
+ */
 function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }
@@ -106,7 +119,7 @@ class MFIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -138,7 +151,7 @@ class MFIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const period: number = (params.period as any),
@@ -149,9 +162,7 @@ class MFIIndicator extends SMAIndicator {
             volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
-            yValVolume: Array<number> = (
-                volumeSeries && (volumeSeries.yData as any)
-            ),
+            yValVolume = volumeSeries?.getColumn('y') || [],
             MFI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -307,4 +318,4 @@ export default MFIIndicator;
  * @apioption series.mfi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

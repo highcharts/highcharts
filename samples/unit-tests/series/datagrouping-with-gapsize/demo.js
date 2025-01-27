@@ -73,9 +73,9 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
 
     var series = chart.series[0];
 
-    assert.strictEqual(
-        series.graph.attr('d').lastIndexOf('L'),
-        77,
+    assert.deepEqual(
+        series.graphPath.map(seg => seg[0]),
+        ['M', 'L', 'L', 'L', 'M', 'L'],
         'Graph should be visible when dataGrouping is enabled'
     );
 
@@ -108,7 +108,8 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
     assert.strictEqual(
         series.graph.attr('d').lastIndexOf('M'),
         0,
-        'Graph should be continuous when dataGrouping is days and crossing DST (#10000)'
+        'Graph should be continuous when dataGrouping is days and crossing ' +
+        'DST (#10000)'
     );
 
     series.update({

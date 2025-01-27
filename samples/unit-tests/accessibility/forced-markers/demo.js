@@ -120,8 +120,14 @@ QUnit.test('Markers enabled, point marker off', function (assert) {
     chart.update({
         yAxis: { visible: false }
     });
-    assert.strictEqual(hasMarker(pointB), true, 'Point marker exists after update');
-    assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden after update');
+    assert.strictEqual(
+        hasMarker(pointB), true, 'Point marker exists after ' +
+        'update'
+    );
+    assert.strictEqual(
+        hasVisibleMarker(pointB), false, 'Point marker hidden ' +
+        'after update'
+    );
 });
 
 QUnit.test('Markers disabled, point marker off', function (assert) {
@@ -269,7 +275,8 @@ QUnit.test('Hover after disabling a11y', function (assert) {
 });
 
 QUnit.test(
-    'Update markers when a series is boosted and markers should not be visible (#17320)',
+    'Update markers when a series is boosted and markers should not be ' +
+    'visible (#17320)',
     function (assert) {
         const chart = Highcharts.chart('container', {
             accessibility: {
@@ -295,18 +302,33 @@ QUnit.test(
         let point = chart.series[0].points[0];
 
         assert.strictEqual(chart.boosted, true, 'Series is boosted from start');
-        assert.strictEqual(hasMarker(point), false, 'Markers does not exist from start');
+        assert.strictEqual(
+            hasMarker(point), false, 'Markers does not exist ' +
+            'from start'
+        );
 
         chart.series[0].removePoint(0);
         point = chart.series[0].points[0];
 
-        assert.strictEqual(!chart.boosted, true, 'Series should not be boosted anymore');
-        assert.strictEqual(hasMarker(point), true, 'Markers should exist when series is not boosted');
+        assert.strictEqual(
+            !chart.boosted, true, 'Series should not be ' +
+            'boosted anymore'
+        );
+        assert.strictEqual(
+            hasMarker(point), true, 'Markers should exist ' +
+            'when series is not boosted'
+        );
 
         chart.series[0].addPoint(1);
         point = chart.series[0].points[0];
 
-        assert.strictEqual(chart.boosted, true, 'Series should be boosted again');
-        assert.strictEqual(hasMarker(point), false, 'Markers should not exist again');
+        assert.strictEqual(
+            chart.boosted, true, 'Series should be boosted ' +
+            'again'
+        );
+        assert.strictEqual(
+            hasMarker(point), false, 'Markers should not ' +
+            'exist again'
+        );
 
     });

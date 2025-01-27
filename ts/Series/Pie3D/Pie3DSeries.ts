@@ -93,7 +93,7 @@ class Pie3DSeries extends PieSeries {
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
-            // destroy (and rebuild) everything!!!
+            // Destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
         }
     }
@@ -121,10 +121,12 @@ class Pie3DSeries extends PieSeries {
                 // Scale down the group and place it in the center
                 (group as any).oldtranslateX = pick(
                     (group as any).oldtranslateX,
-                    (group as any).translateX);
+                    (group as any).translateX
+                );
                 (group as any).oldtranslateY = pick(
                     (group as any).oldtranslateY,
-                    (group as any).translateY);
+                    (group as any).translateY
+                );
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -334,4 +336,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpiledion
+''; // Keeps doclets above after transpiledion

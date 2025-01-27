@@ -196,7 +196,7 @@ function columnAnimateDrillupFrom(
 
     // Cancel mouse events on the series group (#2787)
     (series.trackerGroups || []).forEach((key: string): void => {
-        // we don't always have dataLabelsGroup
+        // We don't always have dataLabelsGroup
         if ((series as AnyRecord)[key]) {
             (series as AnyRecord)[key].on('mouseover');
         }
@@ -212,7 +212,7 @@ function columnAnimateDrillupFrom(
         delete (series as any).group;
     }
 
-    this.points.forEach((point: Point): void => {
+    (this.points || this.data).forEach((point: Point): void => {
         const graphic = point.graphic,
             animateTo = level.shapeArgs;
 
@@ -426,8 +426,6 @@ function mapAnimateDrilldown(
                             ),
                             true
                         );
-                    series.isDirty = true;
-                    chart.redraw();
                 }
             });
 
@@ -453,7 +451,7 @@ function mapAnimateDrillupFrom(
     if (chart && chart.mapView) {
         chart.mapView.allowTransformAnimation = false;
     }
-    // stop duplicating and overriding animations
+    // Stop duplicating and overriding animations
     if (series.options) {
         series.options.inactiveOtherPoints = true;
     }
@@ -479,7 +477,7 @@ function mapAnimateDrillupTo(
             group.attr({
                 opacity: 0.01
             });
-            // stop duplicating and overriding animations
+            // Stop duplicating and overriding animations
             if (series.options) {
                 series.options.inactiveOtherPoints = true;
             }
@@ -672,7 +670,8 @@ function pieAnimateDrilldown(
                         start: start + i * startAngle,
                         end: start + (i + 1) * startAngle
                     }))[animationOptions ? 'animate' : 'attr'](
-                        (animateTo as any),
+                        (
+                            animateTo as any),
                         animationOptions
                     );
                 }

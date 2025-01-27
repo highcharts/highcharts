@@ -135,9 +135,6 @@ class MapPointSeries extends ScatterSeries {
     public translate(): void {
         const mapView = this.chart.mapView;
 
-        if (!this.processedXData) {
-            this.processData();
-        }
         this.generatePoints();
 
         if (this.getProjectedBounds && this.isDirtyData) {
@@ -320,4 +317,4 @@ export default MapPointSeries;
  *
  * */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

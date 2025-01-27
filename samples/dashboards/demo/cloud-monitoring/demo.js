@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 let board = void 0;
 let instances = void 0;
 let currentInstanceId = void 0;
@@ -67,7 +72,10 @@ const setupDashboard = instanceId => {
                 type: 'JSON',
                 options: {
                     firstRowAsNames: false,
-                    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
+                    columnNames: [
+                        'timestamp', 'readOpt', 'writeOpt', 'networkIn',
+                        'networkOut', 'cpuUtilization'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -84,7 +92,11 @@ const setupDashboard = instanceId => {
                 options: {
                     firstRowAsNames: false,
                     orientantion: 'columns',
-                    columnNames: ['index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+                    columnNames: [
+                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
+                        'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
+                        'Documents', 'Downloads'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -121,165 +133,46 @@ const setupDashboard = instanceId => {
                 rows: [{
                     id: 'instance-details',
                     cells: [{
-                        id: 'instance',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'instance'
                     }, {
-                        id: 'zone',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'zone'
                     }, {
-                        id: 'ami',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'ami'
                     }, {
-                        id: 'os',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'os'
                     }]
                 }, {
                     cells: [{
-                        height: 400,
-                        id: 'instances-table',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'instances-table'
                     }, {
+                        id: 'kpi-wrapper',
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'cpu',
-                                    height: 200
+                                    id: 'cpu'
                                 }, {
-                                    id: 'memory',
-                                    height: 200
+                                    id: 'memory'
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'health',
-                                    height: 195
+                                    id: 'health'
                                 }, {
-                                    id: 'disk',
-                                    height: 195
+                                    id: 'disk'
                                 }]
                             }]
-                        },
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
                         }
                     }]
                 }, {
                     cells: [{
-                        id: 'disk-usage',
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'disk-usage'
                     }, {
-                        id: 'cpu-utilization',
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'cpu-utilization'
                     }]
                 }, {
                     cells: [{
-                        id: 'network-opt',
-                        height: 300,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'network-opt'
                     }, {
-                        id: 'disk-opt',
-                        height: 300,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'disk-opt'
                     }]
                 }]
             }]
@@ -289,7 +182,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'Instance type:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/instance-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.InstanceType
@@ -299,7 +194,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'Zone:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/zone-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.Zone
@@ -309,7 +206,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'AMI:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/ami-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.AMI
@@ -319,7 +218,9 @@ const setupDashboard = instanceId => {
             type: 'HTML',
             title: 'OS:',
             elements: [{
-                tagName: 'span'
+                tagName: 'img',
+                /* https://awsicons.dev/ */
+                src: 'https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/os-ico.svg'
             }, {
                 tagName: 'p',
                 textContent: instance.OS
@@ -329,14 +230,20 @@ const setupDashboard = instanceId => {
             title: 'Disk usage',
             type: 'Highcharts',
             connector: {
-                id: 'instanceDetails'
-            },
-            columnAssignment: {
-                index: 'x',
-                MediaGB: 'y',
-                RootGB: 'y',
-                Documents: 'y',
-                Downloads: 'y'
+                id: 'instanceDetails',
+                columnAssignment: [{
+                    seriesId: 'media-gb',
+                    data: ['x', 'MediaGB']
+                }, {
+                    seriesId: 'root-gb',
+                    data: ['x', 'RootGB']
+                }, {
+                    seriesId: 'documents',
+                    data: ['x', 'Documents']
+                }, {
+                    seriesId: 'downloads',
+                    data: ['x', 'Downloads']
+                }]
             },
             chartOptions: {
                 xAxis: {
@@ -352,18 +259,22 @@ const setupDashboard = instanceId => {
                 },
                 series: [{
                     name: 'MediaGB',
+                    id: 'media-gb',
                     pointStart: 0,
                     pointPlacement: -0.3
                 }, {
                     name: 'RootGB',
+                    id: 'root-gb',
                     pointStart: 1,
                     pointPlacement: -0.1
                 }, {
                     name: 'Documents',
+                    id: 'documents',
                     pointStart: 2,
                     pointPlacement: 0.1
                 }, {
                     name: 'Downloads',
+                    id: 'downloads',
                     pointStart: 3,
                     pointPlacement: 0.4
                 }],
@@ -400,24 +311,24 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Disk usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 accessibility: {
                     description: 'The chart is displaying space on disk'
                 }
             }
-        },
-        {
+        }, {
             cell: 'cpu-utilization',
             title: 'CPU utilization',
             type: 'Highcharts',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                cpuUtilization: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'cpu-utilization',
+                    data: ['timestamp', 'cpuUtilization']
+                }]
             },
             sync: {
                 highlight: true
@@ -427,7 +338,8 @@ const setupDashboard = instanceId => {
                     type: 'spline'
                 },
                 series: [{
-                    name: 'cpuUtilization'
+                    name: 'CPU utilization',
+                    id: 'cpu-utilization'
                 }],
                 xAxis: {
                     type: 'datetime',
@@ -458,8 +370,7 @@ const setupDashboard = instanceId => {
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'cpu',
             type: 'KPI',
             connector: {
@@ -472,9 +383,11 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y}%</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">CPU</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">CPU</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -495,7 +408,8 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'CPU usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'CPU usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 tooltip: {
@@ -524,9 +438,11 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y} MB</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">Memory</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">Memory</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -542,21 +458,22 @@ const setupDashboard = instanceId => {
                 }],
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Memory usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Memory usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 tooltip: {
                     valueSuffix: ' MB'
                 }
             }
-        },
-        {
+        }, {
             cell: 'health',
             type: 'HTML',
             class: 'health-indicator',
             elements: [{
                 tagName: 'div',
-                class: 'health-wrapper highcharts-' + instance.HealthIndicator + '-icon',
+                class: 'health-wrapper highcharts-' + instance.HealthIndicator +
+                    '-icon',
                 attributes: {
                     'aria-label': 'Health: ' + instance.HealthIndicator,
                     role: 'img'
@@ -566,8 +483,7 @@ const setupDashboard = instanceId => {
                 class: 'health-title',
                 textContent: 'Health'
             }]
-        },
-        {
+        }, {
             cell: 'disk',
             type: 'KPI',
             connector: {
@@ -579,9 +495,11 @@ const setupDashboard = instanceId => {
                 plotOptions: {
                     series: {
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y} GB</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">Disk space</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">Disk space</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -600,22 +518,24 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Disk usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'network-opt',
             type: 'Highcharts',
             title: 'Network (bytes)',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                networkIn: 'y',
-                networkOut: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'in',
+                    data: ['timestamp', 'networkIn']
+                }, {
+                    seriesId: 'out',
+                    data: ['timestamp', 'networkOut']
+                }]
             },
             sync: {
                 highlight: true
@@ -655,20 +575,28 @@ const setupDashboard = instanceId => {
                     point: {
                         valueDescriptionFormat: 'bytes'
                     }
-                }
+                },
+                series: [{
+                    name: 'network in',
+                    id: 'in'
+                }, {
+                    name: 'network out',
+                    id: 'out'
+                }]
             }
-        },
-        {
+        }, {
             cell: 'disk-opt',
             type: 'Highcharts',
             title: 'Disk operations',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                writeOpt: 'y',
-                readOpt: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'read',
+                    data: ['timestamp', 'readOpt']
+                }, {
+                    seriesId: 'write',
+                    data: ['timestamp', 'writeOpt']
+                }]
             },
             sync: {
                 highlight: true
@@ -710,32 +638,58 @@ const setupDashboard = instanceId => {
                     }
                 }
             }
-        },
-        {
+        }, {
             cell: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',
-            visibleColumns: ['InstanceId', 'InstanceType', 'PublicIpAddress', 'State', 'HealthIndicator'],
             dataGridOptions: {
-                editable: false,
-                columns: {
-                    InstanceId: {
-                        headerFormat: 'ID'
-                    },
-                    InstanceType: {
-                        headerFormat: 'Type'
-                    },
-                    PublicIpAddress: {
-                        headerFormat: 'Public IP'
-                    },
-                    HealthIndicator: {
-                        headerFormat: 'Health'
-                    }
-
+                credits: {
+                    enabled: false
                 },
+                rendering: {
+                    rows: {
+                        strictHeights: true
+                    }
+                },
+                header: [
+                    'InstanceId', 'InstanceType', 'PublicIpAddress',
+                    'State', 'HealthIndicator'
+                ],
+                columns: [{
+                    id: 'InstanceId',
+                    header: {
+                        format: 'ID'
+                    }
+                }, {
+                    id: 'InstanceType',
+                    header: {
+                        format: 'Type'
+                    }
+                }, {
+                    id: 'PublicIpAddress',
+                    header: {
+                        format: 'Public IP'
+                    }
+                }, {
+                    id: 'HealthIndicator',
+                    header: {
+                        format: 'Health'
+                    },
+                    useHTML: true,
+                    cells: {
+                        formatter: function () {
+                            const val = this.value;
+                            return `<img src="https://www.highcharts.com/samples/graphics/dashboards/cloud-monitoring/${
+                                val.toLowerCase()
+                            }-ico.${val === 'Critical' ? 'png' : 'svg'}" alt="${
+                                val
+                            }"/>`;
+                        }
+                    }
+                }],
                 events: {
-                    row: {
-                        click: async function (e) {
+                    cell: {
+                        click: async function () {
                             const enabledPolling = pollingCheckbox.checked;
                             if (enabledPolling) {
                                 // stop polling when is enabled
@@ -743,7 +697,7 @@ const setupDashboard = instanceId => {
                             }
                             board.destroy();
                             setupDashboard(
-                                e.target.parentNode.childNodes[0].innerText
+                                this.row.cells[0].value
                             );
 
                             // run polling when was enabled
@@ -759,10 +713,12 @@ const setupDashboard = instanceId => {
             },
             events: {
                 mount: function () {
+                    const component =
+                        this.board.getComponentByCellId('instances-table');
                     setTimeout(() => {
-                        const currentRow =
-                            document.querySelector('[data-original-data="' + instance.InstanceId + '"]').parentNode;
-                        currentRow.classList.add('current');
+                        component.dataGrid.viewport.rows.find(
+                            row => row.cells[0].value === instance.InstanceId
+                        ).htmlElement.classList.add('current');
                     }, 1);
                 }
             }

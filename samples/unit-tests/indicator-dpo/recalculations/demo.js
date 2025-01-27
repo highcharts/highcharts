@@ -47,8 +47,10 @@ QUnit.test(
             period = dpoSeries.options.params.period,
             range = period + Math.floor(period / 2 + 1);
 
-        function toFastDPOWithRound(arr) {
-            return arr.map(point => parseFloat(point.toFixed(4)));
+        function toFastDPOWithRound(series) {
+            return series.getColumn('y').map(
+                y => parseFloat(y.toFixed(4))
+            );
         }
 
         assert.strictEqual(
@@ -62,7 +64,8 @@ QUnit.test(
         assert.strictEqual(
             mainSeries.data.length,
             dpoSeries.data.length + range - 1,
-            'After addPoint number of Detrended Price Oscillator points is correct'
+            'After addPoint number of Detrended Price Oscillator points is ' +
+            'correct'
         );
 
         mainSeries.setData(
@@ -119,7 +122,8 @@ QUnit.test(
         assert.strictEqual(
             mainSeries.data.length,
             dpoSeries.data.length + range - 1,
-            'After setData number of Detrended Price Oscillator points is correct'
+            'After setData number of Detrended Price Oscillator points is ' +
+            'correct'
         );
 
         dpoSeries.update({
@@ -131,7 +135,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastDPOWithRound(dpoSeries.yData),
+            toFastDPOWithRound(dpoSeries),
             [
                 405.419,
                 385.8262,
@@ -160,7 +164,7 @@ QUnit.test(
         mainSeries.points[mainSeries.points.length - 1].remove();
 
         assert.deepEqual(
-            toFastDPOWithRound(dpoSeries.yData),
+            toFastDPOWithRound(dpoSeries),
             [
                 405.419,
                 385.8262,

@@ -108,7 +108,7 @@ function onAxisAfterSetOptions(
         chart = axis.chart,
         options = axis.options;
 
-    if (chart.is3d && chart.is3d() && axis.coll !== 'colorAxis') {
+    if (chart.is3d?.() && axis.coll !== 'colorAxis') {
         options.tickWidth = pick(options.tickWidth, 0);
         options.gridLineWidth = pick(options.gridLineWidth, 1);
     }
@@ -202,7 +202,7 @@ function wrapAxisGetPlotBandPath(
                     fromStartSeg,
                     fromEndSeg,
                     toEndSeg,
-                    // lineTo instead of moveTo
+                    // `lineTo` instead of `moveTo`
                     ['L', toStartSeg[1], toStartSeg[2]],
                     ['Z']
                 );
@@ -359,7 +359,7 @@ function wrapAxisGetSlotWidth(
         }
         // If next label position is defined, then recalculate its position
         // basing on the perspective.
-        if (nextTick && nextTick.label && nextTick.label.xy) {
+        if (nextTick?.label?.xy) {
             nextLabelPos = perspective3D({
                 x: nextTick.label.xy.x,
                 y: nextTick.label.xy.y,
@@ -646,7 +646,7 @@ class Axis3DAdditions {
                     x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z
                 };
             }
-        } else { // positionMode  == 'offset'
+        } else { // Position mode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets
             // from axis
             if (!axis.horiz) { // Y Axis

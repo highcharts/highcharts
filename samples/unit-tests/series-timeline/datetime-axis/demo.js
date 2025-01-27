@@ -106,7 +106,8 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        'Extremes are set corectly after removing first and last visible points.'
+        'Extremes are set corectly after removing first and last visible ' +
+        'points.'
     );
 
     timeline.setData([
@@ -239,5 +240,31 @@ QUnit.test('Timeline: General tests.', function (assert) {
         timeline.points[2].isInside,
         false,
         'The third point is hidden, when it\'s outside of plot area.'
+    );
+
+
+    chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'timeline',
+            data: [{
+                x: Date.UTC(2009, 10, 1),
+                name: 'A'
+            }, {
+                x: Date.UTC(2009, 10, 27),
+                name: 'B'
+            }, {
+                x: Date.UTC(2010, 10, 20),
+                name: 'C'
+            }, {
+                x: Date.UTC(2011, 3, 19),
+                name: 'D'
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        4,
+        'Timeline series is rendered with stock chart constructor, #17890'
     );
 });

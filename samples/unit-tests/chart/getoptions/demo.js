@@ -43,7 +43,8 @@ QUnit.test('getOptions', assert => {
                 assert.strictEqual(
                     chart.userOptions[coll][i],
                     chart[coll][i].userOptions,
-                    'Item user options should be reflected in chart user options ' +
+                    'Item user options should be reflected in chart user ' +
+                    'options ' +
                     `(${coll})`
                 );
             });
@@ -71,7 +72,8 @@ QUnit.test('getOptions', assert => {
     assert.strictEqual(
         chart.getOptions().legend,
         undefined,
-        'Default setting should not be part of the result, and empty parent purged'
+        'Default setting should not be part of the result, and empty parent ' +
+        'purged'
     );
 
 });

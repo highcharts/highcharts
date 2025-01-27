@@ -138,7 +138,7 @@ const VariwideSeriesDefaults: VariwideSeriesOptions = {
  * @apioption series.variwide.data.z
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

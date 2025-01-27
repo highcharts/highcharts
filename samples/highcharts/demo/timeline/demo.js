@@ -11,7 +11,8 @@ Highcharts.chart('container', {
                 '<div>{viewTableButton}</div>'
         },
         point: {
-            valueDescriptionFormat: '{index}. {point.label}. {point.description}.'
+            valueDescriptionFormat: '{index}. {point.label}. ' +
+                '{point.description}.'
         }
     },
     xAxis: {
@@ -37,22 +38,27 @@ Highcharts.chart('container', {
     series: [{
         data: [{
             name: '2000: Orbiting of an asteroid',
-            description: '14 February 2000, first orbiting of an asteroid (433 Eros).'
+            description: '14 February 2000, first orbiting of an asteroid ' +
+                '(433 Eros).'
         }, {
             name: '2005: Landing on Titan.',
-            description: '14 January 2005, first soft landing on Titan also first soft landing in the outer Solar System.'
+            description: '14 January 2005, first soft landing on Titan also ' +
+                'first soft landing in the outer Solar System.'
         }, {
             name: '2011: Orbit of Mercury',
             description: '18 March 2011, first spacecraft to orbit Mercury.'
         }, {
             name: '2015: Food eaten in space',
-            description: '10 August 2015, first food grown in space and eaten (lettuce).'
+            description: '10 August 2015, first food grown in space and ' +
+                'eaten (lettuce).'
         }, {
             name: '2019: Black hole photograph',
-            description: '10 April 2019, first direct photograph of a black hole and its vicinity.'
+            description: '10 April 2019, first direct photograph of a black ' +
+                'hole and its vicinity.'
         }, {
-            name: '2020: Private spaceflight',
-            description: '30 May 2020, first orbital human spaceflight launched by a private company (SpaceX).'
+            name: '2024: Moon Sample',
+            description: '25 June 2024, First samples returned from the far ' +
+                'side of the Moon.'
         }]
     }]
 });

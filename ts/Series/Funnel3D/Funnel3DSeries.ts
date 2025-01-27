@@ -56,6 +56,7 @@ const {
 /**
  * The funnel3d series type.
  *
+ * @private
  * @class
  * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
@@ -144,7 +145,7 @@ class Funnel3DSeries extends ColumnSeries {
         if (inside) {
             dlBox.x -= dlBox.width / 2;
         } else {
-            // swap for inside
+            // Swap for inside
             if (options.align === 'left') {
                 options.align = 'right';
                 dlBox.x -= dlBox.width * 1.5;
@@ -212,7 +213,7 @@ class Funnel3DSeries extends ColumnSeries {
             points = series.points;
 
         let sum = 0,
-            cumulative = 0, // start at top
+            cumulative = 0, // Start at top
             tempWidth,
             getWidthAt: (y: number) => number,
             fraction,
@@ -266,7 +267,7 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         for (const point of points) {
-            // set start and end positions
+            // Set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
             y1 = centerY - height / 2 + cumulative * height;
@@ -274,7 +275,7 @@ class Funnel3DSeries extends ColumnSeries {
             tempWidth = getWidthAt(y1);
             h = y3 - y1;
             shapeArgs = {
-                // for fill setter
+                // For fill setter
                 gradientForSides: pick(
                     point.options.gradientForSides,
                     options.gradientForSides
@@ -295,11 +296,11 @@ class Funnel3DSeries extends ColumnSeries {
                 width: tempWidth
             };
 
-            // the entire point is within the neck
+            // The entire point is within the neck
             if (y1 >= neckY) {
                 shapeArgs.isCylinder = true;
             } else if (y3 > neckY) {
-                // the base of the neck
+                // The base of the neck
                 y5 = y3;
                 tempWidth = getWidthAt(neckY);
                 y3 = neckY;
@@ -325,7 +326,7 @@ class Funnel3DSeries extends ColumnSeries {
             }
             point.shapeArgs = extend(point.shapeArgs, shapeArgs);
 
-            // for tooltips and data labels context
+            // For tooltips and data labels context
             point.percentage = fraction * 100;
             point.plotX = centerX;
 
@@ -346,7 +347,7 @@ class Funnel3DSeries extends ColumnSeries {
             }], chart, true)[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 
-            // base to be used when alignment options are known
+            // Base to be used when alignment options are known
             point.dlBoxRaw = {
                 x: centerX,
                 width: getWidthAt(point.plotY),
@@ -372,7 +373,7 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
-    getWidthAt(y: number): number; // added during translate
+    getWidthAt(y: number): number; // Added during translate
     pointClass: typeof Funnel3DPoint;
     translate3dShapes(): void;
 }

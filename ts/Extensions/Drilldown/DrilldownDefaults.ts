@@ -67,7 +67,7 @@ const DrilldownDefaults: DrilldownOptions = {
      * up through the drilldown levels.
      *
      * @since 10.0.0
-     * @product   highcharts
+     * @product   highcharts highmaps
      * @extends   navigation.breadcrumbs
      * @optionparent drilldown.breadcrumbs
      */
@@ -351,7 +351,7 @@ const DrilldownDefaults: DrilldownOptions = {
  * @apioption lang.drillUpText
  */
 
-''; // keep doclets above detached in JS file
+''; // Keep doclets above detached in JS file
 
 /* *
  *

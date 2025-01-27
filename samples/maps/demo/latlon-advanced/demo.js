@@ -61,7 +61,9 @@
             },
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{point.capital}, {point.parentState}. Population {point.population}. Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
+                    valueDescriptionFormat: '{point.capital}, ' +
+                        '{point.parentState}. Population {point.population}. ' +
+                        'Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
                 }
             },
             name: 'State capital cities',

@@ -135,7 +135,8 @@ QUnit.test('Flags in panes', function (assert) {
     assert.strictEqual(
         chart.series[2].group.attr('translateY'),
         chart.series[1].group.attr('translateY'),
-        'The flag series group should have the same vertical translation as its onSeries group'
+        'The flag series group should have the same vertical translation as ' +
+        'its onSeries group'
     );
 });
 
@@ -199,7 +200,8 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
         [...chart.container.querySelectorAll('.highcharts-flags-series')]
             .some(group =>  group.getAttribute('transform').includes('NaN')),
         false,
-        'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
+        'The flag series\' DOM elements should not contain NaN attributes ' +
+        'values (#14063).'
     );
 });
 
@@ -232,4 +234,71 @@ QUnit.test('Distributing the flag, #16041.)', function (assert) {
         `After decreasing the chart size, the flag graphic should be distributed
         and still have a positive x position.`
     );
+});
+
+QUnit.test('Flag title values', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'flags',
+            title: 'text',
+            data: [{
+                x: 1,
+                title: false
+            }, {
+                x: 2,
+                title: undefined
+            }, {
+                x: 3,
+                title: null
+            }, {
+                x: 4,
+                title: ''
+            }]
+        }]
+    });
+
+    const points = chart.series[0].points;
+
+    assert.strictEqual(
+        points[0].graphic.text.textStr,
+        false,
+        'Title should equal false if point.title is false.'
+    );
+
+    assert.strictEqual(
+        points[1].graphic.text.textStr,
+        'text',
+        'Title should be set from series.title if point.title is undefined.'
+    );
+    assert.strictEqual(
+        points[2].graphic.text.textStr,
+        'text',
+        'Title should be set from series.title if point.title is null.'
+    );
+
+    assert.strictEqual(
+        points[3].graphic.text.textStr,
+        '',
+        'Empty string should be set as a flag title, #20549.'
+    );
+
+    chart.update({
+        series: [{
+            title: null
+        }]
+    });
+
+    assert.strictEqual(
+        points[1].graphic.text.textStr,
+        'A',
+        `If point.title is undefined and series.title is not defined, it should
+        yield default value.`
+    );
+    assert.strictEqual(
+        points[2].graphic.text.textStr,
+        'A',
+        `If point.title is null and series.title is not defined, it should yield
+        default value.`
+    );
+
 });

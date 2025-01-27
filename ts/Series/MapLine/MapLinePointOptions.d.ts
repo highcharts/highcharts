@@ -23,7 +23,16 @@ import type MapPointOptions from '../Map/MapPointOptions';
  * */
 
 export interface MapLinePointOptions extends MapPointOptions {
-    // nothing here yet
+
+    /**
+     * Pixel width of the mapline line.
+     *
+     * @since 10.3.3
+     *
+     * @product highmaps
+     */
+    lineWidth?: number;
+
 }
 
 export default MapLinePointOptions;

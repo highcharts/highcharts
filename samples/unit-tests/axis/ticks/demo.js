@@ -901,7 +901,8 @@ QUnit.test('No ticks on short axis (#3195)', function (assert) {
 });
 
 QUnit.test(
-    'The ticks should be visible when specified tick amount and chart height <200px',
+    'The ticks should be visible when specified tick amount and chart height ' +
+    '<200px',
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
@@ -963,7 +964,8 @@ QUnit.test('Ticks and setSize', assert => {
                 pos150,
                 (pos100 + pos200) / 2,
                 1,
-                'The new tick should appear centered between the two existing ' +
+                'The new tick should appear centered between the two ' +
+                'existing ' +
                     'ticks (#13507)'
             );
             done();
@@ -976,7 +978,8 @@ QUnit.test('Ticks and setSize', assert => {
             assert.strictEqual(
                 chart.xAxis[0].ticks[0].label.attr('opacity'),
                 1,
-                'The label should remain visible after the update sequence (#12137)'
+                'The label should remain visible after the update sequence ' +
+                '(#12137)'
             );
             done();
         }, 2);
@@ -1079,10 +1082,28 @@ QUnit.test(
                 `Ticks with ${JSON.stringify(toDotNot(options))} should stay
                 the same after updating series (#19604).`
             );
+
+            // Chrome is not that reliable
+            let precision = 2;
+
+            // A strange case of shifting, only when the font-family contains
+            // the `-apple-system` font, and only with FirefoxHeadless (and
+            // ChromeHeadless on Windows). Not reproducible with regular Firefox
+            // or Chrome.
+            if (
+                options.chart?.styledMode &&
+                (
+                    navigator.userAgent.indexOf('Firefox') !== -1 ||
+                    window.navigator.platform.indexOf('Win') >= 0
+                )
+            ) {
+                precision = 9;
+            }
+
             assert.close(
                 chart.plotHeight,
                 expectedPlotHeight,
-                0.5, // Firefox is not that reliable
+                precision,
                 `Plot height with ${JSON.stringify(toDotNot(options))} should
                 stay the same after updating series (#19604).`
             );
@@ -1163,7 +1184,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'In trimTicks, Min and max must be checked when start/endOntick are false (#14417).',
+    'In trimTicks, Min and max must be checked when start/endOntick are ' +
+    'false (#14417).',
     function (assert) {
         var chart = Highcharts.chart('container', {
             xAxis: {
@@ -1217,3 +1239,51 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Tick and label overflow (#16307)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            marginRight: 50
+        },
+        xAxis: {
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+                'Oct', 'Nov', 'Dec'
+            ],
+            tickLength: 10,
+            tickWidth: 1
+        },
+        series: [{
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0,
+                176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            ]
+        }],
+        plotOptions: {
+            series: {
+                pointPlacement: 'on'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.opacity,
+        0,
+        'The last tick mark should not be visible (#20166)'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].label.opacity,
+        1,
+        '... but the last tick label should be visible (#20375)'
+    );
+
+    chart.redraw();
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.opacity,
+        0,
+        'After redraw, the last tick mark should still not be visible'
+    );
+
+});

@@ -9,11 +9,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Visual comparison of Mountains Panorama',
-        align: 'left'
+        text: 'Visual comparison of Mountains Panorama'
     },
     accessibility: {
-        description: 'The chart is showing the shapes of three mountain ranges as three area line series laid out in 3D behind each other.',
+        description: 'The chart is showing the shapes of three mountain ' +
+            'ranges as three area line series laid out in 3D behind each ' +
+            'other.',
         keyboardNavigation: {
             seriesNavigation: {
                 mode: 'serialize'
@@ -23,7 +24,8 @@ Highcharts.chart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has 3 unlabelled X axes, one for each series.'
+                xAxisDescriptionPlural: 'The chart has 3 unlabelled X axes, ' +
+                    'one for each series.'
             }
         }
     },

@@ -39,13 +39,13 @@ const {
 
 declare module '../Axis/AxisLike' {
     interface AxisLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 
 declare module '../Series/PointLike' {
     interface PointLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -112,7 +112,7 @@ namespace LegendSymbol {
             renderer = chart.renderer,
             legendItemGroup = legendItem.group,
             verticalCenter = baseline - Math.round(
-                symbolHeight *
+                (legend.fontMetrics?.b || symbolHeight) *
                 // Render line and marker slightly higher to make room for the
                 // area
                 (hasArea ? 0.4 : 0.3)

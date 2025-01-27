@@ -1,150 +1,157 @@
-QUnit.test('Breadcrumbs button- check if the created path is correct.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        xAxis: {
-            type: 'category'
-        },
-        title: {
-            text: null
-        },
-        series: [{
-            name: 'Supply',
-            data: [{
-                name: 'Fruits',
-                y: 5,
-                drilldown: 'Fruits'
+QUnit.test(
+    'Breadcrumbs button- check if the created path is correct.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
             },
-            {
-                name: 'Vegetables',
-                y: 6,
-                drilldown: 'Vegetables'
+            xAxis: {
+                type: 'category'
             },
-            {
-                name: 'Meat',
-                y: 3
-            }
-            ]
-        }],
-        drilldown: {
-            breadcrumbs: {
-                showFullPath: false
+            title: {
+                text: null
             },
-            animation: false,
             series: [{
-                name: 'Fruits',
-                id: 'Fruits',
+                name: 'Supply',
                 data: [{
+                    name: 'Fruits',
+                    y: 5,
+                    drilldown: 'Fruits'
+                },
+                {
+                    name: 'Vegetables',
+                    y: 6,
+                    drilldown: 'Vegetables'
+                },
+                {
+                    name: 'Meat',
+                    y: 3
+                }
+                ]
+            }],
+            drilldown: {
+                breadcrumbs: {
+                    showFullPath: false
+                },
+                animation: false,
+                series: [{
+                    name: 'Fruits',
+                    id: 'Fruits',
+                    data: [{
+                        name: 'Citrus',
+                        y: 2,
+                        drilldown: 'Citrus'
+                    }, {
+                        name: 'Tropical',
+                        y: 5,
+                        drilldown: 'Tropical'
+                    },
+                    ['Other', 1]
+                    ]
+                }, {
+                    name: 'Vegetables',
+                    id: 'Vegetables',
+                    data: [
+                        ['Potatoes', 2],
+                        ['Cucumber', 4]
+                    ]
+                }, {
                     name: 'Citrus',
-                    y: 2,
-                    drilldown: 'Citrus'
+                    id: 'Citrus',
+                    data: [{
+                        name: 'Lemon',
+                        y: 5,
+                        drilldown: 'Lemon'
+                    },
+                    ['Orange', 4]
+                    ]
                 }, {
                     name: 'Tropical',
-                    y: 5,
-                    drilldown: 'Tropical'
-                },
-                ['Other', 1]
-                ]
-            }, {
-                name: 'Vegetables',
-                id: 'Vegetables',
-                data: [
-                    ['Potatoes', 2],
-                    ['Cucumber', 4]
-                ]
-            }, {
-                name: 'Citrus',
-                id: 'Citrus',
-                data: [{
+                    id: 'Tropical',
+                    data: [
+                        ['Banana', 1],
+                        ['Mango', 3]
+                    ]
+                }, {
                     name: 'Lemon',
-                    y: 5,
-                    drilldown: 'Lemon'
-                },
-                ['Orange', 4]
-                ]
-            }, {
-                name: 'Tropical',
-                id: 'Tropical',
-                data: [
-                    ['Banana', 1],
-                    ['Mango', 3]
-                ]
-            }, {
-                name: 'Lemon',
-                id: 'Lemon',
-                data: [
-                    ['Typ A', 2],
-                    ['Typ B', 7]
+                    id: 'Lemon',
+                    data: [
+                        ['Typ A', 2],
+                        ['Typ B', 7]
+                    ]
+                }
                 ]
             }
-            ]
-        }
-    });
+        });
 
-    chart.series[0].points[0].doDrilldown();
-    assert.ok(
-        chart.drillUpButton.element,
-        'Initially, the breadcrumbs should be disabled and the drillUp button should exist.'
-    );
+        chart.series[0].points[0].doDrilldown();
+        assert.ok(
+            chart.drillUpButton.element,
+            'Initially, the breadcrumbs should be disabled and the drillUp ' +
+        'button should exist.'
+        );
 
-    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
 
-    chart.update({
-        drilldown: {
-            breadcrumbs: {
-                showFullPath: true
+        chart.update({
+            drilldown: {
+                breadcrumbs: {
+                    showFullPath: true
+                }
             }
-        }
+        });
+
+        chart.series[0].points[0].doDrilldown();
+        assert.notOk(
+            chart.drillUpButton,
+            'Clasic button should not exist.'
+        );
+        assert.strictEqual(
+            chart.container.getElementsByClassName(
+                'highcharts-breadcrumbs-group'
+            ).length,
+            1,
+            'Breadcrumbs groups should be created.'
+        );
+        chart.series[0].points[0].doDrilldown();
+        chart.series[0].points[0].doDrilldown();
+
+        let buttons = chart
+            .container
+            .getElementsByClassName('highcharts-breadcrumbs-group')[0]
+            .childNodes;
+
+        assert.strictEqual(
+            buttons[buttons.length - 1].textContent,
+            'Lemon',
+            'The last button should have text Lemon.'
+        );
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
+        assert.strictEqual(
+            buttons[buttons.length - 1].textContent,
+            'Fruits',
+            'The last button should have text Fruits.'
+        );
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
+        assert.strictEqual(
+            chart.container.getElementsByClassName(
+                'highcharts-breadcrumbs-group'
+            ).length,
+            1,
+            'The breadcrumbs separators group should be destroyed.'
+        );
+        chart.series[0].points[1].doDrilldown();
+        buttons = chart
+            .container
+            .getElementsByClassName('highcharts-breadcrumbs-group')[0]
+            .childNodes;
+
+        assert.strictEqual(
+            buttons[buttons.length - 1].textContent,
+            'Vegetables',
+            'The last button should have text Vegetables.'
+        );
     });
-
-    chart.series[0].points[0].doDrilldown();
-    assert.notOk(
-        chart.drillUpButton,
-        'Clasic button should not exist.'
-    );
-    assert.strictEqual(
-        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        1,
-        'Breadcrumbs groups should be created.'
-    );
-    chart.series[0].points[0].doDrilldown();
-    chart.series[0].points[0].doDrilldown();
-
-    let buttons = chart
-        .container
-        .getElementsByClassName('highcharts-breadcrumbs-group')[0]
-        .childNodes;
-
-    assert.strictEqual(
-        buttons[buttons.length - 1].textContent,
-        'Lemon',
-        'The last button should have text Lemon.'
-    );
-    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
-    assert.strictEqual(
-        buttons[buttons.length - 1].textContent,
-        'Fruits',
-        'The last button should have text Fruits.'
-    );
-    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
-    assert.strictEqual(
-        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        1,
-        'The breadcrumbs separators group should be destroyed.'
-    );
-    chart.series[0].points[1].doDrilldown();
-    buttons = chart
-        .container
-        .getElementsByClassName('highcharts-breadcrumbs-group')[0]
-        .childNodes;
-
-    assert.strictEqual(
-        buttons[buttons.length - 1].textContent,
-        'Vegetables',
-        'The last button should have text Vegetables.'
-    );
-});
 
 QUnit.test('Breadcrumbs button format.', function (assert) {
     const chart = Highcharts.chart('container', {
@@ -409,7 +416,8 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,
         3,
-        'When buttons are aligned to the centre, their centre point should be in the middle of the chart width.'
+        'When buttons are aligned to the centre, their centre point should ' +
+        'be in the middle of the chart width.'
     );
 
     chart.series[0].points[0].doDrilldown();
@@ -442,105 +450,106 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     );
 });
 
-QUnit.test('Breadcrumbs list when drilling down category, #17188.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Basic drilldown'
-        },
-        xAxis: {
-            type: 'category'
-        },
-        series: [{
-            name: '2020',
-            colorByPoint: true,
-            data: [{
-                name: 'Animals',
-                y: 5,
-                drilldown: 'animals'
-            }]
-        }, {
-            name: '2021',
-            colorByPoint: true,
-            data: [{
-                name: 'Animals',
-                y: 1,
-                drilldown: 'animals2'
-            }]
-        }],
-        drilldown: {
+QUnit.test(
+    'Breadcrumbs list when drilling down category, #17188.', function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Basic drilldown'
+            },
+            xAxis: {
+                type: 'category'
+            },
             series: [{
-                id: 'animals',
                 name: '2020',
+                colorByPoint: true,
                 data: [{
-                    name: 'Cats',
-                    y: 4,
-                    drilldown: 'cats'
-                },
-                {
-                    name: 'Dogs',
-                    y: 2
+                    name: 'Animals',
+                    y: 5,
+                    drilldown: 'animals'
                 }]
             }, {
-                id: 'animals2',
                 name: '2021',
+                colorByPoint: true,
                 data: [{
-                    name: 'Cats',
-                    y: 3,
-                    drilldown: 'cats'
-                },
-                {
-                    name: 'frogs',
-                    y: 5
-                },
-                {
-                    name: 'Cows',
-                    y: 6
-                },
-                {
-                    name: 'Sheep',
-                    y: 2
-                },
-                {
-                    name: 'Pigs',
-                    y: 2
+                    name: 'Animals',
+                    y: 1,
+                    drilldown: 'animals2'
                 }]
-            }, {
-                id: 'cats',
-                name: '2021',
-                data: [{
-                    name: 'Exotic Shorthair Cats',
-                    y: 3
-                },
-                {
-                    name: 'Ragdoll Cats',
-                    y: 5
-                },
-                {
-                    name: 'British Shorthair',
-                    y: 6
-                },
-                {
-                    name: 'Persian Cats',
-                    y: 2
-                },
-                {
-                    name: 'Maine Coon Cats',
-                    y: 2
+            }],
+            drilldown: {
+                series: [{
+                    id: 'animals',
+                    name: '2020',
+                    data: [{
+                        name: 'Cats',
+                        y: 4,
+                        drilldown: 'cats'
+                    },
+                    {
+                        name: 'Dogs',
+                        y: 2
+                    }]
+                }, {
+                    id: 'animals2',
+                    name: '2021',
+                    data: [{
+                        name: 'Cats',
+                        y: 3,
+                        drilldown: 'cats'
+                    },
+                    {
+                        name: 'frogs',
+                        y: 5
+                    },
+                    {
+                        name: 'Cows',
+                        y: 6
+                    },
+                    {
+                        name: 'Sheep',
+                        y: 2
+                    },
+                    {
+                        name: 'Pigs',
+                        y: 2
+                    }]
+                }, {
+                    id: 'cats',
+                    name: '2021',
+                    data: [{
+                        name: 'Exotic Shorthair Cats',
+                        y: 3
+                    },
+                    {
+                        name: 'Ragdoll Cats',
+                        y: 5
+                    },
+                    {
+                        name: 'British Shorthair',
+                        y: 6
+                    },
+                    {
+                        name: 'Persian Cats',
+                        y: 2
+                    },
+                    {
+                        name: 'Maine Coon Cats',
+                        y: 2
+                    }]
                 }]
-            }]
-        }
-    });
+            }
+        });
 
-    chart.xAxis[0].drilldownCategory(0);
-    chart.xAxis[0].drilldownCategory(0);
-    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
-    assert.strictEqual(
-        chart.drilldownLevels.length,
-        2,
-        `When drilling down categories and then drilling up, a correct list
+        chart.xAxis[0].drilldownCategory(0);
+        chart.xAxis[0].drilldownCategory(0);
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
+        assert.strictEqual(
+            chart.drilldownLevels.length,
+            2,
+            `When drilling down categories and then drilling up, a correct list
         should be displayed and the correct level should be shown.`
-    );
-});
+        );
+    });

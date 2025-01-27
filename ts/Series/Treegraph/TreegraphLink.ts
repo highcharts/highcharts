@@ -16,6 +16,7 @@
  *
  * */
 
+import type ColorString from '../../Core/Color/ColorString';
 import type PointOptions from '../../Core/Series/PointOptions.js';
 import type TreegraphSeries from './TreegraphSeries';
 import type { OrganizationLinkOptions } from '../Organization/OrganizationSeriesOptions.js';
@@ -46,7 +47,49 @@ const {
  *
  * */
 
-export interface TreegraphLinkOptions extends OrganizationLinkOptions {}
+export interface TreegraphLinkOptions extends OrganizationLinkOptions {
+
+
+    /**
+     * Radius for the rounded corners of the links between nodes. Works for
+     * `default` link type.
+     */
+    radius?: number;
+
+    /**
+     * The color of the links between nodes.
+     */
+    color?: ColorString;
+
+    /**
+     * Modifier of the shape of the curved link. Works best for values between 0
+     * and 1, where 0 is a straight line, and 1 is a shape close to the default
+     * one.
+     *
+     * @default 0.5
+     *
+     * @product highcharts
+     *
+     * @since 10.3.0
+     */
+    curveFactor?: number;
+
+    /**
+     * The line width of the links connecting nodes, in pixels.
+     */
+    lineWidth?: number;
+
+    /**
+     * Type of the link shape.
+     *
+     * @sample highcharts/series-treegraph/link-types
+     *         Different link types
+     *
+     * @product highcharts
+     */
+    type?: ('curved'|'default'|'straight');
+
+}
 
 export interface LinkPointOptions extends TreegraphPointOptions {
     link?: TreegraphLinkOptions;
@@ -57,6 +100,7 @@ export interface LinkPointOptions extends TreegraphPointOptions {
  *  Class
  *
  * */
+
 /**
  * @private
  * @class
@@ -64,18 +108,8 @@ export interface LinkPointOptions extends TreegraphPointOptions {
 class LinkPoint extends ColumnPoint {
 
     /* *
-    *
-    *  Class properties
-    *
-    * */
-    isLink = true;
-    node = {};
-    formatPrefix = 'link';
-    dataLabelOnNull = true;
-
-    /* *
      *
-     *  Functions
+     *  Constructor
      *
      * */
 
@@ -96,6 +130,26 @@ class LinkPoint extends ColumnPoint {
             this.id = this.toNode.id + '-' + this.fromNode.id;
         }
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public dataLabelOnNull = true;
+
+    public formatPrefix = 'link';
+
+    public isLink = true;
+
+    public node = {};
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public update(
         options: TreegraphPointOptions | LinkPointOptions,

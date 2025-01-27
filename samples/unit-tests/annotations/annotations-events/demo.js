@@ -127,8 +127,8 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.strictEqual(
         circleAfterUpdateCalled,
-        1,
-        '#15952: afterUpdate event should fire when clicking control point'
+        0,
+        '#15952: afterUpdate event should not fire when clicking control point'
     );
 
     assert.strictEqual(
@@ -207,7 +207,8 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.ok(
         true,
-        'No errors after removing selected annotation and selecting a new one (#11015)'
+        'No errors after removing selected annotation and selecting a new ' +
+        'one (#11015)'
     );
 
     controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
@@ -334,11 +335,15 @@ QUnit.test('Annotations events - general', function (assert) {
     assert.strictEqual(
         initialRedrawCounter,
         chartRedrawEventCalled,
-        'Chart redraw event should not be called when calling annotation.update, #20080.'
+        'Chart redraw event should not be called when calling ' +
+        'annotation.update, #20080.'
     );
 
     setTimeout(() => {
-        assert.ok(chart.series[0].kdTree, 'kdTree should be built upon mouse move on a chart.');
+        assert.ok(
+            chart.series[0].kdTree, 'kdTree should be built upon mouse ' +
+            'move on a chart.'
+        );
         done();
     }, 0);
     let clicks = 0;
@@ -377,6 +382,7 @@ QUnit.test('Annotations events - general', function (assert) {
     assert.equal(
         clicks,
         2,
-        'Click event should be correctly bound both for HTML annotation label and SVG path (#19926).'
+        'Click event should be correctly bound both for HTML annotation ' +
+        'label and SVG path (#19926).'
     );
 });

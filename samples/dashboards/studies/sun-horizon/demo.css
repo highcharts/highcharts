@@ -1,4 +1,4 @@
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 h1#title {
@@ -27,4 +27,27 @@ p {
 
 pre#data {
     display: none;
+}
+
+.btn-secondary.active {
+    color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+
+#horizon-chart {
+    flex: 1 1 100%;
+}
+
+#controls,
+#times {
+    flex: 1 1 50%;
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #controls,
+    #times {
+        flex: 1 1 100%;
+    }
 }

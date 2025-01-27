@@ -15,6 +15,7 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -283,7 +284,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public destroy(): void {
-        // this.graph is null due to removing two times the same SVG element
+        // This.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
@@ -364,11 +365,11 @@ class MACDIndicator extends SMAIndicator {
         // Here we need to apply zones for all lines
         const histogramZones = this.zones;
 
-        // signalZones.zones contains all zones:
+        // `signalZones.zones` contains all zones:
         this.zones = (this.signalZones.zones as any);
         SeriesRegistry.seriesTypes.sma.prototype.applyZones.call(this);
 
-        // applyZones hides only main series.graph, hide macd line manually
+        // `applyZones` hides only main series.graph, hide macd line manually
         if (this.graphmacd && (this.options.macdLine as any).zones.length) {
             (this.graphmacd as any).hide();
         }
@@ -377,7 +378,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indexToShift: number = (
@@ -392,7 +393,8 @@ class MACDIndicator extends SMAIndicator {
             j = 0,
             signalLine: Array<Array<number>> = [];
 
-        if ((series.xData as any).length <
+        if (
+            (series.xData as any).length <
             (params.longPeriod as any) + params.signalPeriod
         ) {
             return;
@@ -462,7 +464,7 @@ class MACDIndicator extends SMAIndicator {
         // Setting the MACD Histogram. In comparison to the loop with pure
         // MACD this loop uses MACD x value not xData.
         for (i = 0; i < MACD.length; i++) {
-            // detect the first point
+            // Detect the first point
             if ((MACD[i] as any)[0] >= signalLine[0][0]) {
 
                 MACD[i][2] = signalLine[j][1];
@@ -472,10 +474,14 @@ class MACDIndicator extends SMAIndicator {
                     MACD[i][1] = 0;
                     yMACD[i][0] = 0;
                 } else {
-                    MACD[i][1] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
-                    yMACD[i][0] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
+                    MACD[i][1] = correctFloat(
+                        (MACD[i] as any)[3] -
+                    signalLine[j][1]
+                    );
+                    yMACD[i][0] = correctFloat(
+                        (MACD[i] as any)[3] -
+                    signalLine[j][1]
+                    );
                 }
 
                 j++;
@@ -560,4 +566,4 @@ export default MACDIndicator;
  * @apioption series.macd
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

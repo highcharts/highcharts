@@ -4,7 +4,8 @@ $(function () {
             type: 'bar'
         },
         title: {
-            text: 'In Highcharts <= 3.0.8 and modern IE, large labels were not vertically centered.'
+            text: 'In Highcharts <= 3.0.8 and modern IE, large labels were ' +
+                'not vertically centered.'
         },
         xAxis: {
             categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
@@ -27,7 +28,13 @@ $(function () {
         series: [{
             name: 'Year 1800',
             data: [31, {
-                dataLabels: { style: { fontWeight: 'bold',  fontSize: '20px' } },
+                dataLabels: {
+                    style: {
+                        fontWeight:
+                    'bold',
+                        fontSize: '20px'
+                    }
+                },
                 y: 107
             }, 635, 203, 2]
         }]

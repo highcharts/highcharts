@@ -18,6 +18,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -43,10 +44,16 @@ const {
 
 // Utils:
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -68,6 +75,9 @@ function calculateDirection(
  * inc - increment for acceleration factor
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
+ */
+/**
+ *
  */
 function getAccelerationFactor(
     dir: number,
@@ -91,6 +101,9 @@ function getAccelerationFactor(
     return initAcc;
 }
 
+/**
+ *
+ */
 function getExtremePoint(
     high: number,
     low: number,
@@ -103,10 +116,16 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
+/**
+ *
+ */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
+/**
+ *
+ */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -125,6 +144,9 @@ function getAccelerationFactorMultiply(
  * sHigh - second previous high
  * pHigh - previous high
  * pEP - previous extreme point
+ */
+/**
+ *
  */
 function getPSAR(
     pdir: number,
@@ -202,7 +224,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -258,7 +280,7 @@ class PSARIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const xVal: Array<number> = (series.xData as any),
@@ -446,4 +468,4 @@ export default PSARIndicator;
  * @apioption series.psar
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

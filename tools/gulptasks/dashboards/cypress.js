@@ -19,8 +19,8 @@ const path = require('path');
  */
 async function testCypress() {
 
-    const processLib = require('../lib/process');
-    const logLib = require('../lib/log');
+    const processLib = require('../../libs/process');
+    const logLib = require('../../libs/log');
 
     await processLib.exec(
         'npx cypress run --config-file ' +

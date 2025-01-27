@@ -202,6 +202,7 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
                 data: [1, 3, 2, 4],
                 zoneAxis: 'x',
                 color: 'blue',
+                shadow: true,
                 zones: [
                     {
                         value: 2
@@ -270,16 +271,34 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
 
     const colors = chart.series[0].points.map(p => p.graphic.attr('fill'));
     chart.update({
+
         series: [{
+            shadow: true,
+            type: 'line',
             data: [1.1, 3, 2, 4]
         }]
     });
+
+    const zones = chart.series[0].zones;
+
     assert.deepEqual(
         chart.series[0].points.map(p => p.graphic.attr('fill')),
         colors,
         'Colors should be preserved after update (#20426)'
     );
 
+    assert.deepEqual(
+        zones[0].graph.element.getAttribute('filter') !== undefined,
+        true,
+        'First zone has received shadow'
+    );
+
+
+    assert.deepEqual(
+        zones[1].graph.element.getAttribute('filter') !== undefined,
+        true,
+        'Second zone has received shadow'
+    );
 });
 
 QUnit.test('Adding and removing zones', function (assert) {
@@ -312,7 +331,8 @@ QUnit.test('Adding and removing zones', function (assert) {
     assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
         'inherit',
-        'Series line\'s visibility should be inherited from the parent group (#10569).'
+        'Series line\'s visibility should be inherited from the parent ' +
+        'group (#10569).'
     );
 
     chart.series[0].setVisible(true);

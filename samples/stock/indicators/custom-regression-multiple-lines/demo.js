@@ -70,7 +70,8 @@
                 zoneDistance: 3
             },
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>' +
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    ' {series.name}:<br/>' +
                 '110%: <b>{point.y4}</b><br/>' +
                 '105%: <b>{point.y3}</b><br/>' +
                 '100%: <b>{point.y}</b><br/>' +
@@ -111,7 +112,12 @@
             },
             getLinearRegressionZones: getLinearRegressionZones,
 
-            linesApiNames: ['highRangeBottomLine', 'closeRangeBottomLine', 'closeRangeTopLine', 'highRangeTopLine'],
+            linesApiNames: [
+                'highRangeBottomLine',
+                'closeRangeBottomLine',
+                'closeRangeTopLine',
+                'highRangeTopLine'
+            ],
             nameBase: 'Linear regression zones',
             nameComponents: ['zoneDistance'],
             nameSuffixes: ['%'],
@@ -147,7 +153,7 @@
 
     // Highcharts v11.4.0+
     } else {
-        Highcharts.MultipleLinesComposition.compose(
+        Highcharts.MultipleLinesComposition?.compose(
             Highcharts.Series.types.linearregressionzones
         );
     }

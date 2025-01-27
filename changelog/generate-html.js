@@ -125,10 +125,18 @@ function generateHTML() {
                 </div>
                 <div class="changelog-container">`);
         }
-        function makeDownloadLinks(version, name) {
+        function getBaseURL(name) {
+            if (name === 'highcharts-dashboards') {
+                return 'https://code.highcharts.com/dashboards/zips/';
+            }
+
+            return 'https://code.highcharts.com/zips/';
+        }
+        function gerURLPath(version, name) {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
-                'highcharts-maps': 'Highmaps'
+                'highcharts-maps': 'Highmaps',
+                'highcharts-dashboards': 'Highcharts-Dashboards'
             };
             if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
                 return name
@@ -143,7 +151,7 @@ function generateHTML() {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
                 const name = changelog.header.name;
-                const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
+                const downloadLink = getBaseURL(name) + gerURLPath(version, name) + '-' + version + '.zip';
 
                 return (
                     `<h3 class="release-header">

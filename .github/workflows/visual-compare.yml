@@ -24,10 +24,10 @@ jobs:
         with:
           ref: master
 
-      - name: Use Node.js lts/*
-        uses: actions/setup-node@v3
+      - name: Use Node.js lts/iron
+        uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -51,10 +51,10 @@ jobs:
           clean: false
           fetch-depth: 0
 
-      - name: Use Node.js lts/*
-        uses: actions/setup-node@v3
+      - name: Use Node.js lts/iron
+        uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -76,7 +76,7 @@ jobs:
           --master ./tmp/filesizes/master.json \
           --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
           --pr ${{github.event.pull_request.number}} \
-          --user circleci-mu
+          --user highsoft-bot
         env:
           GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
 
@@ -86,14 +86,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: [lts/iron]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -116,7 +116,7 @@ jobs:
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -132,17 +132,10 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
 
-      - name: Save test results where both an reference.svg and candidate.svg exists
-        run: |
-          mkdir -p ./tmp/visual-test-results
-          find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ./tmp/visual-test-results
-        if: ${{ always() }}
-
-      - name: Comment on PR and upload visual test images if any produced
+      - name: Comment on PR and upload visual test result
         run: |
           npx gulp update-pr-testresults \
           --fail-silently \
-          --user circleci-mu \
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:
@@ -152,11 +145,57 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
           AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
 
+      - name: Purge references with no candidate
+        if: ${{ always() }}
+        run: |
+          find ./samples -type f -name "reference.svg" \
+            -exec sh -c '
+              for f do
+                dir="$(dirname "$f")"
+                candidate_path="$dir/candidate.svg"
+                if [ ! -f "$candidate_path" ]; then
+                  echo "Deleting unpaired reference: $f"
+                  rm "$f"
+                fi
+              done
+            ' sh {} +
+
+      - name: Upload visual test images
+        if: ${{ always() }}
+        run: |
+          aws s3 sync ./samples \
+          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
+          --exclude "*" \
+          --include "*/reference.svg" \
+          --include "*/candidate.svg" \
+          --include "*/diff.gif"
+        env:
+          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+          PR_NUMBER: ${{github.event.pull_request.number}}
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: ${{ always() }}
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+            const { title, body } = require('./tmp/pr-visual-test-comment.json');
+
+            await createOrUpdateComment(github, context, title, body);
+
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: visual-test-results
-          path: tmp/visual-test-results
+          path: |
+            test/visual-test-results.json
+            test/review-pr-*.json
+            tmp/pr-visual-test-comment.json
 

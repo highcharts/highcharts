@@ -28,15 +28,26 @@ const SOURCE_GLOB = './**/*.ts';
  *         Promise to keep with console output
  */
 function lintTS(argv) {
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     return new Promise((resolve, reject) => {
-        logLib.message(`Linting TS files (.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
+        let product = 'highcharts';
+        let productTSFolder = './ts';
+
+        if (argv.dashboards) {
+            product = 'dashboards';
+            productTSFolder = './ts/Dashboards';
+        } else if (argv.datagrid) {
+            product = 'datagrid';
+            productTSFolder = './ts/DataGrid';
+        }
+
+        logLib.message(`Linting TS files (.ts) for ${product} ...`);
 
         processLib
             .exec('npx eslint --quiet "' + SOURCE_GLOB + '"', {
-                cwd: argv.dashboards ? './ts/Dashboards' : './ts'
+                cwd: productTSFolder
             })
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
@@ -46,7 +57,8 @@ function lintTS(argv) {
 
 lintTS.description = 'Run eslint on TypeScript files (.ts) in the ts folder';
 lintTS.flags = {
-    '--dashboards': 'Lint dashboards TypeScript files only'
+    '--dashboards': 'Lint dashboards TypeScript files only',
+    '--datagrid': 'Lint datagrid TypeScript files only'
 };
 gulp.task('lint-ts', () => lintTS(require('yargs').argv));
 

@@ -22,7 +22,7 @@
  * class constructor.
  */
 export interface DataConnectorTypes {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /**

@@ -110,7 +110,7 @@ class VariablePieSeries extends PieSeries {
             plotHeight = chart.plotHeight,
             seriesOptions = series.options,
             slicingRoom = 2 * (seriesOptions.slicedOffset || 0),
-            zData: Array<number> = series.zData as any,
+            zData = series.getColumn('z'),
             smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
             // Min and max size of pie slice:
             extremes: Record<string, number> = {},
@@ -179,7 +179,7 @@ class VariablePieSeries extends PieSeries {
         minSize: number,
         maxSize: number
     ): void {
-        const zData: Array<number> = this.zData as any,
+        const zData = this.getColumn('z'),
             radii: Array<number> = [],
             options = this.options,
             sizeByArea = options.sizeBy !== 'radius',
@@ -192,7 +192,7 @@ class VariablePieSeries extends PieSeries {
 
         // Calculate radius for all pie slice's based on their Z values
         for (let i = 0; i < zData.length; i++) {
-            // if zData[i] is null/undefined/string we need to take zMin for
+            // If zData[i] is null/undefined/string we need to take zMin for
             // smallest radius.
             value = this.zValEval(zData[i]) ? zData[i] : zMin;
 
@@ -284,7 +284,7 @@ class VariablePieSeries extends PieSeries {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // issue #172
+            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset: number = options.slicedOffset as any,
             startAngle = options.startAngle || 0,
@@ -301,7 +301,7 @@ class VariablePieSeries extends PieSeries {
             start,
             end,
             angle,
-            // the x component of the radius vector for a given point
+            // The x component of the radius vector for a given point
             radiusX: (number|undefined),
             radiusY: (number|undefined),
             point: (VariablePiePoint|undefined),
@@ -440,4 +440,4 @@ export default VariablePieSeries;
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

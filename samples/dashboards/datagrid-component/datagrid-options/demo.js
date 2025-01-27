@@ -22,17 +22,19 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'data'
         },
         type: 'DataGrid',
         dataGridOptions: {
-            columns: {
-                'Vitamin A': {
-                    headerFormat: '{text} mg'
-                }
-            }
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Vitamin A',
+                headerFormat: '{id} [mg]'
+            }]
         }
     }]
 });

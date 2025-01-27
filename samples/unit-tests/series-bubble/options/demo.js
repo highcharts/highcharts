@@ -1,7 +1,8 @@
 QUnit.test('defaultOptions', function (assert) {
     var options = Highcharts.getOptions(),
         bubble = options.plotOptions.bubble;
-    // stickyTracking is true to avoid hiding the tooltip when follow pointer is true.
+    // stickyTracking is true to avoid hiding the tooltip when follow
+    // pointer is true.
     assert.strictEqual(
         bubble.stickyTracking,
         true,
@@ -158,13 +159,15 @@ QUnit.test('Align dataLabel', function (assert) {
         dataLabel.x + dataLabel.width / 2,
         bubbleCenter.x,
         1, // Assuming 1 pixel tolerance
-        `Data label for point (${point.x}, ${point.y}) is horizontally centered (#13240)`
+        `Data label for point (${point.x}, ${point.y}) is horizontally
+        centered (#13240)`
     );
 
     assert.close(
         dataLabel.y + dataLabel.height / 2,
         bubbleCenter.y,
         1, // Assuming 1 pixel tolerance
-        `Data label for point (${point.x}, ${point.y}) is vertically centered (#13240)`
+        `Data label for point (${point.x}, ${point.y}) is vertically centered
+        (#13240)`
     );
 });

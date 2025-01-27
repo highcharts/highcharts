@@ -14,18 +14,19 @@
  *
  * */
 
-import U from '../../Core/Utilities.js';
 import type Cell from '../Layout/Cell.js';
-import GUIElement from '../Layout/GUIElement.js';
 
+import GUIElement from '../Layout/GUIElement.js';
+import U from '../../Core/Utilities.js';
 const {
     defined
 } = U;
 
 class ContextDetection {
+
     public static isGUIElementOnParentEdge(
         mouseContext: Cell,
-        side: string // right, left, top, bottom
+        side: ContextDetection.ContextSides
     ): boolean {
         const visibleElements = (side === 'top' || side === 'bottom') ?
             mouseContext.row.layout.getVisibleRows() :
@@ -52,7 +53,7 @@ class ContextDetection {
         mouseContext: Cell,
         offset: number,
         sideOffset: number,
-        side: string
+        side: ContextDetection.ContextSides
     ): number {
         // Array of overlapped levels.
         const overlappedLevels =
@@ -83,7 +84,7 @@ class ContextDetection {
     ): ContextDetection.ContextDetails {
         let sideOffset;
 
-        // get cell offsets, width, height
+        // Get cell offsets, width, height
         const mouseCellContextOffsets = GUIElement.getOffsets(mouseCellContext);
         const { width, height } =
             GUIElement.getDimFromOffsets(mouseCellContextOffsets);
@@ -97,20 +98,22 @@ class ContextDetection {
         const leftSideX = e.clientX - mouseCellContextOffsets.left;
         const topSideY = e.clientY - mouseCellContextOffsets.top;
 
-        // get cell side - right, left, top, bottom
-        const sideY =
-            topSideY >= -offset && topSideY <= offset ? 'top' :
-                topSideY - height >= -offset && topSideY - height <= offset ?
-                    'bottom' :
-                    '';
+        // Get cell side - right, left, top, bottom
+        let side: ContextDetection.ContextSides = 'bottom';
 
-        const sideX =
-            leftSideX >= -offset && leftSideX <= offset ? 'left' :
-                leftSideX - width >= -offset && leftSideX - width <= offset ?
-                    'right' :
-                    '';
-
-        const side = sideX ? sideX : sideY; // X is prioritized.
+        if (leftSideX >= -offset && leftSideX <= offset) {
+            side = 'left';
+        } else if (
+            leftSideX - width >= -offset && leftSideX - width <= offset
+        ) {
+            side = 'right';
+        } else if (topSideY >= -offset && topSideY <= offset) {
+            side = 'top';
+        } else if (
+            topSideY - height >= -offset && topSideY - height <= offset
+        ) {
+            side = 'bottom';
+        }
 
         switch (side) {
             case 'right':
@@ -134,7 +137,7 @@ class ContextDetection {
 
         // Nested layouts.
         if (
-            mouseCellContext.row.layout.level !== 0 &&
+            mouseCellContext.row?.layout.level &&
             side &&
             ContextDetection.isGUIElementOnParentEdge(mouseCellContext, side) &&
             defined(sideOffset)
@@ -159,8 +162,10 @@ class ContextDetection {
 namespace ContextDetection {
     export interface ContextDetails {
         cell: Cell;
-        side: string; // right, left, top, bottom
+        side: ContextSides;
     }
+
+    export type ContextSides = 'right'|'left'|'top'|'bottom';
 }
 
 export default ContextDetection;

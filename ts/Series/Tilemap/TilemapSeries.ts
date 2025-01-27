@@ -250,7 +250,7 @@ class TilemapSeries extends HeatmapSeries {
 
         return {
             padding: (
-                axis.single ? // if there is only one tick adjust padding #18647
+                axis.single ? // If there is only one tick adjust padding #18647
                     Math.abs(coord1 - coord2) / 2 :
                     Math.abs(coord1 - coord2)
             ) || 0,
@@ -343,4 +343,4 @@ export default TilemapSeries;
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

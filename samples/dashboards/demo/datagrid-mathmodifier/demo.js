@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 // Create Dashboard
 const data = [
     ['Day', 'EUR', 'Rate'],
@@ -31,46 +36,28 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-1'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-2'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         connector: {
-            id: 'EUR-USD'
-        },
-        columnAssignment: {
-            Day: 'x',
-            EUR: 'custom.eur',
-            Rate: 'y',
-            USD: 'custom.usd'
+            id: 'EUR-USD',
+            columnAssignment: [{
+                seriesId: 'EUR',
+                data: ['Day', 'EUR']
+            }, {
+                seriesId: 'Rate',
+                data: ['Day', 'Rate']
+            }, {
+                seriesId: 'USD',
+                data: ['Day', 'USD']
+            }]
         },
         sync: {
             highlight: true
@@ -78,17 +65,7 @@ Dashboards.board('container', {
         chartOptions: {
             chart: {
                 animation: false,
-                type: 'line',
-                zooming: false,
-                events: {
-                    redraw: function () {
-                        if (!this.series[1].options.yAxis) {
-                            this.series[1].update({
-                                yAxis: 1
-                            });
-                        }
-                    }
-                }
+                type: 'line'
             },
             title: {
                 text: 'EUR to USD'
@@ -96,6 +73,11 @@ Dashboards.board('container', {
             subtitle: {
                 text: 'Euro foreign exchange reference rate to US dollar'
             },
+            series: [{
+                id: 'Rate',
+                name: 'Rate',
+                yAxis: 1
+            }],
             tooltip: {
                 shared: true,
                 split: true,
@@ -133,7 +115,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'DataGrid',
         connector: {
             id: 'EUR-USD'
@@ -142,16 +124,19 @@ Dashboards.board('container', {
             highlight: true
         },
         dataGridOptions: {
-            editable: false,
-            columns: {
-                Day: {
-                    cellFormatter: function () {
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Day',
+                cells: {
+                    formatter: function () {
                         return new Date(this.value)
                             .toISOString()
                             .substring(0, 10);
                     }
                 }
-            }
+            }]
         }
     }]
 });

@@ -19,6 +19,7 @@ import type {
     EMAParamsOptions
 } from './EMAOptions';
 import type EMAPoint from './EMAPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -136,13 +137,15 @@ class EMAIndicator extends SMAIndicator {
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
             y: number = typeof calEMA === 'undefined' ?
-                SMA : correctFloat((yValue * EMApercent) +
-                (calEMA * (1 - EMApercent)));
+                SMA : correctFloat(
+                    (yValue * EMApercent) +
+                (calEMA * (1 - EMApercent))
+                );
         return [x, y];
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -178,7 +181,7 @@ class EMAIndicator extends SMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         SMA = sum / period;
 
         // Calculate value one-by-one for each period in visible data
@@ -256,4 +259,4 @@ export default EMAIndicator;
  * @apioption series.ema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

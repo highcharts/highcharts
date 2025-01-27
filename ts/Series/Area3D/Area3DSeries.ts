@@ -34,6 +34,9 @@ const {
  *
  * */
 
+/**
+ *
+ */
 function compose(
     AreaSeriesClass: typeof AreaSeries
 ): void {
@@ -48,6 +51,9 @@ function compose(
 
 }
 
+/**
+ *
+ */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
     proceed: Function

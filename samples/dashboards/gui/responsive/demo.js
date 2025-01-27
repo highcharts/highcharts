@@ -27,18 +27,7 @@ Dashboards.board(
                                     id: 'dashboard-col-0'
                                 },
                                 {
-                                    id: 'dashboard-col-1',
-                                    responsive: {
-                                        small: {
-                                            width: '50%'
-                                        },
-                                        medium: {
-                                            width: '40%'
-                                        },
-                                        large: {
-                                            width: '30%'
-                                        }
-                                    }
+                                    id: 'dashboard-col-1'
                                 }
                             ]
                         }
@@ -48,17 +37,13 @@ Dashboards.board(
         },
         components: [
             {
-                cell: 'dashboard-col-0',
+                renderTo: 'dashboard-col-0',
                 connector: {
                     id: 'sample'
                 },
                 type: 'Highcharts',
                 sync: {
                     highlight: true
-                },
-                columnAssignment: {
-                    Food: 'x',
-                    'Vitamin A': 'y'
                 },
                 title: {
                     text: 'Column chart'
@@ -76,7 +61,7 @@ Dashboards.board(
                 }
             },
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 type: 'DataGrid',
                 connector: {
                     id: 'sample'

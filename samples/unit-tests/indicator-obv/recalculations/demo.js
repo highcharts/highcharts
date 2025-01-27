@@ -56,11 +56,12 @@ QUnit.test('Test OBV calculations on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length,
-        'OBV should have the same amount of points as the main series after adding point.'
+        'OBV should have the same amount of points as the main series after ' +
+        'adding point.'
     );
 
     assert.deepEqual(
-        chart.series[2].yData,
+        chart.series[2].getColumn('y'),
         [
             0,
             30000,

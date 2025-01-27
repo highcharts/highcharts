@@ -48,7 +48,8 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
             cssClass => cssClass === 'highcharts-legend-series-active'
         ),
         false,
-        'Chart container should not have "highcharts-legend-series-active" class.'
+        'Chart container should not have "highcharts-legend-series-active" ' +
+        'class.'
     );
 
     controller.mouseOver(

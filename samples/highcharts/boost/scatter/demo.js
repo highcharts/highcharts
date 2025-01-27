@@ -17,7 +17,9 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         height: '100%'
     },
 
@@ -44,7 +46,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text: 'Scatter chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
 
     legend: {

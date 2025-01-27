@@ -23,7 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface BarPointOptions extends ColumnPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

@@ -38,7 +38,7 @@ const {
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike extends A11yI18nComposition.ChartComposition {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -97,7 +97,7 @@ namespace A11yI18nComposition {
     }
 
     /**
-     * i18n utility function.  Format a single array or plural statement in a
+     * I18n utility function.  Format a single array or plural statement in a
      * format string.  If the statement is not an array or plural statement,
      * returns the statement within brackets.  Invalid array statements return
      * an empty string.

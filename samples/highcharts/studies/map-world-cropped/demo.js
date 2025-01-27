@@ -47,10 +47,6 @@ const getBBox = geometry => {
         'AS', 'FJ', 'FM', 'KI', 'MH', 'NR', 'SB', 'TO', 'TV', 'UM', 'VU', 'WS'
     ];
 
-    /* eslint-disable-next-line no-underscore-dangle */
-    const topo2geo = Highcharts._modules['Maps/GeoJSONComposition.js'].topo2geo;
-
-
     // Remove minor parts of some countries
     // Hawaii, USA
     topology.objects.default.geometries.find(g => g.id === 'US').arcs
@@ -84,7 +80,7 @@ const getBBox = geometry => {
     ru.properties['hc-middle-x'] = 0.65;
     ru.properties['hc-middle-y'] = 0.4;
 
-    const geoJSON = topo2geo(topology);
+    const geoJSON = Highcharts.topo2geo(topology);
 
     const insets = [];
 
@@ -162,12 +158,15 @@ const getBBox = geometry => {
         },
 
         subtitle: {
-            text: 'Study for a separate map (world-cropped.topo.json) where Pacific islands are inset to allow a better fit for the continents',
+            text: 'Study for a separate map (world-cropped.topo.json) where ' +
+                'Pacific islands are inset to allow a better fit for the ' +
+                'continents',
             align: 'left'
         },
 
         accessibility: {
-            description: 'We see how China and India by far are the countries with the largest population.'
+            description: 'We see how China and India by far are the ' +
+                'countries with the largest population.'
         },
 
         legend: {
@@ -215,7 +214,8 @@ const getBBox = geometry => {
                 minSize: 4,
                 maxSize: '12%',
                 tooltip: {
-                    pointFormat: '{point.properties.name} ({point.properties.hc-a2}): {point.z} thousands'
+                    pointFormat: '{point.properties.name} ' +
+                        '({point.properties.hc-a2}): {point.z} thousands'
                 }
             }
         ]

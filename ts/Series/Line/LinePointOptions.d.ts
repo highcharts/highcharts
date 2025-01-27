@@ -33,7 +33,7 @@ declare module '../../Core/Series/PointOptions' {
 }
 
 export interface LinePointOptions extends PointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

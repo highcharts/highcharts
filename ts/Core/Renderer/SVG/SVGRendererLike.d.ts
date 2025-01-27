@@ -19,7 +19,7 @@
  * this file by `declare module` pattern.
  */
 export interface SVGRendererLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

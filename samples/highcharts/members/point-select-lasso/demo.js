@@ -107,7 +107,8 @@
     addEvent(Chart, 'load', function () {
         this.container.addEventListener('mousedown', e => {
             if (this.series.some(
-                series => series.options.custom?.lassoSelection)
+                series => series.options.custom?.lassoSelection
+            )
             ) {
                 this.lasso = this.renderer.path()
                     .attr({

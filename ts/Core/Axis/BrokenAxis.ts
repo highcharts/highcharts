@@ -448,7 +448,7 @@ namespace BrokenAxis {
                 gapSize = groupingSize;
             }
 
-            // extension for ordinal breaks
+            // Extension for ordinal breaks
             let current, next;
             while (i--) {
                 // Reassign next if it is not visible
@@ -464,7 +464,7 @@ namespace BrokenAxis {
                 if ((next.x as any) - (current.x as any) > gapSize) {
                     const xRange = ((current.x as any) + (next.x as any)) / 2;
 
-                    points.splice( // insert after this one
+                    points.splice( // Insert after this one
                         i + 1,
                         0,
                         {
@@ -550,7 +550,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;
@@ -583,7 +583,7 @@ namespace BrokenAxis {
         ): (number|null) {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const breakArray = brokenAxis && brokenAxis.breakArray;
+            const breakArray = brokenAxis?.breakArray;
 
             if (!breakArray || !isNumber(val)) {
                 return val;
@@ -714,14 +714,22 @@ namespace BrokenAxis {
             breaks?: Array<AxisBreakOptions>,
             redraw?: boolean
         ): void {
-            const brokenAxis = this;
-            const axis = brokenAxis.axis;
-            const hasBreaks = isArray(breaks) &&
-                !!breaks.length &&
-                !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
+            const brokenAxis = this,
+                axis = brokenAxis.axis,
+                time = axis.chart.time,
+                hasBreaks = isArray(breaks) &&
+                    !!breaks.length &&
+                    !!Object.keys(breaks[0]).length; // Check for [{}], #16368.
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
+
+            // Compile string dates
+            breaks?.forEach((brk): void => {
+                brk.from = time.parse(brk.from) || 0;
+                brk.to = time.parse(brk.to) || 0;
+            });
+
             if (breaks !== axis.options.breaks) {
                 axis.options.breaks = axis.userOptions.breaks = breaks;
             }

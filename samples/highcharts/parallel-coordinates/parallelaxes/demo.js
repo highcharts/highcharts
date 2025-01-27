@@ -24,7 +24,10 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: ['Mpg', 'Cylinders', 'Displacement', 'HP', 'Lbs', 'Acceleration', 'Year', 'Origin'],
+        categories: [
+            'Mpg', 'Cylinders', 'Displacement', 'HP', 'Lbs', 'Acceleration',
+            'Year', 'Origin'
+        ],
         gridLineWidth: 0
     },
     colors: ['rgba(200, 200, 200, 0.2)'],

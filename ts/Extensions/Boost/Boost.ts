@@ -143,7 +143,7 @@ function compose(
 /**
  * Returns true if the current browser supports WebGL.
  *
- * @requires module:modules/boost
+ * @requires modules/boost
  *
  * @function Highcharts.hasWebGLSupport
  *
@@ -164,7 +164,7 @@ function hasWebGLSupport(): boolean {
                     return true;
                 }
             } catch (e) {
-                // silent error
+                // Silent error
             }
         }
     }
@@ -438,4 +438,4 @@ export default Boost;
  * @apioption  plotOptions.series.boostBlending
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

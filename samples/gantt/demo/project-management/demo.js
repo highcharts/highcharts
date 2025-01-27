@@ -32,7 +32,8 @@ const options = {
             }, {
                 enabled: true,
                 align: 'right',
-                format: '{#if point.completed}{(multiply point.completed.amount 100):.0f}%{/if}',
+                format: '{#if point.completed}{(multiply ' +
+                    'point.completed.amount 100):.0f}%{/if}',
                 padding: 10,
                 style: {
                     fontWeight: 'normal',
@@ -205,16 +206,21 @@ const options = {
                 const completedValue = point.completed ?
                         point.completed.amount || point.completed : null,
                     completed = completedValue ?
-                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        ' Task ' + Math.round(completedValue * 1000) / 10 +
+                            '% completed.' :
                         '',
                     dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
-                    dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+                    dependsOn = dependency ?
+                        ' Depends on ' + dependency + '.' : '';
 
                 return Highcharts.format(
                     point.milestone ?
-                        '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}' :
-                        '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}',
+                        '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. ' +
+                        'Owner: {point.owner}.{dependsOn}' :
+                        '{point.yCategory}.{completed} Start ' +
+                        '{point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}. Owner: ' +
+                        '{point.owner}.{dependsOn}',
                     { point, completed, dependsOn }
                 );
             }
@@ -223,7 +229,8 @@ const options = {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     }

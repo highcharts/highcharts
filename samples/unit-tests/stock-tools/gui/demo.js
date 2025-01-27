@@ -98,10 +98,15 @@ QUnit.test('Stocktools GUI', function (assert) {
         .firstChild
         .data; // Periods textLabel of APO
 
-    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
+    assert.strictEqual(
+        textLabel,
+        'Periods', 'APO should have Periods text-label.'
+    );
 });
 
-QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
+QUnit.test(
+    'Disabling and enabling stock tools buttons, when series are ' +
+    'invisible, #14192',
     function (assert) {
         var wasInitCalled = false;
 
@@ -147,7 +152,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         toolsContainer.style['z-index'] = 99999;
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be executed, when there is no series.'
         );
@@ -158,7 +164,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         });
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should be executed, after series was added.'
         );
@@ -166,7 +173,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(false);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, when series are invisible.'
         );
@@ -174,7 +182,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(true);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should not be called, when series are visible.'
         );
@@ -182,7 +191,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].remove();
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, after deleting the series.'
         );
@@ -212,9 +222,75 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         assert.equal(
             wasInitCalled,
             true,
-            'Init function should be always called for button with alwaysVisible property defined.'
+            'Init function should be always called for button with ' +
+            'alwaysVisible property defined.'
         );
 
         button.remove();
         toolsContainer.remove();
     });
+
+QUnit.test('Stocktools GUI update', function (assert) {
+    let redrawsAmount = 0;
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            events: {
+                redraw: function () {
+                    redrawsAmount++;
+                }
+            }
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    chart.update({
+        stockTools: {
+            gui: {
+                enabled: true,
+                buttons: ['indicators', 'measure'],
+                className: 'updatedClassName',
+                toolbarClassName: 'updatedToolbarClassName'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        redrawsAmount,
+        1,
+        'Updating Stock Tools should trigger redraw only once.'
+    );
+
+    assert.ok(
+        chart.stockTools.wrapper.classList.contains('updatedClassName'),
+        'Stock Tools should have updated class name.'
+    );
+
+    assert.ok(
+        chart.stockTools.toolbar.classList.contains('updatedToolbarClassName'),
+        'Toolbar should have updated class name.'
+    );
+
+    assert.strictEqual(
+        chart.stockTools.toolbar.children.length,
+        2,
+        'Stock Tools should have correct number of buttons after update.'
+    );
+
+    chart.update({
+        stockTools: {
+            gui: {
+                enabled: false
+            }
+        }
+    });
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-stocktools-wrapper'),
+        null,
+        'Stock Tools should be destroyed after disabling.'
+    );
+});

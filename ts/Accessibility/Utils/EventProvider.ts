@@ -21,6 +21,7 @@
 import type EventCallback from '../../Core/EventCallback';
 
 import H from '../../Core/Globals.js';
+import DOMElementType from '../../Core/Renderer/DOMElementType';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
@@ -29,6 +30,11 @@ const { addEvent } = U;
  *  Class
  *
  * */
+
+interface ElementsFocusEventRemovers {
+    element: DOMElementType,
+    remover: Function
+}
 
 /**
  * @private
@@ -51,7 +57,7 @@ class EventProvider {
      *
      * */
 
-    public eventRemovers: Array<Function>;
+    public eventRemovers: Array<ElementsFocusEventRemovers>;
 
     /* *
      *
@@ -74,7 +80,10 @@ class EventProvider {
      */
     public addEvent(): Function {
         const remover = addEvent.apply(H, arguments);
-        this.eventRemovers.push(remover);
+        this.eventRemovers.push({
+            element: arguments[0], // HTML element
+            remover
+        });
         return remover;
     }
 
@@ -84,8 +93,8 @@ class EventProvider {
      */
     public removeEvent(event: Function): void {
         const pos =
-            this.eventRemovers.indexOf(event);
-        this.eventRemovers[pos]();
+            this.eventRemovers.map((e): Function => e.remover).indexOf(event);
+        this.eventRemovers[pos].remover();
         this.eventRemovers.splice(pos, 1);
     }
 
@@ -94,7 +103,8 @@ class EventProvider {
      * @private
      */
     public removeAddedEvents(): void {
-        this.eventRemovers.forEach((remover): void => remover());
+        this.eventRemovers.map((e): Function => e.remover)
+            .forEach((remover): void => remover());
         this.eventRemovers = [];
     }
 

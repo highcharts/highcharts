@@ -26,7 +26,8 @@
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: {point.lon:.2f}'
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: ' +
+                '{point.lon:.2f}'
         },
         colorAxis: {
             min: 0,

@@ -12,7 +12,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         title: 'Component title',
         caption: 'Caption line',
         type: 'Highcharts',
@@ -22,7 +22,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         caption: {
             text: 'Caption bar',
             style: {

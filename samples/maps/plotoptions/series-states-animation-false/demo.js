@@ -16,7 +16,8 @@
         },
 
         subtitle: {
-            text: 'Animation on mouse out disabled. Notice the annoying flickering when hovering over Canadian arctic islands.'
+            text: 'Animation on mouse out disabled. Notice the annoying ' +
+                'flickering when hovering over Canadian arctic islands.'
         },
 
         mapNavigation: {

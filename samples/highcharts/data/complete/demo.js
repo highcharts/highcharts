@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Data module: options structure is modified before final rendering'
+        text: 'Data module: options structure is modified before final ' +
+            'rendering'
     },
 
     data: {

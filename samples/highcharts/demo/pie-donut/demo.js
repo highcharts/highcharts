@@ -194,12 +194,10 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market share, January, 2022',
-        align: 'left'
+        text: 'Browser market share, January, 2022'
     },
     subtitle: {
-        text: 'Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>',
-        align: 'left'
+        text: 'Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     plotOptions: {
         pie: {
@@ -224,7 +222,8 @@ Highcharts.chart('container', {
         size: '80%',
         innerSize: '60%',
         dataLabels: {
-            format: '<b>{point.name}:</b> <span style="opacity: 0.5">{y}%</span>',
+            format: '<b>{point.name}:</b> <span style="opacity: 0.5">' +
+                '{y}%</span>',
             filter: {
                 property: 'y',
                 operator: '>',

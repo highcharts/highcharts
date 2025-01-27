@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const data = [
     ['Food', 'Vitamin A'],
     ['Beef Liver', 6421],
@@ -22,48 +27,21 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-0'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-
-                    },
                     id: 'dashboard-col-1'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         connector: {
             id: 'sample'
         },
         type: 'Highcharts',
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -81,11 +59,11 @@ Dashboards.board('container', {
             },
             accessibility: {
                 typeDescription: 'Packed bubble chart with 5 points.',
-                description: `The chart displays points in the form of 
-                different-sized bubbles, representing types of food, the 
+                description: `The chart displays points in the form of
+                different-sized bubbles, representing types of food, the
                 size of which corresponds to their vitamin A content.`,
                 point: {
-                    descriptionFormat: `Vitamin A content in {name}: 
+                    descriptionFormat: `Vitamin A content in {name}:
                     {value} micrograms`
                 }
             },
@@ -94,9 +72,7 @@ Dashboards.board('container', {
             },
             chart: {
                 animation: false,
-                type: 'packedbubble',
-                margin: 0,
-                spacing: [0, 10, 10, 10]
+                type: 'packedbubble'
             },
             tooltip: {
                 stickOnContact: true
@@ -121,20 +97,23 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'DataGrid',
         connector: {
             id: 'sample'
         },
         className: 'datagrid',
-        editable: true,
         sync: {
             highlight: true
         },
         dataGridOptions: {
+            credits: {
+                enabled: false
+            },
             columns: {
-                'Vitamin A': {
-                    headerFormat: '{text} μg'
+                id: 'Vitamin A',
+                header: {
+                    format: '{id} μg'
                 }
             }
         }

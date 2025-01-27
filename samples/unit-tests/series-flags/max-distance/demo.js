@@ -39,7 +39,8 @@ QUnit.test(
         assert.strictEqual(
             flagSVG.attr('visibility') === 'hidden',
             true,
-            'Flags are hidden when distances between them and their anchors are exceeded.'
+            'Flags are hidden when distances between them and their anchors ' +
+            'are exceeded.'
         );
     }
 );

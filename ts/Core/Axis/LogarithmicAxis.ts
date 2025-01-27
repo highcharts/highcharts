@@ -81,7 +81,7 @@ namespace LogarithmicAxis {
         if (!AxisClass.keepProps.includes('logarithmic')) {
             AxisClass.keepProps.push('logarithmic');
 
-            addEvent(AxisClass, 'init', onInit);
+            addEvent(AxisClass, 'afterSetType', onAfterSetType);
             addEvent(AxisClass, 'afterInit', onAfterInit);
         }
 
@@ -91,23 +91,15 @@ namespace LogarithmicAxis {
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['options'] }
+    function onAfterSetType(
+        this: Axis
     ): void {
-        const axis = this;
-        const options = e.userOptions;
-
-        let logarithmic = axis.logarithmic;
-
-        if (options.type !== 'logarithmic') {
-            axis.logarithmic = void 0;
+        if (this.type !== 'logarithmic') {
+            this.logarithmic = void 0;
         } else {
-            if (!logarithmic) {
-                logarithmic = axis.logarithmic = new Additions(
-                    axis as Composition
-                );
-            }
+            this.logarithmic ??= new Additions(
+                this as Composition
+            );
         }
     }
 
@@ -120,7 +112,7 @@ namespace LogarithmicAxis {
         const axis = this as Composition;
         const log = axis.logarithmic;
 
-        // extend logarithmic axis
+        // Extend logarithmic axis
         if (log) {
             axis.lin2val = function (num: number): number {
                 return log.lin2log(num);

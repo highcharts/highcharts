@@ -195,7 +195,7 @@ const BulletSeriesDefaults: BulletSeriesOptions = {
  * @apioption series.bullet.states.select
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

@@ -338,7 +338,7 @@ class VennSeries extends ScatterSeries {
         targetHeight: number,
         field: PolygonBoxObject
     ): Record<string, number> {
-        const height = field.bottom - field.top, // top is smaller than bottom
+        const height = field.bottom - field.top, // Top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1,
@@ -442,11 +442,9 @@ class VennSeries extends ScatterSeries {
                     // animation
                     if (args.d) {
                         setTimeout((): void => {
-                            if (point && point.graphic) {
-                                point.graphic.animate({
-                                    opacity: 1
-                                });
-                            }
+                            point?.graphic?.animate({
+                                opacity: 1
+                            });
                         }, animOptions.duration);
                     }
                 }
@@ -485,7 +483,7 @@ class VennSeries extends ScatterSeries {
                 attribs: attribs,
                 group: group,
                 renderer: renderer,
-                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
+                shapeType: shapeArgs?.d ? 'path' : 'circle'
             });
         }
 
@@ -515,12 +513,12 @@ class VennSeries extends ScatterSeries {
     ): SVGAttributes {
         const series = this,
             seriesOptions = series.options || {},
-            pointOptions = point && point.options || {},
+            pointOptions = point?.options || {},
             stateOptions =
                 (state && (seriesOptions.states as any)[state as any]) || {},
             options = merge(
                 seriesOptions,
-                { color: point && point.color },
+                { color: point?.color },
                 pointOptions,
                 stateOptions
             );
@@ -542,12 +540,14 @@ class VennSeries extends ScatterSeries {
 
         const chart = this.chart;
 
-        this.processedXData = this.xData as any;
+        this.dataTable.modified = this.dataTable;
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        const relations = VennUtils.processVennData(this.options.data as any,
-            VennSeries.splitter);
+        const relations = VennUtils.processVennData(
+            this.options.data as any,
+            VennSeries.splitter
+        );
 
         // Calculate the positions of each circle.
         const {
@@ -585,14 +585,15 @@ class VennSeries extends ScatterSeries {
 
         // Iterate all points and calculate and draw their graphics.
         for (const point of this.points) {
-            let sets: Array<string> = isArray(point.sets) ? point.sets : [],
+            const sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
-                shapeArgs: (SVGAttributes|undefined),
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
+                dlOptions = point.options?.dataLabels;
+
+            let shapeArgs: (SVGAttributes|undefined),
                 dataLabelWidth = dataLabelValues.width,
-                dataLabelPosition = dataLabelValues.position,
-                dlOptions = point.options && point.options.dataLabels;
+                dataLabelPosition = dataLabelValues.position;
 
             if (shape) {
                 if ((shape as any).r) {

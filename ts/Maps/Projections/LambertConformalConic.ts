@@ -63,7 +63,9 @@ class LambertConformalConic implements ProjectionDefinition {
         let n = lat1 === lat2 ?
             Math.sin(lat1) :
             Math.log(
-                cosLat1 / Math.cos(lat2)) / Math.log(tany(lat2) / tany(lat1)
+                cosLat1 / Math.cos(lat2)
+            ) / Math.log(
+                tany(lat2) / tany(lat1)
             );
 
         if (Math.abs(n) < 1e-10) {

@@ -112,15 +112,50 @@ const defaultMappingOptionsUnmapped = {
         }
     },
     helptexts = {
-        pitch: 'With this pitch mapping, higher notes will be played when the Y-value goes higher. You can picture a piano, where the Y-axis is laid out across the keys. For low Y-values, the low piano keys are played, and for high Y-values, the higher keys are played.',
-        frequency: 'Frequency is similar to pitch mapping, but instead of mapping to notes on a piano, we are mapping to wave frequency in Hertz. The wave frequency doubles for each octave, so mapping higher in frequency will very quickly cause high musical notes. For this reason you would usually use pitch mapping instead.',
-        volume: 'With this volume mapping the pitch is always the same, but low Y-values are played at low volume, while high values are played at high volume. Noticing subtle differences in volume can be hard, and also hardware dependent, so this should usually be combined with other mappings.',
-        pan: 'Stereo panning refers to where in a stereo field a sound is placed. If you are wearing headphones, you will hear low Y-values in the left ear, and high ones in the right ear. Normally we map this to the X-value instead, so that we get a feeling of playing the chart from left to right.',
-        tremolo: 'Tremolo refers to periodical changes in volume. You can map to both the speed and intensity of the volume changes. In this case we are mapping to both, where a higher Y-value causes both faster and more dramatic volume changes.',
-        lowpass: 'Lowpass filters filter out high frequencies, making the sound more dull. You can map to both the dropoff frequency of the filter as well as a resonance. The resonance adds emphasis to the frequencies around the dropoff frequency. In this case we are making low Y-values more dull, and higher ones more natural.',
-        highpass: 'Highpass filters filter out low frequencies, making the sound thinner. Similarly to the lowpass filter, you can map to both dropoff frequency and resonance. In this case we are making low Y-values more thin, and higher ones more natural.',
-        noteDuration: 'Note duration refers to how long each note plays for. It only has an effect with continuous instruments that can hold notes indefinitely, in this case a flute. Here we are making low Y-values play short notes, and high values play long notes.',
-        gapBetweenNotes: 'Here we are mapping pitch to an array of notes. When pitch is an array, multiple notes are played for each point. Note gap refers to how long to wait between each of these notes. In this demo, low Y-values have more space between the notes, and high Y-values play the notes faster.'
+        pitch: 'With this pitch mapping, higher notes will be played when ' +
+            'the Y-value goes higher. You can picture a piano, where the ' +
+            'Y-axis is laid out across the keys. For low Y-values, the low ' +
+            'piano keys are played, and for high Y-values, the higher keys ' +
+            'are played.',
+        frequency: 'Frequency is similar to pitch mapping, but instead of ' +
+            'mapping to notes on a piano, we are mapping to wave frequency ' +
+            'in Hertz. The wave frequency doubles for each octave, so ' +
+            'mapping higher in frequency will very quickly cause high ' +
+            'musical notes. For this reason you would usually use pitch ' +
+            'mapping instead.',
+        volume: 'With this volume mapping the pitch is always the same, but ' +
+            'low Y-values are played at low volume, while high values are ' +
+            'played at high volume. Noticing subtle differences in volume ' +
+            'can be hard, and also hardware dependent, so this should ' +
+            'usually be combined with other mappings.',
+        pan: 'Stereo panning refers to where in a stereo field a sound is ' +
+            'placed. If you are wearing headphones, you will hear low ' +
+            'Y-values in the left ear, and high ones in the right ear. ' +
+            'Normally we map this to the X-value instead, so that we get a ' +
+            'feeling of playing the chart from left to right.',
+        tremolo: 'Tremolo refers to periodical changes in volume. You can ' +
+            'map to both the speed and intensity of the volume changes. In ' +
+            'this case we are mapping to both, where a higher Y-value causes ' +
+            'both faster and more dramatic volume changes.',
+        lowpass: 'Lowpass filters filter out high frequencies, making the ' +
+            'sound more dull. You can map to both the dropoff frequency of ' +
+            'the filter as well as a resonance. The resonance adds emphasis ' +
+            'to the frequencies around the dropoff frequency. In this case ' +
+            'we are making low Y-values more dull, and higher ones more ' +
+            'natural.',
+        highpass: 'Highpass filters filter out low frequencies, making the ' +
+            'sound thinner. Similarly to the lowpass filter, you can map to ' +
+            'both dropoff frequency and resonance. In this case we are ' +
+            'making low Y-values more thin, and higher ones more natural.',
+        noteDuration: 'Note duration refers to how long each note plays for. ' +
+            'It only has an effect with continuous instruments that can hold ' +
+            'notes indefinitely, in this case a flute. Here we are making ' +
+            'low Y-values play short notes, and high values play long notes.',
+        gapBetweenNotes: 'Here we are mapping pitch to an array of notes. ' +
+            'When pitch is an array, multiple notes are played for each ' +
+            'point. Note gap refers to how long to wait between each of ' +
+            'these notes. In this demo, low Y-values have more space between ' +
+            'the notes, and high Y-values play the notes faster.'
     };
 function selectMappingParam(paramName) {
     document.getElementById('helptext').textContent = helptexts[paramName];

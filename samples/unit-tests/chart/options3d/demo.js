@@ -6,7 +6,8 @@ QUnit.test('options3d update', function (assert) {
         },
         series: [
             {
-                data: [1, 2, 3]
+                data: [1, 2, 3],
+                depth: 35
             }
         ]
     });
@@ -34,7 +35,23 @@ QUnit.test('options3d update', function (assert) {
 
     assert.ok(
         result,
-        'After updating chart options3d pie series points should be redrawn (#12714).'
+        'After updating chart to 3d, pie series points should be in 3d ' +
+        '(#12714).'
+    );
+
+    const topPathBefore = series.points[0].graphic.top.pathArray.toString();
+    chart.update({
+        chart: {
+            options3d: {
+                alpha: -45,
+                beta: 30
+            }
+        }
+    });
+    assert.notEqual(
+        topPathBefore,
+        series.points[0].graphic.top.pathArray.toString(),
+        'After changing chart options3d, pie series points should change'
     );
 });
 

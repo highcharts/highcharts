@@ -1,36 +1,64 @@
 QUnit.test(
-    'Handles should not be overlapped by xAxis labels (#2908)',
+    'Navigator handles general tests',
     function (assert) {
-        var chart = $('#container')
-            .highcharts('StockChart', {
-                navigator: {
-                    height: 20
-                },
-                series: [
-                    {
-                        data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
-                        ]
-                    }
-                ]
-            })
-            .highcharts();
+        const chart = Highcharts.StockChart('container', {
+            navigator: {
+                height: 20,
+                xAxis: {
+                    id: 'test'
+                }
+            },
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
+        });
 
         assert.ok(
             chart.scroller.handles[0].zIndex >=
                 chart.scroller.xAxis.labelGroup.zIndex,
-            'Labels no overlap handles'
+            'Handles should not be overlapped by xAxis labels (#2908)'
+        );
+
+        assert.ok(
+            chart.get('test') !== undefined,
+            'Navigator xAxis should be accessed by custom id.'
+        );
+
+        assert.ok(
+            chart.get('navigator-y-axis') !== undefined,
+            'Navigator yAxis should be accessed by the default id.'
+        );
+
+        chart.update({
+            navigator: {
+                handles: {
+                    symbols: [
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                        'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                    ]
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.navigator.handles[0].element.tagName,
+            'image',
+            'Navigator handles should be updated to images. (#21660)'
         );
     }
 );
@@ -323,6 +351,73 @@ QUnit.test('General Navigator tests', function (assert) {
         'Navigator position should be updated when scrollbar ' +
             'disabled and navigator.baseSeries not set (#13114).'
     );
+
+    chart.xAxis[0].setExtremes(0, 5);
+
+    const outlinePathArray = chart.navigator.outline.pathArray;
+
+    assert.equal(
+        outlinePathArray[0][2], // Upper left of navigator outline
+        outlinePathArray[5][2], // Upper right of navigator outline
+        'Upper part of navigator outline should be a straight line.'
+    );
+
+    chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: false,
+            minPadding: 0.05,
+            maxPadding: 0.05
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.minPadding,
+        chart.xAxis[0].options.minPadding,
+        'Navigator should inherit the minPadding property from the main axis.'
+    );
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.maxPadding,
+        chart.xAxis[0].options.maxPadding,
+        'Navigator should inherit the maxPadding property from the main axis.'
+    );
+
+    // #21584
+    const start = +new Date();
+
+    const lineSeries = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, i])
+    };
+    const lineSeries2 = {
+        type: 'line',
+        showInNavigator: true,
+        data: Array.from({ length: 10 }, (_, i) => [start + 60000 * i, 2 * i])
+    };
+
+    const options = {
+        navigator: {
+            enabled: true
+        },
+        series: [lineSeries, lineSeries2]
+    };
+
+    chart = Highcharts.stockChart('container', options);
+
+    // Update the chart
+    options.series = [lineSeries];
+    options.navigator.enabled = false;
+    chart.update(options, true, true, false);
+    assert.ok(
+        true,
+        `Updating the chart with oneToOne should not throw an error in the
+        navigator, #21584.`);
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {
@@ -449,9 +544,10 @@ QUnit.test('Missing points using navigator (#5699, #17212)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].processedXData[0],
-        chart.series[1].processedXData[0],
-        'Navigator by default should start at the parent series starting point, #17212.'
+        chart.series[0].getColumn('x', true)[0],
+        chart.series[1].getColumn('x', true)[0],
+        'Navigator by default should start at the parent series starting ' +
+            'point, #17212.'
     );
 
     navigator.handlesMousedown(
@@ -1251,7 +1347,8 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     assert.equal(
         chart.navigator.series[0].options.dataLabels[0].enabled,
         false,
-        'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
+        'DataLabels in Navigator should be enabled, if specified in options ' +
+        '(wrapped with array).'
     );
 });
 
@@ -1332,25 +1429,28 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
 });
 
 
-QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        rangeSelector: {
-            selected: 1
-        },
-        series: [{
-            pointInterval: 36e7
-        }]
-    });
-    assert.notStrictEqual(
-        chart.xAxis[0].max,
-        0,
-        `After adding series to the chart that has set the range,
+QUnit.test(
+    'Initiation chart without data but with set range, #15864.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 1
+            },
+            series: [{
+                pointInterval: 36e7
+            }]
+        });
+        assert.notStrictEqual(
+            chart.xAxis[0].max,
+            0,
+            `After adding series to the chart that has set the range,
         the navigator shouldn't stick to min.`
-    );
-});
+        );
+    });
 
 
-QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+// Skipped due to impractical mock objects. Make integration test instead.
+QUnit.skip('Navigator, testing method: getBaseSeriesMin', function (assert) {
     const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
 
     const mocks = [

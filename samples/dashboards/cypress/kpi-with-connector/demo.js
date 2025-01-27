@@ -9,7 +9,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'kpi-2',
+        renderTo: 'kpi-2',
         type: 'KPI',
         title: 'Mixed values',
         columnName: 'Value',
@@ -21,7 +21,7 @@ Dashboards.board('container', {
         },
         value: 'OTHER_VALUE'
     }, {
-        cell: 'kpi',
+        renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
         columnName: 'Value',
@@ -32,7 +32,7 @@ Dashboards.board('container', {
             id: 'value'
         }
     }, {
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         sync: {
             extremes: true
@@ -54,15 +54,15 @@ Dashboards.board('container', {
                 }
             }
         },
-        columnAssignment: {
-            Date: 'x',
-            Value: 'y'
-        },
         connector: {
-            id: 'value'
+            id: 'value',
+            columnAssignment: [{
+                seriesId: 'Values',
+                data: ['Date', 'Value']
+            }]
         }
     }, {
-        cell: 'kpi-2'
+        renderTo: 'kpi-2'
     }],
     gui: {
         layouts: [{

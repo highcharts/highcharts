@@ -147,8 +147,8 @@ function updateFileContent(filePath, fileContent) {
  */
 async function apiUpload() {
     const uploadS3 = require('./lib/uploadS3');
-    const fsLib = require('./lib/fs');
-    const log = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const log = require('../libs/log');
     const {
         bucket,
         docs,

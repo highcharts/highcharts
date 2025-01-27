@@ -46,11 +46,9 @@ namespace TreemapUtilities {
         func: TreemapRecursiveCallbackFunction<TContext, TItem>,
         context?: TContext
     ): void {
-        let next: any;
-
-        next = func.call(context || this, item);
+        const next = func.call(context || this, item);
         if (next !== false) {
-            recursive(next, func, context);
+            recursive(next, func as any, context);
         }
     }
 

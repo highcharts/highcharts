@@ -15,41 +15,52 @@ const path = require('path');
  * */
 
 
-function buildCSS(
-    sourceFolder,
-    targetFolder,
-    release
-) {
+async function buildCSS() {
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    let { release } = require('yargs').argv;
 
-    const fsLib = require('../lib/fs');
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
+        if (process.env.DASH_RELEASE) {
+            release = process.env.DASH_RELEASE;
+        } else {
+            throw new Error('No valid `--release x.x.x` provided.');
+        }
+    }
 
-    fsLib.copyAllFiles(
-        'code/datagrid/css',
-        targetFolder
-    );
+    const {
+        buildFolder,
+        buildFolderDataGrid
 
-    fsLib.copyAllFiles(
-        sourceFolder,
-        targetFolder,
-        true,
-        file => (
-            path.basename(file)[0] !== '.' &&
-            (
-                file.includes('dashboards') ||
-                file.includes('datagrid')
-            )
-        )
-    );
+    } = require('./_config.json');
 
-    for (const cssFile of fsLib.getFilePaths(targetFolder)) {
+    function replaceVersionInFile(file) {
         fs.writeFileSync(
-            cssFile,
+            file,
             fs
-                .readFileSync(cssFile, 'utf8')
+                .readFileSync(file, 'utf8')
                 .replace(/@product.version@/gu, release)
         );
     }
 
+    const buildCodeTargetDashboards = path.join(buildFolder, 'code');
+    const buildCodeTargetDataGrid = path.join(buildFolderDataGrid, 'code');
+    const buildCssTargetDashboards = path.join(buildCodeTargetDashboards, 'css');
+    const buildCssTargetDataGrid = path.join(buildCodeTargetDataGrid, 'css');
+
+    fsLib.copyAllFiles(buildCssTargetDataGrid, buildCssTargetDataGrid);
+    fsLib.copyAllFiles(buildCssTargetDashboards, buildCssTargetDashboards);
+
+
+    for (const cssFile of fsLib.getFilePaths(buildCssTargetDashboards)) {
+        replaceVersionInFile(cssFile);
+    }
+
+    for (const cssFile of fsLib.getFilePaths(buildCssTargetDataGrid)) {
+        replaceVersionInFile(cssFile);
+    }
+
+    logLib.success(`Created ${buildCssTargetDashboards} and ${buildCssTargetDataGrid}`);
 }
 
 
@@ -66,14 +77,10 @@ function buildCSS(
  * @return {Promise<void>}
  * Promise to keep.
  */
-async function distBuild() {
-
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-
-    let {
-        release
-    } = require('yargs').argv;
+async function distBuildDashboards() {
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    let { release } = require('yargs').argv;
 
     if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
         if (process.env.DASH_RELEASE) {
@@ -87,7 +94,6 @@ async function distBuild() {
         buildFolder,
         bundleTargetFolder,
         cssFolder,
-        examplesFolder,
         gfxFolder
     } = require('./_config.json');
 
@@ -98,9 +104,6 @@ async function distBuild() {
     fsLib.copyAllFiles(bundleTargetFolder, buildCodeTarget, true);
     logLib.success(`Created ${buildCodeTarget}`);
 
-    const buildCssTarget = path.join(buildCodeTarget, 'css');
-    buildCSS(cssFolder, buildCssTarget, release);
-    logLib.success(`Created ${buildCssTarget}`);
 
     const buildGfxTarget = path.join(buildCodeTarget, 'gfx');
     fsLib.copyAllFiles(
@@ -113,8 +116,52 @@ async function distBuild() {
         )
     );
     logLib.success(`Created ${buildGfxTarget}`);
+}
 
+/**
+ * Creates the ./build/dist/datagrid setup.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function distBuildDataGrid() {
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    let { release } = require('yargs').argv;
+
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
+        if (process.env.DASH_RELEASE) {
+            release = process.env.DASH_RELEASE;
+        } else {
+            throw new Error('No valid `--release x.x.x` provided.');
+        }
+    }
+
+    const {
+        buildFolder,
+        buildFolderDataGrid,
+        bundleTargetFolderDataGrid
+    } = require('./_config.json');
+
+    fsLib.deleteDirectory(buildFolderDataGrid, true);
+    logLib.success(`Deleted ${buildFolderDataGrid}`);
+
+    const buildCodeDataGridTarget = path.join(buildFolderDataGrid, 'code');
+    fsLib.copyAllFiles(bundleTargetFolderDataGrid, buildCodeDataGridTarget, true);
+
+    // Copy the files to the dashboards so they can be compressed later together with the dashboards.
+    const buildCodeDashboardsTarget = path.join(buildFolder, 'code');
+    fsLib.copyAllFiles(bundleTargetFolderDataGrid, buildCodeDashboardsTarget, true);
+
+    logLib.success(`Created ${buildCodeDataGridTarget}`);
 }
 
 
-gulp.task('dashboards/dist-build', distBuild);
+gulp.task(
+    'dashboards/dist-build',
+    gulp.series(
+        distBuildDashboards,
+        distBuildDataGrid,
+        buildCSS
+    )
+);

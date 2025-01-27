@@ -151,21 +151,21 @@ class DataPool implements DataEvent.Emitter {
     ): Promise<DataConnector> {
         const connector = this.connectors[connectorId];
 
-        // already loaded
+        // Already loaded
         if (connector) {
             return Promise.resolve(connector);
         }
 
         let waitingList = this.waiting[connectorId];
 
-        // start loading
+        // Start loading
         if (!waitingList) {
             waitingList = this.waiting[connectorId] = [];
 
             const connectorOptions = this.getConnectorOptions(connectorId);
 
             if (!connectorOptions) {
-                throw new Error(`Connector not found. (${connectorId})`);
+                throw new Error(`Connector '${connectorId}' not found.`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -184,7 +184,7 @@ class DataPool implements DataEvent.Emitter {
                 });
         }
 
-        // add request to waiting list
+        // Add request to waiting list
         return new Promise((resolve, reject): void => {
             waitingList.push([resolve, reject]);
         });

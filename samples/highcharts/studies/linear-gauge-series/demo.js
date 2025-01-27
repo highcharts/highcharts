@@ -27,7 +27,20 @@
             point.graphic.hide();
 
             if (!markLine) {
-                const path = inverted ? ['M', 0, 0, 'L', -5, -5, 'L', 5, -5, 'L', 0, 0, 'L', 0, 0 + xAxis.len] : ['M', 0, 0, 'L', -5, -5, 'L', -5, 5, 'L', 0, 0, 'L', xAxis.len, 0];
+                const path = inverted ?
+                    [
+                        'M', 0, 0,
+                        'L', -5, -5,
+                        'L', 5, -5,
+                        'L', 0, 0,
+                        'L', 0, 0 + xAxis.len
+                    ] : [
+                        'M', 0, 0,
+                        'L', -5, -5,
+                        'L', -5, 5,
+                        'L', 0, 0,
+                        'L', xAxis.len, 0
+                    ];
                 markLine = this.markLine = chart.renderer.path(path)
                     .attr({
                         fill: series.color,
@@ -109,7 +122,7 @@ Highcharts.chart('container', {
 }, // Add some life
 function (chart) {
     setInterval(function () {
-        Highcharts.each(chart.series, function (serie) {
+        chart.series.forEach(function (serie) {
             const point = serie.points[0],
                 inc = (Math.random() - 0.5) * 20;
 

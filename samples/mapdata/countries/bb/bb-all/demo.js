@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bb/bb-all.topo.json">Barbados</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bb/bb-all.topo.json">Barbados</a>'
         },
 
         mapNavigation: {

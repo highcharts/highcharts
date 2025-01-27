@@ -18,13 +18,13 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         connector: {
             id: 'fetched-data'
         }
     }, {
-        cell: 'fetched-columns',
+        renderTo: 'fetched-columns',
         type: 'DataGrid',
         connector: {
             id: 'fetched-data'

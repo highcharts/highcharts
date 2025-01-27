@@ -1,4 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import PluginHandler from  '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
@@ -95,7 +96,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'cell-1',
+        renderTo: 'cell-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {
@@ -121,7 +122,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'cell-2',
+        renderTo: 'cell-2',
         ...chartDemo
     }]
 });

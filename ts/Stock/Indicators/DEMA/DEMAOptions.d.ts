@@ -28,7 +28,7 @@ export interface DEMAOptions extends EMAOptions {
 }
 
 export interface DEMAParamsOptions extends EMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

@@ -42,7 +42,7 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
  *        Link that connects two nodes
  * @param {number} force
  *        Force calculated in `repulsiveForceFunction`
- * @param {Highcharts.PositionObject} distance
+ * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  */
 function attractive(
@@ -100,15 +100,12 @@ function attractiveForceFunction(
 function barycenter(
     this: ReingoldFruchtermanLayout
 ): void {
-    let gravitationalConstant = this.options.gravitationalConstant,
-        xFactor = (this.barycenter as any).xFactor,
-        yFactor = (this.barycenter as any).yFactor;
-
-    // To consider:
-    xFactor = (xFactor - (this.box.left + this.box.width) / 2) *
-        (gravitationalConstant as any);
-    yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
-        (gravitationalConstant as any);
+    const gravitationalConstant = this.options.gravitationalConstant || 0,
+        xFactor = (
+            (this.barycenter as any).xFactor -
+            (this.box.left + this.box.width) / 2) * gravitationalConstant,
+        yFactor = ((this.barycenter as any).yFactor -
+            (this.box.top + this.box.height) / 2) * gravitationalConstant;
 
     this.nodes.forEach(function (node: Point): void {
         if (!(node as DragNodesPoint).fixedPosition) {
@@ -169,26 +166,26 @@ function integrate(
     layout: ReingoldFruchtermanLayout,
     node: NetworkgraphPoint
 ): void {
-    let friction = -(layout.options.friction as any),
+    const friction = -(layout.options.friction as any),
         maxSpeed = layout.options.maxSpeed,
         prevX = node.prevX,
         prevY = node.prevY,
         // Apply friction:
-        diffX = (
+        frictionX = (
             ((node.plotX as any) + (node.dispX as any) -
             (prevX as any)) * friction
         ),
-        diffY = (
+        frictionY = (
             ((node.plotY as any) + (node.dispY as any) -
             (prevY as any)) * friction
         ),
         abs = Math.abs,
-        signX = abs(diffX) / (diffX || 1), // need to deal with 0
-        signY = abs(diffY) / (diffY || 1);
+        signX = abs(frictionX) / (frictionX || 1), // Need to deal with 0
+        signY = abs(frictionY) / (frictionY || 1),
 
-    // Apply max speed:
-    diffX = signX * Math.min(maxSpeed as any, Math.abs(diffX));
-    diffY = signY * Math.min(maxSpeed as any, Math.abs(diffY));
+        // Apply max speed:
+        diffX = signX * Math.min(maxSpeed as any, Math.abs(frictionX)),
+        diffY = signY * Math.min(maxSpeed as any, Math.abs(frictionY));
 
     // Store for the next iteration:
     node.prevX = (node.plotX as any) + (node.dispX as any);
@@ -215,7 +212,7 @@ function integrate(
  *        Node that should be translated by force.
  * @param {number} force
  *        Force calculated in `repulsiveForceFunction`
- * @param {Highcharts.PositionObject} distance
+ * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  */
 function repulsive(

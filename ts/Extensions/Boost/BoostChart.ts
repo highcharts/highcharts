@@ -25,8 +25,11 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -47,6 +50,7 @@ const {
 interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
+    lineWidthFilter?: SVGElement;
 }
 
 export declare class BoostChartComposition extends Chart {
@@ -95,14 +99,24 @@ function getBoostClipRect(
     chart: Chart,
     target: BoostTargetObject
 ): BBoxObject {
+    const navigator = chart.navigator;
     let clipBox = {
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
-        height: chart.navigator ? // #17820
-            chart.navigator.top + chart.navigator.height - chart.plotTop :
-            chart.plotHeight
+        height: chart.plotHeight
     };
+
+    if (navigator && chart.inverted) { // #17820, #20936
+        clipBox.width += navigator.top + navigator.height;
+
+        if (!navigator.opposite) {
+            clipBox.x = navigator.left;
+        }
+
+    } else if (navigator && !chart.inverted) {
+        clipBox.height = navigator.top + navigator.height - chart.plotTop;
+    }
 
     // Clipping of individual series (#11906, #19039).
     if ((target as Series).getClipBox) {
@@ -119,6 +133,7 @@ function getBoostClipRect(
             clipBox.y = yAxis.pos;
         }
     }
+
 
     if (target === chart) {
         const verticalAxes =
@@ -215,9 +230,9 @@ function isChartSeriesBoosting(
         }
 
         if (patientMax(
-            series.processedXData,
+            series.getColumn('x', true),
             seriesOptions.data as any,
-            // series.xData,
+            /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {
             ++needBoostCount;
@@ -285,7 +300,7 @@ function onChartCallback(
             chart.boost.wgl.allocateBuffer(chart);
         }
 
-        // see #6518 + #6739
+        // See #6518 + #6739
         if (
             chart.boost.markerGroup &&
             chart.xAxis &&
@@ -309,29 +324,40 @@ function onChartCallback(
     let prevX = -1;
     let prevY = -1;
 
-    addEvent(chart.pointer, 'afterGetHoverData', (): void => {
-        const series = chart.hoverSeries;
+    addEvent(
+        chart.pointer,
+        'afterGetHoverData',
+        (e: Pointer.EventArgsObject): void => {
+            const series = e.hoverPoint?.series;
 
-        chart.boost = chart.boost || {};
+            chart.boost = chart.boost || {};
 
-        if (chart.boost.markerGroup && series) {
-            const xAxis = chart.inverted ? series.yAxis : series.xAxis;
-            const yAxis = chart.inverted ? series.xAxis : series.yAxis;
+            if (chart.boost.markerGroup && series) {
+                const xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                const yAxis = chart.inverted ? series.xAxis : series.yAxis;
 
-            if (
-                (xAxis && xAxis.pos !== prevX) ||
-                (yAxis && yAxis.pos !== prevY)
-            ) {
-                // #10464: Keep the marker group position in sync with the
-                // position of the hovered series axes since there is only
-                // one shared marker group when boosting.
-                chart.boost.markerGroup.translate(xAxis.pos, yAxis.pos);
+                if (
+                    (xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)
+                ) {
+                    // #21176: If the axis is changed, hide teh halo without
+                    // animation  to prevent flickering of halos sharing the
+                    // same marker group
+                    chart.series.forEach((s): void => {
+                        s.halo?.hide();
+                    });
 
-                prevX = xAxis.pos;
-                prevY = yAxis.pos;
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
+                    chart.boost.markerGroup.translate(xAxis.pos, yAxis.pos);
+
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
             }
         }
-    });
+    );
 }
 
 /**
@@ -343,16 +369,15 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>>): number {
+function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+    args.forEach((t): boolean|undefined => {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
             typeof t.length !== 'undefined'
         ) {
-            // r = r < t.length ? t.length : r;
             if (t.length > 0) {
                 r = t.length;
                 return true;

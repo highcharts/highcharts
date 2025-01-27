@@ -10,7 +10,11 @@
         },
 
         accessibility: {
-            description: 'Chart displays population data for the Nordic Countries. Sweden is by far the most populated country, with nearly 10 million people. Denmark follows with around 5.6 million. The least populated country is the Faroe Islands, with 50 thousand inhabitants.'
+            description: 'Chart displays population data for the Nordic ' +
+                'Countries. Sweden is by far the most populated country, ' +
+                'with nearly 10 million people. Denmark follows with around ' +
+                '5.6 million. The least populated country is the Faroe ' +
+                'Islands, with 50 thousand inhabitants.'
         },
 
         title: {

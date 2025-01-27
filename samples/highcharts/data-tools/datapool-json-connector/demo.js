@@ -51,7 +51,9 @@ Dashboards.board('container', {
             id: 'no-first-names',
             options: {
                 firstRowAsNames: false,
-                columnNames: ['random name', 'second random name', 'third random name'],
+                columnNames: [
+                    'random name', 'second random name', 'third random name'
+                ],
                 data: [
                     [1, 2, 3],
                     [2, 3, 4]
@@ -84,31 +86,31 @@ Dashboards.board('container', {
 
     },
     components: [{
-        cell: 'dg-rows',
+        renderTo: 'dg-rows',
         type: 'DataGrid',
         connector: {
             id: 'rows'
         }
     }, {
-        cell: 'dg-columns',
+        renderTo: 'dg-columns',
         type: 'DataGrid',
         connector: {
             id: 'columns'
         }
     }, {
-        cell: 'dg-no-first-names',
+        renderTo: 'dg-no-first-names',
         type: 'DataGrid',
         connector: {
             id: 'no-first-names'
         }
     }, {
-        cell: 'dg-to-parse',
+        renderTo: 'dg-to-parse',
         type: 'DataGrid',
         connector: {
             id: 'to-parse'
         }
     }, {
-        cell: 'dg-array-of-objects',
+        renderTo: 'dg-array-of-objects',
         type: 'DataGrid',
         connector: {
             id: 'array-of-objects'

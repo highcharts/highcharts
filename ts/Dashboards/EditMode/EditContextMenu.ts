@@ -54,10 +54,17 @@ class EditContextMenu extends Menu {
             getValue: function (item: MenuItem): boolean {
                 return item.menu.editMode.isActive();
             },
+            setValue: function (item: MenuItem, value: boolean): void {
+                const inputElem = item.innerElement?.querySelector('input');
+
+                if (inputElem) {
+                    inputElem.checked = value;
+                }
+            },
             langKey: 'editMode',
             events: {
                 click: function (this: MenuItem): void {
-                    (this.menu as EditContextMenu).editMode.onEditModeToggle();
+                    (this.menu as EditContextMenu).editMode.toggleEditMode();
                 }
             }
         }
@@ -83,7 +90,7 @@ class EditContextMenu extends Menu {
         this.options = merge(EditContextMenu.defaultOptions, options || {});
 
         // Move it in the DOM after the edit tools so it is better accessible.
-        this.editMode.board.layoutsWrapper.parentNode.insertBefore(
+        this.editMode.board.layoutsWrapper?.parentNode.insertBefore(
             this.container,
             this.editMode.board.layoutsWrapper
         );
@@ -167,6 +174,18 @@ class EditContextMenu extends Menu {
                 );
             }
         }
+
+        // Set editMode toggle state
+        const toggleEditMode = this.activeItems.find(
+            (item): boolean => item.options.langKey === 'editMode'
+        );
+
+        if (toggleEditMode) {
+            (toggleEditMode.options as MenuItem.ToggleOptions).setValue(
+                toggleEditMode,
+                this.editMode.isActive()
+            );
+        }
     }
 
     public updatePosition(
@@ -205,11 +224,12 @@ namespace EditContextMenu {
         icon?: string;
         /**
          * The text added next to the icon.
-         * @default undefined
          *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/ | Add text next to icon}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-ctx-icon/|Add text next to icon}
+         *
+         * @default undefined
          */
         text?: string;
         /**

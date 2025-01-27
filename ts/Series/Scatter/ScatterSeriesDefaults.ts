@@ -33,7 +33,8 @@ import type ScatterSeries from './ScatterSeries';
  *         Scatter plot
  *
  * @extends      plotOptions.line
- * @excluding    cropThreshold, pointPlacement, shadow, useOhlcData
+ * @excluding    cropThreshold, legendSymbolColor, pointPlacement, shadow,
+ *               useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
@@ -204,7 +205,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * @apioption series.scatter.data
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file
 
 /* *
  *

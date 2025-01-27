@@ -308,9 +308,10 @@ const createChartLayout = () => {
         }]]
     ].forEach(c => chartLayout.push(makeChart('chart', c[0], c[1])));
     // Create map and stock charts
-    chartLayout.push(makeChart('stockChart', 'spline', makeArray(10, (_, i) => ({
-        data: makeArray(100, () => i + Math.random())
-    }))));
+    chartLayout.push(makeChart(
+        'stockChart', 'spline', makeArray(10, (_, i) => ({
+            data: makeArray(100, () => i + Math.random())
+        }))));
     chartLayout.push(makeChart('mapChart', 'map', [{
         joinBy: null,
         mapData: Highcharts.maps['custom/europe'],

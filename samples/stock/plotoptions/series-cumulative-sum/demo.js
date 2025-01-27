@@ -8,13 +8,14 @@ Highcharts.stockChart('container', {
     },
 
     subtitle: {
-        text: 'Displays the sum of all the previous values and the current value (only within visible range)'
+        text: 'Displays the sum of all the previous values and the current ' +
+            'value (only within visible range)'
     },
 
     plotOptions: {
         series: {
             cumulative: true,
-            pointStart: Date.UTC(2021, 0, 1),
+            pointStart: '2021-01-01',
             pointInterval: day
         }
     },
@@ -24,14 +25,15 @@ Highcharts.stockChart('container', {
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}</b> ({point.cumulativeSum})<br/>',
         changeDecimals: 2,
         valueDecimals: 2
     },
 
     xAxis: {
         minRange: day * 3,
-        max: Date.UTC(2021, 0, 6)
+        max: '2021-01-06'
     },
 
     series: [{

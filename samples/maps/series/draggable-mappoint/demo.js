@@ -53,7 +53,8 @@
                     chart.customLonText = chart.renderer.text(
                         `Longitude:
                             ${chart.series[2].points[0].lon.toFixed(3)}`,
-                        0, 450)
+                        10, 450
+                    )
                         .css({
                             fontSize: '14px'
                         })
@@ -62,7 +63,8 @@
                     chart.customLatText = chart.renderer.text(
                         `Latitude:
                             ${chart.series[2].points[0].lat.toFixed(3)}`,
-                        0, 470)
+                        10, 470
+                    )
                         .css({
                             fontSize: '14px'
                         })
@@ -90,7 +92,9 @@
         },
 
         subtitle: {
-            text: 'Click and drag the marker to change the map point position <br> Click and drag anywhere else to rotate globe<br>',
+            text: 'Click and drag the marker to change the map point ' +
+                'position <br> Click and drag anywhere else to rotate ' +
+                'globe<br>',
             align: 'left'
         },
 

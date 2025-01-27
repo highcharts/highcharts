@@ -1,5 +1,7 @@
 Highcharts.setOptions({
-    colors: ['rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)']
+    colors: [
+        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
+    ]
 });
 
 const series = [{
@@ -50,16 +52,16 @@ getData().then(data => {
     Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         title: {
-            text: 'Olympics athletes by height and weight',
-            align: 'left'
+            text: 'Olympics athletes by height and weight'
         },
         subtitle: {
             text:
-          'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>',
-            align: 'left'
+          'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>'
         },
         xAxis: {
             title: {

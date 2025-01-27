@@ -47,7 +47,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [true, true, true, true],
-        'Array with X given, indentical X - all points should be updated from existing'
+        'Array with X given, indentical X - all points should be updated ' +
+        'from existing'
     );
 
     // With X, shift left
@@ -107,7 +108,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [true, true, true, undefined],
-        'Object with X, shift left - some points should be updated from existing'
+        'Object with X, shift left - some points should be updated from ' +
+        'existing'
     );
 
     // With X, shift right
@@ -137,7 +139,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [undefined, true, true, true],
-        'Array with X, shift right - some points should be updated from existing'
+        'Array with X, shift right - some points should be updated from ' +
+        'existing'
     );
 
     // With X, extend both ends
@@ -167,7 +170,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [undefined, true, true, true, undefined],
-        'Array with X, extend ends - some points should be updated from existing'
+        'Array with X, extend ends - some points should be updated from ' +
+        'existing'
     );
 
     // With X, shift left with multiples
@@ -197,7 +201,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [true, undefined, undefined, undefined],
-        'Array with X, multi shift left - some points should be updated from existing'
+        'Array with X, multi shift left - some points should be updated from ' +
+        'existing'
     );
 
     // With X, all new X
@@ -257,7 +262,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [true, true, true, true],
-        'Array with X, duplicated X, requireSorting is true - all points should be updated from existing (#8995)'
+        'Array with X, duplicated X, requireSorting is true - all points ' +
+        'should be updated from existing (#8995)'
     );
 
     // With X, duplicated X, requireSorting is false
@@ -288,7 +294,8 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             return p.wasThere;
         }),
         [true, true, undefined, undefined],
-        'Array with X, duplicated X, requireSorting is false - some points should be updated from existing (#8995)'
+        'Array with X, duplicated X, requireSorting is false - some points ' +
+        'should be updated from existing (#8995)'
     );
 
     // Identify by id
@@ -430,9 +437,10 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     chart.series[0].setData([4, 5, 5]);
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [4, 5, 5],
-        'Data is set correctly when oldData has null values and the same length (#10187)'
+        'Data is set correctly when oldData has null values and the same ' +
+        'length (#10187)'
     );
 
     // #12333
@@ -514,7 +522,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             ]
         }
     });
-    const correctSet = chart.series[0].processedXData.slice();
+    const correctSet = chart.series[0].getColumn('x', true).slice();
 
     chart.series[0].update(
         {
@@ -536,9 +544,10 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     chart.redraw();
 
     assert.deepEqual(
-        chart.series[0].processedXData,
+        chart.series[0].getColumn('x', true),
         correctSet,
-        'Setting data on a updated series with cropped dataset should keep correct x-values (#12696).'
+        'Setting data on a updated series with cropped dataset should keep ' +
+        'correct x-values (#12696).'
     );
 });
 
@@ -585,7 +594,7 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
 });
 
 QUnit.test(
-    'Hidden series after setData should call \'updatedData\' callback just once. #6012',
+    'Hidden series after setData should call \'updatedData\' just once. #6012',
     function (assert) {
         var iterator = 0,
             chart = Highcharts.chart(
@@ -623,31 +632,33 @@ QUnit.test(
     }
 );
 
-QUnit.test('#8795: Hovering after zooming in and using setData with redraw set to false threw', assert => {
-    const data = () => {
-        const ret = [];
-        for (let i = 0; i < 500; i++) {
-            ret[i] = Math.random();
-        }
-        return ret;
-    };
+QUnit.test(
+    '#8795: Hovering after zooming in and using setData with redraw ' +
+    'set to false threw', assert => {
+        const data = () => {
+            const ret = [];
+            for (let i = 0; i < 500; i++) {
+                ret[i] = Math.random();
+            }
+            return ret;
+        };
 
-    const chart = Highcharts.chart('container', {
-        chart: {
-            zoomType: 'x'
-        },
-        series: [{
-            data: data()
-        }]
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x'
+            },
+            series: [{
+                data: data()
+            }]
+        });
+
+        const controller = new TestController(chart);
+        controller.pan([200, 150], [250, 150]);
+        chart.series[0].setData(data(), false);
+        controller.moveTo(150, 150);
+
+        assert.ok(true, 'It should not throw');
     });
-
-    const controller = new TestController(chart);
-    controller.pan([200, 150], [250, 150]);
-    chart.series[0].setData(data(), false);
-    controller.moveTo(150, 150);
-
-    assert.ok(true, 'It should not throw');
-});
 
 QUnit.test(
     `The setData method with the allowMutatingData property set to false

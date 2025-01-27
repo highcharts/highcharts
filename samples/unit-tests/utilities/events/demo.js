@@ -678,9 +678,11 @@
             e.test = value;
         });
 
-        Highcharts.fireEvent(container, 'testEvent', { a: 'test' }, function (e) {
-            assert.equal(e.test, value);
-        });
+        Highcharts.fireEvent(
+            container,
+            'testEvent', { a: 'test' }, function (e) {
+                assert.equal(e.test, value);
+            });
 
         const obj = {};
 

@@ -5,7 +5,7 @@ const gulp = require('gulp');
 const { sync: gzipSize } = require('gzip-size');
 const scriptsCompile = require('./scripts-compile');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
-const log = require('./lib/log');
+const log = require('../libs/log');
 
 /* *
  *
@@ -28,8 +28,8 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/heatmap.src.js',
     'modules/offline-exporting.src.js',
     'dashboards/dashboards.src.js',
-    'dashboards/datagrid.src.js',
-    'dashboards/modules/dashboards-plugin.src.js'
+    'dashboards/modules/layout.src.js',
+    'datagrid/datagrid.src.js'
 ];
 
 /* *

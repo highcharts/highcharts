@@ -23,7 +23,7 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
  * */
 
 export interface BarSeriesOptions extends ColumnSeriesOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

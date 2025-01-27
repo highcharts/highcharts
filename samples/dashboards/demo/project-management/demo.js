@@ -1,3 +1,8 @@
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 const plotLines = [{
     label: {
         text: 'Today',
@@ -50,90 +55,8 @@ Dashboards.board('container', {
             }
         }]
     },
-    gui: {
-        layouts: [{
-            rows: [{
-                id: 'current-sprint',
-                cells: [{
-                    layout: {
-                        rows: [{
-                            cells: [{
-                                id: 'dashboard-kpi-1',
-                                height: 300,
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    },
-                                    medium: {
-                                        width: '50%'
-                                    },
-                                    large: {
-                                        width: '50%'
-                                    }
-                                }
-                            }, {
-                                id: 'dashboard-kpi-2',
-                                height: 300
-                            }]
-                        }]
-                    }
-                }, {
-                    id: 'dashboard-kpi-4',
-                    height: 300,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    }
-                }]
-            }, {
-                id: 'charts-1',
-                cells: [{
-                    id: 'dashboard-chart-1',
-                    height: 350,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '2/5'
-                        }
-                    }
-                }, {
-                    id: 'dashboard-chart-2',
-                    height: 350,
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        },
-                        large: {
-                            width: '3/5'
-                        }
-                    }
-                }]
-            }, {
-                id: 'cumulative',
-                cells: [{
-                    id: 'dashboard-chart-cumulative',
-                    height: 350
-                }]
-            }]
-        }]
-    },
     components: [{
-        cell: 'dashboard-kpi-1',
+        renderTo: 'dashboard-kpi-1',
         type: 'KPI',
         title: 'Completed tasks',
         subtitle: 'tasks completed',
@@ -141,7 +64,7 @@ Dashboards.board('container', {
             enabled: false
         }
     }, {
-        cell: 'dashboard-kpi-2',
+        renderTo: 'dashboard-kpi-2',
         type: 'KPI',
         title: 'Incomplete tasks',
         subtitle: 'to be done',
@@ -149,7 +72,7 @@ Dashboards.board('container', {
             enabled: false
         }
     }, {
-        cell: 'dashboard-kpi-4',
+        renderTo: 'dashboard-kpi-4',
         type: 'Highcharts',
         title: 'Tasks by status',
         chartOptions: {
@@ -205,7 +128,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-1',
+        renderTo: 'dashboard-chart-1',
         type: 'Highcharts',
         title: 'Total tasks by assignee',
         connector: {
@@ -241,7 +164,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-2',
+        renderTo: 'dashboard-chart-2',
         type: 'Highcharts',
         title: 'Timeline',
         chartConstructor: 'ganttChart',
@@ -252,7 +175,8 @@ Dashboards.board('container', {
             xAxis: [{
                 plotLines,
                 dateTimeLabelFormats: {
-                    day: '%e<br><span style="opacity: 0.5; font-size: 0.7em;">%a</span>'
+                    day: '%e<br><span style="opacity: 0.5; font-size: ' +
+                        '0.7em;">%a</span>'
                 },
                 grid: {
                     borderWidth: 0
@@ -282,49 +206,47 @@ Dashboards.board('container', {
                 headerFormat: ''
             },
             series: [{
-                data: [
-                    {
-                        name: 'F:1352',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 19, 17)
-                    }, {
-                        name: 'I.20-00',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 5, 17)
-                    }, {
-                        name: 'I.20-01',
-                        start: Date.UTC(2023, 4, 8, 9),
-                        end: Date.UTC(2023, 4, 12, 17)
-                    }, {
-                        name: 'F:2741',
-                        start: Date.UTC(2023, 4, 15, 9),
-                        end: Date.UTC(2023, 5, 2, 17)
-                    }, {
-                        name: 'I.20-02',
-                        start: Date.UTC(2023, 4, 15, 9),
-                        end: Date.UTC(2023, 4, 19, 17)
-                    }, {
-                        name: 'I.20-03',
-                        start: Date.UTC(2023, 4, 22, 9),
-                        end: Date.UTC(2023, 4, 26, 17)
-                    }, {
-                        name: 'I.20-04',
-                        start: Date.UTC(2023, 4, 29, 9),
-                        end: Date.UTC(2023, 5, 2, 17)
-                    }, {
-                        name: 'I.20-05',
-                        start: Date.UTC(2023, 5, 5, 9),
-                        end: Date.UTC(2023, 5, 9, 17)
-                    }, {
-                        name: 'F:1982',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 26, 17)
-                    }, {
-                        name: 'F:673',
-                        start: Date.UTC(2023, 4, 29, 9),
-                        end: Date.UTC(2023, 5, 9, 17)
-                    }
-                ]
+                data: [{
+                    name: 'F:1352',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 19, 17)
+                }, {
+                    name: 'I.20-00',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 5, 17)
+                }, {
+                    name: 'I.20-01',
+                    start: Date.UTC(2023, 4, 8, 9),
+                    end: Date.UTC(2023, 4, 12, 17)
+                }, {
+                    name: 'F:2741',
+                    start: Date.UTC(2023, 4, 15, 9),
+                    end: Date.UTC(2023, 5, 2, 17)
+                }, {
+                    name: 'I.20-02',
+                    start: Date.UTC(2023, 4, 15, 9),
+                    end: Date.UTC(2023, 4, 19, 17)
+                }, {
+                    name: 'I.20-03',
+                    start: Date.UTC(2023, 4, 22, 9),
+                    end: Date.UTC(2023, 4, 26, 17)
+                }, {
+                    name: 'I.20-04',
+                    start: Date.UTC(2023, 4, 29, 9),
+                    end: Date.UTC(2023, 5, 2, 17)
+                }, {
+                    name: 'I.20-05',
+                    start: Date.UTC(2023, 5, 5, 9),
+                    end: Date.UTC(2023, 5, 9, 17)
+                }, {
+                    name: 'F:1982',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 26, 17)
+                }, {
+                    name: 'F:673',
+                    start: Date.UTC(2023, 4, 29, 9),
+                    end: Date.UTC(2023, 5, 9, 17)
+                }]
             }],
             lang: {
                 accessibility: {
@@ -348,17 +270,21 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-chart-cumulative',
+        renderTo: 'dashboard-chart-cumulative',
         type: 'Highcharts',
         title: 'Cumulative flow',
         connector: {
-            id: 'cumulativeData'
-        },
-        columnAssignment: {
-            Date: 'x',
-            Done: 'y',
-            'To Do': 'y',
-            Blocked: 'y'
+            id: 'cumulativeData',
+            columnAssignment: [{
+                seriesId: 'Done',
+                data: ['Date', 'Done']
+            }, {
+                seriesId: 'To Do',
+                data: ['Date', 'To Do']
+            }, {
+                seriesId: 'Blocked',
+                data: ['Date', 'Blocked']
+            }]
         },
         chartOptions: {
             chart: {

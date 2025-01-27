@@ -73,10 +73,6 @@
                 .air_temperature,
             value = parseInt(temp, 10);
 
-        const country = {
-            'hc-key': point[0],
-            value
-        };
         const capital = {
             name: point[3],
             lat: point[1],
@@ -90,8 +86,10 @@
             }
         };
 
-        countries.addPoint(country);
-        capitals.addPoint(capital);
+        countries.points.find(p => p['hc-key'] === point[0])
+            .update(value, false);
+        capitals.addPoint(capital, false);
+        countries.chart.redraw(false);
     }
 
     // Create the chart
@@ -113,7 +111,7 @@
         },
 
         subtitle: {
-            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>',
+            text: 'Data source: <a href="https://api.met.no/">api.met.no</a>',
             align: 'left'
         },
 
@@ -145,7 +143,8 @@
         },
 
         tooltip: {
-            headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{point.key}:<br/>',
             pointFormat: 'Temperature: <b>{point.custom.label}</b>'
         },
 
@@ -169,10 +168,24 @@
                 lineWidth: 1,
                 lineColor: '#000'
             },
-            dataLabels: {
+            dataLabels: [{
+                align: 'right',
+                verticalAlign: 'middle',
+                y: -2,
+                x: -2,
                 crop: true,
-                format: '<span>{key}</span><br><span>{point.custom.label}</span>'
-            },
+                format: '{key}',
+                style: {
+                    fontWeight: 'normal'
+                }
+            }, {
+                align: 'left',
+                verticalAlign: 'middle',
+                y: -2,
+                x: 2,
+                crop: true,
+                format: '{custom.label}'
+            }],
             accessibility: {
                 point: {
                     valueDescriptionFormat: '{xDescription}, {point.temp}°C.'

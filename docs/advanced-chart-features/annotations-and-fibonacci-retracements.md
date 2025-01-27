@@ -1,7 +1,7 @@
 Annotations and fibonacci retracements
 ===
 
-A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp).
+A Fibonacci retracement is a tool used in technical analysis which allows users to identify [reversal levels](https://www.investopedia.com/terms/f/fibonacciretracement.asp). For the ready-made technical advanced annotations like this, see [advanced annotations](https://www.highcharts.com/docs/stock/advanced-annotations)
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/stock/annotations/fibonacci-retracements" allow="fullscreen"></iframe>
 
@@ -39,7 +39,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
     
         const lines = [];
     
-        Highcharts.each(levels, function (level, i) {
+        levels.forEach(function (level, i) {
             const retracement = y2 - diff * level,
                 p1 = point(x1, retracement),
                 p2 = point(x2, retracement);
@@ -59,7 +59,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
     
         const labels = [];
     
-        Highcharts.each(levels, function (level, i) {
+        levels.forEach(function (level, i) {
             const retracement = y2 - diff * level,
                 p1 = point(x1, retracement),
                 p2 = point(x2, retracement);
@@ -96,7 +96,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
             'rgba(169, 255, 101, 0.4)'
         ];
     
-        Highcharts.each(levels, function (level, i) {
+        levels.forEach(function (level, i) {
             const retracement = y2 - diff * level,
                 p1 = point(x1, retracement),
                 p2 = point(x2, retracement);

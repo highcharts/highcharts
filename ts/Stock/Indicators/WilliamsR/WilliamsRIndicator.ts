@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -78,7 +79,7 @@ class WilliamsRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * Period for Williams %R oscillator
              */
@@ -104,7 +105,7 @@ class WilliamsRIndicator extends SMAIndicator {
 
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: WilliamsRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
@@ -221,4 +222,4 @@ export default WilliamsRIndicator;
  * @apioption series.williamsr
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

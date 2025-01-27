@@ -2,10 +2,10 @@
  * Copyright (C) Highsoft AS
  */
 
-const fs = require('./lib/fs');
+const fs = require('../libs/fs');
 const gulp = require('gulp');
 const glob = require('glob');
-const log = require('./lib/log');
+const log = require('../libs/log');
 const yargs = require('yargs');
 
 const SAMPLES_SRC_DIR = 'samples/**';

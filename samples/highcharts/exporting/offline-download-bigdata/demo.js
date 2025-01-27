@@ -11,8 +11,10 @@ function addText(text) {
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
-        options.type === 'application/pdf' && isMSBrowser) {
+    if (
+        options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
+        options.type === 'application/pdf' && isMSBrowser
+    ) {
         addText(options.type + ' fell back on purpose');
     } else {
         throw 'Should not have to fall back for this combination. ' +
@@ -34,7 +36,20 @@ Highcharts.chart('container', {
         sourceWidth: 400,
         sourceHeight: 300,
         scale: 1,
-        error: fallbackHandler
+        error: fallbackHandler,
+        buttons: {
+            contextButton: {
+                menuItems: [
+                    'viewFullscreen',
+                    'printChart',
+                    'separator',
+                    'downloadPNG',
+                    'downloadJPEG',
+                    'downloadSVG',
+                    'downloadPDF'
+                ]
+            }
+        }
     },
     title: {
         text: 'Lots of data points, test PDF in particular'

@@ -4,7 +4,7 @@
 
 
 const fs = require('fs');
-const fsLib = require('../lib/fs');
+const fsLib = require('../../libs/fs');
 const gulp = require('gulp');
 const path = require('path');
 
@@ -51,12 +51,13 @@ const DTS_FOLDERS = [
  * Promise to keep.
  */
 async function scriptsDTS() {
-
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     const {
         bundleTargetFolder,
-        esModulesFolder
+        bundleTargetFolderDataGrid,
+        esModulesFolder,
+        esModulesFolderDataGrid
     } = require('./_config.json');
 
     for (const dtsFile of DTS_FILES) {
@@ -73,20 +74,33 @@ async function scriptsDTS() {
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
+
+        fsLib.copyAllFiles(
+            path.join('ts', dtsFolder),
+            path.join(esModulesFolderDataGrid, dtsFolder),
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts')
+        );
     }
 
     logLib.success('Copied stand-alone DTS');
 
     const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
 
+    // Dashboards
     fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolder, true);
+    fsLib.deleteFile(path.join(bundleTargetFolder, 'datagrid.src.d.ts'));
+
+    // DataGrid
+    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolderDataGrid, true);
+    fsLib.deleteFile(path.join(bundleTargetFolderDataGrid, 'dashboards.src.d.ts'));
 
     const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
 
     for (const bundleDtsFile of bundleDtsFiles) {
         fs.writeFileSync(
             path.join(
-                bundleTargetFolder,
+                bundleDtsFile.includes('datagrid') ? bundleTargetFolderDataGrid : bundleTargetFolder,
                 path
                     .relative(bundleDtsFolder, bundleDtsFile)
                     .replace(/\.src\.d\.ts$/u, '.d.ts')

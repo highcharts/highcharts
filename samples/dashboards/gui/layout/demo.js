@@ -23,37 +23,11 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
-                    id: 'dashboard-col-2',
-                    width: '2/3',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'dashboard-col-2'
                 }, {
-                    id: 'dashboard-col-21',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '2/3'
-                        }
-                    }
+                    id: 'dashboard-col-21'
                 }, {
-                    id: 'dashboard-col-22',
-                    width: '1/6',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        }
-                    }
+                    id: 'dashboard-col-22'
                 }]
             }, {
                 id: 'dashboard-row-3',
@@ -78,7 +52,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -100,7 +74,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'HTML',
         elements: [{
             tagName: 'img',
@@ -109,7 +83,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             type: 'cell',
@@ -128,7 +102,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-21',
+        renderTo: 'dashboard-col-21',
         type: 'Highcharts',
         chartOptions: {
             type: 'cell',
@@ -148,7 +122,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-22',
+        renderTo: 'dashboard-col-22',
         type: 'Highcharts',
         chartOptions: {
             type: 'cell',
@@ -168,7 +142,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-3',
+        renderTo: 'dashboard-col-3',
         type: 'HTML',
         elements: [{
             tagName: 'img',
@@ -177,7 +151,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        cell: 'dashboard-col-31',
+        renderTo: 'dashboard-col-31',
         type: 'HTML',
         elements: [{
             tagName: 'img',
@@ -186,7 +160,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        cell: 'dashboard-col-32',
+        renderTo: 'dashboard-col-32',
         type: 'HTML',
         elements: [{
             tagName: 'img',
@@ -195,7 +169,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        cell: 'dashboard-col-5',
+        renderTo: 'dashboard-col-5',
         type: 'Highcharts',
         chartOptions: {
             type: 'line',
@@ -214,7 +188,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-add-component',
+        renderTo: 'dashboard-col-add-component',
         type: 'Highcharts',
         chartOptions: {
             type: 'line',

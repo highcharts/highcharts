@@ -27,7 +27,8 @@ Highcharts.chart('container', {
         name: 'Flow',
         dataLabels: {
             format: '<span style="font-weight: normal; font-size: 16px">' +
-                '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight}' +
+                '{point.fromNode.name} \u2192 {point.toNode.name}: ' +
+                '{point.weight}' +
                 '</span>',
             nodeFormat: '{point.name}'
         }

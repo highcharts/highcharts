@@ -35,7 +35,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ca-congress-113.topo.json">California congressional districts</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ca-congress-113.topo.json">California congressional districts</a>'
         },
 
         mapNavigation: {

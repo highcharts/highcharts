@@ -374,6 +374,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         },
         xAxis: {
             labels: {
+                padding: 1,
                 autoRotation: [-45]
             }
         }
@@ -382,7 +383,8 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
     assert.deepEqual(
         xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
         [-45, -45, -45, -45, -45, -45, -45, -45, -45],
-        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+        'step = 1 and default autoRotation: all ticks should be labeled and ' +
+        'rotated (#14226)'
     );
 
     chart.update({
@@ -673,7 +675,7 @@ QUnit.test('Label formatting(#4291)', function (assert) {
 
     assert.strictEqual(
         chart.yAxis[0].ticks['79962.57'].label.textStr,
-        '79 962.57',
+        '79,962.57',
         'Preserved decimals'
     );
 });
@@ -770,13 +772,15 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'it would be a great improvement if you could actually ' +
+                        'it would be a great improvement if you could ' +
+                        'actually ' +
                             'delete the image and replace it with another. ' +
                             'For example',
                         1
                     ],
                     [
-                        'this seems like a great feature and would like to see ' +
+                        'this seems like a great feature and would like to ' +
+                        'see ' +
                             'more choices',
                         1
                     ],
@@ -786,8 +790,10 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'there needs to be a paint brush option or some way to ' +
-                            'edit the colors of the icons within the text frames. ' +
+                        'there needs to be a paint brush option or some way ' +
+                        'to ' +
+                            'edit the colors of the icons within the text ' +
+                            'frames. ' +
                             ' Other than that',
                         1
                     ],
@@ -1269,15 +1275,15 @@ QUnit.test('Long labels and ellipsis', function (assert) {
         xAxis: {
             categories: [
                 'cgi-bin/php?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63' +
-                    '%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3' +
-                    'D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%' +
-                    '61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66' +
-                    '%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%6' +
-                    '2%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%' +
-                    '70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%6' +
-                    '9%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%' +
-                    '64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72' +
-                    '%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E',
+                '%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3' +
+                'D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%' +
+                '61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66' +
+                '%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%6' +
+                '2%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%' +
+                '70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%6' +
+                '9%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%5F%72%65%' +
+                '64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%65%64%69%72' +
+                '%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%30+%2D%6E',
                 'phpadmin/scripts/setup.php',
                 'w00tw00t.at.blackhats.romanian.anti-sec:)',
                 'cgi-bin/env.cgi',
@@ -1291,15 +1297,15 @@ QUnit.test('Long labels and ellipsis', function (assert) {
                 'SQlite/main.php',
                 'SQLiteManager/main.php',
                 'cgi-bin/php5?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
-                    '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
-                    '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
-                    '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
-                    '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
-                    'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
-                    '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
-                    '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
-                    '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
-                    '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
                     '0+%2D%6E',
                 'cgi-bin/bash',
                 'cgi-bin/contact.cgi',
@@ -1309,38 +1315,38 @@ QUnit.test('Long labels and ellipsis', function (assert) {
                 'cgi-bin/recent.cgi',
                 'cgi-bin/tools/tools.pl',
                 'cgi-bin/php-cgi?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%' +
-                    '6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%6' +
-                    '4%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D' +
-                    '%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%' +
-                    '65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%6' +
-                    '5%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75' +
-                    '%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70' +
-                    '%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%' +
-                    '65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%7' +
-                    '2%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3' +
-                    'D%30+%2D%6E',
+                '6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%6' +
+                '4%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D' +
+                '%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%' +
+                '65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%6' +
+                '5%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75' +
+                '%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70' +
+                '%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%' +
+                '65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%7' +
+                '2%65%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3' +
+                'D%30+%2D%6E',
                 'cgi-bin/php.cgi?%2D%64+%61%6C%6C%6F%77%5F%' +
-                    '75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%6' +
-                    '6%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69' +
-                    '%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%' +
-                    '69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+' +
-                    '%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%6' +
-                    '5+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C' +
-                    '%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%' +
-                    '2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64' +
-                    '+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%7' +
-                    '3%5F%65%6E%76%3D%30+%2D%6E',
+                '75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%6' +
+                '6%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69' +
+                '%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%' +
+                '69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+' +
+                '%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%6' +
+                '5+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C' +
+                '%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%' +
+                '2E%66%6F%72%63%65%5F%72%65%64%69%72%65%63%74%3D%30+%2D%64' +
+                '+%63%67%69%2E%72%65%64%69%72%65%63%74%5F%73%74%61%74%75%7' +
+                '3%5F%65%6E%76%3D%30+%2D%6E',
                 'cgi-bin/php4?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%' +
-                    '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
-                    '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
-                    '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
-                    '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
-                    'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
-                    '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
-                    '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
-                    '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
-                    '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
-                    '0+%2D%6E',
+                '63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%6' +
+                '5%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75' +
+                '%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%' +
+                '5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6' +
+                'E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74' +
+                '%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A' +
+                '%2F%2F%69%6E%70%75%74+%2D%64+%63%67%69%2E%66%6F%72%63%65%' +
+                '5F%72%65%64%69%72%65%63%74%3D%30+%2D%64+%63%67%69%2E%72%6' +
+                '5%64%69%72%65%63%74%5F%73%74%61%74%75%73%5F%65%6E%76%3D%3' +
+                '0+%2D%6E',
                 'scripts/setup.php'
             ],
             title: {
@@ -1516,7 +1522,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     );
 });
 
-QUnit.test('Explicit textOverflow setting', function (assert) {
+QUnit.test('Explicit whiteSpace setting', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 250
@@ -1525,7 +1531,7 @@ QUnit.test('Explicit textOverflow setting', function (assert) {
             categories: ['Very long month name', 'Feb', 'Mar'],
             labels: {
                 style: {
-                    textOverflow: 'ellipsis'
+                    whiteSpace: 'nowrap'
                 }
             }
         },
@@ -1554,6 +1560,7 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             polar: true,
             type: 'line',
             width: 800,
+            height: 400,
             borderWidth: 1
         },
         credits: {
@@ -1615,11 +1622,14 @@ QUnit.test('Handle overflow in polar charts (#7248)', function (assert) {
             var bBox = chart.xAxis[0].ticks['1'].label.element.getBBox();
             assert.ok(
                 bBox.x + bBox.width < chart.chartWidth,
-                'Label ' + pos + ' inside right at ' + chart.chartWidth
+                `Label ${pos} should be inside right
+                    (${bBox.x + bBox.width} < ${chart.chartWidth},
+                    chartWidth = ${chart.chartWidth})`
             );
             assert.ok(
                 bBox.x > 0,
-                'Label ' + pos + ' inside left at ' + chart.chartWidth
+                `Label ${pos} should be inside left
+                    (${bBox.x} > 0, chartWidth = ${chart.chartWidth}`
             );
         });
     }

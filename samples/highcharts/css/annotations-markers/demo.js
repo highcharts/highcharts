@@ -26,7 +26,8 @@ Highcharts.chart('container', {
             id: 'custom-shape',
             children: [{
                 tagName: 'path',
-                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
+                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,' +
+                    '2.5 12.5,2.5 10,0 Z'
             }],
             markerWidth: 40,
             markerHeight: 40,

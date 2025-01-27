@@ -486,7 +486,7 @@ namespace Chart3D {
             chart.frameShapes.bottom[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
                 zIndex: frame.bottom.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.bottom.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -507,7 +507,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.bottom.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.bottom.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xm,
@@ -528,7 +528,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.bottom.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.bottom.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -549,7 +549,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.bottom.visible && !frame.left.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.bottom.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -570,7 +570,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.bottom.visible && !frame.right.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.bottom.color).get(),
                     vertexes: [{
                         x: xpp,
@@ -591,7 +591,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.bottom.visible && !frame.front.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.bottom.color).get(),
                     vertexes: [{
                         x: xmm,
@@ -616,7 +616,7 @@ namespace Chart3D {
             chart.frameShapes.top[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-top',
                 zIndex: frame.top.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.top.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -637,7 +637,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.top.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.top.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xm,
@@ -658,7 +658,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.top.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.top.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -679,7 +679,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.top.visible && !frame.left.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.top.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -700,7 +700,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.top.visible && !frame.right.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.top.color).get(),
                     vertexes: [{
                         x: xmm,
@@ -721,7 +721,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.top.visible && !frame.front.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.top.color).get(),
                     vertexes: [{
                         x: xpp,
@@ -746,7 +746,7 @@ namespace Chart3D {
             chart.frameShapes.left[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-left',
                 zIndex: frame.left.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.left.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -767,7 +767,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.left.visible && !frame.bottom.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.left.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -788,7 +788,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.left.visible && !frame.top.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.left.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -809,7 +809,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.left.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.left.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xm,
@@ -830,7 +830,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.left.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.left.color).get(),
                     vertexes: [{
                         x: xmm,
@@ -851,7 +851,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.left.visible && !frame.front.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.left.color).get(),
                     vertexes: [{
                         x: xmm,
@@ -876,7 +876,7 @@ namespace Chart3D {
             chart.frameShapes.right[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-right',
                 zIndex: frame.right.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.right.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -897,7 +897,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.right.visible && !frame.bottom.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.right.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -918,7 +918,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.right.visible && !frame.top.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.right.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xp,
@@ -939,7 +939,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.right.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.right.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -960,7 +960,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.right.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.right.color).get(),
                     vertexes: [{
                         x: xpp,
@@ -981,7 +981,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.right.visible && !frame.front.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.right.color).get(),
                     vertexes: [{
                         x: xpp,
@@ -1006,7 +1006,7 @@ namespace Chart3D {
             chart.frameShapes.back[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-back',
                 zIndex: frame.back.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.back.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -1027,7 +1027,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.back.visible && !frame.bottom.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.back.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -1048,7 +1048,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.back.visible && !frame.top.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.back.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -1069,7 +1069,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.back.visible && !frame.left.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.back.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -1090,7 +1090,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.back.visible && !frame.right.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.back.color).get(),
                     vertexes: [{
                         x: xm,
@@ -1111,7 +1111,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.back.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.back.color).get(),
                     vertexes: [{
                         x: xmm,
@@ -1136,7 +1136,7 @@ namespace Chart3D {
             chart.frameShapes.front[verb]({
                 'class': 'highcharts-3d-frame highcharts-3d-frame-front',
                 zIndex: frame.front.frontFacing ? -1000 : 1000,
-                faces: [{ // bottom
+                faces: [{ // Bottom
                     fill: color(frame.front.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -1157,7 +1157,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.front.visible && !frame.bottom.visible
                 },
-                { // top
+                { // Top
                     fill: color(frame.front.color).brighten(0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -1178,7 +1178,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.front.visible && !frame.top.visible
                 },
-                { // left
+                { // Left
                     fill: color(frame.front.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xmm,
@@ -1199,7 +1199,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.front.visible && !frame.left.visible
                 },
-                { // right
+                { // Right
                     fill: color(frame.front.color).brighten(-0.1).get(),
                     vertexes: [{
                         x: xpp,
@@ -1220,7 +1220,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.front.visible && !frame.right.visible
                 },
-                { // front
+                { // Front
                     fill: color(frame.front.color).get(),
                     vertexes: [{
                         x: xp,
@@ -1241,7 +1241,7 @@ namespace Chart3D {
                     }],
                     enabled: frame.front.visible
                 },
-                { // back
+                { // Back
                     fill: color(frame.front.color).get(),
                     vertexes: [{
                         x: xpp,
@@ -1622,7 +1622,7 @@ namespace Chart3D {
                 };
             };
 
-            // docs @TODO: Add all frame options (left, right, top, bottom,
+            // Docs @TODO: Add all frame options (left, right, top, bottom,
             // front, back) to apioptions JSDoc once the new system is up.
             const ret: Chart3D.FrameObject = {
                 axes: {},
@@ -2070,4 +2070,4 @@ export default Chart3D;
  * @apioption chart.options3d.frame.side.size
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

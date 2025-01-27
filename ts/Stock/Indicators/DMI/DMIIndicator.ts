@@ -22,6 +22,7 @@ import type {
     DMIParamsOptions
 } from './DMIOptions';
 import type DMIPoint from './DMIPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -85,7 +86,7 @@ class DMIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            index: void 0 // Unused index, do not inherit (#15362)
         },
         marker: {
             enabled: false
@@ -118,7 +119,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.positiveColor // green-ish
+                lineColor: Palette.positiveColor // Green-ish
             }
         },
         /**
@@ -138,7 +139,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.negativeColor // red-ish
+                lineColor: Palette.negativeColor // Red-ish
             }
         },
         dataGrouping: {
@@ -173,10 +174,10 @@ class DMIIndicator extends SMAIndicator {
         let DM: number;
 
         if (currentHigh - previousHigh > previousLow - currentLow) {
-            // for +DM
+            // For +DM
             DM = isPositiveDM ? Math.max(currentHigh - previousHigh, 0) : 0;
         } else {
-            // for -DM
+            // For -DM
             DM = !isPositiveDM ? Math.max(previousLow - currentLow, 0) : 0;
         }
 
@@ -215,18 +216,18 @@ class DMIIndicator extends SMAIndicator {
     ): number {
         return correctFloat(
             Math.max(
-                // currentHigh - currentLow
+                // `currentHigh - currentLow`
                 currentPoint[1] - currentPoint[2],
-                // currentHigh - previousClose
+                // `currentHigh - previousClose`
                 !prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
-                // currentLow - previousClose
+                // `currentLow - previousClose`
                 !prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3])
             )
         );
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: DMIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -413,4 +414,4 @@ export default DMIIndicator;
  * @apioption series.dmi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

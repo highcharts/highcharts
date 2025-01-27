@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         events: {
             click: function (event) {
                 const label = this.renderer.label(
-                    'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) + ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
+                    'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) +
+                    ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
                     event.xAxis[0].axis.toPixels(event.xAxis[0].value),
                     event.yAxis[0].axis.toPixels(event.yAxis[0].value)
                 )
@@ -27,11 +28,13 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [29.9, 71.5,
+        data: [
+            29.9, 71.5,
             106.4, 129.2,
             144.0, 176.0,
             135.6, 148.5,
             216.4, 194.1,
-            95.6, 54.4]
+            95.6, 54.4
+        ]
     }]
 });

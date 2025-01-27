@@ -23,7 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface ColumnPyramidPointOptions extends ColumnPointOptions {
-    // nothing to add yet
+    // Nothing to add yet
 }
 
 /* *

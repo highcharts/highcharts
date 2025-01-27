@@ -12,10 +12,12 @@ Highcharts.chart('container', {
             descriptionFormatter: function (point) {
                 const nodeName = point.toNode.name,
                     nodeId = point.toNode.id,
-                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
+                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ',' +
+                        ' ' + nodeId,
                     parentDesc = point.fromNode.id;
                 return (
-                    point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.'
+                    point.index +
+                        '. ' + nodeDesc + ', reports to ' + parentDesc + '.'
                 );
             }
         }

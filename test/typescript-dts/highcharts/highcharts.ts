@@ -9,6 +9,7 @@
 import * as Highcharts from "highcharts";
 
 test_legend();
+test_selectEvent();
 test_seriesArea();
 test_seriesBar();
 test_seriesColumn();
@@ -31,6 +32,21 @@ function test_legend() {
                     return JSON.stringify(series.legendItem as Record<string, SVGElement>);
                 }
                 return '';
+            }
+        }
+    });
+}
+
+/**
+ * Tests type of select event.
+ */
+function test_selectEvent() {
+    Highcharts.chart('container', {
+        chart: {
+            events: {
+                selection: function (e: Highcharts.SelectEventObject): undefined {
+                    e.preventDefault();
+                }
             }
         }
     });
@@ -255,7 +271,10 @@ function test_seriesColumn() {
         series: [{
             type: 'column',
             name: 'Tokyo',
-            data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            data: [
+            49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+            95.6, 54.4
+        ],
         }, {
             type: 'column',
             name: 'New York',

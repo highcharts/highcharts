@@ -52,7 +52,8 @@
             shadow: false,
             useHTML: true,
             padding: 0,
-            pointFormat: '<span class="f32"><span class="flag {point.properties.hc-key}">' +
+            pointFormat: '<span class="f32"><span class="flag ' +
+                '{point.properties.hc-key}">' +
                     '</span></span> {point.name}<br>' +
                     '<span style="font-size:30px">{point.value}/km²</span>',
             positioner: function () {

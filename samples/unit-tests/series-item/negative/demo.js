@@ -34,12 +34,14 @@ QUnit.test('Item series negative values', assert => {
 
     assert.ok(
         point1 <= 0,
-        'The point should not be displayed in the chart because there are no child nodes.'
+        'The point should not be displayed in the chart because there are no ' +
+        'child nodes.'
     );
 
     assert.ok(
         point2 <= 0,
-        'The point should be displayed in the chart because there are no child nodes.'
+        'The point should be displayed in the chart because there are no ' +
+        'child nodes.'
     );
 
     assert.ok(

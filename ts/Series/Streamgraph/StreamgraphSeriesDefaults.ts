@@ -167,7 +167,7 @@ const StreamgraphSeriesDefaults: StreamgraphSeriesOptions = {
  * @apioption series.streamgraph.fillOpacity
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

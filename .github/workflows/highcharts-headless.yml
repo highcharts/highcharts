@@ -8,16 +8,23 @@ on:
         required: false
         default: false
         type: boolean
+  workflow_dispatch:
+    inputs:
+      testTimezones:
+        description: 'Whether timezone tests should run'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test_unit_tests:
     name: Node unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -27,16 +34,16 @@ jobs:
         run: npx gulp scripts
 
       - name: Run unit tests
-        run: npx ts-node test/ts-node-unit-tests/index.ts
+        run: npm run test-node
 
   test_cypress:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
 
       - name: Install dependencies
@@ -48,13 +55,22 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
           config-file: test/cypress/highcharts/config.mjs
@@ -70,7 +86,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: 'lts/iron'
           cache: 'npm'
       # browser-actions/setup-chrome installs chrome at a separate location
       # which setup-chromedriver does not pick up, so doing it manually
@@ -131,9 +147,9 @@ jobs:
   #   steps:
   #     ### SETUP ###
   #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
+  #     - uses: actions/setup-node@v4
   #       with:
-  #         node-version: 'lts/*'
+  #         node-version: 'lts/iron'
   #         cache: 'npm'
   #     - name: Install Dependencies
   #       run: npm i

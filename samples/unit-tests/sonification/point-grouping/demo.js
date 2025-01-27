@@ -70,7 +70,8 @@ QUnit.test('Point grouping', function (assert) {
         '35,10,13',
         '55,14,13'
     ].join('#'),
-    'Events have correct times and using the correct point with "first" alg');
+    'Events have correct times and using the correct point with "first" alg'
+    );
 
     chart.series[0].update({
         sonification: {
@@ -100,7 +101,8 @@ QUnit.test('Point grouping', function (assert) {
         '52.5,14,7', // group 4 (50-60)
         '57.5,15,9'
     ].join('#'),
-    'Events have correct times and points with "minmax" algorithm');
+    'Events have correct times and points with "minmax" algorithm'
+    );
 
     chart.series[0].update({
         sonification: {
@@ -125,7 +127,8 @@ QUnit.test('Point grouping', function (assert) {
         '52.5,14,7', // Group 5 (50-55)
         '62.5,15,9' // Group 6 (60-65)
     ].join('#'),
-    'Events have correct times and points with "firstlast" algorithm');
+    'Events have correct times and points with "firstlast" algorithm'
+    );
 
     delete Highcharts.sonification.Sonification.prototype.forceReady;
 });

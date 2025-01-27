@@ -25,7 +25,6 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -37,6 +36,7 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    crisp,
     extend,
     isNumber,
     merge,
@@ -143,9 +143,11 @@ class WaterfallSeries extends ColumnSeries {
         // Parent call:
         ColumnSeries.prototype.generatePoints.apply(this);
 
+        const processedYData = this.getColumn('y', true);
+
         for (let i = 0, len = this.points.length; i < len; i++) {
             const point = this.points[i],
-                y = this.processedYData[i];
+                y = processedYData[i];
 
             // Override point value for sums. #3710 Update point does not
             // propagate to sum
@@ -162,7 +164,8 @@ class WaterfallSeries extends ColumnSeries {
     ): undefined {
         const series = this,
             options = series.options,
-            yData = series.yData,
+            yData = series.getColumn('y') as
+                Array<number|'intermediateSum'|'sum'>,
             // #3710 Update point does not propagate to sum
             points = options.data,
             dataLength = yData.length,
@@ -179,7 +182,7 @@ class WaterfallSeries extends ColumnSeries {
 
         for (let i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = points && points[i] ? points[i] : {};
+            point = points?.[i] || {};
 
             if (y === 'sum' || (point as any).isSum) {
                 yData[i] = correctFloat(sum);
@@ -218,21 +221,6 @@ class WaterfallSeries extends ColumnSeries {
             return 'intermediateSum';
         }
         return pt.y;
-    }
-
-    public updateParallelArrays(
-        point: Point,
-        i: (number|string)
-    ): void {
-        super.updateParallelArrays.call(
-            this,
-            point,
-            i
-        );
-        // Prevent initial sums from triggering an error (#3245, #7559)
-        if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
-            this.yData[0] = null;
-        }
     }
 
     // Postprocess mapping between options and SVG attributes
@@ -277,9 +265,7 @@ class WaterfallSeries extends ColumnSeries {
             data = this.data.filter((d): boolean => isNumber(d.y)),
             yAxis = this.yAxis,
             length = data.length,
-            graphNormalizer =
-                Math.round((this.graph as any).strokeWidth()) % 2 / 2,
-            borderNormalizer = Math.round(this.borderWidth) % 2 / 2,
+            graphLineWidth = this.graph?.strokeWidth() || 0,
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
@@ -308,27 +294,29 @@ class WaterfallSeries extends ColumnSeries {
             if (prevStack && prevBox && box) {
                 const prevStackX = (prevStack as any)[i - 1];
 
-                // y position of the connector is different when series are
+                // Y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
                 let yPos: number;
                 if (stacking) {
                     const connectorThreshold = prevStackX.connectorThreshold;
 
-                    yPos = Math.round(
-                        (yAxis.translate(
+                    yPos = crisp(
+                        yAxis.translate(
                             connectorThreshold,
                             false,
                             true,
                             false,
                             true
                         ) +
-                        (reversedYAxis ? isPos : 0))
-                    ) - graphNormalizer;
+                        (reversedYAxis ? isPos : 0),
+                        graphLineWidth
+                    );
                 } else {
-                    yPos =
-                        (prevBox as any).y + prevPoint.minPointLengthOffset +
-                        borderNormalizer - graphNormalizer;
+                    yPos = crisp(
+                        prevBox.y + (prevPoint.minPointLengthOffset || 0),
+                        graphLineWidth
+                    );
                 }
 
                 path.push([
@@ -388,7 +376,8 @@ class WaterfallSeries extends ColumnSeries {
             waterfallStacks = axis.waterfall?.stacks,
             seriesThreshold = options.threshold || 0,
             stackKey = series.stackKey,
-            xData = series.xData,
+            xData = series.getColumn('x'),
+            yData = series.getColumn('y'),
             xLength = xData.length;
 
         let stackThreshold = seriesThreshold,
@@ -445,8 +434,10 @@ class WaterfallSeries extends ColumnSeries {
                 // In case of a redraw, stack for each x value must be emptied
                 // (only for the first series in a specific stack) and
                 // recalculated once more
-                if (alreadyChanged &&
-                    alreadyChanged.indexOf(stackKey) < 0) {
+                if (
+                    alreadyChanged &&
+                    alreadyChanged.indexOf(stackKey) < 0
+                ) {
                     changed = true;
                 }
 
@@ -476,7 +467,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         actualStackX = actualStack[x];
-                        yVal = series.yData[i];
+                        yVal = yData[i];
 
                         if (yVal >= 0) {
                             actualStackX.posTotal += yVal;
@@ -494,7 +485,7 @@ class WaterfallSeries extends ColumnSeries {
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
 
-                        if (xPoint && xPoint.isIntermediateSum) {
+                        if (xPoint?.isIntermediateSum) {
                             calculateStackState(
                                 prevSum,
                                 actualSum,
@@ -509,7 +500,7 @@ class WaterfallSeries extends ColumnSeries {
                             stackThreshold ^= interSum;
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
-                        } else if (xPoint && xPoint.isSum) {
+                        } else if (xPoint?.isSum) {
                             calculateStackState(
                                 seriesThreshold,
                                 totalYVal,
@@ -563,7 +554,7 @@ class WaterfallSeries extends ColumnSeries {
             stackedYNeg = this.stackedYNeg = [];
             stackedYPos = this.stackedYPos = [];
 
-            // the visible y range can be different when stacking is set to
+            // The visible y range can be different when stacking is set to
             // overlap and different when it's set to normal
             if (stacking === 'overlap') {
                 objectEach(waterfallStacks[this.stackKey], function (
@@ -626,7 +617,8 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,
-        actualStack = yAxis.waterfall.stacks[series.stackKey];
+        actualStack = yAxis.waterfall.stacks[series.stackKey],
+        processedYData = series.getColumn('y', true);
 
     let previousIntermediate = threshold,
         previousY = threshold,
@@ -637,7 +629,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
-            yValue = series.processedYData[i] as number,
+            yValue = processedYData[i],
             shapeArgs = point.shapeArgs,
             box: BBoxObject = extend({
                 x: 0,
@@ -651,7 +643,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         const range = [0, yValue],
             pointY = point.y || 0;
 
-        // code responsible for correct positions of stacked points
+        // Code responsible for correct positions of stacked points
         // starts here
         if (stacking) {
             if (actualStack) {
@@ -708,7 +700,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
 
                 if (!point.isSum) {
-                    // the connectorThreshold property is later used in
+                    // The connectorThreshold property is later used in
                     // getCrispPath function to draw a connector line in a
                     // correct place
                     actualStackX.connectorThreshold =
@@ -758,14 +750,14 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
             }
         } else {
-            // up points
+            // Up points
             y = Math.max(
                 previousY,
                 previousY + pointY
             ) + range[0];
             box.y = yAxis.translate(y, false, true, false, true);
 
-            // sum points
+            // Sum points
             if (point.isSum) {
                 box.y = yAxis.translate(
                     range[1],
@@ -796,7 +788,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
 
                 if (yAxis.reversed) {
-                    // swapping values
+                    // Swapping values
                     yPos ^= hPos;
                     hPos ^= yPos;
                     yPos ^= hPos;
@@ -862,16 +854,13 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
             }
         }
 
-        point.plotY = box.y =
-            Math.round(box.y || 0) - (series.borderWidth % 2) / 2;
-        // #3151
-        box.height =
-            Math.max(Math.round(box.height || 0), 0.001);
+        point.plotY = box.y;
         point.yBottom = box.y + box.height;
 
         if (box.height <= minPointLength && !point.isNull) {
             box.height = minPointLength;
             box.y -= halfMinPointLength;
+            point.yBottom = box.y + box.height;
             point.plotY = box.y;
             if (pointY < 0) {
                 point.minPointLengthOffset = -halfMinPointLength;
@@ -887,8 +876,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         }
 
         // Correct tooltip placement (#3014)
-        const tooltipY =
-            point.plotY + (point.negative ? box.height : 0);
+        const tooltipY = point.plotY + (point.negative ? box.height : 0);
 
         if (point.below) { // #15334
             point.plotY += box.height;
@@ -904,6 +892,11 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
         // Check point position after recalculation (#16788)
         point.isInside = this.isPointInside(point);
+
+        // Crisp vector coordinates
+        const crispBottom = crisp(point.yBottom, series.borderWidth);
+        box.y = crisp(box.y, series.borderWidth);
+        box.height = crispBottom - box.y;
 
         merge(true, point.shapeArgs, box);
     }

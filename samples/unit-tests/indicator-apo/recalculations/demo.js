@@ -68,7 +68,8 @@ QUnit.test(
             chart.series[1].points.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After addPoint number of Absolute Price Oscillator points is correct'
+            'After addPoint number of Absolute Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[0].setData(
@@ -97,7 +98,8 @@ QUnit.test(
             chart.series[1].data.length +
                 chart.series[1].options.params.periods[1] -
                 1,
-            'After setData number of Absolute Price Oscillator points is correct'
+            'After setData number of Absolute Price Oscillator points is ' +
+            'correct'
         );
 
         chart.series[1].update({
@@ -109,7 +111,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastAPOWithRound(chart.series[1].yData),
+            toFastAPOWithRound(chart.series[1].getColumn('y')),
             [
                 0.909,
                 0.5443,
@@ -135,7 +137,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toFastAPOWithRound(chart.series[1].yData),
+            toFastAPOWithRound(chart.series[1].getColumn('y')),
             [
                 0.909,
                 0.5443,

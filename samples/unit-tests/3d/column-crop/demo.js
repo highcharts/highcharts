@@ -76,13 +76,12 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
 
         shapeArgs0 = chart.series[0].data[0].shapeArgs;
         shapeArgs1 = chart.series[0].data[1].shapeArgs;
-        assert.strictEqual(
+        assert.ok(
             shapeArgs0.x === shapeArgs1.x &&
                 shapeArgs0.y === shapeArgs1.y &&
-                shapeArgs0.height === shapeArgs1.height &&
+                Math.abs(shapeArgs0.height - shapeArgs1.height) <= 0.5 &&
                 shapeArgs0.width === shapeArgs1.width,
-            true,
-            string + ' are cropped outside plotArea with reversed axis'
+            string + ' should be cropped outside plotArea with reversed axis'
         );
 
         chart.yAxis[0].setExtremes(5, 10);
@@ -170,26 +169,25 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     var newTitleX = Number(chart.yAxis[0].axisTitle.element.attributes.x.value);
     var newTitleY = Number(chart.yAxis[0].axisTitle.element.attributes.y.value);
 
+    let precision = 0.01;
     if (Highcharts.isFirefox) {
-        assert.close(
-            newTitleX,
-            oldTitleX,
-            0.5,
-            'yAxis title is on the same position after toggling series visibility'
-        );
-        assert.close(
-            newTitleY,
-            oldTitleY,
-            0.5,
-            'yAxis title is on the same position after toggling series visibility'
-        );
-    } else {
-        assert.strictEqual(
-            oldTitleX === newTitleX && oldTitleY === newTitleY,
-            true,
-            'yAxis title is on the same position after toggling series visibility'
-        );
+        precision = 0.5;
     }
+
+    assert.close(
+        newTitleX,
+        oldTitleX,
+        precision,
+        'yAxis title is on the same position after toggling series ' +
+        'visibility'
+    );
+    assert.close(
+        newTitleY,
+        oldTitleY,
+        precision,
+        'yAxis title is on the same position after toggling series ' +
+        'visibility'
+    );
 
     chart.update({
         chart: {

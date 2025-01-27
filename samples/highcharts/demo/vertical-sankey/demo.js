@@ -5,14 +5,16 @@ Highcharts.chart('container', {
         height: 1000
     },
     title: {
-        text: 'Evaluating the energy consumed for water use in the United States'
+        text: 'Evaluating the energy consumed for water use in the United ' +
+            'States'
     },
     subtitle: {
         text: 'Data source: <a href="https://iopscience.iop.org/article/10.1088/1748-9326/7/3/034034/pdf">The University of Texas at Austin</a>'
     },
     accessibility: {
         point: {
-            valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
+            valueDescriptionFormat: '{index}. {point.from} to {point.to}, ' +
+                '{point.weight}.'
         }
     },
     plotOptions: {
@@ -130,9 +132,7 @@ Highcharts.chart('container', {
             color: 'rgba(255, 141, 100, 0.8)',
             dataLabels: {
                 rotation: -90,
-                y: -55,
                 style: {
-                    textAnchor: 'middle',
                     width: '110px'
                 }
             }
@@ -152,9 +152,7 @@ Highcharts.chart('container', {
             offsetHorizontal: '-80%',
             color: 'rgba(76, 175, 254, 0.8)',
             dataLabels: {
-                x: 43,
                 style: {
-                    textAnchor: 'middle',
                     width: '90px'
                 }
             }

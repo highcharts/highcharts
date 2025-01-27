@@ -42,6 +42,7 @@ const {
     addEvent,
     defined,
     extend,
+    isNumber,
     merge,
     objectEach,
     wrap
@@ -146,7 +147,9 @@ class FlagsSeries extends ColumnSeries {
             optionsY = options.y,
             yAxis = series.yAxis,
             boxesMap: Record<string, DistributedBoxObject> = {},
-            boxes: Array<DistributedBoxObject> = [];
+            boxes: Array<DistributedBoxObject> = [],
+            borderRadius = isNumber(options.borderRadius) ?
+                options.borderRadius : 0;
 
         let plotX: (number|undefined),
             plotY: (number|undefined),
@@ -178,7 +181,7 @@ class FlagsSeries extends ColumnSeries {
                     (stackIndex * (options.stackDistance as any)) as any
                 );
             }
-            // skip connectors for higher level stacked points
+            // Skip connectors for higher level stacked points
             point.anchorX = stackIndex ? void 0 : point.plotX;
             anchorY = stackIndex ? void 0 : point.plotY;
             centered = shape !== 'flag';
@@ -201,11 +204,11 @@ class FlagsSeries extends ColumnSeries {
                 if (!graphic) {
                     graphic = point.graphic = renderer.label(
                         '',
-                        null as any,
-                        null as any,
+                        0,
+                        void 0,
                         shape as any,
-                        null as any,
-                        null as any,
+                        void 0,
+                        void 0,
                         options.useHTML
                     )
                         .addClass('highcharts-point')
@@ -223,7 +226,8 @@ class FlagsSeries extends ColumnSeries {
                     align: centered ? 'center' : 'left',
                     width: options.width,
                     height: options.height,
-                    'text-align': options.textAlign
+                    'text-align': options.textAlign,
+                    r: borderRadius
                 });
 
                 if (!chart.styledMode) {
@@ -247,7 +251,8 @@ class FlagsSeries extends ColumnSeries {
                     attribs.anchorX = point.anchorX;
                 }
                 graphic.attr({
-                    text: point.options.title || options.title || 'A'
+                    // Allow empty string as a flag title (#20549)
+                    text: point.options.title ?? options.title ?? 'A'
                 })[graphic.isNew ? 'attr' : 'animate'](attribs);
 
                 // Rig for the distribute function
@@ -326,10 +331,10 @@ class FlagsSeries extends ColumnSeries {
                 proceed
             ): SVGElement {
                 return SVGElement.prototype.on.apply(
-                    // for HTML
+                    // For HTML
                     // eslint-disable-next-line no-invalid-this
                     proceed.apply(this, [].slice.call(arguments, 1)),
-                    // and for SVG
+                    // And for SVG
                     [].slice.call(arguments, 1) as any
                 );
             });
@@ -366,7 +371,8 @@ class FlagsSeries extends ColumnSeries {
                     function (): void {
 
                         // Raise this point
-                        if ((point.stackIndex as any) > 0 &&
+                        if (
+                            (point.stackIndex as any) > 0 &&
                             !point.raised
                         ) {
                             point._y = (graphic as any).y;
@@ -503,4 +509,4 @@ export default FlagsSeries;
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above

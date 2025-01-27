@@ -2,7 +2,8 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'bubble',
-        margin: [70, 70, 70, 70] // marginTop, marginRight, marginBottom and marginLeft
+        margin: [70, 70, 70, 70] // marginTop, marginRight, marginBottom and
+        // marginLeft
     },
     title: {
         text: 'Official regions of the United States'
@@ -31,7 +32,9 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         headerFormat: null,
-        pointFormat: '- State of <b>{point.USstate}</b><br/> - The <b>{point.region}</b> region<br/> <b>- {point.capital}</b> is the captal<br/> '
+        pointFormat: '- State of <b>{point.USstate}</b><br/> - The <b>' +
+            '{point.region}</b> region<br/> <b>- {point.capital}</b> is the ' +
+            'captal<br/> '
     },
     xAxis: {
         lineWidth: 0,

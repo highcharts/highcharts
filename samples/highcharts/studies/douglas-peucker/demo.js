@@ -30,9 +30,11 @@ function simplifyPath(data, epsilon) {
         // Evaluate
         if (dmax >= epsilon) {
             result = result.concat(
-                douglasPecker(data.slice(0, index + 1), epsilon));
+                douglasPecker(data.slice(0, index + 1), epsilon)
+            );
             result = result.concat(
-                douglasPecker(data.slice(index + 1, data.length), epsilon));
+                douglasPecker(data.slice(index + 1, data.length), epsilon)
+            );
         } else {
             result = [start];
         }
@@ -80,7 +82,12 @@ function getData(n) {
 const rawData = getData(500000),
     simplifiedData = simplifyPath(rawData, 3);
 
-console.log('Raw data length:', rawData.length, 'Simplifid data length:', simplifiedData.length);
+console.log(
+    'Raw data length:',
+    rawData.length,
+    'Simplifid data length:',
+    simplifiedData.length
+);
 rawData.length = 0; // clear memory
 
 console.time('Highcharts.Chart');
@@ -91,7 +98,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The points are filtered through the Douglas Peucker algorithm<br>View console for benchmarks'
+        text: 'The points are filtered through the Douglas Peucker ' +
+            'algorithm<br>View console for benchmarks'
     },
 
     series: [{

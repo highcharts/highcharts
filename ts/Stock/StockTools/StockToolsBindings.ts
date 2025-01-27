@@ -905,7 +905,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             background: {
                                 width: 0,
                                 height: 0,
-                                strokeWidth: 10
+                                strokeWidth: 0,
+                                stroke: Palette.backgroundColor
                             },
                             crosshairX: {
                                 strokeWidth: 1,
@@ -1090,7 +1091,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 }
                             },
                             { x, y },
-                            { x, y }],
+                            { x, y }
+                            ],
                             innerBackground: {
                                 fill: 'rgba(100, 170, 255, 0.8)'
                             }

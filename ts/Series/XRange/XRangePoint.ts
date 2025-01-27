@@ -89,7 +89,7 @@ class XRangePoint extends ColumnPoint {
                 colors.length :
                 series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
-            color = colors && colors[colorIndex];
+            color = colors?.[colorIndex];
 
         return {
             colorIndex: colorIndex,
@@ -148,32 +148,27 @@ class XRangePoint extends ColumnPoint {
     }
 
     /**
+     * Extend applyOptions to handle time strings for x2
+     *
+     * @private
+     */
+    public applyOptions(
+        options: XRangePointOptions,
+        x: number
+    ): Point {
+        super.applyOptions(options, x);
+        this.x2 = this.series.chart.time.parse(this.x2);
+        this.isNull = !this.isValid?.();
+        return this;
+    }
+
+    /**
      * @private
      */
     public setState(): void {
         super.setState.apply(this, arguments as any);
 
         this.series.drawPoint(this, this.series.getAnimationVerb());
-    }
-
-    /**
-     * Add x2 and yCategory to the available properties for tooltip formats.
-     *
-     * @private
-     */
-    public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        const cfg = super.getLabelConfig.call(this) as
-                XRangePoint.XRangePointLabelObject,
-            yCats = this.series.yAxis.categories;
-
-        cfg.x2 = this.x2;
-        cfg.yCategory = this.yCategory = yCats && yCats[this.y as any];
-
-        // Use 'category' as 'key' to ensure tooltip datetime formatting.
-        // Use 'name' only when 'category' is undefined.
-        cfg.key = this.category || this.name;
-
-        return cfg;
     }
 
     /**
@@ -215,13 +210,6 @@ extend(XRangePoint.prototype, {
  *
  * */
 
-declare namespace XRangePoint {
-    interface XRangePointLabelObject extends Point.PointLabelObject {
-        x2?: XRangePoint['x2'];
-        yCategory?: XRangePoint['yCategory'];
-    }
-}
-
 /* *
  *
  *  Default Export
@@ -244,16 +232,6 @@ export default XRangePoint;
  */
 
 /**
- * Extend applyOptions so that `colorByPoint` for x-range means that one
- * color is applied per Y axis category.
- *
- * @private
- * @function Highcharts.Point#applyOptions
- *
- * @return {Highcharts.Series}
- */
-
-/**
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  *//**
  * The ending X value of the range point.
@@ -262,4 +240,4 @@ export default XRangePoint;
  * @requires modules/xrange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

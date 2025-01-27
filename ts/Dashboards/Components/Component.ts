@@ -23,8 +23,6 @@
  * */
 
 import type Board from '../Board';
-import type Cell from '../Layout/Cell';
-import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -32,17 +30,22 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
-import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
+import Cell from '../Layout/Cell.js';
+import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
+import ConnectorHandler from './ConnectorHandler.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
+import Sync from './Sync/Sync.js';
+
 import Globals from '../Globals.js';
 const { classNamePrefix } = Globals;
+
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -53,7 +56,6 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    relativeLength,
     diffObjects
 } = U;
 
@@ -62,10 +64,12 @@ const {
     getMargins,
     getPaddings
 } = CU;
-import ComponentGroup from './ComponentGroup.js';
+
 import DU from '../Utilities.js';
-const { uniqueKey } = DU;
-import Sync from './Sync/Sync.js';
+const {
+    deepClone,
+    uniqueKey
+} = DU;
 
 /* *
  *
@@ -146,6 +150,13 @@ abstract class Component {
     /** @internal */
     public static Sync = Sync;
     /**
+     * Predefined sync config for component.
+     */
+    public static predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+        defaultSyncOptions: {},
+        defaultSyncPairs: {}
+    };
+    /**
      * Default options of the component.
      */
     public static defaultOptions: Partial<Component.Options> = {
@@ -155,10 +166,6 @@ abstract class Component {
         caption: false,
         sync: Sync.defaultHandlers,
         editableOptions: [{
-            name: 'connectorName',
-            propertyPath: ['connector', 'id'],
-            type: 'select'
-        }, {
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
@@ -180,19 +187,11 @@ abstract class Component {
      *
      * @internal
      */
-    public cell: Cell;
+    public cell: Cell|CellHTML;
     /**
-     * Default sync Handlers.
+     * The connector handlers for the component.
      */
-    public static syncHandlers: Sync.OptionsRecord = {};
-    /**
-     * Connector that allows you to load data via URL or from a local source.
-     */
-    public connector?: Component.ConnectorTypes;
-    /**
-     * The id of the connector in the data pool to use.
-     */
-    protected connectorId?: string;
+    public connectorHandlers: ConnectorHandler[] = [];
     /**
      * @internal
      * The board the component belongs to
@@ -212,6 +211,10 @@ abstract class Component {
      * The HTML element where the title is.
      */
     public titleElement?: HTMLElement;
+    /**
+     * Whether the component state is active.
+     */
+    public isActive?: boolean;
     /**
      * The HTML element where the caption is.
      */
@@ -243,52 +246,26 @@ abstract class Component {
      */
     public callbackRegistry = new CallbackRegistry();
     /**
-     * The interval for rendering the component on data changes.
-     * @internal
-     */
-    private tableEventTimeout?: number;
-    /**
-     * Event listeners tied to the current DataTable. Used for rerendering the
-     * component on data changes.
-     *
-     * @internal
-     */
-    private tableEvents: Function[] = [];
-    /**
      * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
      *
      * @internal
      */
     private cellListeners: Function[] = [];
+
+    /**
+     * Reference to ResizeObserver, which allows running 'unobserve'.
+     * @internal
+     */
+    private resizeObserver?: ResizeObserver;
+
     /**
      * @internal
      */
     protected syncHandlers?: Sync.OptionsRecord;
 
-    /**
-     * DataModifier that is applied on top of modifiers set on the DataStore.
-     *
-     * @internal
-     */
-    public presentationModifier?: DataModifier;
-    /**
-     * The table being presented, either a result of the above or a way to
-     * modify the table via events.
-     *
-     * @internal
-     */
-    public presentationTable?: DataTable;
-
-    /**
-     * The active group of the component. Used for sync.
-     *
-     * @internal
-     */
-    public activeGroup: ComponentGroup | undefined;
-
     /** @internal */
-    public abstract sync: Sync;
+    public sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`.
@@ -322,10 +299,13 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>
+        options: Partial<Component.Options>,
+        board?: Board
     ) {
-        this.board = cell.row.layout.board;
-        this.parentElement = cell.container;
+        const renderTo = options.renderTo || options.cell;
+        this.board = board || cell?.row?.layout?.board || {};
+        this.parentElement =
+            cell?.container || document.querySelector('#' + renderTo);
         this.cell = cell;
 
         this.options = merge(
@@ -337,10 +317,20 @@ abstract class Component {
             this.options.id :
             uniqueKey();
 
+        if (this.options.connector) {
+            const connectorOptionsArray = isArray(this.options.connector) ?
+                this.options.connector :
+                [this.options.connector];
+
+            for (const connectorOptions of connectorOptionsArray) {
+                this.connectorHandlers.push(
+                    new ConnectorHandler(this, connectorOptions)
+                );
+            }
+        }
+
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
-
-        this.presentationModifier = this.options.presentationModifier;
 
         this.dimensions = {
             width: null,
@@ -356,6 +346,11 @@ abstract class Component {
             this.parentElement
         );
 
+        if (!Number(getStyle(this.element, 'padding'))) {
+            // Fix flex problem, because of wrong height in internal elements
+            this.element.style.padding = '0.1px';
+        }
+
         this.contentElement = createElement(
             'div', {
                 className: `${this.options.className}-content`
@@ -365,29 +360,45 @@ abstract class Component {
             true
         );
 
-        this.filterAndAssignSyncOptions();
+        this.sync = new Sync(
+            this,
+            (this.constructor as typeof Component).predefinedSyncConfig
+        );
+
         this.setupEventListeners();
-        this.attachCellListeneres();
+
+        if (cell) {
+            this.attachCellListeners();
+
+            this.on('update', (): void => {
+                if (Cell.isCell(this.cell)) {
+                    this.cell.setLoadingState();
+                }
+            });
+
+            this.on('afterRender', (): void => {
+                if (Cell.isCell(this.cell)) {
+                    this.cell.setLoadingState(false);
+                }
+            });
+        }
 
         this.on('tableChanged', (): void => {
             this.onTableChanged();
         });
-
-        this.on('update', (): void => {
-            this.cell.setLoadingState();
-        });
-
-        this.on('afterRender', (): void => {
-            this.cell.setLoadingState(false);
-        });
     }
 
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
-     * Function fired when component's `tableChanged` event is fired.
-     * @internal
+     * Function fired when component's data source's data is changed.
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
-
 
     /**
      * Returns the component's options when it is dropped from the sidebar.
@@ -402,92 +413,13 @@ abstract class Component {
         return {};
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
     /**
-     * Inits connectors for the component and rerenders it.
+     * Returns the first connector of the component if it exists.
      *
-     * @returns
-     * Promise resolving to the component.
+     * @internal
      */
-    public async initConnector(): Promise<this> {
-        const connectorId = this.options.connector?.id,
-            dataPool = this.board.dataPool;
-
-        if (
-            connectorId &&
-            (
-                this.connectorId !== connectorId ||
-                dataPool.isNewConnector(connectorId)
-            )
-        ) {
-            this.cell.setLoadingState();
-
-            const connector = await dataPool.getConnector(connectorId);
-
-            this.setConnector(connector);
-        }
-
-        return this;
-    }
-    /**
-    * Filter the sync options that are declared in the component options.
-    * Assigns the sync options to the component and to the sync instance.
-    *
-    * @param defaultHandlers
-    * Sync handlers on component.
-    *
-    * @internal
-    */
-    protected filterAndAssignSyncOptions(
-        defaultHandlers: typeof Sync.defaultHandlers = (
-            this.constructor as typeof Component
-        ).syncHandlers
-    ): void {
-        const sync = this.options.sync || {};
-        const syncHandlers = (Object.keys(sync) as Component.SyncType[])
-            .reduce(
-                (
-                    carry: Sync.OptionsRecord,
-                    handlerName
-                ): Sync.OptionsRecord => {
-                    if (handlerName) {
-                        const handler = sync[handlerName],
-                            defaultHandler = defaultHandlers[handlerName];
-
-                        if (defaultHandler) {
-                            if (handler === true) {
-                                carry[handlerName] = defaultHandler;
-                            } else if (handler && handler.enabled) {
-                                const keys: (keyof Sync.OptionsEntry)[] = [
-                                    'emitter', 'handler'
-                                ];
-
-                                carry[handlerName] = {};
-                                for (const key of keys) {
-                                    if (
-                                        handler[key] === true ||
-                                        handler[key] === void 0
-                                    ) {
-                                        carry[handlerName][key] =
-                                            defaultHandler[key] as any;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    return carry;
-                },
-                {}
-            );
-
-        this.sync ? this.sync.syncConfig = syncHandlers : void 0;
-        this.syncHandlers = syncHandlers;
+    public getFirstConnector(): Component.ConnectorTypes | undefined {
+        return this.connectorHandlers[0]?.connector;
     }
 
     /**
@@ -495,8 +427,8 @@ abstract class Component {
      *
      * @internal
      */
-    private attachCellListeneres(): void {
-        // remove old listeners
+    private attachCellListeners(): void {
+        // Remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -504,7 +436,11 @@ abstract class Component {
             }
         }
 
-        if (this.cell && Object.keys(this.cell).length) {
+        if (
+            this.cell &&
+            Cell.isCell(this.cell) &&
+            Object.keys(this.cell).length
+        ) {
             const board = this.cell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
@@ -519,10 +455,10 @@ abstract class Component {
                         const { row } = e;
                         if (row && this.cell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.cell) === void 0;
+                                row.getCellIndex(this.cell as Cell) === void 0;
                             if (hasLeftTheRow) {
                                 if (this.cell) {
-                                    this.setCell(this.cell);
+                                    this.setCell(this.cell as Cell);
                                 }
                             }
                         }
@@ -547,176 +483,30 @@ abstract class Component {
         if (cell.container) {
             this.parentElement = cell.container;
         }
-        this.attachCellListeneres();
+        this.attachCellListeners();
         if (resize) {
             this.resizeTo(this.parentElement);
         }
     }
 
     /**
-     * Adds event listeners to data table.
-     * @param table
-     * Data table that is source of data.
-     * @internal
+     * Initializes connector handlers for the component.
      */
-    private setupTableListeners(table: DataTable): void {
-        const connector = this.connector;
+    public async initConnectors(): Promise<this> {
+        fireEvent(this, 'setConnectors', {
+            connectorHandlers: this.connectorHandlers
+        });
 
-        if (connector) {
-            if (table) {
-                [
-                    'afterDeleteColumns',
-                    'afterDeleteRows',
-                    'afterSetCell',
-                    'afterSetConnector',
-                    'afterSetColumns',
-                    'afterSetRows'
-                ].forEach((event: any): void => {
-                    this.tableEvents.push((table)
-                        .on(event, (e: any): void => {
-                            clearTimeout(this.tableEventTimeout);
-                            this.tableEventTimeout = Globals.win.setTimeout(
-                                (): void => {
-                                    this.emit({
-                                        ...e,
-                                        type: 'tableChanged'
-                                    });
-                                    this.tableEventTimeout = void 0;
-                                });
-                        }));
-                });
-            }
-
-            this.tableEvents.push(connector.on('afterLoad', (): void => {
-                clearTimeout(this.tableEventTimeout);
-                this.tableEventTimeout = Globals.win.setTimeout(
-                    (): void => {
-                        this.emit({
-                            target: this,
-                            type: 'tableChanged'
-                        });
-
-                        this.tableEventTimeout = void 0;
-                    });
-            }));
-        }
-    }
-
-    /**
-     * Remove event listeners in data table.
-     * @internal
-     */
-    private clearTableListeners(): void {
-        const connector = this.connector,
-            tableEvents = this.tableEvents;
-
-        if (tableEvents.length) {
-            tableEvents.forEach(
-                (removeEventCallback): void => removeEventCallback()
-            );
+        for (const connectorHandler of this.connectorHandlers) {
+            await connectorHandler.initConnector();
         }
 
-        if (connector) {
-            tableEvents.push(connector.table.on(
-                'afterSetModifier',
-                (e): void => {
-                    if (e.type === 'afterSetModifier') {
-                        clearTimeout(this.tableEventTimeout);
-                        this.tableEventTimeout = Globals.win.setTimeout(
-                            (): void => {
-                                this.emit({
-                                    ...e,
-                                    type: 'tableChanged'
-                                });
-                                this.tableEventTimeout = void 0;
-                            });
-
-                    }
-                }
-            ));
-        }
-    }
-
-    /**
-     * Attaches data store to the component.
-     * @param connector
-     * Connector of data.
-     *
-     * @returns
-     * Component which can be used in chaining.
-     *
-     * @internal
-     */
-    public setConnector(connector: Component.ConnectorTypes | undefined): this {
-
-        fireEvent(this, 'setConnector', { connector });
-
-        // Clean up old event listeners
-        while (this.tableEvents.length) {
-            const eventCallback = this.tableEvents.pop();
-            if (typeof eventCallback === 'function') {
-                eventCallback();
-            }
-        }
-
-        this.connector = connector;
-
-        if (connector) {
-            // Set up event listeners
-            this.clearTableListeners();
-            this.setupTableListeners(connector.table);
-
-            // re-setup if modifier changes
-            connector.table.on(
-                'setModifier',
-                (): void => this.clearTableListeners()
-            );
-            connector.table.on(
-                'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
-                    if (e.type === 'afterSetModifier' && e.modified) {
-                        this.setupTableListeners(e.modified);
-                    }
-                }
-            );
-
-
-            // Add the component to a group based on the
-            // connector table id by default
-            // TODO: make this configurable
-            const tableID = connector.table.id;
-
-            if (!ComponentGroup.getComponentGroup(tableID)) {
-                ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
-            }
-
-            const group = ComponentGroup.getComponentGroup(tableID);
-            if (group) {
-                group.addComponents([this.id]);
-                this.activeGroup = group;
-            }
-        }
-
-        fireEvent(this, 'afterSetConnector', { connector });
-
+        fireEvent(this, 'afterSetConnectors', {
+            connectorHandlers: this.connectorHandlers
+        });
         return this;
     }
 
-    /** @internal */
-    setActiveGroup(group: ComponentGroup | string | null): void {
-        if (typeof group === 'string') {
-            group = ComponentGroup.getComponentGroup(group) || null;
-        }
-        if (group instanceof ComponentGroup) {
-            this.activeGroup = group;
-        }
-        if (group === null) {
-            this.activeGroup = void 0;
-        }
-        if (this.activeGroup) {
-            this.activeGroup.addComponents([this.id]);
-        }
-    }
     /**
      * Gets height of the component's content.
      *
@@ -725,8 +515,6 @@ abstract class Component {
      * @internal
      */
     private getContentHeight(): number {
-        const parentHeight =
-            this.dimensions.height || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;
@@ -735,7 +523,7 @@ abstract class Component {
             getMargins(this.captionElement).y :
             0;
 
-        return parentHeight - titleHeight - captionHeight;
+        return titleHeight + captionHeight;
     }
 
     /**
@@ -757,30 +545,50 @@ abstract class Component {
             // Get offset for border, padding
             const pad =
                 getPaddings(this.element).y + getMargins(this.element).y;
-
-            this.dimensions.height = relativeLength(
-                height, Number(getStyle(this.parentElement, 'height'))
-            ) - pad;
-            this.element.style.height = this.dimensions.height + 'px';
-            this.contentElement.style.height = this.getContentHeight() + 'px';
-        }
-        if (width) {
-            const pad =
-                getPaddings(this.element).x + getMargins(this.element).x;
-            this.dimensions.width = relativeLength(
-                width, Number(getStyle(this.parentElement, 'width'))
-            ) - pad;
-            this.element.style.width = this.dimensions.width + 'px';
-        }
-
-        if (height === null) {
+            this.element.style.height = 'calc(100% - ' + pad + 'px)';
+            this.contentElement.style.height =
+                'calc(100% - ' + this.getContentHeight() + 'px)';
+        } else if (height === null) {
             this.dimensions.height = null;
             this.element.style.removeProperty('height');
         }
 
-        if (width === null) {
-            this.dimensions.width = null;
-            this.element.style.removeProperty('width');
+        fireEvent(this, 'resize', {
+            width,
+            height
+        });
+    }
+
+    /**
+     * It's a temporary alternative for the `resize` method. It sets the strict
+     * pixel height for the component so that the content can be distributed in
+     * the right way, without looping the resizers in the content and container.
+     * @param width
+     * The width to set the component to.
+     * @param height
+     * The height to set the component to.
+     */
+    protected resizeDynamicContent(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        const { element } = this;
+        if (height) {
+            const margins = getMargins(element).y;
+            const paddings = getPaddings(element).y;
+
+            if (typeof height === 'string') {
+                height = parseFloat(height);
+            }
+            height = Math.round(height);
+
+            element.style.height = `${height - margins - paddings}px`;
+            this.contentElement.style.height = `${
+                element.clientHeight - this.getContentHeight() - paddings
+            }px`;
+        } else if (height === null) {
+            this.dimensions.height = null;
+            element.style.removeProperty('height');
         }
 
         fireEvent(this, 'resize', {
@@ -805,7 +613,6 @@ abstract class Component {
             const { width, height } = element.getBoundingClientRect();
             const padding = getPaddings(element);
             const margins = getMargins(element);
-
             this.resize(
                 width - padding.x - margins.x,
                 height - padding.y - margins.y
@@ -835,25 +642,52 @@ abstract class Component {
         // Update options
         fireEvent(this, 'update', eventObject);
 
-        this.options = merge(this.options, newOptions);
-
-        if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
-        ) {
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
-
-            this.setConnector(connector);
+        if (newOptions.connector && Array.isArray(this.options.connector)) {
+            this.options.connector = void 0;
         }
 
         this.options = merge(this.options, newOptions);
+        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
+            this.options.connector ? (
+                isArray(this.options.connector) ? this.options.connector :
+                    [this.options.connector]
+            ) : []
+        );
 
+        let connectorsHaveChanged =
+            connectorOptions.length !== this.connectorHandlers.length;
+
+        if (!connectorsHaveChanged) {
+            for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
+                const oldConnectorId = this.connectorHandlers[i]?.options.id;
+                const newConnectorId = connectorOptions[i]?.id;
+
+                if (oldConnectorId !== newConnectorId) {
+                    connectorsHaveChanged = true;
+                    break;
+                }
+
+                this.connectorHandlers[i].updateOptions(connectorOptions[i]);
+            }
+        }
+
+        if (connectorsHaveChanged) {
+            for (const connectorHandler of this.connectorHandlers) {
+                connectorHandler.destroy();
+            }
+            this.connectorHandlers.length = 0;
+
+            for (const options of connectorOptions) {
+                this.connectorHandlers.push(
+                    new ConnectorHandler(this, options)
+                );
+            }
+            await this.initConnectors();
+        }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
         }
-
     }
 
     /**
@@ -881,12 +715,17 @@ abstract class Component {
                 }
             });
         }
+        const resizeObserverCallback = (): void => {
+            this.resizeTo(this.parentElement);
+        };
 
-        // TODO: Replace with a resize observer.
-        window.addEventListener(
-            'resize',
-            (): void => this.resizeTo(this.parentElement)
-        );
+        if (typeof ResizeObserver === 'function') {
+            this.resizeObserver = new ResizeObserver(resizeObserverCallback);
+            this.resizeObserver.observe(this.element);
+        } else {
+            const unbind = addEvent(window, 'resize', resizeObserverCallback);
+            addEvent(this, 'destroy', unbind);
+        }
     }
 
     /**
@@ -976,7 +815,7 @@ abstract class Component {
      */
     public async load(): Promise<this> {
 
-        await this.initConnector();
+        await this.initConnectors();
         this.render();
 
         return this;
@@ -992,9 +831,9 @@ abstract class Component {
      */
     public render(): this {
         this.emit({ type: 'render' });
-        this.resizeTo(this.parentElement);
         this.setTitle(this.options.title);
         this.setCaption(this.options.caption);
+        this.resizeTo(this.parentElement);
 
         return this;
     }
@@ -1007,17 +846,21 @@ abstract class Component {
          * TODO: Should perhaps set an `isActive` flag to false.
          */
 
+        if (this.sync.isSyncing) {
+            this.sync.stop();
+        }
+
         while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
 
-        // call unmount
+        // Call unmount
         fireEvent(this, 'unmount');
 
-        // Unregister events
-        this.tableEvents.forEach((eventCallback): void => eventCallback());
+        for (const connectorHandler of this.connectorHandlers) {
+            connectorHandler.destroy();
+        }
         this.element.remove();
-
     }
 
     /** @internal */
@@ -1061,9 +904,8 @@ abstract class Component {
 
         const json: Component.JSON = {
             $class: this.options.type,
-            // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
-                cell: this.options.cell,
+                renderTo: this.options.renderTo,
                 parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
@@ -1088,12 +930,17 @@ abstract class Component {
 
     public getEditableOptions(): Component.Options {
         const component = this;
-        return merge(component.options);
+
+        // When refactoring, limit the copied options to the ones that are
+        // actually editable to avoid unnecessary memory usage.
+        return deepClone(component.options, [
+            'dataTable', 'points', 'series', 'data', 'editableOptions'
+        ]);
     }
 
 
     public getEditableOptionValue(
-        propertyPath?: string[]
+        propertyPath?: (string|number)[]
     ): number | boolean | undefined | string {
         const component = this;
         if (!propertyPath) {
@@ -1103,8 +950,12 @@ abstract class Component {
         let result = component.getEditableOptions() as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (isArray(result)) {
-                result = result[0];
+            if (
+                isArray(result) &&
+                propertyPath[0] === 'connector' &&
+                result.length > 1
+            ) {
+                return 'multiple connectors';
             }
 
             if (!result) {
@@ -1112,6 +963,17 @@ abstract class Component {
             }
 
             result = result[propertyPath[i]];
+
+            if (
+                result === false &&
+                (
+                    propertyPath.indexOf('title') >= 0 ||
+                    propertyPath.indexOf('subtitle') >= 0 ||
+                    propertyPath.indexOf('caption') >= 0
+                )
+            ) {
+                result = '';
+            }
         }
 
         return result;
@@ -1136,6 +998,8 @@ interface Component {
 
 namespace Component {
 
+    export type ConnectorOptions = ConnectorHandler.ConnectorOptions;
+
     /* *
     *
     *  Declarations
@@ -1143,7 +1007,6 @@ namespace Component {
     * */
     /** @internal */
     export interface JSON extends Serializable.JSON<string> {
-        // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -1152,7 +1015,7 @@ namespace Component {
      */
     /** @internal */
     export type EventTypes =
-        SetConnectorEvent |
+        SetConnectorsEvent |
         ResizeEvent |
         UpdateEvent |
         TableChangedEvent |
@@ -1161,8 +1024,8 @@ namespace Component {
         JSONEvent |
         PresentationModifierEvent;
 
-    export type SetConnectorEvent =
-        Event<'setConnector'|'afterSetConnector', {}>;
+    export type SetConnectorsEvent =
+        Event<'setConnectors'|'afterSetConnectors', {}>;
 
     /** @internal */
     export type ResizeEvent = Event<'resize', {
@@ -1200,109 +1063,20 @@ namespace Component {
             detail?: Globals.AnyRecord;
         } & EventRecord;
 
-    /**
-     * The sync can be an object configuration containing: `highlight`,
-     * `visibility` or `extremes`. For the Navigator Component `crossfilter`
-     * sync can be used.
-     *
-     * Example:
-     * ```
-     * {
-     *     highlight: true
-     * }
-     * ```
-     */
-    export interface SyncOptions {
-        /**
-         * Crossfilter sync is available for Navigator components. Modifies data
-         * by selecting only those rows that meet common ranges.
-         *
-         * Alternatively to the boolean value, it can accept an object
-         * containing additional options for operating this type of
-         * synchronization.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Crossfilter with affectNavigators enabled }
-         *
-         * @default false
-         */
-        crossfilter?: boolean|CrossfilterSyncOptions;
-        /**
-         * Extremes sync is available for Highcharts, KPI, DataGrid and
-         * Navigator components. Sets a common range of displayed data. For the
-         * KPI Component sets the last value.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * @default false
-         */
-        extremes?: boolean|Sync.OptionsEntry;
-        /**
-         * Highlight sync is available for Highcharts and DataGrid components.
-         * It allows to highlight hovered corresponding rows in the table and
-         * chart points.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * @default false
-         */
-        highlight?: boolean|Sync.OptionsEntry;
-        /**
-         * Visibility sync is available for Highcharts and DataGrid components.
-         * Synchronizes the visibility of data from a hidden/shown series.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * @default false
-         */
-        visibility?: boolean|Sync.OptionsEntry;
-    }
-
-    /**
-     * The crossfilter sync options.
-     *
-     * Example:
-     * ```
-     * {
-     *     enabled: true,
-     *     affectNavigator: true
-     * }
-     * ```
-     */
-    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
-        /**
-         * Whether this navigator component's content should be affected by
-         * other navigators with crossfilter enabled.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
-         *
-         * @default false
-         */
-        affectNavigator?: boolean;
-    }
-
-    /** @internal */
-    export type SyncType = keyof SyncOptions;
-
     export interface Options {
 
         /**
          * Cell id, where component is attached.
+         * Deprecated, use `renderTo` instead.
+         *
+         * @deprecated
          */
         cell?: string;
+
+        /**
+         * Cell id, where component is attached.
+         */
+        renderTo?: string;
 
         /**
          * The name of class that is applied to the component's container.
@@ -1335,30 +1109,11 @@ namespace Component {
         /** @internal */
         editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
-        presentationModifier?: DataModifier;
-        /**
-         * Defines which elements should be synced.
-         * ```
-         * Example:
-         * {
-         *     highlight: true
-         * }
-         * ```
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/crossfilter | Crossfilter Sync } (Navigator Component only)
-         */
-        sync?: SyncOptions;
+        sync?: Sync.RawOptionsRecord;
         /**
          * Connector options
          */
-        connector?: ComponentConnectorOptions;
+        connector?: (ConnectorOptions|Array<ConnectorOptions>);
         /**
          * Sets an ID for the component's container.
          */
@@ -1379,6 +1134,48 @@ namespace Component {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
+
+        /**
+         * States for the component.
+         */
+        states?: StatesOptions;
+    }
+
+    /**
+     * States options for the component.
+     */
+    export interface StatesOptions {
+        active?: {
+            /**
+             * Whether the component is active. Only used when `enabled` is
+             * `true`.
+             * If `true`, the `highcharts-dashboards-cell-state-active` class
+             * will be added to the component's container.
+             *
+             * Only one component can be active at a time.
+             *
+             * Try it:
+             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+             *
+             * @default false
+             */
+            isActive?: boolean;
+
+            /**
+             * Whether to enable the active state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
+        hover?: {
+            /**
+             * Whether to enable the hover state.
+             *
+             * @default false
+             */
+            enabled?: boolean;
+        };
     }
 
     /**
@@ -1386,18 +1183,16 @@ namespace Component {
      * @internal
      *  */
     export interface ComponentOptionsJSON extends JSON.Object {
-        // connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
         className?: string;
-        cell?: string;
+        renderTo?: string;
         editableOptions?: JSON.Array<string>;
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
         parentCell?: Cell.JSON;
-        // store?: DataStore.ClassJSON; // store id
         parentElement?: string; // ID?
         style?: {};
-        sync?: SyncOptions&JSON.Object;
+        sync?: Sync.RawOptionsRecord&JSON.Object;
         title?: string;
         type: keyof ComponentTypeRegistry;
     }

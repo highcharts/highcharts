@@ -206,7 +206,7 @@ namespace ParallelCoordinates {
          * Flag used in parallel coordinates plot to check if chart has
          * ||-coords (parallel coords).
          *
-         * @requires module:modules/parallel-coordinates
+         * @requires modules/parallel-coordinates
          *
          * @name Highcharts.Chart#hasParallelCoordinates
          * @type {boolean}
@@ -253,7 +253,7 @@ namespace ParallelCoordinates {
 
             options.yAxis = defaultYAxis.concat(newYAxes);
             options.xAxis = merge(
-                ParallelCoordinatesDefaults.xAxis, // docs
+                ParallelCoordinatesDefaults.xAxis, // Docs
                 splat(options.xAxis || {})[0]
             );
         }

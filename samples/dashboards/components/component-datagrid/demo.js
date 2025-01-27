@@ -31,29 +31,30 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'cell-id',
-        elements: [
-            {
-                tagName: 'h1',
-                textContent: 'Sales in the last 7 days'
-            }
-        ]
+        renderTo: 'cell-id',
+        elements: [{
+            tagName: 'h1',
+            textContent: 'Sales in the last 7 days'
+        }]
     }, {
+        type: 'DataGrid',
+        renderTo: 'cell-id-2',
         connector: {
             id: 'data'
         },
-        type: 'DataGrid',
-        cell: 'cell-id-2',
         dataGridOptions: {
-            editable: false,
-            columns: {
-                Revenue: {
-                    headerFormat: '{text} (€)'
-                },
-                Category: {
-                    show: false
+            credits: {
+                enabled: false
+            },
+            columns: [{
+                id: 'Revenue',
+                header: {
+                    format: '{id} (€)'
                 }
-            }
+            }, {
+                id: 'Category',
+                enabled: false
+            }]
         }
     }]
 });

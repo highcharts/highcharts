@@ -99,18 +99,21 @@ const freqToNote = (f: number): number => Math.round(
                         .noteStringToC0Distance(note) : note) & 0x7F;
 
             // CTRL_CHANGE events
-            ctrl.forEach((ctrlDef): void => Object.keys(ctrlDef.data)
-                .forEach((ctrlSignal): void => {
-                    const val = (ctrlDef.data as AnyRecord)[ctrlSignal];
-                    if (val !== void 0) {
-                        add({
-                            timeMS: t,
-                            type: 'CTRL_CHG',
-                            data: [0xB0, parseInt(ctrlSignal, 10),
-                                ctrlDef.valMap(val)]
-                        });
-                    }
-                }));
+            ctrl.forEach(
+                (ctrlDef): void => Object.keys(ctrlDef.data)
+                    .forEach((ctrlSignal): void => {
+                        const val = (ctrlDef.data as AnyRecord)[ctrlSignal];
+                        if (val !== void 0) {
+                            add({
+                                timeMS: t,
+                                type: 'CTRL_CHG',
+                                data: [
+                                    0xB0, parseInt(ctrlSignal, 10),
+                                    ctrlDef.valMap(val)
+                                ]
+                            });
+                        }
+                    }));
 
             // NON/NOF
             if (tNOF) {
@@ -190,8 +193,12 @@ function toMIDI(channels: TimelineChannel[]): Uint8Array {
             multiCh ? getTrackChunk([], true) : [], // Time info only
             channelsToAdd.reduce((chunks, channel): number[] => {
                 const engine = channel.engine as SonificationInstrument;
-                return chunks.concat(getTrackChunk(channel.events, !multiCh,
-                    engine.midiTrackName, engine.midiInstrument));
+                return chunks.concat(
+                    getTrackChunk(
+                        channel.events, !multiCh,
+                        engine.midiTrackName, engine.midiInstrument
+                    )
+                );
             }, [] as number[])));
 }
 

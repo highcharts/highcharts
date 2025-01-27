@@ -13,7 +13,9 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
             ]
         }),
         series = chart.series[0],
-        announcerDiv = document.querySelector('.highcharts-announcer-container').querySelectorAll('div')[0];
+        announcerDiv = document.querySelector(
+            '.highcharts-announcer-container'
+        ).querySelectorAll('div')[0];
 
     assert.ok(
         chart.accessibility.components.infoRegions.announcer.announceRegion,
@@ -39,7 +41,8 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
     setTimeout(function () {
         assert.ok(
             announcerDiv.innerHTML,
-            'The announceRegion should contain text content after adding a point'
+            'The announceRegion should contain text content after adding a ' +
+            'point'
         );
     }, 1);
 
@@ -63,7 +66,8 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
         assert.strictEqual(
             announcerDiv.innerHTML,
             '',
-            'The text in the announceRegion should be removed after a short while'
+            'The text in the announceRegion should be removed after a short ' +
+            'while'
         );
         done();
     }, 3100); // make sure clearAnnouncementTimerRegion is done

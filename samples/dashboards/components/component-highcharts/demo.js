@@ -12,7 +12,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'Highcharts',
-        cell: 'cell-id',
+        renderTo: 'cell-id',
         chartOptions: {
             title: {
                 text: 'Line chart'
@@ -23,7 +23,7 @@ Dashboards.board('container', {
         }
     }, {
         type: 'Highcharts',
-        cell: 'cell-id-2',
+        renderTo: 'cell-id-2',
         chartOptions: {
             title: {
                 text: 'Pie chart'

@@ -128,8 +128,10 @@ function resetDrilldown(chart) {
     // On point click, look for a detailed map to drill into
     const drilldown = async function (e) {
         const map = Object.entries(allMaps).find(map =>
-            map[0] === e.point.name) || Object.entries(allMaps).find(map =>
-            map[0].indexOf(e.point.name) === 0);
+            map[0] === e.point.name
+        ) || Object.entries(allMaps).find(map =>
+            map[0].indexOf(e.point.name) === 0
+        );
         if (!e.seriesOptions && map) {
             const chart = this,
                 mapName = map[0],
@@ -138,7 +140,10 @@ function resetDrilldown(chart) {
             // Handle error, the timeout is cleared on success
             let fail = setTimeout(() => {
                 if (!Highcharts.maps[mapKey]) {
-                    chart.showLoading('<i class="fa fa-frown"></i> Map not found');
+                    chart.showLoading(
+                        '<i class="fa fa-frown"></i> Map not ' +
+                        'found'
+                    );
                     fail = setTimeout(() => {
                         chart.hideLoading();
                     }, 1000);
@@ -191,6 +196,8 @@ function resetDrilldown(chart) {
                     mapKey
                 }
             });
+
+            // Update credits in afterDrilldown. The chart is not ready yet.
         }
     };
 
@@ -204,6 +211,7 @@ function resetDrilldown(chart) {
             fillInfo(mapName, mapKey);
             input.value = mapName;
         }
+        this.credits.update();
     };
 
     const data = mapData.objects.default.geometries.map((g, value) => ({
@@ -216,7 +224,8 @@ function resetDrilldown(chart) {
     const chart = Highcharts.mapChart('container', {
         accessibility: {
             series: {
-                descriptionFormat: '{series.name}, map with {series.points.length} areas.',
+                descriptionFormat: '{series.name}, map with ' +
+                    '{series.points.length} areas.',
                 pointDescriptionEnabledThreshold: 50
             }
         },
@@ -224,21 +233,15 @@ function resetDrilldown(chart) {
         chart: {
             events: {
                 drilldown,
-                afterDrillUp
+                afterDrillUp,
+                afterDrilldown: function () {
+                    this.credits.update();
+                }
             }
         },
 
         colorAxis: {
-            min: 0,
-            stops: [
-                [0, '#EFEFFF'],
-                [0.5, Highcharts.getOptions().colors[0]],
-                [
-                    1,
-                    Highcharts.color(Highcharts.getOptions().colors[0])
-                        .brighten(-0.5).get()
-                ]
-            ]
+            min: 0
         },
 
         drilldown: {
@@ -278,7 +281,8 @@ function resetDrilldown(chart) {
             name: initialMapName,
             dataLabels: {
                 formatter: function () {
-                    return this.point.properties && this.point.properties['hc-a2'];
+                    return this.point.properties && this.point.properties[
+                        'hc-a2'];
                 }
             },
             custom: {
@@ -362,6 +366,7 @@ function resetDrilldown(chart) {
             }
         });
         chart.hideLoading();
+        chart.credits.update();
     }
 
     // Change map on input change

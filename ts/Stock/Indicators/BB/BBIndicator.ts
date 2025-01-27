@@ -19,6 +19,7 @@ import type {
     BBParamsOptions
 } from './BBOptions';
 import type BBPoint from './BBPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -219,7 +220,7 @@ class BBIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -231,7 +232,7 @@ class BBIndicator extends SMAIndicator {
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-middle line, 2-top line, 3-bottom line
             BB: Array<Array<number>> = [];
-            // middle line, top line and bottom line
+            // Middle line, top line and bottom line
         let ML: number,
             TL: number,
             BL: number,
@@ -350,4 +351,4 @@ export default BBIndicator;
  * @apioption series.bb
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

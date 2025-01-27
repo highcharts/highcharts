@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     colors: [
-        { patternIndex: 3 }, { patternIndex: 1 }, '#5050f0'],
+        { patternIndex: 3 }, { patternIndex: 1 }, '#5050f0'
+    ],
     chart: {
         type: 'pie'
     },

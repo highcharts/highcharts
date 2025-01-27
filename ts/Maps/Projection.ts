@@ -81,7 +81,7 @@ const deg2rad = Math.PI * 2 / 360,
  * operator, and preserves the distinction between -180 and 180.
  * @private
  */
-function wrapLon(lon: number): number {
+const wrapLon = (lon: number): number => {
     // Replacing the if's with while would increase the range, but make it prone
     // to crashes on bad data
     if (lon < -180) {
@@ -91,7 +91,30 @@ function wrapLon(lon: number): number {
         lon -= 360;
     }
     return lon;
-}
+};
+
+/**
+ * Calculate the haversine of an angle.
+ * @private
+ */
+const hav = (radians: number): number => (1 - Math.cos(radians)) / 2;
+
+/**
+* Calculate the haversine of an angle from two coordinates.
+* @private
+*/
+const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
+    const cos = Math.cos,
+        lat1 = point1[1] * deg2rad,
+        lon1 = point1[0] * deg2rad,
+        lat2 = point2[1] * deg2rad,
+        lon2 = point2[0] * deg2rad,
+        deltaLat = lat2 - lat1,
+        deltaLon = lon2 - lon1,
+        havFromCoords = hav(deltaLat) + cos(lat1) * cos(lat2) * hav(deltaLon);
+
+    return havFromCoords;
+};
 
 /* *
  *
@@ -127,29 +150,50 @@ class Projection {
     }
 
     /**
-     * Calculate the great circle between two given coordinates.
+     * Calculate the distance in meters between two given coordinates.
      * @private
      */
-    public static greatCircle(
+    public static distance(
+        point1: LonLatArray,
+        point2: LonLatArray
+    ): number {
+        const { atan2, sqrt } = Math,
+
+            hav = havFromCoords(point1, point2),
+            angularDistance = 2 * atan2(sqrt(hav), sqrt(1 - hav)),
+            distance = angularDistance * 6371e3;
+
+        return distance;
+    }
+
+    /**
+     * Calculate the geodesic line string between two given coordinates.
+     * @private
+     */
+    public static geodesic(
         point1: LonLatArray,
         point2: LonLatArray,
-        inclusive?: boolean
+        inclusive?: boolean,
+        stepDistance: number = 500000
     ): LonLatArray[] {
         const { atan2, cos, sin, sqrt } = Math,
+            distance = Projection.distance,
+
             lat1 = point1[1] * deg2rad,
             lon1 = point1[0] * deg2rad,
             lat2 = point2[1] * deg2rad,
             lon2 = point2[0] * deg2rad,
+            cosLat1CosLon1 = cos(lat1) * cos(lon1),
+            cosLat2CosLon2 = cos(lat2) * cos(lon2),
+            cosLat1SinLon1 = cos(lat1) * sin(lon1),
+            cosLat2SinLon2 = cos(lat2) * sin(lon2),
+            sinLat1 = sin(lat1),
+            sinLat2 = sin(lat2),
 
-            deltaLat = lat2 - lat1,
-            deltaLng = lon2 - lon1,
-
-            calcA = sin(deltaLat / 2) * sin(deltaLat / 2) +
-                cos(lat1) * cos(lat2) * sin(deltaLng / 2) * sin(deltaLng / 2),
-            calcB = 2 * atan2(sqrt(calcA), sqrt(1 - calcA)),
-
-            distance = calcB * 6371e3, // In meters
-            jumps = Math.round(distance / 500000), // 500 km each jump
+            pointDistance = distance(point1, point2),
+            angDistance = pointDistance / 6371e3,
+            sinAng = sin(angDistance),
+            jumps = Math.round(pointDistance / stepDistance),
 
             lineString: LonLatArray[] = [];
 
@@ -165,12 +209,13 @@ class Projection {
                 fraction < 0.999; // Account for float errors
                 fraction += step
             ) {
-                const A = sin((1 - fraction) * calcB) / sin(calcB),
-                    B = sin(fraction * calcB) / sin(calcB),
+                // Add intermediate point to lineString
+                const A = sin((1 - fraction) * angDistance) / sinAng,
+                    B = sin(fraction * angDistance) / sinAng,
 
-                    x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2),
-                    y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2),
-                    z = A * sin(lat1) + B * sin(lat2),
+                    x = A * cosLat1CosLon1 + B * cosLat2CosLon2,
+                    y = A * cosLat1SinLon1 + B * cosLat2SinLon2,
+                    z = A * sinLat1 + B * sinLat2,
 
                     lat3 = atan2(z, sqrt(x * x + y * y)),
                     lon3 = atan2(y, x);
@@ -187,7 +232,7 @@ class Projection {
         return lineString;
     }
 
-    public static insertGreatCircles(
+    public static insertGeodesics(
         poly: LonLatArray[]
     ): void {
         let i = poly.length - 1;
@@ -200,12 +245,12 @@ class Projection {
                 Math.abs(poly[i][1] - poly[i + 1][1])
             );
             if (roughDistance > 10) {
-                const greatCircle = Projection.greatCircle(
+                const geodesic = Projection.geodesic(
                     poly[i],
                     poly[i + 1]
                 );
-                if (greatCircle.length) {
-                    poly.splice(i + 1, 0, ...greatCircle);
+                if (geodesic.length) {
+                    poly.splice(i + 1, 0, ...geodesic);
                 }
             }
         }
@@ -497,7 +542,8 @@ class Projection {
                 // primarily to Antarctica.
                 if (intersections.length % 2 === 1) {
                     polarIntersection = intersections.slice().sort(
-                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
+                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat)
+                    )[0];
 
                     erase(intersections, polarIntersection);
                 }
@@ -520,7 +566,7 @@ class Projection {
                         index,
                         intersections[i + 1].i - index,
                         // Add interpolated points close to the cut
-                        ...Projection.greatCircle(
+                        ...Projection.geodesic(
                             [lonPlus, intersections[i].lat],
                             [lonPlus, intersections[i + 1].lat],
                             true
@@ -529,7 +575,7 @@ class Projection {
 
                     // Add interpolated points close to the cut
                     slice.push(
-                        ...Projection.greatCircle(
+                        ...Projection.geodesic(
                             [lonMinus, intersections[i + 1].lat],
                             [lonMinus, intersections[i].lat],
                             true
@@ -560,7 +606,7 @@ class Projection {
                                 direction * floatCorrection
                             );
 
-                            const polarSegment = Projection.greatCircle(
+                            const polarSegment = Projection.geodesic(
                                 [lon1, lat],
                                 [lon1, polarLatitude],
                                 true
@@ -578,7 +624,7 @@ class Projection {
                                 polarSegment.push([lon, polarLatitude]);
                             }
 
-                            polarSegment.push(...Projection.greatCircle(
+                            polarSegment.push(...Projection.geodesic(
                                 [lon2, polarLatitude],
                                 [lon2, polarIntersection.lat],
                                 true
@@ -700,7 +746,7 @@ class Projection {
             if (hasGeoProjection) {
 
                 // Insert great circles into long straight lines
-                Projection.insertGreatCircles(poly);
+                Projection.insertGeodesics(poly);
 
                 if (projectingToPlane) {
                     polygons = this.cutOnAntimeridian(poly, isPolygon);
@@ -811,12 +857,13 @@ class Projection {
                                 // we may have to rewrite this to use the small
                                 // circle related to the current lon0 and lat0.
                                 if (isPolygon && hasGeoProjection) {
-                                    const greatCircle = Projection.greatCircle(
+                                    const geodesic = Projection.geodesic(
                                         lastValidLonLat,
                                         lonLat
                                     );
-                                    greatCircle.forEach((lonLat): void =>
-                                        pushToPath(postclip.forward(lonLat)));
+                                    geodesic.forEach((lonLat): void =>
+                                        pushToPath(postclip.forward(lonLat))
+                                    );
 
                                 // For lines, just jump over the gap
                                 } else {

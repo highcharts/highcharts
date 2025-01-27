@@ -18,6 +18,7 @@ import type {
     CCIParamsOptions
 } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -104,7 +105,7 @@ class CCIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            index: void 0 // Unused index, do not inherit (#15362)
         }
     } as CCIOptions);
 
@@ -125,7 +126,7 @@ class CCIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -155,7 +156,7 @@ class CCIIndicator extends SMAIndicator {
             return;
         }
 
-        // accumulate first N-points
+        // Accumulate first N-points
         while (range < period) {
             p = yVal[range - 1];
             TP.push((p[1] + p[2] + p[3]) / 3);
@@ -238,4 +239,4 @@ export default CCIIndicator;
  * @apioption series.cci
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

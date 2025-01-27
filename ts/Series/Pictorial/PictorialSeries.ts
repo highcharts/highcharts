@@ -91,29 +91,30 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * A pictorial chart uses vector images to represents the data.
-     * The shape of the data point is taken from the path parameter.
-     *
-     * @sample       {highcharts} highcharts/demo/pictorial/
-     *               Pictorial chart
-     *
-     * @extends      plotOptions.column
-     * @since 11.0.0
-     * @product      highcharts
-     * @excluding    allAreas, borderRadius,
-     *               centerInCategory, colorAxis, colorKey, connectEnds,
-     *               connectNulls, crisp, compare, compareBase, dataSorting,
-     *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
-     *               onPoint
-     * @requires     modules/pictorial
-     * @optionparent plotOptions.pictorial
-     */
-
-    public static defaultOptions: PictorialSeriesOptions =
-        merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: PictorialSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        /**
+         * A pictorial chart uses vector images to represents the data.
+         * The shape of the data point is taken from the path parameter.
+         *
+         * @sample       {highcharts} highcharts/demo/pictorial/
+         *               Pictorial chart
+         *
+         * @extends      plotOptions.column
+         * @since 11.0.0
+         * @product      highcharts
+         * @excluding    allAreas, borderRadius,
+         *               centerInCategory, colorAxis, colorKey, connectEnds,
+         *               connectNulls, crisp, compare, compareBase, dataSorting,
+         *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
+         *               onPoint
+         * @requires     modules/pictorial
+         * @optionparent plotOptions.pictorial
+         */
+        {
             borderWidth: 0
-        } as PictorialSeriesOptions);
+        } as PictorialSeriesOptions
+    );
 
     /* *
      *
@@ -307,6 +308,9 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
+/**
+ *
+ */
 function renderStackShadow(
     stack: StackItem
 ): void {
@@ -317,7 +321,8 @@ function renderStackShadow(
             .filter((p): boolean => p.split(',').length > 1),
         allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
-            parseFloat(key.split(',')[0]));
+            parseFloat(key.split(',')[0])
+        );
 
     let seriesIndex = -1;
 
@@ -467,6 +472,9 @@ function renderStackShadow(
     }
 }
 
+/**
+ *
+ */
 function forEachStack(chart: Chart, callback: Function): void {
     if (chart.axes) {
         chart.axes.forEach(function (axis): void {
@@ -512,6 +520,9 @@ addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     }
 });
 
+/**
+ *
+ */
 function destroyAllStackShadows(chart: Chart): void {
     forEachStack(chart, function (stack: StackItem): void {
         if (stack.shadow && stack.shadowGroup) {
@@ -745,4 +756,4 @@ export default PictorialSeries;
  * @apioption yAxis.stackShadow.enabled
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

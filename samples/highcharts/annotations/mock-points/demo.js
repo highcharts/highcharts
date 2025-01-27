@@ -3,19 +3,19 @@ let minMax = {};
 function getMinMax(chart) {
     const yMin = Math.min.apply(
             null,
-            chart.series[0].processedYData.slice(1, -1)
+            chart.series[0].getColumn('y', true).slice(1, -1)
         ),
         yMax = Math.max.apply(
             null,
-            chart.series[0].processedYData.slice(1, -1)
+            chart.series[0].getColumn('y', true).slice(1, -1)
         ),
-        maxIndex = chart.series[0].processedYData.indexOf(yMax),
-        minIndex = chart.series[0].processedYData.indexOf(yMin);
+        maxIndex = chart.series[0].getColumn('y', true).indexOf(yMax),
+        minIndex = chart.series[0].getColumn('y', true).indexOf(yMin);
 
 
     minMax = {
-        xMin: chart.series[0].processedXData[minIndex],
-        xMax: chart.series[0].processedXData[maxIndex],
+        xMin: chart.series[0].getColumn('x', true)[minIndex],
+        xMax: chart.series[0].getColumn('x', true)[maxIndex],
         yMin,
         yMax
     };
@@ -23,7 +23,9 @@ function getMinMax(chart) {
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -99,7 +101,9 @@ Highcharts.chart('container', {
 
     series: [{
         pointInterval: 24 * 36e5,
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-            135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+            135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+        ]
     }]
 });

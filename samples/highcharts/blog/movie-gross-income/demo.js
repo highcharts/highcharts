@@ -18,7 +18,8 @@ Highcharts.chart('container', {
                 formatter: function () {
                     if (this.point.x === this.series.data[
                         this.series.data.length - 1].x &
-                        this.series.options.showlabel) {
+                        this.series.options.showlabel
+                    ) {
                         return this.series.options.extra.title;
                     }
                 },
@@ -28,13 +29,19 @@ Highcharts.chart('container', {
         }
     },
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         marginRight: 120
     },
     tooltip: {
         followPointer: false,
         useHTML: true,
-        pointFormat: '<table>  <tr>\n    <th>Gross</th>\n    <td>$ {point.y}</td>\n  </tr>\n  <tr>\n    <th>Genre</th>\n    <td>{point.series.options.extra.genre}</td>\n  </tr>\n  <tr>\n    <th>MPAA rating</th>\n    <td>{point.series.options.extra.mpaaRating}</td>\n  </tr>\n</table>'
+        pointFormat: '<table>  <tr>\n    <th>Gross</th>\n    <td>$ ' +
+            '{point.y}</td>\n  </tr>\n  <tr>\n    <th>Genre</th>\n    <td>' +
+            '{point.series.options.extra.genre}</td>\n  </tr>\n  <tr>\n    ' +
+            '<th>MPAA rating</th>\n    <td>' +
+            '{point.series.options.extra.mpaaRating}</td>\n  </tr>\n</table>'
     },
     yAxis: {
         title: {
@@ -42,7 +49,8 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Titanic (1997),  Avatar (2009) and Star Wars VII (2016) are the movies with most gross income in the film history.'
+        text: 'Titanic (1997),  Avatar (2009) and Star Wars VII (2016) are ' +
+            'the movies with most gross income in the film history.'
     },
     xAxis: {
         title: {
@@ -9737,7 +9745,8 @@ Highcharts.chart('container', {
         name: 'narnia',
         showInLegend: false,
         extra: {
-            title: 'The Chronicles of Narnia: The Lion, the Witch and the Wardrobe',
+            title: 'The Chronicles of Narnia: The Lion, the Witch and the ' +
+                'Wardrobe',
             genre: 'Fantasy',
 
             mpaaRating: 'PG',

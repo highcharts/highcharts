@@ -1,11 +1,12 @@
 // Data retrieved from https://www.ssb.no/energi-og-industri/olje-og-gass/statistikk/sal-av-petroleumsprodukt/artikler/auka-sal-av-petroleumsprodukt-til-vegtrafikk
 Highcharts.chart('container', {
     title: {
-        text: 'Sales of petroleum products March, Norway',
-        align: 'left'
+        text: 'Sales of petroleum products March, Norway'
     },
     xAxis: {
-        categories: ['Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil']
+        categories: [
+            'Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil'
+        ]
     },
     yAxis: {
         title: {

@@ -35,7 +35,7 @@ const { find } = U;
  * layer for keyboard navigation, and defines a map of keyCodes to handler
  * functions.
  *
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @sample highcharts/accessibility/custom-component
  *         Custom accessibility component
@@ -189,4 +189,4 @@ export default KeyboardNavigationHandler;
  * @type {Function|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
