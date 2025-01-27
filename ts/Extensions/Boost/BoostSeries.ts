@@ -445,7 +445,8 @@ function createAndAttachRenderer(
                     pointerEvents: hasClickHandler ? void 0 : 'none',
                     mixedBlendMode: 'normal',
                     opacity: alpha
-                });
+                })
+                .addClass(hasClickHandler ? 'highcharts-tracker' : '');
 
             if (target instanceof ChartClass) {
                 target.boost?.markerGroup?.translate(
